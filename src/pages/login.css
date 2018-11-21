@@ -1,0 +1,33 @@
+.hold-onto-your-butts-we-are-logging-in {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fddbd7;
+  transition: background-color 600ms ease-in-out;
+}
+
+.hold-onto-your-butts-we-are-logging-in.active {
+  background-color: #ffc7c1;
+}
+
+.login-boxy-box {
+  width: 500px;
+  background-color: white;
+  padding: 25px;
+  border-radius: 7px;
+  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
+  text-align: center;
+}
+
+.beautiful-logo {
+  width: 100px;
+  margin: 0 auto;
+}
+
+.login-me-in-dammit {
+  display: inline-block;
+  width: 300px;
+  margin: 10px 0;
+}

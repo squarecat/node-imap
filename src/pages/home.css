@@ -1,0 +1,103 @@
+a {
+  text-decoration: none;
+}
+.friendly-neighbourhood-hero {
+  height: 100vh;
+  padding: 100px 0;
+  text-align: center;
+  width: 500px;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.catchy-tagline {
+  font-size: 24px;
+  line-height: 1.5;
+  line-height: 32px;
+}
+
+.title {
+  font-size: 54px;
+}
+
+h1 {
+  font-size: 100px;
+}
+
+.leave-me-alone-logo {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.logo-emoji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateY(8px);
+  display: block;
+  padding: 10px 0 0 0;
+  pointer-events: none;
+}
+
+.leave-me-alone-logo img {
+  width: 100%;
+  opacity: 0.2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  filter: blur(0);
+  transition: filter 500ms ease-in-out;
+}
+
+.leave-me-alone-logo.active img {
+  filter: blur(10px);
+}
+
+.beam-me-up-cta {
+  width: 200px;
+  background-color: #fddbd7;
+  color: #e73a30;
+  display: inline-block;
+  padding: 15px 20px;
+  font-size: 22px;
+
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 10px 0;
+  transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
+    color 200ms ease-in-out, background-color 200ms ease-in-out;
+}
+
+/* .beam-me-up-cta--f {
+  background-color: #edd0e8;
+  color: #9e3fa0;
+}
+
+.beam-me-up-cta--f:hover {
+  background-color: #9e3fa0;
+} */
+
+.beam-me-up-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
+  background-color: #e73a30;
+  color: white;
+}
+
+/* .beam-me-up-cta--m {
+  background-color: #d1e8f8;
+  color: #4fa3db;
+}
+
+.beam-me-up-cta--m:hover {
+  background-color: #4fa3db;
+} */

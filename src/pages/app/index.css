@@ -1,0 +1,80 @@
+@import '../../components/btn.css';
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid rgb(231, 58, 48, 0.1);
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fddbd7;
+}
+
+.auth-loading--loaded .header {
+  height: 50px;
+}
+
+.header-title {
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.header-logo {
+  display: inline-block;
+  height: 65%;
+  margin: 0;
+}
+
+.header-logo img {
+  height: 100%;
+}
+
+.basic-btn {
+  color: rgba(231, 57, 48, 0.75);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.basic-btn:hover {
+  background-color: rgba(231, 57, 48, 0.1);
+  color: rgba(231, 57, 48, 1);
+}
+
+.logout {
+  margin-left: auto;
+}
+
+.app-content {
+  width: 600px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 50px 20px;
+}
+
+.first-logon-content {
+  text-align: center;
+  padding: 50px 0;
+}
+
+.first-logon-image {
+  width: 200px;
+  max-width: 80%;
+}
+
+.action {
+  text-align: center;
+}
+
+.collapsable {
+  max-height: 500px;
+  transition: max-height 1s cubic-bezier(0.65, 0.05, 0.36, 1);
+  overflow: hidden;
+}
+
+.collapsed {
+  max-height: 0;
+}
