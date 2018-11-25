@@ -1,8 +1,32 @@
 .toggle {
   display: inline-block;
   position: relative;
+  width: 64px;
+  height: 32px;
+  background-color: #ffd9d6;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.toggle.off {
+  filter: grayscale(80%);
 }
 
 .toggle-switch {
   position: absolute;
+  background-color: rgba(255, 165, 159, 0.55);
+  height: 32px;
+  width: 32px;
+  border-radius: 16px;
+  left: 0;
+  top: 0;
+  transition: transform 250ms ease-in-out, background-color 250ms ease-in-out;
+}
+
+.toggle:hover .toggle-switch {
+  background-color: rgba(255, 165, 159, 1);
+}
+
+.toggle.on .toggle-switch {
+  transform: translateX(100%);
 }
