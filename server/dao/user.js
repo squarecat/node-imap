@@ -28,3 +28,22 @@ export async function getUser(id) {
     throw err;
   }
 }
+
+export async function updateUser(id, userData) {
+  try {
+    const col = await db.collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: userData
+      }
+    );
+    console.log(`users-dao: updated user ${id}`);
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    console.error('users-dao: error updated user');
+    console.error(err);
+    throw err;
+  }
+}

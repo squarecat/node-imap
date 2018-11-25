@@ -1,0 +1,41 @@
+.mail-list ul {
+  list-style: none;
+  background-color: rgba(255, 217, 214, 0.1);
+}
+
+.mail-item {
+  display: flex;
+  border-bottom: 1px solid #ffc9c5;
+  padding: 10px;
+  padding: 20px 20px;
+  align-items: center;
+  margin: 0;
+}
+.mail-content {
+  display: flex;
+  align-items: center;
+}
+
+.from {
+  font-size: 14px;
+  font-weight: bolder;
+  margin-right: 20px;
+}
+
+.from-email,
+.from-name {
+  display: block;
+}
+
+.from-email {
+  opacity: 0.75;
+}
+
+.subject {
+  font-size: 14px;
+}
+
+.actions {
+  font-size: 12px;
+  margin-left: auto;
+}

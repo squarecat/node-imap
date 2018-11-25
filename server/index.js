@@ -25,32 +25,9 @@ app.use(
   })
 );
 
-app.get('/mail', (req, res) => {
-  const gmail = new Gmail(storedUser.accessToken);
-  const limit = 10;
-  const s = gmail.messages('after:2018/10/01 and before:2018/11/01', {
-    timeout: 10000,
-    max: 10
-    // fields: ['id', 'payload']
-  });
-  let mail = [];
-  s.on('data', function(d) {
-    console.log('data');
-    mail.push(d);
-  });
-  s.on('end', () => {
-    console.log('end');
-    res.send(mapMail(mail));
-  });
-  s.on('error', err => {
-    console.log('err');
-    console.error(err);
-    res.send(err);
-  });
-});
+auth(app);
 
 userApi(app);
-auth(app);
 mailApi(app, server);
 
 async function start() {

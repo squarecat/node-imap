@@ -2,7 +2,7 @@ import passport from 'passport';
 import Gmail from 'node-gmail-api';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 
-import { createUserFromGoogle } from './services/user';
+import { createOrUpdateUserFromGoogle } from './services/user';
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'email'];
 const CLIENT_ID =
@@ -17,21 +17,22 @@ passport.use(
       callbackURL: 'http://local.leavemealone.xyz/auth/google/callback'
     },
     async function(accessToken, refreshToken, profile, done) {
-      console.log('access', accessToken);
-      console.log('refresh', refreshToken);
-      const user = await createUserFromGoogle(profile, {
-        refreshToken
+      const user = await createOrUpdateUserFromGoogle(profile, {
+        refreshToken,
+        accessToken
       });
-      done(null, { ...user, accessToken });
+      done(null, { ...user });
     }
   )
 );
 
 passport.serializeUser(function(user, cb) {
+  console.log('ser', user);
   cb(null, user);
 });
 
 passport.deserializeUser(function(obj, cb) {
+  console.log('des', obj);
   cb(null, obj);
 });
 

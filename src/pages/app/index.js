@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
+
 import { Image } from 'gatsby';
-import io from 'socket.io-client';
 
 import AppLayout from '../../components/app-layout';
 import Auth from '../../components/auth';
 import logo from '../../assets/transparent-logo.png';
-import './index.css';
+import MailList from './mail-list';
 
-const socket = io('http://localhost');
-socket.on('connect', function() {});
-socket.on('event', function(data) {});
-socket.on('disconnect', function() {});
+import './index.css';
 
 export default function() {
   const [isScanning, setScanning] = useState(false);
+  const [isDone, setDone] = useState(false);
   const startScan = () => {
     setScanning(true);
   };
@@ -46,15 +44,21 @@ export default function() {
               </p>
             </div>
           </div>
-          <div className="action">
-            <a
-              href
-              className={`btn ${isScanning ? 'disabled' : ''}`}
-              onClick={() => startScan()}
-            >
-              {isScanning ? 'Scanning...' : 'Scan my inbox'}
-            </a>
-          </div>
+          {!isDone ? (
+            <div className="action">
+              <a
+                className={`btn ${isScanning ? 'disabled' : ''}`}
+                onClick={() => startScan()}
+              >
+                {isScanning ? 'Scanning...' : 'Scan my inbox'}
+              </a>
+            </div>
+          ) : null}
+          {isScanning ? (
+            <div className="mail">
+              <MailList onFinished={() => setDone(true)} />
+            </div>
+          ) : null}
         </div>
       </Auth>
     </AppLayout>

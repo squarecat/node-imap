@@ -1,4 +1,5 @@
 import { setConfig } from 'react-hot-loader';
+import { setGlobal } from 'reactn';
 import 'babel-polyfill';
 import React from 'react';
 import Helmet from 'react-helmet';
@@ -6,6 +7,10 @@ import Helmet from 'react-helmet';
 import './layout.css';
 
 setConfig({ pureSFC: true });
+
+setGlobal({
+  user: null
+});
 
 const AppLayout = ({ children }) => (
   <>
