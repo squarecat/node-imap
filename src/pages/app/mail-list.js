@@ -134,7 +134,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
         {/* {mail.length ? ( */}
         <span className="results-data">
           <span className="quantity">{mail.length}</span>
-          subscribtions found
+          subscriptions found
         </span>
         {/* ) : null} */}
 
