@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
+import Toggle from '../../components/toggle';
 import { useGlobal } from 'reactn';
 import io from 'socket.io-client';
 
