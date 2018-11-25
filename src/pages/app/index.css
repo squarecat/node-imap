@@ -53,6 +53,7 @@
   max-width: 100%;
   margin: 0 auto;
   padding: 50px 20px;
+  position: relative;
 }
 
 .first-logon-content {
@@ -77,4 +78,15 @@
 
 .collapsed {
   max-height: 0;
+}
+
+p a {
+  color: rgba(231, 57, 48, 0.749);
+  border-bottom: 1px dashed rgba(231, 57, 48, 0.749);
+  cursor: pointer;
+}
+
+p a:hover {
+  color: rgba(231, 57, 48, 1);
+  border-bottom: 1px dashed rgba(231, 57, 48, 1);
 }

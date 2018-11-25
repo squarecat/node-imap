@@ -36,14 +36,16 @@ export default function(app, server) {
       }
     }, 5000);
 
-    socket.on('fetch', () => {
+    socket.on('fetch', ({ timeframe }) => {
       if (!socket.auth) {
         return 'Not authenticated';
       }
+      console.log('scanning for ', timeframe);
       // get mail data for user
       scanMail(
         {
-          userId: socket.userId
+          userId: socket.userId,
+          timeframe
         },
         {
           onMail: m => {
@@ -61,10 +63,11 @@ export default function(app, server) {
 
     socket.on('unsubscribe', async mail => {
       try {
-        const replyImage = await unsubscribeMail(mail);
-        socket.emit('unsubscribe:success', { id: mail.id, replyImage });
+        const data = await unsubscribeMail(mail);
+        socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
-        socket.emit('unsubscribe:err', { id: mail.id, replyImage });
+        console.error(err);
+        socket.emit('unsubscribe:err', { id: mail.id, err });
       }
     });
 

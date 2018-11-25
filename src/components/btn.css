@@ -2,17 +2,19 @@
   width: 240px;
   background-color: #fddbd7;
   color: rgba(231, 57, 48, 0.749);
-  display: inline-block;
   padding: 15px 25px;
   font-size: 22px;
-
   font-weight: bolder;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  margin: 10px 0;
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  user-select: none;
 }
 
 .btn:hover {
@@ -24,4 +26,28 @@
 
 .btn.disabled {
   pointer-events: none;
+}
+
+.btn.compact {
+  width: auto;
+  padding: 5px 15px;
+  font-size: 16px;
+}
+
+.btn.icon svg {
+  margin-right: 7px;
+  position: relative;
+}
+
+.btn.centered {
+  margin: 10px auto;
+}
+
+.btn.muted {
+  background-color: transparent;
+}
+
+.btn.muted:hover {
+  color: rgba(231, 57, 48, 0.749);
+  background-color: rgba(231, 57, 48, 0.1);
 }
