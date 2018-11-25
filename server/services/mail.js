@@ -1,33 +1,59 @@
 import Gmail from 'node-gmail-api';
-const url from "url";
+import url from 'url';
+import puppeteer from 'puppeteer';
+import subDays from 'date-fns/sub_days';
+import subWeeks from 'date-fns/sub_weeks';
+import subMonths from 'date-fns/sub_months';
+import format from 'date-fns/format';
+
 import { getUserById } from './user';
 
-export async function scanMail({ userId }, { onMail, onError, onEnd }) {
-  let mailUnsubLinks = [];
+const googleDateFormat = 'YYYY/MM/DD';
+
+export async function scanMail(
+  { userId, timeframe },
+  { onMail, onError, onEnd }
+) {
   try {
+    let senders = [];
+    const now = new Date();
+    let then;
+    const [value, unit] = timeframe;
+    if (unit === 'd') {
+      then = subDays(now, value);
+    } else if (unit === 'w') {
+      then = subWeeks(now, value);
+    } else if (unit === 'm') {
+      then = subMonths(now, value);
+    }
+
     const user = await getUserById(userId);
     const gmail = new Gmail(user.keys.accessToken);
 
     const limit = 10;
-
-    const s = gmail.messages('after:2018/10/01 and before:2018/12/01', {
+    const searchStr = getSearchString({ then, now });
+    console.log('doing scan... ', userId, timeframe, searchStr);
+    const s = gmail.messages(searchStr, {
       timeout: 10000,
       max: 10000
-      // fields: ['id', 'payload']
     });
 
     s.on('data', m => {
+      console.log('mail');
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
         // don't send duplicates
-        if (!mailUnsubLinks.includes(mail.unsubscribe)) {
-          mailUnsubLinks = [...mailUnsubLinks, mail];
+        if (mail && !senders.includes(mail.from)) {
+          senders = [...senders, mail.from];
           onMail(mail);
         }
       }
     });
 
-    s.on('end', onEnd);
+    s.on('end', () => {
+      console.log('end mail');
+      onEnd();
+    });
 
     s.on('error', err => {
       console.error(err);
@@ -40,10 +66,9 @@ export async function scanMail({ userId }, { onMail, onError, onEnd }) {
 }
 
 export async function unsubscribeMail(mail) {
-  const { unsubscribe } = mail;
+  const { unsubscribeLink } = mail;
   console.log('unsubscribe from', mail);
-  const unsubUrl = unsubscribe.find(a => a.startsWith('http'));
-  return unsubscribe(unsubUrl);
+  return unsubscribe(unsubscribeLink);
 }
 
 function isUnsubscribable(mail) {
@@ -59,16 +84,16 @@ function mapMail(mail) {
     let unsubscribeMailTo = null;
     let unsubscribeLink = null;
 
-    if (/^<.+>,<.+>$/.test(unsub)) {
+    if (/^<.+>,\s*<.+>$/.test(unsub)) {
       const unsubTypes = unsub
         .split(',')
         .map(a => a.trim().match(/^<(.*)>$/)[1]);
       unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
       unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
     } else if (unsub.startsWith('<http')) {
-      unsubscribeLink = unsub.substr(1, a.length - 2);
+      unsubscribeLink = unsub.substr(1, unsub.length - 2);
     } else if (unsub.startsWith('<mailto')) {
-      unsubscribeMailTo = unsub.substr(1, a.length - 2);
+      unsubscribeMailTo = unsub.substr(1, unsub.length - 2);
     } else if (url.parse(unsub).protocol === 'mailto') {
       unsubscribeMailTo = unsub;
     } else if (url.parse(unsub).protocol !== null) {
@@ -92,17 +117,30 @@ function mapMail(mail) {
       'error mapping mail',
       payload.headers.find(h => h.name === 'List-Unsubscribe').value
     );
+    console.error(err);
     return null;
   }
 }
 
+const unsubSuccessKeywords = ['successfully', 'success'];
+
+function getSearchString({ then, now }) {
+  const thenStr = format(then, googleDateFormat);
+  const nowStr = format(now, googleDateFormat);
+  return `after:${thenStr} and before:${nowStr}`;
+}
 async function unsubscribe(unsubUrl) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto(unsubUrl, { waitUntil: 'networkidle2' }).waitFor(2000);
+  await page.goto(unsubUrl, { waitUntil: 'networkidle2' });
+  const bodyText = await page.evaluate(() => document.body.innerText);
   const image = await page.screenshot({
     encoding: 'base64'
   });
+  const hasSuccessKeywords = unsubSuccessKeywords.some(word => {
+    return bodyText.includes(word);
+  });
+
   await browser.close();
-  return image;
+  return { estimatedSuccess: hasSuccessKeywords, image };
 }

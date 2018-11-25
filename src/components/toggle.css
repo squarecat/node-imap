@@ -1,0 +1,8 @@
+.toggle {
+  display: inline-block;
+  position: relative;
+}
+
+.toggle-switch {
+  position: absolute;
+}

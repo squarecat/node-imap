@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Image } from 'gatsby';
-
+import Modal from '../../components/price-modal';
 import AppLayout from '../../components/app-layout';
 import Auth from '../../components/auth';
 import logo from '../../assets/transparent-logo.png';
+
 import MailList from './mail-list';
+import Welcome from './welcome';
 
 import './index.css';
 
+const hasSearched =
+  localStorage.getItem('leavemealone.hasbeenwelcomed') === 'true';
+
 export default function() {
+  const [showPriceModal, togglePriceModal] = useState(false);
   const [isScanning, setScanning] = useState(false);
-  const [isDone, setDone] = useState(false);
-  const startScan = () => {
-    setScanning(true);
-  };
+  const [timeframe, setTimeframe] = useState(null);
+  const [isDoneSeaching, setDoneSearching] = useState(false);
 
   return (
     <AppLayout>
       <Auth>
         <div className="header">
           <a href="/app" className="header-logo">
-            <img src={logo} />
+            <img alt="logo" src={logo} />
           </a>
           <div className="header-title">Leave Me Alone </div>
           <a className="basic-btn logout" href="/auth/logout">
@@ -29,37 +32,36 @@ export default function() {
           </a>
         </div>
         <div className="app-content">
-          <div className={`collapsable ${isScanning ? 'collapsed' : ''}`}>
-            <div className="first-logon-content">
-              <p>Lets get started!</p>{' '}
-              <p>
-                <strong>Leave Me Alone</strong> will scan your Gmail inbox, and
-                find all the subscripion emails that you are receiving.
-              </p>
-              <div className="">
-                <img src={logo} className="first-logon-image" />
-              </div>
-              <p>
-                You can then choose if you want to stay subscribed, or cancel.
-              </p>
-            </div>
-          </div>
-          {!isDone ? (
+          {!hasSearched ? <Welcome isScanning={isScanning} /> : null}
+          {!hasSearched && !isDoneSeaching ? (
             <div className="action">
               <a
-                className={`btn ${isScanning ? 'disabled' : ''}`}
-                onClick={() => startScan()}
+                className={`btn ${isScanning ? 'disabled' : ''} centered`}
+                onClick={() => togglePriceModal(true)}
               >
                 {isScanning ? 'Scanning...' : 'Scan my inbox'}
               </a>
             </div>
           ) : null}
-          {isScanning ? (
-            <div className="mail">
-              <MailList onFinished={() => setDone(true)} />
-            </div>
+          {hasSearched || timeframe ? (
+            <MailList
+              onFinished={() => setDoneSearching(true)}
+              timeframe={timeframe}
+              hasSearched={hasSearched}
+              showPriceModal={() => togglePriceModal(true)}
+            />
           ) : null}
         </div>
+        {showPriceModal ? (
+          <Modal
+            onPurchase={option => {
+              setScanning(true);
+              setTimeframe(option);
+              togglePriceModal(false);
+            }}
+            onClose={() => togglePriceModal(false)}
+          />
+        ) : null}
       </Auth>
     </AppLayout>
   );
