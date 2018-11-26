@@ -1,6 +1,7 @@
 module.exports = {
   siteMetadata: {
-    title: 'Gatsby Default Starter'
+    title: 'Leave Me Alone - take back control of your inbox',
+    description: `Take back control of your inbox by telling subscription spammers to leave you alone!`
   },
   plugins: [
     'gatsby-plugin-page-transitions',
