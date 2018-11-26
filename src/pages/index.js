@@ -3,7 +3,6 @@ import { Link } from 'gatsby';
 
 import gmailLogo from '../assets/gmail.png';
 import Layout from '../components/layout';
-import Image from '../components/image';
 import './home.css';
 
 const IndexPage = () => {

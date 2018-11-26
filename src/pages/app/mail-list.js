@@ -142,7 +142,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
       <div className="mail-actions">
         <span className="results-data">
           <span className="quantity">{mail.length}</span>
-          subscribtions found
+          subscriptions found
         </span>
 
         <a onClick={() => showPriceModal()} className="btn compact icon">
@@ -196,13 +196,13 @@ function List({ mail, onUnsubscribe, isSearchFinished, showPriceModal }) {
             <li key={m.from}>
               <div className="mail-item">
                 <div className="avatar" />
-                <div className="mail-content">
-                  <div className="from">
-                    <span className="from-name">{fromName}</span>
-                    <span className="from-email">{fromEmail}</span>
-                  </div>
-                  <div className="subject">{m.subject}</div>
+                {/* <div className="mail-content">
+                </div> */}
+                <div className="from">
+                  <span className="from-name">{fromName}</span>
+                  <span className="from-email">{fromEmail}</span>
                 </div>
+                <div className="subject">{m.subject}</div>
                 <div className="actions">
                   {m.estimatedSuccess !== false ? (
                     <Toggle
