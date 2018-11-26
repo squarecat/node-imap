@@ -25,7 +25,7 @@ const IndexPage = () => {
               </span>
             </div>
           </h1>
-          <h2 className="title">Leave me alone!</h2>
+          <h2 className="title">Leave Me Alone!</h2>
           <p className="catchy-tagline">
             Take back control of your inbox by telling subscription spammers to
             leave you alone!
