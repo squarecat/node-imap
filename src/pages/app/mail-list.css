@@ -45,7 +45,7 @@
 .unsubscribe {
   font-size: 10px;
   line-height: 16px !important;
-  display: inline-block;
+  display: none;
 }
 
 .mail-actions {
@@ -71,4 +71,13 @@
   border-radius: 7px;
   text-align: center;
   margin: 50px auto;
+}
+
+.failed-to-unsub-btn {
+  cursor: pointer;
+  stroke: rgba(231, 57, 48, 0.749);
+}
+
+.failed-to-unsub-btn:hover {
+  stroke: rgba(231, 57, 48, 1);
 }

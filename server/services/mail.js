@@ -99,7 +99,6 @@ function mapMail(mail) {
     } else if (url.parse(unsub).protocol !== null) {
       unsubscribeLink = unsub;
     }
-
     if (!unsubscribeMailTo && !unsubscribeLink) {
       return null;
     }

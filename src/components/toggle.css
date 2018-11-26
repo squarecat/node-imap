@@ -30,3 +30,24 @@
 .toggle.on .toggle-switch {
   transform: translateX(100%);
 }
+
+.toggle-loader {
+  position: absolute;
+  height: 32px;
+  width: 32px;
+  border-radius: 16px;
+  left: 0;
+  top: 0;
+  transition: transform 250ms ease-in-out, background-color 250ms ease-in-out;
+  border: 2px solid transparent;
+  border-top-color: rgb(255, 111, 108);
+  display: none;
+}
+
+.toggle.on .toggle-loader {
+  transform: translateX(100%);
+}
+
+.toggle.loading .toggle-loader {
+  display: inline;
+}

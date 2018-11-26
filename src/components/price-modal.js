@@ -70,7 +70,7 @@ export default ({ onClose, onPurchase, children }) => {
             </a>
           ))}
         </div>
-        <div className="price-actions">
+        <div className="modal-actions">
           <a className="btn muted compact" onClick={onClickClose}>
             Cancel
           </a>

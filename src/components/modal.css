@@ -42,7 +42,7 @@
   font-weight: bolder;
 }
 
-.price-actions {
+.modal-actions {
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid #ffe3e1;
@@ -50,7 +50,7 @@
   margin-top: 16px;
 }
 
-.price-actions .btn:first-child {
+.modal-actions .btn:first-child {
   margin-right: 10px;
 }
 
@@ -97,4 +97,44 @@
 .modal p {
   font-size: 16px;
   line-height: 24px;
+}
+
+.feedback-options {
+  font-size: 16px;
+}
+
+.feedback-options li {
+  position: relative;
+  padding: 0 0 0 35px;
+  cursor: pointer;
+}
+
+.feedback-options li:before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: rgba(231, 57, 48, 0.749);
+  border: 8px solid #fddbd7;
+  transform: translateY(-50%);
+  transition: border-width 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+.feedback-options li:hover:before {
+  border-width: 4px;
+  background-color: rgba(231, 57, 48, 0.5);
+}
+
+.feedback-options li[data-selected='true']:before {
+  border-width: 2px;
+  background-color: rgba(231, 57, 48, 0.749);
+}
+
+.unsubscribe-link {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
