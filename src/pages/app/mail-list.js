@@ -1,13 +1,14 @@
 import React, { useEffect, useReducer, useState } from 'react';
-
+import { useGlobal } from '../../utils/hooks';
 import ErrorModal from '../../components/error-modal';
 import Toggle from '../../components/toggle';
-import { useGlobal } from 'reactn';
+
 import io from 'socket.io-client';
 
 import './mail-list.css';
+import useLocalStorage from '../../utils/hooks/use-localstorage';
 
-const mailReducer = (state, action) => {
+const mailReducer = (state = [], action) => {
   switch (action.type) {
     case 'add':
       return [...state, { ...action.data, subscribed: true }];
@@ -44,13 +45,11 @@ const mailReducer = (state, action) => {
 
 function useSocket(callback) {
   const [user] = useGlobal('user');
-  const [mail, dispatch] = useReducer(
-    mailReducer,
-    JSON.parse(localStorage.getItem('leavemealone.mail')) || []
-  );
+  const [localMail, setLocalMail] = useLocalStorage('leavemealone.mail') || [];
+  const [mail, dispatch] = useReducer(mailReducer, localMail);
   useEffect(
     () => {
-      localStorage.setItem('leavemealone.mail', JSON.stringify(mail));
+      setLocalMail('leavemealone.mail', mail);
     },
     [mail]
   );
@@ -141,7 +140,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
     <>
       <div className="mail-actions">
         <span className="results-data">
-          <span className="quantity">{mail.length}</span>
+          <span className="quantity">{mail ? mail.length : 0}</span>
           subscriptions found
         </span>
 
@@ -162,7 +161,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
         </a>
       </div>
       <List
-        mail={mail}
+        mail={mail || []}
         onUnsubscribe={mail => unsubscribeMail(mail)}
         isSearchFinished={isSearchFinished}
         showPriceModal={showPriceModal}
@@ -171,7 +170,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
   );
 };
 
-function List({ mail, onUnsubscribe, isSearchFinished, showPriceModal }) {
+function List({ mail = [], onUnsubscribe, isSearchFinished, showPriceModal }) {
   const [unsubscribeError, setUnsubscribeError] = useState(null);
   if (!mail.length && isSearchFinished) {
     return (

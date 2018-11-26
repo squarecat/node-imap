@@ -11,9 +11,11 @@ import Welcome from './welcome';
 import './index.css';
 
 const hasSearched =
-  localStorage.getItem('leavemealone.hasbeenwelcomed') === 'true';
+  typeof localStorage !== 'undefined'
+    ? localStorage.getItem('leavemealone.hasbeenwelcomed') === 'true'
+    : false;
 
-export default function() {
+export default function App() {
   const [showPriceModal, togglePriceModal] = useState(false);
   const [isScanning, setScanning] = useState(false);
   const [timeframe, setTimeframe] = useState(null);

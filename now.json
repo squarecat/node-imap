@@ -1,0 +1,7 @@
+{
+  "env": {
+    "NODE_ENV": "production",
+    "DB_USER": "@db_user",
+    "DB_PASSWORD": "@db_password"
+  }
+}

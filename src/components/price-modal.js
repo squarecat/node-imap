@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
-// import { useGlobal } from 'reactn';
+
+import BuyButton from '../../plugins/gatsby-plugin-paddle/src';
 import './modal.css';
 
 const prices = [
   {
     price: 3,
     label: '1 week',
-    value: '1w'
+    value: '1w',
+    productId: 545883
   },
   {
     price: 5,
     label: '1 month',
-    value: '1m'
+    value: '1m',
+    productId: 2
   },
   {
     price: 8,
     label: '6 months',
-    value: '6m'
+    value: '6m',
+    productId: 3
   }
 ];
-export default ({ onClose, onPurchase, children }) => {
+export default ({ onClose, onPurchase }) => {
   const [selected, setSelected] = useState('free');
   const [isShown, setShown] = useState(false);
-  // const [user] = useGlobal('user');
+
   // on mount
   useEffect(() => {
     setShown(true);
@@ -74,9 +78,19 @@ export default ({ onClose, onPurchase, children }) => {
           <a className="btn muted compact" onClick={onClickClose}>
             Cancel
           </a>
-          <a className="btn compact" onClick={onClickPurchase}>
-            {selected === 'free' ? 'OK' : 'Purchase'}
-          </a>
+          {selected === 'free' ? (
+            <a className="btn compact" onClick={onClickPurchase}>
+              OK
+            </a>
+          ) : (
+            <BuyButton
+              productId={prices.find(p => selected === p.value).productId}
+              onSuccess={data => {}}
+              onClose={() => {}}
+            >
+              Purchase
+            </BuyButton>
+          )}
         </div>
       </div>
       <div className={`modal-bg ${isShown ? 'shown' : ''}`} />
