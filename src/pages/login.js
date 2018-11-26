@@ -13,7 +13,7 @@ const LoginPage = () => {
 
   return (
     <PageTransition>
-      <Layout>
+      <Layout page="Login">
         <div ref={activeRef} className="hold-onto-your-butts-we-are-logging-in">
           <div className="login-boxy-box">
             <div className="beautiful-logo">

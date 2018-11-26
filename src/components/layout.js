@@ -12,7 +12,7 @@ import './layout.css';
 
 setConfig({ pureSFC: true });
 
-const Layout = ({ children }) => (
+const Layout = ({ page, children }) => (
   <StaticQuery
     query={graphql`
       query SiteTitleQuery {
@@ -35,16 +35,17 @@ const Layout = ({ children }) => (
         twitterHandle,
         siteName
       } = data.site.siteMetadata;
+      const pageTitle = page ? `${page} | ${siteName}` : title;
       return (
         <>
-          <Helmet title={title}>
+          <Helmet>
             <meta charSet="utf-8" />
             <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
             <meta
               name="viewport"
               content="width=device-width, initial-scale=1.0"
             />
-            <title>{title}</title>
+            <title>{pageTitle}</title>
             <meta name="description" content={description} />
             <link rel="canonical" href={`${baseUrl}/index.html`} />
             <link rel="shortcut icon" type="image/png" href={favicon} />
@@ -57,14 +58,14 @@ const Layout = ({ children }) => (
             />
             <meta property="og:type" content="website" />
             <meta property="og:url" content={baseUrl} />
-            <meta property="og:title" content={title} />
+            <meta property="og:title" content={pageTitle} />
             <meta property="og:description" content={description} />
             <meta property="og:site_name" content={siteName} />
 
             {/* twitter card tags additive with the og: tags */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:domain" value={baseUrl} />
-            <meta name="twitter:title" value={title} />
+            <meta name="twitter:title" value={pageTitle} />
             <meta name="twitter:description" value={description} />
             <meta name="twitter:image" content={`${baseUrl}${metaImage}`} />
             <meta name="twitter:url" value={baseUrl} />

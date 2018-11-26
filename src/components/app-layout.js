@@ -3,20 +3,21 @@ import 'babel-polyfill';
 import React from 'react';
 import Helmet from 'react-helmet';
 
+import favicon from '../assets/meta/favicon.png';
+
 import './layout.css';
 
 setConfig({ pureSFC: true });
 
 const AppLayout = ({ children }) => (
   <>
-    <Helmet
-      title=""
-      meta={[
-        { name: 'description', content: 'Sample' },
-        { name: 'keywords', content: 'sample, something' }
-      ]}
-    >
+    <Helmet>
+      <meta charSet="utf-8" />
+      <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Home | Leave Me Alone</title>
       <html lang="en" />
+      <link rel="shortcut icon" type="image/png" href={favicon} />
     </Helmet>
     {children}
   </>
