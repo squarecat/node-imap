@@ -57,6 +57,7 @@ const mailReducer = (state = [], action) => {
 
 function useSocket(callback) {
   const [user] = useGlobal('user');
+
   const [localMail, setLocalMail] = useLocalStorage('leavemealone.mail') || [];
   const [mail, dispatch] = useReducer(mailReducer, localMail);
   useEffect(
@@ -207,7 +208,6 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
     </>
   );
 };
-
 
 function List({
   mail = [],
