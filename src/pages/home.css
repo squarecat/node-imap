@@ -66,7 +66,7 @@ h1 {
 }
 
 .leave-me-alone-logo.active img {
-  filter: blur(10px);
+  /* filter: blur(10px); */
 }
 
 .beam-me-up-cta {
@@ -195,6 +195,7 @@ input:focus {
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
   cursor: pointer;
+  position: relative;
 }
 
 .huskos:hover {
@@ -306,4 +307,71 @@ input:focus {
   .makers > div {
     padding: 20px;
   }
+}
+
+p a {
+  color: rgba(231, 57, 48, 0.749);
+  border-bottom: 1px dashed rgba(231, 57, 48, 0.749);
+  cursor: pointer;
+}
+
+p a:hover {
+  color: rgba(231, 57, 48, 1);
+  border-bottom: 1px dashed rgba(231, 57, 48, 1);
+}
+
+.btn {
+  width: 240px;
+  background-color: #fddbd7;
+  color: rgba(231, 57, 48, 0.749);
+  padding: 15px 25px;
+  font-size: 22px;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
+    color 200ms ease-in-out, background-color 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  user-select: none;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
+  background-color: #e73a30;
+  color: white;
+}
+
+.btn.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: no-drop;
+}
+
+.btn.compact {
+  width: auto;
+  padding: 5px 15px;
+  font-size: 16px;
+}
+
+.btn.icon svg {
+  margin-right: 7px;
+  position: relative;
+}
+
+.btn.centered {
+  margin: 10px auto;
+}
+
+.btn.muted {
+  background-color: transparent;
+}
+
+.btn.muted:hover {
+  color: rgba(231, 57, 48, 0.749);
+  background-color: rgba(231, 57, 48, 0.1);
 }
