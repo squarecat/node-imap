@@ -22,6 +22,7 @@ const Layout = ({ children }) => (
             description
             baseUrl
             twitterHandle
+            siteName
           }
         }
       }
@@ -31,7 +32,8 @@ const Layout = ({ children }) => (
         title,
         description,
         baseUrl,
-        twitterHandle
+        twitterHandle,
+        siteName
       } = data.site.siteMetadata;
       return (
         <>
@@ -57,7 +59,7 @@ const Layout = ({ children }) => (
             <meta property="og:url" content={baseUrl} />
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
-            <meta property="og:site_name" content="UptimeBar" />
+            <meta property="og:site_name" content={siteName} />
 
             {/* twitter card tags additive with the og: tags */}
             <meta name="twitter:card" content="summary_large_image" />

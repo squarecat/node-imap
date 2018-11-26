@@ -8,6 +8,7 @@ import format from 'date-fns/format';
 import emailAddresses from 'email-addresses';
 
 import { getUserById } from './user';
+import { sendUnsubscribeMail } from '../utils/email';
 import {
   addResolvedUnsubscription,
   addUnresolvedUnsubscription
@@ -71,9 +72,14 @@ export async function scanMail(
 }
 
 export async function unsubscribeMail(mail) {
-  const { unsubscribeLink } = mail;
-  console.log('unsubscribe from', mail);
-  return unsubscribe(unsubscribeLink);
+  const { unsubscribeLink, unsubscribeMailTo } = mail;
+  console.log('mail-service: unsubscribe from', mail);
+  if (unsubscribeLink) {
+    console.log('mail-service: unsubscribing with link');
+    return unsubscribeWithLink(unsubscribeLink);
+  }
+  console.log('mail-service: unsubscribing with mailto');
+  return unsubscribeWithMailTo(unsubscribeMailTo);
 }
 
 export async function addUnsubscribeErrorResponse({
@@ -150,7 +156,7 @@ function getSearchString({ then, now }) {
   const nowStr = format(now, googleDateFormat);
   return `after:${thenStr} and before:${nowStr}`;
 }
-async function unsubscribe(unsubUrl) {
+async function unsubscribeWithLink(unsubUrl) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto(unsubUrl, { waitUntil: 'networkidle2' });
@@ -164,6 +170,23 @@ async function unsubscribe(unsubUrl) {
 
   await browser.close();
   return { estimatedSuccess: hasSuccessKeywords, image };
+}
+
+async function unsubscribeWithMailTo(unsubMailto) {
+  try {
+    // const address = unsubMailto.replace('mailto:', '');
+    const [mailto, paramsString = ''] = unsubMailto.split('?');
+    const toAddress = mailto.replace('mailto:', '');
+    const params = paramsString.split('&').reduce((out, p) => {
+      var d = p.split('=');
+      return { ...out, [d[0]]: d[1] };
+    }, {});
+
+    const sent = sendUnsubscribeMail({ toAddress, ...params });
+    return { estimatedSuccess: sent };
+  } catch (err) {
+    return { estimatedSuccess: false };
+  }
 }
 
 function getDomain(mailFrom) {
