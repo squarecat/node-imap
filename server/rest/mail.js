@@ -1,6 +1,10 @@
 import socketio from 'socket.io';
 
-import { scanMail, unsubscribeMail } from '../services/mail';
+import {
+  scanMail,
+  unsubscribeMail,
+  addUnsubscribeErrorResponse
+} from '../services/mail';
 import { checkAuthToken } from '../services/user';
 
 let connectedClients = {};
@@ -68,6 +72,19 @@ export default function(app, server) {
       } catch (err) {
         console.error(err);
         socket.emit('unsubscribe:err', { id: mail.id, err });
+      }
+    });
+
+    socket.on('unsubscribe-error-response', async data => {
+      try {
+        const response = await addUnsubscribeErrorResponse(data);
+        socket.emit('unsubscribe-error-response:success', {
+          id: data.mailId,
+          data: response
+        });
+      } catch (err) {
+        console.error(err);
+        socket.emit('unsubscribe-error-response:err', { id: data.mailId, err });
       }
     });
 

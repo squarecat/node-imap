@@ -5,8 +5,13 @@ import subDays from 'date-fns/sub_days';
 import subWeeks from 'date-fns/sub_weeks';
 import subMonths from 'date-fns/sub_months';
 import format from 'date-fns/format';
+import emailAddresses from 'email-addresses';
 
 import { getUserById } from './user';
+import {
+  addResolvedUnsubscription,
+  addUnresolvedUnsubscription
+} from '../dao/subscriptions';
 
 const googleDateFormat = 'YYYY/MM/DD';
 
@@ -69,6 +74,23 @@ export async function unsubscribeMail(mail) {
   const { unsubscribeLink } = mail;
   console.log('unsubscribe from', mail);
   return unsubscribe(unsubscribeLink);
+}
+
+export async function addUnsubscribeErrorResponse({
+  mailId,
+  success,
+  from,
+  image = null,
+  reason = null
+}) {
+  console.log(
+    `mail-service: add unsubscribe error response, success: ${success}`
+  );
+  const domain = getDomain(from);
+  if (success) {
+    return addResolvedUnsubscription({ mailId, image, domain });
+  }
+  return addUnresolvedUnsubscription({ mailId, image, domain, reason });
 }
 
 function isUnsubscribable(mail) {
@@ -142,4 +164,10 @@ async function unsubscribe(unsubUrl) {
 
   await browser.close();
   return { estimatedSuccess: hasSuccessKeywords, image };
+}
+
+function getDomain(mailFrom) {
+  const { domain } = emailAddresses.parseOneAddress(mailFrom);
+  console.log(`mail-service: got domain: '${domain}' from ${mailFrom}`);
+  return domain;
 }

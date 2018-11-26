@@ -15,6 +15,7 @@
     "@babel/register": "^7.0.0",
     "connect-mongo": "^2.0.1",
     "date-fns": "^1.29.0",
+    "email-addresses": "^3.0.3",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "gatsby": "^2.0.19",

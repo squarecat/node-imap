@@ -48,6 +48,8 @@
 .actions {
   font-size: 12px;
   margin-left: auto;
+  width: 64px;
+  text-align: center;
 }
 
 .unsubscribe {

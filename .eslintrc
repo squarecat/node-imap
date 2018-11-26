@@ -12,6 +12,7 @@
   "rules": {
     "prettier/prettier": ["error", { "singleQuote": true }],
     "react/prop-types": ["0"],
-    "no-console": 0
+    "no-console": 0,
+    "react/no-unescaped-entities": 0
   }
 }

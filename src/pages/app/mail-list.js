@@ -21,6 +21,7 @@ const mailReducer = (state, action) => {
           ? {
               ...email,
               subscribed: false,
+              error: false,
               image: action.data.image,
               estimatedSuccess: action.data.estimatedSuccess
             }
@@ -34,6 +35,17 @@ const mailReducer = (state, action) => {
               error: true,
               subscribed: null,
               image: action.data.image
+            }
+          : email
+      );
+    case 'unsubscribe-error-resolved':
+      return state.map(email =>
+        email.id === action.data.id
+          ? {
+              ...email,
+              error: false,
+              subscribed: false,
+              estimatedSuccess: true
             }
           : email
       );
@@ -101,14 +113,39 @@ function useSocket(callback) {
       socket.emit('unsubscribe', mail);
     }
   }
+  function addUnsubscribeErrorResponse(data) {
+    console.log('ADD UNSUBSCRIBE ERROR RESPONSE', data);
+    if (socket) {
+      dispatch({
+        type: 'unsubscribe-error-resolved',
+        data: { id: data.mailId }
+      });
+      socket.emit('unsubscribe-error-response', data);
+    } else {
+      console.log('NO SOCKET', data);
+    }
+  }
 
-  return { mail, fetchMail, unsubscribeMail, isConnected: !!socket, dispatch };
+  return {
+    mail,
+    fetchMail,
+    unsubscribeMail,
+    isConnected: !!socket,
+    addUnsubscribeErrorResponse,
+    dispatch
+  };
 }
 
 export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
 
-  const { mail, fetchMail, unsubscribeMail, isConnected } = useSocket(() => {
+  const {
+    mail,
+    fetchMail,
+    unsubscribeMail,
+    isConnected,
+    addUnsubscribeErrorResponse
+  } = useSocket(() => {
     setSearchFinished(true);
     onFinished();
   });
@@ -166,12 +203,19 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
         onUnsubscribe={mail => unsubscribeMail(mail)}
         isSearchFinished={isSearchFinished}
         showPriceModal={showPriceModal}
+        addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
       />
     </>
   );
 };
 
-function List({ mail, onUnsubscribe, isSearchFinished, showPriceModal }) {
+function List({
+  mail,
+  onUnsubscribe,
+  isSearchFinished,
+  showPriceModal,
+  addUnsubscribeErrorResponse
+}) {
   const [unsubscribeError, setUnsubscribeError] = useState(null);
   if (!mail.length && isSearchFinished) {
     return (
@@ -236,7 +280,16 @@ function List({ mail, onUnsubscribe, isSearchFinished, showPriceModal }) {
       {unsubscribeError ? (
         <ErrorModal
           onClose={() => setUnsubscribeError(null)}
-          onSubmit={() => setUnsubscribeError(null)}
+          onSubmit={({ success, useImage, failReason = null }) => {
+            setUnsubscribeError(null);
+            addUnsubscribeErrorResponse({
+              success,
+              mailId: unsubscribeError.id,
+              image: useImage ? unsubscribeError.image : null,
+              from: unsubscribeError.from,
+              reason: failReason
+            });
+          }}
           image={unsubscribeError.image}
           link={unsubscribeError.unsubscribeLink}
         />
