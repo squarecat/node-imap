@@ -21,11 +21,17 @@
   font-size: 14px;
   font-weight: bolder;
   margin-right: 20px;
+  overflow: hidden;
+  flex: 1;
 }
 
 .from-email,
 .from-name {
   display: block;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .from-email {
@@ -35,6 +41,8 @@
 
 .subject {
   font-size: 14px;
+  margin-right: 20px;
+  flex: 2;
 }
 
 .actions {

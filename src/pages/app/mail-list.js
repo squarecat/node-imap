@@ -186,13 +186,13 @@ function List({ mail, onUnsubscribe, isSearchFinished, showPriceModal }) {
             <li key={m.from}>
               <div className="mail-item">
                 <div className="avatar" />
-                <div className="mail-content">
-                  <div className="from">
-                    <span className="from-name">{fromName}</span>
-                    <span className="from-email">{fromEmail}</span>
-                  </div>
-                  <div className="subject">{m.subject}</div>
+                {/* <div className="mail-content">
+                </div> */}
+                <div className="from">
+                  <span className="from-name">{fromName}</span>
+                  <span className="from-email">{fromEmail}</span>
                 </div>
+                <div className="subject">{m.subject}</div>
                 <div className="actions">
                   <Toggle status={'on'} />
                   {/* <a onClick={() => onUnsubscribe(m)}>Unsubscribe</a> */}
