@@ -7,7 +7,6 @@ module.exports = {
     siteName: 'Leave Me Alone'
   },
   plugins: [
-    'gatsby-plugin-page-transitions',
     'gatsby-plugin-react-helmet',
     {
       resolve: `gatsby-source-filesystem`,
@@ -24,6 +23,20 @@ module.exports = {
         anonymize: true,
         respectDNT: true
       }
+    },
+    {
+      resolve: 'gatsby-plugin-paddle',
+      options: {
+        vendorId: 35012,
+        productId: 545883,
+        checkoutSecret: '1f1rd9u',
+        debug: true,
+        completeDetails: true
+      }
+    },
+    {
+      resolve: `gatsby-plugin-create-client-paths`,
+      options: { prefixes: ['/app/*'] }
     }
   ]
 };

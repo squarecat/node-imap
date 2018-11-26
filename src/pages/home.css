@@ -1,5 +1,13 @@
+body {
+  padding-bottom: 100px;
+  overflow-x: hidden;
+}
+
 a {
   text-decoration: none;
+}
+img {
+  margin: 0;
 }
 .friendly-neighbourhood-hero {
   height: 100vh;
@@ -42,6 +50,7 @@ h1 {
   display: block;
   padding: 10px 0 0 0;
   pointer-events: none;
+  font-size: 100px;
 }
 
 .leave-me-alone-logo img {
@@ -101,3 +110,200 @@ h1 {
 .beam-me-up-cta--m:hover {
   background-color: #4fa3db;
 } */
+
+.form-input,
+input {
+  /* border: 1px solid #474747; */
+  border-radius: 5px;
+  padding: 20px 25px;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 300px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+input {
+  border: 1px solid rgba(231, 57, 48, 0.4);
+}
+
+.form-input:focus,
+input:focus {
+  outline: 0;
+  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
+}
+
+.form-input:focus + .form-label,
+.form-input:valid + .form-label {
+  transform: translate(-5px, -30px);
+  font-size: 0.75em;
+}
+
+.form-group {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.form-label {
+  position: absolute;
+  pointer-events: none;
+  left: 20px;
+  top: 20px;
+  padding: 0 5px;
+  color: #999;
+  background-color: #fff;
+  transition: transform 150ms ease-out, font-size 150ms ease-out;
+}
+
+.tweet {
+  margin-top: 50px;
+}
+
+.privacy,
+.makers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.privacy > div,
+.makers > div {
+  width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.more-info {
+  display: block;
+  font-weight: 800;
+  transform: translateY(100px);
+  cursor: pointer;
+}
+
+.huskos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  min-height: 300px;
+  width: 300px;
+  overflow: hidden;
+  margin: 25px auto 50px auto;
+  transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
+    color 200ms ease-in-out, background-color 200ms ease-in-out;
+  cursor: pointer;
+}
+
+.huskos:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
+}
+
+.huskos img {
+  height: 300px;
+  max-width: none;
+  margin: 0;
+}
+
+.privacy {
+  background-color: #fddbd7;
+  color: #fb7575;
+  font-weight: bolder;
+  min-height: 65vh;
+  padding-top: 250px;
+  padding-bottom: 150px;
+  text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.15);
+}
+
+.privacy:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border: 100px solid transparent;
+  border-top-color: white;
+  border-left-width: 50vw;
+  border-right-width: 50vw;
+}
+
+.makers:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border: 100px solid transparent;
+  border-top-color: #fddbd7;
+  border-left-width: 50vw;
+  border-right-width: 50vw;
+}
+.makers {
+  padding-top: 200px;
+  min-height: 80vh;
+}
+
+.privacy-padlock {
+  font-size: 70px;
+  height: 80px;
+  line-height: 70px;
+  margin: 50px 0 20px 0;
+  display: block;
+}
+
+.privacy-title {
+  margin-top: 250px;
+}
+
+.example-img {
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 50px;
+  margin-top: 30px;
+  padding: 10px;
+  background-color: white;
+}
+
+.example-img img {
+  display: block;
+}
+
+.falling-emoji {
+  font-size: 20px;
+  animation-duration: 10s;
+  animation-name: falling;
+  animation-iteration-count: infinite;
+  opacity: 0.5;
+  height: 100px;
+  position: absolute;
+  left: 10vw;
+}
+
+@keyframes falling {
+  0% {
+    transform: translate3D(-7.5%, -100%, 0);
+  }
+
+  100% {
+    transform: translate3D(7.5%, 100%, 0);
+  }
+}
+
+@media (max-width: 500px) {
+  .friendly-neighbourhood-hero {
+    padding: 0 20px;
+  }
+  .title {
+    font-size: 35px;
+  }
+  .catchy-tagline {
+    font-size: 20px;
+  }
+  .privacy > div,
+  .makers > div {
+    padding: 20px;
+  }
+}

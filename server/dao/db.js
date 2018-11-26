@@ -1,9 +1,16 @@
 import { MongoClient } from 'mongodb';
 import config from 'getconfig';
 
-export const url = `mongodb://${config.db.host}:${config.db.port}/${
-  config.db.name
-}`;
+export let url;
+
+if (config.db.user) {
+  url = `mongodb://${config.db.user}:${config.db.password}@${config.db.host}:${
+    config.db.port
+  }`;
+} else {
+  url = `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`;
+}
+
 const client = new MongoClient(url, { useNewUrlParser: true });
 
 let db = null;

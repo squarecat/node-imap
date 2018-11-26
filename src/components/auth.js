@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { useGlobal } from 'reactn';
+
 import { fetchLoggedInUser } from '../utils/auth';
-import { useAsync } from '../utils/hooks';
+import { useAsync, useGlobal } from '../utils/hooks';
 import './auth.css';
 import gmailLogo from '../assets/gmail.png';
-import useOnMount from '../utils/hooks/on-mount';
 
 export default ({ children }) => {
   const { error, value: user, loading } = useAsync(fetchLoggedInUser, [], {
@@ -17,11 +16,16 @@ export default ({ children }) => {
   if (error) {
     return <span>{error}</span>;
   }
-  return <UserAuth user={user} children={children} loading={loading} />;
+  return (
+    <UserAuth user={user} loading={loading}>
+      {children}
+    </UserAuth>
+  );
 };
 
 function UserAuth({ user: newUser, children, loading }) {
   const [user, setUser] = useGlobal('user');
+
   useEffect(() => {
     if (newUser && !user) {
       setUser(newUser);
