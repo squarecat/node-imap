@@ -9,7 +9,7 @@ export default ({ isScanning }) => {
     <>
       <div className={`collapsable ${isScanning ? 'collapsed' : ''}`}>
         <div className="first-logon-content">
-          <p>Lets get started!</p>{' '}
+          <h2>Let's get started!</h2>
           <p>
             <strong>Leave Me Alone</strong> will scan your Gmail inbox, and find
             all the subscripion emails that you are receiving.

@@ -39,7 +39,7 @@ const IndexPage = () => {
                 </span>
               </div>
             </h1>
-            <h2 className="title">Leave me alone!</h2>
+            <h2 className="title">Leave Me Alone!</h2>
             <p className="catchy-tagline">
               Take back control of your inbox by telling subscription spammers
               to leave you alone!
@@ -98,6 +98,7 @@ const IndexPage = () => {
             <div className="huskos">
               <img alt="picture-of-us!" src={dogs} />
             </div>
+
             <p className="maker-stuff">
               We're building <strong>Leave Me Alone</strong> on our own without
               funding or outside support. We're real people (not the huskies!),
@@ -105,6 +106,7 @@ const IndexPage = () => {
             </p>
             <p>Support the Indie Maker movement!</p>
           </div>
+
         </div>
       </div>
     </Layout>

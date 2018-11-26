@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import { StaticQuery, graphql } from 'gatsby';
 
-import Header from './header';
+import favicon from '../assets/meta/favicon.png';
+import metaImage from '../assets/meta/meta-img.png';
+
 import './layout.css';
 
 setConfig({ pureSFC: true });
@@ -17,24 +19,60 @@ const Layout = ({ children }) => (
         site {
           siteMetadata {
             title
+            description
+            baseUrl
+            twitterHandle
           }
         }
       }
     `}
-    render={data => (
-      <>
-        <Helmet
-          title={data.site.siteMetadata.title}
-          meta={[
-            { name: 'description', content: 'Sample' },
-            { name: 'keywords', content: 'sample, something' }
-          ]}
-        >
-          <html lang="en" />
-        </Helmet>
-        {children}
-      </>
-    )}
+    render={data => {
+      const {
+        title,
+        description,
+        baseUrl,
+        twitterHandle
+      } = data.site.siteMetadata;
+      return (
+        <>
+          <Helmet title={title}>
+            <meta charSet="utf-8" />
+            <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
+            <title>{title}</title>
+            <meta name="description" content={description} />
+            <link rel="canonical" href={`${baseUrl}/index.html`} />
+            <link rel="shortcut icon" type="image/png" href={favicon} />
+            {/* facebook open graph tags */}
+            <meta property="og:locale" content="en_US" />
+            <meta property="og:image" content={`${baseUrl}${metaImage}`} />
+            <meta
+              property="og:image:secure_url"
+              content={`${baseUrl}${metaImage}`}
+            />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={baseUrl} />
+            <meta property="og:title" content={title} />
+            <meta property="og:description" content={description} />
+            <meta property="og:site_name" content="UptimeBar" />
+
+            {/* twitter card tags additive with the og: tags */}
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:domain" value={baseUrl} />
+            <meta name="twitter:title" value={title} />
+            <meta name="twitter:description" value={description} />
+            <meta name="twitter:image" content={`${baseUrl}${metaImage}`} />
+            <meta name="twitter:url" value={baseUrl} />
+            <meta name="twitter:site" value={twitterHandle} />
+            <html lang="en" />
+          </Helmet>
+          {children}
+        </>
+      );
+    }}
   />
 );
 

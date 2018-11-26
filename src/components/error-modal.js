@@ -14,9 +14,9 @@ export default ({ onClose, onSubmit, image, link }) => {
     setShown(false);
     setTimeout(onClose, 300);
   };
-  const onClickSubmit = () => {
+  const onClickSubmit = data => {
     setShown(false);
-    setTimeout(onSubmit, 300);
+    setTimeout(() => onSubmit(data), 300);
   };
   const pickSlide = () => {
     if (slide === 'first') {
@@ -24,7 +24,7 @@ export default ({ onClose, onSubmit, image, link }) => {
     } else if (slide === 'negative') {
       return slide2(link, onClickSubmit);
     } else if (slide === 'positive') {
-      return slide3(onClickSubmit);
+      return slide3(image, onClickSubmit);
     }
   };
   return (
@@ -49,10 +49,16 @@ function slide1(image, onClickPositive, onClickNegative) {
       <p>How does it look?</p>
       <div className="modal-actions">
         <a className="btn muted compact" onClick={onClickNegative}>
-          It looks unsuccessful
+          It looks unsuccessful{' '}
+          <span className="emoji" role="img" aria-label="frowning face emoji">
+            ️️☹️
+          </span>
         </a>
         <a className="btn compact" onClick={onClickPositive}>
-          It looks great
+          It looks great{' '}
+          <span className="emoji" role="img" aria-label="thumbs up emoji">
+            ️️👍
+          </span>
         </a>
       </div>
     </>
@@ -73,8 +79,8 @@ function slide2(link, onSubmit) {
         </a>
       </p>
       <p>
-        Can you tell us what you think went wrong this time? We'll use the info
-        to improve our service. Here are some common reasons;
+        Can you tell us what you think went wrong this time? We'll use the
+        information to improve our service. Here are some common reasons;
       </p>
       <ul className="feedback-options">
         <li
@@ -108,19 +114,41 @@ function slide2(link, onSubmit) {
           Other
         </li>
       </ul>
+      <p className={`${!selected ? 'hidden' : ''}`}>
+        Thanks! Is it okay if we use that image so that next time we don't make
+        the same mistake?
+      </p>
       <div className="modal-actions">
         <a
-          className="btn compact"
-          onClick={() => onSubmit({ failReason: selected })}
+          className={`btn muted compact ${!selected ? 'disabled' : ''}`}
+          onClick={() =>
+            onSubmit({
+              success: false,
+              useImage: false,
+              failReason: selected
+            })
+          }
         >
-          I'm done
+          Nope
+        </a>
+        <a
+          className={`btn compact ${!selected ? 'disabled' : ''}`}
+          onClick={() =>
+            onSubmit({
+              success: false,
+              useImage: true,
+              failReason: selected
+            })
+          }
+        >
+          Yes of course!
         </a>
       </div>
     </>
   );
 }
 
-function slide3(onSubmit) {
+function slide3(image, onSubmit) {
   return (
     <>
       <p>
@@ -130,11 +158,14 @@ function slide3(onSubmit) {
       <div className="modal-actions">
         <a
           className="btn muted compact"
-          onClick={() => onSubmit({ useImage: false })}
+          onClick={() => onSubmit({ success: true, useImage: false })}
         >
-          Nah
+          Nope
         </a>
-        <a className="btn compact" onClick={() => onSubmit({ useImage: true })}>
+        <a
+          className="btn compact"
+          onClick={() => onSubmit({ success: true, useImage: true })}
+        >
           Yes of course!
         </a>
       </div>

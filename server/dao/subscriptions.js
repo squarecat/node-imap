@@ -2,11 +2,11 @@ import db from './db';
 
 const COL_NAME = 'unsubscriptions';
 
-export function addUnresolvedUnsubscription(data) {
-  const { image, reason, domain } = data;
+export async function addUnresolvedUnsubscription(data) {
+  const { mailId, image, reason, domain } = data;
   try {
     const col = await db.collection(COL_NAME);
-    await col.insertOne({ domain, image, reason, resolved: false });
+    await col.insertOne({ mailId, domain, image, reason, resolved: false });
   } catch (err) {
     console.error('users-dao: error inserting unresolved unsubsription');
     console.error(err);
@@ -14,11 +14,11 @@ export function addUnresolvedUnsubscription(data) {
   }
 }
 
-export function addResolvedUnsubscription(data) {
-  const { image, domain } = data;
+export async function addResolvedUnsubscription(data) {
+  const { mailId, image, domain } = data;
   try {
     const col = await db.collection(COL_NAME);
-    await col.insertOne({ domain, image, resolved: true });
+    await col.insertOne({ mailId, domain, image, resolved: true });
   } catch (err) {
     console.error('users-dao: error inserting resolved unsubsription');
     console.error(err);

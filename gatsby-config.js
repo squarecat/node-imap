@@ -1,6 +1,9 @@
 module.exports = {
   siteMetadata: {
-    title: 'Gatsby Default Starter'
+    title: 'Leave Me Alone - take back control of your inbox',
+    description: `Take back control of your inbox by telling subscription spammers to leave you alone!`,
+    baseUrl: 'https://leavemealone.xyz',
+    twitterHandle: '@LeaveMeAloneApp'
   },
   plugins: [
     'gatsby-plugin-react-helmet',
@@ -12,15 +15,12 @@ module.exports = {
       }
     },
     {
-      resolve: `gatsby-plugin-manifest`,
+      resolve: `gatsby-plugin-google-analytics`,
       options: {
-        name: 'gatsby-starter-default',
-        short_name: 'starter',
-        start_url: '/',
-        background_color: '#663399',
-        theme_color: '#663399',
-        display: 'minimal-ui',
-        icon: 'src/images/gatsby-icon.png' // This path is relative to the root of the site.
+        trackingId: 'UA-129815670-1',
+        head: false,
+        anonymize: true,
+        respectDNT: true
       }
     },
     {
