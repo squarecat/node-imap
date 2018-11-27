@@ -11,7 +11,7 @@ import useLocalStorage from '../../utils/hooks/use-localstorage';
 const mailReducer = (state = [], action) => {
   switch (action.type) {
     case 'add':
-      return [...state, { ...action.data, subscribed: true }];
+      return [...state, { ...action.data }];
     case 'unsubscribe':
       return state.map(email =>
         email.id === action.data ? { ...email, subscribed: null } : email
@@ -50,6 +50,9 @@ const mailReducer = (state = [], action) => {
             }
           : email
       );
+    case 'clear': {
+      return [];
+    }
     default:
       return state;
   }
@@ -58,11 +61,11 @@ const mailReducer = (state = [], action) => {
 function useSocket(callback) {
   const [user] = useGlobal('user');
 
-  const [localMail, setLocalMail] = useLocalStorage('leavemealone.mail') || [];
+  const [localMail, setLocalMail] = useLocalStorage('leavemealone.mail', []);
   const [mail, dispatch] = useReducer(mailReducer, localMail);
   useEffect(
     () => {
-      setLocalMail('leavemealone.mail', mail);
+      setLocalMail(mail);
     },
     [mail]
   );
@@ -101,6 +104,7 @@ function useSocket(callback) {
 
   function fetchMail(timeframe) {
     if (socket) {
+      dispatch({ type: 'clear' });
       console.log('FETCHING', timeframe);
       socket.emit('fetch', { timeframe });
     } else {
