@@ -59,30 +59,45 @@ const IndexPage = () => {
           </div>
         </div>
         <div className="privacy">
-          {/* <span className="falling-emoji">🙅‍♀️</span> */}
           <div>
             <h2>Unsubscribe with a single click</h2>
             <p>
+              Did you know that in 2018 spam messages account for 48.16% of all
+              e-mail traffic worldwide?{' '}
+              <sub className="privacy-source-ref">[1]</sub>
+            </p>
+            <p>
               See all of your subscription emails in one place and unsubscribe
               from them easily!
+            </p>
+            <p className="privacy-source">
+              [1]:{' '}
+              <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
+                Global spam volume as percentage of total e-mail traffic from
+                January 2014 to March 2018, by month
+              </a>
             </p>
             <div className="example-img">
               <img src={gif} alt="unsubscribe list" />
             </div>
 
-            <h2 className="privacy-title">We value your privacy!</h2>
+            <h2 className="privacy-title">We value your privacy</h2>
             <span className="privacy-padlock">🕵️‍♀️</span>
             <p className="privacy-stuff">
-              Unlike{' '}
-              <a href="https://www.nytimes.com/2017/04/24/technology/personal-data-firm-slice-unroll-me-backlash-uber.html">
-                others
-              </a>
-              , we'll never compromise your privacy. When we scan your inbox for
+              We'll NEVER compromise your privacy. When we scan your inbox for
               subscriptions we{' '}
-              <strong>
-                never store any metadata or content of your emails on our
-                servers.
-              </strong>
+              <strong>never store any of your emails on our servers.</strong>
+            </p>
+            <p>
+              Although a service like this exists already,{' '}
+              <a href="https://www.nytimes.com/2017/04/24/technology/personal-data-firm-slice-unroll-me-backlash-uber.html">
+                they make money by selling and marketing your information
+              </a>
+              !
+            </p>
+            <p>
+              We promise to never exploit you or your data. We only want to help
+              you regain control of your inbox!
             </p>
           </div>
         </div>

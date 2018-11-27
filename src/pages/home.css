@@ -205,6 +205,16 @@ h1 {
   display: block;
 }
 
+.privacy-source-ref {
+  vertical-align: super;
+  font-size: 10px;
+}
+
+.privacy-source {
+  font-size: 10px;
+  opacity: 0.5;
+}
+
 .privacy-title {
   margin-top: 250px;
 }
