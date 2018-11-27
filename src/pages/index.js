@@ -44,15 +44,14 @@ const IndexPage = () => {
               Take back control of your inbox by telling subscription spammers
               to leave you alone!
             </p>
-            <Link
-              as="a"
-              to="/subscribe"
+            <a
+              href="/subscribe"
               onMouseEnter={() => setActive(true)}
               onMouseLeave={() => setActive(false)}
               className={`beam-me-up-cta beam-me-up-cta--${gender}`}
             >
               Sign me up!
-            </Link>
+            </a>
 
             <a className="more-info" onClick={scrollDown}>
               Read more 👇
@@ -96,7 +95,7 @@ const IndexPage = () => {
               good reason to do just about anything! ❤️
             </p>
             <div className="huskos">
-              <img alt="picture-of-us!" src={dogs} />
+              <img alt="picture-of-us!" id="emoji-button" src={dogs} />
             </div>
 
             <p className="maker-stuff">
@@ -106,7 +105,6 @@ const IndexPage = () => {
             </p>
             <p>Support the Indie Maker movement!</p>
           </div>
-
         </div>
       </div>
     </Layout>

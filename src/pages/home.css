@@ -111,56 +111,6 @@ h1 {
   background-color: #4fa3db;
 } */
 
-.form-input,
-input {
-  /* border: 1px solid #474747; */
-  border-radius: 5px;
-  padding: 20px 25px;
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 300px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-input {
-  border: 1px solid rgba(231, 57, 48, 0.4);
-}
-
-.form-input:focus,
-input:focus {
-  outline: 0;
-  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
-}
-
-.form-input:focus + .form-label,
-.form-input:valid + .form-label {
-  transform: translate(-5px, -30px);
-  font-size: 0.75em;
-}
-
-.form-group {
-  position: relative;
-  flex: 1;
-  max-width: 300px;
-  margin: 0 auto;
-}
-
-.form-label {
-  position: absolute;
-  pointer-events: none;
-  left: 20px;
-  top: 20px;
-  padding: 0 5px;
-  color: #999;
-  background-color: #fff;
-  transition: transform 150ms ease-out, font-size 150ms ease-out;
-}
-
-.tweet {
-  margin-top: 50px;
-}
-
 .privacy,
 .makers {
   display: flex;
@@ -195,6 +145,7 @@ input:focus {
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
   cursor: pointer;
+  position: relative;
 }
 
 .huskos:hover {
@@ -306,4 +257,15 @@ input:focus {
   .makers > div {
     padding: 20px;
   }
+}
+
+p a {
+  color: rgba(231, 57, 48, 0.749);
+  border-bottom: 1px dashed rgba(231, 57, 48, 0.749);
+  cursor: pointer;
+}
+
+p a:hover {
+  color: rgba(231, 57, 48, 1);
+  border-bottom: 1px dashed rgba(231, 57, 48, 1);
 }

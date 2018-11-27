@@ -12,7 +12,7 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
-        path: `${__dirname}/src/images`
+        path: `${__dirname}/src/assets`
       }
     },
     {
@@ -37,6 +37,19 @@ module.exports = {
     {
       resolve: `gatsby-plugin-create-client-paths`,
       options: { prefixes: ['/app/*'] }
+    },
+    {
+      resolve: `gatsby-plugin-countly`,
+      options: {
+        respectDNT: false,
+        app_key: '5db45d43896e6ab2da8e5f50f39dd9a07b35e953',
+        url: 'https://analytics.squarecat.io',
+        script_url: 'https://analytics.squarecat.io/sdk/web/countly.min.js',
+        track_sessions: true,
+        track_pageview: true,
+        track_clicks: true,
+        track_scrolls: true
+      }
     }
   ]
 };
