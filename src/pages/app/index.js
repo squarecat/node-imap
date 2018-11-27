@@ -53,19 +53,6 @@ export default function App() {
               showPriceModal={() => togglePriceModal(true)}
             />
           ) : null}
-          <div className="token-instruction">
-            <p>
-              A user can revoke access by visiting{' '}
-              <a
-                href="https://security.google.com/settings/security/permissions"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Account Settings
-              </a>
-              .
-            </p>
-          </div>
         </div>
         {showPriceModal ? (
           <Modal

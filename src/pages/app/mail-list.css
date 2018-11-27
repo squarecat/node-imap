@@ -91,3 +91,25 @@
 .failed-to-unsub-btn:hover {
   stroke: rgba(231, 57, 48, 1);
 }
+
+.revoke-token-instructions {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 14px;
+}
+
+.revoke-warning {
+  display: block;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+  color: rgba(231, 57, 48, 1);
+}
+
+.revoke-link:hover + .revoke-warning {
+  opacity: 1;
+}
+
+.icon-external {
+  position: relative;
+  left: 3px;
+}
