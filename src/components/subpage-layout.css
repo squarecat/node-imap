@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid rgb(231, 58, 48, 0.1);
+  height: 50px;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fddbd7;
+}
+
+.header-title {
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.header-logo {
+  display: inline-block;
+  height: 65%;
+  margin: 0;
+}
+
+.header-logo img {
+  height: 100%;
+}
+
+.subpage {
+  padding: 80px 44px;
+}
+
+.subpage-content {
+  width: 990px;
+  max-width: 100%;
+}
+
+.subpage h1 {
+  font-size: 50px;
+}
