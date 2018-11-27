@@ -17,9 +17,7 @@ export default useLocalStorage;
 
 function get(propertyName) {
   let storage;
-  if (typeof window.localStorage !== 'undefined') {
-    storage = window.localStorage;
-  } else if (typeof localStorage !== 'undefined') {
+  if (typeof localStorage !== 'undefined') {
     storage = localStorage;
   }
   if (storage) {
