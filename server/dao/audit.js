@@ -2,7 +2,7 @@ import db from './db';
 
 const COL_NAME = 'audit';
 
-export function addAction(action) {
+export async function addAction(action) {
   const { type, userId, data } = action;
   try {
     const col = await db.collection(COL_NAME);

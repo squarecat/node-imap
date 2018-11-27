@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './modal.css';
 
-export default ({ onClose, onSubmit, image, link }) => {
+export default ({ /*onClose,*/ onSubmit, image, link }) => {
   const [slide, changeSlide] = useState('first');
   const [isShown, setShown] = useState(false);
   const onClickNegative = () => changeSlide('negative');
@@ -10,10 +10,10 @@ export default ({ onClose, onSubmit, image, link }) => {
   useEffect(() => {
     setShown(true);
   }, []);
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(onClose, 300);
-  };
+  // const onClickClose = () => {
+  //   setShown(false);
+  //   setTimeout(onClose, 300);
+  // };
   const onClickSubmit = data => {
     setShown(false);
     setTimeout(() => onSubmit(data), 300);

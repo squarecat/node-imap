@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-import { Link } from 'gatsby';
+import React, { useRef } from 'react';
 
 import gmailLogo from '../assets/gmail.png';
 import dogs from '../assets/dogs.jpg';

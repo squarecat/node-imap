@@ -15,31 +15,31 @@ export default app => {
 };
 
 function sendToTable(data, key) {
-  let referrer;
+  // let referrer;
   const {
-    p_product_id,
+    // p_product_id,
     p_price,
     p_country,
-    p_currency,
+    // p_currency,
     p_sale_gross,
     p_tax_amount,
     p_paddle_fee,
     p_coupon_savings,
-    p_earnings,
+    // p_earnings,
     p_order_id,
     p_coupon,
-    p_used_price_override,
-    passthrough,
+    // p_used_price_override,
+    // passthrough,
     email,
     marketing_consent,
-    p_quantity,
+    // p_quantity,
     quantity
   } = data;
-  if (passthrough) {
-    referrer = passthrough;
-  } else {
-    referrer = 'direct';
-  }
+  // if (passthrough) {
+  //   referrer = passthrough;
+  // } else {
+  //   referrer = 'direct';
+  // }
 
   return axios
     .request({

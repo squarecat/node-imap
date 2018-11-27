@@ -15,7 +15,7 @@ console.log(url);
 
 const client = new MongoClient(url, { useNewUrlParser: true });
 
-let db = null;
+export let db = null;
 
 export function connect() {
   return new Promise((resolve, reject) => {
@@ -34,10 +34,6 @@ export function connect() {
 
 export function close() {
   return db.close();
-}
-
-export default function db() {
-  return db;
 }
 
 export function isoDate(date) {
