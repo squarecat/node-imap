@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import PageTransition from 'gatsby-plugin-page-transitions';
+// import PageTransition from 'gatsby-plugin-page-transitions';
 
 import logo from '../assets/leave-me-logo.png';
 import Layout from '../components/layout';

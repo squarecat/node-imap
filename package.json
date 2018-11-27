@@ -56,10 +56,11 @@
     "develop": "gatsby develop",
     "start": "node --inspect index",
     "format": "prettier --write \"src/**/*.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "eslint ./server ./src",
     "deploy": "now "
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "eslint": "^5.9.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-prettier": "^3.0.0",

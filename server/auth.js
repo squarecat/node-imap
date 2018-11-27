@@ -1,5 +1,4 @@
 import passport from 'passport';
-import Gmail from 'node-gmail-api';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 
 import { createOrUpdateUserFromGoogle } from './services/user';
