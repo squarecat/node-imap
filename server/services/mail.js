@@ -8,7 +8,9 @@ import subMonths from 'date-fns/sub_months';
 import format from 'date-fns/format';
 import emailAddresses from 'email-addresses';
 
-import { getUserById, addUnsubscriptionToUser } from './user';
+import { getUserById, addUnsubscriptionToUser, addScanToUser } from './user';
+import { addUnsubscriptionToStats, addScanToStats } from './stats';
+
 import { sendUnsubscribeMail } from '../utils/email';
 import {
   addResolvedUnsubscription,
@@ -46,6 +48,9 @@ export async function scanMail(
       max: 10000
     });
 
+    let totalResultsCount = 0;
+    let unsubscribedResultsCount = 0;
+
     s.on('data', m => {
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
@@ -54,12 +59,22 @@ export async function scanMail(
         if (mail && !senders.includes(mail.from)) {
           senders = [...senders, mail.from];
           onMail({ ...mail, subscribed: !isUnsubscribed });
+          totalResultsCount++;
+          if (isUnsubscribed) {
+            unsubscribedResultsCount++;
+          }
         }
       }
     });
 
     s.on('end', () => {
       console.log('end mail');
+      addScanToStats();
+      addScanToUser(userId, {
+        timeframe,
+        totalResultsCount,
+        unsubscribedResultsCount
+      });
       onEnd();
     });
 
@@ -95,6 +110,7 @@ export async function unsubscribeMail(userId, mail) {
       unsubscribeMailTo,
       estimatedSuccess: output.estimatedSuccess
     });
+    addUnsubscriptionToStats();
     console.log(output);
     return output;
   } catch (err) {
@@ -264,6 +280,6 @@ function getDomain(mailFrom) {
 // a mail has been unsubscribed already if the from and to
 // are the same as previously
 // TODO and the date is prior to the unsubscription event?
-function hasUnsubscribedAlready(mail, unsubscriptions) {
+function hasUnsubscribedAlready(mail, unsubscriptions = []) {
   return unsubscriptions.some(u => mail.from === u.from && mail.to === u.to);
 }

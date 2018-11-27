@@ -70,3 +70,22 @@ export async function addUnsubscription(id, mailData) {
     throw err;
   }
 }
+
+export async function addScan(id, scanData) {
+  try {
+    const col = await db.collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $push: {
+          scans: { ...scanData, scannedAt: isoDate() }
+        }
+      }
+    );
+    console.log(`users-dao: updated users scans ${id}`);
+  } catch (err) {
+    console.error('users-dao: error updating user scans');
+    console.error(err);
+    throw err;
+  }
+}
