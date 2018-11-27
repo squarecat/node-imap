@@ -20,9 +20,15 @@ export default class IndexPage extends Component {
         >
           <div className="container">
             <p>
-              Hey 👋 We're Squarecat, a pair of travelling makers. We write
-              software to help people because it's rewarding and we love doing
-              it, which we think is a good reason to do just about anything.
+              Hey{' '}
+              <span role="img" aria-label="wave-emoji">
+                👋
+              </span>
+              . We're <a href="https://twitter.com/jamesivings">James</a> &{' '}
+              <a href="https://twitter.com/dinkydani21">Danielle</a> from
+              Squarecat, a pair of travelling makers. We write software to help
+              people because it's rewarding and we love doing it, which we think
+              is a good reason to do just about anything.
             </p>
             <p>
               Come check out the rest of our work at{' '}

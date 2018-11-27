@@ -200,7 +200,6 @@ async function unsubscribeWithLink(unsubUrl) {
           (await link.getProperty('value')).jsonValue(),
           (await link.getProperty('innerText')).jsonValue()
         ]);
-        debugger;
         const hasButtonKeyword = confirmButtonKeywords.some(keyword =>
           `${value} ${text}`.toLowerCase().includes(keyword)
         );
