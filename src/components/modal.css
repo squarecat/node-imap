@@ -164,3 +164,34 @@
 .strike {
   text-decoration: line-through;
 }
+
+.estimates {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+.estimates p {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.estimates-list {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.estimates-timeframe,
+.estimates-value {
+  font-weight: bolder;
+  color: rgba(231, 57, 48, 0.749);
+}
+
+.source p {
+  font-size: 12px;
+  line-height: 18px;
+}
+.source h5 {
+  font-size: 12px;
+  font-weight: bolder;
+  margin-bottom: 5px;
+}

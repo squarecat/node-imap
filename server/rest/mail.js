@@ -3,13 +3,19 @@ import socketio from 'socket.io';
 import {
   scanMail,
   unsubscribeMail,
-  addUnsubscribeErrorResponse
+  addUnsubscribeErrorResponse,
+  getMailEstimates
 } from '../services/mail';
 import { checkAuthToken } from '../services/user';
 
 let connectedClients = {};
 
 export default function(app, server) {
+  app.get('/api/mail/estimates', async (req, res) => {
+    const estimates = await getMailEstimates(req.user.id);
+    res.send(estimates);
+  });
+
   const io = socketio(server).of('mail');
 
   io.on('connection', socket => {
@@ -45,28 +51,27 @@ export default function(app, server) {
         return 'Not authenticated';
       }
       console.log('scanning for ', timeframe);
-      try {
-        // get mail data for user
-        scanMail(
-          {
-            userId: socket.userId,
-            timeframe
+      // get mail data for user
+      scanMail(
+        {
+          userId: socket.userId,
+          timeframe
+        },
+        {
+          onMail: m => {
+            socket.emit('mail', m);
           },
-          {
-            onMail: m => {
-              socket.emit('mail', m);
-            },
-            onError: err => {
-              socket.emit('mail:err', err);
-            },
-            onEnd: () => {
-              socket.emit('mail:end');
-            }
+          onError: err => {
+            socket.emit('mail:err', err);
+          },
+          onEnd: () => {
+            socket.emit('mail:end');
+          },
+          onProgress: progress => {
+            socket.emit('mail:progress', progress);
           }
-        );
-      } catch (err) {
-        socket.emit('mail:err', err);
-      }
+        }
+      );
     });
 
     socket.on('unsubscribe', async mail => {

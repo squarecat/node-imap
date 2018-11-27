@@ -16,10 +16,41 @@ import {
 } from '../dao/subscriptions';
 
 const googleDateFormat = 'YYYY/MM/DD';
+const estimateTimeframes = ['3d', '1w'];
+
+export async function getMailEstimates(userId) {
+  const user = await getUserById(userId);
+  const gmail = new Gmail(user.keys.accessToken);
+  const now = new Date();
+  let estimates = await Promise.all(
+    estimateTimeframes.map(async timeframe => {
+      const [value, unit] = timeframe;
+      let then;
+      if (unit === 'd') {
+        then = subDays(now, value);
+      } else if (unit === 'w') {
+        then = subWeeks(now, value);
+      }
+      const searchStr = getSearchString({ then, now });
+      const total = await getEstimatedEmails(searchStr, gmail);
+      return {
+        timeframe,
+        total
+      };
+    })
+  );
+  estimates = [
+    ...estimates,
+    { timeframe: '1m', total: estimates[1].total * 4 },
+    { timeframe: '6m', total: estimates[1].total * 4 * 6 }
+  ].map(e => ({ ...e, totalSpam: (e.total * 0.48).toFixed() }));
+
+  return estimates;
+}
 
 export async function scanMail(
   { userId, timeframe },
-  { onMail, onError, onEnd }
+  { onMail, onError, onEnd, onProgress }
 ) {
   try {
     let senders = [];
@@ -37,8 +68,10 @@ export async function scanMail(
     const user = await getUserById(userId);
     const gmail = new Gmail(user.keys.accessToken);
     const { unsubscriptions } = user;
-    const limit = 10;
     const searchStr = getSearchString({ then, now });
+    console.log('getting estimate');
+    const total = await getEstimatedEmails(searchStr, gmail);
+    console.log('total', total);
     console.log('doing scan... ', userId, timeframe, searchStr);
 
     const s = gmail.messages(searchStr, {
@@ -46,9 +79,13 @@ export async function scanMail(
       max: 10000
     });
 
+    let progress = 0;
+    onProgress({ progress, total });
+
     s.on('data', m => {
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
+        console.log('mail date', mail.googleDate);
         const isUnsubscribed = hasUnsubscribedAlready(mail, unsubscriptions);
         // don't send duplicates
         if (mail && !senders.includes(mail.from)) {
@@ -56,6 +93,8 @@ export async function scanMail(
           onMail({ ...mail, subscribed: !isUnsubscribed });
         }
       }
+      progress = progress + 1;
+      onProgress({ progress, total });
     });
 
     s.on('end', () => {
@@ -68,7 +107,7 @@ export async function scanMail(
       onError(err.toString());
     });
   } catch (err) {
-    console.log(err);
+    onError(err.toString());
     throw err;
   }
 }
@@ -183,6 +222,7 @@ function getSearchString({ then, now }) {
   const nowStr = format(now, googleDateFormat);
   return `after:${thenStr} and before:${nowStr}`;
 }
+
 async function unsubscribeWithLink(unsubUrl) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
@@ -266,4 +306,23 @@ function getDomain(mailFrom) {
 // TODO and the date is prior to the unsubscription event?
 function hasUnsubscribedAlready(mail, unsubscriptions) {
   return unsubscriptions.some(u => mail.from === u.from && mail.to === u.to);
+}
+
+async function getEstimatedEmails(query, gmail) {
+  console.log('estimate', query);
+  return new Promise((resolve, reject) => {
+    gmail.estimatedMessages(
+      query,
+      {
+        max: 1000,
+        timeout: 5000
+      },
+      (err, count) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(count);
+      }
+    );
+  });
 }
