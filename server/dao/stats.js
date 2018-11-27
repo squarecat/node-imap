@@ -13,7 +13,7 @@ export function addScan(count = 1) {
 // generic update stat function for anything
 async function updateStat(statName, count = 1) {
   try {
-    const col = await db.collection(COL_NAME);
+    const col = await db().collection(COL_NAME);
     await col.updateOne(
       {},
       {

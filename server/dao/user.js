@@ -4,7 +4,7 @@ const COL_NAME = 'users';
 
 export async function createUser(data) {
   try {
-    const col = await db.collection(COL_NAME);
+    const col = await db().collection(COL_NAME);
     await col.insertOne({
       ...data,
       createdAt: isoDate(),
@@ -22,7 +22,7 @@ export async function createUser(data) {
 
 export async function getUser(id) {
   try {
-    const col = await db.collection(COL_NAME);
+    const col = await db().collection(COL_NAME);
     const user = await col.findOne({ id }, { fields: { _id: 0 } });
     console.log(`users-dao: fetched user ${id}`);
     return user;
@@ -35,7 +35,7 @@ export async function getUser(id) {
 
 export async function updateUser(id, userData) {
   try {
-    const col = await db.collection(COL_NAME);
+    const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
@@ -54,7 +54,7 @@ export async function updateUser(id, userData) {
 
 export async function addUnsubscription(id, mailData) {
   try {
-    const col = await db.collection(COL_NAME);
+    const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
@@ -73,7 +73,7 @@ export async function addUnsubscription(id, mailData) {
 
 export async function addScan(id, scanData) {
   try {
-    const col = await db.collection(COL_NAME);
+    const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
