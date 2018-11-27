@@ -1,4 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
 import { useGlobal } from '../../utils/hooks';
 import ErrorModal from '../../components/error-modal';
 import Toggle from '../../components/toggle';
@@ -63,13 +65,15 @@ function useSocket(callback) {
 
   const [localMail, setLocalMail] = useLocalStorage('leavemealone.mail', []);
   const [mail, dispatch] = useReducer(mailReducer, localMail);
+
   useEffect(
     () => {
       setLocalMail(mail);
     },
     [mail]
   );
-  // const [isConnected, setConnected] = useState(false);
+  const [error, setError] = useState(null);
+  const [progress, setProgress] = useState(0);
   const [socket, setSocket] = useState(null);
   // only once
   useEffect(() => {
@@ -90,6 +94,11 @@ function useSocket(callback) {
     socket.on('mail:end', callback);
     socket.on('mail:err', err => {
       console.error(err);
+      setError(err);
+    });
+    socket.on('mail:progress', ({ progress, total }) => {
+      const percentage = (progress / total) * 100;
+      setProgress((+percentage).toFixed());
     });
 
     socket.on('unsubscribe:success', ({ id, data }) => {
@@ -103,6 +112,7 @@ function useSocket(callback) {
   }, []);
 
   function fetchMail(timeframe) {
+    setProgress(0);
     if (socket) {
       dispatch({ type: 'clear' });
       console.log('FETCHING', timeframe);
@@ -136,6 +146,8 @@ function useSocket(callback) {
     unsubscribeMail,
     isConnected: !!socket,
     addUnsubscribeErrorResponse,
+    progress,
+    error,
     dispatch
   };
 }
@@ -148,7 +160,9 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
     fetchMail,
     unsubscribeMail,
     isConnected,
-    addUnsubscribeErrorResponse
+    addUnsubscribeErrorResponse,
+    progress,
+    error
   } = useSocket(() => {
     setSearchFinished(true);
     onFinished();
@@ -161,6 +175,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
   useEffect(
     () => {
       if (timeframe && hasSearched) {
+        setSearchFinished(false);
         fetchMail(timeframe);
       }
     },
@@ -170,6 +185,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
   useEffect(
     () => {
       if (!hasSearched) {
+        setSearchFinished(false);
         fetchMail(timeframe);
       } else {
         setSearchFinished(true);
@@ -178,14 +194,19 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
     [isConnected]
   );
 
+  // because the count is estimated, the progress can go above 100%
+  // so here we make it more believable
+  const believableProgress = progress > 95 ? 98 : progress;
   return (
     <>
-      <div className="mail-actions">
+      <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
         <span className="results-data">
           <span className="quantity">{mail ? mail.length : 0}</span>
           subscriptions found
         </span>
-
+        <span className="progress">{`Scanning... ${
+          isSearchFinished ? 100 : believableProgress
+        }%`}</span>
         <a onClick={() => showPriceModal()} className="btn compact icon">
           <svg
             viewBox="0 0 32 32"
@@ -202,16 +223,56 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
           Re-scan
         </a>
       </div>
-      <List
-        mail={mail || []}
-        onUnsubscribe={mail => unsubscribeMail(mail)}
-        isSearchFinished={isSearchFinished}
-        showPriceModal={showPriceModal}
-        addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
-      />
+      {error ? (
+        <ErrorScreen error={error} />
+      ) : (
+        <List
+          mail={mail || []}
+          onUnsubscribe={mail => unsubscribeMail(mail)}
+          isSearchFinished={isSearchFinished}
+          showPriceModal={showPriceModal}
+          addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
+        />
+      )}
     </>
   );
 };
+
+function ErrorScreen({ error }) {
+  if (error === 'Error: Invalid Credentials') {
+    return (
+      <div className="mail-error">
+        <p>
+          Oh no, it looks like your Google credentials have become invalid
+          somehow, perhaps you revoked your token?
+        </p>
+
+        <a className="btn centered muted">Retry</a>
+
+        <p>
+          If this keeps happening please try{' '}
+          <a href="/auth/logout">logging out</a> and back in again to refresh
+          your credentials. Thanks!
+        </p>
+        <pre className="error-details">{error}</pre>
+      </div>
+    );
+  }
+  return (
+    <div className="mail-error">
+      {/* <h3>Oops</h3> */}
+      <p>Oh no, something went wrong on our end. Please try and scan again</p>
+
+      <a className="btn centered muted">Retry</a>
+
+      <p>
+        This is definitely our fault, so if it still doesn't work then please
+        bear with us and we'll try and get it sorted for you!
+      </p>
+      <pre className="error-details">{error}</pre>
+    </div>
+  );
+}
 
 function List({
   mail = [],
@@ -235,52 +296,52 @@ function List({
   }
   return (
     <div className="mail-list">
-      <ul>
+      <TransitionGroup component="ul">
         {mail.map(m => {
           const isSubscibed = !!m.subscribed;
           console.log(m);
           const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
           return (
-            <li key={m.from}>
-              <div className="mail-item">
-                <div className="avatar" />
-                {/* <div className="mail-content">
-                </div> */}
-                <div className="from">
-                  <span className="from-name">{fromName}</span>
-                  <span className="from-email">{fromEmail}</span>
+            <CSSTransition key={m.id} timeout={500} classNames="mail-list-item">
+              <li className="mail-list-item">
+                <div className="mail-item">
+                  <div className="avatar" />
+                  <div className="from">
+                    <span className="from-name">{fromName}</span>
+                    <span className="from-email">{fromEmail}</span>
+                  </div>
+                  <div className="subject">{m.subject}</div>
+                  <div className="actions">
+                    {m.estimatedSuccess !== false ? (
+                      <Toggle
+                        status={isSubscibed}
+                        onChange={() => onUnsubscribe(m)}
+                      />
+                    ) : (
+                      <svg
+                        onClick={() => setUnsubscribeError(m)}
+                        className="failed-to-unsub-btn"
+                        viewBox="0 0 32 32"
+                        width="20"
+                        height="20"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                      >
+                        <path d="M16 14 L16 23 M16 8 L16 10" />
+                        <circle cx="16" cy="16" r="14" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
-                <div className="subject">{m.subject}</div>
-                <div className="actions">
-                  {m.estimatedSuccess !== false ? (
-                    <Toggle
-                      status={isSubscibed}
-                      onChange={() => onUnsubscribe(m)}
-                    />
-                  ) : (
-                    <svg
-                      onClick={() => setUnsubscribeError(m)}
-                      className="failed-to-unsub-btn"
-                      viewBox="0 0 32 32"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="3"
-                    >
-                      <path d="M16 14 L16 23 M16 8 L16 10" />
-                      <circle cx="16" cy="16" r="14" />
-                    </svg>
-                  )}
-                </div>
-              </div>
-              <span className="unsubscribe">{m.unsubscribeLink}</span>
-              <span className="unsubscribe">{m.unsubscribeMailTo}</span>
-            </li>
+                <span className="unsubscribe">{m.unsubscribeLink}</span>
+                <span className="unsubscribe">{m.unsubscribeMailTo}</span>
+              </li>
+            </CSSTransition>
           );
         })}
-      </ul>
+      </TransitionGroup>
       {unsubscribeError ? (
         <ErrorModal
           onClose={() => setUnsubscribeError(null)}

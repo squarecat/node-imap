@@ -70,13 +70,13 @@ const IndexPage = () => {
               See all of your subscription emails in one place and unsubscribe
               from them easily!
             </p>
-            <p className="privacy-source">
+            <cite className="privacy-source">
               [1]:{' '}
               <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
                 Global spam volume as percentage of total e-mail traffic from
                 January 2014 to March 2018, by month
               </a>
-            </p>
+            </cite>
             <div className="example-img">
               <img src={gif} alt="unsubscribe list" />
             </div>

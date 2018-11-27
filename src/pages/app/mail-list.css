@@ -61,14 +61,14 @@
 .mail-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .results-data {
-  margin-right: auto;
   font-size: 14px;
   font-weight: bolder;
   padding-left: 5px;
+  min-width: 200px;
 }
 
 .quantity {
@@ -90,4 +90,51 @@
 
 .failed-to-unsub-btn:hover {
   stroke: rgba(231, 57, 48, 1);
+}
+
+.progress {
+  font-size: 14px;
+  font-weight: bolder;
+  display: inline-block;
+  width: 120px;
+  opacity: 1;
+  transition: opacity 250ms 1s ease-in-out;
+}
+
+.finished .progress {
+  opacity: 0;
+}
+
+.mail-error {
+  text-align: center;
+  width: 600px;
+  margin: 25px auto 0 auto;
+  background-color: rgba(255, 217, 214, 0.1);
+  padding: 25px;
+  border-radius: 8px;
+}
+
+pre {
+  text-align: left;
+}
+
+.mail-list-item {
+  transition: all 250ms ease-in;
+}
+.mail-list-item-enter {
+  opacity: 0;
+  transform: translate(0, 10px);
+}
+
+.mail-list-item-enter-active {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.mail-list-item-exit {
+  opacity: 1;
+}
+
+.mail-list-item-exit-active {
+  opacity: 0;
 }
