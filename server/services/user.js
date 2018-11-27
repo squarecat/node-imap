@@ -1,5 +1,10 @@
 import { v4 } from 'node-uuid';
-import { getUser, createUser, updateUser } from '../dao/user';
+import {
+  getUser,
+  createUser,
+  updateUser,
+  addUnsubscription
+} from '../dao/user';
 
 export async function getUserById(id) {
   try {
@@ -42,6 +47,16 @@ export async function checkAuthToken(userId, token) {
       return false;
     }
     return true;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
+  const { to, from, id, googleDate } = mail;
+  try {
+    await addUnsubscription(userId, { to, from, id, googleDate, ...rest });
   } catch (err) {
     console.error(err);
     throw err;

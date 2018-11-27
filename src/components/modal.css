@@ -53,6 +53,7 @@
 .modal-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   border-top: 1px solid #ffe3e1;
   padding-top: 6px;
   margin-top: 16px;
@@ -62,8 +63,8 @@
   margin-left: 10px;
 }
 
-.modal-actions .btn:first-child {
-  margin-right: 10px;
+.modal-actions .btn {
+  margin-left: 10px;
 }
 
 .modal .btn:hover {
@@ -153,4 +154,13 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.monthly-price {
+  font-size: 12px;
+  margin-right: auto;
+}
+
+.strike {
+  text-decoration: line-through;
 }

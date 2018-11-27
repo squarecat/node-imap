@@ -43,7 +43,7 @@ function sendToTable(data, key) {
 
   return axios
     .request({
-      url: `${baseUrl}/viwY0qO4TpQ1aJVU0/Table%201`,
+      url: `${baseUrl}/appEn83AdcZdMO1sm/Table%201`,
       method: 'POST',
       headers: {
         Authorization: `Bearer ${airTableKey}`,

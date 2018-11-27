@@ -1,5 +1,6 @@
 import Gmail from 'node-gmail-api';
 import url from 'url';
+import config from 'getconfig';
 import puppeteer from 'puppeteer';
 import subDays from 'date-fns/sub_days';
 import subWeeks from 'date-fns/sub_weeks';
@@ -7,7 +8,7 @@ import subMonths from 'date-fns/sub_months';
 import format from 'date-fns/format';
 import emailAddresses from 'email-addresses';
 
-import { getUserById } from './user';
+import { getUserById, addUnsubscriptionToUser } from './user';
 import { sendUnsubscribeMail } from '../utils/email';
 import {
   addResolvedUnsubscription,
@@ -35,23 +36,24 @@ export async function scanMail(
 
     const user = await getUserById(userId);
     const gmail = new Gmail(user.keys.accessToken);
-
+    const { unsubscriptions } = user;
     const limit = 10;
     const searchStr = getSearchString({ then, now });
     console.log('doing scan... ', userId, timeframe, searchStr);
+
     const s = gmail.messages(searchStr, {
       timeout: 10000,
       max: 10000
     });
 
     s.on('data', m => {
-      console.log('mail');
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
+        const isUnsubscribed = hasUnsubscribedAlready(mail, unsubscriptions);
         // don't send duplicates
         if (mail && !senders.includes(mail.from)) {
           senders = [...senders, mail.from];
-          onMail(mail);
+          onMail({ ...mail, subscribed: !isUnsubscribed });
         }
       }
     });
@@ -62,7 +64,7 @@ export async function scanMail(
     });
 
     s.on('error', err => {
-      console.error(err);
+      console.error('gmail error', err);
       onError(err.toString());
     });
   } catch (err) {
@@ -71,15 +73,34 @@ export async function scanMail(
   }
 }
 
-export async function unsubscribeMail(mail) {
+export async function unsubscribeMail(userId, mail) {
   const { unsubscribeLink, unsubscribeMailTo } = mail;
   console.log('mail-service: unsubscribe from', mail);
-  if (unsubscribeLink) {
-    console.log('mail-service: unsubscribing with link');
-    return unsubscribeWithLink(unsubscribeLink);
+  let unsubStrategy;
+  let output;
+  try {
+    if (unsubscribeLink) {
+      console.log('mail-service: unsubscribing with link');
+      unsubStrategy = 'link';
+      output = await unsubscribeWithLink(unsubscribeLink);
+    } else {
+      console.log('mail-service: unsubscribing with mailto');
+      unsubStrategy = 'mailto';
+      output = await unsubscribeWithMailTo(unsubscribeMailTo);
+    }
+    addUnsubscriptionToUser(userId, {
+      mail,
+      unsubStrategy,
+      unsubscribeLink,
+      unsubscribeMailTo,
+      estimatedSuccess: output.estimatedSuccess
+    });
+    console.log(output);
+    return output;
+  } catch (err) {
+    console.log(err);
+    throw err;
   }
-  console.log('mail-service: unsubscribing with mailto');
-  return unsubscribeWithMailTo(unsubscribeMailTo);
 }
 
 export async function addUnsubscribeErrorResponse({
@@ -105,7 +126,7 @@ function isUnsubscribable(mail) {
 }
 
 function mapMail(mail) {
-  const { payload, id, snippet } = mail;
+  const { payload, id, snippet, internalDate } = mail;
   try {
     const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
       .value;
@@ -133,6 +154,7 @@ function mapMail(mail) {
     return {
       id,
       snippet,
+      googleDate: internalDate,
       from: payload.headers.find(h => h.name === 'From').value,
       to: payload.headers.find(h => h.name === 'To').value,
       subject: payload.headers.find(h => h.name === 'Subject').value,
@@ -149,7 +171,12 @@ function mapMail(mail) {
   }
 }
 
-const unsubSuccessKeywords = ['successfully', 'success'];
+// get lowercase, uppercase and capitalized versions of all keywords too
+const unsubSuccessKeywords = config.unsubscribeKeywords.reduce(
+  (words, keyword) => [...words, keyword, keyword.toLowerCase()],
+  []
+);
+const confirmButtonKeywords = ['confirm', 'unsubscribe'];
 
 function getSearchString({ then, now }) {
   const thenStr = format(then, googleDateFormat);
@@ -159,17 +186,56 @@ function getSearchString({ then, now }) {
 async function unsubscribeWithLink(unsubUrl) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto(unsubUrl, { waitUntil: 'networkidle2' });
-  const bodyText = await page.evaluate(() => document.body.innerText);
-  const image = await page.screenshot({
-    encoding: 'base64'
-  });
-  const hasSuccessKeywords = unsubSuccessKeywords.some(word => {
+
+  try {
+    await page.goto(unsubUrl, { waitUntil: 'domcontentloaded' });
+
+    let hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
+    if (!hasSuccessKeywords) {
+      // find button to press
+      const links = await page.$$('a, input[type=submit], button');
+      console.log('links', links.length);
+      const $confirmLink = await links.reduce(async (promise, link) => {
+        const [value, text] = await Promise.all([
+          (await link.getProperty('value')).jsonValue(),
+          (await link.getProperty('innerText')).jsonValue()
+        ]);
+        const hasButtonKeyword = confirmButtonKeywords.some(keyword =>
+          `${value} ${text}`.toLowerCase().includes(keyword)
+        );
+        if (hasButtonKeyword) {
+          console.log('found text in btn');
+          return link;
+        }
+        return null;
+      }, Promise.resolve());
+      if ($confirmLink) {
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+          $confirmLink.click()
+        ]);
+        console.log('clicked button');
+        hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
+      }
+    }
+    const image = await page.screenshot({
+      encoding: 'base64'
+    });
+    return { estimatedSuccess: hasSuccessKeywords, image };
+  } catch (err) {
+    return { estimatedSuccess: false, err };
+  } finally {
+    await browser.close();
+  }
+}
+
+async function hasKeywords(page, keywords) {
+  const bodyText = await page.evaluate(() =>
+    document.body.innerText.toLowerCase()
+  );
+  return keywords.some(word => {
     return bodyText.includes(word);
   });
-
-  await browser.close();
-  return { estimatedSuccess: hasSuccessKeywords, image };
 }
 
 async function unsubscribeWithMailTo(unsubMailto) {
@@ -193,4 +259,11 @@ function getDomain(mailFrom) {
   const { domain } = emailAddresses.parseOneAddress(mailFrom);
   console.log(`mail-service: got domain: '${domain}' from ${mailFrom}`);
   return domain;
+}
+
+// a mail has been unsubscribed already if the from and to
+// are the same as previously
+// TODO and the date is prior to the unsubscription event?
+function hasUnsubscribedAlready(mail, unsubscriptions) {
+  return unsubscriptions.some(u => mail.from === u.from && mail.to === u.to);
 }

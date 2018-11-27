@@ -27,12 +27,10 @@ passport.use(
 );
 
 passport.serializeUser(function(user, cb) {
-  console.log('ser', user);
   cb(null, user);
 });
 
 passport.deserializeUser(function(obj, cb) {
-  console.log('des', obj);
   cb(null, obj);
 });
 

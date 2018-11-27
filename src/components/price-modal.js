@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { useGlobal } from '../utils/hooks';
 import BuyButton from '../../plugins/gatsby-plugin-paddle/src';
 import './modal.css';
 
@@ -24,6 +24,7 @@ const prices = [
   }
 ];
 export default ({ onClose, onPurchase }) => {
+  const [user] = useGlobal('user');
   const [selected, setSelected] = useState('free');
   const [isShown, setShown] = useState(false);
 
@@ -35,10 +36,12 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(onClose, 300);
   };
-  const onClickPurchase = () => {
+  const onClickPurchase = data => {
+    console.log(data);
     setShown(false);
     setTimeout(() => onPurchase(selected === 'free' ? '3d' : selected), 300);
   };
+  const isBeta = !!user.beta;
   return (
     <>
       <div className={`modal price-modal ${isShown ? 'shown' : ''}`}>
@@ -47,10 +50,16 @@ export default ({ onClose, onPurchase }) => {
           We'll scan your inbox for any subscription emails that you've had in
           the last 3 days for free!
         </p>
-        <p>
+        <p className={`${isBeta ? 'strike' : ''}`}>
           To scan before this, you can make a one-off purchase of one of our
           packages.
         </p>
+        {isBeta ? (
+          <p>
+            Thanks for Beta Testing <strong>Leave Me Alone</strong>! You don't
+            have to pay, so scan as much as you like!
+          </p>
+        ) : null}
         <div className="price-free">
           <a
             onClick={() => setSelected('free')}
@@ -75,17 +84,20 @@ export default ({ onClose, onPurchase }) => {
           ))}
         </div>
         <div className="modal-actions">
+          <span className="monthly-price">
+            Looking for a monthly subscription? Contact us!
+          </span>
           <a className="btn muted compact" onClick={onClickClose}>
             Cancel
           </a>
-          {selected === 'free' ? (
+          {selected === 'free' || user.beta ? (
             <a className="btn compact" onClick={onClickPurchase}>
               OK
             </a>
           ) : (
             <BuyButton
               productId={prices.find(p => selected === p.value).productId}
-              onSuccess={data => {}}
+              onSuccess={data => onClickPurchase(data)}
               onClose={() => {}}
             >
               Purchase

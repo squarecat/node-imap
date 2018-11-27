@@ -45,29 +45,33 @@ export default function(app, server) {
         return 'Not authenticated';
       }
       console.log('scanning for ', timeframe);
-      // get mail data for user
-      scanMail(
-        {
-          userId: socket.userId,
-          timeframe
-        },
-        {
-          onMail: m => {
-            socket.emit('mail', m);
+      try {
+        // get mail data for user
+        scanMail(
+          {
+            userId: socket.userId,
+            timeframe
           },
-          onError: err => {
-            socket.emit('mail:err', err);
-          },
-          onEnd: () => {
-            socket.emit('mail:end');
+          {
+            onMail: m => {
+              socket.emit('mail', m);
+            },
+            onError: err => {
+              socket.emit('mail:err', err);
+            },
+            onEnd: () => {
+              socket.emit('mail:end');
+            }
           }
-        }
-      );
+        );
+      } catch (err) {
+        socket.emit('mail:err', err);
+      }
     });
 
     socket.on('unsubscribe', async mail => {
       try {
-        const data = await unsubscribeMail(mail);
+        const data = await unsubscribeMail(socket.userId, mail);
         socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
         console.error(err);
