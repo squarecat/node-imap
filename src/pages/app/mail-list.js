@@ -234,6 +234,7 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
           addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
         />
       )}
+      {isSearchFinished ? RevokeTokenInstructions() : null}
     </>
   );
 };
@@ -270,6 +271,42 @@ function ErrorScreen({ error }) {
         bear with us and we'll try and get it sorted for you!
       </p>
       <pre className="error-details">{error}</pre>
+    </div>
+  );
+}
+
+function RevokeTokenInstructions() {
+  return (
+    <div className="revoke-token-instructions">
+      <p>
+        You can revoke access to Leave Me Alone any time by visiting your{' '}
+        <a
+          href="https://security.google.com/settings/security/permissions"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="revoke-link"
+        >
+          Google Account Settings
+          <svg
+            className="icon-external"
+            viewBox="0 0 32 32"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentcolor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          >
+            <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+          </svg>
+        </a>
+        .
+        <span className="revoke-warning">
+          <strong>WARNING</strong>: if you revoke your token you will need to
+          log-in again before you can perform any more scans.
+        </span>
+      </p>
     </div>
   );
 }

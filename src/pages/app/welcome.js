@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import logo from '../../assets/transparent-logo.png';
-import MailList from './mail-list';
 import './welcome.css';
 
 export default ({ isScanning }) => {

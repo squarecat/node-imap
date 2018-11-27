@@ -1,12 +1,19 @@
 .squarecat-widget {
   position: fixed;
-  right: 25px;
-  bottom: 33px;
+  right: 80px;
+  bottom: 13px;
   width: 55px;
   height: 60px;
   z-index: 9;
   border-bottom: none;
   cursor: pointer;
+}
+
+@media screen and (min-width: 560px) {
+  .squarecat-widget {
+    right: 95px;
+    bottom: 20px;
+  }
 }
 
 .container {
