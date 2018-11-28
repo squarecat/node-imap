@@ -1,7 +1,7 @@
 import { useState } from 'react';
 let globals = {};
 
-const useLocalStorage = propertyName => {
+const useGlobal = propertyName => {
   const [state, setState] = useState(globals);
 
   function set(value) {
@@ -18,4 +18,4 @@ const useLocalStorage = propertyName => {
   return [state[propertyName], set];
 };
 
-export default useLocalStorage;
+export default useGlobal;

@@ -63,7 +63,10 @@ const mailReducer = (state = [], action) => {
 function useSocket(callback) {
   const [user] = useGlobal('user');
 
-  const [localMail, setLocalMail] = useLocalStorage('leavemealone.mail', []);
+  const [localMail, setLocalMail] = useLocalStorage(
+    `leavemealone.mail.${user.id}`,
+    []
+  );
   const [mail, dispatch] = useReducer(mailReducer, localMail);
 
   useEffect(
@@ -261,7 +264,6 @@ function ErrorScreen({ error }) {
   }
   return (
     <div className="mail-error">
-      {/* <h3>Oops</h3> */}
       <p>Oh no, something went wrong on our end. Please try and scan again</p>
 
       <a className="btn centered muted">Retry</a>
