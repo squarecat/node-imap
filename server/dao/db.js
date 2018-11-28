@@ -11,7 +11,7 @@ if (config.db.user) {
   url = `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`;
 }
 
-console.log(url);
+console.log('db: url', url);
 
 const client = new MongoClient(url, { useNewUrlParser: true });
 

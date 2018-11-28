@@ -12,12 +12,13 @@ export async function getUserById(id) {
     let user = await getUser(id);
     return user;
   } catch (err) {
+    console.error('user-service: error getting user by id', id);
     console.error(err);
     throw err;
   }
 }
 
-export async function createOrUpdateUserFromGoogle(userData, keys) {
+export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
     const { id, emails } = userData;
     const { value: email } = emails.find(e => e.type === 'account');
@@ -36,6 +37,10 @@ export async function createOrUpdateUserFromGoogle(userData, keys) {
     }
     return user;
   } catch (err) {
+    console.error(
+      'user-service: error creating user from Google',
+      userData.id || 'no userData id'
+    );
     console.error(err);
     throw err;
   }
@@ -49,6 +54,7 @@ export async function checkAuthToken(userId, token) {
     }
     return true;
   } catch (err) {
+    console.error('user-service: error checking auth token for user', userId);
     console.error(err);
     throw err;
   }
@@ -59,6 +65,7 @@ export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
   try {
     await addUnsubscription(userId, { to, from, id, googleDate, ...rest });
   } catch (err) {
+    console.error('user-service: error adding unsubscription to user', userId);
     console.error(err);
     throw err;
   }

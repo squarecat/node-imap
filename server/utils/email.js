@@ -17,22 +17,17 @@ export async function sendUnsubscribeMail({
   toAddress,
   subject = 'unsubscribe'
 }) {
-  console.log('email-utils: to address', toAddress);
-  console.log('email-utils: subject', subject);
+  console.log('email-utils: sending unsubscribe mail');
   try {
     const info = await transporter.sendMail({
       ...mailOptions,
       to: toAddress,
       subject
     });
-    console.log('email-utils: info envelope', info.envelope);
-    console.log('email-utils: info messageId', info.messageId);
-    return true;
+    return info;
   } catch (err) {
-    console.error(
-      'unsubscribe-service: failed to send unsubscribe mail',
-      toAddress
-    );
+    console.error('email-utils: failed to send unsubscribe mail');
+    console.error(err);
     throw err;
   }
 }

@@ -23,17 +23,17 @@ export default function(app, server) {
     socket.on('authenticate', async data => {
       try {
         const { userId, token } = data;
-        console.log('auth socket', data);
         connectedClients[userId] = socket;
         // check the auth data sent by the client
         const isValid = await checkAuthToken(userId, token);
         if (isValid) {
-          console.log('Authenticated socket ', socket.id);
+          console.log('mail-rest: Authenticated socket ', socket.id);
           socket.auth = true;
           socket.userId = userId;
           socket.emit('authenticated');
         }
       } catch (err) {
+        console.error('mail-rest: error authenticating socket');
         console.error(err);
       }
     });
@@ -41,7 +41,7 @@ export default function(app, server) {
     setTimeout(() => {
       // if the socket didn't authenticate, disconnect it
       if (!socket.auth) {
-        console.log('Disconnecting socket ', socket.id);
+        console.log('mail-rest: Disconnecting socket ', socket.id);
         socket.disconnect('unauthorized');
       }
     }, 5000);
@@ -50,7 +50,7 @@ export default function(app, server) {
       if (!socket.auth) {
         return 'Not authenticated';
       }
-      console.log('scanning for ', timeframe);
+      console.log('mail-rest: scanning for ', timeframe);
       // get mail data for user
       scanMail(
         {
@@ -79,6 +79,7 @@ export default function(app, server) {
         const data = await unsubscribeMail(socket.userId, mail);
         socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
+        console.error('mail-rest: error unsubscribing from mail');
         console.error(err);
         socket.emit('unsubscribe:err', { id: mail.id, err });
       }
@@ -92,6 +93,7 @@ export default function(app, server) {
           data: response
         });
       } catch (err) {
+        console.error('mail-rest: error adding unsubscribe response');
         console.error(err);
         socket.emit('unsubscribe-error-response:err', { id: data.mailId, err });
       }

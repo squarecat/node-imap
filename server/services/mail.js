@@ -64,7 +64,7 @@ export async function scanMail(
     const { unsubscriptions } = user;
     const searchStr = getSearchString({ then, now });
     let total;
-    console.log('getting estimate');
+    console.log('mail-service: getting estimate');
 
     if (timeframe === '1m' || timeframe === '6m') {
       const { then: estimateThen } = getTimeRange('1w');
@@ -77,8 +77,8 @@ export async function scanMail(
     } else {
       total = await getEstimatedEmails(searchStr, gmail);
     }
-    console.log('total', total);
-    console.log('doing scan... ', userId, timeframe, searchStr);
+    console.log('mail-service: total', total);
+    console.log('mail-service: doing scan... ', userId, timeframe, searchStr);
 
     const s = gmail.messages(searchStr, {
       timeout: 10000,
@@ -93,7 +93,7 @@ export async function scanMail(
     s.on('data', m => {
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
-        console.log('mail date', mail.googleDate);
+        console.log('mail-service: mail date', mail.googleDate);
         const isUnsubscribed = hasUnsubscribedAlready(mail, unsubscriptions);
         // don't send duplicates
         if (mail && !senders.includes(mail.from)) {
@@ -110,7 +110,7 @@ export async function scanMail(
     });
 
     s.on('end', () => {
-      console.log('end mail');
+      console.log('mail-service: end mail');
       addScanToStats();
       addScanToUser(userId, {
         timeframe,
@@ -121,7 +121,8 @@ export async function scanMail(
     });
 
     s.on('error', err => {
-      console.error('gmail error', err);
+      console.error('mail-service: gmail error');
+      console.error(err);
       onError(err.toString());
     });
   } catch (err) {
@@ -132,7 +133,7 @@ export async function scanMail(
 
 export async function unsubscribeMail(userId, mail) {
   const { unsubscribeLink, unsubscribeMailTo } = mail;
-  console.log('mail-service: unsubscribe from', mail);
+  console.log('mail-service: unsubscribe from', mail.id);
   let unsubStrategy;
   let output;
   try {
@@ -153,10 +154,10 @@ export async function unsubscribeMail(userId, mail) {
       estimatedSuccess: output.estimatedSuccess
     });
     addUnsubscriptionToStats();
-    console.log(output);
     return output;
   } catch (err) {
-    console.log(err);
+    console.error('mail-service: error unsubscribing from mail', mail.id);
+    console.error(err);
     throw err;
   }
 }
@@ -220,10 +221,7 @@ function mapMail(mail) {
       unsubscribeMailTo
     };
   } catch (err) {
-    console.log(
-      'error mapping mail',
-      payload.headers.find(h => h.name === 'List-Unsubscribe').value
-    );
+    console.error('mail-service: error mapping mail');
     console.error(err);
     return null;
   }
@@ -253,7 +251,7 @@ async function unsubscribeWithLink(unsubUrl) {
     if (!hasSuccessKeywords) {
       // find button to press
       const links = await page.$$('a, input[type=submit], button');
-      console.log('links', links.length);
+      console.log('mail-service: links', links.length);
       const $confirmLink = await links.reduce(async (promise, link) => {
         const [value, text] = await Promise.all([
           (await link.getProperty('value')).jsonValue(),
@@ -263,7 +261,7 @@ async function unsubscribeWithLink(unsubUrl) {
           `${value} ${text}`.toLowerCase().includes(keyword)
         );
         if (hasButtonKeyword) {
-          console.log('found text in btn');
+          console.log('mail-service: found text in btn');
           return link;
         }
         return null;
@@ -273,7 +271,7 @@ async function unsubscribeWithLink(unsubUrl) {
           page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
           $confirmLink.click()
         ]);
-        console.log('clicked button');
+        console.log('mail-service: clicked button');
         hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
       }
     }
@@ -316,7 +314,6 @@ async function unsubscribeWithMailTo(unsubMailto) {
 
 function getDomain(mailFrom) {
   const { domain } = emailAddresses.parseOneAddress(mailFrom);
-  console.log(`mail-service: got domain: '${domain}' from ${mailFrom}`);
   return domain;
 }
 
@@ -328,7 +325,7 @@ function hasUnsubscribedAlready(mail, unsubscriptions = []) {
 }
 
 async function getEstimatedEmails(query, gmail) {
-  console.log('estimate', query);
+  console.log('mail-service: estimate', query);
   return new Promise((resolve, reject) => {
     gmail.estimatedMessages(
       query,

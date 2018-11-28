@@ -68,6 +68,6 @@ function sendToTable(data, key) {
         }
       }
     })
-    .then(() => console.log('Saved info'))
+    .then(() => console.log('payments-rest: Saved info'))
     .catch(err => console.error('Failed to save', err.response.data));
 }
