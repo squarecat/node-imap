@@ -6,6 +6,7 @@ import subDays from 'date-fns/sub_days';
 import subWeeks from 'date-fns/sub_weeks';
 import subMonths from 'date-fns/sub_months';
 import format from 'date-fns/format';
+import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 
 import { getUserById, addUnsubscriptionToUser, addScanToUser } from './user';
@@ -234,8 +235,8 @@ const confirmButtonKeywords = ['confirm', 'unsubscribe'];
 
 function getSearchString({ then, now }) {
   const thenStr = format(then, googleDateFormat);
-  const nowStr = format(now, googleDateFormat);
-  return `after:${thenStr} and before:${nowStr}`;
+  const tomorrowStr = format(addDays(now, 1), googleDateFormat);
+  return `after:${thenStr} and before:${tomorrowStr}`;
 }
 
 async function unsubscribeWithLink(unsubUrl) {
