@@ -26,7 +26,8 @@
 }
 
 .from-email,
-.from-name {
+.from-name,
+.from-date {
   display: block;
   text-overflow: ellipsis;
   max-width: 100%;
@@ -37,6 +38,12 @@
 .from-email {
   opacity: 0.75;
   font-size: 11px;
+}
+
+.from-date {
+  opacity: 0.5;
+  font-size: 11px;
+  line-height: 14px;
 }
 
 .subject {
@@ -62,6 +69,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.action-item {
+  flex: 1;
+}
+
+.action-item > .btn.compact {
+  width: 120px;
+  margin-left: auto;
 }
 
 .results-data {
@@ -99,6 +115,7 @@
   width: 120px;
   opacity: 1;
   transition: opacity 250ms 1s ease-in-out;
+  text-align: center;
 }
 
 .finished .progress {
