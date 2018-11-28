@@ -31,12 +31,15 @@ export default function Terms() {
       <p>
         We do store metadata of your emails in order to identify if you have
         unsubscribed from a subscription in a previous scan. This is limited to
-        recipient and sender email addresses, and a timestamp.
+        recipient and sender email addresses, and a timestamp. If you can think
+        of any way we can avoid holding onto this information then{' '}
+        <a href="https://twitter.com/leavemealoneapp">let us know!</a>
       </p>
       <p>
-        We are dedicated unholding the privacy of your data and promise to never
-        do anything with this data except provide you an excellent service
-        through this website.
+        We are dedicated to upholding the privacy of your data and promise to
+        never do anything with this data except provide you an excellent service
+        through this website. All Google information, including your keys and
+        metadata is encrypted at rest in our database.
       </p>
       <p>
         We don’t share any personally identifying information publicly or with

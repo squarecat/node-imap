@@ -23,8 +23,8 @@ const LoginPage = () => {
           </p>
           <p>
             Although we inspect your mail in order to find your subscriptions,
-            unlike other services we <strong>NEVER</strong> store any of your
-            personal information!
+            unlike other services we <strong>NEVER</strong> store any of the
+            content of your mail or any other private information!
           </p>
           <a
             href="/auth/google"

@@ -193,7 +193,7 @@ const EstimatesScreen = ({ setScreen }) => {
                   <span className="estimates-timeframe">
                     {timeframeLabel[timeframe]}
                   </span>{' '}
-                  we estimate you will have received{' '}
+                  you have received{' '}
                   <span className="estimates-value">{totalSpam}</span>{' '}
                   subscription emails.
                 </li>

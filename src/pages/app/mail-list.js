@@ -175,11 +175,15 @@ export default ({ timeframe, showPriceModal }) => {
     setSearchFinished(true);
   });
 
+  function doSearch() {
+    setSearchFinished(false);
+    fetchMail(timeframe);
+  }
+
   useEffect(
     () => {
       if (timeframe && hasSearched) {
-        setSearchFinished(false);
-        fetchMail(timeframe);
+        doSearch();
       }
     },
     [timeframe]
@@ -189,8 +193,7 @@ export default ({ timeframe, showPriceModal }) => {
     () => {
       if (!hasSearched) {
         if (isConnected) {
-          setSearchFinished(false);
-          fetchMail(timeframe);
+          doSearch();
           setUser({ ...user, hasSearched: true });
         }
       } else {
@@ -232,7 +235,7 @@ export default ({ timeframe, showPriceModal }) => {
         </span>
       </div>
       {error ? (
-        <ErrorScreen error={error} />
+        <ErrorScreen error={error} retry={doSearch} />
       ) : (
         <List
           mail={mail || []}
@@ -247,7 +250,7 @@ export default ({ timeframe, showPriceModal }) => {
   );
 };
 
-function ErrorScreen({ error }) {
+function ErrorScreen({ error, retry }) {
   if (error === 'Error: Invalid Credentials') {
     return (
       <div className="mail-error">
@@ -256,7 +259,9 @@ function ErrorScreen({ error }) {
           somehow, perhaps you revoked your token?
         </p>
 
-        <a className="btn centered muted">Retry</a>
+        <a className="btn centered muted" onClick={retry}>
+          Retry
+        </a>
 
         <p>
           If this keeps happening please try{' '}
@@ -271,7 +276,9 @@ function ErrorScreen({ error }) {
     <div className="mail-error">
       <p>Oh no, something went wrong on our end. Please try and scan again</p>
 
-      <a className="btn centered muted">Retry</a>
+      <a className="btn centered muted" onClick={retry}>
+        Retry
+      </a>
 
       <p>
         This is definitely our fault, so if it still doesn't work then please
@@ -318,6 +325,44 @@ function RevokeTokenInstructions() {
   );
 }
 
+const progressTweets = [
+  {
+    val: -1,
+    text: `Start unsubscribing to take back control of your inbox from spammers! 💌`,
+    tweet: `I’m using @LeaveMeAloneApp to take back control of my inbox and unsubscribe from email lists with one click! 💌 leavemealone.xyz`
+  },
+  {
+    val: 1,
+    text: `Congrats! You’ve unsubscribed from NUM spam email, keep going for a cleaner inbox! 🤩`,
+    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz`
+  },
+  {
+    val: 2,
+    text: `Congrats! You’ve unsubscribed from NUM spam emails, keep going for a cleaner inbox! 🤩`,
+    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz`
+  },
+  {
+    val: 5,
+    text: `Wow! You’ve saved yourself from NUM spam emails so far, great job! 🙌`,
+    tweet: `I’ve saved myself from NUM spam emails so far using @LeaveMeAloneApp 🙌 leavemealone.xyz`
+  },
+  {
+    val: 20,
+    text: `Bam! You’re on a roll, you’ve unsubscribed from NUM email lists so far 🎉`,
+    tweet: `I’m on a roll, I’ve unsubscribed from NUM email lists so far using @LeaveMeAloneApp 🎉 leavemealone.xyz`
+  },
+  {
+    val: 50,
+    text: `Super user alert! Can you believe you’ve opted out of NUM spam email lists? 🔥`,
+    tweet: `I’m a Leave Me Alone super user! Can you believe I’ve opted out of NUM spam email lists using @LeaveMeAloneApp 🔥 leavemealone.xyz`
+  },
+  {
+    val: 100,
+    text: `Incredible! You’ve hit NUM unsubscribes. I name you an unsubscribing master 👩‍🎓`,
+    tweet: `I’ve hit NUM unsubscribes and been named an email un-subscribing master using @LeaveMeAloneApp 👩‍🎓 leavemealone.xyz`
+  }
+];
+
 function List({
   mail = [],
   onUnsubscribe,
@@ -338,59 +383,43 @@ function List({
       </div>
     );
   }
-  const sortedMail = mail.sort((a, b) => {
-    return +b.googleDate - +a.googleDate;
-  });
+  const socialContent = getSocialContent(mail);
+  const sortedMail = mail
+    .sort((a, b) => {
+      return +b.googleDate - +a.googleDate;
+    })
+    .reduce((out, mailItem, i) => {
+      if (i === 9) {
+        return [
+          ...out,
+          { type: 'mail', ...mailItem },
+          { id: 'social', type: 'social' }
+        ];
+      }
+      return [...out, { type: 'mail', ...mailItem }];
+    }, []);
   return (
     <div className="mail-list">
       <TransitionGroup component="ul">
-        {sortedMail.map(m => {
-          const isSubscibed = !!m.subscribed;
-          // console.log(m);
-          const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
-          return (
+        {sortedMail.map(m =>
+          m.type === 'mail' ? (
             <CSSTransition key={m.id} timeout={500} classNames="mail-list-item">
-              <li className="mail-list-item">
-                <div className="mail-item">
-                  <div className="avatar" />
-                  <div className="from">
-                    <span className="from-name">{fromName}</span>
-                    <span className="from-email">{fromEmail}</span>
-                    <span className="from-date">
-                      {format(+m.googleDate, mailDateFormat)}
-                    </span>
-                  </div>
-                  <div className="subject">{m.subject}</div>
-                  <div className="actions">
-                    {m.estimatedSuccess !== false ? (
-                      <Toggle
-                        status={isSubscibed}
-                        onChange={() => onUnsubscribe(m)}
-                      />
-                    ) : (
-                      <svg
-                        onClick={() => setUnsubscribeError(m)}
-                        className="failed-to-unsub-btn"
-                        viewBox="0 0 32 32"
-                        width="20"
-                        height="20"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="3"
-                      >
-                        <path d="M16 14 L16 23 M16 8 L16 10" />
-                        <circle cx="16" cy="16" r="14" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                <span className="unsubscribe">{m.unsubscribeLink}</span>
-                <span className="unsubscribe">{m.unsubscribeMailTo}</span>
-              </li>
+              <MailItem
+                mail={m}
+                onUnsubscribe={onUnsubscribe}
+                setUnsubscribeError={setUnsubscribeError}
+              />
             </CSSTransition>
-          );
-        })}
+          ) : (
+            <CSSTransition
+              key="social"
+              timeout={500}
+              classNames="mail-list-item"
+            >
+              {socialContent}
+            </CSSTransition>
+          )
+        )}
       </TransitionGroup>
       {unsubscribeError ? (
         <ErrorModal
@@ -410,5 +439,91 @@ function List({
         />
       ) : null}
     </div>
+  );
+}
+
+function MailItem({ mail: m, onUnsubscribe, setUnsubscribeError }) {
+  const isSubscibed = !!m.subscribed;
+  const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
+  return (
+    <li className="mail-list-item">
+      <div className="mail-item">
+        <div className="avatar" />
+        <div className="from">
+          <span className="from-name">{fromName}</span>
+          <span className="from-email">{fromEmail}</span>
+          <span className="from-date">
+            {format(+m.googleDate, mailDateFormat)}
+          </span>
+        </div>
+        <div className="subject">{m.subject}</div>
+        <div className="actions">
+          {m.estimatedSuccess !== false ? (
+            <Toggle status={isSubscibed} onChange={() => onUnsubscribe(m)} />
+          ) : (
+            <svg
+              onClick={() => setUnsubscribeError(m)}
+              className="failed-to-unsub-btn"
+              viewBox="0 0 32 32"
+              width="20"
+              height="20"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="3"
+            >
+              <path d="M16 14 L16 23 M16 8 L16 10" />
+              <circle cx="16" cy="16" r="14" />
+            </svg>
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function getSocialContent(mail) {
+  const unsubCount = mail.reduce((num, m) => (m.subscribed ? num : num + 1), 0);
+
+  const socialOutput = progressTweets.reduce((out, progress) => {
+    if (unsubCount >= progress.val) {
+      return {
+        text: progress.text.replace('NUM', unsubCount),
+        tweet: encodeURIComponent(progress.tweet.replace('NUM', unsubCount))
+      };
+    }
+    return out;
+  }, null);
+  return (
+    <li className="mail-list-item mail-list-social">
+      <div className="mail-item">
+        <div className="avatar">
+          <svg viewBox="0 0 64 64" width="32" height="32">
+            <path
+              strokeWidth="0"
+              fill="currentColor"
+              d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
+            />
+          </svg>
+        </div>
+        <div className="social-content">{socialOutput.text}</div>
+        <div className="actions">
+          <a
+            target="_"
+            href={`https://twitter.com/intent/tweet?text=${socialOutput.tweet}`}
+            className="btn compact"
+          >
+            <svg viewBox="0 0 64 64" width="16" height="16">
+              <path
+                strokeWidth="0"
+                fill="currentColor"
+                d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
+              />
+            </svg>
+            Tweet progress
+          </a>
+        </div>
+      </div>
+    </li>
   );
 }
