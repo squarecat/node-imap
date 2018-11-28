@@ -56,23 +56,26 @@ export async function scanMail(
 ) {
   try {
     let senders = [];
-    const now = new Date();
-    let then;
-    const [value, unit] = timeframe;
-    if (unit === 'd') {
-      then = subDays(now, value);
-    } else if (unit === 'w') {
-      then = subWeeks(now, value);
-    } else if (unit === 'm') {
-      then = subMonths(now, value);
-    }
+    const { then, now } = getTimeRange(timeframe);
 
     const user = await getUserById(userId);
     const gmail = new Gmail(user.keys.accessToken);
     const { unsubscriptions } = user;
     const searchStr = getSearchString({ then, now });
+    let total;
     console.log('getting estimate');
-    const total = await getEstimatedEmails(searchStr, gmail);
+
+    if (timeframe === '1m' || timeframe === '6m') {
+      const { then: estimateThen } = getTimeRange('1w');
+      const estimatedSearchString = getSearchString({
+        then: estimateThen,
+        now
+      });
+      const oneWTotal = await getEstimatedEmails(estimatedSearchString, gmail);
+      total = timeframe === '1m' ? oneWTotal * 4 : oneWTotal * 4 * 6;
+    } else {
+      total = await getEstimatedEmails(searchStr, gmail);
+    }
     console.log('total', total);
     console.log('doing scan... ', userId, timeframe, searchStr);
 
@@ -340,4 +343,18 @@ async function getEstimatedEmails(query, gmail) {
       }
     );
   });
+}
+
+function getTimeRange(timeframe) {
+  let then;
+  const now = Date.now();
+  const [value, unit] = timeframe;
+  if (unit === 'd') {
+    then = subDays(now, value);
+  } else if (unit === 'w') {
+    then = subWeeks(now, value);
+  } else if (unit === 'm') {
+    then = subMonths(now, value);
+  }
+  return { then, now };
 }

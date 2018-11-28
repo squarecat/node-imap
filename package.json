@@ -54,7 +54,8 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
-    "start": "node --inspect index",
+    "start": "node index",
+    "start:dev": "node --inspect index",
     "format": "prettier --write \"src/**/*.js\"",
     "test": "eslint ./server ./src",
     "deploy": "now "
