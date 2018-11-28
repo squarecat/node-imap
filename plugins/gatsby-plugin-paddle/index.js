@@ -47,7 +47,8 @@ var PayButton = function (_Component) {
     value: function render() {
       var _props = this.props,
           children = _props.children,
-          productId = _props.productId;
+          productId = _props.productId,
+          className = _props.className;
       var referrer = this.state.referrer;
 
       return _react2.default.createElement(
@@ -59,7 +60,7 @@ var PayButton = function (_Component) {
           'data-passthrough': referrer || 'direct',
           'data-success-callback': 'onConversionSuccess',
           'data-close-callback': 'onConversionFailed',
-          className: 'paddle_button'
+          className: 'paddle_button ' + className
         },
         children
       );

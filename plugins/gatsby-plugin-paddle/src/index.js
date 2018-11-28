@@ -15,7 +15,7 @@ export default class PayButton extends Component {
     window.onConversionSuccess = this.onConversionSuccess.bind(this);
   }
   render() {
-    const { children, productId } = this.props;
+    const { children, productId, className } = this.props;
     const { referrer } = this.state;
     return (
       <button
@@ -25,7 +25,7 @@ export default class PayButton extends Component {
         data-passthrough={referrer || 'direct'}
         data-success-callback="onConversionSuccess"
         data-close-callback="onConversionFailed"
-        className="paddle_button"
+        className={`paddle_button ${className}`}
       >
         {children}
       </button>

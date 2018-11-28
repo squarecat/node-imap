@@ -137,6 +137,7 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
           </a>
         ) : (
           <BuyButton
+            className="btn compact"
             productId={prices.find(p => selected === p.value).productId}
             onSuccess={data => onClickPurchase(data)}
             onClose={() => {}}
