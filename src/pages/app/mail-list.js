@@ -101,6 +101,7 @@ function useSocket(callback) {
     socket.on('mail:err', err => {
       console.error(err);
       setError(err);
+      callback(err);
     });
     socket.on('mail:progress', ({ progress, total }) => {
       const percentage = (progress / total) * 100;
@@ -158,7 +159,7 @@ function useSocket(callback) {
   };
 }
 
-export default ({ onFinished, timeframe, showPriceModal }) => {
+export default ({ timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
   const [user, setUser] = useGlobal('user');
   const { hasSearched } = user;
@@ -172,7 +173,6 @@ export default ({ onFinished, timeframe, showPriceModal }) => {
     error
   } = useSocket(() => {
     setSearchFinished(true);
-    onFinished();
   });
 
   useEffect(

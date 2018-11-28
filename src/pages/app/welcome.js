@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import logo from '../../assets/transparent-logo.png';
 import './welcome.css';
 
-export default ({ isScanning }) => {
+export default ({ openPriceModal }) => {
+  const [isScanning, setScanning] = useState(false);
   return (
     <>
-      <div className={`collapsable ${isScanning ? 'collapsed' : ''}`}>
+      <div>
         <div className="first-logon-content">
           <h2>Let's get started!</h2>
           <p>
@@ -16,7 +17,21 @@ export default ({ isScanning }) => {
           <div className="">
             <img src={logo} className="first-logon-image" />
           </div>
-          <p>You can then choose if you want to stay subscribed, or cancel.</p>
+          <p>
+            You can then choose if you want to stay subscribed, or cancel the
+            subscription.
+          </p>
+        </div>
+        <div className="action">
+          <a
+            className={`btn ${isScanning ? 'disabled' : ''} centered`}
+            onClick={() => {
+              setScanning(true);
+              openPriceModal();
+            }}
+          >
+            Scan my inbox
+          </a>
         </div>
       </div>
     </>
