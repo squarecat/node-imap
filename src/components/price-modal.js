@@ -21,7 +21,8 @@ const prices = [
     price: 8,
     label: '6 months',
     value: '6m',
-    productId: 546141
+    productId: 546141,
+    disabled: true
   }
 ];
 export default ({ onClose, onPurchase }) => {
@@ -76,16 +77,18 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
         We'll scan your inbox for any subscription emails that you've had in the
         last 3 days for free!
       </p>
-      <p className={`${isBeta ? 'strike' : ''}`}>
-        To scan before this, you can make a one-off purchase of one of our
-        packages.
-      </p>
+
       {isBeta ? (
-        <p>
+        <p className="beta-text">
           Thanks for Beta Testing <strong>Leave Me Alone</strong>! You don't
           have to pay, so scan as much as you like!
         </p>
-      ) : null}
+      ) : (
+        <p>
+          To scan before this, you can make a one-off purchase of one of our
+          packages.
+        </p>
+      )}
       <div className="price-free">
         <a
           onClick={() => setSelected('free')}
@@ -102,7 +105,7 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
             key={p.value}
             onClick={() => setSelected(p.value)}
             data-selected={selected === p.value}
-            className="btn compact muted"
+            className={`btn compact muted ${p.disabled ? 'disabled' : ''}`}
           >
             <span>{p.label}</span>
             <span className="price">{`($${p.price})`}</span>

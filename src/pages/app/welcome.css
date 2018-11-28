@@ -14,3 +14,9 @@
 .welcome-content.exited {
   opacity: 0;
 }
+
+.beta-text {
+  font-size: 18px;
+  font-weight: bolder;
+  color: rgba(231, 57, 48, 0.749);
+}

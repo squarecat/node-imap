@@ -25,6 +25,7 @@ export async function createOrUpdateUserFromGoogle(userData, keys) {
     if (!user) {
       user = await createUser({
         id,
+        beta: true,
         email,
         keys,
         token: v4()
