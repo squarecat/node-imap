@@ -57,7 +57,7 @@ export async function getUser(id) {
             ...out,
             [k]: unsub[k]
           };
-        });
+        }, {});
       })
     };
     console.log(`users-dao: fetched user ${id}`);
@@ -108,7 +108,7 @@ export async function addUnsubscription(id, mailData) {
       ...out,
       [k]: mailData[k]
     };
-  });
+  }, {});
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
