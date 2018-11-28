@@ -153,7 +153,6 @@ async function getEstimates() {
   try {
     const resp = await fetch('/api/mail/estimates');
     const estimates = resp.json();
-    console.log(estimates);
     return estimates;
   } catch (err) {
     console.error(err);

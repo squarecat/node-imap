@@ -112,7 +112,7 @@ function useSocket(callback) {
       dispatch({ type: 'unsubscribe-success', data: { id, ...data } });
     });
     socket.on('unsubscribe:err', ({ id, data }) => {
-      console.log('unsub err', data);
+      console.error('unsub err', data);
       dispatch({ type: 'unsubscribe-error', data: { id, ...data } });
     });
   }, []);
