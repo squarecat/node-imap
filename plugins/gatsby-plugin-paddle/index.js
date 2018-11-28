@@ -48,7 +48,8 @@ var PayButton = function (_Component) {
       var _props = this.props,
           children = _props.children,
           productId = _props.productId,
-          className = _props.className;
+          className = _props.className,
+          message = _props.message;
       var referrer = this.state.referrer;
 
       return _react2.default.createElement(
@@ -56,7 +57,7 @@ var PayButton = function (_Component) {
         {
           'data-theme': 'none',
           'data-product': productId,
-          'data-message': 'Thanks for supporting UptimeBar! After the payment is processed you\'ll be redirected to the download page.',
+          'data-message': message,
           'data-passthrough': referrer || 'direct',
           'data-success-callback': 'onConversionSuccess',
           'data-close-callback': 'onConversionFailed',

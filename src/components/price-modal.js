@@ -9,19 +9,19 @@ const prices = [
     price: 3,
     label: '1 week',
     value: '1w',
-    productId: 545883
+    productId: '546139'
   },
   {
     price: 5,
     label: '1 month',
     value: '1m',
-    productId: 2
+    productId: 546140
   },
   {
     price: 8,
     label: '6 months',
     value: '6m',
-    productId: 3
+    productId: 546141
   }
 ];
 export default ({ onClose, onPurchase }) => {
@@ -141,6 +141,7 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
             productId={prices.find(p => selected === p.value).productId}
             onSuccess={data => onClickPurchase(data)}
             onClose={() => {}}
+            message="Thanks for supporting Leave Me Alone!"
           >
             Purchase
           </BuyButton>
