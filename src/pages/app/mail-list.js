@@ -158,9 +158,10 @@ function useSocket(callback) {
   };
 }
 
-export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
+export default ({ onFinished, timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
-
+  const [user, setUser] = useGlobal('user');
+  const { hasSearched } = user;
   const {
     mail,
     fetchMail,
@@ -173,10 +174,6 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
     setSearchFinished(true);
     onFinished();
   });
-
-  useEffect(() => {
-    localStorage.setItem('leavemealone.hasbeenwelcomed', true);
-  }, []);
 
   useEffect(
     () => {
@@ -191,8 +188,11 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
   useEffect(
     () => {
       if (!hasSearched) {
-        setSearchFinished(false);
-        fetchMail(timeframe);
+        if (isConnected) {
+          setSearchFinished(false);
+          fetchMail(timeframe);
+          setUser({ ...user, hasSearched: true });
+        }
       } else {
         setSearchFinished(true);
       }
