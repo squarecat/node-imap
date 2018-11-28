@@ -5,7 +5,10 @@ import { useGlobal } from '../../utils/hooks';
 import ErrorModal from '../../components/error-modal';
 import Toggle from '../../components/toggle';
 
+import format from 'date-fns/format';
 import io from 'socket.io-client';
+
+const mailDateFormat = 'Do MMM YYYY HH:mm';
 
 import './mail-list.css';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
@@ -200,28 +203,30 @@ export default ({ onFinished, hasSearched, timeframe, showPriceModal }) => {
   return (
     <>
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
-        <span className="results-data">
+        <span className="action-item results-data">
           <span className="quantity">{mail ? mail.length : 0}</span>
           subscriptions found
         </span>
-        <span className="progress">{`Scanning... ${
+        <span className="action-item progress">{`Scanning... ${
           isSearchFinished ? 100 : believableProgress
         }%`}</span>
-        <a onClick={() => showPriceModal()} className="btn compact icon">
-          <svg
-            viewBox="0 0 32 32"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentcolor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="3"
-          >
-            <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
-          </svg>
-          Re-scan
-        </a>
+        <span className="action-item">
+          <a onClick={() => showPriceModal()} className="btn compact icon">
+            <svg
+              viewBox="0 0 32 32"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentcolor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="3"
+            >
+              <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
+            </svg>
+            Re-scan
+          </a>
+        </span>
       </div>
       {error ? (
         <ErrorScreen error={error} />
@@ -331,12 +336,15 @@ function List({
       </div>
     );
   }
+  const sortedMail = mail.sort((a, b) => {
+    return +b.googleDate - +a.googleDate;
+  });
   return (
     <div className="mail-list">
       <TransitionGroup component="ul">
-        {mail.map(m => {
+        {sortedMail.map(m => {
           const isSubscibed = !!m.subscribed;
-          console.log(m);
+          // console.log(m);
           const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
           return (
             <CSSTransition key={m.id} timeout={500} classNames="mail-list-item">
@@ -346,6 +354,9 @@ function List({
                   <div className="from">
                     <span className="from-name">{fromName}</span>
                     <span className="from-email">{fromEmail}</span>
+                    <span className="from-date">
+                      {format(+m.googleDate, mailDateFormat)}
+                    </span>
                   </div>
                   <div className="subject">{m.subject}</div>
                   <div className="actions">
