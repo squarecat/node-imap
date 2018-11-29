@@ -34,7 +34,7 @@ userApi(app);
 mailApi(app, server);
 paymentsApi(app);
 
-// app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 async function start() {
   await connectDb();

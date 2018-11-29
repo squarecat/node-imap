@@ -76,10 +76,12 @@ const mailReducer = (state = [], action) => {
 function useSocket(callback) {
   const [user] = useGlobal('user');
 
+  // gatsby wont compile without these type checks
   const [localMail, setLocalMail] = useLocalStorage(
-    `leavemealone.mail.${user.id}`,
+    `leavemealone.mail.${user ? user.id : ''}`,
     []
   );
+
   const [mail, dispatch] = useReducer(mailReducer, localMail);
 
   useEffect(
@@ -175,7 +177,7 @@ function useSocket(callback) {
 export default ({ timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
   const [user, setUser] = useGlobal('user');
-  const { hasSearched } = user;
+  const { hasSearched } = user || {};
   const {
     mail,
     fetchMail,
