@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from './layout';
+import Layout from '../layouts/layout';
 import logo from '../assets/transparent-logo.png';
 import './subpage-layout.css';
 

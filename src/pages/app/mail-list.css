@@ -174,11 +174,15 @@ pre {
   font-size: 14px;
 }
 
+.revoke-token-instructions a {
+  font-weight: bold;
+}
+
 .revoke-warning {
   display: block;
   opacity: 0;
   transition: opacity 150ms ease-in-out;
-  color: rgba(231, 57, 48, 1);
+  color: var(--primary-font-color);
 }
 
 .revoke-link:hover + .revoke-warning {

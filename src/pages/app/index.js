@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TransitionGroup, Transition } from 'react-transition-group';
 
 import Modal from '../../components/price-modal';
-import AppLayout from '../../components/app-layout';
+import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import logo from '../../assets/transparent-logo.png';
 
