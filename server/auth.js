@@ -9,6 +9,8 @@ const CLIENT_ID =
   '229643572503-d51b5c1infuudehgdlg1q0sigjella2h.apps.googleusercontent.com';
 const CLIENT_SECRET = '9vNmLaNThnZbXmh5RWSys0_0';
 
+console.log('auth: redirect to', google.redirect);
+
 passport.use(
   new GoogleStrategy(
     {
