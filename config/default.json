@@ -2,7 +2,11 @@
   "db": {
     "host": "127.0.0.1",
     "port": 27017,
-    "name": "leavemealone"
+    "name": "leavemealone",
+    "encryption": {
+      "algorithm": "aes-256-ctr",
+      "password": "secret"
+    }
   },
   "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"]
 }

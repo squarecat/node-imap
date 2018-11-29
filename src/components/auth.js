@@ -28,7 +28,7 @@ function UserAuth({ user: newUser, children, loading }) {
 
   useEffect(() => {
     if (newUser && !user) {
-      setUser(newUser);
+      setUser({ ...newUser, hasSearched: newUser.hasScanned });
     }
   });
 

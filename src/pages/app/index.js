@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TransitionGroup, Transition } from 'react-transition-group';
 
 import Modal from '../../components/price-modal';
 import AppLayout from '../../components/app-layout';
@@ -9,62 +10,77 @@ import MailList from './mail-list';
 import Welcome from './welcome';
 
 import './index.css';
-
-const hasSearched =
-  typeof localStorage !== 'undefined'
-    ? localStorage.getItem('leavemealone.hasbeenwelcomed') === 'true'
-    : false;
+import useGlobal from '../../utils/hooks/use-global';
 
 export default function App() {
-  const [showPriceModal, togglePriceModal] = useState(false);
-  const [isScanning, setScanning] = useState(false);
-  const [timeframe, setTimeframe] = useState(null);
-  const [isDoneSeaching, setDoneSearching] = useState(false);
-
   return (
     <AppLayout>
       <Auth>
-        <div className="header">
-          <a href="/app" className="header-logo">
-            <img alt="logo" src={logo} />
-          </a>
-          <div className="header-title">Leave Me Alone </div>
-          <a className="basic-btn logout" href="/auth/logout">
-            Logout
-          </a>
-        </div>
-        <div className="app-content">
-          {!hasSearched ? <Welcome isScanning={isScanning} /> : null}
-          {!hasSearched && !isDoneSeaching ? (
-            <div className="action">
-              <a
-                className={`btn ${isScanning ? 'disabled' : ''} centered`}
-                onClick={() => togglePriceModal(true)}
-              >
-                {isScanning ? 'Scanning...' : 'Scan my inbox'}
-              </a>
-            </div>
-          ) : null}
-          {hasSearched || timeframe ? (
-            <MailList
-              onFinished={() => setDoneSearching(true)}
-              timeframe={timeframe}
-              hasSearched={hasSearched}
-              showPriceModal={() => togglePriceModal(true)}
-            />
-          ) : null}
-        </div>
-        {showPriceModal ? (
-          <Modal
-            onPurchase={option => {
-              setScanning(true);
-              setTimeframe(option);
-              togglePriceModal(false);
-            }}
-            onClose={() => togglePriceModal(false)}
-          />
-        ) : null}
+        <AuthApp />
       </Auth>
     </AppLayout>
+  );
+}
+
+function AuthApp() {
+  const [showPriceModal, togglePriceModal] = useState(false);
+  const [timeframe, setTimeframe] = useState(null);
+
+  const [user] = useGlobal('user');
+  const { hasSearched } = user;
+
+  return (
+    <>
+      <div className="header">
+        <a href="/app" className="header-logo">
+          <img alt="logo" src={logo} />
+        </a>
+        <div className="header-title">Leave Me Alone </div>
+        <a className="basic-btn logout" href="/auth/logout">
+          Logout
+        </a>
+      </div>
+      <div className="app-content">
+        <Transition
+          in={!hasSearched && !timeframe}
+          classNames="welcome-content"
+          timeout={250}
+          unmountOnExit
+        >
+          {state => (
+            <div className={`welcome-content ${state}`}>
+              <Welcome openPriceModal={() => togglePriceModal(true)} />
+            </div>
+          )}
+        </Transition>
+
+        <Transition
+          in={!!(hasSearched || timeframe)}
+          classNames="mail-list-content"
+          timeout={250}
+          mountOnEnter
+          appear
+        >
+          {state => (
+            <div className={`mail-list-content ${state}`}>
+              <MailList
+                timeframe={timeframe}
+                hasSearched={hasSearched}
+                showPriceModal={() => togglePriceModal(true)}
+              />
+            </div>
+          )}
+        </Transition>
+      </div>
+      {showPriceModal ? (
+        <Modal
+          onPurchase={option => {
+            setTimeframe(option);
+            togglePriceModal(false);
+          }}
+          onClose={() => togglePriceModal(false)}
+        />
+      ) : null}
+    </>
   );
 }

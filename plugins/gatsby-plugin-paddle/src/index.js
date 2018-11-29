@@ -15,17 +15,17 @@ export default class PayButton extends Component {
     window.onConversionSuccess = this.onConversionSuccess.bind(this);
   }
   render() {
-    const { children, productId } = this.props;
+    const { children, productId, className, message } = this.props;
     const { referrer } = this.state;
     return (
       <button
         data-theme="none"
         data-product={productId}
-        data-message={`Thanks for supporting UptimeBar! After the payment is processed you'll be redirected to the download page.`}
+        data-message={message}
         data-passthrough={referrer || 'direct'}
         data-success-callback="onConversionSuccess"
         data-close-callback="onConversionFailed"
-        className="paddle_button"
+        className={`paddle_button ${className}`}
       >
         {children}
       </button>

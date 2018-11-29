@@ -1,3 +1,13 @@
+.mail-list-content {
+  opacity: 0;
+  transition: opacity 250ms 250ms cubic-bezier(0.65, 0.05, 0.36, 1);
+  overflow: hidden;
+}
+
+.mail-list-content.entered {
+  opacity: 1;
+}
+
 .mail-list ul {
   list-style: none;
   background-color: rgba(255, 217, 214, 0.1);
@@ -11,6 +21,7 @@
   padding: 20px 20px;
   align-items: center;
   margin: 0;
+  min-height: 100px;
 }
 .mail-content {
   display: flex;
@@ -137,6 +148,7 @@ pre {
 
 .mail-list-item {
   transition: all 250ms ease-in;
+  margin-bottom: 0;
 }
 .mail-list-item-enter {
   opacity: 0;
@@ -176,4 +188,31 @@ pre {
 .icon-external {
   position: relative;
   left: 3px;
+}
+
+.mail-list-social .avatar {
+  width: 100px;
+  padding-left: 20px;
+}
+
+.mail-list-social .avatar path {
+  fill: #ffc6c2;
+}
+
+.mail-list-social .actions {
+  min-width: 200px;
+  padding-left: 20px;
+}
+
+.mail-list-social .actions .btn {
+  width: 100%;
+  margin: 0;
+}
+
+.mail-list-social .actions .btn svg {
+  margin-right: 8px;
+}
+
+.social-content {
+  padding: 0 20px;
 }

@@ -46,7 +46,8 @@ module.exports = {
         app_key: '5db45d43896e6ab2da8e5f50f39dd9a07b35e953',
         url: 'https://analytics.squarecat.io',
         script_url: 'https://analytics.squarecat.io/sdk/web/countly.min.js',
-        track_sessions: true
+        track_sessions: true,
+        exclude: ['/app/*']
       }
     }
   ]
