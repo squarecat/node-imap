@@ -158,7 +158,10 @@ export async function unsubscribeMail(userId, mail) {
       estimatedSuccess: output.estimatedSuccess
     });
     if (output.estimatedSuccess) addUnsubscriptionToStats();
-    return output;
+    return {
+      ...output,
+      unsubStrategy
+    };
   } catch (err) {
     console.error('mail-service: error unsubscribing from mail', mail.id);
     console.error(err);
@@ -247,11 +250,11 @@ function getSearchString({ then, now }) {
 }
 
 async function unsubscribeWithLink(unsubUrl) {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
   try {
-    await page.goto(unsubUrl, { waitUntil: 'domcontentloaded' });
+    await page.goto(unsubUrl, { waitUntil: 'networkidle0' });
 
     let hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
     if (!hasSuccessKeywords) {
@@ -274,7 +277,7 @@ async function unsubscribeWithLink(unsubUrl) {
       }, Promise.resolve());
       if ($confirmLink) {
         await Promise.all([
-          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+          page.waitForNavigation({ waitUntil: 'networkidle0' }),
           $confirmLink.click()
         ]);
         console.log('mail-service: clicked button');
@@ -286,6 +289,7 @@ async function unsubscribeWithLink(unsubUrl) {
     });
     return { estimatedSuccess: hasSuccessKeywords, image };
   } catch (err) {
+    console.error(err);
     return { estimatedSuccess: false, err };
   } finally {
     await browser.close();

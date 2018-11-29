@@ -38,16 +38,27 @@
   border-radius: 16px;
   left: 0;
   top: 0;
-  transition: transform 250ms ease-in-out, background-color 250ms ease-in-out;
+  transition: left 250ms ease-in-out, background-color 250ms ease-in-out;
   border: 2px solid transparent;
   border-top-color: rgb(255, 111, 108);
-  display: none;
+  animation: spin 1s infinite;
+  visibility: hidden;
 }
 
 .toggle.on .toggle-loader {
-  transform: translateX(100%);
+  left: 32px;
 }
 
 .toggle.loading .toggle-loader {
   display: inline;
+  visibility: visible;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

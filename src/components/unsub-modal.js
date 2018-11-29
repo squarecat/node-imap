@@ -1,36 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import './modal.css';
 
-export default ({ /*onClose,*/ onSubmit, image, link }) => {
+export default ({ onClose, onSubmit, mail }) => {
+  const {
+    error,
+    image,
+    unsubscribeLink,
+    unsubscribeMailTo,
+    unsubStrategy
+  } = mail;
+
   const [slide, changeSlide] = useState('first');
   const [isShown, setShown] = useState(false);
+  const [selected, setSelected] = useState(null);
   const onClickNegative = () => changeSlide('negative');
-  const onClickPositive = () => changeSlide('positive');
+  const onClickPositive = () => {
+    if (error) {
+      return changeSlide('positive');
+    }
+    onClickClose();
+  };
   // on mount
   useEffect(() => {
     setShown(true);
   }, []);
-  // const onClickClose = () => {
-  //   setShown(false);
-  //   setTimeout(onClose, 300);
-  // };
+  const onClickClose = () => {
+    setShown(false);
+    setTimeout(onClose, 300);
+  };
   const onClickSubmit = data => {
     setShown(false);
     setTimeout(() => onSubmit(data), 300);
   };
   const pickSlide = () => {
     if (slide === 'first') {
-      return slide1(image, onClickPositive, onClickNegative);
+      return slide1(
+        image,
+        onClickPositive,
+        onClickNegative,
+        error,
+        unsubStrategy
+      );
     } else if (slide === 'negative') {
-      return slide2(link, onClickSubmit);
+      return slide2({
+        type: unsubStrategy,
+        link: unsubscribeLink,
+        mailTo: unsubscribeMailTo,
+        onClickSubmit,
+        onClickBack: () => changeSlide('first'),
+        selected,
+        setSelected
+      });
     } else if (slide === 'positive') {
       return slide3(image, onClickSubmit);
     }
   };
+  const title = error ? 'Something went wrong...' : 'Successfully unsubscribed';
   return (
     <>
       <div className={`modal error-modal ${isShown ? 'shown' : ''}`}>
-        <h3>Something went wrong...</h3>
+        <h3>{title}</h3>
         {pickSlide()}
       </div>
       <div className={`modal-bg ${isShown ? 'shown' : ''}`} />
@@ -38,44 +67,82 @@ export default ({ /*onClose,*/ onSubmit, image, link }) => {
   );
 };
 
-function slide1(image, onClickPositive, onClickNegative) {
+function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
+  const lead = error
+    ? `We couldn't tell if we successfully unsubscribed, here's the response we
+  got:`
+    : `We unsubscribed you via ${
+        unsubStrategy === 'link' ? 'a URL link' : 'sending an unsubscribe email'
+      }`;
   return (
     <>
-      <p>
-        We couldn't tell if we successfully unsubscribed, here's the response we
-        got:
-      </p>
-      <img alt="unsub image" src={`data:image/jpeg;base64, ${image}`} />
-      <p>How does it look?</p>
-      <div className="modal-actions">
-        <a className="btn muted compact" onClick={onClickNegative}>
-          It looks unsuccessful{' '}
-          <span className="emoji" role="img" aria-label="frowning face emoji">
-            ️️☹️
-          </span>
-        </a>
-        <a className="btn compact" onClick={onClickPositive}>
-          It looks great{' '}
-          <span className="emoji" role="img" aria-label="thumbs up emoji">
-            ️️👍
-          </span>
-        </a>
-      </div>
+      <p>{lead}</p>
+      {unsubStrategy === 'link' ? (
+        <>
+          <img alt="unsub image" src={`data:image/jpeg;base64, ${image}`} />
+          <p>How does it look?</p>
+          <div className="modal-actions">
+            <a className="btn muted compact" onClick={onClickNegative}>
+              It looks unsuccessful{' '}
+              <span
+                className="emoji"
+                role="img"
+                aria-label="frowning face emoji"
+              >
+                ️️☹️
+              </span>
+            </a>
+            <a className="btn compact" onClick={onClickPositive}>
+              It looks great{' '}
+              <span className="emoji" role="img" aria-label="thumbs up emoji">
+                ️️👍
+              </span>
+            </a>
+          </div>
+        </>
+      ) : (
+        <>
+          <p>
+            If the provider is behaving themselves, then you shouldn't get any
+            more subscription emails from them!
+          </p>
+          <div className="modal-actions">
+            <a className="btn compact" onClick={onClickPositive}>
+              Awesome!{' '}
+              <span className="emoji" role="img" aria-label="thumbs up emoji">
+                ️️👍
+              </span>
+            </a>
+          </div>
+        </>
+      )}
     </>
   );
 }
 
-function slide2(link, onSubmit) {
-  const [selected, setSelected] = useState(null);
+function slide2({
+  type,
+  link,
+  mailTo,
+  onClickSubmit: onSubmit,
+  onClickBack,
+  selected,
+  setSelected
+}) {
+  const lead =
+    type === 'link'
+      ? `Oh snap! Sorry about that. This one you'll have to do manually. Just
+        click or copy the following link to unsubscribe`
+      : `Oh snap! Sorry about that. This one you'll have to do manually. This
+      particular service only accepts email unsubs, just click the following
+      link or send an email to the address in oder to unsubscribe`;
+
   return (
     <>
-      <p>
-        Oh snap! Sorry about that. This one you'll have to do manually. Just
-        click or copy the following link to unsubscribe;
-      </p>
+      <p>{lead}</p>
       <p>
         <a className="unsubscribe-link" href={link}>
-          {link}
+          {type === 'link' ? link : mailTo}
         </a>
       </p>
       <p>
@@ -119,6 +186,9 @@ function slide2(link, onSubmit) {
         the same mistake?
       </p>
       <div className="modal-actions">
+        <a className={`btn muted compact`} onClick={onClickBack}>
+          Back
+        </a>
         <a
           className={`btn muted compact ${!selected ? 'disabled' : ''}`}
           onClick={() =>

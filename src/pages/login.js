@@ -30,7 +30,7 @@ const LoginPage = () => {
             href="/auth/google"
             onMouseEnter={() => setActive(true)}
             onMouseLeave={() => setActive(false)}
-            className="beam-me-up-cta login-me-in-dammit"
+            className="btn centered login-me-in-dammit"
           >
             Connect with Gmail
           </a>
