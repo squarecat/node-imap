@@ -305,17 +305,6 @@ h1 {
   }
 }
 
-p a {
-  color: var(--link-color);
-  border-bottom: 1px dashed var(--link-color);
-  cursor: pointer;
-}
-
-p a:hover {
-  color: var(--primary-font-color);
-  border-bottom: 1px dashed var(--primary-font-color);
-}
-
 .footer {
   display: flex;
   flex-direction: column;
