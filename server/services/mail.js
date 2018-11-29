@@ -13,7 +13,8 @@ import { getUserById, addUnsubscriptionToUser, addScanToUser } from './user';
 import {
   addUnsubscriptionToStats,
   addFailedUnsubscriptionToStats,
-  addScanToStats
+  addScanToStats,
+  addNumberofEmailsToStats
 } from './stats';
 
 import { sendUnsubscribeMail } from '../utils/email';
@@ -89,8 +90,9 @@ export async function scanMail(
       max: 10000
     });
 
-    let totalResultsCount = 0;
-    let unsubscribedResultsCount = 0;
+    let totalEmailsCount = 0;
+    let totalUnsubscribableEmailsCount = 0;
+    let totalPreviouslyUnsubscribedEmails = 0;
     let progress = 0;
     onProgress({ progress, total });
 
@@ -103,12 +105,13 @@ export async function scanMail(
         if (mail && !senders.includes(mail.from)) {
           senders = [...senders, mail.from];
           onMail({ ...mail, subscribed: !isUnsubscribed });
-          totalResultsCount++;
+          totalUnsubscribableEmailsCount++;
           if (isUnsubscribed) {
-            unsubscribedResultsCount++;
+            totalPreviouslyUnsubscribedEmails++;
           }
         }
       }
+      totalEmailsCount++;
       progress = progress + 1;
       onProgress({ progress, total });
     });
@@ -116,10 +119,16 @@ export async function scanMail(
     s.on('end', () => {
       console.log('mail-service: end mail');
       addScanToStats();
+      addNumberofEmailsToStats({
+        totalEmails: totalEmailsCount,
+        totalUnsubscribableEmails: totalUnsubscribableEmailsCount,
+        totalPreviouslyUnsubscribedEmails
+      });
       addScanToUser(userId, {
         timeframe,
-        totalResultsCount,
-        unsubscribedResultsCount
+        totalEmails: totalEmailsCount,
+        totalUnsubscribableEmails: totalUnsubscribableEmailsCount,
+        totalPreviouslyUnsubscribedEmails
       });
       onEnd();
     });

@@ -33,3 +33,32 @@ async function updateStat(statName, count = 1) {
     throw err;
   }
 }
+
+export async function addNumberofEmails({
+  totalEmails = 0,
+  totalUnsubscribableEmails = 0,
+  totalPreviouslyUnsubscribedEmails = 0
+}) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          emails: totalEmails,
+          unsubscribableEmails: totalUnsubscribableEmails,
+          previouslyUnsubscribedEmails: totalPreviouslyUnsubscribedEmails
+        }
+      },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error(
+      'users-dao: error inserting stat total emails and total unsubscribable emails',
+      totalEmails,
+      totalUnsubscribableEmails
+    );
+    console.error(err);
+    throw err;
+  }
+}
