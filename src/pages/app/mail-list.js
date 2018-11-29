@@ -95,7 +95,12 @@ function useSocket(callback) {
   const [socket, setSocket] = useState(null);
   // only once
   useEffect(() => {
-    const socket = io.connect('http://127.0.0.1:2345/mail');
+    let socket;
+    if (window.location.host.startsWith('local')) {
+      socket = io.connect('http://127.0.0.1:2345/mail');
+    } else {
+      socket = io.connect('https://leavemealone.xyz/mail');
+    }
     console.log('setting up socket');
     socket.on('connect', () => {
       console.log('socket connected');
