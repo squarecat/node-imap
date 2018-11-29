@@ -1,7 +1,7 @@
 {
   "name": "leavemealone",
   "description": "",
-  "version": "0.0.1-beta",
+  "version": "0.0.2-beta",
   "author": "James Ivings <james@squarecat.io>",
   "dependencies": {
     "@babel/core": "^7.0.0",
