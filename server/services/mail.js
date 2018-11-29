@@ -10,7 +10,11 @@ import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 
 import { getUserById, addUnsubscriptionToUser, addScanToUser } from './user';
-import { addUnsubscriptionToStats, addScanToStats } from './stats';
+import {
+  addUnsubscriptionToStats,
+  addFailedUnsubscriptionToStats,
+  addScanToStats
+} from './stats';
 
 import { sendUnsubscribeMail } from '../utils/email';
 import {
@@ -153,7 +157,7 @@ export async function unsubscribeMail(userId, mail) {
       unsubscribeMailTo,
       estimatedSuccess: output.estimatedSuccess
     });
-    addUnsubscriptionToStats();
+    if (output.estimatedSuccess) addUnsubscriptionToStats();
     return output;
   } catch (err) {
     console.error('mail-service: error unsubscribing from mail', mail.id);
@@ -174,8 +178,10 @@ export async function addUnsubscribeErrorResponse({
   );
   const domain = getDomain(from);
   if (success) {
+    addUnsubscriptionToStats();
     return addResolvedUnsubscription({ mailId, image, domain });
   }
+  addFailedUnsubscriptionToStats();
   return addUnresolvedUnsubscription({ mailId, image, domain, reason });
 }
 
@@ -306,7 +312,7 @@ async function unsubscribeWithMailTo(unsubMailto) {
     }, {});
 
     const sent = sendUnsubscribeMail({ toAddress, ...params });
-    return { estimatedSuccess: sent };
+    return { estimatedSuccess: !!sent };
   } catch (err) {
     return { estimatedSuccess: false };
   }

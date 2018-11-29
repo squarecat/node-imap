@@ -10,6 +10,10 @@ export function addScan(count = 1) {
   return updateStat('scans', count);
 }
 
+export function addFailedUnsubscription(count = 1) {
+  return updateStat('unsubscriptionsFailed', count);
+}
+
 // generic update stat function for anything
 async function updateStat(statName, count = 1) {
   try {
