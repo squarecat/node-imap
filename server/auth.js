@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { google } from 'getconfig';
 
 import { createOrUpdateUserFromGoogle } from './services/user';
 
@@ -8,12 +9,14 @@ const CLIENT_ID =
   '229643572503-d51b5c1infuudehgdlg1q0sigjella2h.apps.googleusercontent.com';
 const CLIENT_SECRET = '9vNmLaNThnZbXmh5RWSys0_0';
 
+console.log('auth: redirect to', google.redirect);
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: CLIENT_ID,
       clientSecret: CLIENT_SECRET,
-      callbackURL: 'http://local.leavemealone.xyz/auth/google/callback'
+      callbackURL: google.redirect
     },
     async function(accessToken, refreshToken, profile, done) {
       const user = await createOrUpdateUserFromGoogle(profile, {

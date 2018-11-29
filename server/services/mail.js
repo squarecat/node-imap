@@ -100,15 +100,20 @@ export async function scanMail(
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
         console.log('mail-service: mail date', mail.googleDate);
-        const isUnsubscribed = hasUnsubscribedAlready(mail, unsubscriptions);
+        const prevUnsubscriptionInfo = hasUnsubscribedAlready(
+          mail,
+          unsubscriptions
+        );
         // don't send duplicates
         if (mail && !senders.includes(mail.from)) {
           senders = [...senders, mail.from];
-          onMail({ ...mail, subscribed: !isUnsubscribed });
-          totalUnsubscribableEmailsCount++;
-          if (isUnsubscribed) {
+          if (prevUnsubscriptionInfo) {
             totalPreviouslyUnsubscribedEmails++;
+            onMail({ ...mail, subscribed: false, ...prevUnsubscriptionInfo });
+          } else {
+            onMail({ ...mail, subscribed: true });
           }
+          totalUnsubscribableEmailsCount++;
         }
       }
       totalEmailsCount++;
@@ -161,6 +166,7 @@ export async function unsubscribeMail(userId, mail) {
     }
     addUnsubscriptionToUser(userId, {
       mail,
+      image: output.image,
       unsubStrategy,
       unsubscribeLink,
       unsubscribeMailTo,
@@ -340,7 +346,14 @@ function getDomain(mailFrom) {
 // are the same as previously
 // TODO and the date is prior to the unsubscription event?
 function hasUnsubscribedAlready(mail, unsubscriptions = []) {
-  return unsubscriptions.some(u => mail.from === u.from && mail.to === u.to);
+  const unsubInfo = unsubscriptions.find(
+    u => mail.from === u.from && mail.to === u.to
+  );
+  if (!unsubInfo) {
+    return null;
+  }
+  const { image, unsubStrategy, estimatedSuccess } = unsubInfo;
+  return { image, unsubStrategy, estimatedSuccess };
 }
 
 async function getEstimatedEmails(query, gmail) {

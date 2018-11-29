@@ -95,7 +95,12 @@ function useSocket(callback) {
   const [socket, setSocket] = useState(null);
   // only once
   useEffect(() => {
-    const socket = io.connect('http://127.0.0.1:2345/mail');
+    let socket;
+    if (window.location.host.startsWith('local')) {
+      socket = io.connect('http://127.0.0.1:2345/mail');
+    } else {
+      socket = io.connect('https://leavemealone.xyz/mail');
+    }
     console.log('setting up socket');
     socket.on('connect', () => {
       console.log('socket connected');
@@ -135,6 +140,7 @@ function useSocket(callback) {
   function fetchMail(timeframe) {
     setProgress(0);
     if (socket) {
+      setError(null);
       dispatch({ type: 'clear' });
       console.log('FETCHING', timeframe);
       socket.emit('fetch', { timeframe });
@@ -467,9 +473,8 @@ function List({
 function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   const isSubscibed = !!m.subscribed;
   const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
-  console.log(m);
   return (
-    <li className="mail-list-item">
+    <li className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}>
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
@@ -503,11 +508,11 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
               <circle cx="16" cy="16" r="14" />
             </svg>
           )}
-          {isSubscibed ? null : (
+          {!isSubscibed ? (
             <a className="status" onClick={() => setUnsubModal(m)}>
               See details
             </a>
-          )}
+          ) : null}
         </div>
       </div>
     </li>

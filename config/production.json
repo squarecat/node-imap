@@ -9,5 +9,8 @@
       "algorithm": "aes-256-ctr",
       "password": "$DB_ENCRYPT_PASSWORD"
     }
+  },
+  "google": {
+    "redirect": "https://leavemealone.xyz/auth/google/callback"
   }
 }

@@ -31,8 +31,13 @@ export default function Terms() {
       <p>
         We do store metadata of your emails in order to identify if you have
         unsubscribed from a subscription in a previous scan. This is limited to
-        recipient and sender email addresses, and a timestamp. If you can think
-        of any way we can avoid holding onto this information then{' '}
+        recipient and sender email addresses, and a timestamp, and is encrypted
+        by industry an standard AES256 cipher.
+      </p>
+      <p>
+        We believe your data is safe, but if you can think of any way we can
+        avoid holding onto even this limited information and still provide the
+        same level of service then{' '}
         <a href="https://twitter.com/leavemealoneapp">let us know!</a>
       </p>
       <p>

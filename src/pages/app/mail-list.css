@@ -239,3 +239,7 @@ pre {
 .status:hover {
   opacity: 1 !important;
 }
+
+.mail-list-item.loading .status {
+  display: none;
+}
