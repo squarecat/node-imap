@@ -68,6 +68,7 @@
   margin-left: auto;
   width: 64px;
   text-align: center;
+  position: relative;
 }
 
 .unsubscribe {
@@ -215,4 +216,22 @@ pre {
 
 .social-content {
   padding: 0 20px;
+}
+
+.status {
+  position: absolute;
+  bottom: -20px;
+  width: auto;
+  left: 0;
+  opacity: 0;
+  width: 66px;
+  cursor: pointer;
+}
+
+.mail-item:hover .status {
+  opacity: 0.5;
+}
+
+.status:hover {
+  opacity: 1 !important;
 }

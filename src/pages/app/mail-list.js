@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import { useGlobal } from '../../utils/hooks';
-import ErrorModal from '../../components/error-modal';
+import UnsubModal from '../../components/unsub-modal';
 import Toggle from '../../components/toggle';
 
 import format from 'date-fns/format';
@@ -29,7 +29,8 @@ const mailReducer = (state = [], action) => {
               subscribed: false,
               error: false,
               image: action.data.image,
-              estimatedSuccess: action.data.estimatedSuccess
+              estimatedSuccess: action.data.estimatedSuccess,
+              unsubStrategy: action.data.unsubStrategy
             }
           : email
       );
@@ -40,7 +41,9 @@ const mailReducer = (state = [], action) => {
               ...email,
               error: true,
               subscribed: null,
-              image: action.data.image
+              image: action.data.image,
+              estimatedSuccess: action.data.estimatedSuccess,
+              unsubStrategy: action.data.unsubStrategy
             }
           : email
       );
@@ -57,6 +60,13 @@ const mailReducer = (state = [], action) => {
       );
     case 'clear': {
       return [];
+    }
+    case 'set-loading': {
+      return state.map(email =>
+        email.id === action.data.id
+          ? { ...email, isLoading: action.data.isLoading }
+          : email
+      );
     }
     default:
       return state;
@@ -111,10 +121,12 @@ function useSocket(callback) {
     socket.on('unsubscribe:success', ({ id, data }) => {
       console.log('unsub success', data);
       dispatch({ type: 'unsubscribe-success', data: { id, ...data } });
+      dispatch({ type: 'set-loading', data: { id, isLoading: false } });
     });
     socket.on('unsubscribe:err', ({ id, data }) => {
       console.error('unsub err', data);
       dispatch({ type: 'unsubscribe-error', data: { id, ...data } });
+      dispatch({ type: 'set-loading', data: { id, isLoading: false } });
     });
   }, []);
 
@@ -131,6 +143,7 @@ function useSocket(callback) {
   function unsubscribeMail(mail) {
     if (socket) {
       dispatch({ type: 'unsubscribe', data: mail.id });
+      dispatch({ type: 'set-loading', data: { id: mail.id, isLoading: true } });
       socket.emit('unsubscribe', mail);
     }
   }
@@ -370,7 +383,9 @@ function List({
   showPriceModal,
   addUnsubscribeErrorResponse
 }) {
-  const [unsubscribeError, setUnsubscribeError] = useState(null);
+  // const [unsubscribeError, setUnsubscribeError] = useState(null);
+  const [unsubData, setUnsubData] = useState(null);
+
   if (!mail.length && isSearchFinished) {
     return (
       <div className="mail-empty-state">
@@ -407,7 +422,7 @@ function List({
               <MailItem
                 mail={m}
                 onUnsubscribe={onUnsubscribe}
-                setUnsubscribeError={setUnsubscribeError}
+                setUnsubModal={setUnsubData}
               />
             </CSSTransition>
           ) : (
@@ -421,30 +436,36 @@ function List({
           )
         )}
       </TransitionGroup>
-      {unsubscribeError ? (
-        <ErrorModal
-          onClose={() => setUnsubscribeError(null)}
+      {unsubData ? (
+        <UnsubModal
+          onClose={() => {
+            setUnsubData(null);
+          }}
           onSubmit={({ success, useImage, failReason = null }) => {
-            setUnsubscribeError(null);
+            setUnsubData(null);
             addUnsubscribeErrorResponse({
               success,
-              mailId: unsubscribeError.id,
-              image: useImage ? unsubscribeError.image : null,
-              from: unsubscribeError.from,
+              mailId: unsubData.id,
+              image: useImage ? unsubData.image : null,
+              from: unsubData.from,
               reason: failReason
             });
           }}
-          image={unsubscribeError.image}
-          link={unsubscribeError.unsubscribeLink}
+          mail={unsubData}
+          // image={unsubData.image}
+          // link={unsubData.unsubscribeLink}
+          // mailTo={unsubData.mailToLink}
+          // unsubStrategy={unsubData.mailToLink}
         />
       ) : null}
     </div>
   );
 }
 
-function MailItem({ mail: m, onUnsubscribe, setUnsubscribeError }) {
+function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   const isSubscibed = !!m.subscribed;
   const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
+  console.log(m);
   return (
     <li className="mail-list-item">
       <div className="mail-item">
@@ -459,10 +480,14 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubscribeError }) {
         <div className="subject">{m.subject}</div>
         <div className="actions">
           {m.estimatedSuccess !== false ? (
-            <Toggle status={isSubscibed} onChange={() => onUnsubscribe(m)} />
+            <Toggle
+              status={isSubscibed}
+              loading={m.isLoading}
+              onChange={() => onUnsubscribe(m)}
+            />
           ) : (
             <svg
-              onClick={() => setUnsubscribeError(m)}
+              onClick={() => setUnsubModal(m, true)}
               className="failed-to-unsub-btn"
               viewBox="0 0 32 32"
               width="20"
@@ -475,6 +500,11 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubscribeError }) {
               <path d="M16 14 L16 23 M16 8 L16 10" />
               <circle cx="16" cy="16" r="14" />
             </svg>
+          )}
+          {isSubscibed ? null : (
+            <a className="status" onClick={() => setUnsubModal(m)}>
+              See details
+            </a>
           )}
         </div>
       </div>
