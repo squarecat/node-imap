@@ -468,9 +468,8 @@ function List({
 function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   const isSubscibed = !!m.subscribed;
   const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
-  console.log(m);
   return (
-    <li className="mail-list-item">
+    <li className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}>
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
@@ -504,11 +503,11 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
               <circle cx="16" cy="16" r="14" />
             </svg>
           )}
-          {isSubscibed ? null : (
+          {!isSubscibed ? (
             <a className="status" onClick={() => setUnsubModal(m)}>
               See details
             </a>
-          )}
+          ) : null}
         </div>
       </div>
     </li>

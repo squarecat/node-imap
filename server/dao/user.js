@@ -6,7 +6,8 @@ const encryptedUnsubCols = [
   'unsubscribeLink',
   'unsubscribeMailTo',
   'to',
-  'from'
+  'from',
+  'image'
 ];
 
 export async function createUser(data) {

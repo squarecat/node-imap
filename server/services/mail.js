@@ -152,6 +152,7 @@ export async function unsubscribeMail(userId, mail) {
     }
     addUnsubscriptionToUser(userId, {
       mail,
+      image: output.image,
       unsubStrategy,
       unsubscribeLink,
       unsubscribeMailTo,
