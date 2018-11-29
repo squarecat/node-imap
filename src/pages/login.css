@@ -26,12 +26,6 @@
   margin: 20px auto;
 }
 
-.login-me-in-dammit {
-  display: inline-block;
-  width: 300px;
-  margin: 10px 0;
-}
-
 .btn {
   width: 240px;
   background-color: #fddbd7;
@@ -136,4 +130,10 @@ input:focus {
 
 .tweet {
   margin-top: 50px;
+}
+
+.login-me-in-dammit {
+  display: inline-block;
+  width: 300px;
+  margin: 10px 0;
 }

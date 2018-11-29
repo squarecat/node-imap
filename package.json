@@ -14,6 +14,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
+    "aes256": "^1.0.4",
     "axios": "^0.18.0",
     "connect-mongo": "^2.0.1",
     "date-fns": "^1.29.0",
