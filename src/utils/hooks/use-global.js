@@ -15,7 +15,7 @@ const useGlobal = propertyName => {
     };
   }
 
-  return [state[propertyName], set];
+  return [state[propertyName] || {}, set];
 };
 
 export default useGlobal;

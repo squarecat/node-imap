@@ -241,7 +241,7 @@ function getSearchString({ then, now }) {
 }
 
 async function unsubscribeWithLink(unsubUrl) {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
   try {
