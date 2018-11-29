@@ -19,12 +19,12 @@ export async function sendUnsubscribeMail({
 }) {
   console.log('email-utils: sending unsubscribe mail');
   try {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       ...mailOptions,
       to: toAddress,
       subject
     });
-    return info;
+    return true;
   } catch (err) {
     console.error('email-utils: failed to send unsubscribe mail');
     console.error(err);
