@@ -128,9 +128,18 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
         </a> */}
       </div>
       <div className="modal-actions">
-        <span className="monthly-price">
-          Looking for a monthly subscription? Contact us!
-        </span>
+        <p className="monthly-price">
+          Looking for a monthly subscription?{' '}
+          <a
+            onClick={() =>
+              openChat(
+                "Hi! I'm looking for a monthly subscription to Leave Me Alone."
+              )
+            }
+          >
+            Contact us!
+          </a>
+        </p>
         <a className="btn muted compact" onClick={onClickClose}>
           Cancel
         </a>
@@ -223,3 +232,10 @@ const EstimatesScreen = ({ setScreen }) => {
     </>
   );
 };
+
+function openChat(message = '') {
+  if (window.$crisp) {
+    window.$crisp.push(['do', 'chat:open']);
+    window.$crisp.push(['set', 'message:text', [message]]);
+  }
+}

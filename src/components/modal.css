@@ -170,7 +170,9 @@
   display: flex;
   flex-direction: column;
 }
-.estimates p {
+
+.estimates p,
+p.monthly-price {
   font-size: 12px;
   margin-bottom: 5px;
 }
