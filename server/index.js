@@ -37,8 +37,10 @@ paymentsApi(app);
 app.use(express.static(path.join(__dirname, '../public')));
 
 async function start() {
+  console.log('server starting');
   await connectDb();
   server.listen(2345);
+  console.log('server started');
 }
 
 start();

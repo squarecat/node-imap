@@ -8,5 +8,8 @@
       "password": "secret"
     }
   },
+  "google": {
+    "redirect": "http://local.leavemealone.xyz/auth/google/callback"
+  },
   "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"]
 }

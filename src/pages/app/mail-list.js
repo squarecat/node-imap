@@ -135,6 +135,7 @@ function useSocket(callback) {
   function fetchMail(timeframe) {
     setProgress(0);
     if (socket) {
+      setError(null);
       dispatch({ type: 'clear' });
       console.log('FETCHING', timeframe);
       socket.emit('fetch', { timeframe });

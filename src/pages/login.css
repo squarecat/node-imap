@@ -136,4 +136,5 @@ input:focus {
   display: inline-block;
   width: 300px;
   margin: 10px 0;
+  text-decoration: none;
 }

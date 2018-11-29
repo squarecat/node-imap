@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { google } from 'getconfig';
 
 import { createOrUpdateUserFromGoogle } from './services/user';
 
@@ -13,7 +14,7 @@ passport.use(
     {
       clientID: CLIENT_ID,
       clientSecret: CLIENT_SECRET,
-      callbackURL: 'http://local.leavemealone.xyz/auth/google/callback'
+      callbackURL: google.redirect
     },
     async function(accessToken, refreshToken, profile, done) {
       const user = await createOrUpdateUserFromGoogle(profile, {
