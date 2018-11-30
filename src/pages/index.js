@@ -2,14 +2,15 @@ import React, { useRef } from 'react';
 
 import gmailLogo from '../assets/gmail.png';
 import dogs from '../assets/dogs.jpg';
+import girlLogo from '../assets/leavemealonegirl.png';
+import gif from '../assets/toggle-unsubscribe-hd.gif';
+
 import Colin from '../components/squarecat';
 import Layout from '../layouts/layout';
-import gif from '../assets/toggle-unsubscribe-hd.gif';
 
 import './home.css';
 
 const IndexPage = () => {
-  const gender = 'f';
   const activeRef = useRef(null);
   const setActive = isActive => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
@@ -31,10 +32,14 @@ const IndexPage = () => {
             <h1>
               <div className="leave-me-alone-logo" ref={activeRef}>
                 <span>
-                  <img src={gmailLogo} alt="gmail-logo" />
+                  <img
+                    src={gmailLogo}
+                    alt="gmail-logo"
+                    className="gmail-logo"
+                  />
                 </span>
                 <span className="logo-emoji">
-                  {gender === 'f' ? '🙅‍♀' : '🙅‍♂️'}
+                  <img src={girlLogo} alt="girl-logo" className="girl-logo" />
                 </span>
               </div>
             </h1>
@@ -47,7 +52,7 @@ const IndexPage = () => {
               href="/subscribe"
               onMouseEnter={() => setActive(true)}
               onMouseLeave={() => setActive(false)}
-              className={`beam-me-up-cta beam-me-up-cta--${gender}`}
+              className={`beam-me-up-cta beam-me-up-cta--f`}
             >
               Sign me up!
             </a>

@@ -89,7 +89,7 @@ h1 {
   font-size: 100px;
 }
 
-.leave-me-alone-logo img {
+.leave-me-alone-logo .gmail-logo {
   width: 100%;
   opacity: 0.2;
   position: absolute;
@@ -101,7 +101,11 @@ h1 {
   transition: filter 500ms ease-in-out;
 }
 
-.leave-me-alone-logo.active img {
+.leave-me-alone-logo .logo-emoji {
+  width: 140px;
+}
+
+.leave-me-alone-logo.active .gmail-logo {
   filter: blur(10px);
 }
 
