@@ -330,7 +330,7 @@ async function unsubscribeWithMailTo(unsubMailto) {
       return { ...out, [d[0]]: d[1] };
     }, {});
 
-    const sent = sendUnsubscribeMail({ toAddress, ...params });
+    const sent = await sendUnsubscribeMail({ toAddress, ...params });
     return { estimatedSuccess: !!sent };
   } catch (err) {
     return { estimatedSuccess: false };
