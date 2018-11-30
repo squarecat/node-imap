@@ -24,7 +24,7 @@ export async function unsubscribeWithLink(unsubUrl) {
     if (!hasSuccessKeywords) {
       // find button to press
       const links = await page.$$('a, input[type=submit], button');
-      console.log('mail-service: links', links.length);
+      console.log('browser: links', links.length);
       const $confirmLink = await links.reduce(async (promise, link) => {
         const [value, text] = await Promise.all([
           (await link.getProperty('value')).jsonValue(),
@@ -34,17 +34,18 @@ export async function unsubscribeWithLink(unsubUrl) {
           `${value} ${text}`.toLowerCase().includes(keyword)
         );
         if (hasButtonKeyword) {
-          console.log('mail-service: found text in btn');
+          console.log('browser: found text in btn');
           return link;
         }
-        return null;
+        return promise;
       }, Promise.resolve());
       if ($confirmLink) {
+        console.log('browser: clicking and waiting');
         await Promise.all([
           page.waitForNavigation({ waitUntil: 'networkidle0' }),
           $confirmLink.click()
         ]);
-        console.log('mail-service: clicked button');
+        console.log('browser: clicked button');
         hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
       }
     }
@@ -62,6 +63,7 @@ export async function unsubscribeWithLink(unsubUrl) {
 }
 
 async function hasKeywords(page, keywords) {
+  console.log('browser: checking for keywords');
   const bodyText = await page.evaluate(() =>
     document.body.innerText.toLowerCase()
   );
@@ -74,6 +76,7 @@ async function getPuppeteerInstance() {
   if (puppeteerInstance) {
     return puppeteerInstance;
   }
+  console.log(config.puppeteer);
   puppeteerInstance = await puppeteer.launch(config.puppeteer);
   return puppeteerInstance;
 }
@@ -84,6 +87,7 @@ async function closeInstance() {
   if (pageCount === 1) {
     console.log('no pages open, closing browser');
     await puppeteerInstance.close();
+    puppeteerInstance = null;
   } else {
     console.log(`${pageCount} pages still open`);
   }
