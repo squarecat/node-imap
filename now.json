@@ -1,6 +1,9 @@
 {
   "version": 1,
   "name": "LeaveMeAlone",
+  "features": {
+    "cloud": "v1"
+  },
   "env": {
     "NODE_ENV": "production",
     "DB_USER": "@db_user",

@@ -72,8 +72,8 @@ function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
     ? `We couldn't tell if we successfully unsubscribed, here's the response we
   got:`
     : `We unsubscribed you via ${
-        unsubStrategy === 'link' ? 'a URL link' : 'sending an unsubscribe email'
-      }`;
+        unsubStrategy === 'link' ? 'a URL link' : `sending an unsubscribe email`
+      }, here's the response we got;`;
   return (
     <>
       <p>{lead}</p>
@@ -141,7 +141,7 @@ function slide2({
     <>
       <p>{lead}</p>
       <p>
-        <a className="unsubscribe-link" href={link}>
+        <a className="unsubscribe-link" target="_" href={link}>
           {type === 'link' ? link : mailTo}
         </a>
       </p>

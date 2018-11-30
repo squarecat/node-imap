@@ -12,5 +12,16 @@
   },
   "google": {
     "redirect": "https://leavemealone.xyz/auth/google/callback"
+  },
+  "puppeteer": {
+    "executablePath": "/usr/bin/chromium-browser",
+    "args": [
+      "--no-sandbox",
+      "--headless",
+      "--disable-gpu",
+      "-—disable-dev-tools"
+    ],
+    "dumpio": true,
+    "devtools": false
   }
 }
