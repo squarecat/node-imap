@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
+import ModalClose from './modal/modal-close';
+
 import './modal.css';
 
 export default ({ onClose, onSubmit, mail }) => {
@@ -20,9 +23,18 @@ export default ({ onClose, onSubmit, mail }) => {
     }
     onClickClose();
   };
+  const handleKeydown = e => {
+    if (e.keyCode === 27 || e.key === 'Escape') {
+      onClickClose();
+    }
+  };
   // on mount
   useEffect(() => {
     setShown(true);
+    document.addEventListener('keydown', handleKeydown, false);
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeydown);
+    };
   }, []);
   const onClickClose = () => {
     setShown(false);
@@ -59,6 +71,7 @@ export default ({ onClose, onSubmit, mail }) => {
   return (
     <>
       <div className={`modal error-modal ${isShown ? 'shown' : ''}`}>
+        <ModalClose onClose={onClickClose} />
         <h3>{title}</h3>
         {pickSlide()}
       </div>
