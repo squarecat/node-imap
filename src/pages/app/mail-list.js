@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
+import ErrorBoundary from '../../components/error-boundary';
 import { useGlobal } from '../../utils/hooks';
 import UnsubModal from '../../components/unsub-modal';
 import Toggle from '../../components/toggle';
@@ -16,7 +17,10 @@ import useLocalStorage from '../../utils/hooks/use-localstorage';
 const mailReducer = (state = [], action) => {
   switch (action.type) {
     case 'add':
-      return [...state, { ...action.data }];
+      return [
+        ...state,
+        { ...action.data, error: !action.data.estimatedSuccess }
+      ];
     case 'unsubscribe':
       return state.map(email =>
         email.id === action.data ? { ...email, subscribed: null } : email
@@ -258,13 +262,15 @@ export default ({ timeframe, showPriceModal }) => {
       {error ? (
         <ErrorScreen error={error} retry={doSearch} />
       ) : (
-        <List
-          mail={mail || []}
-          onUnsubscribe={mail => unsubscribeMail(mail)}
-          isSearchFinished={isSearchFinished}
-          showPriceModal={showPriceModal}
-          addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
-        />
+        <ErrorBoundary>
+          <List
+            mail={mail || []}
+            onUnsubscribe={mail => unsubscribeMail(mail)}
+            isSearchFinished={isSearchFinished}
+            showPriceModal={showPriceModal}
+            addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
+          />
+        </ErrorBoundary>
       )}
       {isSearchFinished ? RevokeTokenInstructions() : null}
     </>
@@ -460,10 +466,6 @@ function List({
             });
           }}
           mail={unsubData}
-          // image={unsubData.image}
-          // link={unsubData.unsubscribeLink}
-          // mailTo={unsubData.mailToLink}
-          // unsubStrategy={unsubData.mailToLink}
         />
       ) : null}
     </div>
@@ -494,7 +496,10 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
             />
           ) : (
             <svg
-              onClick={() => setUnsubModal(m, true)}
+              onClick={() => {
+                debugger;
+                setUnsubModal(m, true);
+              }}
               className="failed-to-unsub-btn"
               viewBox="0 0 32 32"
               width="20"
