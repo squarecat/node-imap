@@ -6,13 +6,13 @@ import './modal.css';
 
 export default ({ onClose, onSubmit, mail }) => {
   const {
-    error,
+    estimatedSuccess,
     image,
     unsubscribeLink,
     unsubscribeMailTo,
     unsubStrategy
   } = mail;
-
+  const error = !estimatedSuccess;
   const [slide, changeSlide] = useState('first');
   const [isShown, setShown] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -81,56 +81,75 @@ export default ({ onClose, onSubmit, mail }) => {
 };
 
 function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
-  const lead = error
-    ? `We couldn't tell if we successfully unsubscribed, here's the response we
-  got:`
-    : `We unsubscribed you via ${
-        unsubStrategy === 'link'
-          ? `a URL link here's the response we got;`
-          : `sending an unsubscribe email`
-      }`;
+  let lead;
+  let timeout = false;
+  if (error && !image) {
+    lead = `We couldn't tell if we successfully unsubscribed and we got no response from the provider...`;
+    timeout = true;
+  } else if (error) {
+    lead = `We couldn't tell if we successfully unsubscribed, here's the response we
+    got:`;
+  } else {
+    lead = `We unsubscribed you via ${
+      unsubStrategy === 'link'
+        ? `a URL link here's the response we got;`
+        : `sending an unsubscribe email`
+    }`;
+  }
+  let content;
+  if (timeout) {
+    content = (
+      <>
+        <div className="modal-actions">
+          <a className="btn compact" onClick={onClickNegative}>
+            Unsubscribe manually
+          </a>
+        </div>
+      </>
+    );
+  } else if (unsubStrategy === 'link') {
+    content = (
+      <>
+        <img alt="unsub image" src={`data:image/jpeg;base64, ${image}`} />
+        <p>How does it look?</p>
+        <div className="modal-actions">
+          <a className="btn muted compact" onClick={onClickNegative}>
+            It looks unsuccessful{' '}
+            <span className="emoji" role="img" aria-label="frowning face emoji">
+              ️️☹️
+            </span>
+          </a>
+          <a className="btn compact" onClick={onClickPositive}>
+            It looks great{' '}
+            <span className="emoji" role="img" aria-label="thumbs up emoji">
+              ️️👍
+            </span>
+          </a>
+        </div>
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <p>
+          If the provider is behaving themselves, then you shouldn't get any
+          more subscription emails from them!
+        </p>
+        <div className="modal-actions">
+          <a className="btn compact" onClick={onClickPositive}>
+            Awesome!{' '}
+            <span className="emoji" role="img" aria-label="thumbs up emoji">
+              ️️👍
+            </span>
+          </a>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <p>{lead}</p>
-      {unsubStrategy === 'link' ? (
-        <>
-          <img alt="unsub image" src={`data:image/jpeg;base64, ${image}`} />
-          <p>How does it look?</p>
-          <div className="modal-actions">
-            <a className="btn muted compact" onClick={onClickNegative}>
-              It looks unsuccessful{' '}
-              <span
-                className="emoji"
-                role="img"
-                aria-label="frowning face emoji"
-              >
-                ️️☹️
-              </span>
-            </a>
-            <a className="btn compact" onClick={onClickPositive}>
-              It looks great{' '}
-              <span className="emoji" role="img" aria-label="thumbs up emoji">
-                ️️👍
-              </span>
-            </a>
-          </div>
-        </>
-      ) : (
-        <>
-          <p>
-            If the provider is behaving themselves, then you shouldn't get any
-            more subscription emails from them!
-          </p>
-          <div className="modal-actions">
-            <a className="btn compact" onClick={onClickPositive}>
-              Awesome!{' '}
-              <span className="emoji" role="img" aria-label="thumbs up emoji">
-                ️️👍
-              </span>
-            </a>
-          </div>
-        </>
-      )}
+      <div>{content}</div>
     </>
   );
 }

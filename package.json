@@ -35,11 +35,11 @@
     "build": "gatsby build",
     "build:server": "babel -d ./build ./server",
     "develop": "gatsby develop",
-    "start": "node index",
-    "start:dev": "node --inspect index",
+    "start": "NODE_ENV=production node index",
+    "start:dev": "NODE_ENV=development node --inspect index",
     "format": "prettier --write \"src/**/*.js\"",
     "test": "eslint ./server ./src",
-    "deploy": "now "
+    "deploy": "now --docker && now alias"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
