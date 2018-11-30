@@ -462,7 +462,8 @@ function List({
               mailId: unsubData.id,
               image: useImage ? unsubData.image : null,
               from: unsubData.from,
-              reason: failReason
+              reason: failReason,
+              unsubStrategy: unsubData.unsubStrategy
             });
           }}
           mail={unsubData}

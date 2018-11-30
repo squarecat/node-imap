@@ -4,7 +4,7 @@ import { encrypt } from './encryption';
 const COL_NAME = 'unsubscriptions';
 
 export async function addUnresolvedUnsubscription(data) {
-  const { mailId, image, reason, domain } = data;
+  const { mailId, image, reason, unsubStrategy, domain } = data;
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
@@ -12,6 +12,7 @@ export async function addUnresolvedUnsubscription(data) {
       domain: encrypt(domain),
       image: encrypt(image),
       reason,
+      unsubStrategy,
       resolved: false
     });
   } catch (err) {
