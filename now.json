@@ -9,5 +9,6 @@
     "DB_USER": "@db_user",
     "DB_PASSWORD": "@db_password",
     "DB_ENCRYPT_PASSWORD": "@db_encrypt_password"
-  }
+  },
+  "alias": ["leavemealone.xyz"]
 }

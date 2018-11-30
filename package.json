@@ -4,6 +4,7 @@
   "version": "0.0.2-beta",
   "author": "James Ivings <james@squarecat.io>",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
     "aes256": "^1.0.4",
     "axios": "^0.18.0",
     "connect-mongo": "^2.0.1",
@@ -23,8 +24,7 @@
     "puppeteer": "^1.10.0",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
-    "uuid": "^3.3.2",
-    "@babel/polyfill": "^7.0.0"
+    "uuid": "^3.3.2"
   },
   "keywords": [
     "gatsby"
@@ -43,6 +43,7 @@
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",
+    "@babel/node": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
