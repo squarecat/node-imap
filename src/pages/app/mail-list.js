@@ -496,10 +496,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
             />
           ) : (
             <svg
-              onClick={() => {
-                debugger;
-                setUnsubModal(m, true);
-              }}
+              onClick={() => setUnsubModal(m, true)}
               className="failed-to-unsub-btn"
               viewBox="0 0 32 32"
               width="20"
