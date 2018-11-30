@@ -11,5 +11,9 @@
   "google": {
     "redirect": "http://local.leavemealone.xyz/auth/google/callback"
   },
-  "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"]
+  "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
+  "mailgun": {
+    "apiKey": "key-2y-9ivl7dzujgdv9ht38u61zdbwhcpl8",
+    "domain": "squarecat.io"
+  }
 }
