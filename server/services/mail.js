@@ -1,7 +1,5 @@
 import Gmail from 'node-gmail-api';
 import url from 'url';
-import config from 'getconfig';
-import puppeteer from 'puppeteer';
 import subDays from 'date-fns/sub_days';
 import subWeeks from 'date-fns/sub_weeks';
 import subMonths from 'date-fns/sub_months';
@@ -17,6 +15,7 @@ import {
   addNumberofEmailsToStats
 } from './stats';
 
+import { unsubscribeWithLink } from '../utils/browser';
 import { sendUnsubscribeMail } from '../utils/email';
 import {
   addResolvedUnsubscription,
@@ -99,21 +98,22 @@ export async function scanMail(
     s.on('data', m => {
       if (isUnsubscribable(m)) {
         const mail = mapMail(m);
-        console.log('mail-service: mail date', mail.googleDate);
-        const prevUnsubscriptionInfo = hasUnsubscribedAlready(
-          mail,
-          unsubscriptions
-        );
-        // don't send duplicates
-        if (mail && !senders.includes(mail.from)) {
-          senders = [...senders, mail.from];
-          if (prevUnsubscriptionInfo) {
-            totalPreviouslyUnsubscribedEmails++;
-            onMail({ ...mail, subscribed: false, ...prevUnsubscriptionInfo });
-          } else {
-            onMail({ ...mail, subscribed: true });
+        if (mail) {
+          const prevUnsubscriptionInfo = hasUnsubscribedAlready(
+            mail,
+            unsubscriptions
+          );
+          // don't send duplicates
+          if (mail && !senders.includes(mail.from)) {
+            senders = [...senders, mail.from];
+            if (prevUnsubscriptionInfo) {
+              totalPreviouslyUnsubscribedEmails++;
+              onMail({ ...mail, subscribed: false, ...prevUnsubscriptionInfo });
+            } else {
+              onMail({ ...mail, subscribed: true });
+            }
+            totalUnsubscribableEmailsCount++;
           }
-          totalUnsubscribableEmailsCount++;
         }
       }
       totalEmailsCount++;
@@ -213,24 +213,7 @@ function mapMail(mail) {
   try {
     const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
       .value;
-    let unsubscribeMailTo = null;
-    let unsubscribeLink = null;
-
-    if (/^<.+>,\s*<.+>$/.test(unsub)) {
-      const unsubTypes = unsub
-        .split(',')
-        .map(a => a.trim().match(/^<(.*)>$/)[1]);
-      unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
-      unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
-    } else if (unsub.startsWith('<http')) {
-      unsubscribeLink = unsub.substr(1, unsub.length - 2);
-    } else if (unsub.startsWith('<mailto')) {
-      unsubscribeMailTo = unsub.substr(1, unsub.length - 2);
-    } else if (url.parse(unsub).protocol === 'mailto') {
-      unsubscribeMailTo = unsub;
-    } else if (url.parse(unsub).protocol !== null) {
-      unsubscribeLink = unsub;
-    }
+    const { unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub);
     if (!unsubscribeMailTo && !unsubscribeLink) {
       return null;
     }
@@ -251,73 +234,10 @@ function mapMail(mail) {
   }
 }
 
-// get lowercase, uppercase and capitalized versions of all keywords too
-const unsubSuccessKeywords = config.unsubscribeKeywords.reduce(
-  (words, keyword) => [...words, keyword, keyword.toLowerCase()],
-  []
-);
-const confirmButtonKeywords = ['confirm', 'unsubscribe'];
-
 function getSearchString({ then, now }) {
   const thenStr = format(then, googleDateFormat);
   const tomorrowStr = format(addDays(now, 1), googleDateFormat);
   return `after:${thenStr} and before:${tomorrowStr}`;
-}
-
-async function unsubscribeWithLink(unsubUrl) {
-  const browser = await puppeteer.launch(config.puppeteer);
-  const page = await browser.newPage();
-
-  try {
-    await page.goto(unsubUrl, { waitUntil: 'networkidle0' });
-
-    let hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
-    if (!hasSuccessKeywords) {
-      // find button to press
-      const links = await page.$$('a, input[type=submit], button');
-      console.log('mail-service: links', links.length);
-      const $confirmLink = await links.reduce(async (promise, link) => {
-        const [value, text] = await Promise.all([
-          (await link.getProperty('value')).jsonValue(),
-          (await link.getProperty('innerText')).jsonValue()
-        ]);
-        const hasButtonKeyword = confirmButtonKeywords.some(keyword =>
-          `${value} ${text}`.toLowerCase().includes(keyword)
-        );
-        if (hasButtonKeyword) {
-          console.log('mail-service: found text in btn');
-          return link;
-        }
-        return null;
-      }, Promise.resolve());
-      if ($confirmLink) {
-        await Promise.all([
-          page.waitForNavigation({ waitUntil: 'networkidle0' }),
-          $confirmLink.click()
-        ]);
-        console.log('mail-service: clicked button');
-        hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
-      }
-    }
-    const image = await page.screenshot({
-      encoding: 'base64'
-    });
-    return { estimatedSuccess: hasSuccessKeywords, image };
-  } catch (err) {
-    console.error(err);
-    return { estimatedSuccess: false, err };
-  } finally {
-    await browser.close();
-  }
-}
-
-async function hasKeywords(page, keywords) {
-  const bodyText = await page.evaluate(() =>
-    document.body.innerText.toLowerCase()
-  );
-  return keywords.some(word => {
-    return bodyText.includes(word);
-  });
 }
 
 async function unsubscribeWithMailTo(unsubMailto) {
@@ -387,4 +307,34 @@ function getTimeRange(timeframe) {
     then = subMonths(now, value);
   }
   return { then, now };
+}
+
+function getUnsubValues(unsub) {
+  let unsubscribeMailTo = null;
+  let unsubscribeLink = null;
+  if (/^<.+>,\s*<.+>$/.test(unsub)) {
+    const unsubTypes = unsub.split(',').map(a => a.trim().match(/^<(.*)>$/)[1]);
+    unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
+    unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
+  } else if (/^<.+>,\s*.+$/.test(unsub)) {
+    const unsubTypes = unsub.split(',').map(a => getUnsubValue(a));
+    unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
+    unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
+  } else if (unsub.startsWith('<http')) {
+    unsubscribeLink = unsub.substr(1, unsub.length - 2);
+  } else if (unsub.startsWith('<mailto')) {
+    unsubscribeMailTo = unsub.substr(1, unsub.length - 2);
+  } else if (url.parse(unsub).protocol === 'mailto') {
+    unsubscribeMailTo = unsub;
+  } else if (url.parse(unsub).protocol !== null) {
+    unsubscribeLink = unsub;
+  }
+  return { unsubscribeMailTo, unsubscribeLink };
+}
+
+function getUnsubValue(str) {
+  if (str.trim().match(/^<.+>$/)) {
+    return str.substr(1, str.length - 2);
+  }
+  return str;
 }

@@ -1,2 +1,2 @@
 #!/bin/bash
-NODE_ENV=development ./node_modules/@babel/node/bin/babel-node.js ./index.js
+NODE_ENV=development node --inspect-brk ./index.js

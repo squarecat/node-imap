@@ -1,0 +1,122 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+
+jobs:
+  update_ssh:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - '56:fd:89:dc:d7:41:7a:8c:79:9e:88:5e:5a:f7:81:5b'
+            - '2f:58:5d:4d:cf:3f:a0:19:03:e5:4a:d1:79:f9:df:79'
+            - '2d:8e:4f:10:b1:a3:44:5c:a0:aa:ac:84:aa:ff:8b:38'
+      - restore_cache:
+          keys:
+            - ssh-{{ checksum ".circleci/config.yml" }}
+      - run:
+          name: Update SSH config
+          command: |
+            mkdir -p ~/.ssh
+            echo "Host github.com" > ~/.ssh/config
+            echo "    User git" >> ~/.ssh/config
+            echo "Host staging" >> ~/.ssh/config
+            echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+            echo "    User colin" >> ~/.ssh/config
+            echo "    HostName staging.releasepage.co" >> ~/.ssh/config
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - save_cache:
+          key: ssh-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - ~/.ssh
+
+  install_deps:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - api-deps-{{ checksum "package.json" }}
+            - api-deps-
+      - restore_cache:
+          key: ssh-{{ checksum ".circleci/config.yml" }}
+      - run: yarn --ignore-engines
+      - save_cache:
+          key: api-deps-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+  build:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: api-deps-{{ checksum "package.json" }}
+      - run: |
+          npm run build
+
+  deploy:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - checkout
+      - restore_cache:
+          key: ssh-{{ checksum ".circleci/config.yml" }}
+      - restore_cache:
+          key: api-deps-{{ checksum "package.json" }}
+      - run: |
+          NODE_ENV=production yarn run build
+          NODE_ENV=production yarn run build:server
+      - run:
+          name: Deploy master to prod
+          command: |
+            # deploy
+            bash ./node_modules/release-page-deploy/scripts/deploy.sh
+
+  deploy-staging:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - checkout
+      - restore_cache:
+          key: ssh-{{ checksum ".circleci/config.yml" }}
+      - restore_cache:
+          key: api-deps-{{ checksum "package.json" }}
+      - run: |
+          NODE_ENV=production npm run build
+      - run:
+          name: Deploy develop to staging
+          command: |
+            # deploy
+            bash ./node_modules/release-page-deploy/scripts/deploy_staging.sh
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - update_ssh
+      - install_deps:
+          requires:
+            - update_ssh
+      - build:
+          requires:
+            - update_ssh
+            - install_deps
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop

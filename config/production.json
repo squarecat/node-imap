@@ -21,7 +21,7 @@
       "--disable-gpu",
       "-—disable-dev-tools"
     ],
-    "dumpio": true,
+    "dumpio": false,
     "devtools": false
   }
 }

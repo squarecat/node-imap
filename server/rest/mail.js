@@ -27,7 +27,6 @@ export default function(app, server) {
         // check the auth data sent by the client
         const isValid = await checkAuthToken(userId, token);
         if (isValid) {
-          console.log('mail-rest: Authenticated socket ', socket.id);
           socket.auth = true;
           socket.userId = userId;
           socket.emit('authenticated');

@@ -21,8 +21,7 @@ const prices = [
     price: 8,
     label: '6 months',
     value: '6m',
-    productId: 546141,
-    disabled: true
+    productId: 546141
   }
 ];
 export default ({ onClose, onPurchase }) => {
