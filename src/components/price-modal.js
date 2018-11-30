@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useGlobal } from '../utils/hooks';
 import BuyButton from '../../plugins/gatsby-plugin-paddle/src';
-import './modal.css';
 import useAsync from '../utils/hooks/use-async';
+
+import ModalClose from './modal/modal-close';
+
+import './modal.css';
 
 const prices = [
   {
@@ -28,9 +31,19 @@ export default ({ onClose, onPurchase }) => {
   const [isShown, setShown] = useState(false);
   const [screen, setScreen] = useState('pricing');
 
+  const handleKeydown = e => {
+    if (e.keyCode === 27 || e.key === 'Escape') {
+      onClickClose();
+    }
+  };
+
   // on mount
   useEffect(() => {
     setShown(true);
+    document.addEventListener('keydown', handleKeydown, false);
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeydown);
+    };
   }, []);
 
   const onClickClose = () => {
@@ -57,6 +70,7 @@ export default ({ onClose, onPurchase }) => {
   return (
     <>
       <div className={`modal price-modal ${isShown ? 'shown' : ''}`}>
+        <ModalClose onClose={onClickClose} />
         {content}
       </div>
       <div className={`modal-bg ${isShown ? 'shown' : ''}`} />
