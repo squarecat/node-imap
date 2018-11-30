@@ -22,7 +22,7 @@ const IndexPage = () => {
 
   const scrollDown = () => {
     window.scrollTo({
-      top: window.innerHeight - 100,
+      top: document.querySelector('.privacy').offsetTop,
       left: 0,
       behavior: 'smooth'
     });
