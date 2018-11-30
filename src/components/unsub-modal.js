@@ -101,7 +101,7 @@ function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
         <p>How does it look?</p>
         <div className="modal-actions">
           <a className="btn muted compact" onClick={onClickNegative}>
-            It looks unsuccessful{' '}
+            It didn't work{' '}
             <span className="emoji" role="img" aria-label="frowning face emoji">
               ️️☹️
             </span>
