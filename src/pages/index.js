@@ -61,13 +61,13 @@ const IndexPage = () => {
           <div>
             <h2>Unsubscribe with a single click</h2>
             <p>
-              Did you know that in 2018 spam messages account for 48.16% of all
+              Did you know that in 2018, spam messages account for 48.16% of all
               e-mail traffic worldwide?{' '}
               <sub className="privacy-source-ref">[1]</sub>
             </p>
             <p>
               See all of your subscription emails in one place and unsubscribe
-              from them easily!
+              from them easily.
             </p>
             <cite className="privacy-source">
               [1]:{' '}
@@ -84,12 +84,12 @@ const IndexPage = () => {
             <span className="privacy-padlock">🕵️‍♀️</span>
             <p className="privacy-stuff">
               We'll NEVER compromise your privacy. When we scan your inbox for
-              subscriptions we{' '}
+              subscriptions, we{' '}
               <strong>never store any of your emails on our servers.</strong>
             </p>
             <p>
               Although services like this exist already, they make money by
-              selling and marketing your information! You can read more about
+              selling and marketing your information. You can read more about
               this on{' '}
               <a href="https://www.nytimes.com/2017/04/24/technology/personal-data-firm-slice-unroll-me-backlash-uber.html">
                 The New York Times
@@ -118,7 +118,7 @@ const IndexPage = () => {
             </p>
             <p>
               We promise to never exploit you or your data. We only want to help
-              you regain control of your inbox!
+              you regain control of your inbox.
             </p>
           </div>
         </div>
