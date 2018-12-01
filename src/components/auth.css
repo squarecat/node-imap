@@ -57,23 +57,28 @@
 }
 
 .auth-loading-pane .logo-emoji {
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -55%);
+  width: 120px;
 }
 
 .logo-emoji {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) translateY(8px);
+  transform: translate(-50%, -55%);
   display: block;
   padding: 10px 0 0 0;
   pointer-events: none;
-  font-size: 100px;
 }
 
-.auth-loading-pane img {
+.auth-loading-pane .gmail-logo {
   margin: 0;
   opacity: 0.2;
+}
+
+.auth-loading-pane .girl-logo {
+  margin: 0;
+  width: 150px;
 }
 
 .auth-loading-pane--front {

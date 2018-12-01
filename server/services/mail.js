@@ -7,7 +7,12 @@ import format from 'date-fns/format';
 import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 
-import { getUserById, addUnsubscriptionToUser, addScanToUser } from './user';
+import {
+  getUserById,
+  addUnsubscriptionToUser,
+  addScanToUser,
+  resolveUserUnsubscription
+} from './user';
 import {
   addUnsubscriptionToStats,
   addFailedUnsubscriptionToStats,
@@ -184,23 +189,26 @@ export async function unsubscribeMail(userId, mail) {
   }
 }
 
-export async function addUnsubscribeErrorResponse({
-  mailId,
-  success,
-  from,
-  image = null,
-  reason = null
-}) {
+export async function addUnsubscribeErrorResponse(
+  { mailId, success, from, image = null, reason = null },
+  userId
+) {
   console.log(
     `mail-service: add unsubscribe error response, success: ${success}`
   );
   const domain = getDomain(from);
   if (success) {
-    addUnsubscriptionToStats();
-    return addResolvedUnsubscription({ mailId, image, domain });
+    return Promise.all([
+      addUnsubscriptionToStats(),
+      addResolvedUnsubscription({ mailId, image, domain }),
+      resolveUserUnsubscription(userId, mailId)
+    ]);
   }
-  addFailedUnsubscriptionToStats();
-  return addUnresolvedUnsubscription({ mailId, image, domain, reason });
+  return Promise.all([
+    addFailedUnsubscriptionToStats(),
+    addUnresolvedUnsubscription({ mailId, image, domain, reason }),
+    resolveUserUnsubscription(userId, mailId)
+  ]);
 }
 
 function isUnsubscribable(mail) {
@@ -272,8 +280,8 @@ function hasUnsubscribedAlready(mail, unsubscriptions = []) {
   if (!unsubInfo) {
     return null;
   }
-  const { image, unsubStrategy, estimatedSuccess } = unsubInfo;
-  return { image, unsubStrategy, estimatedSuccess };
+  const { image, unsubStrategy, estimatedSuccess, resolved } = unsubInfo;
+  return { image, unsubStrategy, estimatedSuccess, resolved };
 }
 
 async function getEstimatedEmails(query, gmail) {

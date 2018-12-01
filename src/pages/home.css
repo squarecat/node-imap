@@ -101,10 +101,6 @@ h1 {
   transition: filter 500ms ease-in-out;
 }
 
-.leave-me-alone-logo .logo-emoji {
-  width: 140px;
-}
-
 .leave-me-alone-logo.active .gmail-logo {
   filter: blur(10px);
 }
