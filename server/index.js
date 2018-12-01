@@ -10,6 +10,8 @@ import auth from './auth';
 import mailApi from './rest/mail';
 import paymentsApi from './rest/payments';
 
+import { recordStats } from './dao/stats';
+
 import { url as mongoUrl, connect as connectDb } from './dao/db';
 
 nowLogs('colinloveslogs');
@@ -41,6 +43,7 @@ const App = {
     console.log('server starting');
     await connectDb();
     server.listen(2345);
+    await recordStats();
     console.log('server started');
   }
 };
