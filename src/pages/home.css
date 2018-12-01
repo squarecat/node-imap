@@ -337,6 +337,22 @@ h1 {
   color: var(--primary-font-color);
 }
 
+.love > div {
+  width: 90%;
+  max-width: 1050px;
+}
+.tweet-box {
+  margin-top: 45px;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  grid-gap: 15px;
+  align-items: flex-start;
+  padding-top: 0;
+}
+.twitter-tweet {
+  max-width: 100% !important;
+}
+
 @media (max-width: 400px) {
   .more-info {
     position: relative;
@@ -373,22 +389,14 @@ h1 {
   .footer {
     padding-bottom: 50px;
   }
-}
-
-.love > div {
-  width: 90%;
-  max-width: 1050px;
-}
-.tweet-box {
-  margin-top: 45px;
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-gap: 15px;
-  align-items: flex-start;
-  padding-top: 0;
-}
-.twitter-tweet {
-  max-width: 100% !important;
+  .tweet-box {
+    margin-top: 45px;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 15px;
+    align-items: flex-start;
+    padding-top: 0;
+  }
 }
 
 @keyframes falling {
