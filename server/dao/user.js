@@ -128,6 +128,21 @@ export async function addUnsubscription(id, mailData) {
   }
 }
 
+export async function resolveUnsubscription(id, mailId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'unsubscriptions.id': mailId },
+      { $set: { 'unsubscriptions.$.resolved': true } }
+    );
+    console.log(`users-dao: resolved users unsubscriptions ${id}`);
+  } catch (err) {
+    console.error('users-dao: error resolving user unsubscriptions');
+    console.error(err);
+    throw err;
+  }
+}
+
 export async function addScan(id, scanData) {
   try {
     const col = await db().collection(COL_NAME);

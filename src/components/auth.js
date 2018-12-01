@@ -4,6 +4,7 @@ import { fetchLoggedInUser } from '../utils/auth';
 import { useAsync, useGlobal } from '../utils/hooks';
 import './auth.css';
 import gmailLogo from '../assets/gmail.png';
+import girlLogo from '../assets/leavemealonegirl.png';
 
 export default ({ children }) => {
   const { error, value: user, loading } = useAsync(fetchLoggedInUser, [], {
@@ -40,10 +41,12 @@ function UserAuth({ user: newUser, children, loading }) {
     >
       <div className="dice">
         <div className="auth-loading-pane auth-loading-pane--front">
-          <span className="logo-emoji">🙅‍♀️</span>
+          <span className="logo-emoji">
+            <img src={girlLogo} alt="girl-logo" className="girl-logo" />
+          </span>
         </div>
         <div className="auth-loading-pane auth-loading-pane--back">
-          <img src={gmailLogo} alt="gmail-logo" />
+          <img src={gmailLogo} alt="gmail-logo" className="gmail-logo" />
         </div>
       </div>
       <div className="loaded-content">{!loading && user ? children : null}</div>

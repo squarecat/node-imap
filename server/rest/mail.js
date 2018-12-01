@@ -86,7 +86,7 @@ export default function(app, server) {
 
     socket.on('unsubscribe-error-response', async data => {
       try {
-        const response = await addUnsubscribeErrorResponse(data);
+        const response = await addUnsubscribeErrorResponse(data, socket.userId);
         socket.emit('unsubscribe-error-response:success', {
           id: data.mailId,
           data: response

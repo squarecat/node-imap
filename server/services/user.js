@@ -4,7 +4,8 @@ import {
   createUser,
   updateUser,
   addUnsubscription,
-  addScan
+  addScan,
+  resolveUnsubscription
 } from '../dao/user';
 
 export async function getUserById(id) {
@@ -74,4 +75,8 @@ export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
 
 export function addScanToUser(userId, scanData) {
   return addScan(userId, scanData);
+}
+
+export async function resolveUserUnsubscription(userId, mailId) {
+  return resolveUnsubscription(userId, mailId);
 }

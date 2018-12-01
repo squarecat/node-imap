@@ -5,7 +5,9 @@
   "author": "James Ivings <james@squarecat.io>",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@sentry/browser": "^4.4.1",
     "aes256": "^1.0.4",
+    "agenda": "^2.0.2",
     "axios": "^0.18.0",
     "connect-mongo": "^2.0.1",
     "date-fns": "^1.29.0",
@@ -14,6 +16,8 @@
     "express-session": "^1.15.6",
     "getconfig": "^4.5.0",
     "googleapis": "^35.0.0",
+    "lodash.get": "^4.4.2",
+    "lodash.omit": "^4.5.0",
     "mailgun-js": "^0.22.0",
     "mongodb": "^3.1.10",
     "node-gmail-api": "^0.6.1",

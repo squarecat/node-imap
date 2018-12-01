@@ -496,7 +496,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
         </div>
         <div className="subject">{m.subject}</div>
         <div className="actions">
-          {m.estimatedSuccess !== false ? (
+          {m.estimatedSuccess !== false || m.resolved ? (
             <Toggle
               status={isSubscibed}
               loading={m.isLoading}
