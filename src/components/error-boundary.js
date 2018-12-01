@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Sentry from '@sentry/browser';
 
 export default class ErrorBoundary extends Component {
   state = { hasError: false };
@@ -7,11 +8,19 @@ export default class ErrorBoundary extends Component {
     return { hasError: true, error };
   }
 
-  componentDidCatch() {}
+  componentDidCatch(error, errorInfo) {
+    this.setState({ error });
+    Sentry.withScope(scope => {
+      Object.keys(errorInfo).forEach(key => {
+        scope.setExtra(key, errorInfo[key]);
+      });
+      Sentry.captureException(error);
+    });
+  }
 
   render() {
-    const { hasError, error } = this.state;
-    if (hasError) {
+    const { error } = this.state;
+    if (error) {
       // You can render any custom fallback UI
       return (
         <div className="mail-error">
@@ -21,6 +30,7 @@ export default class ErrorBoundary extends Component {
             This is definitely our fault, so if it still doesn't work then
             please bear with us and we'll try and get it sorted for you!
           </p>
+          <a onClick={() => Sentry.showReportDialog()}>Report feedback</a>
           <pre className="error-details">{error}</pre>
         </div>
       );
