@@ -3,7 +3,9 @@ import {
   addUnsubscriptionByEmail,
   addScan,
   addFailedUnsubscription,
-  addNumberofEmails
+  addNumberofEmails,
+  addPayment,
+  addUser
 } from '../dao/stats';
 
 export function addUnsubscriptionToStats({ unsubStrategy }) {
@@ -19,4 +21,10 @@ export function addFailedUnsubscriptionToStats() {
 }
 export function addNumberofEmailsToStats(data) {
   return addNumberofEmails(data);
+}
+export function addUserToStats() {
+  return addUser();
+}
+export function addPaymentToStats(data) {
+  return addPayment(data);
 }

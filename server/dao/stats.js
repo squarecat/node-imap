@@ -28,7 +28,7 @@ async function addUnsubscription(type, count = 1) {
       { upsert: true }
     );
   } catch (err) {
-    console.error('users-dao: error inserting stat unsubscription', type);
+    console.error('stats-dao: error inserting stat unsubscription', type);
     console.error(err);
     throw err;
   }
@@ -40,6 +40,10 @@ export function addScan(count = 1) {
 
 export function addFailedUnsubscription(count = 1) {
   return updateSingleStat('unsubscriptionsFailed', count);
+}
+
+export function addUser(count = 1) {
+  return updateSingleStat('users', count);
 }
 
 // generic update stat function for anything
@@ -56,7 +60,7 @@ async function updateSingleStat(statName, count = 1) {
       { upsert: true }
     );
   } catch (err) {
-    console.error('users-dao: error inserting stat', statName);
+    console.error('stats-dao: error inserting stat', statName);
     console.error(err);
     throw err;
   }
@@ -82,10 +86,30 @@ export async function addNumberofEmails({
     );
   } catch (err) {
     console.error(
-      'users-dao: error inserting stat total emails and total unsubscribable emails',
+      'stats-dao: error inserting stat total emails and total unsubscribable emails',
       totalEmails,
       totalUnsubscribableEmails
     );
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function addPayment({ price }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          totalRevenue: price,
+          totalSales: count
+        }
+      },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error(`stats-dao: error inserting payment stat ${price}`);
     console.error(err);
     throw err;
   }
@@ -96,7 +120,7 @@ export async function getStats() {
     const col = await db().collection(COL_NAME);
     return await col.findOne();
   } catch (err) {
-    console.error('users-dao: failed to get stats');
+    console.error('stats-dao: failed to get stats');
     console.error(err);
     throw err;
   }
@@ -112,6 +136,7 @@ agenda.define('record day stats', async (job, done) => {
   // calc today stats
   const today = {
     timestamp: isoDate(),
+    users: allStats.users - (yesterdayTotals.users || 0),
     scans: allStats.scans - (yesterdayTotals.scans || 0),
     unsubscriptions:
       allStats.unsubscriptions - (yesterdayTotals.unsubscriptions || 0),
@@ -130,7 +155,9 @@ agenda.define('record day stats', async (job, done) => {
       (yesterdayTotals.unsubscriptionsByMailtoStrategy || 0),
     unsubscriptionsByLinkStrategy:
       allStats.unsubscriptionsByLinkStrategy -
-      (yesterdayTotals.unsubscriptionsByLinkStrategy || 0)
+      (yesterdayTotals.unsubscriptionsByLinkStrategy || 0),
+    totalRevenue: allStats.totalRevenue - (yesterdayTotals.totalRevenue || 0),
+    totalSales: allStats.totalSales - (yesterdayTotals.totalSales || 0)
   };
   const col = await db().collection(COL_NAME);
   // insert today total
