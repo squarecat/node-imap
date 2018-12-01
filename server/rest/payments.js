@@ -2,6 +2,8 @@ import axios from 'axios';
 import pkg from '../../package.json';
 const uuid = require('uuid');
 
+import { addPaymentToStats } from '../services/stats';
+
 const { version } = pkg;
 const airTableKey = 'keymWk6x3qe1QpDJn';
 const baseUrl = 'https://api.airtable.com/v0';
@@ -40,6 +42,8 @@ function sendToTable(data, key) {
   // } else {
   //   referrer = 'direct';
   // }
+
+  addPaymentToStats({ price: parseFloat(p_price) });
 
   return axios
     .request({

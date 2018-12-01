@@ -8,6 +8,8 @@ import {
   resolveUnsubscription
 } from '../dao/user';
 
+import { addUserToStats } from './stats';
+
 export async function getUserById(id) {
   try {
     let user = await getUser(id);
@@ -32,6 +34,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         keys,
         token: v4()
       });
+      addUserToStats();
     } else {
       user = await updateUser(id, {
         keys

@@ -6,7 +6,7 @@ export let url;
 if (config.db.user) {
   url = `mongodb://${config.db.user}:${config.db.password}@${config.db.host}:${
     config.db.port
-  }`;
+  }/${config.db.name}?authSource=admin`;
 } else {
   url = `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`;
 }
