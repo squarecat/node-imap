@@ -9,6 +9,7 @@ import userApi from './rest/user';
 import auth from './auth';
 import mailApi from './rest/mail';
 import paymentsApi from './rest/payments';
+import statsApi from './rest/stats';
 
 import { recordStats } from './dao/stats';
 
@@ -35,6 +36,9 @@ auth(app);
 userApi(app);
 mailApi(app, server);
 paymentsApi(app);
+statsApi(app);
+
+app.get('/api', (req, res) => res.send('OK'));
 
 app.use(express.static(path.join(__dirname, '../public')));
 
