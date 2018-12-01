@@ -65,7 +65,7 @@ export async function scanMail(
   { onMail, onError, onEnd, onProgress }
 ) {
   try {
-    let senders = [];
+    let dupes = [];
     const { then, now } = getTimeRange(timeframe);
 
     const user = await getUserById(userId);
@@ -109,8 +109,11 @@ export async function scanMail(
             unsubscriptions
           );
           // don't send duplicates
-          if (mail && !senders.includes(mail.from)) {
-            senders = [...senders, mail.from];
+          const hasDupe = dupes.some(
+            dupe => dupe.from === mail.from && dupe.to === mail.to
+          );
+          if (mail && !hasDupe) {
+            dupes = [...dupes, { to: mail.to, from: mail.from }];
             if (prevUnsubscriptionInfo) {
               totalPreviouslyUnsubscribedEmails++;
               onMail({ ...mail, subscribed: false, ...prevUnsubscriptionInfo });

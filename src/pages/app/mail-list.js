@@ -399,6 +399,7 @@ function List({
 }) {
   // const [unsubscribeError, setUnsubscribeError] = useState(null);
   const [unsubData, setUnsubData] = useState(null);
+  const [user] = useGlobal('user');
 
   if (!mail.length && isSearchFinished) {
     return (
@@ -414,10 +415,10 @@ function List({
   }
 
   const isTweetPosition = (pos, arrLen) => {
-    return pos === 9 || (arrLen < 10 && pos === arrLen - 1);
+    return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
   };
 
-  const socialContent = getSocialContent(mail);
+  const socialContent = getSocialContent(mail, user);
   const sortedMail = mail
     .sort((a, b) => {
       return +b.googleDate - +a.googleDate;
@@ -482,7 +483,17 @@ function getSocialItem(mail, socialContent) {
 
 function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   const isSubscibed = !!m.subscribed;
-  const [, fromName, fromEmail] = /^(.*)(<.*>)/.exec(m.from);
+  let fromName;
+  let fromEmail;
+  if (m.from.match(/^.*<.*>/)) {
+    const [, name, email] = /^(.*)(<.*>)/.exec(m.from);
+    fromName = name;
+    fromEmail = email;
+  } else {
+    fromName = '';
+    fromEmail = m.from;
+  }
+
   return (
     <li className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}>
       <div className="mail-item">
@@ -529,8 +540,11 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   );
 }
 
-function getSocialContent(mail) {
-  const unsubCount = mail.reduce((num, m) => (m.subscribed ? num : num + 1), 0);
+function getSocialContent(mail, user) {
+  let unsubCount = 0;
+  if (user) {
+    unsubCount = user.unsubscriptions ? user.unsubscriptions.length : 0;
+  }
 
   const socialOutput = progressTweets.reduce((out, progress) => {
     if (unsubCount >= progress.val) {
