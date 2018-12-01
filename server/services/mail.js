@@ -7,6 +7,8 @@ import format from 'date-fns/format';
 import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 
+import { emailStringIsEqual } from '../utils/parsers';
+
 import {
   getUserById,
   addUnsubscriptionToUser,
@@ -110,7 +112,9 @@ export async function scanMail(
           );
           // don't send duplicates
           const hasDupe = dupes.some(
-            dupe => dupe.from === mail.from && dupe.to === mail.to
+            dupe =>
+              emailStringIsEqual(dupe.from, mail.from) &&
+              emailStringIsEqual(dupe.to, mail.to)
           );
           if (mail && !hasDupe) {
             dupes = [...dupes, { to: mail.to, from: mail.from }];
