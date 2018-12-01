@@ -412,13 +412,18 @@ function List({
       </div>
     );
   }
+
+  const isTweetPosition = (pos, arrLen) => {
+    return pos === 9 || (arrLen < 10 && pos === arrLen - 1);
+  };
+
   const socialContent = getSocialContent(mail);
   const sortedMail = mail
     .sort((a, b) => {
       return +b.googleDate - +a.googleDate;
     })
     .reduce((out, mailItem, i) => {
-      if (i === 9) {
+      if (isTweetPosition(i, mail.length)) {
         return [
           ...out,
           { type: 'mail', ...mailItem },
@@ -440,13 +445,7 @@ function List({
               />
             </CSSTransition>
           ) : (
-            <CSSTransition
-              key="social"
-              timeout={500}
-              classNames="mail-list-item"
-            >
-              {socialContent}
-            </CSSTransition>
+            getSocialItem(m, socialContent)
           )
         )}
       </TransitionGroup>
@@ -470,6 +469,14 @@ function List({
         />
       ) : null}
     </div>
+  );
+}
+
+function getSocialItem(mail, socialContent) {
+  return (
+    <CSSTransition key="social" timeout={500} classNames="mail-list-item">
+      {socialContent}
+    </CSSTransition>
   );
 }
 
