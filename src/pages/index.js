@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import gmailLogo from '../assets/gmail.png';
 import dogs from '../assets/dogs.jpg';
@@ -27,6 +27,16 @@ const IndexPage = () => {
       behavior: 'smooth'
     });
   };
+  useEffect(() => {
+    document.querySelectorAll('twitter-widget').forEach(e => {
+      const style = document.createElement('style');
+      style.innerHTML = `
+    .Tweet-card {
+      display: none;
+    }`;
+      e.shadowRoot.appendChild(style);
+    });
+  }, []);
   return (
     <Layout>
       <Colin />
@@ -129,6 +139,139 @@ const IndexPage = () => {
               We promise to never exploit you or your data. We only want to help
               you regain control of your inbox.
             </p>
+          </div>
+        </div>
+        <div className="love">
+          <div>
+            <h2>💌 Wall of love 💌</h2>
+            <div className="tweet-wall">
+              <div className="tweet-box">
+                <div className="col">
+                  <blockquote
+                    className="twitter-tweet"
+                    data-conversation="none"
+                    data-cards="hidden"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      I must admit I&#39;m lazy at unsubscribing to subscription
+                      emails, so my email inbox grows at an alarming rate every
+                      day. I just used{' '}
+                      <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
+                        @LeaveMeAloneApp
+                      </a>{' '}
+                      and unsubscribed to 15 emails in 3 minutes. What a great
+                      idea! 🙅‍♀️
+                    </p>
+                    &mdash; Tom Haworth (@tomhaworth_b13){' '}
+                    <a href="https://twitter.com/tomhaworth_b13/status/1068904289031065602?ref_src=twsrc%5Etfw">
+                      December 1, 2018
+                    </a>
+                  </blockquote>
+
+                  <blockquote
+                    className="twitter-tweet"
+                    data-conversation="none"
+                    data-cards="hidden"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      🙌 I&#39;ve been beta testing{' '}
+                      <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
+                        @LeaveMeAloneApp
+                      </a>{' '}
+                      and it&#39;s the best because I can never find all
+                      newsletters I&#39;m subscribed too. I unsubscribed from a
+                      few in seconds. So cool!! <br />
+                      <br />
+                      Check it out at{' '}
+                      <a href="https://t.co/xIALdiT5YB">
+                        https://t.co/xIALdiT5YB
+                      </a>
+                    </p>
+                    &mdash; Sam Parton (@ItsMrSammeh){' '}
+                    <a href="https://twitter.com/ItsMrSammeh/status/1068594425130037248?ref_src=twsrc%5Etfw">
+                      November 30, 2018
+                    </a>
+                  </blockquote>
+                </div>
+                <div className="col">
+                  <blockquote className="twitter-tweet" data-lang="en">
+                    <p lang="en" dir="ltr">
+                      Such a good privacy-first app built my indie makers! Can’t
+                      wait for the full launch 💌{' '}
+                      <a href="https://t.co/DxRKc2WfX3">
+                        https://t.co/DxRKc2WfX3
+                      </a>
+                    </p>
+                    &mdash; Steph Smith (@stephsmithio){' '}
+                    <a href="https://twitter.com/stephsmithio/status/1068872694710628352?ref_src=twsrc%5Etfw">
+                      December 1, 2018
+                    </a>
+                  </blockquote>
+                  <blockquote
+                    className="twitter-tweet"
+                    data-cards="hidden"
+                    data-conversation="none"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      Loving it so far. I just got 4 emails from different sites
+                      saying goodbye cos I got unsubbed from them 😂 I just
+                      played &#39;Thank you, next&#39; by Ariana Grande loud and
+                      clear and had some coffee grinning like a maniac ☕
+                    </p>
+                    &mdash; Dinuka (@its_dinuka){' '}
+                    <a href="https://twitter.com/its_dinuka/status/1068558838670909440?ref_src=twsrc%5Etfw">
+                      November 30, 2018
+                    </a>
+                  </blockquote>
+                </div>
+                <div className="col">
+                  <blockquote
+                    className="twitter-tweet"
+                    data-conversation="none"
+                    data-cards="hidden"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      I&#39;m honestly impressed by{' '}
+                      <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
+                        @LeaveMeAloneApp
+                      </a>{' '}
+                      ! I unsubcribed from ~ 97 subscriptions in A LOT less
+                      time, than I would have needed if I did it manually.{' '}
+                      <br /> ▶️ Fast
+                      <br />
+                      ▶️ Easy
+                      <br />
+                      ▶️ Beautiful ❤️😀{' '}
+                      <a href="https://t.co/vMZuM8xAMM">
+                        https://t.co/vMZuM8xAMM
+                      </a>
+                    </p>
+                    &mdash; Luis Hocke (@luishocke){' '}
+                    <a href="https://twitter.com/luishocke/status/1068872261384499200?ref_src=twsrc%5Etfw">
+                      December 1, 2018
+                    </a>
+                  </blockquote>
+                  <blockquote className="twitter-tweet" data-lang="en">
+                    <p lang="en" dir="ltr">
+                      <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
+                        @LeaveMeAloneApp
+                      </a>{' '}
+                      is shaping up to be an amazing product... <br />
+                      <br />
+                      Keep it up guys!
+                    </p>
+                    &mdash; Sergio Mattei ✌️ (@matteing){' '}
+                    <a href="https://twitter.com/matteing/status/1068871586617413632?ref_src=twsrc%5Etfw">
+                      December 1, 2018
+                    </a>
+                  </blockquote>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="makers">

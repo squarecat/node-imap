@@ -31,7 +31,6 @@ module.exports = {
         vendorId: 35012,
         productId: 545883,
         checkoutSecret: '1f1rd9u',
-        debug: true,
         completeDetails: true
       }
     },
@@ -49,6 +48,7 @@ module.exports = {
         track_sessions: true,
         exclude: ['/app', '/app/*']
       }
-    }
+    },
+    'gatsby-plugin-twitter'
   ]
 };

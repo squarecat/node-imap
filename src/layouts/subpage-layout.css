@@ -31,11 +31,14 @@ a {
 
 .subpage {
   padding: 80px 44px;
+  background-color: #fff9f9;
+  min-height: 100%;
 }
 
 .subpage-content {
   width: 990px;
   max-width: 100%;
+  margin: 0 auto;
 }
 
 .subpage h1 {

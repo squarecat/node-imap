@@ -7,7 +7,7 @@ export default ({ children }) => {
   return (
     <Layout>
       <div className="header">
-        <a href="/app" className="header-logo">
+        <a href="/" className="header-logo">
           <img alt="logo" src={logo} />
         </a>
         <div className="header-title">Leave Me Alone </div>

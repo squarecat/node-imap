@@ -5,6 +5,12 @@
   --link-color: rgba(231, 57, 48, 0.749);
 }
 
+body,
+html,
+#___gatsby {
+  min-height: 100%;
+}
+
 body {
   background-color: var(--main-bg-color);
   padding-bottom: 0;
@@ -161,14 +167,17 @@ h1 {
 } */
 
 .privacy,
-.makers {
+.makers,
+.love {
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
 }
+
 .privacy > div,
-.makers > div {
+.makers > div,
+.love > div {
   width: 600px;
   margin: 0 auto;
   text-align: center;
@@ -222,7 +231,7 @@ h1 {
   border-right-width: 50vw;
 }
 
-.makers:before {
+.love:before {
   content: '';
   position: absolute;
   top: 0;
@@ -233,7 +242,8 @@ h1 {
   border-left-width: 50vw;
   border-right-width: 50vw;
 }
-.makers {
+.makers,
+.love {
   padding-top: 200px;
   min-height: 80vh;
 }
@@ -363,6 +373,22 @@ h1 {
   .footer {
     padding-bottom: 50px;
   }
+}
+
+.love > div {
+  width: 90%;
+  max-width: 1050px;
+}
+.tweet-box {
+  margin-top: 45px;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  grid-gap: 15px;
+  align-items: flex-start;
+  padding-top: 0;
+}
+.twitter-tweet {
+  max-width: 100% !important;
 }
 
 @keyframes falling {
