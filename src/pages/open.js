@@ -7,9 +7,8 @@ import { useAsync } from '../utils/hooks';
 
 import './open.css';
 
-async function getStats() {
-  const resp = await fetch('/api/stats');
-  return resp.json();
+function getStats() {
+  return fetch('/api/stats').then(resp => resp.json());
 }
 
 function chart(ctx, stats) {
@@ -52,6 +51,48 @@ function chart(ctx, stats) {
     }
   });
 }
+function dailyRevChart(ctx, stats) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram } = daily;
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          fill: false,
+          backgroundColor: 'blue',
+          borderColor: 'blue',
+          data: histogram.map(d => ({
+            x: d.timestamp,
+            y: d.totalRevenue
+          }))
+        }
+      ]
+    },
+    type: 'line',
+    options: {
+      legend: {
+        display: false
+      },
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              precision: 0,
+              callback: function(label) {
+                return `$${label}`;
+              }
+            }
+          }
+        ]
+      },
+      responsive: true
+    }
+  });
+}
+
 function scanChart(ctx, stats) {
   if (!stats) return null;
   const { daily } = stats;
@@ -61,13 +102,12 @@ function scanChart(ctx, stats) {
     data: {
       datasets: [
         {
-          label: 'Unsubscriptions',
           fill: false,
           backgroundColor: 'blue',
           borderColor: 'blue',
           data: histogram.map(d => ({
             x: d.timestamp,
-            y: d.unsubscriptions
+            y: d.scans
           }))
         }
       ]
@@ -92,11 +132,12 @@ function scanChart(ctx, stats) {
     }
   });
 }
+
 export default function Terms() {
   const { error, value: stats, loading } = useAsync(getStats);
 
   const subscriptionRef = useRef(null);
-  const monthlyRevRef = useRef(null);
+  const dailyRevRef = useRef(null);
   const scanRef = useRef(null);
 
   useEffect(
@@ -104,14 +145,14 @@ export default function Terms() {
       if (subscriptionRef.current) {
         chart(subscriptionRef.current.getContext('2d'), stats);
       }
-      if (monthlyRevRef.current) {
-        chart(monthlyRevRef.current.getContext('2d'), stats);
+      if (dailyRevRef.current) {
+        dailyRevChart(dailyRevRef.current.getContext('2d'), stats);
       }
       if (scanRef.current) {
         scanChart(scanRef.current.getContext('2d'), stats);
       }
     },
-    [stats, subscriptionRef.current, monthlyRevRef.current, scanRef.current]
+    [stats, subscriptionRef.current, dailyRevRef.current, scanRef.current]
   );
   if (loading) {
     return null;
@@ -128,8 +169,8 @@ export default function Terms() {
         </div>
         <div className="revenue">
           <div className="chart box">
-            <h2>Monthly Revenue</h2>
-            <canvas ref={monthlyRevRef} />
+            <h2>Daily Revenue</h2>
+            <canvas ref={dailyRevRef} />
           </div>
           <div className="totals">
             <div className="big-stat box">
@@ -138,11 +179,15 @@ export default function Terms() {
             </div>
             <div className="big-stat box">
               <span className="label">Total sales</span>
-              <span className="value">0</span>
+              <span className="value">{format(stats.totalSales)}</span>
             </div>
             <div className="big-stat box">
               <span className="label">Revenue per user</span>
               <span className="value">{currency(0)}</span>
+            </div>
+            <div className="big-stat box">
+              <span className="label">Total users</span>
+              <span className="value">{format(stats.users)}</span>
             </div>
           </div>
         </div>
