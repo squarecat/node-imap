@@ -139,7 +139,7 @@ function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
           <a className="btn compact" onClick={onClickPositive}>
             Awesome!{' '}
             <span className="emoji" role="img" aria-label="thumbs up emoji">
-              ️️👍
+              ️👍
             </span>
           </a>
         </div>

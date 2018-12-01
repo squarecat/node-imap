@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React  from 'react';
 
 import logo from '../../assets/transparent-logo.png';
 import './welcome.css';
@@ -8,7 +8,6 @@ const tweetText = encodeURIComponent(
 );
 
 export default ({ openPriceModal }) => {
-  const [isScanning, setScanning] = useState(false);
   return (
     <>
       <div>
@@ -43,9 +42,8 @@ export default ({ openPriceModal }) => {
         </div>
         <div className="action">
           <a
-            className={`btn ${isScanning ? 'disabled' : ''} centered`}
+            className={'btn centered'}
             onClick={() => {
-              setScanning(true);
               openPriceModal();
             }}
           >

@@ -7,6 +7,7 @@
 
 body {
   background-color: var(--main-bg-color);
+  padding-bottom: 0;
 }
 
 #main {
@@ -33,6 +34,7 @@ cite a:focus {
   color: var(--link-color);
   border-bottom: 1px dashed var(--link-color);
   cursor: pointer;
+  font-weight: bold;
 }
 
 p a:hover,
@@ -55,6 +57,17 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.more-info {
+  display: block;
+  font-weight: 800;
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
 }
 
 .catchy-tagline {
@@ -162,13 +175,6 @@ h1 {
   max-width: 100%;
 }
 
-.more-info {
-  display: block;
-  font-weight: 800;
-  transform: translateY(100px);
-  cursor: pointer;
-}
-
 .huskos {
   display: flex;
   align-items: center;
@@ -200,8 +206,7 @@ h1 {
   color: var(--primary-font-color);
   font-weight: bolder;
   min-height: 65vh;
-  padding-top: 250px;
-  padding-bottom: 150px;
+  padding: 250px 0 150px 0;
   text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.15);
 }
 
@@ -279,32 +284,6 @@ h1 {
   left: 10vw;
 }
 
-@keyframes falling {
-  0% {
-    transform: translate3D(-7.5%, -100%, 0);
-  }
-
-  100% {
-    transform: translate3D(7.5%, 100%, 0);
-  }
-}
-
-@media (max-width: 500px) {
-  .friendly-neighbourhood-hero {
-    padding: 0 20px;
-  }
-  .title {
-    font-size: 35px;
-  }
-  .catchy-tagline {
-    font-size: 20px;
-  }
-  .privacy > div,
-  .makers > div {
-    padding: 20px;
-  }
-}
-
 .footer {
   display: flex;
   flex-direction: column;
@@ -346,4 +325,52 @@ h1 {
 }
 .footer-social li:hover svg {
   color: var(--primary-font-color);
+}
+
+@media (max-width: 400px) {
+  .more-info {
+    position: relative;
+    bottom: -20px;
+  }
+}
+
+@media (max-width: 500px) {
+  .friendly-neighbourhood-hero {
+    padding: 20px;
+    align-items: flex-start;
+  }
+  /* .more-info {
+    position: relative;
+    bottom: -20px;
+  } */
+  .title {
+    font-size: 35px;
+  }
+  .catchy-tagline {
+    font-size: 20px;
+  }
+  .privacy {
+    padding: 150px 0 50px 0;
+  }
+  .privacy-title {
+    margin-top: 150px;
+  }
+  .privacy > div,
+  .makers > div {
+    padding: 20px;
+  }
+  #main,
+  .footer {
+    padding-bottom: 50px;
+  }
+}
+
+@keyframes falling {
+  0% {
+    transform: translate3D(-7.5%, -100%, 0);
+  }
+
+  100% {
+    transform: translate3D(7.5%, 100%, 0);
+  }
 }

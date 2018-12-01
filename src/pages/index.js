@@ -10,6 +10,10 @@ import Layout from '../layouts/layout';
 
 import './home.css';
 
+const indieMakerTweetText = encodeURIComponent(
+  `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
+);
+
 const IndexPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {
@@ -18,7 +22,7 @@ const IndexPage = () => {
 
   const scrollDown = () => {
     window.scrollTo({
-      top: window.innerHeight - 100,
+      top: document.querySelector('.privacy').offsetTop,
       left: 0,
       behavior: 'smooth'
     });
@@ -144,7 +148,14 @@ const IndexPage = () => {
               funding or outside support. We're real people (not the huskies!),
               we're not a soulless corporation out to steal your money! 🙅‍
             </p>
-            <p>Support the Indie Maker movement!</p>
+            <p>
+              <a
+                target="_"
+                href={`https://twitter.com/intent/tweet?text=${indieMakerTweetText}`}
+              >
+                Support the Indie Maker movement!
+              </a>
+            </p>
           </div>
         </div>
       </div>

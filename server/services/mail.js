@@ -143,6 +143,12 @@ export async function scanMail(
       onEnd();
     });
 
+    s.on('timeout', err => {
+      console.error('mail-service: gmail timeout');
+      console.error(err);
+      onError(err.toString());
+    });
+
     s.on('error', err => {
       console.error('mail-service: gmail error');
       console.error(err);
@@ -150,7 +156,6 @@ export async function scanMail(
     });
   } catch (err) {
     onError(err.toString());
-    throw err;
   }
 }
 
@@ -172,12 +177,12 @@ export async function unsubscribeMail(userId, mail) {
     addUnsubscriptionToUser(userId, {
       mail,
       image: output.image,
-      unsubStrategy,
+      unsubscribeStrategy: unsubStrategy,
       unsubscribeLink,
       unsubscribeMailTo,
       estimatedSuccess: output.estimatedSuccess
     });
-    if (output.estimatedSuccess) addUnsubscriptionToStats();
+    if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
     return {
       ...output,
       unsubStrategy
@@ -190,7 +195,7 @@ export async function unsubscribeMail(userId, mail) {
 }
 
 export async function addUnsubscribeErrorResponse(
-  { mailId, success, from, image = null, reason = null },
+  { mailId, success, from, image = null, reason = null, unsubStrategy },
   userId
 ) {
   console.log(
@@ -200,13 +205,19 @@ export async function addUnsubscribeErrorResponse(
   if (success) {
     return Promise.all([
       addUnsubscriptionToStats(),
-      addResolvedUnsubscription({ mailId, image, domain }),
+      addResolvedUnsubscription({ mailId, image, domain, unsubStrategy }),
       resolveUserUnsubscription(userId, mailId)
     ]);
   }
   return Promise.all([
     addFailedUnsubscriptionToStats(),
-    addUnresolvedUnsubscription({ mailId, image, domain, reason }),
+    addUnresolvedUnsubscription({
+      mailId,
+      image,
+      domain,
+      reason,
+      unsubStrategy
+    }),
     resolveUserUnsubscription(userId, mailId)
   ]);
 }
