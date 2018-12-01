@@ -16,3 +16,16 @@
 .modal-close-btn:hover {
   transform: scale(1);
 }
+
+@media (max-width: 350px) {
+  .modal-close-btn {
+    right: 10px;
+    top: 10px;
+  }
+}
+@media (max-width: 500px) {
+  .modal-close-btn {
+    right: 15px;
+    top: 15px;
+  }
+}

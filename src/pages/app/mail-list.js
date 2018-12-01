@@ -236,7 +236,7 @@ export default ({ timeframe, showPriceModal }) => {
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
         <span className="action-item results-data">
           <span className="quantity">{mail ? mail.length : 0}</span>
-          subscriptions found
+          subscriptions <span className="extra">found</span>
         </span>
         <span className="action-item progress">{`Scanning... ${
           isSearchFinished ? 100 : believableProgress

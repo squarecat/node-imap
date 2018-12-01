@@ -243,3 +243,29 @@ pre {
 .mail-list-item.loading .status {
   display: none;
 }
+
+@media (max-width: 500px) {
+  .social-content {
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .mail-list-social .avatar {
+    padding: 0;
+  }
+  .mail-list-social .actions {
+    min-width: 90px;
+    padding: 0;
+  }
+  .mail-list-social .actions .btn svg {
+    display: none;
+  }
+  .mail-list-social .actions .btn {
+    font-size: 14px;
+  }
+  .revoke-token-instructions {
+    padding: 0 10px;
+  }
+  .status {
+    opacity: 0.5;
+  }
+}

@@ -90,3 +90,22 @@ p a:hover {
   color: rgba(231, 57, 48, 1);
   border-bottom: 1px dashed rgba(231, 57, 48, 1);
 }
+
+@media (max-width: 500px) {
+  .app-content {
+    padding: 20px 0;
+  }
+  .results-data {
+    min-width: auto;
+  }
+
+  .mail-actions {
+    padding: 0 20px;
+  }
+  .mail-actions .extra {
+    display: none;
+  }
+  .mail-actions .action-item > .btn {
+    width: 120px;
+  }
+}

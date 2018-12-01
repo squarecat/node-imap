@@ -203,3 +203,36 @@ p.monthly-price {
   opacity: 0.25;
   pointer-events: none;
 }
+
+@media (max-width: 350px) {
+  .modal {
+    padding: 10px 5px 5px 5px;
+  }
+  .modal p,
+  .feedback-options {
+    font-size: 12px;
+  }
+  .price-free .btn.compact,
+  .price-paid .btn.compact {
+    font-size: 12px;
+    line-height: 14px;
+  }
+}
+@media (max-width: 500px) {
+  .modal {
+    max-width: 100%;
+    /* show above crisp */
+    z-index: 1000001;
+    padding: 15px 10px;
+  }
+  .modal p,
+  .feedback-options {
+    font-size: 14px;
+  }
+  .price-free .btn,
+  .price-paid .btn {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+}
