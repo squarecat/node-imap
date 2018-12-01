@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js';
 import numeral from 'numeral';
+import endOfDay from 'date-fns/end_of_day';
 
 import SubPageLayout from '../layouts/subpage-layout';
 import { useAsync } from '../utils/hooks';
 
 import './open.css';
+
+const lineColor = '#EB6C69';
 
 function getStats() {
   return fetch('/api/stats').then(resp => resp.json());
@@ -22,10 +25,10 @@ function chart(ctx, stats) {
         {
           label: 'Unsubscriptions',
           fill: false,
-          backgroundColor: 'blue',
-          borderColor: 'blue',
+          backgroundColor: lineColor,
+          borderColor: lineColor,
           data: histogram.map(d => ({
-            x: d.timestamp,
+            x: endOfDay(d.timestamp),
             y: d.unsubscriptions
           }))
         }
@@ -38,6 +41,14 @@ function chart(ctx, stats) {
       },
       maintainAspectRatio: false,
       scales: {
+        xAxes: [
+          {
+            type: 'time',
+            time: {
+              unit: 'day'
+            }
+          }
+        ],
         yAxes: [
           {
             ticks: {
@@ -60,10 +71,10 @@ function dailyRevChart(ctx, stats) {
       datasets: [
         {
           fill: false,
-          backgroundColor: 'blue',
-          borderColor: 'blue',
+          backgroundColor: lineColor,
+          borderColor: lineColor,
           data: histogram.map(d => ({
-            x: d.timestamp,
+            x: endOfDay(d.timestamp),
             y: d.totalRevenue
           }))
         }
@@ -76,6 +87,14 @@ function dailyRevChart(ctx, stats) {
       },
       maintainAspectRatio: false,
       scales: {
+        xAxes: [
+          {
+            type: 'time',
+            time: {
+              unit: 'day'
+            }
+          }
+        ],
         yAxes: [
           {
             ticks: {
@@ -103,10 +122,10 @@ function scanChart(ctx, stats) {
       datasets: [
         {
           fill: false,
-          backgroundColor: 'blue',
-          borderColor: 'blue',
+          backgroundColor: lineColor,
+          borderColor: lineColor,
           data: histogram.map(d => ({
-            x: d.timestamp,
+            x: endOfDay(d.timestamp),
             y: d.scans
           }))
         }
@@ -119,6 +138,14 @@ function scanChart(ctx, stats) {
       },
       maintainAspectRatio: false,
       scales: {
+        xAxes: [
+          {
+            type: 'time',
+            time: {
+              unit: 'day'
+            }
+          }
+        ],
         yAxes: [
           {
             ticks: {
