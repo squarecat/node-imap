@@ -6,13 +6,22 @@ const React = require('react');
  * See: https://www.gatsbyjs.org/docs/ssr-apis/
  */
 
-exports.onRenderBody = ({ setPostBodyComponents }, pluginOptions) => {
-  return setPostBodyComponents([
+exports.onRenderBody = (
+  { setPostBodyComponents, setHeadComponents },
+  pluginOptions
+) => {
+  setPostBodyComponents([
     <script
       key="chat-widget"
       dangerouslySetInnerHTML={{
         __html: getChat(pluginOptions)
       }}
+    />,
+    <script
+      key="twitter-script"
+      async
+      src="https://platform.twitter.com/widgets.js"
+      charSet="utf-8"
     />
   ]);
 };
