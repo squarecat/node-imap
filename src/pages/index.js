@@ -144,6 +144,10 @@ const IndexPage = () => {
         <div className="love">
           <div>
             <h2>💌 Wall of love 💌</h2>
+            <p>
+              Our users are awesome and they think we're awesome too. Take a
+              look at all the nice things they've said about us!
+            </p>
             <div className="tweet-wall">
               <div className="tweet-box">
                 <div className="col">
