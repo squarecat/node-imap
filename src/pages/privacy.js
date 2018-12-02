@@ -32,7 +32,7 @@ export default function Terms() {
         We do store metadata of your emails in order to identify if you have
         unsubscribed from a subscription in a previous scan. This is limited to
         recipient and sender email addresses, and a timestamp, and is encrypted
-        by industry an standard AES256 cipher.
+        by industry standard AES256 cipher.
       </p>
       <p>
         We believe your data is safe, but if you can think of any way we can
