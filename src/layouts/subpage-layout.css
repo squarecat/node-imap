@@ -6,10 +6,10 @@ a {
   text-decoration: none;
 }
 
-a,
-a:visited,
-a:active,
-a:focus {
+.subpage a,
+.subpage a:visited,
+.subpage a:active,
+.subpage a:focus {
   color: var(--link-color);
   border-bottom: 1px dashed var(--link-color);
   cursor: pointer;
