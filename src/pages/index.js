@@ -198,6 +198,20 @@ const IndexPage = () => {
                       November 30, 2018
                     </a>
                   </blockquote>
+                  <blockquote
+                    class="twitter-tweet"
+                    data-conversation="none"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      Just tried it on mobile, cannot get over how quick, simple
+                      and easy it is to unsubscribe.
+                    </p>
+                    &mdash; Pradip Khakhar (@pradipcloud){' '}
+                    <a href="https://twitter.com/pradipcloud/status/1068964781401546752?ref_src=twsrc%5Etfw">
+                      December 1, 2018
+                    </a>
+                  </blockquote>
                 </div>
                 <div className="col">
                   <blockquote className="twitter-tweet" data-lang="en">
@@ -228,6 +242,29 @@ const IndexPage = () => {
                     &mdash; Dinuka (@its_dinuka){' '}
                     <a href="https://twitter.com/its_dinuka/status/1068558838670909440?ref_src=twsrc%5Etfw">
                       November 30, 2018
+                    </a>
+                  </blockquote>
+                  <blockquote
+                    className="twitter-tweet"
+                    data-conversation="none"
+                    data-cards="hidden"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
+                        @leavemealoneapp
+                      </a>{' '}
+                      is my new hero....
+                      <br />
+                      <br />
+                      I&#39;m sure we can all use such a great idea...{' '}
+                      <a href="https://t.co/Nx1FhA7SAk">
+                        pic.twitter.com/Nx1FhA7SAk
+                      </a>
+                    </p>
+                    &mdash; TheAddledSpine (@TheAddledSpine){' '}
+                    <a href="https://twitter.com/TheAddledSpine/status/1069151473928425473?ref_src=twsrc%5Etfw">
+                      December 2, 2018
                     </a>
                   </blockquote>
                 </div>
@@ -271,6 +308,20 @@ const IndexPage = () => {
                     &mdash; Sergio Mattei ✌️ (@matteing){' '}
                     <a href="https://twitter.com/matteing/status/1068871586617413632?ref_src=twsrc%5Etfw">
                       December 1, 2018
+                    </a>
+                  </blockquote>
+                  <blockquote
+                    className="twitter-tweet"
+                    data-conversation="none"
+                    data-lang="en"
+                  >
+                    <p lang="en" dir="ltr">
+                      If there&#39;s one thing I love, it&#39;s a clean inbox!
+                      Thanks for having me! ✌️
+                    </p>
+                    &mdash; Chris Malby-Tynan (@ChrisMalbyTynan){' '}
+                    <a href="https://twitter.com/ChrisMalbyTynan/status/1069236707667652610?ref_src=twsrc%5Etfw">
+                      December 2, 2018
                     </a>
                   </blockquote>
                 </div>

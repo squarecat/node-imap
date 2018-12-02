@@ -1,4 +1,3 @@
-import auth from './auth';
 import { getAllStats } from '../services/stats';
 
 export default app => {
