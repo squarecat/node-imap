@@ -18,12 +18,14 @@ export default app => {
     await addPaidScanToUser(userId, scanType);
     res.redirect(`/app?doScan=${scanType}`);
   });
-  app.get('/api/checkout/:productId', auth, async (req, res) => {
-    const { productId } = req.params;
+
+  app.get('/api/checkout/:productId/:coupon?', auth, async (req, res) => {
+    const { productId, coupon } = req.params;
     try {
       const { paymentUrl } = await PaymentService.createPaymentForUser({
         user: req.user,
-        productId
+        productId,
+        coupon
       });
       return res.send({
         status: 'success',

@@ -1,5 +1,6 @@
 import { createCustomer, createPayment } from '../utils/mollie';
 import { updateCustomerId } from './user';
+import { getDiscount } from '../dao/coupons';
 
 const products = [
   {
@@ -19,15 +20,18 @@ const products = [
   }
 ];
 
-export async function createPaymentForUser({ user, productId }) {
+export async function createPaymentForUser({ user, productId, coupon }) {
   let payment;
   const { price: amount, label, value: productType } = products.find(
     p => p.value === productId
   );
-
+  let discountPercentage = 1;
+  if (coupon) {
+    discountPercentage = await getDiscount(coupon);
+  }
   if (user.customerId) {
     payment = await createPayment({
-      amount,
+      amount: amount * discountPercentage,
       productLabel: label,
       productType,
       customerId: user.customerId,
