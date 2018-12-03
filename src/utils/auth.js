@@ -1,9 +1,16 @@
+const params = new URLSearchParams(window.location.search);
+const isPaymentRedirectNow = params.get('doScan');
+
+export function isPaymentRedirect() {
+  return isPaymentRedirectNow;
+}
+
 export function setUser(user) {
   return localStorage.setItem('user', JSON.stringify(user));
 }
 
 export function getUser() {
-  return localStorage.getItem('user');
+  return JSON.parse(localStorage.getItem('user'));
 }
 
 export async function isLoggedIn() {
@@ -19,7 +26,7 @@ export function logout() {
 
 export async function fetchLoggedInUser() {
   const resp = await fetch('/api/me');
-  const user = resp.json();
+  const user = await resp.json();
   localStorage.setItem('fetched-user', true);
   localStorage.setItem('user', JSON.stringify(user));
   return user;

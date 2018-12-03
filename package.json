@@ -5,6 +5,7 @@
   "author": "James Ivings <james@squarecat.io>",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@mollie/api-client": "^2.1.0",
     "@sentry/browser": "^4.4.1",
     "aes256": "^1.0.4",
     "agenda": "^2.0.2",
@@ -61,6 +62,7 @@
     "@babel/register": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "chart.js": "^2.7.3",
+    "classnames": "^2.2.6",
     "eslint": "^5.9.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-prettier": "^3.0.0",

@@ -205,27 +205,26 @@ export default ({ timeframe, showPriceModal }) => {
     fetchMail(timeframe);
   }
 
-  useEffect(
-    () => {
-      if (timeframe && hasSearched) {
-        doSearch();
-      }
-    },
-    [timeframe]
-  );
+  // useEffect(
+  //   () => {
+  //     if (isConnected && timeframe && hasSearched) {
+  //       doSearch();
+  //     }
+  //   },
+  //   [timeframe]
+  // );
 
   useEffect(
     () => {
-      if (!hasSearched) {
-        if (isConnected) {
-          doSearch();
-          setUser({ ...user, hasSearched: true });
-        }
+      // if (!hasSearched) {
+      if (isConnected && timeframe) {
+        doSearch();
+        setUser({ ...user, hasSearched: true });
       } else {
         setSearchFinished(true);
       }
     },
-    [isConnected]
+    [isConnected, timeframe]
   );
 
   // because the count is estimated, the progress can go above 100%
@@ -296,6 +295,25 @@ function ErrorScreen({ error, retry }) {
           your credentials. Thanks!
         </p>
         <pre className="error-details">{error}</pre>
+      </div>
+    );
+  } else if (error === 'Not paid') {
+    return (
+      <div className="mail-error">
+        <p>
+          Oh no, you've used up all of your paid scans, use the 'Re-scan' button
+          above to purchase a new scan
+        </p>
+        <p>
+          Think you're seeing this screen in error?{' '}
+          <a
+            onClick={() =>
+              openChat("Hi! I've paid for a scan but I can't perform it!")
+            }
+          >
+            Let us know!
+          </a>
+        </p>
       </div>
     );
   }
@@ -587,4 +605,11 @@ function getSocialContent(mail, user) {
       </div>
     </li>
   );
+}
+
+function openChat(message = '') {
+  if (window.$crisp) {
+    window.$crisp.push(['do', 'chat:open']);
+    window.$crisp.push(['set', 'message:text', [message]]);
+  }
 }
