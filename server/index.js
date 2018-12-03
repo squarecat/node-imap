@@ -43,9 +43,7 @@ app.get('/api', (req, res) => res.send('OK'));
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {
-  res.sendFile('404.html', {
-    root: path.join(__dirname, '../public')
-  });
+  res.redirect(302, '/404');
 });
 
 const App = {
