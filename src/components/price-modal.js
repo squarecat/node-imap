@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useGlobal } from '../utils/hooks';
-import BuyButton from '../../plugins/gatsby-plugin-paddle/src';
-import useAsync from '../utils/hooks/use-async';
 
+import { useGlobal } from '../utils/hooks';
+import useAsync from '../utils/hooks/use-async';
+import Button from '../components/btn';
 import ModalClose from './modal/modal-close';
 
 import './modal.css';
@@ -11,25 +11,23 @@ const prices = [
   {
     price: 3,
     label: '1 week',
-    value: '1w',
-    productId: '546139'
+    value: '1w'
   },
   {
     price: 5,
     label: '1 month',
-    value: '1m',
-    productId: 546140
+    value: '1m'
   },
   {
     price: 8,
     label: '6 months',
-    value: '6m',
-    productId: 546141
+    value: '6m'
   }
 ];
 export default ({ onClose, onPurchase }) => {
   const [isShown, setShown] = useState(false);
   const [screen, setScreen] = useState('pricing');
+  const [isPaymentLoading, setPaymentLoading] = useState(false);
 
   const handleKeydown = e => {
     if (e.keyCode === 27 || e.key === 'Escape') {
@@ -50,9 +48,18 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(onClose, 300);
   };
-  const onClickPurchase = selected => {
-    setShown(false);
-    setTimeout(() => onPurchase(selected === 'free' ? '3d' : selected), 300);
+  const onClickPurchase = async (selected, isBeta) => {
+    if (selected === 'free') {
+      return onPurchase('3d');
+    }
+    if (isBeta) {
+      return onPurchase(selected);
+    }
+    setPaymentLoading(true);
+    const resp = await fetch(`/api/checkout/${selected}`);
+    const { error, paymentUrl } = await resp.json();
+    setPaymentLoading(false);
+    window.location.href = paymentUrl;
   };
 
   let content;
@@ -62,6 +69,7 @@ export default ({ onClose, onPurchase }) => {
         onClickPurchase={onClickPurchase}
         onClickClose={onClickClose}
         setScreen={setScreen}
+        isPaymentLoading={isPaymentLoading}
       />
     );
   } else if (screen === 'estimates') {
@@ -78,7 +86,12 @@ export default ({ onClose, onPurchase }) => {
   );
 };
 
-const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
+const PricingScreen = ({
+  onClickPurchase,
+  onClickClose,
+  setScreen,
+  isPaymentLoading
+}) => {
   const [user] = useGlobal('user');
   const [selected, setSelected] = useState('free');
   const isBeta = !!user.beta;
@@ -133,12 +146,6 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
           </a>
           .
         </p>
-        {/* <a
-          className="btn centered compact muted"
-
-        >
-          Estimate spam
-        </a> */}
       </div>
       <div className="modal-actions">
         <p className="monthly-price">
@@ -157,19 +164,19 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
           Cancel
         </a>
         {selected === 'free' || user.beta ? (
-          <a className="btn compact" onClick={() => onClickPurchase(selected)}>
+          <a
+            className="btn compact"
+            onClick={() => onClickPurchase(selected, user.beta)}
+          >
             OK
           </a>
         ) : (
-          <BuyButton
-            className="btn compact"
-            productId={prices.find(p => selected === p.value).productId}
-            onSuccess={data => onClickPurchase(data)}
-            onClose={() => {}}
-            message="Thanks for supporting Leave Me Alone!"
-          >
-            Purchase
-          </BuyButton>
+          <Button
+            compact
+            onClick={() => onClickPurchase(selected)}
+            loading={isPaymentLoading}
+            label="Purchase"
+          />
         )}
       </div>
     </>

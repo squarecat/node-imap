@@ -5,7 +5,9 @@ import {
   updateUser,
   addUnsubscription,
   addScan,
-  resolveUnsubscription
+  resolveUnsubscription,
+  addPaidScan,
+  updatePaidScan
 } from '../dao/user';
 
 import { addUserToStats } from './stats';
@@ -82,4 +84,16 @@ export function addScanToUser(userId, scanData) {
 
 export async function resolveUserUnsubscription(userId, mailId) {
   return resolveUnsubscription(userId, mailId);
+}
+
+export async function updateCustomerId(userId, customerId) {
+  return updateUser(userId, { customerId });
+}
+
+export function addPaidScanToUser(userId, scanType) {
+  return addPaidScan(userId, scanType);
+}
+
+export function updatePaidScanForUser(userId, scanType) {
+  return updatePaidScan(userId, scanType);
 }

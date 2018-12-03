@@ -1,7 +1,11 @@
 import axios from 'axios';
+
+import auth from './auth';
 import pkg from '../../package.json';
 const uuid = require('uuid');
 
+import * as PaymentService from '../services/payments';
+import { addPaidScanToUser } from '../services/user';
 import { addPaymentToStats } from '../services/stats';
 
 const { version } = pkg;
@@ -9,6 +13,30 @@ const airTableKey = 'keymWk6x3qe1QpDJn';
 const baseUrl = 'https://api.airtable.com/v0';
 
 export default app => {
+  app.get('/api/checkout/redirect/:userId/:scanType', async (req, res) => {
+    const { userId, scanType } = req.params;
+    await addPaidScanToUser(userId, scanType);
+    res.redirect(`/app?doScan=${scanType}`);
+  });
+  app.get('/api/checkout/:productId', auth, async (req, res) => {
+    const { productId } = req.params;
+    try {
+      const { paymentUrl } = await PaymentService.createPaymentForUser({
+        user: req.user,
+        productId
+      });
+      return res.send({
+        status: 'success',
+        paymentUrl
+      });
+    } catch (err) {
+      console.log(err);
+      return res.send({
+        status: 'failed',
+        err: err.toString()
+      });
+    }
+  });
   app.get('/api/purchase_success', (req, res) => {
     const key = uuid.v4();
     sendToTable(req.query, key);

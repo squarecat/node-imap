@@ -20,5 +20,10 @@
     "dumpio": true,
     "devtools": false,
     "headeless": false
+  },
+  "payments": {
+    "apiKey": "test_6352NTNKjgqmatGgpvzhpffU7wtbdG",
+    "redirectUrl": "http://local.leavemealone.xyz/api/checkout/redirect",
+    "webhookUrl": "http://local.leavemealone.xyz/api/payments/hook"
   }
 }

@@ -13,7 +13,8 @@ import {
   getUserById,
   addUnsubscriptionToUser,
   addScanToUser,
-  resolveUserUnsubscription
+  resolveUserUnsubscription,
+  updatePaidScanForUser
 } from './user';
 import {
   addUnsubscriptionToStats,
@@ -73,6 +74,10 @@ export async function scanMail(
     const { then, now } = getTimeRange(timeframe);
 
     const user = await getUserById(userId);
+    if (!hasPaidScanAvailable(user, timeframe)) {
+      console.log('mail: User attempted search that has not been paid for');
+      return onError('Not paid');
+    }
     const gmail = new Gmail(user.keys.accessToken);
     const { unsubscriptions } = user;
     const searchStr = getSearchString({ then, now });
@@ -149,6 +154,9 @@ export async function scanMail(
         totalUnsubscribableEmails: totalUnsubscribableEmailsCount,
         totalPreviouslyUnsubscribedEmails
       });
+      if (timeframe !== '3d') {
+        updatePaidScanForUser(userId, timeframe);
+      }
       onEnd();
     });
 
@@ -365,4 +373,9 @@ function getUnsubValue(str) {
     return str.substr(1, str.length - 2);
   }
   return str;
+}
+
+function hasPaidScanAvailable(user, scanType) {
+  if (scanType === '3d' || user.beta) return true;
+  return user.paidScans.some(s => s.scanType === scanType && !s.performed);
 }

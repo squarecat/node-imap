@@ -199,6 +199,14 @@ function mailtoLinkPieChart(ctx, stats) {
   });
 }
 
+function scanTypes(ctx, stats) {
+  var myPieChart = new Chart(ctx, {
+    type: 'pie',
+    data: data,
+    options: options
+  });
+}
+
 export default function Terms() {
   const { error, value: stats, loading } = useAsync(getStats);
 

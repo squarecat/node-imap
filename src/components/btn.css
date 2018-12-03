@@ -53,3 +53,35 @@
   color: rgba(231, 57, 48, 0.749);
   background-color: rgba(231, 57, 48, 0.1);
 }
+
+.btn.loading {
+  pointer-events: none;
+}
+
+.btn.loading .btn-content {
+  visibility: hidden;
+}
+
+.btn-loader {
+  position: absolute;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: #ff9794;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+  transform: scale(1);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+    background-color: #ff726d;
+  }
+  100% {
+    transform: scale(1);
+  }
+}

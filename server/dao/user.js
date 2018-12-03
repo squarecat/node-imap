@@ -72,19 +72,25 @@ export async function getUser(id) {
 
 export async function updateUser(id, userData) {
   const { keys } = userData;
+  let updateObj = {
+    ...userData,
+    lastUpdatedAt: isoDate()
+  };
+  if (keys) {
+    updateObj = {
+      ...updateObj,
+      keys: {
+        refreshToken: encrypt(keys.refreshToken),
+        accessToken: encrypt(keys.accessToken)
+      }
+    };
+  }
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
-        $set: {
-          ...userData,
-          lastUpdatedAt: isoDate(),
-          keys: {
-            refreshToken: encrypt(keys.refreshToken),
-            accessToken: encrypt(keys.accessToken)
-          }
-        }
+        $set: updateObj
       }
     );
     console.log(`users-dao: updated user ${id}`);
@@ -157,6 +163,50 @@ export async function addScan(id, scanData) {
     console.log(`users-dao: updated users scans ${id}`);
   } catch (err) {
     console.error('users-dao: error updating user scans');
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function updatePaidScan(id, scanType) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const { paidScans } = await getUser(id);
+    const newPaidScans = paidScans.reduce(
+      (out, p) => {
+        if (!out.done && p.scanType === scanType && !p.performed) {
+          return {
+            done: true,
+            scans: [...out.scans, { ...p, performed: true }]
+          };
+        }
+        return { ...out, scans: [...out.scans, p] };
+      },
+      { done: false, scans: [] }
+    );
+    await col.updateOne({ id }, { $set: { paidScans: newPaidScans.scans } });
+    console.log(`users-dao: updated users scans ${id}`);
+  } catch (err) {
+    console.error('users-dao: error updating user scans');
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function addPaidScan(id, scanType) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $push: {
+          paidScans: { scanType, paidAt: isoDate(), performed: false }
+        }
+      }
+    );
+    console.log(`users-dao: added users paid scans ${id}`);
+  } catch (err) {
+    console.error('users-dao: error adding user paid scans');
     console.error(err);
     throw err;
   }

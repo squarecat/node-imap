@@ -12,6 +12,11 @@ import Welcome from './welcome';
 import './index.css';
 import useGlobal from '../../utils/hooks/use-global';
 
+const doScan = new URLSearchParams(window.location.search).get('doScan');
+if (doScan) {
+  history.replaceState({}, '', window.location.pathname);
+}
+
 export default function App() {
   return (
     <AppLayout>
@@ -24,7 +29,7 @@ export default function App() {
 
 function AuthApp() {
   const [showPriceModal, togglePriceModal] = useState(false);
-  const [timeframe, setTimeframe] = useState(null);
+  const [timeframe, setTimeframe] = useState(doScan);
 
   const [user] = useGlobal('user');
   const { hasSearched } = user;

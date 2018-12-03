@@ -379,6 +379,16 @@ const IndexPage = () => {
               Releases
             </a>
           </li>
+          <li>
+            <a
+              className="footer-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.notion.so/33d2efb925634020a1cd64d40b91efe4"
+            >
+              Roadmap
+            </a>
+          </li>
         </ul>
         <ul className="footer-social">
           <li title="@LeaveMeAloneApp">
