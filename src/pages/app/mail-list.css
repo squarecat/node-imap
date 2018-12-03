@@ -244,6 +244,13 @@ pre {
   display: none;
 }
 
+/* Roughly tablet width */
+@media (max-width: 768px) {
+  .subject {
+    flex: 1;
+  }
+}
+
 @media (max-width: 500px) {
   .social-content {
     font-size: 12px;
@@ -267,5 +274,8 @@ pre {
   }
   .status {
     opacity: 0.5;
+  }
+  .subject {
+    display: none;
   }
 }
