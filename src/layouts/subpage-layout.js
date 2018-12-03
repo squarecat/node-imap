@@ -6,11 +6,11 @@ import './subpage-layout.css';
 export default ({ children }) => {
   return (
     <Layout>
-      <div className="header">
-        <a href="/" className="header-logo">
+      <div className="subpage-header">
+        <a href="/" className="subpage-header-logo">
           <img alt="logo" src={logo} />
         </a>
-        <div className="header-title">Leave Me Alone </div>
+        <div className="subpage-header-title">Leave Me Alone </div>
       </div>
       <div className="subpage">
         <div className="subpage-content">{children}</div>

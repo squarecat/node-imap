@@ -7,8 +7,10 @@
 
 body,
 html,
-#___gatsby {
+#___gatsby,
+#___gatsby > div {
   min-height: 100%;
+  height: 100%;
 }
 
 body {
