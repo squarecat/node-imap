@@ -236,3 +236,32 @@ p.monthly-price {
     text-align: center;
   }
 }
+
+.coupon {
+  height: 0;
+  overflow: hidden;
+  transition: height 200ms ease-in-out;
+}
+
+.coupon.shown {
+  height: 65px;
+}
+
+.coupon.shown + .add-coupon {
+  display: none;
+}
+
+.add-coupon p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.coupon input {
+  padding: 10px;
+  margin: 10px 0 0 0;
+  font-size: 14px;
+}
+
+.coupon input:focus {
+  box-shadow: none;
+}

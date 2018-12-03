@@ -48,7 +48,7 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(onClose, 300);
   };
-  const onClickPurchase = async (selected, isBeta) => {
+  const onClickPurchase = async (selected, isBeta, coupon) => {
     if (selected === 'free') {
       return onPurchase('3d');
     }
@@ -56,7 +56,12 @@ export default ({ onClose, onPurchase }) => {
       return onPurchase(selected);
     }
     setPaymentLoading(true);
-    const resp = await fetch(`/api/checkout/${selected}`);
+    let resp;
+    if (coupon) {
+      resp = await fetch(`/api/checkout/${selected}/${coupon}`);
+    } else {
+      resp = await fetch(`/api/checkout/${selected}`);
+    }
     const { error, paymentUrl } = await resp.json();
     setPaymentLoading(false);
     window.location.href = paymentUrl;
@@ -94,6 +99,8 @@ const PricingScreen = ({
 }) => {
   const [user] = useGlobal('user');
   const [selected, setSelected] = useState('free');
+  const [coupon, setCoupon] = useState('');
+  const [isCouponShown, showCoupon] = useState(false);
   const isBeta = !!user.beta;
 
   return (
@@ -147,6 +154,21 @@ const PricingScreen = ({
           .
         </p>
       </div>
+      <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
+        <input
+          className="coupon-input"
+          value={coupon}
+          placeholder="Discount coupon"
+          onChange={e => setCoupon(e.currentTarget.value)}
+        />
+      </div>
+      <div className="add-coupon">
+        <p>
+          <a className="add-coupon-link" onClick={() => showCoupon(true)}>
+            Have a discount coupon?
+          </a>
+        </p>
+      </div>
       <div className="modal-actions">
         <p className="monthly-price">
           Looking for a monthly subscription?{' '}
@@ -173,7 +195,7 @@ const PricingScreen = ({
         ) : (
           <Button
             compact
-            onClick={() => onClickPurchase(selected)}
+            onClick={() => onClickPurchase(selected, false, coupon)}
             loading={isPaymentLoading}
             label="Purchase"
           />
