@@ -146,7 +146,7 @@ agenda.define('record day stats', async (job, done) => {
       (yesterdayTotals.unsubscribableEmails || 0),
     previouslyUnsubscribedEmails:
       allStats.previouslyUnsubscribedEmails -
-      (yesterdayTotals.unsubscribableEmails || 0),
+      (yesterdayTotals.previouslyUnsubscribedEmails || 0),
     unsubscriptionsFailed:
       allStats.unsubscriptionsFailed -
       (yesterdayTotals.unsubscriptionsFailed || 0),
@@ -171,12 +171,8 @@ agenda.define('record day stats', async (job, done) => {
 
 export async function recordStats() {
   console.log('starting agenda');
-  const dailyReport = agenda.create('record day stats');
-  await agenda.start();
-  await dailyReport
-    .repeatEvery('0 0 * * *', {
-      skipImmediate: true,
-      timezone: 'Etc/UTC'
-    })
-    .save();
+  agenda.on('ready', async () => {
+    await agenda.start();
+    await agenda.every('0 0 * * *', 'record day stats');
+  });
 }
