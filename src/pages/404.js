@@ -1,11 +1,13 @@
 import React from 'react';
-import Layout from '../layouts/layout';
+import SubPageLayout from '../layouts/subpage-layout';
 
 const NotFoundPage = () => (
-  <Layout>
-    <h1>NOT FOUND</h1>
-    <p>You just hit a route that doesn&#39;t exist... the sadness.</p>
-  </Layout>
+  <SubPageLayout className="not-found-page">
+    <h1>404</h1>
+    <h2>Nothing Found Here</h2>
+    <p>You're not going to get a cleaner inbox out in the wild like this!</p>
+    <a href="/">Back home</a>
+  </SubPageLayout>
 );
 
 export default NotFoundPage;

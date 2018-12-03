@@ -42,6 +42,12 @@ app.get('/api', (req, res) => res.send('OK'));
 
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.get('*', (req, res) => {
+  res.sendFile('404.html', {
+    root: path.join(__dirname, '../public')
+  });
+});
+
 const App = {
   async start() {
     console.log('server starting');
