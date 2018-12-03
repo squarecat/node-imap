@@ -6,6 +6,7 @@ import {
   addNumberofEmails,
   addPayment,
   addUser,
+  addEstimate,
   getStats
 } from '../dao/stats';
 
@@ -28,6 +29,9 @@ export function addUserToStats() {
 }
 export function addPaymentToStats(data) {
   return addPayment(data);
+}
+export function addEstimateToStats() {
+  return addEstimate();
 }
 export function getAllStats() {
   return getStats();
