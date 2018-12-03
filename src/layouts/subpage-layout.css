@@ -16,7 +16,7 @@ a {
   font-weight: bold;
 }
 
-.header {
+.subpage-header {
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -27,26 +27,26 @@ a {
   background-color: #fddbd7;
 }
 
-.header-title {
+.subpage-header-title {
   font-size: 18px;
   margin-left: 15px;
   font-weight: bold;
 }
 
-.header-logo {
+.subpage-header-logo {
   display: inline-block;
   height: 65%;
   margin: 0;
 }
 
-.header-logo img {
+.subpage-header-logo img {
   height: 100%;
 }
 
 .subpage {
   padding: 80px 44px;
   background-color: #fff9f9;
-  min-height: 100%;
+  min-height: calc(100% - 50px);
 }
 
 .subpage-content {
