@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 import { useGlobal } from '../utils/hooks';
-// import BuyButton from '../../plugins/gatsby-plugin-paddle/src';
 import useAsync from '../utils/hooks/use-async';
 import Button from '../components/btn';
 import ModalClose from './modal/modal-close';
@@ -49,9 +48,12 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(onClose, 300);
   };
-  const onClickPurchase = async selected => {
+  const onClickPurchase = async (selected, isBeta) => {
     if (selected === 'free') {
       return onPurchase('3d');
+    }
+    if (isBeta) {
+      return onPurchase(selected);
     }
     setPaymentLoading(true);
     const resp = await fetch(`/api/checkout/${selected}`);
@@ -144,12 +146,6 @@ const PricingScreen = ({
           </a>
           .
         </p>
-        {/* <a
-          className="btn centered compact muted"
-
-        >
-          Estimate spam
-        </a> */}
       </div>
       <div className="modal-actions">
         <p className="monthly-price">
@@ -168,7 +164,10 @@ const PricingScreen = ({
           Cancel
         </a>
         {selected === 'free' || user.beta ? (
-          <a className="btn compact" onClick={() => onClickPurchase(selected)}>
+          <a
+            className="btn compact"
+            onClick={() => onClickPurchase(selected, user.beta)}
+          >
             OK
           </a>
         ) : (
@@ -178,18 +177,8 @@ const PricingScreen = ({
             loading={isPaymentLoading}
             label="Purchase"
           />
-          // <BuyButton
-          //   className="btn compact"
-          //   productId={prices.find(p => selected === p.value).productId}
-          //   onSuccess={data => onClickPurchase(data)}
-          //   onClose={() => {}}
-          //   message="Thanks for supporting Leave Me Alone!"
-          // >
-          //   Purchase
-          // </BuyButton>
         )}
       </div>
-      {/* <p>To make payment you will be redirected to our payment provider</p> */}
     </>
   );
 };

@@ -7,7 +7,6 @@ import gmailLogo from '../assets/gmail.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 
 export default ({ children }) => {
-  debugger;
   const { error, value: user, loading } = useAsync(fetchLoggedInUser, [], {
     minWait: isPaymentRedirect() ? 0 : 2000
   });
