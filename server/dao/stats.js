@@ -46,6 +46,10 @@ export function addUser(count = 1) {
   return updateSingleStat('users', count);
 }
 
+export function addEstimate(count = 1) {
+  return updateSingleStat('estimates', count);
+}
+
 // generic update stat function for anything
 async function updateSingleStat(statName, count = 1) {
   try {
@@ -138,6 +142,7 @@ agenda.define('record day stats', async (job, done) => {
     timestamp: isoDate(),
     users: allStats.users - (yesterdayTotals.users || 0),
     scans: allStats.scans - (yesterdayTotals.scans || 0),
+    estimates: allStats.estimates - (yesterdayTotals.estimates || 0),
     unsubscriptions:
       allStats.unsubscriptions - (yesterdayTotals.unsubscriptions || 0),
     emails: allStats.emails - (yesterdayTotals.emails || 0),

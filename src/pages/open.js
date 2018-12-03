@@ -260,6 +260,10 @@ export default function Terms() {
               <span className="label">Total emails scanned</span>
               <span className="value">{format(stats.emails)}</span>
             </div>
+            <div className="big-stat box">
+              <span className="label">Total number of estimates</span>
+              <span className="value">{format(stats.estimates || 0)}</span>
+            </div>
           </div>
         </div>
       </div>

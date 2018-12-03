@@ -20,7 +20,8 @@ import {
   addUnsubscriptionToStats,
   addFailedUnsubscriptionToStats,
   addScanToStats,
-  addNumberofEmailsToStats
+  addNumberofEmailsToStats,
+  addEstimateToStats
 } from './stats';
 
 import { unsubscribeWithLink } from '../utils/browser';
@@ -60,6 +61,7 @@ export async function getMailEstimates(userId) {
     { timeframe: '6m', total: estimates[1].total * 4 * 6 }
   ].map(e => ({ ...e, totalSpam: (e.total * 0.48).toFixed() }));
 
+  addEstimateToStats();
   return estimates;
 }
 
