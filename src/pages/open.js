@@ -160,12 +160,52 @@ function scanChart(ctx, stats) {
   });
 }
 
+function mailtoLinkPieChart(ctx, stats) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram } = daily;
+
+  const data = histogram.reduce(
+    (out, d) => {
+      return {
+        unsubscriptionsByMailtoStrategy:
+          out.unsubscriptionsByMailtoStrategy +
+            d.unsubscriptionsByMailtoStrategy || 0,
+        unsubscriptionsByLinkStrategy:
+          out.unsubscriptionsByLinkStrategy + d.unsubscriptionsByLinkStrategy ||
+          0
+      };
+    },
+    { unsubscriptionsByLinkStrategy: 0, unsubscriptionsByMailtoStrategy: 0 }
+  );
+
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          backgroundColor: ['#EB6C69', '#fddbd7'],
+          data: [
+            data.unsubscriptionsByLinkStrategy,
+            data.unsubscriptionsByMailtoStrategy
+          ]
+        }
+      ],
+      labels: ['Link', 'Mailto']
+    },
+    type: 'pie',
+    options: {
+      responsive: true
+    }
+  });
+}
+
 export default function Terms() {
   const { error, value: stats, loading } = useAsync(getStats);
 
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const scanRef = useRef(null);
+  const mailtoLinkRef = useRef(null);
 
   useEffect(
     () => {
@@ -177,6 +217,9 @@ export default function Terms() {
       }
       if (scanRef.current) {
         scanChart(scanRef.current.getContext('2d'), stats);
+      }
+      if (mailtoLinkRef.current) {
+        mailtoLinkPieChart(mailtoLinkRef.current.getContext('2d'), stats);
       }
     },
     [stats, subscriptionRef.current, dailyRevRef.current, scanRef.current]
@@ -237,6 +280,10 @@ export default function Terms() {
               <span className="label">Total Unsubscriptions</span>
               <span className="value">{format(stats.unsubscriptions)}</span>
             </div>
+          </div>
+          <div className="chart box">
+            <h2>Link vs Maito Unsubscriptions</h2>
+            <canvas ref={mailtoLinkRef} />
           </div>
         </div>
         <div className="scans">
