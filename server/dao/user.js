@@ -23,7 +23,8 @@ export async function createUser(data) {
         accessToken: encrypt(keys.accessToken)
       },
       unsubscriptions: [],
-      scans: []
+      scans: [],
+      paidScans: []
     });
     console.log(`users-dao: inserted user ${data.id}`);
     const user = await getUser(data.id);
@@ -171,7 +172,7 @@ export async function addScan(id, scanData) {
 export async function updatePaidScan(id, scanType) {
   try {
     const col = await db().collection(COL_NAME);
-    const { paidScans } = await getUser(id);
+    const { paidScans = [] } = await getUser(id);
     const newPaidScans = paidScans.reduce(
       (out, p) => {
         if (!out.done && p.scanType === scanType && !p.performed) {

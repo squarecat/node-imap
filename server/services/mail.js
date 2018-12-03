@@ -377,5 +377,7 @@ function getUnsubValue(str) {
 
 function hasPaidScanAvailable(user, scanType) {
   if (scanType === '3d' || user.beta) return true;
-  return user.paidScans.some(s => s.scanType === scanType && !s.performed);
+  return (user.paidScans || []).some(
+    s => s.scanType === scanType && !s.performed
+  );
 }
