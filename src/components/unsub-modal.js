@@ -169,12 +169,29 @@ function slide2({
         click or copy the following link to unsubscribe`
       : `Oh snap! Sorry about that. This one you'll have to do manually. This
       particular service only accepts email unsubs, just click the following
-      link or send an email to the address in oder to unsubscribe`;
+      link or send an email to the address in order to unsubscribe`;
 
   return (
     <>
       <p>{lead}</p>
-      <p>
+      <a className="btn compact manual-unsubscribe-btn" target="_" href={link}>
+        Unsubscribe manually
+        <svg
+          className="icon-external"
+          viewBox="0 0 32 32"
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentcolor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        >
+          <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+        </svg>
+      </a>
+      <p className="unsubscribe-link-alt">
+        <span>Or use this link:</span>
         <a className="unsubscribe-link" target="_" href={link}>
           {type === 'link' ? link : mailTo}
         </a>

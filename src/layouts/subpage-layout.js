@@ -1,9 +1,10 @@
 import React from 'react';
 import Layout from '../layouts/layout';
 import logo from '../assets/transparent-logo.png';
+
 import './subpage-layout.css';
 
-export default ({ children }) => {
+export default ({ className, children }) => {
   return (
     <Layout>
       <div className="subpage-header">
@@ -12,7 +13,7 @@ export default ({ children }) => {
         </a>
         <div className="subpage-header-title">Leave Me Alone </div>
       </div>
-      <div className="subpage">
+      <div className={`subpage ${className}`}>
         <div className="subpage-content">{children}</div>
       </div>
     </Layout>

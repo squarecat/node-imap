@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js';
 import numeral from 'numeral';
-import endOfDay from 'date-fns/end_of_day';
+import startOfDay from 'date-fns/start_of_day';
 
 import SubPageLayout from '../layouts/subpage-layout';
 import { useAsync } from '../utils/hooks';
@@ -28,7 +28,7 @@ function chart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: histogram.map(d => ({
-            x: endOfDay(d.timestamp),
+            x: startOfDay(d.timestamp),
             y: d.unsubscriptions
           }))
         }
@@ -74,7 +74,7 @@ function dailyRevChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: histogram.map(d => ({
-            x: endOfDay(d.timestamp),
+            x: startOfDay(d.timestamp),
             y: d.totalRevenue
           }))
         }
@@ -125,7 +125,7 @@ function scanChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: histogram.map(d => ({
-            x: endOfDay(d.timestamp),
+            x: startOfDay(d.timestamp),
             y: d.scans
           }))
         }
@@ -160,6 +160,45 @@ function scanChart(ctx, stats) {
   });
 }
 
+function mailtoLinkPieChart(ctx, stats) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram } = daily;
+
+  const data = histogram.reduce(
+    (out, d) => {
+      return {
+        unsubscriptionsByMailtoStrategy:
+          out.unsubscriptionsByMailtoStrategy +
+            d.unsubscriptionsByMailtoStrategy || 0,
+        unsubscriptionsByLinkStrategy:
+          out.unsubscriptionsByLinkStrategy + d.unsubscriptionsByLinkStrategy ||
+          0
+      };
+    },
+    { unsubscriptionsByLinkStrategy: 0, unsubscriptionsByMailtoStrategy: 0 }
+  );
+
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          backgroundColor: ['#EB6C69', '#fddbd7'],
+          data: [
+            data.unsubscriptionsByLinkStrategy,
+            data.unsubscriptionsByMailtoStrategy
+          ]
+        }
+      ],
+      labels: ['Link', 'Mailto']
+    },
+    type: 'pie',
+    options: {
+      responsive: true
+    }
+  });
+}
+
 function scanTypes(ctx, stats) {
   var myPieChart = new Chart(ctx, {
     type: 'pie',
@@ -167,12 +206,14 @@ function scanTypes(ctx, stats) {
     options: options
   });
 }
+
 export default function Terms() {
   const { error, value: stats, loading } = useAsync(getStats);
 
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const scanRef = useRef(null);
+  const mailtoLinkRef = useRef(null);
 
   useEffect(
     () => {
@@ -184,6 +225,9 @@ export default function Terms() {
       }
       if (scanRef.current) {
         scanChart(scanRef.current.getContext('2d'), stats);
+      }
+      if (mailtoLinkRef.current) {
+        mailtoLinkPieChart(mailtoLinkRef.current.getContext('2d'), stats);
       }
     },
     [stats, subscriptionRef.current, dailyRevRef.current, scanRef.current]
@@ -198,7 +242,10 @@ export default function Terms() {
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
-            <a href="https://openstartups.co/">Open Startups</a> movement
+            <a className="link" href="https://openstartups.co/">
+              Open Startups
+            </a>{' '}
+            movement
           </h2>
         </div>
         <div className="revenue">
@@ -244,6 +291,10 @@ export default function Terms() {
               <span className="label">Total Unsubscriptions</span>
               <span className="value">{format(stats.unsubscriptions)}</span>
             </div>
+          </div>
+          <div className="chart box">
+            <h2>Link vs Maito Unsubscriptions</h2>
+            <canvas ref={mailtoLinkRef} />
           </div>
         </div>
         <div className="scans">
