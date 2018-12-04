@@ -1,5 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import numeral from 'numeral';
+import AnimatedNumber from 'react-animated-number';
+import TrackVisibility from 'react-on-screen';
 
+import { useAsync } from '../utils/hooks';
 import gmailLogo from '../assets/gmail.png';
 import dogs from '../assets/dogs.jpg';
 import girlLogo from '../assets/leavemealonegirl.png';
@@ -98,6 +102,10 @@ const IndexPage = () => {
             <div className="example-img">
               <img src={gif} alt="unsubscribe list" />
             </div>
+
+            <TrackVisibility>
+              {({ isVisible }) => <Stats isVisible={isVisible} />}
+            </TrackVisibility>
 
             <h2 className="privacy-title">We don't steal your data</h2>
             <span className="privacy-padlock">🕵️‍♀️</span>
@@ -199,7 +207,7 @@ const IndexPage = () => {
                     </a>
                   </blockquote>
                   <blockquote
-                    class="twitter-tweet"
+                    className="twitter-tweet"
                     data-conversation="none"
                     data-lang="en"
                   >
@@ -424,5 +432,72 @@ const IndexPage = () => {
     </Layout>
   );
 };
+
+function fetchStats() {
+  return fetch('/api/stats').then(r => r.json());
+}
+
+function Stats({ isVisible }) {
+  const { loading, value } = useAsync(fetchStats);
+  const [stats, setStats] = useState({
+    unsubscribableEmails: 0,
+    unsubscriptions: 0
+  });
+
+  useEffect(
+    () => {
+      if (!loading && isVisible) {
+        const { unsubscribableEmails, unsubscriptions } = value;
+        setStats({
+          unsubscribableEmails,
+          unsubscriptions,
+          set: true
+        });
+      }
+    },
+    [loading, isVisible]
+  );
+
+  return (
+    <div className="stats">
+      <div className="stat">
+        <span className="stat-value">
+          <AnimatedNumber
+            value={stats.unsubscribableEmails}
+            style={{
+              transition: '0.8s ease-out',
+              fontSize: 48
+            }}
+            duration={1000}
+            formatValue={n =>
+              n > 9999 ? numeral(n).format('0a') : n.toFixed()
+            }
+          />
+        </span>
+        <span>Spam emails scanned</span>
+      </div>
+      <div className="stat">
+        <span className="stat-value">
+          <AnimatedNumber
+            value={stats.unsubscriptions}
+            style={{
+              transition: '0.8s ease-out',
+              fontSize: 48
+            }}
+            duration={1000}
+            formatValue={n =>
+              n > 9999 ? numeral(n).format('0a') : n.toFixed()
+            }
+          />
+        </span>
+        <span>Spam emails unsubscribed</span>
+      </div>
+    </div>
+  );
+}
+
+function showStats(values) {
+  return <></>;
+}
 
 export default IndexPage;
