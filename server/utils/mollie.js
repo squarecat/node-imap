@@ -6,6 +6,15 @@ const mollie = Mollie({ apiKey });
 
 console.log(Object.keys(mollie));
 
+export async function getPayment(id) {
+  try {
+    const payment = await mollie.payments.get(id);
+    return payment;
+  } catch (err) {
+    console.error('mollie: failed to fetch payment', err);
+    return null;
+  }
+}
 export async function createPayment({
   amount,
   productLabel,

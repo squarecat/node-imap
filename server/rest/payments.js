@@ -1,13 +1,15 @@
 import axios from 'axios';
+import { payments } from 'getconfig';
 
 import auth from './auth';
 import pkg from '../../package.json';
-const uuid = require('uuid');
+import uuid from 'uuid';
 
 import * as PaymentService from '../services/payments';
 import { addPaidScanToUser } from '../services/user';
 import { addPaymentToStats } from '../services/stats';
 
+const { webhookUrl } = payments;
 const { version } = pkg;
 const airTableKey = 'keymWk6x3qe1QpDJn';
 const baseUrl = 'https://api.airtable.com/v0';
@@ -39,10 +41,14 @@ export default app => {
       });
     }
   });
-  app.get('/api/purchase_success', (req, res) => {
-    const key = uuid.v4();
-    sendToTable(req.query, key);
-    return res.send(key);
+  app.get(webhookUrl, (req, res) => {
+    const { id: paymentId } = req.body;
+    const { amount, status } = await PaymentService.fetchPayment(paymentId);
+    if (status === 'paid') {
+      const { value } = amount;
+      addPaymentToStats({ price: value });
+    }
+    res.send('OK');
   });
 };
 
