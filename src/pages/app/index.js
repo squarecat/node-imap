@@ -12,7 +12,10 @@ import Welcome from './welcome';
 import './index.css';
 import useGlobal from '../../utils/hooks/use-global';
 
-const doScan = new URLSearchParams(window.location.search).get('doScan');
+let doScan = false;
+if (typeof URLSearchParams !== 'undefined') {
+  doScan = new URLSearchParams(window.location.search).get('doScan');
+}
 if (doScan) {
   history.replaceState({}, '', window.location.pathname);
 }

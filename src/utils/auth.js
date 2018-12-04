@@ -1,5 +1,9 @@
-const params = new URLSearchParams(window.location.search);
-const isPaymentRedirectNow = params.get('doScan');
+let isPaymentRedirectNow = false;
+if (typeof URLSearchParams !== 'undefined') {
+  isPaymentRedirectNow = new URLSearchParams(window.location.search).get(
+    'doScan'
+  );
+}
 
 export function isPaymentRedirect() {
   return isPaymentRedirectNow;
