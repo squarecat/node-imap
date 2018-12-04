@@ -1,4 +1,4 @@
-import { createCustomer, createPayment } from '../utils/mollie';
+import { createCustomer, createPayment, getPayment } from '../utils/mollie';
 import { updateCustomerId } from './user';
 import { getDiscount } from '../dao/coupons';
 
@@ -50,4 +50,8 @@ export async function createPaymentForUser({ user, productId, coupon }) {
     });
   }
   return payment;
+}
+
+export async function fetchPayment(id) {
+  return getPayment(id);
 }
