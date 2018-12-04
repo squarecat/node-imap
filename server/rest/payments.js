@@ -41,7 +41,7 @@ export default app => {
       });
     }
   });
-  app.get(webhookUrl, (req, res) => {
+  app.get(webhookUrl, async (req, res) => {
     const { id: paymentId } = req.body;
     const { amount, status } = await PaymentService.fetchPayment(paymentId);
     if (status === 'paid') {

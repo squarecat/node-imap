@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TransitionGroup, Transition } from 'react-transition-group';
+import { Transition } from 'react-transition-group';
 
 import Modal from '../../components/price-modal';
 import AppLayout from '../../layouts/app-layout';
