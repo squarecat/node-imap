@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js';
 import numeral from 'numeral';
-import endOfDay from 'date-fns/end_of_day';
+import startOfDay from 'date-fns/start_of_day';
 
 import SubPageLayout from '../layouts/subpage-layout';
 import { useAsync } from '../utils/hooks';
@@ -28,7 +28,7 @@ function chart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: histogram.map(d => ({
-            x: endOfDay(d.timestamp),
+            x: startOfDay(d.timestamp),
             y: d.unsubscriptions
           }))
         }
@@ -74,7 +74,7 @@ function dailyRevChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: histogram.map(d => ({
-            x: endOfDay(d.timestamp),
+            x: startOfDay(d.timestamp),
             y: d.totalRevenue
           }))
         }
@@ -125,7 +125,7 @@ function scanChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: histogram.map(d => ({
-            x: endOfDay(d.timestamp),
+            x: startOfDay(d.timestamp),
             y: d.scans
           }))
         }
