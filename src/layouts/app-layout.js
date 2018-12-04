@@ -5,6 +5,7 @@ import Helmet from 'react-helmet';
 
 import favicon from '../assets/meta/favicon.png';
 
+import '../common.css';
 import './layout.css';
 
 setConfig({ pureSFC: true });

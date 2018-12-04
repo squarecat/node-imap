@@ -360,18 +360,18 @@ const IndexPage = () => {
       <div className="footer">
         <ul className="footer-nav">
           <li>
-            <a className="footer-link" href="/privacy">
+            <a className="link" href="/privacy">
               Privacy
             </a>
           </li>
           <li>
-            <a className="footer-link" href="/terms">
+            <a className="link" href="/terms">
               Terms
             </a>
           </li>
           <li>
             <a
-              className="footer-link"
+              className="link"
               target="_blank"
               rel="noopener noreferrer"
               href="http://leavemealone.releasepage.co"
@@ -381,7 +381,7 @@ const IndexPage = () => {
           </li>
           <li>
             <a
-              className="footer-link"
+              className="link"
               target="_blank"
               rel="noopener noreferrer"
               href="https://www.notion.so/33d2efb925634020a1cd64d40b91efe4"

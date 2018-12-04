@@ -242,7 +242,10 @@ export default function Terms() {
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
-            <a href="https://openstartups.co/">Open Startups</a> movement
+            <a className="link" href="https://openstartups.co/">
+              Open Startups
+            </a>{' '}
+            movement
           </h2>
         </div>
         <div className="revenue">

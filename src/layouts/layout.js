@@ -8,6 +8,7 @@ import { StaticQuery, graphql } from 'gatsby';
 import favicon from '../assets/meta/favicon.png';
 import metaImage from '../assets/meta/meta-img.png';
 
+import '../common.css';
 import './layout.css';
 
 setConfig({ pureSFC: true });
