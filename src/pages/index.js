@@ -447,9 +447,14 @@ function Stats({ isVisible }) {
   useEffect(
     () => {
       if (!loading && isVisible) {
-        const { unsubscribableEmails, unsubscriptions } = value;
-        setStats({
+        const {
           unsubscribableEmails,
+          unsubscriptions,
+          previouslyUnsubscribedEmails
+        } = value;
+        setStats({
+          unsubscribableEmails:
+            unsubscribableEmails - previouslyUnsubscribedEmails,
           unsubscriptions,
           set: true
         });
@@ -494,10 +499,6 @@ function Stats({ isVisible }) {
       </div>
     </div>
   );
-}
-
-function showStats(values) {
-  return <></>;
 }
 
 export default IndexPage;
