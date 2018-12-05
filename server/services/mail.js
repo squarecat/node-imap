@@ -71,6 +71,11 @@ export async function scanMail(
 ) {
   try {
     let dupes = [];
+    const hasFinished = {
+      mail: false,
+      trash: false
+    };
+
     const { then, now } = getTimeRange(timeframe);
 
     const user = await getUserById(userId);
@@ -81,6 +86,7 @@ export async function scanMail(
     const gmail = new Gmail(user.keys.accessToken);
     const { unsubscriptions } = user;
     const searchStr = getSearchString({ then, now });
+    const trashSearchStr = getSearchString({ then, now, query: 'in:trash' });
     let total;
     console.log('mail-service: getting estimate');
 
@@ -90,28 +96,55 @@ export async function scanMail(
         then: estimateThen,
         now
       });
+      const trashEstimatedSearchString = getSearchString({
+        then: estimateThen,
+        now,
+        query: 'in:trash'
+      });
       const oneWTotal = await getEstimatedEmails(estimatedSearchString, gmail);
-      total = timeframe === '1m' ? oneWTotal * 4 : oneWTotal * 4 * 6;
+      const trashOneWTotal = await getEstimatedEmails(
+        trashEstimatedSearchString,
+        gmail
+      );
+      const combinedOneWTotal = oneWTotal + trashOneWTotal;
+      total =
+        timeframe === '1m' ? combinedOneWTotal * 4 : combinedOneWTotal * 4 * 6;
     } else {
-      total = await getEstimatedEmails(searchStr, gmail);
+      const estimatedTotal = await getEstimatedEmails(searchStr, gmail);
+      const trashEstimatedTotal = await getEstimatedEmails(
+        trashSearchStr,
+        gmail
+      );
+      total = estimatedTotal + trashEstimatedTotal;
     }
     console.log('mail-service: total', total);
     console.log('mail-service: doing scan... ', userId, timeframe, searchStr);
+    console.log(
+      'mail-service: doing trash scan... ',
+      userId,
+      timeframe,
+      trashSearchStr
+    );
 
-    const s = gmail.messages(searchStr, {
+    const messageOptions = {
       timeout: 10000,
       max: 10000
-    });
+    };
+
+    const s = gmail.messages(searchStr, messageOptions);
+    const t = gmail.messages(trashSearchStr, messageOptions);
 
     let totalEmailsCount = 0;
     let totalUnsubscribableEmailsCount = 0;
     let totalPreviouslyUnsubscribedEmails = 0;
+
     let progress = 0;
     onProgress({ progress, total });
 
-    s.on('data', m => {
+    const onMailData = (m, options) => {
       if (isUnsubscribable(m)) {
-        const mail = mapMail(m);
+        debugger;
+        const mail = mapMail(m, options);
         if (mail) {
           const prevUnsubscriptionInfo = hasUnsubscribedAlready(
             mail,
@@ -138,10 +171,21 @@ export async function scanMail(
       totalEmailsCount++;
       progress = progress + 1;
       onProgress({ progress, total });
-    });
+    };
+    s.on('data', onMailData);
+    t.on('data', d => onMailData(d, { trash: true }));
 
     s.on('end', () => {
-      console.log('mail-service: end mail');
+      hasFinished.mail = true;
+      if (hasFinished.trash === true) onScanFinished();
+    });
+    t.on('end', () => {
+      hasFinished.trash = true;
+      if (hasFinished.mail === true) onScanFinished();
+    });
+
+    const onScanFinished = () => {
+      console.log('mail-service: scan finished');
       addScanToStats();
       addNumberofEmailsToStats({
         totalEmails: totalEmailsCount,
@@ -158,19 +202,23 @@ export async function scanMail(
         updatePaidScanForUser(userId, timeframe);
       }
       onEnd();
-    });
+    };
 
-    s.on('timeout', err => {
+    const onTimeout = err => {
       console.error('mail-service: gmail timeout');
       console.error(err);
       onError(err.toString());
-    });
+    };
+    s.on('timeout', onTimeout);
+    t.on('timeout', onTimeout);
 
-    s.on('error', err => {
+    const onError = err => {
       console.error('mail-service: gmail error');
       console.error(err);
       onError(err.toString());
-    });
+    };
+    s.on('error', onError);
+    t.on('error', onError);
   } catch (err) {
     onError(err.toString());
   }
@@ -244,8 +292,10 @@ function isUnsubscribable(mail) {
   return headers.some(h => h.name === 'List-Unsubscribe');
 }
 
-function mapMail(mail) {
-  const { payload, id, snippet, internalDate } = mail;
+function mapMail(mail, { trash = false }) {
+  const { payload, id, snippet, internalDate, labelIds } = mail;
+  const isTrash = trash || labelIds.includes('TRASH');
+
   try {
     const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
       .value;
@@ -261,7 +311,8 @@ function mapMail(mail) {
       to: payload.headers.find(h => h.name === 'To').value,
       subject: payload.headers.find(h => h.name === 'Subject').value,
       unsubscribeLink,
-      unsubscribeMailTo
+      unsubscribeMailTo,
+      isTrash
     };
   } catch (err) {
     console.error('mail-service: error mapping mail');
@@ -270,10 +321,10 @@ function mapMail(mail) {
   }
 }
 
-function getSearchString({ then, now }) {
+function getSearchString({ then, now, query = '' }) {
   const thenStr = format(then, googleDateFormat);
-  const tomorrowStr = format(addDays(now, 1), googleDateFormat);
-  return `after:${thenStr} and before:${tomorrowStr}`;
+  // const tomorrowStr = format(addDays(now, 1), googleDateFormat);
+  return `after:${thenStr} ${query}`;
 }
 
 async function unsubscribeWithMailTo(unsubMailto) {
