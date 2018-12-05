@@ -143,7 +143,6 @@ export async function scanMail(
 
     const onMailData = (m, options) => {
       if (isUnsubscribable(m)) {
-        debugger;
         const mail = mapMail(m, options);
         if (mail) {
           const prevUnsubscriptionInfo = hasUnsubscribedAlready(
