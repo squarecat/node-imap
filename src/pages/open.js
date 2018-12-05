@@ -293,7 +293,7 @@ export default function Terms() {
             </div>
           </div>
           <div className="chart box">
-            <h2>Link vs Maito Unsubscriptions</h2>
+            <h2>Link vs Mailto Unsubscriptions</h2>
             <canvas ref={mailtoLinkRef} />
           </div>
         </div>
@@ -310,10 +310,6 @@ export default function Terms() {
             <div className="big-stat box">
               <span className="label">Total emails scanned</span>
               <span className="value">{format(stats.emails)}</span>
-            </div>
-            <div className="big-stat box">
-              <span className="label">Total number of estimates</span>
-              <span className="value">{format(stats.estimates || 0)}</span>
             </div>
           </div>
         </div>
