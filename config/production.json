@@ -25,7 +25,7 @@
     "devtools": false
   },
   "payments": {
-    "apiKey": "",
+    "apiKey": "test_6352NTNKjgqmatGgpvzhpffU7wtbdG",
     "redirectUrl": "https://leavemealone.xyz/api/checkout/redirect",
     "webhookUrl": "https://leavemealone.xyz/api/payments/hook"
   }

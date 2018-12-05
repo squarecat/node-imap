@@ -1,5 +1,5 @@
 let isPaymentRedirectNow = false;
-if (typeof URLSearchParams !== 'undefined') {
+if (typeof URLSearchParams !== 'undefined' && typeof window !== 'undefined') {
   isPaymentRedirectNow = new URLSearchParams(window.location.search).get(
     'doScan'
   );

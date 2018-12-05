@@ -13,7 +13,7 @@ import './index.css';
 import useGlobal from '../../utils/hooks/use-global';
 
 let doScan = false;
-if (typeof URLSearchParams !== 'undefined') {
+if (typeof URLSearchParams !== 'undefined' && typeof window !== 'undefined') {
   doScan = new URLSearchParams(window.location.search).get('doScan');
 }
 if (doScan) {
