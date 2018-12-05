@@ -194,7 +194,8 @@ function mailtoLinkPieChart(ctx, stats) {
     },
     type: 'pie',
     options: {
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
@@ -292,7 +293,7 @@ export default function Terms() {
               <span className="value">{format(stats.unsubscriptions)}</span>
             </div>
           </div>
-          <div className="chart box">
+          <div className="chart box chart--pie">
             <h2>Link vs Mailto Unsubscriptions</h2>
             <canvas ref={mailtoLinkRef} />
           </div>
