@@ -43,21 +43,15 @@ const IndexPage = () => {
       <div id="main">
         <div className="friendly-neighbourhood-hero">
           <div>
-            <h1>
-              <div className="leave-me-alone-logo" ref={activeRef}>
-                <span>
-                  <img
-                    src={gmailLogo}
-                    alt="gmail-logo"
-                    className="gmail-logo"
-                  />
-                </span>
-                <span className="logo-emoji">
-                  <img src={girlLogo} alt="girl-logo" className="girl-logo" />
-                </span>
-              </div>
-            </h1>
-            <h2 className="title">Leave Me Alone!</h2>
+            <div className="leave-me-alone-logo" ref={activeRef}>
+              <span>
+                <img src={gmailLogo} alt="gmail-logo" className="gmail-logo" />
+              </span>
+              <span className="logo-emoji">
+                <img src={girlLogo} alt="girl-logo" className="girl-logo" />
+              </span>
+            </div>
+            <h1 className="title">Leave Me Alone!</h1>
             <p className="catchy-tagline">
               Take back control of your inbox by telling subscription spammers
               to leave you alone!
