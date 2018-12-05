@@ -4,7 +4,7 @@ import AnimatedNumber from 'react-animated-number';
 import TrackVisibility from 'react-on-screen';
 
 import { useAsync } from '../utils/hooks';
-import gmailLogo from '../assets/gmail.png';
+import envelope from '../assets/envelope.png';
 import dogs from '../assets/dogs.jpg';
 import girlLogo from '../assets/leavemealonegirl.png';
 import gif from '../assets/toggle-unsubscribe-hd.gif';
@@ -50,11 +50,7 @@ const IndexPage = () => {
             <h1>
               <div className="leave-me-alone-logo" ref={activeRef}>
                 <span>
-                  <img
-                    src={gmailLogo}
-                    alt="gmail-logo"
-                    className="gmail-logo"
-                  />
+                  <img src={envelope} alt="gmail-logo" className="gmail-logo" />
                 </span>
                 <span className="logo-emoji">
                   <img src={girlLogo} alt="girl-logo" className="girl-logo" />
