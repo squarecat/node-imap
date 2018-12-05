@@ -67,11 +67,10 @@ h1 {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) translateY(8px);
+  transform: translate(-50%, -50%) translateY(2px);
   display: block;
-  padding: 10px 0 0 0;
   pointer-events: none;
-  font-size: 100px;
+  padding: 0;
 }
 
 .leave-me-alone-logo .gmail-logo {
