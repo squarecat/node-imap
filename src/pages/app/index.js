@@ -4,7 +4,7 @@ import { Transition } from 'react-transition-group';
 import Modal from '../../components/price-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
-import logo from '../../assets/transparent-logo.png';
+import logo from '../../assets/envelope-logo.png';
 
 import MailList from './mail-list';
 import Welcome from './welcome';

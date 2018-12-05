@@ -60,7 +60,7 @@ h1 {
   position: relative;
   width: 200px;
   height: 140px;
-  margin: 0 auto;
+  margin: 0 auto 20px auto;
 }
 
 .logo-emoji {

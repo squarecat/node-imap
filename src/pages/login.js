@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 // import PageTransition from 'gatsby-plugin-page-transitions';
 
-import logo from '../assets/leave-me-logo.png';
+import logo from '../assets/envelope-logo.png';
 import Layout from '../layouts/layout';
 import './login.css';
 

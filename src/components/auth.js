@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { fetchLoggedInUser, isPaymentRedirect } from '../utils/auth';
 import { useAsync, useGlobal } from '../utils/hooks';
 import './auth.css';
-import gmailLogo from '../assets/gmail.png';
+import envelopeLogo from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 
 export default ({ children }) => {
@@ -45,7 +45,11 @@ function UserAuth({ user: newUser, children, loading }) {
           </span>
         </div>
         <div className="auth-loading-pane auth-loading-pane--back">
-          <img src={gmailLogo} alt="gmail-logo" className="gmail-logo" />
+          <img
+            src={envelopeLogo}
+            alt="envelope-logo"
+            className="envelope-logo"
+          />
         </div>
       </div>
       <div className="loaded-content">{!loading && user ? children : null}</div>

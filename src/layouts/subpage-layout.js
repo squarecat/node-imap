@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../layouts/layout';
-import logo from '../assets/transparent-logo.png';
+import logo from '../assets/envelope-logo.png';
 
 import './subpage-layout.css';
 
