@@ -358,3 +358,18 @@ h1 {
     transform: translate3D(7.5%, 100%, 0);
   }
 }
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 175px;
+}
+
+.stat > span {
+  display: block;
+}
+
+.stat-value {
+  font-size: 50px;
+  line-height: 50px;
+}
