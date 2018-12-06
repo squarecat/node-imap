@@ -43,7 +43,7 @@
   text-align: center;
   transform-origin: 50% 50%;
   background: white;
-  font-size: 80px;
+  font-size: 14px;
 }
 
 .loaded-content {
@@ -54,21 +54,6 @@
 
 .auth-loading--loaded .loaded-content {
   opacity: 1;
-}
-
-.auth-loading-pane .logo-emoji {
-  transform: translate(-50%, -55%);
-  width: 120px;
-}
-
-.logo-emoji {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -55%);
-  display: block;
-  padding: 10px 0 0 0;
-  pointer-events: none;
 }
 
 .auth-loading-pane .envelope-logo {
