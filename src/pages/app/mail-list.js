@@ -515,16 +515,18 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
           <span className="from-date">
             {format(+m.googleDate, mailDateFormat)}
           </span>
-          <Tooltip
-            placement="top"
-            trigger={['hover']}
-            mouseLeaveDelay="0"
-            overlayClassName="tooltip"
-            destroyTooltipOnHide={true}
-            overlay={<span>This email was in your trash folder</span>}
-          >
-            {m.isTrash ? <span className="trash">trash</span> : null}
-          </Tooltip>
+          {m.isTrash ? (
+            <Tooltip
+              placement="top"
+              trigger={['hover']}
+              mouseLeaveDelay={0}
+              overlayClassName="tooltip"
+              destroyTooltipOnHide={true}
+              overlay={<span>This email was in your trash folder</span>}
+            >
+              <span className="trash">trash</span>
+            </Tooltip>
+          ) : null}
         </div>
         <div className="subject">{m.subject}</div>
         <div className="actions">
