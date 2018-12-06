@@ -373,6 +373,11 @@ const IndexPage = () => {
             </a>
           </li>
           <li>
+            <a className="link" href="/faq">
+              FAQ
+            </a>
+          </li>
+          <li>
             <a
               className="link"
               target="_blank"

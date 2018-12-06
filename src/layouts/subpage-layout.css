@@ -1,3 +1,7 @@
+body {
+  padding-bottom: 0;
+}
+
 .subpage-header {
   display: flex;
   align-items: center;
