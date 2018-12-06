@@ -5,12 +5,12 @@ import Modal from '../../components/price-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import logo from '../../assets/envelope-logo.png';
+import useUser from '../../utils/hooks/use-user';
 
 import MailList from './mail-list';
 import Welcome from './welcome';
 
 import './index.css';
-import useGlobal from '../../utils/hooks/use-global';
 
 let doScan = false;
 if (typeof URLSearchParams !== 'undefined' && typeof window !== 'undefined') {
@@ -34,8 +34,7 @@ function AuthApp() {
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan);
 
-  const [user] = useGlobal('user');
-  const { hasSearched } = user;
+  const [hasSearched] = useUser(s => s.hasSearched);
 
   return (
     <>

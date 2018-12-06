@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 
 import { fetchLoggedInUser, isPaymentRedirect } from '../utils/auth';
-import { useAsync, useGlobal } from '../utils/hooks';
+import { useAsync } from '../utils/hooks';
+import useUser from '../utils/hooks/use-user';
 import './auth.css';
 import envelopeLogo from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
@@ -24,11 +25,11 @@ export default ({ children }) => {
 };
 
 function UserAuth({ user: newUser, children, loading }) {
-  const [user, setUser] = useGlobal('user');
+  const [user, { load }] = useUser();
 
   useEffect(() => {
     if (newUser && !user) {
-      setUser({ ...newUser, hasSearched: newUser.hasScanned });
+      load({ ...newUser, hasSearched: newUser.hasScanned });
     }
   });
 

@@ -2,9 +2,9 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import ErrorBoundary from '../../components/error-boundary';
-import { useGlobal } from '../../utils/hooks';
 import UnsubModal from '../../components/unsub-modal';
 import Toggle from '../../components/toggle';
+import useUser from '../../utils/hooks/use-user';
 
 import format from 'date-fns/format';
 import io from 'socket.io-client';
@@ -78,7 +78,7 @@ const mailReducer = (state = [], action) => {
 };
 
 function useSocket(callback) {
-  const [user] = useGlobal('user');
+  const [user, { incrementUnsubCount }] = useUser();
 
   // gatsby wont compile without these type checks
   const [localMail, setLocalMail] = useLocalStorage(
@@ -133,6 +133,7 @@ function useSocket(callback) {
       console.log('unsub success', data);
       dispatch({ type: 'unsubscribe-success', data: { id, ...data } });
       dispatch({ type: 'set-loading', data: { id, isLoading: false } });
+      incrementUnsubCount();
     });
     socket.on('unsubscribe:err', ({ id, data }) => {
       console.error('unsub err', data);
@@ -186,8 +187,7 @@ function useSocket(callback) {
 
 export default ({ timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
-  const [user, setUser] = useGlobal('user');
-  const { hasSearched } = user || {};
+  const [, { setHasSearched }] = useUser();
   const {
     mail,
     fetchMail,
@@ -205,21 +205,12 @@ export default ({ timeframe, showPriceModal }) => {
     fetchMail(timeframe);
   }
 
-  // useEffect(
-  //   () => {
-  //     if (isConnected && timeframe && hasSearched) {
-  //       doSearch();
-  //     }
-  //   },
-  //   [timeframe]
-  // );
-
   useEffect(
     () => {
       // if (!hasSearched) {
       if (isConnected && timeframe) {
         doSearch();
-        setUser({ ...user, hasSearched: true });
+        setHasSearched(true);
       } else {
         setSearchFinished(true);
       }
@@ -415,9 +406,8 @@ function List({
   showPriceModal,
   addUnsubscribeErrorResponse
 }) {
-  // const [unsubscribeError, setUnsubscribeError] = useState(null);
   const [unsubData, setUnsubData] = useState(null);
-  const [user] = useGlobal('user');
+  const [unsubCount] = useUser(s => s.unsubCount);
 
   if (!mail.length && isSearchFinished) {
     return (
@@ -436,7 +426,7 @@ function List({
     return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
   };
 
-  const socialContent = getSocialContent(mail, user);
+  const socialContent = getSocialContent(unsubCount);
   const sortedMail = mail
     .sort((a, b) => {
       return +b.googleDate - +a.googleDate;
@@ -558,12 +548,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   );
 }
 
-function getSocialContent(mail, user) {
-  let unsubCount = 0;
-  if (user) {
-    unsubCount = user.unsubscriptions ? user.unsubscriptions.length : 0;
-  }
-
+function getSocialContent(unsubCount) {
   const socialOutput = progressTweets.reduce((out, progress) => {
     if (unsubCount >= progress.val) {
       return {

@@ -31,6 +31,7 @@
     "passport-google-oauth2": "^0.1.6",
     "puppeteer": "^1.10.0",
     "react-animated-number": "^0.4.4",
+    "react-hook-utils": "^1.0.6",
     "react-on-screen": "^2.1.0",
     "react-use": "^4.10.0",
     "socket.io": "^2.1.1",

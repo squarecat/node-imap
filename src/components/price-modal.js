@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { useGlobal } from '../utils/hooks';
+import useUser from '../utils/hooks/use-user';
 import useAsync from '../utils/hooks/use-async';
 import Button from '../components/btn';
 import ModalClose from './modal/modal-close';
@@ -97,11 +97,10 @@ const PricingScreen = ({
   setScreen,
   isPaymentLoading
 }) => {
-  const [user] = useGlobal('user');
+  const [isBeta] = useUser(s => s.beta);
   const [selected, setSelected] = useState('free');
   const [coupon, setCoupon] = useState('');
   const [isCouponShown, showCoupon] = useState(false);
-  const isBeta = !!user.beta;
 
   return (
     <>
@@ -185,10 +184,10 @@ const PricingScreen = ({
         <a className="btn muted compact" onClick={onClickClose}>
           Cancel
         </a>
-        {selected === 'free' || user.beta ? (
+        {selected === 'free' || isBeta ? (
           <a
             className="btn compact"
-            onClick={() => onClickPurchase(selected, user.beta)}
+            onClick={() => onClickPurchase(selected, isBeta)}
           >
             OK
           </a>
