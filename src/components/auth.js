@@ -25,10 +25,10 @@ export default ({ children }) => {
 };
 
 function UserAuth({ user: newUser, children, loading }) {
-  const [user, { load }] = useUser();
+  const [isUserLoaded, { load }] = useUser(s => s.loaded);
 
   useEffect(() => {
-    if (newUser && !user) {
+    if (newUser && !isUserLoaded) {
       load({ ...newUser, hasSearched: newUser.hasScanned });
     }
   });
@@ -36,7 +36,7 @@ function UserAuth({ user: newUser, children, loading }) {
   return (
     <div
       className={`auth-loading ${
-        loading || !user ? '' : 'auth-loading--loaded'
+        loading || !isUserLoaded ? '' : 'auth-loading--loaded'
       }`}
     >
       <div className="dice">
@@ -53,7 +53,9 @@ function UserAuth({ user: newUser, children, loading }) {
           />
         </div>
       </div>
-      <div className="loaded-content">{!loading && user ? children : null}</div>
+      <div className="loaded-content">
+        {!loading && isUserLoaded ? children : null}
+      </div>
     </div>
   );
 }

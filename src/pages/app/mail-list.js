@@ -551,16 +551,19 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   );
 }
 
-function getSocialContent(unsubCount) {
-  const socialOutput = progressTweets.reduce((out, progress) => {
-    if (unsubCount >= progress.val) {
-      return {
-        text: progress.text.replace('NUM', unsubCount),
-        tweet: encodeURIComponent(progress.tweet.replace('NUM', unsubCount))
-      };
-    }
-    return out;
-  }, null);
+function getSocialContent(unsubCount = 0) {
+  const socialOutput = progressTweets.reduce(
+    (out, progress) => {
+      if (unsubCount >= progress.val) {
+        return {
+          text: progress.text.replace('NUM', unsubCount),
+          tweet: encodeURIComponent(progress.tweet.replace('NUM', unsubCount))
+        };
+      }
+      return out;
+    },
+    { text: null, tweet: null }
+  );
   return (
     <li className="mail-list-item mail-list-social">
       <div className="mail-item">
