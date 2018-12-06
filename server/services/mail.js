@@ -291,7 +291,7 @@ function isUnsubscribable(mail) {
   return headers.some(h => h.name === 'List-Unsubscribe');
 }
 
-function mapMail(mail, { trash = false }) {
+function mapMail(mail, { trash = false } = {}) {
   const { payload, id, snippet, internalDate, labelIds } = mail;
   const isTrash = trash || labelIds.includes('TRASH');
 

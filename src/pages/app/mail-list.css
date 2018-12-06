@@ -46,6 +46,25 @@
   white-space: nowrap;
 }
 
+.from-date {
+  display: inline-block;
+}
+
+.trash {
+  display: inline-block;
+  background-color: #ffd7d5;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 15px;
+  vertical-align: top;
+  margin-left: 7px;
+  cursor: default;
+}
+.trash:hover {
+  background-color: #ffb9b6;
+}
+
 .from-email {
   opacity: 0.75;
   font-size: 11px;
@@ -278,4 +297,24 @@ pre {
   .subject {
     display: none;
   }
+}
+
+.rc-tooltip-inner {
+  background-color: #ffd9d6 !important;
+  border: 0 !important;
+  box-shadow: 1px 1px 2px hsla(18, 100%, 38%, 0.1) !important;
+  min-height: 30px;
+  padding: 5px 10px;
+}
+
+.rc-tooltip-placement-top .rc-tooltip-arrow,
+.rc-tooltip-placement-topLeft .rc-tooltip-arrow,
+.rc-tooltip-placement-topRight .rc-tooltip-arrow {
+  border-top-color: #ffd9d6 !important;
+}
+
+.rc-tooltip {
+  background: transparent !important;
+  transform: translateY(-4px);
+  opacity: 1 !important;
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
+import Tooltip from 'rc-tooltip';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import ErrorBoundary from '../../components/error-boundary';
@@ -11,7 +12,9 @@ import io from 'socket.io-client';
 
 const mailDateFormat = 'Do MMM YYYY HH:mm';
 
+import 'rc-tooltip/assets/bootstrap_white.css';
 import './mail-list.css';
+
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 
 const mailReducer = (state = [], action) => {
@@ -507,14 +510,21 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
-          <span className="from-name">
-            {m.isTrash ? <span className="trash">(trash) </span> : null}
-            {fromName}
-          </span>
+          <span className="from-name">{fromName}</span>
           <span className="from-email">{fromEmail}</span>
           <span className="from-date">
             {format(+m.googleDate, mailDateFormat)}
           </span>
+          <Tooltip
+            placement="top"
+            trigger={['hover']}
+            mouseLeaveDelay="0"
+            overlayClassName="tooltip"
+            destroyTooltipOnHide={true}
+            overlay={<span>This email was in your trash folder</span>}
+          >
+            {m.isTrash ? <span className="trash">trash</span> : null}
+          </Tooltip>
         </div>
         <div className="subject">{m.subject}</div>
         <div className="actions">
