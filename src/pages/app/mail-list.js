@@ -490,7 +490,7 @@ function getSocialItem(mail, socialContent) {
 }
 
 function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
-  const isSubscibed = !!m.subscribed;
+  const isSubscribed = !!m.subscribed;
   let fromName;
   let fromEmail;
   if (m.from.match(/^.*<.*>/)) {
@@ -507,7 +507,10 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
-          <span className="from-name">{fromName}</span>
+          <span className="from-name">
+            {m.isTrash ? <span className="trash">(trash) </span> : null}
+            {fromName}
+          </span>
           <span className="from-email">{fromEmail}</span>
           <span className="from-date">
             {format(+m.googleDate, mailDateFormat)}
@@ -517,7 +520,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
         <div className="actions">
           {m.estimatedSuccess !== false || m.resolved ? (
             <Toggle
-              status={isSubscibed}
+              status={isSubscribed}
               loading={m.isLoading}
               onChange={() => onUnsubscribe(m)}
             />
@@ -537,7 +540,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
               <circle cx="16" cy="16" r="14" />
             </svg>
           )}
-          {!isSubscibed ? (
+          {!isSubscribed ? (
             <a className="status" onClick={() => setUnsubModal(m)}>
               See details
             </a>
