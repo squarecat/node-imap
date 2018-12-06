@@ -203,21 +203,21 @@ export async function scanMail(
       onEnd();
     };
 
-    const onTimeout = err => {
+    const onMailTimeout = err => {
       console.error('mail-service: gmail timeout');
       console.error(err);
       onError(err.toString());
     };
-    s.on('timeout', onTimeout);
-    t.on('timeout', onTimeout);
+    s.on('timeout', onMailTimeout);
+    t.on('timeout', onMailTimeout);
 
-    const onError = err => {
+    const onMailError = err => {
       console.error('mail-service: gmail error');
       console.error(err);
       onError(err.toString());
     };
-    s.on('error', onError);
-    t.on('error', onError);
+    s.on('error', onMailError);
+    t.on('error', onMailError);
   } catch (err) {
     onError(err.toString());
   }
