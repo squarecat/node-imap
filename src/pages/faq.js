@@ -9,7 +9,7 @@ const FaqPage = () => (
     <div className="faqs">
       <div className="faq-box">
         <h3 className="faq-title">
-          How is Leave Me Alone different from Unroll.me?
+          How is Leave Me Alone different from other services like Unroll.me?
         </h3>
         <p>
           When we scan your inbox we NEVER sell any of your data for marketing
@@ -21,7 +21,7 @@ const FaqPage = () => (
         </p>
         <p>
           We unsubscribe you from the lists rather than just moving them to
-          trash or labelling them.
+          trash or applying a label.
         </p>
       </div>
       <div className="faq-box">
