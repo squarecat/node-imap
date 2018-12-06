@@ -261,34 +261,6 @@ h1 {
   left: 10vw;
 }
 
-.footer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding-bottom: 100px;
-}
-
-.footer-nav,
-.footer-social {
-  margin: 0;
-  padding: 0;
-  display: flex;
-}
-
-.footer li {
-  padding: 10px;
-  margin: 0 5px;
-}
-
-.footer-social li svg {
-  color: var(--link-color);
-}
-.footer-social li:hover svg {
-  color: var(--primary-font-color);
-}
-
 .love > div {
   width: 90%;
   max-width: 1050px;
@@ -337,8 +309,7 @@ h1 {
   .makers > div {
     padding: 20px;
   }
-  #main,
-  .footer {
+  #main {
     padding-bottom: 50px;
   }
   .tweet-box {
