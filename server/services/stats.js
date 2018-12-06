@@ -10,7 +10,7 @@ import {
   getStats
 } from '../dao/stats';
 
-export function addUnsubscriptionToStats({ unsubStrategy }) {
+export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
   if (unsubStrategy === 'link') return addUnsubscriptionByLink();
   if (unsubStrategy === 'mailto') return addUnsubscriptionByEmail();
   return false;

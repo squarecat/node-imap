@@ -268,7 +268,7 @@ export async function addUnsubscribeErrorResponse(
   const domain = getDomain(from);
   if (success) {
     return Promise.all([
-      addUnsubscriptionToStats(),
+      addUnsubscriptionToStats({ unsubStrategy }),
       addResolvedUnsubscription({ mailId, image, domain, unsubStrategy }),
       resolveUserUnsubscription(userId, mailId)
     ]);
