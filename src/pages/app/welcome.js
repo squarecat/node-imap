@@ -1,6 +1,7 @@
 import React from 'react';
 
 import logo from '../../assets/envelope-logo.png';
+import gif from '../../assets/toggle-unsubscribe-hd.gif';
 import './welcome.css';
 
 const betaTweetText = encodeURIComponent(
@@ -41,9 +42,10 @@ export default ({ openPriceModal, isBeta }) => {
             <img src={logo} alt="logo" className="first-logon-image" />
           </div>
           <p>
-            You can then choose if you want to stay subscribed, or cancel the
-            subscription.
+            We'll show you all the mail you are subscribed to, just hit the
+            slider to unsubscribe.
           </p>
+          <img src={gif} className="unsub-gif" alt="unsubscribe-gif" />
         </div>
         <div className="action">
           <a

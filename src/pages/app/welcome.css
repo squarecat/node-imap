@@ -24,3 +24,11 @@
 .welcome-logo {
   margin-bottom: 20px;
 }
+
+.unsub-gif {
+  width: 90%;
+  max-width: 450px;
+  margin-top: 20px;
+  border: 1px solid #ffd9d6;
+  border-radius: 8px;
+}

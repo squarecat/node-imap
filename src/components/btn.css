@@ -62,6 +62,15 @@
   visibility: hidden;
 }
 
+.btn.basic:hover {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.btn.basic.disabled {
+  background-color: transparent;
+}
+
 .btn-loader {
   position: absolute;
   display: block;
