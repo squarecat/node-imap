@@ -4,7 +4,7 @@ import SubPageLayout from '../layouts/subpage-layout';
 export default function Terms() {
   return (
     <SubPageLayout>
-      <h2>Privacy Policy</h2>
+      <h1>Privacy Policy</h1>
       <p>
         Your privacy is important to us. It is Squarecat's policy to respect
         your privacy regarding any information we may collect from you across

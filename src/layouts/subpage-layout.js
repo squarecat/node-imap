@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../layouts/layout';
 import logo from '../assets/envelope-logo.png';
+import Footer from '../components/footer';
 
 import './subpage-layout.css';
 
@@ -15,6 +16,7 @@ export default ({ className, children }) => {
       </div>
       <div className={`subpage ${className}`}>
         <div className="subpage-content">{children}</div>
+        <Footer />
       </div>
     </Layout>
   );
