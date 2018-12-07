@@ -25,8 +25,7 @@
     "devtools": false
   },
   "payments": {
-    "apiKey": "test_6352NTNKjgqmatGgpvzhpffU7wtbdG",
-    "redirectUrl": "https://leavemealone.xyz/api/checkout/redirect",
-    "webhookUrl": "https://leavemealone.xyz/api/payments/hook"
+    "publishableKey": "pk_live_2thpKDxq45nmO8NBG4wCJr0j",
+    "secretKey": "sk_live_3SbQqVsq3kybRISez1MtdeGp"
   }
 }

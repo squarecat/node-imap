@@ -134,7 +134,7 @@ const PricingScreen = ({
         ))}
       </div>
       <div className="estimates">
-        <p>
+        <p className="modal-text--small">
           Not sure what package is best for you? Let us{' '}
           <a onClick={() => setScreen('estimates')}>
             estimate the number of spam messages you might have
@@ -158,38 +158,62 @@ const PricingScreen = ({
         </p>
       </div>
       <div className="modal-actions">
-        <p className="monthly-price">
-          Looking for a monthly subscription?{' '}
-          <a
-            onClick={() =>
-              openChat(
-                "Hi! I'm looking for a monthly subscription to Leave Me Alone."
-              )
-            }
-          >
-            Contact us!
+        <div className="modal-actions-info">
+          <p className="modal-text--small monthly-price">
+            Looking for a monthly subscription?{' '}
+            <a
+              onClick={() =>
+                openChat(
+                  "Hi! I'm looking for a monthly subscription to Leave Me Alone."
+                )
+              }
+            >
+              Contact us!
+            </a>
+          </p>
+          <p className="modal-text--small secured-by">
+            <svg
+              className="lock-icon"
+              id="i-lock"
+              viewBox="0 0 32 32"
+              width="12"
+              height="12"
+              fill="none"
+              stroke="currentcolor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+            >
+              <path d="M5 15 L5 30 27 30 27 15 Z M9 15 C9 9 9 5 16 5 23 5 23 9 23 15 M16 20 L16 23" />
+              <circle cx="16" cy="24" r="1" />
+            </svg>
+            Payments Secured by{' '}
+            <a href="https://stripe.com/docs/security/stripe">Stripe</a>
+          </p>
+        </div>
+        <div className="modal-buttons">
+          <a className="btn muted compact" onClick={onClickClose}>
+            Cancel
           </a>
-        </p>
-        <a className="btn muted compact" onClick={onClickClose}>
-          Cancel
-        </a>
-        {selected === 'free' || isBeta ? (
-          <a
-            className="btn compact"
-            onClick={() => onClickPurchase(selected, isBeta)}
-          >
-            OK
-          </a>
-        ) : (
-          <CheckoutForm
-            coupon={coupon}
-            onCheckoutFailed={() => {
-              console.error('Checkout failed, what do?');
-            }}
-            onCheckoutComplete={() => onClickPurchase(selected)}
-            selected={prices.find(s => s.value === selected)}
-          />
-        )}
+
+          {selected === 'free' || isBeta ? (
+            <a
+              className="btn compact"
+              onClick={() => onClickPurchase(selected, isBeta)}
+            >
+              OK
+            </a>
+          ) : (
+            <CheckoutForm
+              coupon={coupon}
+              onCheckoutFailed={() => {
+                console.error('Checkout failed, what do?');
+              }}
+              onCheckoutComplete={() => onClickPurchase(selected)}
+              selected={prices.find(s => s.value === selected)}
+            />
+          )}
+        </div>
       </div>
     </>
   );
