@@ -82,6 +82,7 @@ async function getPuppeteerInstance() {
 }
 
 async function closeInstance() {
+  if (!puppeteerInstance) return;
   const pageCount = (await puppeteerInstance.pages()).length;
   // theres always a blank page to start with
   if (pageCount === 1) {
