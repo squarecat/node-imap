@@ -5,7 +5,6 @@
   "author": "James Ivings <james@squarecat.io>",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "@mollie/api-client": "^2.1.0",
     "@sentry/browser": "^4.4.1",
     "aes256": "^1.0.4",
     "agenda": "^2.0.2",
@@ -15,6 +14,7 @@
     "email-addresses": "^3.0.3",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
+    "gatsby-plugin-stripe-elements": "^1.0.9",
     "gatsby-plugin-twitter": "^2.0.8",
     "getconfig": "^4.5.0",
     "googleapis": "^35.0.0",
@@ -34,9 +34,12 @@
     "react-animated-number": "^0.4.4",
     "react-hook-utils": "^1.0.6",
     "react-on-screen": "^2.1.0",
+    "react-stripe-checkout": "^2.6.3",
+    "react-stripe-elements": "^2.0.1",
     "react-use": "^4.10.0",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
+    "stripe": "^6.18.0",
     "uuid": "^3.3.2"
   },
   "keywords": [
