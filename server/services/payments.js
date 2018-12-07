@@ -1,56 +1,62 @@
-import { createCustomer, createPayment } from '../utils/stripe';
-import { updateCustomerId } from './user';
-// import { getDiscount } from '../dao/coupons';
+import { createPayment, getPaymentCoupon } from '../utils/stripe';
+import { addPaidScanToUser } from '../services/user';
+import { addPaymentToStats } from '../services/stats';
 
 const products = [
   {
-    price: 3,
+    price: 300,
     label: '1 week',
     value: '1w'
   },
   {
-    price: 5,
+    price: 500,
     label: '1 month',
     value: '1m'
   },
   {
-    price: 8,
+    price: 800,
     label: '6 months',
     value: '6m'
   }
 ];
 
+export async function getCoupon(coupon) {
+  return getPaymentCoupon(coupon);
+}
+
 export async function createPaymentForUser({ token, user, productId, coupon }) {
   let payment;
-  const { price: amount, label, value: productType } = products.find(
-    p => p.value === productId
-  );
-
+  let price;
+  const { id: userId } = user;
+  const { price: amount, label } = products.find(p => p.value === productId);
   const { id: tokenId } = token;
+  debugger;
+  if (coupon) {
+    const { percent_off, amount_off } = await getCoupon(coupon);
+    if (percent_off) {
+      price = amount - amount * (percent_off / 100);
+    } else if (amount_off) {
+      price = amount - amount_off;
+    }
+  } else {
+    price = amount;
+  }
+
   try {
-    // if (user.customerId) {
     payment = await createPayment({
-      amount,
+      amount: price,
       productLabel: label,
       tokenId
     });
-    // } else {
-    //   const { email } = user;
-    //   const customer = await createCustomer({ email, token });
-    //   const { id: customerId } = customer;
-    //   await updateCustomerId(user.id, customerId);
-    //   // put customer id into database
-    //   payment = await createPayment({
-    //     amount,
-    //     productLabel: label,
-    //     customerId
-    //   });
-    // }
+    if (payment.paid) {
+      addPaidScanToUser(userId, productId);
+      addPaymentToStats({ price: amount / 100 });
+    }
     return payment;
   } catch (err) {
     console.error(
       'payments-service: failed to create payment for user',
-      user.id
+      userId
     );
     console.error(err);
     throw err;

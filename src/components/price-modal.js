@@ -53,18 +53,7 @@ export default ({ onClose, onPurchase }) => {
     if (selected === 'free') {
       return onPurchase('3d');
     }
-    if (isBeta) {
-      return onPurchase(selected);
-    }
-    setPaymentLoading(true);
-    // let resp;
-    // if (coupon) {
-    // resp = await fetch(`/api/checkout/${selected}/${coupon}`);
-    // } else {
-    const resp = await fetch(`/api/checkout/${selected}`);
-    // }
-    const { status, err } = await resp.json();
-    setPaymentLoading(false);
+    return onPurchase(selected);
   };
 
   let content;
@@ -153,7 +142,7 @@ const PricingScreen = ({
           .
         </p>
       </div>
-      {/* <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
+      <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
         <input
           className="coupon-input"
           value={coupon}
@@ -167,7 +156,7 @@ const PricingScreen = ({
             Have a discount coupon?
           </a>
         </p>
-      </div> */}
+      </div>
       <div className="modal-actions">
         <p className="monthly-price">
           Looking for a monthly subscription?{' '}
@@ -193,8 +182,11 @@ const PricingScreen = ({
           </a>
         ) : (
           <CheckoutForm
-            // onClick={() => setPaymentLoading(true)}
-            // onSuccess={() => setPaymentLoading(false)}
+            coupon={coupon}
+            onCheckoutFailed={() => {
+              console.error('Checkout failed, what do?');
+            }}
+            onCheckoutComplete={() => onClickPurchase(selected)}
             selected={prices.find(s => s.value === selected)}
           />
         )}
