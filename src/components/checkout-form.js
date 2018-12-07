@@ -4,13 +4,13 @@ import logo from '../assets/envelope-logo.png';
 import Button from './btn';
 
 let callback;
+let onClose;
 let onToken = t => callback(t);
-
 const handler = window.StripeCheckout.configure({
   key: 'pk_test_td6LkJVGPINUdmgEnbonAGNk',
   image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
   locale: 'auto',
-  closed: () => callback(false),
+  closed: () => onClose(),
   token: onToken
 });
 
@@ -47,20 +47,20 @@ const CheckoutForm = ({
 
   const { price, value, label: productName } = selected;
 
+  useEffect(() => {
+    onClose = () => {
+      setLoading(false);
+    };
+  });
   useEffect(
     () => {
       callback = async token => {
         try {
-          if (!token) {
-            return onCheckoutFailed();
-          }
           await sendPayment({ token, productId: value, coupon });
           onCheckoutComplete();
         } catch (err) {
           console.error(err);
           onCheckoutFailed();
-        } finally {
-          setLoading(false);
         }
       };
     },
