@@ -12,6 +12,7 @@ export default ({
   disabled,
   children,
   label,
+  basic,
   centered
 }) => {
   const className = cx('btn', {
@@ -20,7 +21,8 @@ export default ({
     centered,
     muted,
     icon,
-    disabled
+    disabled,
+    basic
   });
   return (
     <a className={className} onClick={onClick}>

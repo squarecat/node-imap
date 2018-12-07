@@ -49,11 +49,14 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(onClose, 300);
   };
-  const onClickPurchase = async (selected, isBeta, coupon) => {
-    if (selected === 'free') {
-      return onPurchase('3d');
-    }
-    return onPurchase(selected);
+  const onClickPurchase = async selected => {
+    setShown(false);
+    setTimeout(() => {
+      if (selected === 'free') {
+        return onPurchase('3d');
+      }
+      return onPurchase(selected);
+    }, 300);
   };
 
   let content;
