@@ -345,3 +345,14 @@ h1 {
   font-size: 50px;
   line-height: 50px;
 }
+
+.join-text {
+  font-size: 12px;
+  line-height: 16px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+.join-stat {
+  color: var(--link-color);
+  font-weight: bold;
+}

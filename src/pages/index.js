@@ -42,6 +42,9 @@ const IndexPage = () => {
       e.shadowRoot.appendChild(style);
     });
   }, []);
+
+  const { loading: statsLoading, value: statsData } = useAsync(fetchStats);
+
   return (
     <Layout>
       <Colin />
@@ -63,13 +66,23 @@ const IndexPage = () => {
               to leave you alone!
             </p>
             <a
-              href="/subscribe"
+              href="/login"
               onMouseEnter={() => setActive(true)}
               onMouseLeave={() => setActive(false)}
               className={`beam-me-up-cta beam-me-up-cta--f`}
             >
-              Sign me up!
+              Get Started!
             </a>
+            {!statsLoading ? (
+              <p className="join-text">
+                Join <span className="join-stat">{statsData.users} users</span>{' '}
+                who have unsubscribed from a total of{' '}
+                <span className="join-stat">
+                  {statsData.unsubscriptions} spam
+                </span>{' '}
+                emails
+              </p>
+            ) : null}
 
             <a className="more-info" onClick={scrollDown}>
               Read more 👇
@@ -100,7 +113,13 @@ const IndexPage = () => {
             </div>
 
             <TrackVisibility>
-              {({ isVisible }) => <Stats isVisible={isVisible} />}
+              {({ isVisible }) => (
+                <Stats
+                  isLoading={statsLoading}
+                  data={statsData}
+                  isVisible={isVisible}
+                />
+              )}
             </TrackVisibility>
 
             <h2 className="privacy-title">We don't steal your data</h2>
@@ -370,8 +389,7 @@ function fetchStats() {
   return fetch('/api/stats').then(r => r.json());
 }
 
-function Stats({ isVisible }) {
-  const { loading, value } = useAsync(fetchStats);
+function Stats({ isLoading, data, isVisible }) {
   const [stats, setStats] = useState({
     unsubscribableEmails: 0,
     unsubscriptions: 0
@@ -379,12 +397,12 @@ function Stats({ isVisible }) {
 
   useEffect(
     () => {
-      if (!loading && isVisible) {
+      if (!isLoading && isVisible) {
         const {
           unsubscribableEmails,
           unsubscriptions,
           previouslyUnsubscribedEmails
-        } = value;
+        } = data;
         setStats({
           unsubscribableEmails:
             unsubscribableEmails - previouslyUnsubscribedEmails,
@@ -393,7 +411,7 @@ function Stats({ isVisible }) {
         });
       }
     },
-    [loading, isVisible]
+    [isVisible]
   );
 
   return (
