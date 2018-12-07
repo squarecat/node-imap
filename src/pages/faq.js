@@ -20,21 +20,26 @@ const FaqPage = () => (
           ).
         </p>
         <p>
-          We unsubscribe you from the lists rather than just moving them to
-          trash or applying a label.
+          We actually unsubscribe you from the lists rather than just moving
+          them to trash or applying a label. This is better for both your inbox,
+          and the subscription service as they'll now know they have one less
+          subscriber!
         </p>
       </div>
       <div className="faq-box">
         <h3 className="faq-title">How do you unsubscribe from the lists?</h3>
-        <p>If there's an unsubscribe link provided we click it.</p>
+        <p>
+          If there's an unsubscribe link provided we follow it and unsubscribe
+          you.
+        </p>
         <p>
           If the sender didn't provide a link then we send an email on your
           behalf using the a unique address which identifies your subscription.
         </p>
         <p>
-          If the provider obeys the{' '}
-          <a href="https://tools.ietf.org/html/rfc8058">RFC</a> then this will
-          work.
+          If the provider{' '}
+          <a href="https://tools.ietf.org/html/rfc8058">obeys the rules</a> then
+          this should work, and you'll now be unsubscribed.
         </p>
       </div>
       <div className="faq-box">
@@ -62,7 +67,7 @@ const FaqPage = () => (
         </p>
       </div>
       <div className="faq-box">
-        <h3 className="faq-title">Do you have a subscription service?</h3>
+        <h3 className="faq-title">Can I buy a monthly subscription?</h3>
         <p>
           Not yet! If you'd like a monthly subscription to Leave Me Alone{' '}
           <a href="mailto:leavemalone@squarecat.io">email</a> or{' '}
