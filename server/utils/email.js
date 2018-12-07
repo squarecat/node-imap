@@ -7,7 +7,7 @@ const domain = config.mailgun.domain;
 const transport = mailgun({ apiKey, domain });
 
 const mailOptions = {
-  from: 'Leave Me Alone <leavemealone@squarecat.io>',
+  from: 'Leave Me Alone <unsubcsribebot@leavemealone.app>',
   text: 'unsubscribe'
 };
 
