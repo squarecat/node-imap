@@ -3,12 +3,13 @@ import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
 
-export async function createPayment({ amount, productLabel, customerId }) {
+export async function createPayment({ amount, productLabel, tokenId }) {
   try {
+    debugger;
     const charge = await stripe.charges.create({
       amount: amount.toFixed(2),
       currency: 'usd',
-      customer: customerId,
+      source: tokenId,
       description: `Payment for ${productLabel}`
     });
     console.log('stripe: created charge');
@@ -23,6 +24,7 @@ export async function createPayment({ amount, productLabel, customerId }) {
 
 export async function createCustomer({ email, token }) {
   try {
+    debugger;
     const customer = await stripe.customers.create({
       source: token,
       email
@@ -31,7 +33,7 @@ export async function createCustomer({ email, token }) {
     console.log('stripe: created customer', id);
     return { id };
   } catch (err) {
-    console.error('stripe: failed to create charge');
+    console.error('stripe: failed to create customer');
     console.error(err);
     throw err;
   }

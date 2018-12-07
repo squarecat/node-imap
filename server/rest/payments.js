@@ -16,11 +16,12 @@ const baseUrl = 'https://api.airtable.com/v0';
 
 export default app => {
   app.post('/api/checkout/:productId/:coupon?', auth, async (req, res) => {
+    const { user } = req;
     const { productId, coupon } = req.params;
-    const { token } = req.body;
+    const token = req.body;
     try {
       await PaymentService.createPaymentForUser({
-        user: req.user,
+        user: user,
         productId,
         coupon,
         token

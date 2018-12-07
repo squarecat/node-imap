@@ -26,25 +26,26 @@ export async function createPaymentForUser({ token, user, productId, coupon }) {
     p => p.value === productId
   );
 
+  const { id: tokenId } = token;
   try {
-    if (user.customerId) {
-      payment = await createPayment({
-        amount,
-        productLabel: label,
-        customerId: user.customerId
-      });
-    } else {
-      const { email } = user;
-      const customer = await createCustomer({ email, token });
-      const { id: customerId } = customer;
-      await updateCustomerId(user.id, customerId);
-      // put customer id into database
-      payment = await createPayment({
-        amount,
-        productLabel: label,
-        customerId
-      });
-    }
+    // if (user.customerId) {
+    payment = await createPayment({
+      amount,
+      productLabel: label,
+      tokenId
+    });
+    // } else {
+    //   const { email } = user;
+    //   const customer = await createCustomer({ email, token });
+    //   const { id: customerId } = customer;
+    //   await updateCustomerId(user.id, customerId);
+    //   // put customer id into database
+    //   payment = await createPayment({
+    //     amount,
+    //     productLabel: label,
+    //     customerId
+    //   });
+    // }
     return payment;
   } catch (err) {
     console.error(

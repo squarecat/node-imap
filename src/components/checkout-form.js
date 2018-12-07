@@ -1,30 +1,73 @@
-import React from 'react';
-import StripeCheckout from 'react-stripe-checkout';
+import React, { useState, useEffect } from 'react';
 import logo from '../assets/envelope-logo.png';
+import Button from './btn';
 
-const CheckoutForm = ({ selected }) => {
-  const { price, value: productId, label: productName } = selected;
+let callback;
+let onToken = () => callback();
+
+const handler = window.StripeCheckout.configure({
+  key: 'pk_test_td6LkJVGPINUdmgEnbonAGNk',
+  image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+  locale: 'auto',
+  token: onToken
+});
+
+function doCheckout({ description, amount }) {
+  handler.open({
+    name: 'LeaveMeAlone',
+    description,
+    zipCode: true,
+    currency: 'usd',
+    amount
+  });
+}
+
+const CheckoutForm = ({
+  selected,
+  onCheckoutComplete,
+  onCheckoutCancelled
+}) => {
+  const [isLoading, setLoading] = useState(false);
+
+  const { price, value, label: productName } = selected;
+
+  useEffect(
+    () => {
+      callback = async token => {
+        debugger;
+        setLoading(true);
+        await saveToken({ token, productId: value });
+        setLoading(false);
+        debugger;
+        // onCheckoutComplete();
+      };
+    },
+    [value]
+  );
+
   return (
-    <StripeCheckout
-      token={token => onToken(token, productId)}
-      stripeKey="pk_test_td6LkJVGPINUdmgEnbonAGNk"
-      name="Leave Me Alone"
-      description={`Payment for ${productName} scan`}
-      image={logo}
-      amount={price}
-      currency="USD"
-      zipCode={true}
-      locale="auto"
-    />
+    <Button
+      loading={isLoading}
+      onClick={() => doCheckout({ description: productName, amount: price })}
+      compact
+    >
+      Purchase
+    </Button>
   );
 };
 
 export default CheckoutForm;
 
-async function onToken(token, productId) {
+async function saveToken({ productId }) {
+  console.log(`saving token; /api/checkout/${productId}`);
   try {
     const resp = await fetch(`/api/checkout/${productId}`, {
       method: 'POST',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
       body: JSON.stringify(token)
     });
     const data = resp.json();
@@ -34,30 +77,3 @@ async function onToken(token, productId) {
     throw err;
   }
 }
-// import React, { useEffect } from 'react';
-// import { CardElement, injectStripe } from 'react-stripe-elements';
-
-// const CheckoutForm = ({ stripe, selected }) => {
-//   return (
-//     <div className="checkout">
-//       <p>Would you like to complete the purchase?</p>
-//       <CardElement />
-//       <button onClick={e => submit(e, { stripe, selected })}>Send</button>
-//     </div>
-//   );
-// };
-
-// async function submit(ev, { stripe, selected }) {
-//   console.log('submit');
-//   debugger;
-//   // let { token } = await stripe.createToken({ name: 'Name' });
-//   // let response = await fetch(`/api/checkout/${selected}`, {
-//   //   method: 'POST',
-//   //   headers: { 'Content-Type': 'text/plain' },
-//   //   body: token.id
-//   // });
-
-//   // if (response.ok) console.log('Purchase Complete!');
-// }
-
-// export default injectStripe(CheckoutForm);

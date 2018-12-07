@@ -12,6 +12,10 @@ exports.onRenderBody = (
 ) => {
   setPostBodyComponents([
     <script
+      key="stripe-script"
+      src="https://checkout.stripe.com/checkout.js"
+    />,
+    <script
       key="chat-widget"
       dangerouslySetInnerHTML={{
         __html: getChat(pluginOptions)

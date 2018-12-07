@@ -20,6 +20,8 @@ const app = express();
 const server = http.createServer(app);
 const MongoStore = connectMongo(session);
 
+app.use(express.json());
+app.use(express.urlencoded());
 app.use(
   session({
     secret: 'colinisafoursidedcatfromspace',

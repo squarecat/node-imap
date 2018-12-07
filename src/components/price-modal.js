@@ -10,17 +10,17 @@ import './modal.css';
 
 const prices = [
   {
-    price: 3,
+    price: 300,
     label: '1 week',
     value: '1w'
   },
   {
-    price: 5,
+    price: 500,
     label: '1 month',
     value: '1m'
   },
   {
-    price: 8,
+    price: 800,
     label: '6 months',
     value: '6m'
   }
@@ -140,7 +140,7 @@ const PricingScreen = ({
             className={`btn compact muted ${p.disabled ? 'disabled' : ''}`}
           >
             <span>{p.label}</span>
-            <span className="price">{`($${p.price})`}</span>
+            <span className="price">{`($${p.price / 100})`}</span>
           </a>
         ))}
       </div>
