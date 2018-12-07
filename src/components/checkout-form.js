@@ -8,7 +8,7 @@ let onClose;
 let onToken = t => callback(t);
 const handler = window.StripeCheckout.configure({
   key: 'pk_test_td6LkJVGPINUdmgEnbonAGNk',
-  image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+  image: logo,
   locale: 'auto',
   closed: () => onClose(),
   token: onToken
@@ -27,7 +27,7 @@ async function doCheckout({ description, amount, email, coupon }) {
   }
 
   handler.open({
-    name: 'LeaveMeAlone',
+    name: 'Leave Me Alone',
     description,
     zipCode: true,
     currency: 'usd',
@@ -73,7 +73,7 @@ const CheckoutForm = ({
       onClick={() => {
         setLoading(true);
         doCheckout({
-          description: productName,
+          description: `${productName} scan`,
           amount: price,
           email: userEmail,
           coupon
