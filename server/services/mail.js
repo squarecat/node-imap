@@ -286,13 +286,27 @@ export async function addUnsubscribeErrorResponse(
   ]);
 }
 
-function isUnsubscribable(mail) {
-  const { headers } = mail.payload;
+function isUnsubscribable(mail = {}) {
+  const { id, payload } = mail;
+  if (!payload) {
+    console.error(
+      'mail-service: cannot check if unsubscribable, mail object has no payload',
+      id
+    );
+    return false;
+  }
+
+  const { headers = [] } = payload;
   return headers.some(h => h.name === 'List-Unsubscribe');
 }
 
 function mapMail(mail, { trash = false } = {}) {
   const { payload, id, snippet, internalDate, labelIds } = mail;
+
+  if (!payload) {
+    throw new Error('mail object has no payload');
+  }
+
   const isTrash = trash || labelIds.includes('TRASH');
 
   try {

@@ -41,9 +41,7 @@ function UserAuth({ user: newUser, children, loading }) {
     >
       <div className="dice">
         <div className="auth-loading-pane auth-loading-pane--front">
-          <span className="logo-emoji">
-            <img src={girlLogo} alt="girl-logo" className="girl-logo" />
-          </span>
+          <img src={girlLogo} alt="girl-logo" className="girl-logo" />
         </div>
         <div className="auth-loading-pane auth-loading-pane--back">
           <img
