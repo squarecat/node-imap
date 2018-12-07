@@ -1,6 +1,6 @@
-import { createCustomer, createPayment, getPayment } from '../utils/mollie';
+import { createCustomer, createPayment } from '../utils/stripe';
 import { updateCustomerId } from './user';
-import { getDiscount } from '../dao/coupons';
+// import { getDiscount } from '../dao/coupons';
 
 const products = [
   {
@@ -20,38 +20,38 @@ const products = [
   }
 ];
 
-export async function createPaymentForUser({ user, productId, coupon }) {
+export async function createPaymentForUser({ token, user, productId, coupon }) {
   let payment;
   const { price: amount, label, value: productType } = products.find(
     p => p.value === productId
   );
-  let discountPercentage = 1;
-  if (coupon) {
-    discountPercentage = await getDiscount(coupon);
-  }
-  if (user.customerId) {
-    payment = await createPayment({
-      amount: amount * discountPercentage,
-      productLabel: label,
-      productType,
-      customerId: user.customerId,
-      userId: user.id
-    });
-  } else {
-    const { name, email } = user;
-    const customer = await createCustomer({ name: name || email, email });
-    const { id: customerId } = customer;
-    await updateCustomerId(user.id, customerId);
-    // put customer id into database
-    payment = await createPayment({
-      amount,
-      productLabel: label,
-      customerId
-    });
-  }
-  return payment;
-}
 
-export async function fetchPayment(id) {
-  return getPayment(id);
+  try {
+    if (user.customerId) {
+      payment = await createPayment({
+        amount,
+        productLabel: label,
+        customerId: user.customerId
+      });
+    } else {
+      const { email } = user;
+      const customer = await createCustomer({ email, token });
+      const { id: customerId } = customer;
+      await updateCustomerId(user.id, customerId);
+      // put customer id into database
+      payment = await createPayment({
+        amount,
+        productLabel: label,
+        customerId
+      });
+    }
+    return payment;
+  } catch (err) {
+    console.error(
+      'payments-service: failed to create payment for user',
+      user.id
+    );
+    console.error(err);
+    throw err;
+  }
 }

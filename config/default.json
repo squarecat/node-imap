@@ -22,8 +22,7 @@
     "headeless": false
   },
   "payments": {
-    "apiKey": "test_6352NTNKjgqmatGgpvzhpffU7wtbdG",
-    "redirectUrl": "http://local.leavemealone.xyz/api/checkout/redirect",
-    "webhookUrl": "http://local.leavemealone.xyz/api/payments/hook"
+    "publishableKey": "pk_test_td6LkJVGPINUdmgEnbonAGNk",
+    "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ"
   }
 }

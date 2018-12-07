@@ -26,15 +26,6 @@ module.exports = {
       }
     },
     {
-      resolve: 'gatsby-plugin-paddle',
-      options: {
-        vendorId: 35012,
-        productId: 545883,
-        checkoutSecret: '1f1rd9u',
-        completeDetails: true
-      }
-    },
-    {
       resolve: `gatsby-plugin-create-client-paths`,
       options: { prefixes: ['/app/*'] }
     },
@@ -49,6 +40,7 @@ module.exports = {
         exclude: ['/app', '/app/*']
       }
     },
-    'gatsby-plugin-twitter'
+    'gatsby-plugin-twitter',
+    `gatsby-plugin-stripe-elements`
   ]
 };

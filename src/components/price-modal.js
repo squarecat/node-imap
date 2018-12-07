@@ -4,6 +4,7 @@ import useUser from '../utils/hooks/use-user';
 import useAsync from '../utils/hooks/use-async';
 import Button from '../components/btn';
 import ModalClose from './modal/modal-close';
+import CheckoutForm from './checkout-form';
 
 import './modal.css';
 
@@ -56,15 +57,14 @@ export default ({ onClose, onPurchase }) => {
       return onPurchase(selected);
     }
     setPaymentLoading(true);
-    let resp;
-    if (coupon) {
-      resp = await fetch(`/api/checkout/${selected}/${coupon}`);
-    } else {
-      resp = await fetch(`/api/checkout/${selected}`);
-    }
-    const { error, paymentUrl } = await resp.json();
+    // let resp;
+    // if (coupon) {
+    // resp = await fetch(`/api/checkout/${selected}/${coupon}`);
+    // } else {
+    const resp = await fetch(`/api/checkout/${selected}`);
+    // }
+    const { status, err } = await resp.json();
     setPaymentLoading(false);
-    window.location.href = paymentUrl;
   };
 
   let content;
@@ -153,7 +153,7 @@ const PricingScreen = ({
           .
         </p>
       </div>
-      <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
+      {/* <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
         <input
           className="coupon-input"
           value={coupon}
@@ -167,7 +167,7 @@ const PricingScreen = ({
             Have a discount coupon?
           </a>
         </p>
-      </div>
+      </div> */}
       <div className="modal-actions">
         <p className="monthly-price">
           Looking for a monthly subscription?{' '}
@@ -192,11 +192,10 @@ const PricingScreen = ({
             OK
           </a>
         ) : (
-          <Button
-            compact
-            onClick={() => onClickPurchase(selected, false, coupon)}
-            loading={isPaymentLoading}
-            label="Purchase"
+          <CheckoutForm
+            // onClick={() => setPaymentLoading(true)}
+            // onSuccess={() => setPaymentLoading(false)}
+            selected={prices.find(s => s.value === selected)}
           />
         )}
       </div>
