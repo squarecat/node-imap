@@ -6,6 +6,7 @@ import './modal.css';
 
 export default ({ onClose, onSubmit, mail }) => {
   const {
+    id: mailId,
     estimatedSuccess,
     image,
     unsubscribeLink,
@@ -47,6 +48,7 @@ export default ({ onClose, onSubmit, mail }) => {
   const pickSlide = () => {
     if (slide === 'first') {
       return slide1(
+        mailId,
         image,
         onClickPositive,
         onClickNegative,
@@ -80,7 +82,14 @@ export default ({ onClose, onSubmit, mail }) => {
   );
 };
 
-function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
+function slide1(
+  mailId,
+  image,
+  onClickPositive,
+  onClickNegative,
+  error,
+  unsubStrategy
+) {
   let lead;
   let timeout = false;
   if (error && !image) {
@@ -110,7 +119,8 @@ function slide1(image, onClickPositive, onClickNegative, error, unsubStrategy) {
   } else if (unsubStrategy === 'link') {
     content = (
       <>
-        <img alt="unsub image" src={`data:image/jpeg;base64, ${image}`} />
+        <img alt="unsub image" src={`/api/mail/image/${mailId}`} />
+        {/* src={`data:image/jpeg;base64, ${image}`} /> */}
         <p>How does it look?</p>
         <div className="modal-actions">
           <a className="btn muted compact" onClick={onClickNegative}>

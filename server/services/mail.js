@@ -8,7 +8,7 @@ import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 
 import { emailStringIsEqual } from '../utils/parsers';
-
+import { getUnsubscribeImage } from '../dao/user';
 import {
   getUserById,
   addUnsubscriptionToUser,
@@ -16,6 +16,7 @@ import {
   resolveUserUnsubscription,
   updatePaidScanForUser
 } from './user';
+
 import {
   addUnsubscriptionToStats,
   addFailedUnsubscriptionToStats,
@@ -248,7 +249,9 @@ export async function unsubscribeMail(userId, mail) {
     });
     if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
     return {
-      ...output,
+      id: output.id,
+      estimatedSuccess: output.estimatedSuccess,
+      image: !!output.image,
       unsubStrategy
     };
   } catch (err) {
@@ -332,6 +335,10 @@ function mapMail(mail, { trash = false } = {}) {
     console.error(err);
     return null;
   }
+}
+
+export function getImage(userId, mailId) {
+  return getUnsubscribeImage(userId, mailId);
 }
 
 function getSearchString({ then, now, query = '' }) {

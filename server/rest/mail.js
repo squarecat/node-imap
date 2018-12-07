@@ -4,13 +4,29 @@ import {
   scanMail,
   unsubscribeMail,
   addUnsubscribeErrorResponse,
-  getMailEstimates
+  getMailEstimates,
+  getImage
 } from '../services/mail';
 import { checkAuthToken } from '../services/user';
 
 let connectedClients = {};
 
 export default function(app, server) {
+  app.get('/api/mail/image/:mailId', async (req, res) => {
+    const { user, params } = req;
+    const { mailId } = params;
+    try {
+      const image = await getImage(user.id, mailId);
+      const img = new Buffer(image, 'base64');
+      res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-Length': img.length
+      });
+      res.end(img);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  });
   app.get('/api/mail/estimates', async (req, res) => {
     const estimates = await getMailEstimates(req.user.id);
     res.send(estimates);

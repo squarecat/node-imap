@@ -30,7 +30,6 @@ export async function createPaymentForUser({ token, user, productId, coupon }) {
   const { id: userId } = user;
   const { price: amount, label } = products.find(p => p.value === productId);
   const { id: tokenId } = token;
-  debugger;
   if (coupon) {
     const { percent_off, amount_off } = await getCoupon(coupon);
     if (percent_off) {

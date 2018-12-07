@@ -49,6 +49,12 @@ export async function getUser(id) {
       },
       unsubscriptions: user.unsubscriptions.map(unsub => {
         return Object.keys(unsub).reduce((out, k) => {
+          if (k === 'image') {
+            return {
+              ...out,
+              image: !!unsub.image
+            };
+          }
           if (encryptedUnsubCols.includes(k)) {
             return {
               ...out,
@@ -164,6 +170,24 @@ export async function addScan(id, scanData) {
     console.log(`users-dao: updated users scans ${id}`);
   } catch (err) {
     console.error('users-dao: error updating user scans');
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function getUnsubscribeImage(id, mailId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const user = await col.findOne({ id });
+    const { unsubscriptions } = user;
+    const unsub = unsubscriptions.find(u => u.id === mailId);
+    console.log(`users-dao: fetching subscription image`);
+    if (!unsub) {
+      return null;
+    }
+    return decrypt(unsub.image);
+  } catch (err) {
+    console.error(`users-dao: failed to fetch subscription image`);
     console.error(err);
     throw err;
   }
