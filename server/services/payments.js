@@ -26,10 +26,10 @@ export async function getCoupon(coupon) {
 
 export async function createPaymentForUser({ token, user, productId, coupon }) {
   let payment;
-  let price;
   const { id: userId } = user;
   const { price: amount, label } = products.find(p => p.value === productId);
   const { id: tokenId } = token;
+  let price = amount;
   if (coupon) {
     const { percent_off, amount_off } = await getCoupon(coupon);
     if (percent_off) {
@@ -37,8 +37,6 @@ export async function createPaymentForUser({ token, user, productId, coupon }) {
     } else if (amount_off) {
       price = amount - amount_off;
     }
-  } else {
-    price = amount;
   }
 
   try {
