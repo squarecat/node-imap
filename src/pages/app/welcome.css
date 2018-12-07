@@ -20,3 +20,7 @@
   font-weight: bolder;
   color: rgba(231, 57, 48, 0.749);
 }
+
+.welcome-logo {
+  margin-bottom: 20px;
+}

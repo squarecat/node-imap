@@ -109,18 +109,10 @@ const PricingScreen = ({
         We'll scan your inbox for any subscription emails that you've had in the
         last 3 days for free!
       </p>
-
-      {isBeta ? (
-        <p className="beta-text">
-          Thanks for Beta Testing <strong>Leave Me Alone</strong>! You don't
-          have to pay, so scan as much as you like!
-        </p>
-      ) : (
-        <p>
-          To scan before this, you can make a one-off purchase of one of our
-          packages.
-        </p>
-      )}
+      <p>
+        To scan before this, you can make a one-off purchase of one of our
+        packages.
+      </p>
       <div className="price-free">
         <a
           onClick={() => setSelected('free')}

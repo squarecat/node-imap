@@ -35,6 +35,7 @@ function AuthApp() {
   const [timeframe, setTimeframe] = useState(doScan);
 
   const [hasSearched] = useUser(s => s.hasSearched);
+  const [isBeta] = useUser(s => s.beta);
 
   return (
     <>
@@ -56,7 +57,10 @@ function AuthApp() {
         >
           {state => (
             <div className={`welcome-content ${state}`}>
-              <Welcome openPriceModal={() => togglePriceModal(true)} />
+              <Welcome
+                openPriceModal={() => togglePriceModal(true)}
+                isBeta={isBeta}
+              />
             </div>
           )}
         </Transition>
