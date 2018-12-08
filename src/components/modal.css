@@ -8,12 +8,17 @@
   margin: 0 auto;
   background-color: white;
   border-radius: 7px;
-  padding: 25px 25px 10px 25px;
+  /* padding: 25px 25px 10px 25px; */
   z-index: 9;
   transform: scale(0.8) translateY(-50%);
   opacity: 0;
   transition: opacity 250ms cubic-bezier(0.65, 0.05, 0.36, 1),
     transform 250ms cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+
+.modal h3 {
+  padding: 0 25px;
+  margin: 0;
 }
 
 .modal.shown {
@@ -40,12 +45,13 @@
 
 .modal-content {
   overflow-y: scroll;
+  padding: 0 25px;
 }
 
 .modal h3 {
   font-size: 18px;
   font-weight: bolder;
-  padding-right: 25px;
+  padding: 25px;
 }
 
 .modal img {
@@ -54,11 +60,13 @@
 
 .modal-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   border-top: 1px solid #ffe3e1;
   padding-top: 6px;
   margin-top: 16px;
+  padding: 5px 0px;
+  margin: 0 25px;
 }
 
 .modal-actions .emoji {
@@ -302,4 +310,13 @@ p.unsubscribe-link-alt {
 
 .coupon input:focus {
   box-shadow: none;
+}
+
+.modal-content {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.add-coupon {
+  margin-bottom: 10px;
 }

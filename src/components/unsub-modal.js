@@ -109,6 +109,9 @@ function slide1(
   if (timeout) {
     content = (
       <>
+        <div className="modal-content">
+          <p>{lead}</p>
+        </div>
         <div className="modal-actions">
           <a className="btn compact" onClick={onClickNegative}>
             Unsubscribe manually
@@ -119,9 +122,12 @@ function slide1(
   } else if (unsubStrategy === 'link') {
     content = (
       <>
-        <img alt="unsub image" src={`/api/mail/image/${mailId}`} />
-        {/* src={`data:image/jpeg;base64, ${image}`} /> */}
-        <p>How does it look?</p>
+        <div className="modal-content">
+          <p>{lead}</p>
+          <img alt="unsub image" src={`/api/mail/image/${mailId}`} />
+          {/* src={`data:image/jpeg;base64, ${image}`} /> */}
+          <p>How does it look?</p>
+        </div>
         <div className="modal-actions">
           <a className="btn muted compact" onClick={onClickNegative}>
             It didn't work{' '}
@@ -129,6 +135,7 @@ function slide1(
               ️️☹️
             </span>
           </a>
+
           <a className="btn compact" onClick={onClickPositive}>
             It looks great{' '}
             <span className="emoji" role="img" aria-label="thumbs up emoji">
@@ -141,10 +148,13 @@ function slide1(
   } else {
     content = (
       <>
-        <p>
-          If the provider is behaving themselves, then you shouldn't get any
-          more subscription emails from them!
-        </p>
+        <div className="modal-content">
+          <p>{lead}</p>
+          <p>
+            If the provider is behaving themselves, then you shouldn't get any
+            more subscription emails from them!
+          </p>
+        </div>
         <div className="modal-actions">
           <a className="btn compact" onClick={onClickPositive}>
             Awesome!{' '}
@@ -158,7 +168,6 @@ function slide1(
   }
   return (
     <>
-      <p>{lead}</p>
       <div>{content}</div>
     </>
   );
@@ -183,69 +192,75 @@ function slide2({
 
   return (
     <>
-      <p>{lead}</p>
-      <a className="btn compact manual-unsubscribe-btn" target="_" href={link}>
-        Unsubscribe manually
-        <svg
-          className="icon-external"
-          viewBox="0 0 32 32"
-          width="14"
-          height="14"
-          fill="none"
-          stroke="currentcolor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
+      <div className="modal-content">
+        <p>{lead}</p>
+        <a
+          className="btn compact manual-unsubscribe-btn"
+          target="_"
+          href={link}
         >
-          <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
-        </svg>
-      </a>
-      <p className="unsubscribe-link-alt">
-        <span>Or use this link:</span>
-        <a className="unsubscribe-link" target="_" href={link}>
-          {type === 'link' ? link : mailTo}
+          Unsubscribe manually
+          <svg
+            className="icon-external"
+            viewBox="0 0 32 32"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentcolor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          >
+            <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+          </svg>
         </a>
-      </p>
-      <p>
-        Can you tell us what you think went wrong this time? We'll use the
-        information to improve our service. Here are some common reasons;
-      </p>
-      <ul className="feedback-options">
-        <li
-          onClick={() => setSelected('button')}
-          data-selected={selected === 'button'}
-        >
-          There was a submit button that needed to be clicked
-        </li>
-        <li
-          onClick={() => setSelected('steps')}
-          data-selected={selected === 'steps'}
-        >
-          There were extra steps to unsubscribe
-        </li>
-        <li
-          onClick={() => setSelected('login')}
-          data-selected={selected === 'login'}
-        >
-          I had to login
-        </li>
-        <li
-          onClick={() => setSelected('404')}
-          data-selected={selected === '404'}
-        >
-          The link didn't work
-        </li>
-        <li
-          onClick={() => setSelected('other')}
-          data-selected={selected === 'other'}
-        >
-          Other
-        </li>
-      </ul>
-      <p className={`${!selected ? 'hidden' : ''}`}>
-        Thanks! Is it okay if we use that image so that next time we don't make
-        the same mistake?
-      </p>
+        <p className="unsubscribe-link-alt">
+          <span>Or use this link:</span>
+          <a className="unsubscribe-link" target="_" href={link}>
+            {type === 'link' ? link : mailTo}
+          </a>
+        </p>
+        <p>
+          Can you tell us what you think went wrong this time? We'll use the
+          information to improve our service. Here are some common reasons;
+        </p>
+        <ul className="feedback-options">
+          <li
+            onClick={() => setSelected('button')}
+            data-selected={selected === 'button'}
+          >
+            There was a submit button that needed to be clicked
+          </li>
+          <li
+            onClick={() => setSelected('steps')}
+            data-selected={selected === 'steps'}
+          >
+            There were extra steps to unsubscribe
+          </li>
+          <li
+            onClick={() => setSelected('login')}
+            data-selected={selected === 'login'}
+          >
+            I had to login
+          </li>
+          <li
+            onClick={() => setSelected('404')}
+            data-selected={selected === '404'}
+          >
+            The link didn't work
+          </li>
+          <li
+            onClick={() => setSelected('other')}
+            data-selected={selected === 'other'}
+          >
+            Other
+          </li>
+        </ul>
+        <p className={`${!selected ? 'hidden' : ''}`}>
+          Thanks! Is it okay if we use that image so that next time we don't
+          make the same mistake?
+        </p>
+      </div>
       <div className="modal-actions">
         <a className={`btn muted compact`} onClick={onClickBack}>
           Back
@@ -282,10 +297,12 @@ function slide2({
 function slide3(image, onSubmit) {
   return (
     <>
-      <p>
-        Awesome! Is it okay if we use that image so that next time we don't make
-        the same mistake?
-      </p>
+      <div className="modal-content">
+        <p>
+          Awesome! Is it okay if we use that image so that next time we don't
+          make the same mistake?
+        </p>
+      </div>
       <div className="modal-actions">
         <a
           className="btn muted compact"

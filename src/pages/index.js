@@ -43,8 +43,11 @@ const IndexPage = () => {
     });
   }, []);
 
-  const { loading: statsLoading, value: statsData } = useAsync(fetchStats);
-
+  const { loading: statsLoading, value } = useAsync(fetchStats);
+  let statsData = { users: 0, unsubscriptions: 0 };
+  if (!statsLoading) {
+    statsData = value;
+  }
   return (
     <Layout>
       <Colin />
@@ -73,16 +76,17 @@ const IndexPage = () => {
             >
               Get Started!
             </a>
-            {!statsLoading ? (
-              <p className="join-text">
-                Join <span className="join-stat">{statsData.users} users</span>{' '}
-                who have unsubscribed from a total of{' '}
-                <span className="join-stat">
-                  {statsData.unsubscriptions} spam
-                </span>{' '}
-                emails
-              </p>
-            ) : null}
+
+            <p
+              className={`${statsLoading ? 'join-text-loading' : ''} join-text`}
+            >
+              Join <span className="join-stat">{statsData.users} users</span>{' '}
+              who have unsubscribed from a total of{' '}
+              <span className="join-stat">
+                {statsData.unsubscriptions} spam
+              </span>{' '}
+              emails
+            </p>
 
             <a className="more-info" onClick={scrollDown}>
               Read more 👇
