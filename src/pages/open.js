@@ -265,7 +265,9 @@ export default function Terms() {
             </div>
             <div className="big-stat box">
               <span className="label">Revenue per user</span>
-              <span className="value">{currency(0)}</span>
+              <span className="value">
+                {currency(stats.totalRevenue / stats.users)}
+              </span>
             </div>
             <div className="big-stat box">
               <span className="label">Total users</span>
@@ -327,5 +329,5 @@ function format(num) {
 }
 
 function currency(num) {
-  return numeral(num).format('$0,0');
+  return numeral(num).format('$0,0.00');
 }
