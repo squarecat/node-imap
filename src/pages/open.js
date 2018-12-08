@@ -88,8 +88,8 @@ function dailyRevChart(ctx, stats) {
       maintainAspectRatio: false,
       tooltips: {
         callbacks: {
-          title: function(items, data) {
-            return currency(items[0].yLabel);
+          label: function(items, data) {
+            return currency(items.yLabel);
           }
         }
       },
