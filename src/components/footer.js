@@ -35,7 +35,7 @@ export default () => (
           className="link"
           target="_blank"
           rel="noopener noreferrer"
-          href="https://www.notion.so/33d2efb925634020a1cd64d40b91efe4"
+          href="/roadmap"
         >
           Roadmap
         </a>
