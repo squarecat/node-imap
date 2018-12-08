@@ -80,10 +80,13 @@ const IndexPage = () => {
             <p
               className={`${statsLoading ? 'join-text-loading' : ''} join-text`}
             >
-              Join <span className="join-stat">{statsData.users} users</span>{' '}
+              Join{' '}
+              <span className="join-stat">
+                {formatNumber(statsData.users)} users
+              </span>{' '}
               who have unsubscribed from a total of{' '}
               <span className="join-stat">
-                {statsData.unsubscriptions} spam
+                {formatNumber(statsData.unsubscriptions)} spam
               </span>{' '}
               emails
             </p>
@@ -429,9 +432,7 @@ function Stats({ isLoading, data, isVisible }) {
               fontSize: 48
             }}
             duration={1000}
-            formatValue={n =>
-              n > 9999 ? numeral(n).format('0a') : n.toFixed()
-            }
+            formatValue={n => formatNumber(n)}
           />
         </span>
         <span>Spam emails scanned</span>
@@ -445,9 +446,7 @@ function Stats({ isLoading, data, isVisible }) {
               fontSize: 48
             }}
             duration={1000}
-            formatValue={n =>
-              n > 9999 ? numeral(n).format('0a') : n.toFixed()
-            }
+            formatValue={n => formatNumber(n)}
           />
         </span>
         <span>Spam emails unsubscribed</span>
@@ -457,3 +456,7 @@ function Stats({ isLoading, data, isVisible }) {
 }
 
 export default IndexPage;
+
+function formatNumber(n) {
+  return n > 99999 ? numeral(n).format('0a') : numeral(n).format('0,0');
+}
