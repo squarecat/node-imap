@@ -4,11 +4,11 @@ import useUser from '../utils/hooks/use-user';
 import useAsync from '../utils/hooks/use-async';
 import Button from '../components/btn';
 import ModalClose from './modal/modal-close';
-import CheckoutForm from './checkout-form';
+import CheckoutForm, { getCoupon } from './checkout-form';
 
 import './modal.css';
 
-const prices = [
+const PRICES = [
   {
     price: 300,
     label: '1 week',
@@ -93,6 +93,46 @@ const PricingScreen = ({
   const [selected, setSelected] = useState('free');
   const [coupon, setCoupon] = useState('');
   const [isCouponShown, showCoupon] = useState(false);
+  const [fetchingCoupon, setFetchingCoupon] = useState(false);
+  const [couponData, setCouponData] = useState({
+    coupon: null,
+    percent_off: 0,
+    amount_off: 0,
+    valid: null
+  });
+  const [prices, setPrices] = useState(PRICES);
+  // const [isPaymentRequired, setPaymentRequired] = useState(false);
+
+  useEffect(
+    () => {
+      if (couponData.valid) {
+        setPrices(
+          PRICES.map(p => ({
+            ...p,
+            discountedPrice: getDiscountedPrice(p.price, couponData)
+          }))
+        );
+      } else {
+        setPrices(PRICES);
+      }
+    },
+    [couponData.valid]
+  );
+
+  const applyCoupon = async coupon => {
+    try {
+      const { percent_off, amount_off } = await getCoupon(coupon);
+      if (percent_off || amount_off) {
+        setCouponData({ coupon, percent_off, amount_off, valid: true });
+      } else {
+        setCouponData({ ...couponData, valid: false });
+      }
+      setFetchingCoupon(false);
+    } catch (err) {
+      setCouponData({ coupon: null });
+      setFetchingCoupon(false);
+    }
+  };
 
   return (
     <>
@@ -125,7 +165,16 @@ const PricingScreen = ({
               className={`btn compact muted ${p.disabled ? 'disabled' : ''}`}
             >
               <span>{p.label}</span>
-              <span className="price">{`($${p.price / 100})`}</span>
+              {p.discountedPrice !== undefined ? (
+                <span className="price">
+                  (
+                  <span className="price-discounted">{`$${p.price /
+                    100}`}</span>{' '}
+                  ${p.discountedPrice / 100})
+                </span>
+              ) : (
+                <span className="price">{`($${p.price / 100})`}</span>
+              )}
             </a>
           ))}
         </div>
@@ -139,12 +188,32 @@ const PricingScreen = ({
           </p>
         </div>
         <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
-          <input
-            className="coupon-input"
-            value={coupon}
-            placeholder="Discount coupon"
-            onChange={e => setCoupon(e.currentTarget.value)}
-          />
+          <div
+            className={`coupon-input
+            ${couponData.valid === true ? 'valid' : ''} ${
+              couponData.valid === false ? 'invalid' : ''
+            }`}
+          >
+            <input
+              value={coupon}
+              placeholder="Discount coupon"
+              onChange={e => {
+                setCoupon(e.currentTarget.value);
+                setCouponData({ valid: null });
+              }}
+            />
+          </div>
+          <Button
+            compact={true}
+            disabled={!coupon}
+            loading={fetchingCoupon}
+            onClick={() => {
+              setFetchingCoupon(true);
+              applyCoupon(coupon);
+            }}
+          >
+            Apply
+          </Button>
         </div>
         <div className="add-coupon">
           <p>
@@ -196,28 +265,97 @@ const PricingScreen = ({
             Cancel
           </a>
 
-          {selected === 'free' || isBeta ? (
-            <a
-              className="btn compact"
-              onClick={() => onClickPurchase(selected, isBeta)}
-            >
-              OK
-            </a>
-          ) : (
-            <CheckoutForm
-              coupon={coupon}
-              onCheckoutFailed={() => {
-                console.error('Checkout failed, what do?');
-              }}
-              onCheckoutComplete={() => onClickPurchase(selected)}
-              selected={prices.find(s => s.value === selected)}
-            />
-          )}
+          {getPaymentButton({
+            selected,
+            isBeta,
+            prices,
+            couponData,
+            onClickPurchase
+          })}
         </div>
       </div>
     </>
   );
 };
+
+function getPaymentButton({
+  selected,
+  isBeta,
+  prices,
+  couponData,
+  onClickPurchase
+}) {
+  let isFree = false;
+  if (selected === 'free' || isBeta) {
+    isFree = true;
+  } else if (selected !== 'free') {
+    const { discountedPrice } = prices.find(p => p.value === selected);
+    isFree = discountedPrice === 0;
+  }
+
+  const [isLoading, setLoading] = useState(false);
+
+  const freePurchase = async () => {
+    try {
+      setLoading(true);
+      await addPaidScan(selected);
+    } catch (_) {
+    } finally {
+      onClickPurchase(selected);
+      setLoading(false);
+    }
+  };
+
+  if (isFree) {
+    return (
+      <Button
+        loading={isLoading}
+        compact={true}
+        onClick={() => {
+          if (selected === 'free' || isBeta) {
+            onClickPurchase(selected, isBeta);
+          } else {
+            freePurchase();
+          }
+        }}
+      >
+        Scan now
+      </Button>
+    );
+  }
+
+  return (
+    <CheckoutForm
+      coupon={couponData}
+      onCheckoutFailed={() => {
+        console.error('Checkout failed, what do?');
+      }}
+      onCheckoutComplete={() => onClickPurchase(selected)}
+      selected={prices.find(s => s.value === selected)}
+    />
+  );
+}
+
+function getDiscountedPrice(amount, { percent_off, amount_off } = {}) {
+  let price = amount;
+  if (percent_off) {
+    price = amount - amount * (percent_off / 100);
+  } else if (amount_off) {
+    price = amount - amount_off;
+  }
+  return price < 50 ? 0 : price;
+}
+
+async function addPaidScan(productId) {
+  try {
+    await fetch(`/api/me/paidscans/${productId}`, {
+      method: 'PUT'
+    });
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
 
 async function getEstimates() {
   try {

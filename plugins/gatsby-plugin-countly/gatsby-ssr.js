@@ -35,7 +35,8 @@ exports.onRenderBody = (
 
 function getCountlyCodeStr(options) {
   let codeStr = `
-  const debug = ${process.env.NODE_ENV !== 'production' || options.debug};
+  const debug = false; // ${process.env.NODE_ENV !== 'production' ||
+    options.debug};
   const respectDNT = ${options.respectDNT} && !debug;
   const doNotTrack =
     respectDNT &&

@@ -1,3 +1,5 @@
+@import '../common.css';
+
 .modal {
   position: fixed;
   right: 0;
@@ -110,7 +112,7 @@ p.modal-text--small {
 }
 
 .price-paid .btn.compact {
-  width: 30%;
+  width: 33%;
   margin-right: 4px;
 }
 
@@ -119,7 +121,7 @@ p.modal-text--small {
 }
 
 .price-free .btn.compact {
-  width: 30%;
+  width: 33%;
   margin: 0 auto;
 }
 
@@ -137,6 +139,9 @@ p.modal-text--small {
   font-weight: bolder;
   position: relative;
   top: 2px;
+}
+.price-discounted {
+  text-decoration: line-through;
 }
 
 .modal p {
@@ -287,14 +292,41 @@ p.unsubscribe-link-alt {
   height: 0;
   overflow: hidden;
   transition: height 200ms ease-in-out;
+  display: flex;
+}
+
+.coupon .btn {
+  margin: 0 0 0 10px;
 }
 
 .coupon.shown {
-  height: 65px;
+  height: 45px;
+  margin: 10px 0;
 }
 
 .coupon.shown + .add-coupon {
   display: none;
+}
+
+.coupon-input {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.coupon-input:after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.coupon-input.valid:after {
+  content: '✔';
+  color: #2fbc2f;
+}
+.coupon-input.invalid:after {
+  content: '✘';
+  color: var(--primary-font-color);
 }
 
 .add-coupon p {
@@ -304,8 +336,8 @@ p.unsubscribe-link-alt {
 
 .coupon input {
   padding: 10px;
-  margin: 10px 0 0 0;
   font-size: 14px;
+  height: 100%;
 }
 
 .coupon input:focus {

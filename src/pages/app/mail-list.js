@@ -210,11 +210,10 @@ export default ({ timeframe, showPriceModal }) => {
 
   useEffect(
     () => {
-      // if (!hasSearched) {
       if (isConnected && timeframe) {
         doSearch();
         setHasSearched(true);
-      } else {
+      } else if (!timeframe) {
         setSearchFinished(true);
       }
     },
