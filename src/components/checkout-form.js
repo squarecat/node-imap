@@ -17,16 +17,9 @@ if (typeof window !== 'undefined') {
   });
 }
 
-async function doCheckout({ description, amount, email, coupon }) {
-  let price = amount;
-
-  if (coupon) {
-    const { percent_off, amount_off } = await getCoupon(coupon);
-    if (percent_off) {
-      price = amount - amount * (percent_off / 100);
-    } else if (amount_off) {
-      price = amount - amount_off;
-    }
+async function doCheckout({ description, amount, email, onCheckoutComplete }) {
+  if (amount < 50) {
+    onCheckoutComplete();
   }
 
   handler.open({
@@ -34,7 +27,7 @@ async function doCheckout({ description, amount, email, coupon }) {
     description,
     zipCode: true,
     currency: 'usd',
-    amount: price,
+    amount,
     email
   });
 }
@@ -48,7 +41,7 @@ const CheckoutForm = ({
   const [isLoading, setLoading] = useState(false);
   const [userEmail] = useUser(s => s.email);
 
-  const { price, value, label: productName } = selected;
+  const { price, discountedPrice, value, label: productName } = selected;
 
   useEffect(() => {
     onClose = () => {
@@ -77,9 +70,10 @@ const CheckoutForm = ({
         setLoading(true);
         doCheckout({
           description: `${productName} scan`,
-          amount: price,
+          amount: discountedPrice || price,
           email: userEmail,
-          coupon
+          // coupon,
+          onCheckoutComplete
         });
       }}
       compact
@@ -116,7 +110,7 @@ async function sendPayment({ token, productId, coupon }) {
   }
 }
 
-async function getCoupon(coupon) {
+export async function getCoupon(coupon) {
   try {
     const resp = await fetch(`/api/checkout/${coupon}`);
     const data = resp.json();
