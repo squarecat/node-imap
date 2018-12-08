@@ -86,6 +86,13 @@ function dailyRevChart(ctx, stats) {
         display: false
       },
       maintainAspectRatio: false,
+      tooltips: {
+        callbacks: {
+          title: function(items, data) {
+            return currency(items[0].yLabel);
+          }
+        }
+      },
       scales: {
         xAxes: [
           {
@@ -101,7 +108,7 @@ function dailyRevChart(ctx, stats) {
               beginAtZero: true,
               precision: 0,
               callback: function(label) {
-                return `$${label}`;
+                return numeral(label).format('$0,0');
               }
             }
           }
