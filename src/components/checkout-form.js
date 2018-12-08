@@ -7,7 +7,7 @@ let callback;
 let onClose;
 let onToken = t => callback(t);
 const handler = window.StripeCheckout.configure({
-  key: 'pk_test_td6LkJVGPINUdmgEnbonAGNk',
+  key: `${process.env.STRIPE_PK}`,
   image: logo,
   locale: 'auto',
   closed: () => onClose(),
