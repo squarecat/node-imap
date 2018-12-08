@@ -17,11 +17,7 @@ if (typeof window !== 'undefined') {
   });
 }
 
-async function doCheckout({ description, amount, email, onCheckoutComplete }) {
-  if (amount < 50) {
-    onCheckoutComplete();
-  }
-
+async function doCheckout({ description, amount, email }) {
   handler.open({
     name: 'Leave Me Alone',
     description,
@@ -71,9 +67,7 @@ const CheckoutForm = ({
         doCheckout({
           description: `${productName} scan`,
           amount: discountedPrice || price,
-          email: userEmail,
-          // coupon,
-          onCheckoutComplete
+          email: userEmail
         });
       }}
       compact

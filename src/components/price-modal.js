@@ -292,14 +292,35 @@ function getPaymentButton({
     const { discountedPrice } = prices.find(p => p.value === selected);
     isFree = discountedPrice === 0;
   }
+
+  const [isLoading, setLoading] = useState(false);
+
+  const freePurchase = async () => {
+    try {
+      setLoading(true);
+      await addPaidScan(selected);
+    } catch (_) {
+    } finally {
+      onClickPurchase(selected);
+      setLoading(false);
+    }
+  };
+
   if (isFree) {
     return (
-      <a
-        className="btn compact"
-        onClick={() => onClickPurchase(selected, isBeta)}
+      <Button
+        loading={isLoading}
+        compact={true}
+        onClick={() => {
+          if (selected === 'free' || isBeta) {
+            onClickPurchase(selected, isBeta);
+          } else {
+            freePurchase();
+          }
+        }}
       >
         Scan now
-      </a>
+      </Button>
     );
   }
 
@@ -323,6 +344,17 @@ function getDiscountedPrice(amount, { percent_off, amount_off } = {}) {
     price = amount - amount_off;
   }
   return price < 50 ? 0 : price;
+}
+
+async function addPaidScan(productId) {
+  try {
+    await fetch(`/api/me/paidscans/${productId}`, {
+      method: 'PUT'
+    });
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 async function getEstimates() {
