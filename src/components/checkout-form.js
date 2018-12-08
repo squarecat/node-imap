@@ -6,13 +6,16 @@ import Button from './btn';
 let callback;
 let onClose;
 let onToken = t => callback(t);
-const handler = window.StripeCheckout.configure({
-  key: `${process.env.STRIPE_PK}`,
-  image: logo,
-  locale: 'auto',
-  closed: () => onClose(),
-  token: onToken
-});
+let handler;
+if (typeof window !== 'undefined') {
+  handler = window.StripeCheckout.configure({
+    key: `${process.env.STRIPE_PK}`,
+    image: logo,
+    locale: 'auto',
+    closed: () => onClose(),
+    token: onToken
+  });
+}
 
 async function doCheckout({ description, amount, email, coupon }) {
   let price = amount;
