@@ -293,7 +293,6 @@ p.unsubscribe-link-alt {
   overflow: hidden;
   transition: height 200ms ease-in-out;
   display: flex;
-  align-items: center;
 }
 
 .coupon .btn {
@@ -301,7 +300,8 @@ p.unsubscribe-link-alt {
 }
 
 .coupon.shown {
-  height: 65px;
+  height: 45px;
+  margin: 10px 0;
 }
 
 .coupon.shown + .add-coupon {
@@ -337,6 +337,7 @@ p.unsubscribe-link-alt {
 .coupon input {
   padding: 10px;
   font-size: 14px;
+  height: 100%;
 }
 
 .coupon input:focus {
