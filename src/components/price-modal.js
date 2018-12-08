@@ -97,60 +97,65 @@ const PricingScreen = ({
   return (
     <>
       <h3>Ready for a quieter inbox?</h3>
-      <p>
-        We'll scan your inbox for any subscription emails that you've had in the
-        last 3 days for free!
-      </p>
-      <p>
-        To scan before this, you can make a one-off purchase of one of our
-        packages.
-      </p>
-      <div className="price-free">
-        <a
-          onClick={() => setSelected('free')}
-          data-selected={selected === 'free'}
-          className="btn compact muted"
-        >
-          <span>3 days</span>
-          <span className="price">(free)</span>
-        </a>
-      </div>
-      <div className="price-paid">
-        {prices.map(p => (
-          <a
-            key={p.value}
-            onClick={() => setSelected(p.value)}
-            data-selected={selected === p.value}
-            className={`btn compact muted ${p.disabled ? 'disabled' : ''}`}
-          >
-            <span>{p.label}</span>
-            <span className="price">{`($${p.price / 100})`}</span>
-          </a>
-        ))}
-      </div>
-      <div className="estimates">
-        <p className="modal-text--small">
-          Not sure what package is best for you? Let us{' '}
-          <a onClick={() => setScreen('estimates')}>
-            estimate the number of spam messages you might have
-          </a>
-          .
-        </p>
-      </div>
-      <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
-        <input
-          className="coupon-input"
-          value={coupon}
-          placeholder="Discount coupon"
-          onChange={e => setCoupon(e.currentTarget.value)}
-        />
-      </div>
-      <div className="add-coupon">
+      <div className="modal-content">
         <p>
-          <a className="add-coupon-link" onClick={() => showCoupon(true)}>
-            Have a discount coupon?
-          </a>
+          We'll scan your inbox for any subscription emails that you've had in
+          the last 3 days for free!
         </p>
+        <p>
+          To scan before this, you can make a one-off purchase of one of our
+          packages.
+        </p>
+        <div className="price-free">
+          <a
+            onClick={() => setSelected('free')}
+            data-selected={selected === 'free'}
+            className="btn compact muted"
+          >
+            <span>3 days</span>
+            <span className="price">(free)</span>
+          </a>
+        </div>
+        <div className="price-paid">
+          {prices.map(p => (
+            <a
+              key={p.value}
+              onClick={() => setSelected(p.value)}
+              data-selected={selected === p.value}
+              className={`btn compact muted ${p.disabled ? 'disabled' : ''}`}
+            >
+              <span>{p.label}</span>
+              <span className="price">{`($${p.price / 100})`}</span>
+            </a>
+          ))}
+        </div>
+        <div className="estimates">
+          <p className="modal-text--small">
+            Not sure what package is best for you? Let us{' '}
+            <a onClick={() => setScreen('estimates')}>
+              estimate the number of spam messages you might have
+            </a>
+            .
+          </p>
+        </div>
+        <div className={`coupon ${isCouponShown ? 'shown' : ''}`}>
+          <input
+            className="coupon-input"
+            value={coupon}
+            placeholder="Discount coupon"
+            onChange={e => setCoupon(e.currentTarget.value)}
+          />
+        </div>
+        <div className="add-coupon">
+          <p>
+            <a
+              className="add-coupon-link modal-text--small"
+              onClick={() => showCoupon(true)}
+            >
+              Have a discount coupon?
+            </a>
+          </p>
+        </div>
       </div>
       <div className="modal-actions">
         <div className="modal-actions-info">
