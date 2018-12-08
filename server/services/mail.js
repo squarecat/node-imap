@@ -296,6 +296,10 @@ function isUnsubscribable(mail = {}) {
       'mail-service: cannot check if unsubscribable, mail object has no payload',
       id
     );
+    if (!id) {
+      console.error('mail-service: mail id undefined');
+      console.error(mail);
+    }
     return false;
   }
 
@@ -306,13 +310,12 @@ function isUnsubscribable(mail = {}) {
 function mapMail(mail, { trash = false } = {}) {
   const { payload, id, snippet, internalDate, labelIds } = mail;
 
-  if (!payload) {
-    throw new Error('mail object has no payload');
-  }
-
-  const isTrash = trash || labelIds.includes('TRASH');
-
   try {
+    if (!payload) {
+      throw new Error('mail object has no payload', id);
+    }
+
+    const isTrash = trash || labelIds.includes('TRASH');
     const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
       .value;
     const { unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub);
