@@ -67,6 +67,13 @@ const FaqPage = () => (
         </p>
       </div>
       <div className="faq-box">
+        <h3 className="faq-title">Can I re-subscribe to mailing lists?</h3>
+        <p>
+          Sorry, we can't subscribe you to a mailing list you have unsubscribed
+          from. You'd need to visit the website and subscribe again manually.
+        </p>
+      </div>
+      <div className="faq-box">
         <h3 className="faq-title">Can I buy a monthly subscription?</h3>
         <p>
           Not yet! If you'd like a monthly subscription to Leave Me Alone{' '}
