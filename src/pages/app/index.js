@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Transition } from 'react-transition-group';
-
+import 'whatwg-fetch';
 import Modal from '../../components/price-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';

@@ -42,7 +42,7 @@ statsApi(app);
 
 app.get('/api', (req, res) => res.send('OK'));
 app.get('/roadmap', (req, res) =>
-  res.redirct('https://www.notion.so/33d2efb925634020a1cd64d40b91efe4')
+  res.redirect('https://www.notion.so/33d2efb925634020a1cd64d40b91efe4')
 );
 
 app.use(express.static(path.join(__dirname, '../public')));
