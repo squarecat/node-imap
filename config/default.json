@@ -24,5 +24,8 @@
   "payments": {
     "publishableKey": "pk_test_td6LkJVGPINUdmgEnbonAGNk",
     "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ"
+  },
+  "urls": {
+    "roadmap": "https://trello.com/b/QvJsEk2F"
   }
 }

@@ -4,6 +4,7 @@ import connectMongo from 'connect-mongo';
 import http from 'http';
 import path from 'path';
 import nowLogs from 'now-logs';
+import config from 'getconfig';
 
 import userApi from './rest/user';
 import auth from './auth';
@@ -41,9 +42,7 @@ paymentsApi(app);
 statsApi(app);
 
 app.get('/api', (req, res) => res.send('OK'));
-app.get('/roadmap', (req, res) =>
-  res.redirct('https://www.notion.so/33d2efb925634020a1cd64d40b91efe4')
-);
+app.get('/roadmap', (req, res) => res.redirct(config.urls.roadmap));
 
 app.use(express.static(path.join(__dirname, '../public')));
 
