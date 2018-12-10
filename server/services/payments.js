@@ -47,7 +47,7 @@ export async function createPaymentForUser({ token, user, productId, coupon }) {
     });
     if (payment.paid) {
       addPaidScanToUser(userId, productId);
-      addPaymentToStats({ price: amount / 100 });
+      addPaymentToStats({ price: price / 100 });
     }
     return payment;
   } catch (err) {

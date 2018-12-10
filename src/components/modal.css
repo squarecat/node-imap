@@ -352,3 +352,7 @@ p.unsubscribe-link-alt {
 .add-coupon {
   margin-bottom: 10px;
 }
+
+.modal-text-important {
+  font-weight: bold;
+}
