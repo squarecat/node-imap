@@ -89,7 +89,7 @@ h1 {
 }
 
 .beam-me-up-cta {
-  width: 200px;
+  width: 300px;
   background-color: var(--secondary-bg-color);
   color: #e73a30;
   display: inline-block;
@@ -345,4 +345,21 @@ h1 {
 .join-text-loading {
   opacity: 0;
   transform: translateY(4px);
+}
+
+.landing-header {
+  width: 100%;
+}
+
+.landing-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.landing-nav a {
+  border-bottom: none;
+  padding: 10px;
 }

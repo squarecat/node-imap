@@ -26,9 +26,9 @@ const IndexPage = () => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
   };
 
-  const scrollDown = () => {
+  const scrollToElement = selector => {
     window.scrollTo({
-      top: document.querySelector('.privacy').offsetTop,
+      top: document.getElementById(selector).offsetTop,
       left: 0,
       behavior: 'smooth'
     });
@@ -55,6 +55,36 @@ const IndexPage = () => {
     <Layout>
       <Colin />
       <div id="main">
+        <div className="landing-header">
+          <ul className="landing-nav">
+            <li>
+              <a
+                className="link"
+                onClick={() => scrollToElement('#how-it-works')}
+              >
+                How it works
+              </a>
+            </li>
+            <li>
+              <a
+                className="link"
+                onClick={() => scrollToElement('#wall-of-love')}
+              >
+                Wall of love
+              </a>
+            </li>
+            <li>
+              <a className="link" onClick={() => scrollToElement('#pricing')}>
+                Pricing
+              </a>
+            </li>
+            <li>
+              <a className="link" onClick={() => scrollToElement('#about')}>
+                About
+              </a>
+            </li>
+          </ul>
+        </div>
         <div className="friendly-neighbourhood-hero">
           <div>
             <div className="leave-me-alone-logo" ref={activeRef}>
@@ -77,7 +107,7 @@ const IndexPage = () => {
               onMouseLeave={() => setActive(false)}
               className={`beam-me-up-cta beam-me-up-cta--f`}
             >
-              Get Started!
+              Get Started For Free!
             </a>
 
             {!statsError ? (
@@ -98,7 +128,10 @@ const IndexPage = () => {
               </p>
             ) : null}
 
-            <a className="more-info" onClick={scrollDown}>
+            <a
+              className="more-info"
+              onClick={() => scrollToElement('#how-it-works')}
+            >
               Read more 👇
             </a>
           </div>
@@ -178,8 +211,21 @@ const IndexPage = () => {
             </p>
           </div>
         </div>
-        <div className="love" id="love">
+        <div className="love" id="wall-of-love">
           <WallOfLove />
+        </div>
+        <div className="pricing" id="pricing">
+          <div>
+            <h2>Let's talk money</h2>
+            <p>
+              We’ll scan your inbox for any subscription emails received in the
+              last 3 days for free.
+            </p>
+            <p>
+              To scan for email subscriptions received in the last week, month,
+              or 6 months, you can purchase a one time package detailed below.
+            </p>
+          </div>
         </div>
         <div className="makers" id="about">
           <div>
