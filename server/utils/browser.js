@@ -16,6 +16,7 @@ export async function unsubscribeWithLink(unsubUrl) {
   let page;
   try {
     page = await browser.newPage();
+    console.log('browser: opened new tab');
     await page.goto(unsubUrl, { waitUntil: 'networkidle0' });
     image = await page.screenshot({
       encoding: 'base64'
@@ -57,6 +58,8 @@ export async function unsubscribeWithLink(unsubUrl) {
     console.error(err);
     return { estimatedSuccess: false, err, image };
   } finally {
+    // clear tab memory
+    await page.goto('about:blank');
     await page.close();
     await closeInstance();
   }
@@ -67,6 +70,7 @@ async function hasKeywords(page, keywords) {
   const bodyText = await page.evaluate(() =>
     document.body.innerText.toLowerCase()
   );
+  console.log('browser: got page text');
   return keywords.some(word => {
     return bodyText.includes(word);
   });
@@ -76,20 +80,31 @@ async function getPuppeteerInstance() {
   if (puppeteerInstance) {
     return puppeteerInstance;
   }
-  console.log(config.puppeteer);
   puppeteerInstance = await puppeteer.launch(config.puppeteer);
+  console.log('browser: launched new browser');
   return puppeteerInstance;
 }
 
+let closing;
 async function closeInstance() {
   if (!puppeteerInstance) return;
-  const pageCount = (await puppeteerInstance.pages()).length;
-  // theres always a blank page to start with
-  if (pageCount === 1) {
-    console.log('no pages open, closing browser');
-    await puppeteerInstance.close();
-    puppeteerInstance = null;
-  } else {
-    console.log(`${pageCount} pages still open`);
-  }
+  if (closing) return closing.then(closeInstance, closeInstance);
+
+  closing = new Promise(async (resolve, reject) => {
+    try {
+      const pageCount = (await puppeteerInstance.pages()).length;
+      // theres always a blank page to start with
+      if (pageCount === 1) {
+        console.log('browser: no pages open, closing browser');
+        await puppeteerInstance.close();
+        puppeteerInstance = null;
+      } else {
+        console.log(`browser: ${pageCount} pages still open`);
+      }
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
+  return closing;
 }

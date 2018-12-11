@@ -12,15 +12,23 @@ import mailApi from './rest/mail';
 import paymentsApi from './rest/payments';
 import statsApi from './rest/stats';
 
+const Sentry = require('@sentry/node');
+
 import { recordStats } from './dao/stats';
 
 import { url as mongoUrl, connect as connectDb } from './dao/db';
+
+Sentry.init({
+  dsn: 'https://9b4279f65dbd47e09187ed8b1c4f071b@sentry.io/1334902'
+});
 
 nowLogs('colinloveslogs');
 const app = express();
 const server = http.createServer(app);
 const MongoStore = connectMongo(session);
 
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.errorHandler());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(
@@ -42,7 +50,6 @@ paymentsApi(app);
 statsApi(app);
 
 app.get('/api', (req, res) => res.send('OK'));
-
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 
 app.use(express.static(path.join(__dirname, '../public')));
