@@ -129,8 +129,8 @@ const IndexPage = () => {
             </a>
           </div>
         </div>
-        <div className="privacy container" id="how-it-works">
-          <div className="container-inner">
+        <div className="privacy home-container" id="how-it-works">
+          <div className="home-container-inner">
             <h2>Unsubscribe with a single click</h2>
             <p>
               Did you know that in 2018, spam messages account for 48.16% of all
@@ -204,13 +204,13 @@ const IndexPage = () => {
             </p>
           </div>
         </div>
-        <div className="love container" id="wall-of-love">
-          <div className="container-inner">
+        <div className="love home-container" id="wall-of-love">
+          <div className="home-container-inner">
             <WallOfLove />
           </div>
         </div>
-        <div className="pricing container" id="pricing">
-          <div className="container-inner">
+        <div className="pricing home-container" id="pricing">
+          <div className="home-container-inner">
             <h2>Let's talk money</h2>
             <p>
               We’ll scan your inbox for any subscription emails received in the{' '}
@@ -272,8 +272,8 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="makers container" id="about">
-          <div className="container-inner">
+        <div className="makers home-container" id="about">
+          <div className="home-container-inner">
             <h2>Created by Independent Makers</h2>
             <p className="maker-stuff">
               Hey! 👋 We're Danielle and James. We work on products that help
