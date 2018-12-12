@@ -355,4 +355,5 @@ p.unsubscribe-link-alt {
 
 .modal-text-important {
   font-weight: bold;
+  color: var(--link-color);
 }

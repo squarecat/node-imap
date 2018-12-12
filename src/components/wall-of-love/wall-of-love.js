@@ -34,7 +34,6 @@ export default () => {
                 December 1, 2018
               </a>
             </blockquote>
-
             <blockquote
               className="twitter-tweet"
               data-conversation="none"
@@ -42,23 +41,23 @@ export default () => {
               data-lang="en"
             >
               <p lang="en" dir="ltr">
-                🙌 I&#39;ve been beta testing{' '}
+                I&#39;m honestly impressed by{' '}
                 <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
                   @LeaveMeAloneApp
                 </a>{' '}
-                and it&#39;s the best because I can never find all newsletters
-                I&#39;m subscribed too. I unsubscribed from a few in seconds. So
-                cool!! <br />
+                ! I unsubcribed from ~ 97 subscriptions in A LOT less time, than
+                I would have needed if I did it manually. <br /> ▶️ Fast
                 <br />
-                Check it out at{' '}
-                <a href="https://t.co/xIALdiT5YB">https://t.co/xIALdiT5YB</a>
+                ▶️ Easy
+                <br />
+                ▶️ Beautiful ❤️😀{' '}
+                <a href="https://t.co/vMZuM8xAMM">https://t.co/vMZuM8xAMM</a>
               </p>
-              &mdash; Sam Parton (@ItsMrSammeh){' '}
-              <a href="https://twitter.com/ItsMrSammeh/status/1068594425130037248?ref_src=twsrc%5Etfw">
-                November 30, 2018
+              &mdash; Luis Hocke (@luishocke){' '}
+              <a href="https://twitter.com/luishocke/status/1068872261384499200?ref_src=twsrc%5Etfw">
+                December 1, 2018
               </a>
             </blockquote>
-
             <blockquote
               className="twitter-tweet"
               data-lang="en"
@@ -75,21 +74,6 @@ export default () => {
               &mdash; Abid Omar 👨‍💻 (@abidomr){' '}
               <a href="https://twitter.com/abidomr/status/1072168369820884992?ref_src=twsrc%5Etfw">
                 December 10, 2018
-              </a>
-            </blockquote>
-            <blockquote
-              className="twitter-tweet"
-              data-lang="en"
-              data-cards="hidden"
-              data-conversation="none"
-            >
-              <p lang="en" dir="ltr">
-                Unrollme is going to die by this app! I tried it out yesterday
-                and it blew me away at how simple and easy to use it was
-              </p>
-              &mdash; Leon Hitchens 👾 (@Leonhitchens){' '}
-              <a href="https://twitter.com/Leonhitchens/status/1070072591321350145?ref_src=twsrc%5Etfw">
-                December 4, 2018
               </a>
             </blockquote>
           </div>
@@ -151,17 +135,20 @@ export default () => {
             <blockquote
               className="twitter-tweet"
               data-lang="en"
-              data-cards="hidden"
               data-conversation="none"
+              data-cards="hidden"
             >
               <p lang="en" dir="ltr">
-                Such a good privacy-first app built my indie makers! Can’t wait
-                for the full launch 💌{' '}
-                <a href="https://t.co/DxRKc2WfX3">https://t.co/DxRKc2WfX3</a>
+                Turning those subscriptions off was a damn satisfying
+                experience. Great job guys 😏👍🏼{' '}
+                <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
+                  @LeaveMeAloneApp
+                </a>{' '}
+                is a sweet product!
               </p>
-              &mdash; Steph Smith (@stephsmithio){' '}
-              <a href="https://twitter.com/stephsmithio/status/1068872694710628352?ref_src=twsrc%5Etfw">
-                December 1, 2018
+              &mdash; Tuhin Bhuyan (@tuhin_bhuyan){' '}
+              <a href="https://twitter.com/tuhin_bhuyan/status/1072535808387747841?ref_src=twsrc%5Etfw">
+                December 11, 2018
               </a>
             </blockquote>
           </div>
@@ -169,26 +156,22 @@ export default () => {
           <div className="col">
             <blockquote
               className="twitter-tweet"
-              data-conversation="none"
-              data-cards="hidden"
               data-lang="en"
+              data-cards="hidden"
+              data-conversation="none"
             >
               <p lang="en" dir="ltr">
-                I&#39;m honestly impressed by{' '}
+                People -{' '}
                 <a href="https://twitter.com/LeaveMeAloneApp?ref_src=twsrc%5Etfw">
                   @LeaveMeAloneApp
                 </a>{' '}
-                ! I unsubcribed from ~ 97 subscriptions in A LOT less time, than
-                I would have needed if I did it manually. <br /> ▶️ Fast
-                <br />
-                ▶️ Easy
-                <br />
-                ▶️ Beautiful ❤️😀{' '}
-                <a href="https://t.co/vMZuM8xAMM">https://t.co/vMZuM8xAMM</a>
+                is awesome. Pay $8 for the 6-Months history of searching for
+                email subscriptions. Turn off the subscriptions your don&#39;t
+                want. Clean up your inbox. It&#39;s that easy.
               </p>
-              &mdash; Luis Hocke (@luishocke){' '}
-              <a href="https://twitter.com/luishocke/status/1068872261384499200?ref_src=twsrc%5Etfw">
-                December 1, 2018
+              &mdash; Jordan O&#39;Connor (@jmofyi){' '}
+              <a href="https://twitter.com/jmofyi/status/1072578849593016323?ref_src=twsrc%5Etfw">
+                December 11, 2018
               </a>
             </blockquote>
             <blockquote
@@ -223,6 +206,21 @@ export default () => {
               &mdash; Sergio Mattei ✌️ (@matteing){' '}
               <a href="https://twitter.com/matteing/status/1068871586617413632?ref_src=twsrc%5Etfw">
                 December 1, 2018
+              </a>
+            </blockquote>
+            <blockquote
+              className="twitter-tweet"
+              data-lang="en"
+              data-cards="hidden"
+              data-conversation="none"
+            >
+              <p lang="en" dir="ltr">
+                Unrollme is going to die by this app! I tried it out yesterday
+                and it blew me away at how simple and easy to use it was
+              </p>
+              &mdash; Leon Hitchens 👾 (@Leonhitchens){' '}
+              <a href="https://twitter.com/Leonhitchens/status/1070072591321350145?ref_src=twsrc%5Etfw">
+                December 4, 2018
               </a>
             </blockquote>
           </div>
