@@ -1,4 +1,10 @@
 import socketio from 'socket.io';
+import io from '@pm2/io';
+
+const socketsOpen = io.metric({
+  name: 'Sockets open',
+  type: 'counter'
+});
 
 import {
   scanMail,
@@ -35,6 +41,7 @@ export default function(app, server) {
   const io = socketio(server).of('mail');
 
   io.on('connection', socket => {
+    socketsOpen.inc();
     socket.auth = false;
     socket.on('authenticate', async data => {
       try {
@@ -115,6 +122,7 @@ export default function(app, server) {
     });
 
     socket.on('disconnect', () => {
+      socketsOpen.dec();
       delete connectedClients[socket.userId];
     });
   });

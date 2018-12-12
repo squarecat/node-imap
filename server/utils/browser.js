@@ -1,5 +1,11 @@
 import puppeteer from 'puppeteer';
 import config from 'getconfig';
+import io from '@pm2/io';
+
+const currentTabsOpen = io.metric({
+  name: 'Current Tabs Open',
+  type: 'counter'
+});
 
 // get lowercase, uppercase and capitalized versions of all keywords too
 const unsubSuccessKeywords = config.unsubscribeKeywords.reduce(
@@ -17,6 +23,7 @@ export async function unsubscribeWithLink(unsubUrl) {
   try {
     page = await browser.newPage();
     console.log('browser: opened new tab');
+    currentTabsOpen.inc();
     await page.goto(unsubUrl, { waitUntil: 'networkidle0' });
     image = await page.screenshot({
       encoding: 'base64'
@@ -61,6 +68,7 @@ export async function unsubscribeWithLink(unsubUrl) {
     // clear tab memory
     console.log('browser: clearing memory');
     await page.goto('about:blank');
+    currentTabsOpen.dec();
     await page.close();
     await closeInstance();
   }
@@ -102,3 +110,15 @@ async function closeInstance() {
     console.error(err);
   }
 }
+
+io.action('browser: force-close', async cb => {
+  try {
+    if (puppeteerInstance) {
+      await puppeteerInstance.close();
+      puppeteerInstance = null;
+      cb({ success: true });
+    }
+  } catch (err) {
+    cb({ success: false });
+  }
+});

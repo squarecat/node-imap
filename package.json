@@ -5,6 +5,7 @@
   "author": "James Ivings <james@squarecat.io>",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@pm2/io": "^2.4.7",
     "@sentry/browser": "^4.4.1",
     "@sentry/node": "^4.4.1",
     "aes256": "^1.0.4",

@@ -6,6 +6,12 @@ import subMonths from 'date-fns/sub_months';
 import format from 'date-fns/format';
 import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
+import io from '@pm2/io';
+
+const mailPerSecond = io.metric({
+  name: 'mail/sec',
+  type: 'meter'
+});
 
 import { emailStringIsEqual } from '../utils/parsers';
 import { getUnsubscribeImage } from '../dao/user';
@@ -143,6 +149,7 @@ export async function scanMail(
     onProgress({ progress, total });
 
     const onMailData = (m, options) => {
+      mailPerSecond.mark();
       if (isUnsubscribable(m)) {
         const mail = mapMail(m, options);
         if (mail) {
