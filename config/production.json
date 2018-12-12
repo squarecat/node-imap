@@ -14,12 +14,13 @@
     "redirect": "https://leavemealone.xyz/auth/google/callback"
   },
   "puppeteer": {
-    "executablePath": "/usr/bin/chromium-browser",
     "args": [
       "--no-sandbox",
       "--headless",
       "--disable-gpu",
-      "-—disable-dev-tools"
+      "-—disable-dev-tools",
+      "--disable-dev-shm-usage",
+      "--full-memory-crash-report"
     ],
     "dumpio": false,
     "devtools": false

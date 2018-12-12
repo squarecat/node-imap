@@ -555,7 +555,9 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
             <a className="status" onClick={() => setUnsubModal(m)}>
               See details
             </a>
-          ) : null}
+          ) : (
+            <span className="status subscribed">Subscribed</span>
+          )}
         </div>
       </div>
     </li>

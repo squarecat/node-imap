@@ -248,13 +248,23 @@ pre {
   left: 0;
   right: 0;
   margin: 0 auto;
-  opacity: 0;
-  width: 66px;
+  opacity: 0.5;
+  width: 76px;
   cursor: pointer;
+}
+
+.status.subscribed {
+  opacity: 1;
+  color: #faaca9;
+  font-weight: bolder;
 }
 
 .mail-item:hover .status {
   opacity: 0.5;
+}
+
+.mail-item:hover .status.subscribed {
+  opacity: 1;
 }
 
 .status:hover {
