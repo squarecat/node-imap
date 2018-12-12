@@ -5,9 +5,9 @@ import Footer from '../components/footer';
 
 import './subpage-layout.css';
 
-export default ({ className, children }) => {
+export default ({ page, className, children }) => {
   return (
-    <Layout>
+    <Layout page={page}>
       <div className="subpage-header">
         <a href="/" className="subpage-header-logo">
           <img alt="logo" src={logo} />
