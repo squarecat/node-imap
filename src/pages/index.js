@@ -11,6 +11,7 @@ import gif from '../assets/toggle-unsubscribe-hd.gif';
 
 import Colin from '../components/squarecat';
 import Layout from '../layouts/layout';
+// import Header from '../components/landing-header/landing-header';
 import Footer from '../components/footer';
 import WallOfLove from '../components/wall-of-love/wall-of-love';
 
@@ -20,6 +21,25 @@ const indieMakerTweetText = encodeURIComponent(
   `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
 );
 
+const PRICES = [
+  {
+    price: 3,
+    label: '1 week',
+    value: '1w'
+  },
+  {
+    price: 5,
+    label: '1 month',
+    value: '1m'
+  },
+  {
+    price: 8,
+    label: '6 months',
+    value: '6m',
+    recommended: true
+  }
+];
+
 const IndexPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {
@@ -27,6 +47,7 @@ const IndexPage = () => {
   };
 
   const scrollToElement = selector => {
+    // window.history.pushState({}, false, `#${selector}`);
     window.scrollTo({
       top: document.getElementById(selector).offsetTop,
       left: 0,
@@ -55,36 +76,7 @@ const IndexPage = () => {
     <Layout>
       <Colin />
       <div id="main">
-        <div className="landing-header">
-          <ul className="landing-nav">
-            <li>
-              <a
-                className="link"
-                onClick={() => scrollToElement('#how-it-works')}
-              >
-                How it works
-              </a>
-            </li>
-            <li>
-              <a
-                className="link"
-                onClick={() => scrollToElement('#wall-of-love')}
-              >
-                Wall of love
-              </a>
-            </li>
-            <li>
-              <a className="link" onClick={() => scrollToElement('#pricing')}>
-                Pricing
-              </a>
-            </li>
-            <li>
-              <a className="link" onClick={() => scrollToElement('#about')}>
-                About
-              </a>
-            </li>
-          </ul>
-        </div>
+        {/* <Header onClickNav={name => scrollToElement(name)} /> */}
         <div className="friendly-neighbourhood-hero">
           <div>
             <div className="leave-me-alone-logo" ref={activeRef}>
@@ -130,14 +122,14 @@ const IndexPage = () => {
 
             <a
               className="more-info"
-              onClick={() => scrollToElement('#how-it-works')}
+              onClick={() => scrollToElement('how-it-works')}
             >
               Read more 👇
             </a>
           </div>
         </div>
-        <div className="privacy" id="how-it-works">
-          <div>
+        <div className="privacy container" id="how-it-works">
+          <div className="container-inner">
             <h2>Unsubscribe with a single click</h2>
             <p>
               Did you know that in 2018, spam messages account for 48.16% of all
@@ -211,24 +203,76 @@ const IndexPage = () => {
             </p>
           </div>
         </div>
-        <div className="love" id="wall-of-love">
-          <WallOfLove />
-        </div>
-        <div className="pricing" id="pricing">
-          <div>
-            <h2>Let's talk money</h2>
-            <p>
-              We’ll scan your inbox for any subscription emails received in the
-              last 3 days for free.
-            </p>
-            <p>
-              To scan for email subscriptions received in the last week, month,
-              or 6 months, you can purchase a one time package detailed below.
-            </p>
+        <div className="love container" id="wall-of-love">
+          <div className="container-inner">
+            <WallOfLove />
           </div>
         </div>
-        <div className="makers" id="about">
-          <div>
+        <div className="pricing container" id="pricing">
+          <div className="container-inner">
+            <h2>Let's talk money</h2>
+            <p>
+              We’ll scan your inbox for any subscription emails received in the{' '}
+              <span className="pricing-text-important">
+                last 3 days for free
+              </span>
+              .
+            </p>
+            <p>
+              To scan for email subscriptions received in the{' '}
+              <span className="pricing-text-important">
+                last week, last month, or last 6 months
+              </span>
+              , you can make a one-time purchase of one of these packages.
+            </p>
+            <div className="pricing-boxes">
+              {PRICES.map(p => (
+                <div
+                  key={p.value}
+                  className={`pricing-box ${
+                    p.recommended ? 'pricing-box-recommended' : ''
+                  }`}
+                >
+                  <h3 className="pricing-title">{p.label}</h3>
+                  <p className="pricing-price">
+                    {p.price ? `$${p.price}` : 'Free'}
+                  </p>
+                  <span className="pricing-text">one-time payment</span>
+                </div>
+              ))}
+            </div>
+            <div className="pricing-cta">
+              <ul className="bullets">
+                <li>
+                  See all of your subscription emails{' '}
+                  <span className="pricing-text-important">in one place</span>
+                </li>
+                <li>
+                  Unsubscribe from spam{' '}
+                  <span className="pricing-text-important">with one click</span>
+                </li>
+                <li>
+                  Know your data is{' '}
+                  <span className="pricing-text-important">in safe hands</span>
+                </li>
+                <li>
+                  Enjoy a{' '}
+                  <span className="pricing-text-important">cleaner inbox</span>
+                </li>
+              </ul>
+              <a
+                href="/login"
+                onMouseEnter={() => setActive(true)}
+                onMouseLeave={() => setActive(false)}
+                className={`beam-me-up-cta beam-me-up-cta--f`}
+              >
+                Get Started For Free!
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="makers container" id="about">
+          <div className="container-inner">
             <h2>Created by Independent Makers</h2>
             <p className="maker-stuff">
               Hey! 👋 We're Danielle and James. We work on products that help

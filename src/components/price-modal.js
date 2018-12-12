@@ -139,15 +139,15 @@ const PricingScreen = ({
       <h3>Ready for a quieter inbox?</h3>
       <div className="modal-content">
         <p>
-          We'll scan your inbox for any subscription emails that you've received{' '}
-          <span className="modal-text-important">in the last 3 days</span> for
-          free!
+          We’ll scan your inbox for any subscription emails received in the{' '}
+          <span className="modal-text-important">last 3 days for free</span>.
         </p>
-        <p />
         <p>
-          To scan for emails that you received{' '}
-          <span className="modal-text-important">more than 3 days ago</span>,
-          you can make a one-off purchase of one of our packages.
+          To scan for email subscriptions received in the{' '}
+          <span className="modal-text-important">
+            last week, last month, or last 6 months
+          </span>
+          , you can make a one-time purchase of one of these packages.
         </p>
         <div className="price-free">
           <a
