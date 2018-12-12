@@ -7,7 +7,7 @@ let callback;
 let onClose;
 let onToken = t => callback(t);
 let handler;
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && window.StripeCheckout) {
   handler = window.StripeCheckout.configure({
     key: `${process.env.STRIPE_PK}`,
     image: logo,

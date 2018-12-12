@@ -67,18 +67,34 @@ const FaqPage = () => (
         </p>
       </div>
       <div className="faq-box">
+        <h3 className="faq-title">Can I purchase a monthly subscription?</h3>
+        <p>
+          Not yet! Our pricing is tiered on how far back in time you want us to
+          include in a scan.
+        </p>
+        <p>
+          We’ll scan your inbox for any subscription emails received in the{' '}
+          <span className="text-important">last 3 days for free</span>.
+        </p>
+        <p>
+          To scan for email subscriptions received in the{' '}
+          <span className="text-important">
+            last week, last month, or last 6 months
+          </span>
+          , you can make a one-time purchase of one of our packages.
+        </p>
+        <p>
+          We are considering adding monthly subscription plans to Leave Me
+          Alone, if you'd be interested in this please{' '}
+          <a href="mailto:leavemalone@squarecat.io">email</a> or{' '}
+          <a href="https://twitter.com/leavemealoneapp">tweet</a> us.
+        </p>
+      </div>
+      <div className="faq-box">
         <h3 className="faq-title">Can I re-subscribe to mailing lists?</h3>
         <p>
           Sorry, we can't subscribe you to a mailing list you have unsubscribed
           from. You'd need to visit the website and subscribe again manually.
-        </p>
-      </div>
-      <div className="faq-box">
-        <h3 className="faq-title">Can I buy a monthly subscription?</h3>
-        <p>
-          Not yet! If you'd like a monthly subscription to Leave Me Alone{' '}
-          <a href="mailto:leavemalone@squarecat.io">email</a> or{' '}
-          <a href="https://twitter.com/leavemealoneapp">tweet</a> us.
         </p>
       </div>
     </div>

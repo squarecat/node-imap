@@ -101,3 +101,8 @@ input:focus {
   background-color: #fff;
   transition: transform 150ms ease-out, font-size 150ms ease-out;
 }
+
+.text-important {
+  color: var(--link-color);
+  font-weight: bold;
+}

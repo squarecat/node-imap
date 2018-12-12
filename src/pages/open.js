@@ -2,6 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js';
 import numeral from 'numeral';
 import startOfDay from 'date-fns/start_of_day';
+import startOfMonth from 'date-fns/start_of_month';
+import endOfMonth from 'date-fns/end_of_month';
+import addMonths from 'date-fns/add_months';
+import isWithinRange from 'date-fns/is_within_range';
 
 import SubPageLayout from '../layouts/subpage-layout';
 import { useAsync } from '../utils/hooks';
@@ -14,7 +18,7 @@ function getStats() {
   return fetch('/api/stats').then(resp => resp.json());
 }
 
-function chart(ctx, stats) {
+function unsubscriptionsChart(ctx, stats) {
   if (!stats) return null;
   const { daily } = stats;
   const { histogram } = daily;
@@ -120,6 +124,13 @@ function dailyRevChart(ctx, stats) {
 }
 
 function scanChart(ctx, stats) {
+  return simpleLineChart(ctx, stats, 'scans');
+}
+function usersChart(ctx, stats) {
+  return simpleLineChart(ctx, stats, 'scans');
+}
+
+function simpleLineChart(ctx, stats, stat) {
   if (!stats) return null;
   const { daily } = stats;
   const { histogram } = daily;
@@ -133,7 +144,7 @@ function scanChart(ctx, stats) {
           borderColor: lineColor,
           data: histogram.map(d => ({
             x: startOfDay(d.timestamp),
-            y: d.scans
+            y: d[stat]
           }))
         }
       ]
@@ -222,11 +233,12 @@ export default function Terms() {
   const dailyRevRef = useRef(null);
   const scanRef = useRef(null);
   const mailtoLinkRef = useRef(null);
+  const usersRef = useRef(null);
 
   useEffect(
     () => {
       if (subscriptionRef.current) {
-        chart(subscriptionRef.current.getContext('2d'), stats);
+        unsubscriptionsChart(subscriptionRef.current.getContext('2d'), stats);
       }
       if (dailyRevRef.current) {
         dailyRevChart(dailyRevRef.current.getContext('2d'), stats);
@@ -236,6 +248,9 @@ export default function Terms() {
       }
       if (mailtoLinkRef.current) {
         mailtoLinkPieChart(mailtoLinkRef.current.getContext('2d'), stats);
+      }
+      if (usersRef.current) {
+        usersChart(usersRef.current.getContext('2d'), stats);
       }
     },
     [stats, subscriptionRef.current, dailyRevRef.current, scanRef.current]
@@ -264,7 +279,11 @@ export default function Terms() {
           <div className="totals">
             <div className="big-stat box">
               <span className="label">Last month's revenue</span>
-              <span className="value">{currency(0)}</span>
+              <span className="value">
+                {currency(
+                  getLastMonthValues(stats.daily.histogram, 'totalRevenue')
+                )}
+              </span>
             </div>
             <div className="big-stat box">
               <span className="label">Total sales</span>
@@ -274,6 +293,20 @@ export default function Terms() {
               <span className="label">Revenue per user</span>
               <span className="value">
                 {currency(stats.totalRevenue / stats.users)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="users">
+          <div className="chart box">
+            <h2>New Signups</h2>
+            <canvas ref={usersRef} />
+          </div>
+          <div className="totals">
+            <div className="big-stat box">
+              <span className="label">Last month's users</span>
+              <span className="value">
+                {getLastMonthValues(stats.daily.histogram, 'users')}
               </span>
             </div>
             <div className="big-stat box">
@@ -326,6 +359,17 @@ export default function Terms() {
       </div>
     </SubPageLayout>
   );
+}
+
+function getLastMonthValues(histogram, stat) {
+  const today = new Date();
+  const start = startOfMonth(addMonths(today, -1));
+  const end = endOfMonth(addMonths(today, -1));
+
+  return histogram.reduce((out, d) => {
+    if (isWithinRange(d.timestamp, start, end)) return out + d[stat];
+    return out;
+  }, 0);
 }
 
 function format(num) {
