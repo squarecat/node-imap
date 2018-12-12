@@ -1,4 +1,5 @@
 import socketio from 'socket.io';
+import io from '@pm2/io';
 
 import {
   scanMail,
@@ -10,6 +11,10 @@ import {
 import { checkAuthToken } from '../services/user';
 
 let connectedClients = {};
+
+const socketsOpen = io.counter({
+  name: 'Sockets open'
+});
 
 export default function(app, server) {
   app.get('/api/mail/image/:mailId', async (req, res) => {
@@ -35,6 +40,7 @@ export default function(app, server) {
   const io = socketio(server).of('mail');
 
   io.on('connection', socket => {
+    socketsOpen.inc();
     socket.auth = false;
     socket.on('authenticate', async data => {
       try {
@@ -116,6 +122,7 @@ export default function(app, server) {
 
     socket.on('disconnect', () => {
       console.log('mail-rest: socket disconnected');
+      socketsOpen.dec();
       delete connectedClients[socket.userId];
     });
   });

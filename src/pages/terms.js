@@ -3,7 +3,7 @@ import SubPageLayout from '../layouts/subpage-layout';
 
 export default function Terms() {
   return (
-    <SubPageLayout>
+    <SubPageLayout page="Terms">
       <h1>Terms of Service</h1>
       <h2>Squarecat Terms of Service</h2>
       <h3>1. Terms</h3>

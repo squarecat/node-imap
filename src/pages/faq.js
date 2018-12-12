@@ -4,7 +4,7 @@ import SubPageLayout from '../layouts/subpage-layout';
 import './faq.css';
 
 const FaqPage = () => (
-  <SubPageLayout className="faq-page">
+  <SubPageLayout page="FAQ" className="faq-page">
     <h1>FAQs</h1>
     <div className="faqs">
       <div className="faq-box">

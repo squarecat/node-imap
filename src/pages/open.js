@@ -259,7 +259,7 @@ export default function Terms() {
     return null;
   }
   return (
-    <SubPageLayout>
+    <SubPageLayout page="Open Stats">
       <div className="open-page">
         <div className="open-title box">
           <h1>All of our metrics are public</h1>
