@@ -1,11 +1,6 @@
 import socketio from 'socket.io';
 import io from '@pm2/io';
 
-const socketsOpen = io.metric({
-  name: 'Sockets open',
-  type: 'counter'
-});
-
 import {
   scanMail,
   unsubscribeMail,
@@ -16,6 +11,10 @@ import {
 import { checkAuthToken } from '../services/user';
 
 let connectedClients = {};
+
+const socketsOpen = io.counter({
+  name: 'Sockets open'
+});
 
 export default function(app, server) {
   app.get('/api/mail/image/:mailId', async (req, res) => {

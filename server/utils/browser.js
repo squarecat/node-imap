@@ -2,9 +2,8 @@ import puppeteer from 'puppeteer';
 import config from 'getconfig';
 import io from '@pm2/io';
 
-const currentTabsOpen = io.metric({
-  name: 'Current Tabs Open',
-  type: 'counter'
+const currentTabsOpen = io.counter({
+  name: 'Current Tabs Open'
 });
 
 // get lowercase, uppercase and capitalized versions of all keywords too

@@ -8,9 +8,8 @@ import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 import io from '@pm2/io';
 
-const mailPerSecond = io.metric({
-  name: 'mail/sec',
-  type: 'meter'
+const mailPerSecond = io.meter({
+  name: 'mail/sec'
 });
 
 import { emailStringIsEqual } from '../utils/parsers';
