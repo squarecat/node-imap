@@ -72,10 +72,6 @@ export async function scanMail(
 ) {
   try {
     let dupes = [];
-    const hasFinished = {
-      mail: false,
-      trash: false
-    };
 
     const { then, now } = getTimeRange(timeframe);
 
@@ -127,14 +123,6 @@ export async function scanMail(
       trashSearchStr
     );
 
-    const messageOptions = {
-      timeout: 10000,
-      max: 10000
-    };
-
-    const s = gmail.messages(searchStr, messageOptions);
-    const t = gmail.messages(trashSearchStr, messageOptions);
-
     let totalEmailsCount = 0;
     let totalUnsubscribableEmailsCount = 0;
     let totalPreviouslyUnsubscribedEmails = 0;
@@ -142,7 +130,7 @@ export async function scanMail(
     let progress = 0;
     onProgress({ progress, total });
 
-    const onMailData = (m, options) => {
+    const onMailData = (m, options = {}) => {
       if (isUnsubscribable(m)) {
         const mail = mapMail(m, options);
         if (mail) {
@@ -170,19 +158,9 @@ export async function scanMail(
       }
       totalEmailsCount++;
       progress = progress + 1;
+      console.log('progress', progress);
       onProgress({ progress, total });
     };
-    s.on('data', onMailData);
-    t.on('data', d => onMailData(d, { trash: true }));
-
-    s.on('end', () => {
-      hasFinished.mail = true;
-      if (hasFinished.trash === true) onScanFinished();
-    });
-    t.on('end', () => {
-      hasFinished.trash = true;
-      if (hasFinished.mail === true) onScanFinished();
-    });
 
     const onScanFinished = () => {
       console.log('mail-service: scan finished');
@@ -209,16 +187,37 @@ export async function scanMail(
       console.error(err);
       onError(err.toString());
     };
-    s.on('timeout', onMailTimeout);
-    t.on('timeout', onMailTimeout);
 
     const onMailError = err => {
       console.error('mail-service: gmail error');
       console.error(err);
       onError(err.toString());
     };
+
+    const messageOptions = {
+      timeout: 10000,
+      max: 10000
+    };
+
+    console.log('mail-service: -------- INBOX STARTED --------');
+    const s = gmail.messages(searchStr, messageOptions);
+
+    s.on('data', onMailData);
+    s.on('timeout', onMailTimeout);
     s.on('error', onMailError);
-    t.on('error', onMailError);
+
+    s.on('end', () => {
+      console.log('mail-service: -------- INBOX FINISHED --------');
+      console.log('mail-service: -------- TRASH STARTED --------');
+      const t = gmail.messages(trashSearchStr, messageOptions);
+      t.on('data', d => onMailData(d, { trash: true }));
+      t.on('end', () => {
+        console.log('mail-service: -------- TRASH FINISHED --------');
+        onScanFinished();
+      });
+      t.on('timeout', onMailTimeout);
+      t.on('error', onMailError);
+    });
   } catch (err) {
     onError(err.toString());
   }

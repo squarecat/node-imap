@@ -115,6 +115,7 @@ export default function(app, server) {
     });
 
     socket.on('disconnect', () => {
+      console.log('mail-rest: socket disconnected');
       delete connectedClients[socket.userId];
     });
   });
