@@ -59,6 +59,7 @@ export async function unsubscribeWithLink(unsubUrl) {
     return { estimatedSuccess: false, err, image };
   } finally {
     // clear tab memory
+    console.log('browser: clearing memory');
     await page.goto('about:blank');
     await page.close();
     await closeInstance();
@@ -85,26 +86,19 @@ async function getPuppeteerInstance() {
   return puppeteerInstance;
 }
 
-let closing;
 async function closeInstance() {
   if (!puppeteerInstance) return;
-  if (closing) return closing.then(closeInstance, closeInstance);
-
-  closing = new Promise(async (resolve, reject) => {
-    try {
-      const pageCount = (await puppeteerInstance.pages()).length;
-      // theres always a blank page to start with
-      if (pageCount === 1) {
-        console.log('browser: no pages open, closing browser');
-        await puppeteerInstance.close();
-        puppeteerInstance = null;
-      } else {
-        console.log(`browser: ${pageCount} pages still open`);
-      }
-      resolve();
-    } catch (err) {
-      reject(err);
+  try {
+    const pageCount = (await puppeteerInstance.pages()).length;
+    // theres always a blank page to start with
+    if (pageCount === 1) {
+      console.log('browser: no pages open, closing browser');
+      await puppeteerInstance.close();
+      puppeteerInstance = null;
+    } else {
+      console.log(`browser: ${pageCount} pages still open`);
     }
-  });
-  return closing;
+  } catch (err) {
+    console.error(err);
+  }
 }
