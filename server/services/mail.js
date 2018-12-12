@@ -158,7 +158,6 @@ export async function scanMail(
       }
       totalEmailsCount++;
       progress = progress + 1;
-      console.log('progress', progress);
       onProgress({ progress, total });
     };
 
