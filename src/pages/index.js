@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import 'isomorphic-fetch';
 import numeral from 'numeral';
 import AnimatedNumber from 'react-animated-number';
 import TrackVisibility from 'react-on-screen';

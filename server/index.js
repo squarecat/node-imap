@@ -42,7 +42,8 @@ paymentsApi(app);
 statsApi(app);
 
 app.get('/api', (req, res) => res.send('OK'));
-app.get('/roadmap', (req, res) => res.redirct(config.urls.roadmap));
+
+app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 
 app.use(express.static(path.join(__dirname, '../public')));
 
