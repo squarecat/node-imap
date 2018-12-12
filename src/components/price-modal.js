@@ -329,7 +329,7 @@ function getPaymentButton({
 
   return (
     <CheckoutForm
-      coupon={couponData}
+      coupon={couponData.coupon}
       onCheckoutFailed={() => {
         console.error('Checkout failed, what do?');
       }}
