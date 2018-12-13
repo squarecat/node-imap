@@ -20,7 +20,9 @@ export async function createUser(data) {
       lastUpdatedAt: isoDate(),
       keys: {
         refreshToken: encrypt(keys.refreshToken),
-        accessToken: encrypt(keys.accessToken)
+        accessToken: encrypt(keys.accessToken),
+        expires: keys.expires,
+        expiresIn: keys.expiresIn
       },
       unsubscriptions: [],
       scans: [],
@@ -44,6 +46,7 @@ export async function getUser(id) {
     const decryptedUser = {
       ...user,
       keys: {
+        ...user.keys,
         refreshToken: decrypt(user.keys.refreshToken),
         accessToken: decrypt(user.keys.accessToken)
       },
@@ -87,6 +90,7 @@ export async function updateUser(id, userData) {
     updateObj = {
       ...updateObj,
       keys: {
+        ...keys,
         refreshToken: encrypt(keys.refreshToken),
         accessToken: encrypt(keys.accessToken)
       }

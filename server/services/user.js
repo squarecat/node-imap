@@ -52,6 +52,22 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   }
 }
 
+export async function updateUserToken(id, keys) {
+  try {
+    const user = await updateUser(id, {
+      keys
+    });
+    return user;
+  } catch (err) {
+    console.error(
+      'user-service: error updating user refreshtoken',
+      id || 'no userData id'
+    );
+    console.error(err);
+    throw err;
+  }
+}
+
 export async function checkAuthToken(userId, token) {
   try {
     let user = await getUser(userId);
