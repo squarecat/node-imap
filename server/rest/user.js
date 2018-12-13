@@ -9,7 +9,8 @@ export default app => {
       token,
       beta,
       unsubscriptions,
-      scans
+      scans,
+      profileImg
     } = await getUserById(req.user.id);
     res.send({
       id,
@@ -17,6 +18,7 @@ export default app => {
       token,
       beta,
       unsubscriptions,
+      profileImg,
       hasScanned: scans ? !!scans.length : false
     });
   });

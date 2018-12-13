@@ -25,20 +25,23 @@ export async function getUserById(id) {
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
-    const { id, emails } = userData;
+    const { id, emails, photos = [] } = userData;
+    const profileImg = photos.length ? photos[0].value : null;
     const { value: email } = emails.find(e => e.type === 'account');
     let user = await getUser(id);
     if (!user) {
       user = await createUser({
         id,
         email,
+        profileImg,
         keys,
         token: v4()
       });
       addUserToStats();
     } else {
       user = await updateUser(id, {
-        keys
+        keys,
+        profileImg
       });
     }
     return user;
