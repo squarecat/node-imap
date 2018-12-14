@@ -4,14 +4,12 @@ import subDays from 'date-fns/sub_days';
 import subWeeks from 'date-fns/sub_weeks';
 import subMonths from 'date-fns/sub_months';
 import format from 'date-fns/format';
-import addDays from 'date-fns/add_days';
 import emailAddresses from 'email-addresses';
 import io from '@pm2/io';
+import subMinutes from 'date-fns/sub_minutes';
+import isBefore from 'date-fns/is_before';
 
-const mailPerSecond = io.meter({
-  name: 'mail/sec'
-});
-
+import { refreshAccessToken } from '../auth';
 import { emailStringIsEqual } from '../utils/parsers';
 import { getUnsubscribeImage } from '../dao/user';
 import {
@@ -37,12 +35,27 @@ import {
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
 
+const mailPerSecond = io.meter({
+  name: 'mail/sec'
+});
+
 const googleDateFormat = 'YYYY/MM/DD';
 const estimateTimeframes = ['3d', '1w'];
 
+function getAccessToken(user) {
+  const { keys, id: userId } = user;
+  const { accessToken, refreshToken, expires, expiresIn } = keys;
+
+  if (isBefore(subMinutes(expires, 5), new Date())) {
+    return refreshAccessToken(userId, { refreshToken, expiresIn });
+  }
+  return accessToken;
+}
+
 export async function getMailEstimates(userId) {
   const user = await getUserById(userId);
-  const gmail = new Gmail(user.keys.accessToken);
+  const accessToken = await getAccessToken(user);
+  const gmail = new Gmail(accessToken);
   const now = new Date();
   let estimates = await Promise.all(
     estimateTimeframes.map(async timeframe => {
@@ -89,7 +102,8 @@ export async function scanMail(
       console.log('mail: User attempted search that has not been paid for');
       return onError('Not paid');
     }
-    const gmail = new Gmail(user.keys.accessToken);
+    const accessToken = await getAccessToken(user);
+    const gmail = new Gmail(accessToken);
     const { unsubscriptions } = user;
     const searchStr = getSearchString({ then, now });
     const trashSearchStr = getSearchString({ then, now, query: 'in:trash' });

@@ -49,6 +49,10 @@ mailApi(app, server);
 paymentsApi(app);
 statsApi(app);
 
+app.get('/sitemap.xml', (req, res) => {
+  console.log('sitemap');
+  res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
 app.get('/api', (req, res) => res.send('OK'));
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 

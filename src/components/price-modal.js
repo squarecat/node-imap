@@ -387,46 +387,51 @@ const EstimatesScreen = ({ setScreen }) => {
   const { error, value: estimates, loading } = useAsync(getEstimates);
   return (
     <>
-      <div className="estimates-modal">
-        {loading ? (
-          <p>Asking Google to estimating your emails...please wait...</p>
-        ) : (
-          <p>Here are our estimates.</p>
-        )}
-      </div>
-      {estimates ? (
-        <>
-          <ul className="estimates-list">
-            {estimates.map(({ timeframe, totalSpam }) => {
-              return (
-                <li key={timeframe}>
-                  In the past{' '}
-                  <span className="estimates-timeframe">
-                    {timeframeLabel[timeframe]}
-                  </span>{' '}
-                  you have received{' '}
-                  <span className="estimates-value">{totalSpam}</span>{' '}
-                  subscription emails.
-                </li>
-              );
-            })}
-          </ul>
-          <div className="source">
-            <h5>How do we get this information?</h5>
-            <p>
-              Google provides estimates of the quantity of emails in your inbox.
-              Using this and{' '}
-              <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
-                reseach into the number of spam emails users recieve on average
-                (48.16%)
-              </a>
-              , then we work out the estimated amount of spam!
-            </p>
-          </div>
-        </>
-      ) : null}
+      <h3>Estimating...</h3>
+      <div className="modal-content">
+        <div className="estimates-modal">
+          {loading ? (
+            <p>Asking Google to estimating your emails...please wait...</p>
+          ) : (
+            <p>Here are our estimates.</p>
+          )}
+        </div>
+        {estimates ? (
+          <>
+            <ul className="estimates-list">
+              {estimates.map(({ timeframe, totalSpam }) => {
+                return (
+                  <li key={timeframe}>
+                    In the past{' '}
+                    <span className="estimates-timeframe">
+                      {timeframeLabel[timeframe]}
+                    </span>{' '}
+                    you have received{' '}
+                    <span className="estimates-value">{totalSpam}</span>{' '}
+                    subscription emails.
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="source">
+              <h5>How do we get this information?</h5>
+              <p>
+                Google provides estimates of the quantity of emails in your
+                inbox. Using this and{' '}
+                <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
+                  reseach into the number of spam emails users recieve on
+                  average (48.16%)
+                </a>
+                , then we work out the estimated amount of spam!
+              </p>
+            </div>
+          </>
+        ) : null}
 
-      {error ? <div className="estimates-error">{error.toString()}</div> : null}
+        {error ? (
+          <div className="estimates-error">{error.toString()}</div>
+        ) : null}
+      </div>
       <div className="modal-actions">
         <a className="btn muted compact" onClick={() => setScreen('pricing')}>
           Go back
