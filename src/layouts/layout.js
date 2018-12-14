@@ -49,7 +49,12 @@ const Layout = ({ page, children }) => (
             <title>{pageTitle}</title>
             <meta name="description" content={description} />
             <link rel="canonical" href={`${baseUrl}/index.html`} />
-            <link rel="shortcut icon" type="image/png" href={favicon} />
+            <link
+              rel="shortcut icon"
+              type="image/png"
+              href={favicon}
+              id="dynamic-favicon"
+            />
             {/* facebook open graph tags */}
             <meta property="og:locale" content="en_US" />
             <meta property="og:image" content={`${baseUrl}${metaImage}`} />

@@ -1,4 +1,8 @@
-import { createPayment, getPaymentCoupon } from '../utils/stripe';
+import {
+  createPayment,
+  getPaymentCoupon,
+  updateCouponUses
+} from '../utils/stripe';
 import { addPaidScanToUser } from '../services/user';
 import { addPaymentToStats } from '../services/stats';
 
@@ -24,30 +28,37 @@ export async function getCoupon(coupon) {
   return getPaymentCoupon(coupon);
 }
 
+export async function updateCoupon(coupon) {
+  return updateCouponUses(coupon);
+}
+
 export async function createPaymentForUser({ token, user, productId, coupon }) {
   let payment;
   const { id: userId } = user;
   const { price: amount, label } = products.find(p => p.value === productId);
   const { id: tokenId } = token;
   let price = amount;
+  let couponObject;
   if (coupon) {
-    const { percent_off, amount_off } = await getCoupon(coupon);
+    couponObject = await getCoupon(coupon);
+    const { percent_off, amount_off } = couponObject;
     if (percent_off) {
       price = amount - amount * (percent_off / 100);
     } else if (amount_off) {
       price = amount - amount_off;
     }
   }
-
   try {
     payment = await createPayment({
       amount: price,
       productLabel: label,
-      tokenId
+      tokenId,
+      coupon: couponObject && couponObject.valid ? coupon : null
     });
     if (payment.paid) {
       addPaidScanToUser(userId, productId);
       addPaymentToStats({ price: price / 100 });
+      if (coupon) updateCoupon(coupon);
     }
     return payment;
   } catch (err) {

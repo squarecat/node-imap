@@ -280,9 +280,7 @@ export default function Terms() {
             <div className="big-stat box">
               <span className="label">Last month's revenue</span>
               <span className="value">
-                {currency(
-                  getLastMonthValues(stats.daily.histogram, 'totalRevenue')
-                )}
+                {currency(getLastMonthValues(stats, 'totalRevenue'))}
               </span>
             </div>
             <div className="big-stat box">
@@ -306,7 +304,7 @@ export default function Terms() {
             <div className="big-stat box">
               <span className="label">Last month's users</span>
               <span className="value">
-                {getLastMonthValues(stats.daily.histogram, 'users')}
+                {getLastMonthValues(stats, 'users')}
               </span>
             </div>
             <div className="big-stat box">
@@ -361,7 +359,11 @@ export default function Terms() {
   );
 }
 
-function getLastMonthValues(histogram, stat) {
+function getLastMonthValues(stats, stat) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram } = daily;
+
   const today = new Date();
   const start = startOfMonth(addMonths(today, -1));
   const end = endOfMonth(addMonths(today, -1));

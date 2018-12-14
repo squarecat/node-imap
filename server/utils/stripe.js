@@ -3,13 +3,16 @@ import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
 
-export async function createPayment({ amount, productLabel, tokenId }) {
+export async function createPayment({ amount, productLabel, tokenId, coupon }) {
   try {
     const payment = await stripe.charges.create({
       amount: amount,
       currency: 'usd',
       source: tokenId,
-      description: `Payment for ${productLabel}`
+      description: `Payment for ${productLabel}`,
+      metadata: {
+        coupon
+      }
     });
     console.log('stripe: created charge');
     return payment;
@@ -23,13 +26,38 @@ export async function createPayment({ amount, productLabel, tokenId }) {
 export async function getPaymentCoupon(name) {
   try {
     const coupon = await stripe.coupons.retrieve(name);
-    if (coupon && coupon.valid) {
-      return coupon;
+    if (coupon) {
+      const { valid, metadata = {}, max_redemptions } = coupon;
+      const { uses = 0 } = metadata;
+      const exceededRedemptions =
+        parseInt(max_redemptions) > 0 &&
+        parseInt(uses) >= parseInt(max_redemptions);
+      if (valid && !exceededRedemptions) {
+        return coupon;
+      }
     }
-    return { percent_off: 0, amount_off: 0 };
+    return { percent_off: 0, amount_off: 0, valid: false };
   } catch (err) {
     console.error('stripe: failed to get coupon');
-    return { percent_off: 0, amount_off: 0 };
+    return { percent_off: 0, amount_off: 0, valid: false };
+  }
+}
+
+export async function updateCouponUses(name) {
+  try {
+    const coupon = await stripe.coupons.retrieve(name);
+    const { id, metadata } = coupon;
+    const { uses = 0 } = metadata;
+    const updated = await stripe.coupons.update(id, {
+      metadata: {
+        uses: parseInt(uses) + 1
+      }
+    });
+    return updated;
+  } catch (err) {
+    console.error('stripe: failed to update coupon uses');
+    console.error(err);
+    throw err;
   }
 }
 

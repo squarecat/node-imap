@@ -34,8 +34,8 @@ function AuthApp() {
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan);
 
-  const [hasSearched] = useUser(s => s.hasSearched);
-  const [isBeta] = useUser(s => s.beta);
+  const [user] = useUser();
+  const { hasSearched, beta: isBeta, profileImg } = user;
 
   return (
     <>
@@ -44,9 +44,16 @@ function AuthApp() {
           <img alt="logo" src={logo} />
         </a>
         <div className="header-title">Leave Me Alone </div>
-        <a className="basic-btn logout" href="/auth/logout">
-          Logout
-        </a>
+        <div className="logout">
+          {profileImg ? (
+            <div className="profile">
+              <img className="profile-img" src={profileImg} />
+            </div>
+          ) : null}
+          <a className="basic-btn" href="/auth/logout">
+            Logout
+          </a>
+        </div>
       </div>
       <div className="app-content">
         <Transition

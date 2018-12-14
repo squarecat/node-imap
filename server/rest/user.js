@@ -1,5 +1,5 @@
 import auth from './auth';
-import { getUserById, addPaidScanToUser } from '../services/user';
+import { getUserById, addFreeScan } from '../services/user';
 
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
@@ -9,7 +9,8 @@ export default app => {
       token,
       beta,
       unsubscriptions,
-      scans
+      scans,
+      profileImg
     } = await getUserById(req.user.id);
     res.send({
       id,
@@ -17,15 +18,16 @@ export default app => {
       token,
       beta,
       unsubscriptions,
+      profileImg,
       hasScanned: scans ? !!scans.length : false
     });
   });
 
-  app.put('/api/me/paidscans/:productId', auth, async (req, res) => {
+  app.put('/api/me/paidscans/:productId/:coupon?', auth, async (req, res) => {
     const { user } = req;
-    const { productId } = req.params;
+    const { productId, coupon } = req.params;
     try {
-      await addPaidScanToUser(user.id, productId);
+      await addFreeScan(user.id, productId, coupon);
       res.send();
     } catch (err) {
       console.log('user-rest: error adding scan to user', productId);

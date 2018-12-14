@@ -10,6 +10,8 @@ import {
   updatePaidScan
 } from '../dao/user';
 
+import { updateCoupon } from './payments';
+
 import { addUserToStats } from './stats';
 
 export async function getUserById(id) {
@@ -25,20 +27,23 @@ export async function getUserById(id) {
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
-    const { id, emails } = userData;
+    const { id, emails, photos = [] } = userData;
+    const profileImg = photos.length ? photos[0].value : null;
     const { value: email } = emails.find(e => e.type === 'account');
     let user = await getUser(id);
     if (!user) {
       user = await createUser({
         id,
         email,
+        profileImg,
         keys,
         token: v4()
       });
       addUserToStats();
     } else {
       user = await updateUser(id, {
-        keys
+        keys,
+        profileImg
       });
     }
     return user;
@@ -46,6 +51,22 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
     console.error(
       'user-service: error creating user from Google',
       userData.id || 'no userData id'
+    );
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function updateUserToken(id, keys) {
+  try {
+    const user = await updateUser(id, {
+      keys
+    });
+    return user;
+  } catch (err) {
+    console.error(
+      'user-service: error updating user refreshtoken',
+      id || 'no userData id'
     );
     console.error(err);
     throw err;
@@ -95,4 +116,14 @@ export function addPaidScanToUser(userId, scanType) {
 
 export function updatePaidScanForUser(userId, scanType) {
   return updatePaidScan(userId, scanType);
+}
+
+export async function addFreeScan(userId, scanType, coupon) {
+  try {
+    await addPaidScanToUser(userId, scanType);
+    if (coupon) updateCoupon(coupon);
+    return true;
+  } catch (err) {
+    throw err;
+  }
 }
