@@ -10,6 +10,8 @@ import {
   updatePaidScan
 } from '../dao/user';
 
+import { updateCoupon } from './payments';
+
 import { addUserToStats } from './stats';
 
 export async function getUserById(id) {
@@ -98,4 +100,14 @@ export function addPaidScanToUser(userId, scanType) {
 
 export function updatePaidScanForUser(userId, scanType) {
   return updatePaidScan(userId, scanType);
+}
+
+export async function addFreeScan(userId, scanType, coupon) {
+  try {
+    await addPaidScanToUser(userId, scanType);
+    if (coupon) updateCoupon(coupon);
+    return true;
+  } catch (err) {
+    throw err;
+  }
 }

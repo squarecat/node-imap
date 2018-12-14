@@ -301,7 +301,7 @@ function getPaymentButton({
   const freePurchase = async () => {
     try {
       setLoading(true);
-      await addPaidScan(selected);
+      await addPaidScan(selected, couponData.coupon);
     } catch (_) {
     } finally {
       onClickPurchase(selected);
@@ -349,9 +349,15 @@ function getDiscountedPrice(amount, { percent_off, amount_off } = {}) {
   return price < 50 ? 0 : price;
 }
 
-async function addPaidScan(productId) {
+async function addPaidScan(productId, coupon) {
   try {
-    await fetch(`/api/me/paidscans/${productId}`, {
+    let url;
+    if (coupon) {
+      url = `/api/me/paidscans/${productId}/${coupon}`;
+    } else {
+      url = `/api/me/paidscans/${productId}`;
+    }
+    await fetch(url, {
       method: 'PUT'
     });
   } catch (err) {
