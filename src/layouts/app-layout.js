@@ -18,7 +18,12 @@ const AppLayout = ({ children }) => (
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Home | Leave Me Alone</title>
       <html lang="en" />
-      <link rel="shortcut icon" type="image/png" href={favicon} />
+      <link
+        rel="shortcut icon"
+        type="image/png"
+        href={favicon}
+        id="dynamic-favicon"
+      />
     </Helmet>
     {children}
   </>

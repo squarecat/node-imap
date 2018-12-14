@@ -10,6 +10,10 @@ import useUser from '../../utils/hooks/use-user';
 import format from 'date-fns/format';
 import io from 'socket.io-client';
 
+import favicon from '../../assets/meta/favicon.png';
+import faviconScanning from '../../assets/meta/favicon-scanning.png';
+import faviconFinished from '../../assets/meta/favicon-done.png';
+
 const mailDateFormat = 'Do MMM YYYY HH:mm';
 
 import 'rc-tooltip/assets/bootstrap_white.css';
@@ -200,6 +204,7 @@ export default ({ timeframe, showPriceModal }) => {
     progress,
     error
   } = useSocket(() => {
+    changeFavicon(false, true);
     setSearchFinished(true);
   });
 
@@ -211,9 +216,11 @@ export default ({ timeframe, showPriceModal }) => {
   useEffect(
     () => {
       if (isConnected && timeframe) {
+        changeFavicon(true, false);
         doSearch();
         setHasSearched(true);
       } else if (!timeframe) {
+        changeFavicon(false, false);
         setSearchFinished(true);
       }
     },
@@ -622,5 +629,45 @@ function openChat(message = '') {
   if (window.$crisp) {
     window.$crisp.push(['do', 'chat:open']);
     window.$crisp.push(['set', 'message:text', [message]]);
+  }
+}
+
+document.head || (document.head = document.getElementsByTagName('head')[0]);
+let checkFocusInterval;
+function changeFavicon(scanning = false, isSearchFinished = false) {
+  let src = favicon;
+  let title = 'Home | Leave Me Alone';
+
+  if (scanning) {
+    title = 'Scanning... | Leave Me Alone';
+    src = faviconScanning;
+  }
+  if (isSearchFinished) {
+    title = 'Finished! | Leave Me Alone';
+    src = faviconFinished;
+    checkFocusInterval = setInterval(checkFocus, 1000);
+  }
+
+  // cache bust
+  src = `${src}?=${Date.now()}`;
+
+  const link = document.createElement('link');
+  const oldLink = document.getElementById('dynamic-favicon');
+  link.id = 'dynamic-favicon';
+  link.rel = 'shortcut icon';
+  link.href = src;
+  if (oldLink) {
+    document.head.removeChild(oldLink);
+  }
+  document.head.appendChild(link);
+  document.title = title;
+}
+
+function checkFocus() {
+  if (document.hasFocus()) {
+    clearInterval(checkFocusInterval);
+    setTimeout(() => {
+      changeFavicon(false, false);
+    }, 2000);
   }
 }
