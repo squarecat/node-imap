@@ -10,13 +10,6 @@ import subMinutes from 'date-fns/sub_minutes';
 import isBefore from 'date-fns/is_before';
 import { refreshAccessToken } from '../auth';
 
-const mailPerSecond = io.meter({
-  name: 'mail/sec'
-});
-const trashPerSecond = io.meter({
-  name: 'trash/sec'
-});
-
 import { emailStringIsEqual } from '../utils/parsers';
 import { getUnsubscribeImage } from '../dao/user';
 import {
@@ -44,6 +37,10 @@ import {
 
 const mailPerSecond = io.meter({
   name: 'mail/sec'
+});
+
+const trashPerSecond = io.meter({
+  name: 'trash/sec'
 });
 
 const googleDateFormat = 'YYYY/MM/DD';
