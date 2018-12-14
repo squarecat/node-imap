@@ -35,12 +35,12 @@ import {
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
 
-const mailPerSecond = io.meter({
-  name: 'mail/sec'
+const mailPerMinute = io.meter({
+  name: 'mail/min'
 });
 
-const trashPerSecond = io.meter({
-  name: 'trash/sec'
+const trashPerMinute = io.meter({
+  name: 'trash/min'
 });
 
 const googleDateFormat = 'YYYY/MM/DD';
@@ -155,9 +155,9 @@ export async function scanMail(
 
     const onMailData = (m, options = {}) => {
       if (options.trash) {
-        trashPerSecond.mark();
+        trashPerMinute.mark();
       } else {
-        mailPerSecond.mark();
+        mailPerMinute.mark();
       }
       if (isUnsubscribable(m)) {
         const mail = mapMail(m, options);

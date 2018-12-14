@@ -1,5 +1,7 @@
 import socketio from 'socket.io';
 import io from '@pm2/io';
+import isBefore from 'date-fns/is_before';
+import subMinutes from 'date-fns/sub_minutes';
 
 import {
   scanMail,
@@ -11,6 +13,11 @@ import {
 import { checkAuthToken } from '../services/user';
 
 let connectedClients = {};
+let mailBuffer = {};
+
+const mailInBuffer = io.counter({
+  name: 'Mail in buffer'
+});
 
 const socketsOpen = io.counter({
   name: 'Sockets open'
@@ -52,6 +59,11 @@ export default function(app, server) {
           socket.auth = true;
           socket.userId = userId;
           socket.emit('authenticated');
+          if (mailBuffer[userId] && mailBuffer[userId].droppedMail.length) {
+            socket.emit('mail', mailBuffer[userId].droppedMail);
+            mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
+            mailBuffer[userId].droppedMail = [];
+          }
         }
       } catch (err) {
         console.error('mail-rest: error authenticating socket');
@@ -72,6 +84,9 @@ export default function(app, server) {
         return 'Not authenticated';
       }
       console.log('mail-rest: scanning for ', timeframe);
+      const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
+        socket.userId
+      );
       // get mail data for user
       scanMail(
         {
@@ -79,18 +94,10 @@ export default function(app, server) {
           timeframe
         },
         {
-          onMail: m => {
-            socket.emit('mail', m);
-          },
-          onError: err => {
-            socket.emit('mail:err', err);
-          },
-          onEnd: () => {
-            socket.emit('mail:end');
-          },
-          onProgress: progress => {
-            socket.emit('mail:progress', progress);
-          }
+          onMail,
+          onError,
+          onEnd,
+          onProgress
         }
       );
     });
@@ -127,3 +134,72 @@ export default function(app, server) {
     });
   });
 }
+
+function getSocket(userId) {
+  return connectedClients[userId];
+}
+
+const mailBuffered = io.meter({
+  name: 'buffered mail/minute'
+});
+
+function getSocketFunctions(userId) {
+  mailBuffer[userId] = { start: Date.now(), droppedMail: [] };
+  return {
+    onMail: m => {
+      const sock = getSocket(userId);
+      if (!sock) {
+        console.error('socket: no socket bufferring mail');
+        mailBuffered.mark();
+        mailBuffer[userId].droppedMail.push(m);
+        mailInBuffer.inc(1);
+        return false;
+      }
+      sock.emit('mail', m);
+      return true;
+    },
+    onError: err => {
+      const sock = getSocket(userId);
+      if (!sock) {
+        console.error('socket: no socket dropped event `error`');
+        return false;
+      }
+      sock.emit('mail:err', err);
+      return true;
+    },
+    onEnd: () => {
+      const sock = getSocket(userId);
+      if (!sock) {
+        console.error('socket: no socket dropped event `end`');
+        return false;
+      }
+      sock.emit('mail:end');
+      return true;
+    },
+    onProgress: progress => {
+      const sock = getSocket(userId);
+      if (!sock) {
+        return false;
+      }
+      sock.emit('mail:progress', progress);
+      return true;
+    }
+  };
+}
+
+// delete any mail buffer that is older than 5 minutes
+setTimeout(() => {
+  Object.keys(mailBuffer).forEach(userId => {
+    const { start } = mailBuffer[userId];
+    if (isBefore(start, subMinutes(new Date(), 5))) {
+      mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
+      delete mailBuffer[userId];
+    }
+  });
+}, 5000);
+
+io.action('mail-buffer:clear', cb => {
+  mailBuffer = {};
+  mailInBuffer.set(0);
+  cb({ success: true });
+});
