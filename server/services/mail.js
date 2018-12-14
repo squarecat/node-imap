@@ -11,6 +11,9 @@ import io from '@pm2/io';
 const mailPerSecond = io.meter({
   name: 'mail/sec'
 });
+const trashPerSecond = io.meter({
+  name: 'trash/sec'
+});
 
 import { emailStringIsEqual } from '../utils/parsers';
 import { getUnsubscribeImage } from '../dao/user';
@@ -135,12 +138,12 @@ export async function scanMail(
     let progress = 0;
     onProgress({ progress, total });
 
-<<<<<<< HEAD
     const onMailData = (m, options = {}) => {
-=======
-    const onMailData = (m, options) => {
-      mailPerSecond.mark();
->>>>>>> master
+      if (options.trash) {
+        trashPerSecond.mark();
+      } else {
+        mailPerSecond.mark();
+      }
       if (isUnsubscribable(m)) {
         const mail = mapMail(m, options);
         if (mail) {
