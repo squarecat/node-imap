@@ -58,7 +58,6 @@ body {
 .profile {
   width: 30px;
   height: 30px;
-  margin: 0 10px;
 }
 
 .profile-img {
@@ -99,6 +98,11 @@ body {
   max-height: 0;
 }
 
+@media (max-width: 700px) {
+  .mail-actions {
+    padding-bottom: 20px;
+  }
+}
 @media (max-width: 500px) {
   .app-content {
     padding: 20px 0;
@@ -108,12 +112,18 @@ body {
   }
 
   .mail-actions {
-    padding: 0 20px;
+    padding: 0 20px 20px 20px;
   }
   .mail-actions .extra {
     display: none;
   }
   .mail-actions .action-item > .btn {
     width: 140px;
+  }
+  .header {
+    padding: 0 10px;
+  }
+  .header-title {
+    font-size: 16px;
   }
 }

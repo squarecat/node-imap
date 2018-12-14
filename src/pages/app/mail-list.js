@@ -223,6 +223,13 @@ export default ({ timeframe, showPriceModal }) => {
   // because the count is estimated, the progress can go above 100%
   // so here we make it more believable
   const believableProgress = progress > 95 ? 98 : progress;
+  let scanName;
+  if (timeframe) {
+    if (timeframe === '3d') scanName = '3 days';
+    if (timeframe === '1w') scanName = '1 week';
+    if (timeframe === '1m') scanName = '1 month';
+    if (timeframe === '6m') scanName = '6 months';
+  }
   return (
     <>
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
@@ -230,9 +237,9 @@ export default ({ timeframe, showPriceModal }) => {
           <span className="quantity">{mail ? mail.length : 0}</span>
           subscriptions <span className="extra">found</span>
         </span>
-        <span className="action-item progress">{`Scanning... ${
-          isSearchFinished ? 100 : believableProgress
-        }%`}</span>
+        <span className="action-item progress">{`Scanning ${
+          scanName ? `for ${scanName}` : ''
+        }... ${isSearchFinished ? 100 : believableProgress}%`}</span>
         <span className="action-item">
           <a onClick={() => showPriceModal()} className="btn compact icon">
             <svg
