@@ -119,6 +119,7 @@ body {
   }
   .mail-actions .action-item > .btn {
     width: 140px;
+    padding: 5px 0;
   }
   .header {
     padding: 0 10px;

@@ -110,6 +110,7 @@
 .action-item > .btn.compact {
   width: 140px;
   margin-left: auto;
+  padding: 5px 0;
 }
 
 .results-data {

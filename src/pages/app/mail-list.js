@@ -261,7 +261,7 @@ export default ({ timeframe, showPriceModal }) => {
             >
               <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
             </svg>
-            Re-scan
+            Scan more
           </a>
         </span>
       </div>
@@ -308,7 +308,7 @@ function ErrorScreen({ error, retry }) {
     return (
       <div className="mail-error">
         <p>
-          Oh no, you've used up all of your paid scans, use the 'Re-scan' button
+          Oh no, you've used up all of your paid scans, use the 'Scan more' button
           above to purchase a new scan
         </p>
         <p>
