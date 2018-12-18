@@ -6,7 +6,6 @@ import './gifts.css';
 import '../btn.css';
 
 export default ({ prices }) => {
-  const [selected, setSelected] = useState('6m');
   const [coupon, setCoupon] = useState(null);
 
   const onCheckoutComplete = ({ coupon }) => {
@@ -16,7 +15,7 @@ export default ({ prices }) => {
   return (
     <div className="gifts-prices">
       <p>
-        Purchase one of our scans as a gift and you'll receive a coupon of equal
+        Purchase one of the scans below and you'll receive a coupon of equal
         value.
       </p>
       {prices.map(p => (
@@ -29,9 +28,6 @@ export default ({ prices }) => {
           selected={p}
         />
       ))}
-      {/* TODO */}
-      {/* - open a modal on successful payment with a an email written that'll send to the receiver */}
-      {/* - send confirmation email with coupon to the purchaser */}
       <div className={`gift-coupon ${coupon ? 'shown' : ''}`}>
         <p>
           Thank you for your purchase! Here is your coupon:{' '}

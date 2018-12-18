@@ -1,6 +1,6 @@
 import { createPayment, createCoupon } from '../utils/stripe';
 import { getProduct } from './payments';
-import { addPaymentToStats, addGiftToStats } from '../services/stats';
+import { addPaymentToStats } from '../services/stats';
 import { sendGiftCouponMail } from '../utils/email';
 
 export async function createGift({ productId, token }) {
@@ -14,8 +14,10 @@ export async function createGift({ productId, token }) {
     });
     if (payment.paid) {
       addPaymentToStats({ price: price / 100, gift: true });
-      addGiftToStats({ price: price / 100 });
-      const { id: couponId } = await createCoupon({ amount_off: price });
+      const { id: couponId } = await createCoupon({
+        amount_off: price,
+        metadata: { gift: true }
+      });
       sendGiftCouponMail({
         toAddress: purchaserEmail,
         scanPeriod: label,

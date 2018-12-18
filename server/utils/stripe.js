@@ -64,7 +64,8 @@ export async function updateCouponUses(name) {
 export async function createCoupon({
   amount_off,
   duration = 'once',
-  max_redemptions = 1
+  max_redemptions = 1,
+  metadata = {}
 }) {
   try {
     const name = generateCoupon();
@@ -74,7 +75,8 @@ export async function createCoupon({
       duration,
       amount_off,
       currency: 'usd',
-      max_redemptions
+      max_redemptions,
+      metadata
     });
     return coupon;
   } catch (err) {
