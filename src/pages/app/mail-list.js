@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import Tooltip from 'rc-tooltip';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+var _isArray = require('lodash.isarray');
 
 import ErrorBoundary from '../../components/error-boundary';
 import UnsubModal from '../../components/unsub-modal';
@@ -27,6 +28,14 @@ const mailReducer = (state = [], action) => {
       return [
         ...state,
         { ...action.data, error: !action.data.estimatedSuccess }
+      ];
+    case 'add-all':
+      return [
+        ...state,
+        ...action.data.map(m => ({
+          ...m,
+          error: !action.data.estimatedSuccess
+        }))
       ];
     case 'unsubscribe':
       return state.map(email =>
@@ -122,8 +131,11 @@ function useSocket(callback) {
       setSocket(socket);
     });
     socket.on('mail', data => {
-      console.log(data);
-      dispatch({ type: 'add', data: data });
+      if (_isArray(data)) {
+        dispatch({ type: 'add-all', data: data });
+      } else {
+        dispatch({ type: 'add', data: data });
+      }
     });
     socket.on('mail:end', callback);
     socket.on('mail:err', err => {
@@ -632,7 +644,12 @@ function openChat(message = '') {
   }
 }
 
-document.head || (document.head = document.getElementsByTagName('head')[0]);
+let head;
+if (typeof document !== 'undefined') {
+  head =
+    document.head || (document.head = document.getElementsByTagName('head')[0]);
+}
+
 let checkFocusInterval;
 function changeFavicon(scanning = false, isSearchFinished = false) {
   let src = favicon;
@@ -657,9 +674,9 @@ function changeFavicon(scanning = false, isSearchFinished = false) {
   link.rel = 'shortcut icon';
   link.href = src;
   if (oldLink) {
-    document.head.removeChild(oldLink);
+    head.removeChild(oldLink);
   }
-  document.head.appendChild(link);
+  head.appendChild(link);
   document.title = title;
 }
 
