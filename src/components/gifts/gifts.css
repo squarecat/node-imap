@@ -24,3 +24,27 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.gift-loading {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: #ff9794;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+  transform: scale(1);
+  margin: 30px auto;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+    background-color: #ff726d;
+  }
+  100% {
+    transform: scale(1);
+  }
+}

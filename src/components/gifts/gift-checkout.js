@@ -28,7 +28,7 @@ async function doCheckout({ description, amount }) {
 
 const GiftCheckout = ({
   selected,
-  buttonText,
+  setCouponLoading,
   onCheckoutComplete,
   onCheckoutFailed
 }) => {
@@ -43,12 +43,15 @@ const GiftCheckout = ({
   useEffect(
     () => {
       callback = async token => {
+        setCouponLoading(true);
         try {
           const data = await sendGiftPayment({ token, productId: value });
           onCheckoutComplete(data);
+          setCouponLoading(false);
         } catch (err) {
           console.error(err);
           onCheckoutFailed(err);
+          setCouponLoading(false);
         }
       };
     },
@@ -77,6 +80,7 @@ const GiftCheckout = ({
 export default GiftCheckout;
 
 async function sendGiftPayment({ token, productId }) {
+  console.log('payment for', productId);
   const url = `/api/gift/${productId}`;
   try {
     const resp = await fetch(url, {

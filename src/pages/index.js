@@ -259,7 +259,7 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="gifts home-container" id="gift">
+        <div className="gifts home-container" id="gifts">
           <div className="home-container-inner">
             <h2>'tis the season to be giving</h2>
             <span className="container-emoji">🎁</span>

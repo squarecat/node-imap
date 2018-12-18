@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import GiftCheckout from './gift-checkout';
 
@@ -7,6 +7,7 @@ import '../btn.css';
 
 export default ({ prices }) => {
   const [coupon, setCoupon] = useState(null);
+  const [isCouponLoading, setCouponLoading] = useState(false);
 
   const onCheckoutComplete = ({ coupon }) => {
     setCoupon(coupon);
@@ -21,6 +22,7 @@ export default ({ prices }) => {
       {prices.map(p => (
         <GiftCheckout
           key={p.value}
+          setCouponLoading={val => setCouponLoading(val)}
           onCheckoutFailed={() => {
             console.error('Checkout failed, what do?');
           }}
@@ -28,13 +30,24 @@ export default ({ prices }) => {
           selected={p}
         />
       ))}
-      <div className={`gift-coupon ${coupon ? 'shown' : ''}`}>
-        <p>
-          Thank you for your purchase! Here is your coupon:{' '}
-          <span className="text-important">{coupon}</span>
-        </p>
-        <p>We have also emailed you a copy for your records.</p>
-        <p>Happy Holidays! 🎄</p>
+      <div
+        className={`gift-coupon ${coupon || isCouponLoading ? 'shown' : ''}`}
+      >
+        {isCouponLoading ? (
+          <>
+            <p>Fetching your coupon...</p>
+            <div className="gift-loading" />
+          </>
+        ) : (
+          <>
+            <p>
+              Thank you for your purchase! Here is your coupon:{' '}
+              <span className="text-important">{coupon}</span>
+            </p>
+            <p>We have also emailed you a copy for your records.</p>
+            <p>Happy Holidays! 🎄</p>
+          </>
+        )}
       </div>
     </div>
   );
