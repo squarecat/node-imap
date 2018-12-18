@@ -6,6 +6,7 @@ let callback;
 let onClose;
 let onToken = t => callback(t);
 let handler;
+
 if (typeof window !== 'undefined' && window.StripeCheckout) {
   handler = window.StripeCheckout.configure({
     key: `${process.env.STRIPE_PK}`,
@@ -35,39 +36,33 @@ const GiftCheckout = ({
   const [isLoading, setLoading] = useState(false);
   const { price, value, label: productName } = selected;
 
-  useEffect(() => {
+  function onClick() {
+    setLoading(true);
     onClose = () => {
       setLoading(false);
     };
-  });
-  useEffect(
-    () => {
-      callback = async token => {
-        setCouponLoading(true);
-        try {
-          const data = await sendGiftPayment({ token, productId: value });
-          onCheckoutComplete(data);
-          setCouponLoading(false);
-        } catch (err) {
-          console.error(err);
-          onCheckoutFailed(err);
-          setCouponLoading(false);
-        }
-      };
-    },
-    [value]
-  );
+    callback = async token => {
+      setCouponLoading(true);
+      try {
+        const data = await sendGiftPayment({ token, productId: value });
+        onCheckoutComplete(data);
+        setCouponLoading(false);
+      } catch (err) {
+        console.error(err);
+        onCheckoutFailed(err);
+        setCouponLoading(false);
+      }
+    };
+    doCheckout({
+      description: `Gift a ${productName} scan`,
+      amount: price
+    });
+  }
 
   return (
     <Button
       loading={isLoading}
-      onClick={() => {
-        setLoading(true);
-        doCheckout({
-          description: `Gift a ${productName} scan`,
-          amount: price
-        });
-      }}
+      onClick={() => onClick()}
       compact={true}
       muted={true}
     >
