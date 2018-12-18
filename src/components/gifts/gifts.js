@@ -10,7 +10,6 @@ export default ({ prices }) => {
   const [coupon, setCoupon] = useState(null);
 
   const onCheckoutComplete = ({ coupon }) => {
-    debugger;
     setCoupon(coupon);
   };
 
