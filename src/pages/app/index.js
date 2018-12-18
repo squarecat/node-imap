@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'isomorphic-fetch';
 import { Transition } from 'react-transition-group';
+import { Link } from 'gatsby';
+
+import Button from '../../components/btn';
 import Modal from '../../components/price-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
@@ -33,10 +36,30 @@ export default function App() {
 function AuthApp() {
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan);
-
+  const [showSettings, setShowSettings] = useState();
   const [user] = useUser();
   const { hasSearched, beta: isBeta, profileImg } = user;
 
+  const onClickBody = ({ target }) => {
+    let { parentElement } = target;
+    while (parentElement !== document.body) {
+      if (parentElement.classList.contains('settings-dropdown-toggle')) {
+        return;
+      }
+      parentElement = parentElement.parentElement;
+    }
+    setShowSettings(false);
+  };
+  useEffect(
+    () => {
+      if (showSettings) {
+        document.body.addEventListener('click', onClickBody);
+      } else {
+        document.body.removeEventListener('click', onClickBody);
+      }
+    },
+    [showSettings]
+  );
   return (
     <>
       <div className="header">
@@ -44,15 +67,30 @@ function AuthApp() {
           <img alt="logo" src={logo} />
         </a>
         <div className="header-title">Leave Me Alone </div>
-        <div className="logout">
-          {profileImg ? (
+
+        <div className="settings-dropdown">
+          <Button
+            compact
+            className="settings-dropdown-toggle"
+            onClick={() => setShowSettings(!showSettings)}
+          >
             <div className="profile">
               <img className="profile-img" src={profileImg} />
             </div>
-          ) : null}
-          <a className="basic-btn" href="/auth/logout">
-            Logout
-          </a>
+          </Button>
+          <ul
+            className={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}
+          >
+            <li>
+              <Link to="/app/history/scans">Scan history</Link>
+            </li>
+            <li>
+              <Link to="/app/history/unsubscriptions">Unsub history</Link>
+            </li>
+            <li className="logout">
+              <a href="/auth/logout">Logout</a>
+            </li>
+          </ul>
         </div>
       </div>
       <div className="app-content">

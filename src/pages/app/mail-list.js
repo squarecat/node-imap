@@ -1,7 +1,8 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import Tooltip from 'rc-tooltip';
+import { List as VirtualList, AutoSizer } from 'react-virtualized';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-var _isArray = require('lodash.isarray');
+import _isArray from 'lodash.isarray';
 
 import ErrorBoundary from '../../components/error-boundary';
 import UnsubModal from '../../components/unsub-modal';
@@ -242,6 +243,15 @@ export default ({ timeframe, showPriceModal }) => {
   // because the count is estimated, the progress can go above 100%
   // so here we make it more believable
   const believableProgress = progress > 95 ? 98 : progress;
+  // if progress changes then we are definitely
+  // not finished
+  useEffect(
+    () => {
+      setSearchFinished(false);
+    },
+    [believableProgress !== 100, believableProgress !== 0]
+  );
+
   let scanName;
   if (timeframe) {
     if (timeframe === '3d') scanName = '3 days';
@@ -252,30 +262,32 @@ export default ({ timeframe, showPriceModal }) => {
   return (
     <>
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
-        <span className="action-item results-data">
-          <span className="quantity">{mail ? mail.length : 0}</span>
-          subscriptions <span className="extra">found</span>
-        </span>
-        <span className="action-item progress">{`Scanning ${
-          scanName ? `for ${scanName}` : ''
-        }... ${isSearchFinished ? 100 : believableProgress}%`}</span>
-        <span className="action-item">
-          <a onClick={() => showPriceModal()} className="btn compact icon">
-            <svg
-              viewBox="0 0 32 32"
-              width="14"
-              height="14"
-              fill="none"
-              stroke="currentcolor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="3"
-            >
-              <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
-            </svg>
-            Re-scan
-          </a>
-        </span>
+        <div className="mail-actions-content">
+          <span className="action-item results-data">
+            <span className="quantity">{mail ? mail.length : 0}</span>
+            subscriptions <span className="extra">found</span>
+          </span>
+          <span className="action-item progress">{`Scanning ${
+            scanName ? `for ${scanName}` : ''
+          }... ${isSearchFinished ? 100 : believableProgress}%`}</span>
+          <span className="action-item">
+            <a onClick={() => showPriceModal()} className="btn compact icon">
+              <svg
+                viewBox="0 0 32 32"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentcolor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+              >
+                <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
+              </svg>
+              Re-scan
+            </a>
+          </span>
+        </div>
       </div>
       {error ? (
         <ErrorScreen error={error} retry={doSearch} />
@@ -290,7 +302,6 @@ export default ({ timeframe, showPriceModal }) => {
           />
         </ErrorBoundary>
       )}
-      {isSearchFinished ? RevokeTokenInstructions() : null}
     </>
   );
 };
@@ -454,7 +465,6 @@ function List({
     return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
   };
 
-  const socialContent = getSocialContent(unsubCount);
   const sortedMail = mail
     .sort((a, b) => {
       return +b.googleDate - +a.googleDate;
@@ -470,42 +480,60 @@ function List({
       return [...out, { type: 'mail', ...mailItem }];
     }, []);
   return (
-    <div className="mail-list">
-      <TransitionGroup component="ul">
-        {sortedMail.map(m =>
-          m.type === 'mail' ? (
-            <CSSTransition key={m.id} timeout={500} classNames="mail-list-item">
-              <MailItem
-                mail={m}
-                onUnsubscribe={onUnsubscribe}
-                setUnsubModal={setUnsubData}
-              />
-            </CSSTransition>
-          ) : (
-            getSocialItem(m, socialContent)
-          )
-        )}
-      </TransitionGroup>
-      {unsubData ? (
-        <UnsubModal
-          onClose={() => {
-            setUnsubData(null);
-          }}
-          onSubmit={({ success, useImage, failReason = null }) => {
-            setUnsubData(null);
-            addUnsubscribeErrorResponse({
-              success,
-              mailId: unsubData.id,
-              image: useImage ? unsubData.image : null,
-              from: unsubData.from,
-              reason: failReason,
-              unsubStrategy: unsubData.unsubStrategy
-            });
-          }}
-          mail={unsubData}
-        />
-      ) : null}
-    </div>
+    <AutoSizer>
+      {({ width, height }) => (
+        <div className="mail-list">
+          <TransitionGroup component="div">
+            <VirtualList
+              height={height}
+              rowHeight={120}
+              rowCount={sortedMail.length}
+              width={width}
+              rowRenderer={({ index, key, style }) => {
+                const m = sortedMail[index];
+                return m.type === 'mail' ? (
+                  <CSSTransition
+                    key={m.id}
+                    timeout={500}
+                    classNames="mail-list-item"
+                  >
+                    <MailItem
+                      style={style}
+                      key={key}
+                      mail={m}
+                      onUnsubscribe={onUnsubscribe}
+                      setUnsubModal={setUnsubData}
+                    />
+                  </CSSTransition>
+                ) : (
+                  getSocialItem(m, getSocialContent(unsubCount, style))
+                );
+              }}
+            />
+          </TransitionGroup>
+
+          {unsubData ? (
+            <UnsubModal
+              onClose={() => {
+                setUnsubData(null);
+              }}
+              onSubmit={({ success, useImage, failReason = null }) => {
+                setUnsubData(null);
+                addUnsubscribeErrorResponse({
+                  success,
+                  mailId: unsubData.id,
+                  image: useImage ? unsubData.image : null,
+                  from: unsubData.from,
+                  reason: failReason,
+                  unsubStrategy: unsubData.unsubStrategy
+                });
+              }}
+              mail={unsubData}
+            />
+          ) : null}
+        </div>
+      )}
+    </AutoSizer>
   );
 }
 
@@ -517,7 +545,7 @@ function getSocialItem(mail, socialContent) {
   );
 }
 
-function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
+function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
   const isSubscribed = !!m.subscribed;
   let fromName;
   let fromEmail;
@@ -531,7 +559,10 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   }
 
   return (
-    <li className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}>
+    <div
+      style={style}
+      className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}
+    >
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
@@ -586,11 +617,11 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
           )}
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 
-function getSocialContent(unsubCount = 0) {
+function getSocialContent(unsubCount = 0, style) {
   const socialOutput = progressTweets.reduce(
     (out, progress) => {
       if (unsubCount >= progress.val) {
@@ -604,7 +635,7 @@ function getSocialContent(unsubCount = 0) {
     { text: null, tweet: null }
   );
   return (
-    <li className="mail-list-item mail-list-social">
+    <div className="mail-list-item mail-list-social" style={style}>
       <div className="mail-item">
         <div className="avatar">
           <svg viewBox="0 0 64 64" width="32" height="32">
@@ -633,7 +664,7 @@ function getSocialContent(unsubCount = 0) {
           </a>
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 

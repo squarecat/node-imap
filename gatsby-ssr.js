@@ -6,10 +6,7 @@ const React = require('react');
  * See: https://www.gatsbyjs.org/docs/ssr-apis/
  */
 
-exports.onRenderBody = (
-  { setPostBodyComponents, setHeadComponents },
-  pluginOptions
-) => {
+exports.onRenderBody = ({ setPostBodyComponents }, pluginOptions) => {
   setPostBodyComponents([
     <script
       key="stripe-script"

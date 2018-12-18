@@ -13,9 +13,10 @@ export default ({
   children,
   label,
   basic,
-  centered
+  centered,
+  className: cn
 }) => {
-  const className = cx('btn', {
+  const className = cx(`btn ${cn}`, {
     loading,
     compact,
     centered,
