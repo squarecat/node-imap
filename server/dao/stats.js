@@ -47,7 +47,7 @@ export function addUser(count = 1) {
 }
 
 export function addGiftRedemption(count = 1) {
-  return updateSingleStat('giftsRedeemed', count);
+  return updateSingleStat('giftRedemptions', count);
 }
 
 export function addEstimate(count = 1) {

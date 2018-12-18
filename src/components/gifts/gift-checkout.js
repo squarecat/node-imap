@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import logo from '../../assets/envelope-logo.png';
+import React, { useState } from 'react';
 import Button from '../btn';
+
+import {
+  PAYMENT_CONFIG_OPTS,
+  PAYMENT_CHECKOUT_OPTS
+} from '../../utils/payments';
 
 let callback;
 let onClose;
@@ -9,9 +13,7 @@ let handler;
 
 if (typeof window !== 'undefined' && window.StripeCheckout) {
   handler = window.StripeCheckout.configure({
-    key: `${process.env.STRIPE_PK}`,
-    image: logo,
-    locale: 'auto',
+    ...PAYMENT_CONFIG_OPTS,
     closed: () => onClose(),
     token: onToken
   });
@@ -19,10 +21,8 @@ if (typeof window !== 'undefined' && window.StripeCheckout) {
 
 async function doCheckout({ description, amount }) {
   handler.open({
-    name: 'Leave Me Alone',
+    ...PAYMENT_CHECKOUT_OPTS,
     description,
-    zipCode: true,
-    currency: 'usd',
     amount
   });
 }
