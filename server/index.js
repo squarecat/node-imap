@@ -11,6 +11,7 @@ import auth from './auth';
 import mailApi from './rest/mail';
 import paymentsApi from './rest/payments';
 import statsApi from './rest/stats';
+import giftsApi from './rest/gifts';
 
 const Sentry = require('@sentry/node');
 
@@ -48,6 +49,7 @@ userApi(app);
 mailApi(app, server);
 paymentsApi(app);
 statsApi(app);
+giftsApi(app);
 
 app.get('/sitemap.xml', (req, res) => {
   console.log('sitemap');

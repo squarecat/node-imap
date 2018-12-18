@@ -192,11 +192,13 @@ h1 {
 }
 .makers,
 .love,
-.pricing {
+.pricing,
+.gifts {
   padding-top: 200px;
   min-height: 80vh;
 }
 
+.container-emoji,
 .privacy-padlock {
   font-size: 70px;
   height: 80px;
