@@ -6,30 +6,44 @@ const domain = config.mailgun.domain;
 
 const transport = mailgun({ apiKey, domain });
 
-const mailOptions = {
-  from: 'Leave Me Alone <unsubcsribebot@leavemealone.app>',
+const unsubMailOptions = {
+  from: 'Leave Me Alone <unsubscribebot@leavemealone.app>',
   text: 'unsubscribe'
+};
+
+const giftMailOptions = {
+  from: 'Leave Me Alone <purchases@leavemealone.app>',
+  subject: 'Thank you for purchasing a gift scan'
 };
 
 export function sendUnsubscribeMail({ toAddress, subject = 'unsubscribe' }) {
   console.log('email-utils: sending unsubscribe mail');
+  return sendMail({
+    ...unsubMailOptions,
+    to: toAddress,
+    subject
+  });
+}
+
+export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
+  return sendMail({
+    ...giftMailOptions,
+    to: toAddress,
+    text: `Thank you for purchasing a gift scan for ${scanPeriod}. Your coupon code is:\n\n${coupon}\n\nJames & Danielle\n\nLeave Me Alone`
+  });
+}
+
+function sendMail(options) {
   return new Promise((resolve, reject) => {
-    transport.messages().send(
-      {
-        ...mailOptions,
-        to: toAddress,
-        subject
-      },
-      err => {
-        if (err) {
-          console.error('email-utils: failed to send unsubscribe mail');
-          console.error(err);
-          return reject(err);
-        }
-        console.log('email-utils: successfully unsubscribed');
-        return resolve(true);
+    transport.messages().send(options, err => {
+      if (err) {
+        console.error('email-utils: failed to send mail');
+        console.error(err);
+        return reject(err);
       }
-    );
+      console.log('email-utils: mail successfully sent');
+      return resolve(true);
+    });
   });
 }
 

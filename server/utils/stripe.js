@@ -61,6 +61,36 @@ export async function updateCouponUses(name) {
   }
 }
 
+export async function createCoupon({
+  amount_off,
+  duration = 'once',
+  max_redemptions = 1
+}) {
+  try {
+    const name = generateCoupon();
+    const coupon = await stripe.coupons.create({
+      name: name,
+      id: name,
+      duration,
+      amount_off,
+      currency: 'usd',
+      max_redemptions
+    });
+    return coupon;
+  } catch (err) {
+    console.error('stripe: failed to create coupon');
+    console.error(err);
+    throw err;
+  }
+}
+
+function generateCoupon(length = 8) {
+  return Math.random()
+    .toString(36)
+    .substring(2, 2 + length)
+    .toUpperCase();
+}
+
 // NOT USED
 export async function createCustomer({ email, token }) {
   try {

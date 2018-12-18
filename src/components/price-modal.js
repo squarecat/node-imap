@@ -8,7 +8,7 @@ import CheckoutForm, { getCoupon } from './checkout-form';
 
 import './modal.css';
 
-const PRICES = [
+export const PRICES = [
   {
     price: 300,
     label: '1 week',

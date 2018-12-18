@@ -15,6 +15,7 @@ import Layout from '../layouts/layout';
 // import Header from '../components/landing-header/landing-header';
 import Footer from '../components/footer';
 import WallOfLove from '../components/wall-of-love/wall-of-love';
+import GiftsPayment from '../components/gifts/gifts';
 
 import './home.css';
 
@@ -22,24 +23,10 @@ const indieMakerTweetText = encodeURIComponent(
   `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
 );
 
-const PRICES = [
-  {
-    price: 3,
-    label: '1 week',
-    value: '1w'
-  },
-  {
-    price: 5,
-    label: '1 month',
-    value: '1m'
-  },
-  {
-    price: 8,
-    label: '6 months',
-    value: '6m',
-    recommended: true
-  }
-];
+import { PRICES as modalPrices } from '../components/price-modal';
+const PRICES = modalPrices.map(p =>
+  p.price === 800 ? { ...p, recommended: true } : p
+);
 
 const IndexPage = () => {
   const activeRef = useRef(null);
@@ -236,7 +223,7 @@ const IndexPage = () => {
                 >
                   <h3 className="pricing-title">{p.label}</h3>
                   <p className="pricing-price">
-                    {p.price ? `$${p.price}` : 'Free'}
+                    {p.price ? `$${p.price / 100}` : 'Free'}
                   </p>
                   <span className="pricing-text">one-time payment</span>
                 </div>
@@ -270,6 +257,17 @@ const IndexPage = () => {
                 Get Started For Free!
               </a>
             </div>
+          </div>
+        </div>
+        <div className="gifts home-container" id="gift">
+          <div className="home-container-inner">
+            <h2>'tis the season to be giving</h2>
+            <span className="container-emoji">🎁</span>
+            <p>
+              Why not give the gift of a clean inbox to a friend or loved one
+              this holiday season?
+            </p>
+            <GiftsPayment prices={PRICES} />
           </div>
         </div>
         <div className="makers home-container" id="about">
