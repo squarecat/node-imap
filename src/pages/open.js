@@ -13,6 +13,7 @@ import { useAsync } from '../utils/hooks';
 import './open.css';
 
 const lineColor = '#EB6C69';
+const lineColor2 = '#fddbd7';
 
 function getStats() {
   return fetch('/api/stats').then(resp => resp.json());
@@ -80,6 +81,15 @@ function dailyRevChart(ctx, stats) {
           data: histogram.map(d => ({
             x: startOfDay(d.timestamp),
             y: d.totalRevenue
+          }))
+        },
+        {
+          fill: false,
+          backgroundColor: lineColor2,
+          borderColor: lineColor2,
+          data: histogram.map(d => ({
+            x: startOfDay(d.timestamp),
+            y: d.giftRevenue
           }))
         }
       ]
@@ -292,6 +302,26 @@ export default function Terms() {
               <span className="value">
                 {currency(stats.totalRevenue / stats.users)}
               </span>
+            </div>
+          </div>
+          <div className="totals">
+            <div className="big-stat box">
+              <span className="label">Revenue from gifts</span>
+              <span className="value">
+                {`${(
+                  (stats.giftRevenue /
+                    (stats.totalRevenue + stats.giftRevenue)) *
+                  100
+                ).toFixed(0)}%`}
+              </span>
+            </div>
+            <div className="big-stat box">
+              <span className="label">Total gift sales</span>
+              <span className="value">{stats.giftSales}</span>
+            </div>
+            <div className="big-stat box">
+              <span className="label">Gifts redeemed</span>
+              <span className="value">{stats.giftRedemptions}</span>
             </div>
           </div>
         </div>
