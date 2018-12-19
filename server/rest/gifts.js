@@ -3,11 +3,13 @@ import { createGift } from '../services/gifts';
 export default app => {
   app.post('/api/gift/:productId', async (req, res) => {
     const { productId } = req.params;
-    const token = req.body;
+    const { token, address, name } = req.body;
     try {
       const couponId = await createGift({
         productId,
-        token
+        token,
+        address,
+        name
       });
       return res.send({
         status: 'success',

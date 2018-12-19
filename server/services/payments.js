@@ -1,10 +1,13 @@
 import {
   createPayment,
   getPaymentCoupon,
-  updateCouponUses
+  updateCouponUses,
+  createCustomer,
+  updateCustomer
 } from '../utils/stripe';
-import { addPaidScanToUser } from '../services/user';
+import { addPaidScanToUser, getUserById } from '../services/user';
 import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
+import { updateUser } from '../dao/user';
 
 const products = [
   {
@@ -36,11 +39,18 @@ export async function updateCoupon(coupon) {
   return updateCouponUses(coupon);
 }
 
-export async function createPaymentForUser({ token, user, productId, coupon }) {
+export async function createPaymentForUser({
+  token,
+  user,
+  productId,
+  coupon,
+  address,
+  name
+}) {
   let payment;
   const { id: userId } = user;
+  let { customerId } = await getUserById(userId);
   const { price: amount, label } = getProduct(productId);
-  const { id: tokenId } = token;
   let price = amount;
   let couponObject;
   if (coupon) {
@@ -52,22 +62,43 @@ export async function createPaymentForUser({ token, user, productId, coupon }) {
       price = amount - amount_off;
     }
   }
+
   try {
+    if (customerId) {
+      await updateCustomer({
+        customerId: customerId,
+        token,
+        email: user.email,
+        address,
+        name
+      });
+    } else {
+      const { id } = await createCustomer({
+        token,
+        email: user.email,
+        address,
+        name
+      });
+      customerId = id;
+    }
     payment = await createPayment({
+      customerId: customerId,
       amount: price,
       productLabel: label,
-      tokenId,
       coupon: couponObject && couponObject.valid ? coupon : null
     });
-    if (payment.paid) {
-      addPaidScanToUser(userId, productId);
-      addPaymentToStats({ price: price / 100 });
-      if (couponObject) {
-        const { metadata = {} } = coupon;
-        if (metadata.gift) addGiftRedemptionToStats();
-        updateCoupon(coupon);
-      }
+    await updateUser(userId, {
+      customerId
+    });
+
+    addPaidScanToUser(userId, productId);
+    addPaymentToStats({ price: price / 100 });
+    if (couponObject) {
+      const { metadata = {} } = coupon;
+      if (metadata.gift) addGiftRedemptionToStats();
+      updateCoupon(coupon);
     }
+
     return payment;
   } catch (err) {
     console.error(

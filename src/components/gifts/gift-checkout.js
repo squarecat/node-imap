@@ -8,7 +8,7 @@ import {
 
 let callback;
 let onClose;
-let onToken = t => callback(t);
+let onToken = (t, args) => callback(t, args);
 let handler;
 
 if (typeof window !== 'undefined' && window.StripeCheckout) {
@@ -41,10 +41,23 @@ const GiftCheckout = ({
     onClose = () => {
       setLoading(false);
     };
-    callback = async token => {
+    callback = async (token, args) => {
       setCouponLoading(true);
       try {
-        const data = await sendGiftPayment({ token, productId: value });
+        const address = {
+          city: args.billing_address_city,
+          country: args.billing_address_country,
+          line1: args.billing_address_line1,
+          line2: args.billing_address_line2,
+          state: args.billing_address_state,
+          postal_code: args.billing_address_zip
+        };
+        const data = await sendGiftPayment({
+          token,
+          productId: value,
+          address,
+          name: args.billing_name
+        });
         onCheckoutComplete(data);
         setCouponLoading(false);
       } catch (err) {
@@ -74,7 +87,7 @@ const GiftCheckout = ({
 
 export default GiftCheckout;
 
-async function sendGiftPayment({ token, productId }) {
+async function sendGiftPayment({ token, productId, address, name }) {
   console.log('payment for', productId);
   const url = `/api/gift/${productId}`;
   try {
@@ -85,7 +98,7 @@ async function sendGiftPayment({ token, productId }) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify(token)
+      body: JSON.stringify({ token, address, name })
     });
     const data = resp.json();
     return data;

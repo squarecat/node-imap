@@ -6,7 +6,7 @@ import { PAYMENT_CONFIG_OPTS, PAYMENT_CHECKOUT_OPTS } from '../utils/payments';
 
 let callback;
 let onClose;
-let onToken = t => callback(t);
+let onToken = (t, args) => callback(t, args);
 let handler;
 if (typeof window !== 'undefined' && window.StripeCheckout) {
   handler = window.StripeCheckout.configure({
@@ -43,9 +43,24 @@ const CheckoutForm = ({
   });
   useEffect(
     () => {
-      callback = async token => {
+      callback = async (token, args) => {
         try {
-          await sendPayment({ token, productId: value, coupon });
+          const address = {
+            city: args.billing_address_city,
+            country: args.billing_address_country,
+            line1: args.billing_address_line1,
+            line2: args.billing_address_line2,
+            state: args.billing_address_state,
+            postal_code: args.billing_address_zip
+          };
+
+          await sendPayment({
+            token,
+            productId: value,
+            coupon,
+            address,
+            name: args.billing_name
+          });
           onCheckoutComplete();
         } catch (err) {
           console.error(err);
@@ -76,7 +91,7 @@ const CheckoutForm = ({
 
 export default CheckoutForm;
 
-async function sendPayment({ token, productId, coupon }) {
+async function sendPayment({ token, productId, coupon, address, name }) {
   let url;
   if (coupon) {
     url = `/api/checkout/${productId}/${coupon}`;
@@ -91,7 +106,7 @@ async function sendPayment({ token, productId, coupon }) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify(token)
+      body: JSON.stringify({ token, address, name })
     });
     const data = resp.json();
     return data;

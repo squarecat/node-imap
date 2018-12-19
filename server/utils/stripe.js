@@ -3,13 +3,26 @@ import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
 
-export async function createPayment({ amount, productLabel, tokenId, coupon }) {
+export async function createPayment({
+  amount,
+  productLabel,
+  customerId,
+  coupon
+}) {
   try {
-    const payment = await stripe.charges.create({
-      amount: amount,
+    // create invoice line item
+    await stripe.invoiceItems.create({
+      customer: customerId,
+      amount,
       currency: 'usd',
-      source: tokenId,
-      description: `Payment for ${productLabel}`,
+      description: `Payment for ${productLabel}`
+    });
+    // invoice line item will automatically be
+    // applied to this invoice
+    const payment = await stripe.invoices.create({
+      customer: customerId,
+      billing: 'charge_automatically',
+      auto_advance: true,
       metadata: {
         coupon
       }
@@ -93,12 +106,15 @@ function generateCoupon(length = 8) {
     .toUpperCase();
 }
 
-// NOT USED
-export async function createCustomer({ email, token }) {
+export async function createCustomer({ email, token, address, name }) {
   try {
     const customer = await stripe.customers.create({
-      source: token,
-      email
+      source: token.id,
+      email,
+      shipping: {
+        address,
+        name
+      }
     });
     const { id } = customer;
     console.log('stripe: created customer', id);
@@ -106,31 +122,25 @@ export async function createCustomer({ email, token }) {
   } catch (err) {
     console.error('stripe: failed to create customer');
     console.error(err);
+    throw err;
+  }
+}
 
-    switch (err.type) {
-      case 'StripeCardError':
-        // A declined card error
-        err.message; // => e.g. "Your card's expiration year is invalid."
-        break;
-      case 'RateLimitError':
-        // Too many requests made to the API too quickly
-        break;
-      case 'StripeInvalidRequestError':
-        // Invalid parameters were supplied to Stripe's API
-        break;
-      case 'StripeAPIError':
-        // An error occurred internally with Stripe's API
-        break;
-      case 'StripeConnectionError':
-        // Some kind of error occurred during the HTTPS communication
-        break;
-      case 'StripeAuthenticationError':
-        // You probably used an incorrect API key
-        break;
-      default:
-        // Handle any other types of unexpected errors
-        break;
-    }
+export async function updateCustomer({ token, customerId, address, name }) {
+  try {
+    const customer = await stripe.customers.update(customerId, {
+      source: token.id,
+      shipping: {
+        address,
+        name
+      }
+    });
+    const { id } = customer;
+    console.log('stripe: updated customer', id);
+    return { id };
+  } catch (err) {
+    console.error('stripe: failed to update customer');
+    console.error(err);
     throw err;
   }
 }
