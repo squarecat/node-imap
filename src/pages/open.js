@@ -127,7 +127,7 @@ function scanChart(ctx, stats) {
   return simpleLineChart(ctx, stats, 'scans');
 }
 function usersChart(ctx, stats) {
-  return simpleLineChart(ctx, stats, 'scans');
+  return simpleLineChart(ctx, stats, 'users');
 }
 
 function simpleLineChart(ctx, stats, stat) {

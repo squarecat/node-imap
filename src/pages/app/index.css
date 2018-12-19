@@ -55,9 +55,14 @@ body {
   flex-direction: row-reverse;
 }
 
+.settings-dropdown-toggle.shown {
+  transform: translateY(-2px);
+}
+
 .profile {
-  width: 30px;
-  height: 30px;
+  border: 2px solid #fffbfb;
+  width: 35px;
+  height: 35px;
   background: white;
   border-radius: 50%;
   overflow: hidden;
@@ -107,20 +112,22 @@ body {
 }
 @media (max-width: 500px) {
   .app-content {
-    padding: 20px 0;
+    padding: 10px 0;
   }
   .results-data {
     min-width: auto;
   }
 
   .mail-actions {
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 10px 20px;
   }
   .mail-actions .extra {
     display: none;
   }
   .mail-actions .action-item > .btn {
     width: 140px;
+    padding: 5px 0;
+    margin: 5px auto;
   }
   .header {
     padding: 0 10px;
@@ -149,7 +156,7 @@ body {
   pointer-events: none;
   position: absolute;
   top: 60px;
-  right: 10px;
+  right: 30px;
   box-shadow: 0 1px 15px hsla(18, 100%, 38%, 0.15);
   border-radius: 7px;
   z-index: 999;

@@ -71,7 +71,9 @@ function AuthApp() {
         <div className="settings-dropdown">
           <Button
             compact
-            className="settings-dropdown-toggle"
+            className={`settings-dropdown-toggle ${
+              showSettings ? 'shown' : ''
+            }`}
             onClick={() => setShowSettings(!showSettings)}
           >
             <div className="profile">
@@ -81,12 +83,17 @@ function AuthApp() {
           <ul
             className={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}
           >
-            <li>
-              <Link to="/app/history/scans">Scan history</Link>
-            </li>
-            <li>
-              <Link to="/app/history/unsubscriptions">Unsub history</Link>
-            </li>
+            {user.beta ? (
+              <>
+                <li>
+                  <Link to="/app/history/scans">Scan history</Link>
+                </li>
+                <li>
+                  <Link to="/app/history/unsubscriptions">Unsub history</Link>
+                </li>
+              </>
+            ) : null}
+
             <li className="logout">
               <a href="/auth/logout">Logout</a>
             </li>

@@ -4,7 +4,7 @@ import {
   updateCouponUses
 } from '../utils/stripe';
 import { addPaidScanToUser } from '../services/user';
-import { addPaymentToStats } from '../services/stats';
+import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
 
 const products = [
   {
@@ -24,6 +24,10 @@ const products = [
   }
 ];
 
+export function getProduct(id) {
+  return products.find(p => p.value === id);
+}
+
 export async function getCoupon(coupon) {
   return getPaymentCoupon(coupon);
 }
@@ -35,7 +39,7 @@ export async function updateCoupon(coupon) {
 export async function createPaymentForUser({ token, user, productId, coupon }) {
   let payment;
   const { id: userId } = user;
-  const { price: amount, label } = products.find(p => p.value === productId);
+  const { price: amount, label } = getProduct(productId);
   const { id: tokenId } = token;
   let price = amount;
   let couponObject;
@@ -58,7 +62,11 @@ export async function createPaymentForUser({ token, user, productId, coupon }) {
     if (payment.paid) {
       addPaidScanToUser(userId, productId);
       addPaymentToStats({ price: price / 100 });
-      if (coupon) updateCoupon(coupon);
+      if (couponObject) {
+        const { metadata = {} } = coupon;
+        if (metadata.gift) addGiftRedemptionToStats();
+        updateCoupon(coupon);
+      }
     }
     return payment;
   } catch (err) {

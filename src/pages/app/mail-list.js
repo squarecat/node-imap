@@ -97,7 +97,6 @@ const mailReducer = (state = [], action) => {
 function useSocket(callback) {
   const [user, { incrementUnsubCount }] = useUser();
 
-  // gatsby wont compile without these type checks
   const [localMail, setLocalMail] = useLocalStorage(
     `leavemealone.mail.${user ? user.id : ''}`,
     []
@@ -207,7 +206,7 @@ function useSocket(callback) {
 
 export default ({ timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
-  const [, { setHasSearched }] = useUser();
+  const [user, { setHasSearched }] = useUser();
   const {
     mail,
     fetchMail,
@@ -220,7 +219,10 @@ export default ({ timeframe, showPriceModal }) => {
     changeFavicon(false, true);
     setSearchFinished(true);
   });
-
+  const [lastSearchTimeframe, setLastSearchTimeframe] = useLocalStorage(
+    `leavemealone.timeframe.${user ? user.id : ''}`,
+    []
+  );
   function doSearch() {
     setSearchFinished(false);
     fetchMail(timeframe);
@@ -229,6 +231,7 @@ export default ({ timeframe, showPriceModal }) => {
   useEffect(
     () => {
       if (isConnected && timeframe) {
+        setLastSearchTimeframe(timeframe);
         changeFavicon(true, false);
         doSearch();
         setHasSearched(true);
@@ -253,12 +256,30 @@ export default ({ timeframe, showPriceModal }) => {
   );
 
   let scanName;
-  if (timeframe) {
-    if (timeframe === '3d') scanName = '3 days';
-    if (timeframe === '1w') scanName = '1 week';
-    if (timeframe === '1m') scanName = '1 month';
-    if (timeframe === '6m') scanName = '6 months';
+  let moreSubsPrice = '$0';
+  let moreSubsEstimate = 0;
+  const tf = timeframe || lastSearchTimeframe;
+  if (tf) {
+    if (tf === '3d') {
+      scanName = '3 days';
+      moreSubsPrice = '$3';
+      moreSubsEstimate = Math.ceil((mail.length / 3) * 7) - mail.length;
+    }
+    if (tf === '1w') {
+      scanName = '1 week';
+      moreSubsPrice = '$5';
+      moreSubsEstimate = Math.ceil(mail.length * 4) - mail.length;
+    }
+    if (tf === '1m') {
+      scanName = '1 month';
+      moreSubsPrice = '$8';
+      moreSubsEstimate = Math.ceil(mail.length * 6) - mail.length;
+    }
+    if (tf === '6m') scanName = '6 months';
   }
+
+  const showMoreText =
+    isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;
   return (
     <>
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
@@ -284,8 +305,14 @@ export default ({ timeframe, showPriceModal }) => {
               >
                 <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
               </svg>
-              Re-scan
+              Scan more
             </a>
+
+            <span className={`scan-more-text ${showMoreText ? 'shown' : ''}`}>
+              Clear <span className="more-subs">{moreSubsEstimate}</span> more
+              subscriptions for just{' '}
+              <span className="more-subs-price">{moreSubsPrice}</span>
+            </span>
           </span>
         </div>
       </div>
@@ -331,8 +358,8 @@ function ErrorScreen({ error, retry }) {
     return (
       <div className="mail-error">
         <p>
-          Oh no, you've used up all of your paid scans, use the 'Re-scan' button
-          above to purchase a new scan
+          Oh no, you've used up all of your paid scans, use the 'Scan more'
+          button above to purchase a new scan
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
@@ -364,9 +391,9 @@ function ErrorScreen({ error, retry }) {
   );
 }
 
-function RevokeTokenInstructions() {
+function RevokeTokenInstructions({ style }) {
   return (
-    <div className="revoke-token-instructions">
+    <div className="revoke-token-instructions" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
         <a
@@ -465,7 +492,7 @@ function List({
     return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
   };
 
-  const sortedMail = mail
+  let sortedMail = mail
     .sort((a, b) => {
       return +b.googleDate - +a.googleDate;
     })
@@ -479,38 +506,45 @@ function List({
       }
       return [...out, { type: 'mail', ...mailItem }];
     }, []);
+  if (isSearchFinished) {
+    sortedMail = [...sortedMail, { id: 'notice', type: 'notice' }];
+  }
   return (
     <AutoSizer>
       {({ width, height }) => (
         <div className="mail-list">
-          <TransitionGroup component="div">
-            <VirtualList
-              height={height}
-              rowHeight={120}
-              rowCount={sortedMail.length}
-              width={width}
-              rowRenderer={({ index, key, style }) => {
-                const m = sortedMail[index];
-                return m.type === 'mail' ? (
+          {/* <TransitionGroup component="div"> */}
+          <VirtualList
+            height={height}
+            rowHeight={120}
+            rowCount={sortedMail.length}
+            width={width}
+            rowRenderer={({ index, key, style }) => {
+              const m = sortedMail[index];
+              if (m.type === 'mail') {
+                return (
                   <CSSTransition
                     key={m.id}
                     timeout={500}
                     classNames="mail-list-item"
                   >
                     <MailItem
-                      style={style}
                       key={key}
+                      style={style}
                       mail={m}
                       onUnsubscribe={onUnsubscribe}
                       setUnsubModal={setUnsubData}
                     />
                   </CSSTransition>
-                ) : (
-                  getSocialItem(m, getSocialContent(unsubCount, style))
                 );
-              }}
-            />
-          </TransitionGroup>
+              } else if (m.type === 'social') {
+                return getSocialItem(m, getSocialContent(unsubCount, style));
+              } else if (m.type === 'notice') {
+                return <RevokeTokenInstructions key={m.key} style={style} />;
+              }
+            }}
+          />
+          {/* </TransitionGroup> */}
 
           {unsubData ? (
             <UnsubModal

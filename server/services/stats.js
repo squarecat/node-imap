@@ -5,6 +5,7 @@ import {
   addFailedUnsubscription,
   addNumberofEmails,
   addPayment,
+  addGiftRedemption,
   addUser,
   addEstimate,
   getStats
@@ -27,8 +28,11 @@ export function addNumberofEmailsToStats(data) {
 export function addUserToStats() {
   return addUser();
 }
-export function addPaymentToStats(data) {
-  return addPayment(data);
+export function addPaymentToStats({ price, gift = false }) {
+  return addPayment({ price, gift });
+}
+export function addGiftRedemptionToStats() {
+  return addGiftRedemption();
 }
 export function addEstimateToStats() {
   return addEstimate();

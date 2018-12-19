@@ -46,6 +46,10 @@ export function addUser(count = 1) {
   return updateSingleStat('users', count);
 }
 
+export function addGiftRedemption(count = 1) {
+  return updateSingleStat('giftRedemptions', count);
+}
+
 export function addEstimate(count = 1) {
   return updateSingleStat('estimates', count);
 }
@@ -99,16 +103,24 @@ export async function addNumberofEmails({
   }
 }
 
-export async function addPayment({ price }, count = 1) {
+export async function addPayment({ price, gift = false }, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
+    let data = {
+      totalRevenue: price,
+      totalSales: count
+    };
+    if (gift) {
+      data = {
+        ...data,
+        giftRevenue: price,
+        giftSales: count
+      };
+    }
     await col.updateOne(
       {},
       {
-        $inc: {
-          totalRevenue: price,
-          totalSales: count
-        }
+        $inc: data
       },
       { upsert: true }
     );

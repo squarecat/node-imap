@@ -26,8 +26,7 @@
   margin: 20px auto;
 }
 
-.btn {
-  width: 240px;
+.hold-onto-your-butts-we-are-logging-in .btn {
   background-color: #fddbd7;
   color: rgba(231, 57, 48, 0.749);
   padding: 15px 25px;
@@ -45,39 +44,39 @@
   user-select: none;
 }
 
-.btn:hover {
+.hold-onto-your-butts-we-are-logging-in .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
   background-color: #e73a30;
   color: white;
 }
 
-.btn.disabled {
+.hold-onto-your-butts-we-are-logging-in .btn.disabled {
   pointer-events: none;
   opacity: 0.5;
   cursor: no-drop;
 }
 
-.btn.compact {
+.hold-onto-your-butts-we-are-logging-in .btn.compact {
   width: auto;
   padding: 5px 15px;
   font-size: 16px;
 }
 
-.btn.icon svg {
+.hold-onto-your-butts-we-are-logging-in .btn.icon svg {
   margin-right: 7px;
   position: relative;
 }
 
-.btn.centered {
+.hold-onto-your-butts-we-are-logging-in .btn.centered {
   margin: 10px auto;
 }
 
-.btn.muted {
+.hold-onto-your-butts-we-are-logging-in .btn.muted {
   background-color: transparent;
 }
 
-.btn.muted:hover {
+.hold-onto-your-butts-we-are-logging-in .btn.muted:hover {
   color: rgba(231, 57, 48, 0.749);
   background-color: rgba(231, 57, 48, 0.1);
 }
