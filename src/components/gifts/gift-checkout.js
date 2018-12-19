@@ -29,12 +29,15 @@ async function doCheckout({ description, amount }) {
 
 const GiftCheckout = ({
   selected,
+  quantity = 1,
   setCouponLoading,
   onCheckoutComplete,
   onCheckoutFailed
 }) => {
   const [isLoading, setLoading] = useState(false);
   const { price, value, label: productName } = selected;
+
+  const parsedQuantity = !quantity || isNaN(+quantity) ? 1 : +quantity;
 
   function onClick() {
     setLoading(true);
@@ -56,7 +59,8 @@ const GiftCheckout = ({
           token,
           productId: value,
           address,
-          name: args.billing_name
+          name: args.billing_name,
+          quantity: parsedQuantity
         });
         onCheckoutComplete(data);
         setCouponLoading(false);
@@ -67,8 +71,11 @@ const GiftCheckout = ({
       }
     };
     doCheckout({
-      description: `Gift a ${productName} scan`,
-      amount: price
+      description:
+        parsedQuantity > 1
+          ? `Gift ${parsedQuantity} ${productName} scans`
+          : `Gift a ${productName} scan`,
+      amount: parsedQuantity * price
     });
   }
 
@@ -80,14 +87,15 @@ const GiftCheckout = ({
       muted={true}
     >
       <span>{selected.label}</span>
-      <span className="price">{`($${selected.price / 100})`}</span>
+      <span className="price">{`($${(selected.price / 100) *
+        parsedQuantity})`}</span>
     </Button>
   );
 };
 
 export default GiftCheckout;
 
-async function sendGiftPayment({ token, productId, address, name }) {
+async function sendGiftPayment({ token, productId, address, name, quantity }) {
   console.log('payment for', productId);
   const url = `/api/gift/${productId}`;
   try {
@@ -98,7 +106,7 @@ async function sendGiftPayment({ token, productId, address, name }) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify({ token, address, name })
+      body: JSON.stringify({ token, address, name, quantity })
     });
     const data = resp.json();
     return data;

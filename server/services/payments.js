@@ -35,8 +35,11 @@ export async function getCoupon(coupon) {
   return getPaymentCoupon(coupon);
 }
 
-export async function updateCoupon(coupon) {
-  return updateCouponUses(coupon);
+export async function updateCoupon(name) {
+  const couponData = await getCoupon(name);
+  const { metadata = {} } = couponData;
+  if (metadata.gift) addGiftRedemptionToStats();
+  return updateCouponUses(couponData);
 }
 
 export async function createPaymentForUser({
@@ -87,6 +90,7 @@ export async function createPaymentForUser({
       productLabel: label,
       coupon: couponObject && couponObject.valid ? coupon : null
     });
+
     await updateUser(userId, {
       customerId
     });
@@ -94,8 +98,6 @@ export async function createPaymentForUser({
     addPaidScanToUser(userId, productId);
     addPaymentToStats({ price: price / 100 });
     if (couponObject) {
-      const { metadata = {} } = coupon;
-      if (metadata.gift) addGiftRedemptionToStats();
       updateCoupon(coupon);
     }
 

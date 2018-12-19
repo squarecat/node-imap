@@ -3,17 +3,19 @@ import { createGift } from '../services/gifts';
 export default app => {
   app.post('/api/gift/:productId', async (req, res) => {
     const { productId } = req.params;
-    const { token, address, name } = req.body;
+
+    const { token, address, name, quantity } = req.body;
     try {
-      const couponId = await createGift({
+      const couponData = await createGift({
         productId,
         token,
         address,
-        name
+        name,
+        quantity
       });
       return res.send({
         status: 'success',
-        coupon: couponId
+        couponData
       });
     } catch (err) {
       console.log('gifts-rest: error with payment');

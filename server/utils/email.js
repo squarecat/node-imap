@@ -25,6 +25,22 @@ export function sendUnsubscribeMail({ toAddress, subject = 'unsubscribe' }) {
   });
 }
 
+export function sendGiftCouponMultiMail({
+  toAddress,
+  scanPeriod,
+  coupons,
+  quantity = 1
+}) {
+  return sendMail({
+    ...giftMailOptions,
+    subject: 'Thank you for purchasing gift scans',
+    to: toAddress,
+    text: `Thank you for purchasing ${quantity} gift scans for ${scanPeriod}. Your coupon codes are:\n\n${coupons
+      .map(c => c)
+      .join('\n')}\n\nJames & Danielle\n\nLeave Me Alone`
+  });
+}
+
 export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
   return sendMail({
     ...giftMailOptions,

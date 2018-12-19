@@ -1,9 +1,17 @@
 import { createPayment, createCoupon, createCustomer } from '../utils/stripe';
-import { getProduct } from './payments';
-import { addPaymentToStats } from '../services/stats';
-import { sendGiftCouponMail } from '../utils/email';
+import _times from 'lodash.times';
 
-export async function createGift({ productId, token, address, name }) {
+import { getProduct } from './payments';
+import { addGiftPaymentToStats } from '../services/stats';
+import { sendGiftCouponMail, sendGiftCouponMultiMail } from '../utils/email';
+
+export async function createGift({
+  productId,
+  token,
+  address,
+  name,
+  quantity = 1
+}) {
   const { price, label } = getProduct(productId);
   const { email: purchaserEmail } = token;
   try {
@@ -14,23 +22,44 @@ export async function createGift({ productId, token, address, name }) {
       name
     });
 
+    const totalAmount = price * quantity;
+
     await createPayment({
-      amount: price,
+      amount: totalAmount,
       customerId,
       productLabel: label
     });
 
-    addPaymentToStats({ price: price / 100, gift: true });
-    const { id: couponId } = await createCoupon({
-      amount_off: price,
-      metadata: { gift: true }
-    });
-    sendGiftCouponMail({
-      toAddress: purchaserEmail,
-      scanPeriod: label,
-      coupon: couponId
-    });
-    return couponId;
+    addGiftPaymentToStats({ price: price / 100 }, quantity);
+    if (quantity > 1) {
+      const coupons = await Promise.all(
+        _times(quantity, async () => {
+          const { id: couponId } = await createCoupon({
+            amount_off: price,
+            metadata: { gift: true }
+          });
+          return couponId;
+        })
+      );
+      sendGiftCouponMultiMail({
+        toAddress: purchaserEmail,
+        scanPeriod: label,
+        coupons,
+        quantity
+      });
+      return coupons;
+    } else {
+      const { id: couponId } = await createCoupon({
+        amount_off: price,
+        metadata: { gift: true }
+      });
+      sendGiftCouponMail({
+        toAddress: purchaserEmail,
+        scanPeriod: label,
+        coupon: couponId
+      });
+      return couponId;
+    }
   } catch (err) {
     console.error('gifts-service: failed to create payment for gift');
     console.error(err);
