@@ -3,7 +3,6 @@ import session from 'express-session';
 import connectMongo from 'connect-mongo';
 import http from 'http';
 import path from 'path';
-import nowLogs from 'now-logs';
 import config from 'getconfig';
 
 import userApi from './rest/user';
@@ -23,7 +22,6 @@ Sentry.init({
   dsn: 'https://9b4279f65dbd47e09187ed8b1c4f071b@sentry.io/1334902'
 });
 
-nowLogs('colinloveslogs');
 const app = express();
 const server = http.createServer(app);
 const MongoStore = connectMongo(session);
@@ -37,6 +35,9 @@ app.use(
     secret: 'colinisafoursidedcatfromspace',
     saveUninitialized: true,
     resave: true,
+    cookie: {
+      _expires: 1000 * 60 * 60 * 24 * 7 // 1 week
+    },
     store: new MongoStore({
       url: mongoUrl,
       collection: 'sessions'

@@ -1,7 +1,8 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import Tooltip from 'rc-tooltip';
+import { List as VirtualList, AutoSizer } from 'react-virtualized';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-var _isArray = require('lodash.isarray');
+import _isArray from 'lodash.isarray';
 
 import ErrorBoundary from '../../components/error-boundary';
 import UnsubModal from '../../components/unsub-modal';
@@ -96,7 +97,6 @@ const mailReducer = (state = [], action) => {
 function useSocket(callback) {
   const [user, { incrementUnsubCount }] = useUser();
 
-  // gatsby wont compile without these type checks
   const [localMail, setLocalMail] = useLocalStorage(
     `leavemealone.mail.${user ? user.id : ''}`,
     []
@@ -206,7 +206,7 @@ function useSocket(callback) {
 
 export default ({ timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
-  const [, { setHasSearched }] = useUser();
+  const [user, { setHasSearched }] = useUser();
   const {
     mail,
     fetchMail,
@@ -219,7 +219,10 @@ export default ({ timeframe, showPriceModal }) => {
     changeFavicon(false, true);
     setSearchFinished(true);
   });
-
+  const [lastSearchTimeframe, setLastSearchTimeframe] = useLocalStorage(
+    `leavemealone.timeframe.${user ? user.id : ''}`,
+    []
+  );
   function doSearch() {
     setSearchFinished(false);
     fetchMail(timeframe);
@@ -228,6 +231,7 @@ export default ({ timeframe, showPriceModal }) => {
   useEffect(
     () => {
       if (isConnected && timeframe) {
+        setLastSearchTimeframe(timeframe);
         changeFavicon(true, false);
         doSearch();
         setHasSearched(true);
@@ -242,40 +246,75 @@ export default ({ timeframe, showPriceModal }) => {
   // because the count is estimated, the progress can go above 100%
   // so here we make it more believable
   const believableProgress = progress > 95 ? 98 : progress;
+  // if progress changes then we are definitely
+  // not finished
+  useEffect(
+    () => {
+      setSearchFinished(false);
+    },
+    [believableProgress !== 100, believableProgress !== 0]
+  );
+
   let scanName;
-  if (timeframe) {
-    if (timeframe === '3d') scanName = '3 days';
-    if (timeframe === '1w') scanName = '1 week';
-    if (timeframe === '1m') scanName = '1 month';
-    if (timeframe === '6m') scanName = '6 months';
+  let moreSubsPrice = '$0';
+  let moreSubsEstimate = 0;
+  const tf = timeframe || lastSearchTimeframe;
+  if (tf) {
+    if (tf === '3d') {
+      scanName = '3 days';
+      moreSubsPrice = '$3';
+      moreSubsEstimate = Math.ceil((mail.length / 3) * 7) - mail.length;
+    }
+    if (tf === '1w') {
+      scanName = '1 week';
+      moreSubsPrice = '$5';
+      moreSubsEstimate = Math.ceil(mail.length * 4) - mail.length;
+    }
+    if (tf === '1m') {
+      scanName = '1 month';
+      moreSubsPrice = '$8';
+      moreSubsEstimate = Math.ceil(mail.length * 6) - mail.length;
+    }
+    if (tf === '6m') scanName = '6 months';
   }
+
+  const showMoreText =
+    isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;
   return (
     <>
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
-        <span className="action-item results-data">
-          <span className="quantity">{mail ? mail.length : 0}</span>
-          subscriptions <span className="extra">found</span>
-        </span>
-        <span className="action-item progress">{`Scanning ${
-          scanName ? `for ${scanName}` : ''
-        }... ${isSearchFinished ? 100 : believableProgress}%`}</span>
-        <span className="action-item">
-          <a onClick={() => showPriceModal()} className="btn compact icon">
-            <svg
-              viewBox="0 0 32 32"
-              width="14"
-              height="14"
-              fill="none"
-              stroke="currentcolor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="3"
-            >
-              <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
-            </svg>
-            Scan more
-          </a>
-        </span>
+        <div className="mail-actions-content">
+          <span className="action-item results-data">
+            <span className="quantity">{mail ? mail.length : 0}</span>
+            subscriptions <span className="extra">found</span>
+          </span>
+          <span className="action-item progress">{`Scanning ${
+            scanName ? `for ${scanName}` : ''
+          }... ${isSearchFinished ? 100 : believableProgress}%`}</span>
+          <span className="action-item">
+            <a onClick={() => showPriceModal()} className="btn compact icon">
+              <svg
+                viewBox="0 0 32 32"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentcolor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+              >
+                <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
+              </svg>
+              Scan more
+            </a>
+
+            <span className={`scan-more-text ${showMoreText ? 'shown' : ''}`}>
+              Clear <span className="more-subs">{moreSubsEstimate}</span> more
+              subscriptions for just{' '}
+              <span className="more-subs-price">{moreSubsPrice}</span>
+            </span>
+          </span>
+        </div>
       </div>
       {error ? (
         <ErrorScreen error={error} retry={doSearch} />
@@ -290,7 +329,6 @@ export default ({ timeframe, showPriceModal }) => {
           />
         </ErrorBoundary>
       )}
-      {isSearchFinished ? RevokeTokenInstructions() : null}
     </>
   );
 };
@@ -320,8 +358,8 @@ function ErrorScreen({ error, retry }) {
     return (
       <div className="mail-error">
         <p>
-          Oh no, you've used up all of your paid scans, use the 'Scan more' button
-          above to purchase a new scan
+          Oh no, you've used up all of your paid scans, use the 'Scan more'
+          button above to purchase a new scan
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
@@ -353,9 +391,9 @@ function ErrorScreen({ error, retry }) {
   );
 }
 
-function RevokeTokenInstructions() {
+function RevokeTokenInstructions({ style }) {
   return (
-    <div className="revoke-token-instructions">
+    <div className="revoke-token-instructions" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
         <a
@@ -454,8 +492,7 @@ function List({
     return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
   };
 
-  const socialContent = getSocialContent(unsubCount);
-  const sortedMail = mail
+  let sortedMail = mail
     .sort((a, b) => {
       return +b.googleDate - +a.googleDate;
     })
@@ -469,43 +506,68 @@ function List({
       }
       return [...out, { type: 'mail', ...mailItem }];
     }, []);
+  if (isSearchFinished) {
+    sortedMail = [...sortedMail, { id: 'notice', type: 'notice' }];
+  }
   return (
-    <div className="mail-list">
-      <TransitionGroup component="ul">
-        {sortedMail.map(m =>
-          m.type === 'mail' ? (
-            <CSSTransition key={m.id} timeout={500} classNames="mail-list-item">
-              <MailItem
-                mail={m}
-                onUnsubscribe={onUnsubscribe}
-                setUnsubModal={setUnsubData}
-              />
-            </CSSTransition>
-          ) : (
-            getSocialItem(m, socialContent)
-          )
-        )}
-      </TransitionGroup>
-      {unsubData ? (
-        <UnsubModal
-          onClose={() => {
-            setUnsubData(null);
-          }}
-          onSubmit={({ success, useImage, failReason = null }) => {
-            setUnsubData(null);
-            addUnsubscribeErrorResponse({
-              success,
-              mailId: unsubData.id,
-              image: useImage ? unsubData.image : null,
-              from: unsubData.from,
-              reason: failReason,
-              unsubStrategy: unsubData.unsubStrategy
-            });
-          }}
-          mail={unsubData}
-        />
-      ) : null}
-    </div>
+    <AutoSizer>
+      {({ width, height }) => (
+        <div className="mail-list">
+          {/* <TransitionGroup component="div"> */}
+          <VirtualList
+            height={height}
+            rowHeight={120}
+            rowCount={sortedMail.length}
+            width={width}
+            rowRenderer={({ index, key, style }) => {
+              const m = sortedMail[index];
+              if (m.type === 'mail') {
+                return (
+                  <CSSTransition
+                    key={m.id}
+                    timeout={500}
+                    classNames="mail-list-item"
+                  >
+                    <MailItem
+                      key={key}
+                      style={style}
+                      mail={m}
+                      onUnsubscribe={onUnsubscribe}
+                      setUnsubModal={setUnsubData}
+                    />
+                  </CSSTransition>
+                );
+              } else if (m.type === 'social') {
+                return getSocialItem(m, getSocialContent(unsubCount, style));
+              } else if (m.type === 'notice') {
+                return <RevokeTokenInstructions key={m.key} style={style} />;
+              }
+            }}
+          />
+          {/* </TransitionGroup> */}
+
+          {unsubData ? (
+            <UnsubModal
+              onClose={() => {
+                setUnsubData(null);
+              }}
+              onSubmit={({ success, useImage, failReason = null }) => {
+                setUnsubData(null);
+                addUnsubscribeErrorResponse({
+                  success,
+                  mailId: unsubData.id,
+                  image: useImage ? unsubData.image : null,
+                  from: unsubData.from,
+                  reason: failReason,
+                  unsubStrategy: unsubData.unsubStrategy
+                });
+              }}
+              mail={unsubData}
+            />
+          ) : null}
+        </div>
+      )}
+    </AutoSizer>
   );
 }
 
@@ -517,7 +579,7 @@ function getSocialItem(mail, socialContent) {
   );
 }
 
-function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
+function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
   const isSubscribed = !!m.subscribed;
   let fromName;
   let fromEmail;
@@ -531,7 +593,10 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
   }
 
   return (
-    <li className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}>
+    <div
+      style={style}
+      className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}
+    >
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
@@ -586,11 +651,11 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal }) {
           )}
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 
-function getSocialContent(unsubCount = 0) {
+function getSocialContent(unsubCount = 0, style) {
   const socialOutput = progressTweets.reduce(
     (out, progress) => {
       if (unsubCount >= progress.val) {
@@ -604,7 +669,7 @@ function getSocialContent(unsubCount = 0) {
     { text: null, tweet: null }
   );
   return (
-    <li className="mail-list-item mail-list-social">
+    <div className="mail-list-item mail-list-social" style={style}>
       <div className="mail-item">
         <div className="avatar">
           <svg viewBox="0 0 64 64" width="32" height="32">
@@ -633,7 +698,7 @@ function getSocialContent(unsubCount = 0) {
           </a>
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 

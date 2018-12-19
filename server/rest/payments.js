@@ -24,13 +24,15 @@ export default app => {
   app.post('/api/checkout/:productId/:coupon?', auth, async (req, res) => {
     const { user } = req;
     const { productId, coupon } = req.params;
-    const token = req.body;
+    const { token, address, name } = req.body;
     try {
       await PaymentService.createPaymentForUser({
         user: user,
         productId,
         coupon,
-        token
+        token,
+        address,
+        name
       });
       return res.send({
         status: 'success'

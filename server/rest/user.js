@@ -23,6 +23,26 @@ export default app => {
     });
   });
 
+  app.get('/api/me/unsubscriptions', async (req, res) => {
+    try {
+      const { unsubscriptions } = await getUserById(req.user.id);
+      res.send(unsubscriptions);
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    }
+  });
+
+  app.get('/api/me/scans', async (req, res) => {
+    try {
+      const { scans } = await getUserById(req.user.id);
+      res.send(scans);
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    }
+  });
+
   app.put('/api/me/paidscans/:productId/:coupon?', auth, async (req, res) => {
     const { user } = req;
     const { productId, coupon } = req.params;
