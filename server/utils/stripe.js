@@ -4,18 +4,29 @@ import { payments } from 'getconfig';
 const stripe = Stripe(payments.secretKey);
 
 export async function createPayment({
-  amount,
+  productPrice,
   productLabel,
+  quantity = 1,
   customerId,
-  coupon
+  coupon,
+  gift = false
 }) {
   try {
+    let description;
+    if (gift) {
+      description = `Payment for ${quantity} ${productLabel} gift scan${
+        quantity > 1 ? 's' : ''
+      }`;
+    } else {
+      description = `Payment for ${productLabel} scan`;
+    }
     // create invoice line item
     await stripe.invoiceItems.create({
       customer: customerId,
-      amount,
+      quantity,
+      unit_amount: productPrice,
       currency: 'usd',
-      description: `Payment for ${productLabel}`
+      description
     });
     // invoice line item will automatically be
     // applied to this invoice

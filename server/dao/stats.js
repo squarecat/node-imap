@@ -185,7 +185,11 @@ agenda.define('record day stats', async (job, done) => {
       allStats.unsubscriptionsByLinkStrategy -
       (yesterdayTotals.unsubscriptionsByLinkStrategy || 0),
     totalRevenue: allStats.totalRevenue - (yesterdayTotals.totalRevenue || 0),
-    totalSales: allStats.totalSales - (yesterdayTotals.totalSales || 0)
+    totalSales: allStats.totalSales - (yesterdayTotals.totalSales || 0),
+    giftRevenue: allStats.giftRevenue - (yesterdayTotals.giftRevenue || 0),
+    giftSales: allStats.giftSales - (yesterdayTotals.giftSales || 0),
+    giftRedemptions:
+      allStats.giftRedemptions - (yesterdayTotals.giftRedemptions || 0)
   };
   const col = await db().collection(COL_NAME);
   // insert today total
