@@ -393,7 +393,7 @@ function ErrorScreen({ error, retry }) {
 
 function RevokeTokenInstructions({ style }) {
   return (
-    <div className="revoke-token-instructions" style={style}>
+    <div className="revoke-token-instructions" key="token" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
         <a
@@ -524,12 +524,12 @@ function List({
               if (m.type === 'mail') {
                 return (
                   <CSSTransition
-                    key={m.id}
+                    key={key}
                     timeout={500}
                     classNames="mail-list-item"
                   >
                     <MailItem
-                      key={key}
+                      key={m.id}
                       style={style}
                       mail={m}
                       onUnsubscribe={onUnsubscribe}
