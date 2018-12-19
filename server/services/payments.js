@@ -86,7 +86,7 @@ export async function createPaymentForUser({
     }
     payment = await createPayment({
       customerId: customerId,
-      amount: price,
+      productPrice: price,
       productLabel: label,
       coupon: couponObject && couponObject.valid ? coupon : null
     });

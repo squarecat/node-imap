@@ -13,11 +13,11 @@ export async function createGift({
   quantity = 1
 }) {
   const { price, label } = getProduct(productId);
-  const { email: purchaserEmail } = token;
+  const { email } = token;
   try {
     const { id: customerId } = await createCustomer({
       token,
-      email: purchaserEmail,
+      email,
       address,
       name
     });
@@ -25,36 +25,37 @@ export async function createGift({
     const totalAmount = price * quantity;
 
     await createPayment({
-      amount: totalAmount,
-      customerId,
-      productLabel: label
+      customerId: customerId,
+      productPrice: price,
+      productLabel: label,
+      quantity,
+      gift: true
     });
 
     addGiftPaymentToStats({ price: totalAmount / 100 }, quantity);
     if (quantity > 1) {
       const coupons = await Promise.all(
-        _times(quantity, async () => {
-          const { id: couponId } = await createCoupon({
-            amount_off: price,
-            metadata: { gift: true }
+        _times(quantity, () => {
+          return generateCoupon({
+            price,
+            purchaser: { name, email }
           });
-          return couponId;
         })
       );
       sendGiftCouponMultiMail({
-        toAddress: purchaserEmail,
+        toAddress: email,
         scanPeriod: label,
         coupons,
         quantity
       });
       return coupons;
     } else {
-      const { id: couponId } = await createCoupon({
-        amount_off: price,
-        metadata: { gift: true }
+      const couponId = await generateCoupon({
+        price,
+        purchaser: { name, email }
       });
       sendGiftCouponMail({
-        toAddress: purchaserEmail,
+        toAddress: email,
         scanPeriod: label,
         coupon: couponId
       });
@@ -65,4 +66,13 @@ export async function createGift({
     console.error(err);
     throw err;
   }
+}
+
+async function generateCoupon({ price, purchaser = {} }) {
+  const { name, email } = purchaser;
+  const { id: couponId } = await createCoupon({
+    amount_off: price,
+    metadata: { gift: true, name, email }
+  });
+  return couponId;
 }
