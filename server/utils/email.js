@@ -35,9 +35,9 @@ export function sendGiftCouponMultiMail({
     ...giftMailOptions,
     subject: 'Thank you for purchasing gift scans',
     to: toAddress,
-    text: `Thank you for purchasing ${quantity} gift scans for ${scanPeriod}. Your coupon codes are:\n\n${coupons.map(
-      c => `${c}\n`
-    )}\n\nJames & Danielle\n\nLeave Me Alone`
+    text: `Thank you for purchasing ${quantity} gift scans for ${scanPeriod}. Your coupon codes are:\n\n${coupons
+      .map(c => c)
+      .join('\n')}\n\nJames & Danielle\n\nLeave Me Alone`
   });
 }
 
