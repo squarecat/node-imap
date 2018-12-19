@@ -19,6 +19,13 @@ img {
   margin: 0;
 }
 
+.xmas-logo {
+  position: relative;
+  width: 200px;
+  top: -25px;
+  left: 32px;
+}
+
 .friendly-neighbourhood-hero {
   height: 100vh;
   padding: 100px 0 100px 0;

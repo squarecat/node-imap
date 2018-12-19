@@ -8,6 +8,7 @@ import { useAsync } from '../utils/hooks';
 import envelope from '../assets/envelope.png';
 import dogs from '../assets/dogs.jpg';
 import girlLogo from '../assets/leavemealonegirl.png';
+import xmasLogo from '../assets/xmas-logo.png';
 import gif from '../assets/toggle-unsubscribe-hd.gif';
 
 import Colin from '../components/squarecat';
@@ -69,11 +70,14 @@ const IndexPage = () => {
           <div>
             <div className="leave-me-alone-logo" ref={activeRef}>
               <span>
+                <img src={xmasLogo} alt="xmas-logo" className="xmas-logo" />
+              </span>
+              {/* <span>
                 <img src={envelope} alt="gmail-logo" className="gmail-logo" />
               </span>
               <span className="logo-emoji">
                 <img src={girlLogo} alt="girl-logo" className="girl-logo" />
-              </span>
+              </span> */}
             </div>
             <h1 className="title">Leave Me Alone!</h1>
 

@@ -30,7 +30,7 @@ export async function createGift({
       productLabel: label
     });
 
-    addGiftPaymentToStats({ price: price / 100 }, quantity);
+    addGiftPaymentToStats({ price: totalAmount / 100 }, quantity);
     if (quantity > 1) {
       const coupons = await Promise.all(
         _times(quantity, async () => {
