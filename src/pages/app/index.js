@@ -83,6 +83,9 @@ function AuthApp() {
           <ul
             className={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}
           >
+            <li>
+              <a href="/auth/google">Switch account</a>
+            </li>
             {user.beta ? (
               <>
                 <li>
