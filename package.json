@@ -24,6 +24,7 @@
     "lodash.get": "^4.4.2",
     "lodash.isarray": "^4.0.0",
     "lodash.omit": "^4.5.0",
+    "lodash.times": "^4.3.2",
     "lz-string": "^1.4.4",
     "mailgun-js": "^0.22.0",
     "mongodb": "^3.1.10",

@@ -29,12 +29,15 @@ async function doCheckout({ description, amount }) {
 
 const GiftCheckout = ({
   selected,
+  quantity = 1,
   setCouponLoading,
   onCheckoutComplete,
   onCheckoutFailed
 }) => {
   const [isLoading, setLoading] = useState(false);
   const { price, value, label: productName } = selected;
+
+  const parsedQuantity = !quantity || isNaN(+quantity) ? 1 : +quantity;
 
   function onClick() {
     setLoading(true);
@@ -44,7 +47,11 @@ const GiftCheckout = ({
     callback = async token => {
       setCouponLoading(true);
       try {
-        const data = await sendGiftPayment({ token, productId: value });
+        const data = await sendGiftPayment({
+          token,
+          productId: value,
+          quantity: parsedQuantity
+        });
         onCheckoutComplete(data);
         setCouponLoading(false);
       } catch (err) {
@@ -54,8 +61,11 @@ const GiftCheckout = ({
       }
     };
     doCheckout({
-      description: `Gift a ${productName} scan`,
-      amount: price
+      description:
+        parsedQuantity > 1
+          ? `Gift ${parsedQuantity} ${productName} scans`
+          : `Gift a ${productName} scan`,
+      amount: parsedQuantity * price
     });
   }
 
@@ -67,14 +77,15 @@ const GiftCheckout = ({
       muted={true}
     >
       <span>{selected.label}</span>
-      <span className="price">{`($${selected.price / 100})`}</span>
+      <span className="price">{`($${(selected.price / 100) *
+        parsedQuantity})`}</span>
     </Button>
   );
 };
 
 export default GiftCheckout;
 
-async function sendGiftPayment({ token, productId }) {
+async function sendGiftPayment({ token, productId, quantity }) {
   console.log('payment for', productId);
   const url = `/api/gift/${productId}`;
   try {
@@ -85,7 +96,7 @@ async function sendGiftPayment({ token, productId }) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify(token)
+      body: JSON.stringify({ token, quantity })
     });
     const data = resp.json();
     return data;

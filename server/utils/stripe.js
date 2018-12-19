@@ -43,9 +43,8 @@ export async function getPaymentCoupon(name) {
   }
 }
 
-export async function updateCouponUses(name) {
+export async function updateCouponUses(coupon) {
   try {
-    const coupon = await stripe.coupons.retrieve(name);
     const { id, metadata } = coupon;
     const { uses = 0 } = metadata;
     const updated = await stripe.coupons.update(id, {

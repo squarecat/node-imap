@@ -103,24 +103,35 @@ export async function addNumberofEmails({
   }
 }
 
-export async function addPayment({ price, gift = false }, count = 1) {
+export async function addPayment({ price }, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
-    let data = {
-      totalRevenue: price,
-      totalSales: count
-    };
-    if (gift) {
-      data = {
-        ...data,
-        giftRevenue: price,
-        giftSales: count
-      };
-    }
     await col.updateOne(
       {},
       {
-        $inc: data
+        $inc: {
+          totalRevenue: price,
+          totalSales: count
+        }
+      },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error(`stats-dao: error inserting payment stat ${price}`);
+    console.error(err);
+    throw err;
+  }
+}
+export async function addGiftPayment({ price }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          giftRevenue: price,
+          giftSales: count
+        }
       },
       { upsert: true }
     );
