@@ -44,7 +44,7 @@ const IndexPage = () => {
     });
   };
   useEffect(() => {
-    document.querySelectorAll('twitter-widget').forEach(e => {
+    [...document.querySelectorAll('twitter-widget')].forEach(e => {
       const style = document.createElement('style');
       style.innerHTML = `
     .Tweet-card {
