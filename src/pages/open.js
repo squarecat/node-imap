@@ -13,7 +13,7 @@ import { useAsync } from '../utils/hooks';
 import './open.css';
 
 const lineColor = '#EB6C69';
-const lineColor2 = '#fddbd7';
+const lineColor2 = 'rgb(158, 87, 174)';
 
 function getStats() {
   return fetch('/api/stats').then(resp => resp.json());
@@ -283,7 +283,10 @@ export default function Terms() {
         </div>
         <div className="revenue">
           <div className="chart box">
-            <h2>Daily Revenue</h2>
+            <h2>
+              Daily Revenue - <span style={{ color: lineColor }}>Sales</span> vs{' '}
+              <span style={{ color: lineColor2 }}>Gift Sales</span>
+            </h2>
             <canvas ref={dailyRevRef} />
           </div>
           <div className="totals">
