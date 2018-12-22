@@ -419,7 +419,7 @@ const EstimatesScreen = ({ setScreen }) => {
                 Google provides estimates of the quantity of emails in your
                 inbox. Using this and{' '}
                 <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
-                  reseach into the number of spam emails users recieve on
+                  research into the number of spam emails users receive on
                   average (48.16%)
                 </a>
                 , then we work out the estimated amount of spam!
