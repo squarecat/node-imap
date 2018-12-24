@@ -9,9 +9,10 @@
 
 .twitter-tweet {
   max-width: 100% !important;
+  margin: 0 auto;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 800px) {
   .tweet-box {
     margin-top: 45px;
     display: grid;
