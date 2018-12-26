@@ -41,6 +41,28 @@ export default () => (
         </a>
       </li>
     </ul>
+    <ul className="footer-nav">
+      <li>
+        <a
+          className="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="/feedback"
+        >
+          Give us feedback
+        </a>
+      </li>
+      <li>
+        <a
+          className="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="/bugs"
+        >
+          Report a bug
+        </a>
+      </li>
+    </ul>
     <ul className="footer-social">
       <li title="@LeaveMeAloneApp">
         <a href="https://twitter.com/leavemealoneapp">

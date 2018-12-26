@@ -58,6 +58,8 @@ app.get('/sitemap.xml', (req, res) => {
 });
 app.get('/api', (req, res) => res.send('OK'));
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
+app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
+app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
 
 app.use(express.static(path.join(__dirname, '../public')));
 

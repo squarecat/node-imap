@@ -26,6 +26,8 @@
     "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ"
   },
   "urls": {
-    "roadmap": "https://trello.com/b/QvJsEk2F"
+    "roadmap": "https://trello.com/b/QvJsEk2F",
+    "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
+    "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf"
   }
 }

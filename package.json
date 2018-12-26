@@ -63,7 +63,7 @@
     "start:dev": "NODE_ENV=development node --inspect-brk index",
     "format": "prettier --write \"src/**/*.js\"",
     "test": "eslint ./server ./src",
-    "deploy": "now --docker && now alias"
+    "deploy": "node ./deploy.sh"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
