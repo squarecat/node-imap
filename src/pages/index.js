@@ -8,7 +8,7 @@ import { useAsync } from '../utils/hooks';
 import envelope from '../assets/envelope.png';
 import dogs from '../assets/dogs.jpg';
 import girlLogo from '../assets/leavemealonegirl.png';
-import xmasLogo from '../assets/xmas-logo.png';
+// import xmasLogo from '../assets/xmas-logo.png';
 import gif from '../assets/toggle-unsubscribe-hd.gif';
 
 import Colin from '../components/squarecat';
@@ -70,14 +70,11 @@ const IndexPage = () => {
           <div>
             <div className="leave-me-alone-logo" ref={activeRef}>
               <span>
-                <img src={xmasLogo} alt="xmas-logo" className="xmas-logo" />
-              </span>
-              {/* <span>
                 <img src={envelope} alt="gmail-logo" className="gmail-logo" />
               </span>
               <span className="logo-emoji">
                 <img src={girlLogo} alt="girl-logo" className="girl-logo" />
-              </span> */}
+              </span>
             </div>
             <h1 className="title">Leave Me Alone!</h1>
 
@@ -265,11 +262,23 @@ const IndexPage = () => {
         </div>
         <div className="gifts home-container" id="gifts">
           <div className="home-container-inner">
-            <h2>'tis the season to be giving</h2>
+            <h2>Gift a clean inbox</h2>
             <span className="container-emoji">🎁</span>
             <p>
-              Why not give the gift of a clean inbox to a friend or loved one
-              this holiday season?
+              Increase your{' '}
+              <span className="text-important">team's productivity</span>.
+            </p>
+            <p>
+              Give your loved one fewer{' '}
+              <span className="text-important">email notifications</span>.
+            </p>
+            <p>
+              Help your mom{' '}
+              <span className="text-important">ditch the spam</span>.
+            </p>
+            <p>
+              Just a few great reasons to buy a gift scan of Leave Me Alone
+              today!
             </p>
             <GiftsPayment prices={PRICES} />
           </div>
