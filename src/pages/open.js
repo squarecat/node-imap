@@ -268,6 +268,10 @@ export default function Terms() {
   if (loading) {
     return null;
   }
+  const prevMonthRev = getLastMonthValues(stats, 'totalRevenue');
+  const prevMonthGiftRev = getLastMonthValues(stats, 'giftRevenue');
+  const lastMonthsRevenue = prevMonthRev + prevMonthGiftRev;
+
   return (
     <SubPageLayout page="Open Stats">
       <div className="open-page">
@@ -292,9 +296,7 @@ export default function Terms() {
           <div className="totals">
             <div className="big-stat box">
               <span className="label">Last month's revenue</span>
-              <span className="value">
-                {currency(getLastMonthValues(stats, 'totalRevenue'))}
-              </span>
+              <span className="value">{currency(lastMonthsRevenue)}</span>
             </div>
             <div className="big-stat box">
               <span className="label">Total sales</span>
@@ -402,7 +404,7 @@ function getLastMonthValues(stats, stat) {
   const end = endOfMonth(addMonths(today, -1));
 
   return histogram.reduce((out, d) => {
-    if (isWithinRange(d.timestamp, start, end)) return out + d[stat];
+    if (isWithinRange(d.timestamp, start, end)) return out + d[stat] || 0;
     return out;
   }, 0);
 }
