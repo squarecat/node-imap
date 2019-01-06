@@ -36,7 +36,7 @@ export default app => {
   app.get('/api/me/scans', async (req, res) => {
     try {
       const { scans } = await getUserById(req.user.id);
-      res.send(scans);
+      res.send(scans.reverse());
     } catch (err) {
       console.error(err);
       res.sendStatus(500);

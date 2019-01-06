@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import 'isomorphic-fetch';
 import { Transition } from 'react-transition-group';
-import { Link } from 'gatsby';
 
-import Button from '../../components/btn';
+import Template from './template';
 import Modal from '../../components/price-modal';
-import AppLayout from '../../layouts/app-layout';
-import Auth from '../../components/auth';
-import logo from '../../assets/envelope-logo.png';
+
 import useUser from '../../utils/hooks/use-user';
 
 import MailList from './mail-list';
@@ -23,121 +20,50 @@ if (doScan) {
   history.replaceState({}, '', window.location.pathname);
 }
 
-export default function App() {
-  return (
-    <AppLayout>
-      <Auth>
-        <AuthApp />
-      </Auth>
-    </AppLayout>
-  );
-}
-
-function AuthApp() {
+export default function App({ location = {} } = {}) {
+  const { state } = location;
+  const rescan = state && state.rescan;
   const [showPriceModal, togglePriceModal] = useState(false);
-  const [timeframe, setTimeframe] = useState(doScan);
-  const [showSettings, setShowSettings] = useState();
+  const [timeframe, setTimeframe] = useState(doScan || rescan);
   const [user] = useUser();
-  const { hasSearched, beta: isBeta, profileImg } = user;
+  const { hasSearched, beta: isBeta } = user;
 
-  const onClickBody = ({ target }) => {
-    let { parentElement } = target;
-    while (parentElement !== document.body) {
-      if (parentElement.classList.contains('settings-dropdown-toggle')) {
-        return;
-      }
-      parentElement = parentElement.parentElement;
-    }
-    setShowSettings(false);
-  };
-  useEffect(
-    () => {
-      if (showSettings) {
-        document.body.addEventListener('click', onClickBody);
-      } else {
-        document.body.removeEventListener('click', onClickBody);
-      }
-    },
-    [showSettings]
-  );
   return (
-    <>
-      <div className="header">
-        <a href="/app" className="header-logo">
-          <img alt="logo" src={logo} />
-        </a>
-        <div className="header-title">Leave Me Alone </div>
+    <Template>
+      <Transition
+        in={!hasSearched && !timeframe}
+        classNames="welcome-content"
+        timeout={250}
+        unmountOnExit
+      >
+        {state => (
+          <div className={`welcome-content ${state}`}>
+            <Welcome
+              openPriceModal={() => togglePriceModal(true)}
+              isBeta={isBeta}
+            />
+          </div>
+        )}
+      </Transition>
 
-        <div className="settings-dropdown">
-          <Button
-            compact
-            className={`settings-dropdown-toggle ${
-              showSettings ? 'shown' : ''
-            }`}
-            onClick={() => setShowSettings(!showSettings)}
-          >
-            <div className="profile">
-              <img className="profile-img" src={profileImg} />
-            </div>
-          </Button>
-          <ul
-            className={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}
-          >
-            <li>
-              <a href="/auth/google">Switch account</a>
-            </li>
-            {user.beta ? (
-              <>
-                <li>
-                  <Link to="/app/history/scans">Scan history</Link>
-                </li>
-                <li>
-                  <Link to="/app/history/unsubscriptions">Unsub history</Link>
-                </li>
-              </>
-            ) : null}
+      <Transition
+        in={!!(hasSearched || timeframe)}
+        classNames="mail-list-content"
+        timeout={250}
+        mountOnEnter
+        appear
+      >
+        {state => (
+          <div className={`mail-list-content ${state}`}>
+            <MailList
+              timeframe={timeframe}
+              hasSearched={hasSearched}
+              showPriceModal={() => togglePriceModal(true)}
+            />
+          </div>
+        )}
+      </Transition>
 
-            <li className="logout">
-              <a href="/auth/logout">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="app-content">
-        <Transition
-          in={!hasSearched && !timeframe}
-          classNames="welcome-content"
-          timeout={250}
-          unmountOnExit
-        >
-          {state => (
-            <div className={`welcome-content ${state}`}>
-              <Welcome
-                openPriceModal={() => togglePriceModal(true)}
-                isBeta={isBeta}
-              />
-            </div>
-          )}
-        </Transition>
-
-        <Transition
-          in={!!(hasSearched || timeframe)}
-          classNames="mail-list-content"
-          timeout={250}
-          mountOnEnter
-          appear
-        >
-          {state => (
-            <div className={`mail-list-content ${state}`}>
-              <MailList
-                timeframe={timeframe}
-                hasSearched={hasSearched}
-                showPriceModal={() => togglePriceModal(true)}
-              />
-            </div>
-          )}
-        </Transition>
-      </div>
       {showPriceModal ? (
         <Modal
           onPurchase={option => {
@@ -147,6 +73,6 @@ function AuthApp() {
           onClose={() => togglePriceModal(false)}
         />
       ) : null}
-    </>
+    </Template>
   );
 }

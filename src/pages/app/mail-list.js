@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import Tooltip from 'rc-tooltip';
 import { List as VirtualList, AutoSizer } from 'react-virtualized';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import _isArray from 'lodash.isarray';
 
 import ErrorBoundary from '../../components/error-boundary';
@@ -393,7 +393,7 @@ function ErrorScreen({ error, retry }) {
 
 function RevokeTokenInstructions({ style }) {
   return (
-    <div className="revoke-token-instructions" key="token" style={style}>
+    <div className="revoke-token-instructions" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
         <a
@@ -540,7 +540,7 @@ function List({
               } else if (m.type === 'social') {
                 return getSocialItem(m, getSocialContent(unsubCount, style));
               } else if (m.type === 'notice') {
-                return <RevokeTokenInstructions key={m.key} style={style} />;
+                return <RevokeTokenInstructions key={key} style={style} />;
               }
             }}
           />
