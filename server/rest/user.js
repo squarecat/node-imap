@@ -1,5 +1,10 @@
 import auth from './auth';
-import { getUserById, addFreeScan } from '../services/user';
+import {
+  getUserById,
+  addFreeScan,
+  addToUserIgnoreList,
+  removeFromUserIgnoreList
+} from '../services/user';
 
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
@@ -10,7 +15,8 @@ export default app => {
       beta,
       unsubscriptions,
       scans,
-      profileImg
+      profileImg,
+      ignoredSenderList
     } = await getUserById(req.user.id);
     res.send({
       id,
@@ -19,6 +25,7 @@ export default app => {
       beta,
       unsubscriptions,
       profileImg,
+      ignoredSenderList,
       hasScanned: scans ? !!scans.length : false
     });
   });
@@ -53,6 +60,24 @@ export default app => {
       console.log('user-rest: error adding scan to user', productId);
       console.log(err);
       res.status(500).send(err);
+    }
+  });
+  app.patch('/api/me/ignore', auth, async (req, res) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op, value } = body;
+    let newUser;
+    try {
+      if (op === 'add') {
+        newUser = await addToUserIgnoreList(id, value);
+      } else if (op === 'remove') {
+        newUser = await removeFromUserIgnoreList(id, value);
+      } else {
+        console.error(`op not supported `);
+      }
+      res.send(newUser);
+    } catch (err) {
+      console.error(`user-rest: error patching user ${id} with op ${op}`);
     }
   });
 };

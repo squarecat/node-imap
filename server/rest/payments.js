@@ -46,4 +46,17 @@ export default app => {
       });
     }
   });
+  app.post('/api/payments/hook', async (req, res) => {
+    // TODO collect invoice data
+    // const { body } = req;
+    // const { type, data } = body;
+    // if (type === 'invoice.finalized') {
+    //   const { invoice_pdf, metadata } = data;
+    //   const
+
+    // }
+    //invoice.payment_failed
+    // invoice.payment_succeeded
+    res.send('ok');
+  });
 };

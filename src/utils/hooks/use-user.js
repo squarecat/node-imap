@@ -19,6 +19,10 @@ export default globalReducer(
     setHasSearched: (state, hasSearched) => ({
       ...state,
       hasSearched
+    }),
+    setIgnoredSenderList: (state, list) => ({
+      ...state,
+      ignoredSenderList: list
     })
   }
 );

@@ -36,27 +36,12 @@ export default function ScanHistory() {
         <table>
           <tbody>
             {scans.map(scan => {
-              const yesterday = subHours(Date.now(), 24);
               return (
                 <tr key={scan.scannedAt} className="scan-item">
                   <td>{relative(scan.scannedAt)}</td>
                   <td>{tfToString[scan.timeframe]}</td>
                   <td>{`${scan.totalUnsubscribableEmails} emails found`}</td>
-                  <td>
-                    {isAfter(scan.scannedAt, yesterday) ? (
-                      <Button
-                        compact
-                        linkTo="/app"
-                        linkArgs={{ rescan: scan.timeframe }}
-                      >
-                        Re-scan
-                      </Button>
-                    ) : (
-                      <Button compact basic muted>
-                        Invoice
-                      </Button>
-                    )}
-                  </td>
+                  <td>{renderButton()}</td>
                 </tr>
               );
             })}
@@ -65,4 +50,23 @@ export default function ScanHistory() {
       </div>
     </Template>
   );
+}
+
+function renderButton(scan) {
+  const yesterday = subHours(Date.now(), 24);
+  if (isAfter(scan.scannedAt, yesterday)) {
+    return (
+      <Button compact linkTo="/app" linkArgs={{ rescan: scan.timeframe }}>
+        Re-scan
+      </Button>
+    );
+  } else if (scan.receiptUrl) {
+    // TODO
+    return (
+      <Button compact basic muted>
+        Invoice
+      </Button>
+    );
+  }
+  return null;
 }

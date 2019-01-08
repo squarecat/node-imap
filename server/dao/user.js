@@ -1,5 +1,5 @@
 import db, { isoDate } from './db';
-import { encrypt, decrypt } from './encryption';
+import { encrypt, decrypt, hash } from './encryption';
 
 const COL_NAME = 'users';
 const encryptedUnsubCols = [
@@ -236,6 +236,43 @@ export async function addPaidScan(id, scanType) {
     console.log(`users-dao: added users paid scans ${id}`);
   } catch (err) {
     console.error('users-dao: error adding user paid scans');
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function updateIgnoreList(id, { action, value }) {
+  try {
+    const col = await db().collection(COL_NAME);
+    let update = {
+      $set: {
+        lastUpdatedAt: isoDate()
+      }
+    };
+    if (action === 'add') {
+      update = {
+        ...update,
+        $push: {
+          ignoredSenderList: value
+        }
+      };
+    } else if (action === 'remove') {
+      update = {
+        ...update,
+        $pull: {
+          ignoredSenderList: { $in: [value] }
+        }
+      };
+    } else {
+      throw new Error('Operation not supported');
+    }
+    col.updateOne({ id }, update);
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    console.error(
+      `users-dao: error performing ${action} to user ${id} ignore list`
+    );
     console.error(err);
     throw err;
   }

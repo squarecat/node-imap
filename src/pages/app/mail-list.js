@@ -4,6 +4,7 @@ import { List as VirtualList, AutoSizer } from 'react-virtualized';
 import { CSSTransition } from 'react-transition-group';
 import _isArray from 'lodash.isarray';
 
+import { toggleFromIgnoreList } from './ignore';
 import ErrorBoundary from '../../components/error-boundary';
 import UnsubModal from '../../components/unsub-modal';
 import Toggle from '../../components/toggle';
@@ -87,6 +88,16 @@ const mailReducer = (state = [], action) => {
         email.id === action.data.id
           ? { ...email, isLoading: action.data.isLoading }
           : email
+      );
+    }
+    case 'add-ignore': {
+      return state.map(email =>
+        email.id === action.data.id ? { ...email, ignored: true } : email
+      );
+    }
+    case 'remove-ignore': {
+      return state.map(email =>
+        email.id === action.data.id ? { ...email, ignored: false } : email
       );
     }
     default:
@@ -214,7 +225,8 @@ export default ({ timeframe, showPriceModal }) => {
     isConnected,
     addUnsubscribeErrorResponse,
     progress,
-    error
+    error,
+    dispatch
   } = useSocket(() => {
     changeFavicon(false, true);
     setSearchFinished(true);
@@ -326,6 +338,7 @@ export default ({ timeframe, showPriceModal }) => {
             isSearchFinished={isSearchFinished}
             showPriceModal={showPriceModal}
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
+            dispatch={dispatch}
           />
         </ErrorBoundary>
       )}
@@ -470,7 +483,8 @@ function List({
   onUnsubscribe,
   isSearchFinished,
   showPriceModal,
-  addUnsubscribeErrorResponse
+  addUnsubscribeErrorResponse,
+  dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
   const [unsubCount] = useUser(s => s.unsubCount);
@@ -534,6 +548,7 @@ function List({
                       mail={m}
                       onUnsubscribe={onUnsubscribe}
                       setUnsubModal={setUnsubData}
+                      dispatch={dispatch}
                     />
                   </CSSTransition>
                 );
@@ -580,6 +595,9 @@ function getSocialItem(mail, socialContent) {
 }
 
 function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
+  const [user, { setIgnoredSenderList }] = useUser();
+  const ignoredSenderList = user.ignoredSenderList || [];
+
   const isSubscribed = !!m.subscribed;
   let fromName;
   let fromEmail;
@@ -591,6 +609,16 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
     fromName = '';
     fromEmail = m.from;
   }
+  const pureEmail = fromEmail.substr(1).substr(0, fromEmail.length - 2);
+  const isIgnored = ignoredSenderList.includes(pureEmail);
+  const clickIgnore = () => {
+    const newList = isIgnored
+      ? ignoredSenderList.filter(sender => sender !== pureEmail)
+      : [...ignoredSenderList, pureEmail];
+    toggleFromIgnoreList(pureEmail, isIgnored ? 'remove' : 'add');
+    setIgnoredSenderList(newList);
+    return false;
+  };
 
   return (
     <div
@@ -600,7 +628,39 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
-          <span className="from-name">{fromName}</span>
+          <span className="from-name">
+            <Tooltip
+              placement="top"
+              trigger={['hover']}
+              mouseLeaveDelay={0}
+              overlayClassName="tooltip"
+              destroyTooltipOnHide={true}
+              overlay={
+                <span>
+                  {isIgnored
+                    ? 'This sender is on your ignore list'
+                    : 'Click to ignore this sender in future scans'}
+                </span>
+              }
+            >
+              <a
+                className={`add-to-ignore ${isIgnored ? 'ignored' : ''}`}
+                onClick={() => clickIgnore()}
+              >
+                <svg
+                  viewBox="0 0 32 32"
+                  width="15"
+                  height="15"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                >
+                  <path d="M4 16 C1 12 2 6 7 4 12 2 15 6 16 8 17 6 21 2 26 4 31 6 31 12 28 16 25 20 16 28 16 28 16 28 7 20 4 16 Z" />
+                </svg>
+              </a>
+            </Tooltip>
+            {fromName}
+          </span>
           <span className="from-email">{fromEmail}</span>
           <span className="from-date">
             {format(+m.googleDate, mailDateFormat)}

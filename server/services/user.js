@@ -7,7 +7,8 @@ import {
   addScan,
   resolveUnsubscription,
   addPaidScan,
-  updatePaidScan
+  updatePaidScan,
+  updateIgnoreList
 } from '../dao/user';
 
 import { updateCoupon } from './payments';
@@ -123,6 +124,21 @@ export async function addFreeScan(userId, scanType, coupon) {
     await addPaidScanToUser(userId, scanType);
     if (coupon) updateCoupon(coupon);
     return true;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function addToUserIgnoreList(id, email) {
+  try {
+    return updateIgnoreList(id, { action: 'add', value: email });
+  } catch (err) {
+    throw err;
+  }
+}
+export async function removeFromUserIgnoreList(id, email) {
+  try {
+    return updateIgnoreList(id, { action: 'remove', value: email });
   } catch (err) {
     throw err;
   }

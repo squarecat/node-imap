@@ -14,6 +14,7 @@ export default ({ children }) => {
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
+    if (!parentElement) return;
     while (parentElement !== document.body) {
       if (parentElement.classList.contains('settings-dropdown-toggle')) {
         return;
@@ -29,10 +30,11 @@ export default ({ children }) => {
       } else {
         document.body.removeEventListener('click', onClickBody);
       }
+      return () => document.body.removeEventListener('click', onClickBody);
     },
     [showSettings]
   );
-
+  console.warn('render tamplte');
   return (
     <AppLayout>
       <Auth loaded={!!user}>
@@ -65,9 +67,9 @@ export default ({ children }) => {
               <li>
                 <Link to="/app/history/scans">Scan history</Link>
               </li>
-              {/* <li>
-                <Link to="/app/history/unsubscriptions">Unsub history</Link>
-              </li> */}
+              <li>
+                <Link to="/app/ignore">Ignored senders</Link>
+              </li>
               <li className="logout">
                 <a href="/auth/logout">Logout</a>
               </li>

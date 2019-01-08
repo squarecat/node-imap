@@ -369,8 +369,11 @@ pre {
 
 .rc-tooltip {
   background: transparent !important;
-  transform: translateY(-4px);
   opacity: 1 !important;
+}
+
+.rc-tooltip-content {
+  transform: translateY(-7px);
 }
 
 .ReactVirtualized__Grid.ReactVirtualized__List {
@@ -394,4 +397,30 @@ pre {
 }
 .scan-more-text.shown {
   opacity: 1;
+}
+
+.add-to-ignore {
+  position: relative;
+  top: 3px;
+  margin-right: 6px;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.add-to-ignore svg {
+  stroke: #ff5955;
+  fill: none;
+}
+
+.add-to-ignore:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.add-to-ignore.ignored {
+  opacity: 1;
+}
+
+.add-to-ignore.ignored svg {
+  fill: #ffb9b6;
 }

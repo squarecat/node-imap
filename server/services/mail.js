@@ -10,6 +10,7 @@ import subMinutes from 'date-fns/sub_minutes';
 import isAfter from 'date-fns/is_after';
 import subHours from 'date-fns/sub_hours';
 import isBefore from 'date-fns/is_before';
+
 import { refreshAccessToken } from '../auth';
 
 const mailPerSecond = io.meter({
@@ -21,6 +22,7 @@ const trashPerSecond = io.meter({
 
 import { emailStringIsEqual } from '../utils/parsers';
 import { getUnsubscribeImage } from '../dao/user';
+import { isHashEqual } from '../dao/encryption';
 import {
   getUserById,
   addUnsubscriptionToUser,
@@ -105,7 +107,7 @@ export async function scanMail(
     }
     const accessToken = await getAccessToken(user);
     const gmail = new Gmail(accessToken);
-    const { unsubscriptions } = user;
+    const { unsubscriptions, ignoredSenderList } = user;
     const searchStr = getSearchString({ then, now });
     const trashSearchStr = getSearchString({ then, now, query: 'in:trash' });
     let total;
@@ -150,8 +152,8 @@ export async function scanMail(
     let totalEmailsCount = 0;
     let totalUnsubscribableEmailsCount = 0;
     let totalPreviouslyUnsubscribedEmails = 0;
-
     let progress = 0;
+
     onProgress({ progress, total });
 
     const onMailData = (m, options = {}) => {
@@ -160,7 +162,7 @@ export async function scanMail(
       } else {
         mailPerSecond.mark();
       }
-      if (isUnsubscribable(m)) {
+      if (isUnsubscribable(m, ignoredSenderList)) {
         const mail = mapMail(m, options);
         if (mail) {
           const prevUnsubscriptionInfo = hasUnsubscribedAlready(
@@ -316,8 +318,9 @@ export async function addUnsubscribeErrorResponse(
   ]);
 }
 
-function isUnsubscribable(mail = {}) {
+function isUnsubscribable(mail = {}, ignoredSenderList = []) {
   const { id, payload } = mail;
+
   if (!payload) {
     console.error(
       'mail-service: cannot check if unsubscribable, mail object has no payload',
@@ -331,7 +334,10 @@ function isUnsubscribable(mail = {}) {
   }
 
   const { headers = [] } = payload;
-  return headers.some(h => h.name === 'List-Unsubscribe');
+  const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
+  const from = headers.find(h => h.name === 'From').value;
+  const isIgnoredSender = ignoredSenderList.some(sender => sender === from);
+  return hasListUnsubscribe && !isIgnoredSender;
 }
 
 function mapMail(mail, { trash = false } = {}) {
@@ -371,9 +377,8 @@ export function getImage(userId, mailId) {
   return getUnsubscribeImage(userId, mailId);
 }
 
-function getSearchString({ then, now, query = '' }) {
+function getSearchString({ then, query = '' }) {
   const thenStr = format(then, googleDateFormat);
-  // const tomorrowStr = format(addDays(now, 1), googleDateFormat);
   return `after:${thenStr} ${query}`;
 }
 
