@@ -1,9 +1,13 @@
 import { PRICES } from '../components/price-modal';
 
+let gtag;
+if (typeof window !== 'undefined') {
+  gtag = window.gtag;
+}
 export function trackPurchase({ timeframe }) {
   const price = getPrice(timeframe);
-  if (window.gtag) {
-    window.gtag('event', 'purchase', {
+  if (gtag) {
+    gtag('event', 'purchase', {
       event_category: 'scans',
       event_label: timeframe,
       value: price
@@ -12,16 +16,16 @@ export function trackPurchase({ timeframe }) {
 }
 
 export function trackFreeScan() {
-  if (window.gtag) {
-    window.gtag('event', 'free_scan', {
+  if (gtag) {
+    gtag('event', 'free_scan', {
       event_category: 'scans'
     });
   }
 }
 
 export function trackPriceModalOpen() {
-  if (window.gtag) {
-    window.gtag('event', 'begin_checkout', {
+  if (gtag) {
+    gtag('event', 'begin_checkout', {
       event_category: 'scans'
     });
   }

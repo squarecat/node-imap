@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { payments } from 'getconfig';
 import axios from 'axios';
+import countries from './countries.json';
 
 const stripe = Stripe(payments.secretKey);
 
@@ -23,12 +24,12 @@ export async function createPayment({
     } else {
       description = `Payment for ${productLabel} scan`;
     }
-
     const { vatRate, vatAmount } = await getTaxInfo({
-      countryCode: country,
+      country,
       amount: productPrice
     });
-    const newProductPrice = productPrice - vatAmount;
+
+    const newProductPrice = (productPrice - vatAmount).toFixed();
 
     // create invoice line item
     await stripe.invoiceItems.create({
@@ -166,31 +167,39 @@ export async function updateCustomer({ token, customerId, address, name }) {
   }
 }
 
-function getTaxInfo({ amount, countryCode }) {
+function getCountryCode(country) {
+  const countryEntry = countries.find(c => c.name === country);
+  if (!countryEntry) {
+    throw new Error(`Unknown country name ${country}`);
+  }
+  return countryEntry.code;
+}
+async function getTaxInfo({ amount, country }) {
+  const countryCode = getCountryCode(country);
   if (countryCode === 'US') {
     return {
-      priceBeforeVat: amount,
-      priceAfterVat: amount,
       vatRate: 0,
       vatAmount: 0
     };
   }
   try {
-    const response = axios.get('https://apilayer.net/api/price', {
-      access_key: payments.taxKey,
-      amount,
-      country_code: countryCode
-    });
-    console.log(response);
-    const { price_excl_vat, price_incl_vat, vat_rate } = response;
+    const url = [
+      'http://apilayer.net/api/price?',
+      `access_key=${payments.vatKey}`,
+      `amount=${amount}`,
+      `country_code=${countryCode}`
+    ].join('&');
+    const response = await axios.get(url);
+    const { vat_rate } = response.data;
     return {
-      priceBeforeVat: price_excl_vat,
-      priceAfterVat: price_incl_vat,
       vatRate: vat_rate,
-      vatAmount: price_incl_vat - price_excl_vat
+      vatAmount: amount - amount / (vat_rate / 100 + 1)
     };
   } catch (err) {
     console.error(err);
-    throw err;
+    return {
+      vatRate: 0,
+      vatAmount: 0
+    };
   }
 }
