@@ -6,6 +6,8 @@ import Button from '../components/btn';
 import ModalClose from './modal/modal-close';
 import CheckoutForm, { getCoupon } from './checkout-form';
 
+import * as track from '../utils/analytics';
+
 import './modal.css';
 
 export const PRICES = [
@@ -39,6 +41,7 @@ export default ({ onClose, onPurchase }) => {
   // on mount
   useEffect(() => {
     setShown(true);
+    track.trackPriceModalOpen();
     document.addEventListener('keydown', handleKeydown, false);
     return function cleanup() {
       document.removeEventListener('keydown', handleKeydown);
@@ -53,8 +56,10 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(() => {
       if (selected === 'free') {
+        track.trackFreeScan();
         return onPurchase('3d');
       }
+      track.trackPurchase({ timeframe: selected });
       return onPurchase(selected);
     }, 300);
   };
