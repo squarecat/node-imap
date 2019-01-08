@@ -1,26 +1,30 @@
 import { PRICES } from '../components/price-modal';
 
-const gtag = window.gtag || {};
-
 export function trackPurchase({ timeframe }) {
   const price = getPrice(timeframe);
-  gtag('event', 'purchase', {
-    event_category: 'scans',
-    event_label: timeframe,
-    value: price
-  });
+  if (window.gtag) {
+    window.gtag('event', 'purchase', {
+      event_category: 'scans',
+      event_label: timeframe,
+      value: price
+    });
+  }
 }
 
 export function trackFreeScan() {
-  gtag('event', 'free_scan', {
-    event_category: 'scans'
-  });
+  if (window.gtag) {
+    window.gtag('event', 'free_scan', {
+      event_category: 'scans'
+    });
+  }
 }
 
 export function trackPriceModalOpen() {
-  gtag('event', 'begin_checkout', {
-    event_category: 'scans'
-  });
+  if (window.gtag) {
+    window.gtag('event', 'begin_checkout', {
+      event_category: 'scans'
+    });
+  }
 }
 
 // export function trackLogin({ method = 'Google' }) {
