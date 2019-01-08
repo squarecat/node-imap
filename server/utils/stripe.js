@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { payments } from 'getconfig';
+import axios from 'axios';
 
 const stripe = Stripe(payments.secretKey);
 
@@ -9,8 +10,10 @@ export async function createPayment({
   quantity = 1,
   customerId,
   coupon,
+  address,
   gift = false
 }) {
+  const { country } = address;
   try {
     let description;
     if (gift) {
@@ -20,11 +23,18 @@ export async function createPayment({
     } else {
       description = `Payment for ${productLabel} scan`;
     }
+
+    const { vatRate, vatAmount } = await getTaxInfo({
+      countryCode: country,
+      amount: productPrice
+    });
+    const newProductPrice = productPrice - vatAmount;
+
     // create invoice line item
     await stripe.invoiceItems.create({
       customer: customerId,
       quantity,
-      unit_amount: productPrice,
+      unit_amount: newProductPrice,
       currency: 'usd',
       description
     });
@@ -34,6 +44,7 @@ export async function createPayment({
       customer: customerId,
       billing: 'charge_automatically',
       auto_advance: true,
+      tax_percent: vatRate,
       metadata: {
         coupon
       }
@@ -150,6 +161,35 @@ export async function updateCustomer({ token, customerId, address, name }) {
     return { id };
   } catch (err) {
     console.error('stripe: failed to update customer');
+    console.error(err);
+    throw err;
+  }
+}
+
+function getTaxInfo({ amount, countryCode }) {
+  if (countryCode === 'US') {
+    return {
+      priceBeforeVat: amount,
+      priceAfterVat: amount,
+      vatRate: 0,
+      vatAmount: 0
+    };
+  }
+  try {
+    const response = axios.get('https://apilayer.net/api/price', {
+      access_key: payments.taxKey,
+      amount,
+      country_code: countryCode
+    });
+    console.log(response);
+    const { price_excl_vat, price_incl_vat, vat_rate } = response;
+    return {
+      priceBeforeVat: price_excl_vat,
+      priceAfterVat: price_incl_vat,
+      vatRate: vat_rate,
+      vatAmount: price_incl_vat - price_excl_vat
+    };
+  } catch (err) {
     console.error(err);
     throw err;
   }
