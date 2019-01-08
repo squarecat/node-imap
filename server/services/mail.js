@@ -7,8 +7,17 @@ import format from 'date-fns/format';
 import emailAddresses from 'email-addresses';
 import io from '@pm2/io';
 import subMinutes from 'date-fns/sub_minutes';
+import isAfter from 'date-fns/is_after';
+import subHours from 'date-fns/sub_hours';
 import isBefore from 'date-fns/is_before';
 import { refreshAccessToken } from '../auth';
+
+const mailPerSecond = io.meter({
+  name: 'mail/sec'
+});
+const trashPerSecond = io.meter({
+  name: 'trash/sec'
+});
 
 import { emailStringIsEqual } from '../utils/parsers';
 import { getUnsubscribeImage } from '../dao/user';
@@ -34,14 +43,6 @@ import {
   addResolvedUnsubscription,
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
-
-const mailPerMinute = io.meter({
-  name: 'mail/min'
-});
-
-const trashPerMinute = io.meter({
-  name: 'trash/min'
-});
 
 const googleDateFormat = 'YYYY/MM/DD';
 const estimateTimeframes = ['3d', '1w'];
@@ -155,9 +156,9 @@ export async function scanMail(
 
     const onMailData = (m, options = {}) => {
       if (options.trash) {
-        trashPerMinute.mark();
+        trashPerSecond.mark();
       } else {
-        mailPerMinute.mark();
+        mailPerSecond.mark();
       }
       if (isUnsubscribable(m)) {
         const mail = mapMail(m, options);
@@ -475,9 +476,17 @@ function getUnsubValue(str) {
   return str;
 }
 
+// a scan is available if it has not yet been
+// completed, or it was completed in the last
+// 24 hours
 function hasPaidScanAvailable(user, scanType) {
+  const yesterday = subHours(Date.now(), 24);
   if (scanType === '3d' || user.beta) return true;
-  return (user.paidScans || []).some(
-    s => s.scanType === scanType && !s.performed
-  );
+  return (user.paidScans || []).some(s => {
+    if (s.scanType === scanType) {
+      const performedWithin24Hrs = isAfter(s.paidAt, yesterday);
+      return !s.performed || performedWithin24Hrs;
+    }
+    return false;
+  });
 }
