@@ -41,7 +41,7 @@ export default function ScanHistory() {
                   <td>{relative(scan.scannedAt)}</td>
                   <td>{tfToString[scan.timeframe]}</td>
                   <td>{`${scan.totalUnsubscribableEmails} emails found`}</td>
-                  <td>{renderButton()}</td>
+                  <td>{renderButton(scan)}</td>
                 </tr>
               );
             })}
