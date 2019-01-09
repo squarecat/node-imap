@@ -3,6 +3,7 @@ import Tooltip from 'rc-tooltip';
 import { List as VirtualList, AutoSizer } from 'react-virtualized';
 import { CSSTransition } from 'react-transition-group';
 import _isArray from 'lodash.isarray';
+import AnimatedNumber from 'react-animated-number';
 
 import { toggleFromIgnoreList } from './ignore';
 import ErrorBoundary from '../../components/error-boundary';
@@ -218,6 +219,7 @@ function useSocket(callback) {
 export default ({ timeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
   const [user, { setHasSearched }] = useUser();
+
   const {
     mail,
     fetchMail,
@@ -340,6 +342,7 @@ export default ({ timeframe, showPriceModal }) => {
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
             dispatch={dispatch}
           />
+          {getSocialContent(user.unsubCount)}
         </ErrorBoundary>
       )}
     </>
@@ -512,11 +515,7 @@ function List({
     })
     .reduce((out, mailItem, i) => {
       if (isTweetPosition(i, mail.length)) {
-        return [
-          ...out,
-          { type: 'mail', ...mailItem },
-          { id: 'social', type: 'social' }
-        ];
+        return [...out, { type: 'mail', ...mailItem }];
       }
       return [...out, { type: 'mail', ...mailItem }];
     }, []);
@@ -529,7 +528,7 @@ function List({
         <div className="mail-list">
           {/* <TransitionGroup component="div"> */}
           <VirtualList
-            height={height}
+            height={height - 90}
             rowHeight={120}
             rowCount={sortedMail.length}
             width={width}
@@ -552,8 +551,6 @@ function List({
                     />
                   </CSSTransition>
                 );
-              } else if (m.type === 'social') {
-                return getSocialItem(m, getSocialContent(unsubCount, style));
               } else if (m.type === 'notice') {
                 return <RevokeTokenInstructions key={key} style={style} />;
               }
@@ -583,14 +580,6 @@ function List({
         </div>
       )}
     </AutoSizer>
-  );
-}
-
-function getSocialItem(mail, socialContent) {
-  return (
-    <CSSTransition key="social" timeout={500} classNames="mail-list-item">
-      {socialContent}
-    </CSSTransition>
   );
 }
 
@@ -715,7 +704,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
   );
 }
 
-function getSocialContent(unsubCount = 0, style) {
+function getSocialContent(unsubCount = 0) {
   const socialOutput = progressTweets.reduce(
     (out, progress) => {
       if (unsubCount >= progress.val) {
@@ -728,34 +717,33 @@ function getSocialContent(unsubCount = 0, style) {
     },
     { text: null, tweet: null }
   );
+
   return (
-    <div className="mail-list-item mail-list-social" style={style}>
-      <div className="mail-item">
+    <div className={`mail-list-social ${unsubCount < 3 ? 'collapsed' : ''}`}>
+      <div className="social-item">
         <div className="avatar">
-          <svg viewBox="0 0 64 64" width="32" height="32">
-            <path
-              strokeWidth="0"
-              fill="currentColor"
-              d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
-            />
-          </svg>
+          <AnimatedNumber value={unsubCount} stepPrecision={1} duration={300} />
         </div>
-        <div className="social-content">{socialOutput.text}</div>
-        <div className="actions">
-          <a
-            target="_"
-            href={`https://twitter.com/intent/tweet?text=${socialOutput.tweet}`}
-            className="btn compact"
-          >
-            <svg viewBox="0 0 64 64" width="16" height="16">
-              <path
-                strokeWidth="0"
-                fill="currentColor"
-                d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
-              />
-            </svg>
-            Tweet progress
-          </a>
+        <div className="social-switch">
+          <div className="social-content">{socialOutput.text}</div>
+          <div className="actions">
+            <a
+              target="_"
+              href={`https://twitter.com/intent/tweet?text=${
+                socialOutput.tweet
+              }`}
+              className="btn compact"
+            >
+              <svg viewBox="0 0 64 64" width="16" height="16">
+                <path
+                  strokeWidth="0"
+                  fill="currentColor"
+                  d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
+                />
+              </svg>
+              Tweet progress
+            </a>
+          </div>
         </div>
       </div>
     </div>

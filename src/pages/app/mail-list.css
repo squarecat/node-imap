@@ -245,33 +245,6 @@ pre {
   left: 3px;
 }
 
-.mail-list-social {
-  height: 120px;
-}
-
-.mail-list-social .avatar {
-  width: 100px;
-  padding-left: 20px;
-}
-
-.mail-list-social .avatar path {
-  fill: #ffc6c2;
-}
-
-.mail-list-social .actions {
-  min-width: 210px;
-  padding-left: 20px;
-}
-
-.mail-list-social .actions .btn {
-  width: 100%;
-  margin: 0;
-}
-
-.mail-list-social .actions .btn svg {
-  margin-right: 8px;
-}
-
 .social-content {
   padding: 0 20px;
 }
@@ -322,15 +295,9 @@ pre {
     font-size: 12px;
     line-height: 18px;
   }
-  .mail-list-social .avatar {
-    padding: 0;
-  }
   .mail-list-social .actions {
     min-width: 90px;
     padding: 0;
-  }
-  .mail-list-social .actions .btn svg {
-    display: none;
   }
   .mail-list-social .actions .btn {
     font-size: 14px;
@@ -423,4 +390,138 @@ pre {
 
 .add-to-ignore.ignored svg {
   fill: #ffb9b6;
+}
+
+.mail-list-social {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fffbfb;
+  border-top: 1px solid #ffd8d5;
+  z-index: 9;
+  height: 90px;
+  transform: translateY(0);
+  transition: transform 250ms ease-in-out;
+}
+
+.mail-list-social.collapsed {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.social-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  font-size: 16px;
+  padding: 0 15px;
+}
+
+.mail-list-social .avatar {
+  position: relative;
+  width: 100px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-weight: bold;
+  margin-right: 10px;
+  color: #ffb9b6;
+  min-width: 100px;
+}
+
+.mail-list-social .avatar:before {
+  content: '';
+  background-image: url('../../assets/envelope.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100px auto;
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.mail-list-social .avatar span {
+  position: relative;
+  top: 3px;
+}
+
+.mail-list-social .actions {
+  min-width: 210px;
+  padding-left: 20px;
+}
+
+.mail-list-social .actions .btn {
+  width: 100%;
+  margin: 0;
+}
+
+.mail-list-social .actions .btn svg {
+  margin-right: 8px;
+}
+
+.social-switch {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 700px) {
+  .social-switch {
+    flex-direction: column;
+  }
+  .mail-list-social .actions {
+    padding-left: 20px;
+    padding-top: 5px;
+    margin: 0;
+  }
+  .mail-list-social .actions a {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    text-align: left;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 500px) {
+  .mail-list-social .avatar {
+    margin-right: 0;
+  }
+  .mail-list-social .avatar:before {
+    background-size: 100px auto;
+  }
+  .btn {
+    line-height: 20px;
+  }
+  .social-content {
+    padding: 0 0px 0 10px;
+  }
+  .revoke-token-instructions {
+    margin-top: 40px;
+  }
+  .mail-list-social .actions {
+    padding-left: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .mail-list-social .avatar:before {
+    background-size: 70px auto;
+  }
+  .mail-list-social .avatar {
+    font-size: 30px;
+    min-width: 60px;
+  }
 }

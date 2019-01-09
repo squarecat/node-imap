@@ -1,5 +1,6 @@
 yarn run build
 yarn run build:server
+cp server/utils/countries.json build/utils/countries.json
 # zip
 tar cf leavemealone.tar.gz build public config index.js package.json
 # deploy
