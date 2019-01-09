@@ -1,5 +1,7 @@
 import Stripe from 'stripe';
 import { payments } from 'getconfig';
+import axios from 'axios';
+import countries from './countries.json';
 
 const stripe = Stripe(payments.secretKey);
 
@@ -9,8 +11,10 @@ export async function createPayment({
   quantity = 1,
   customerId,
   coupon,
+  address,
   gift = false
 }) {
+  const { country } = address;
   try {
     let description;
     if (gift) {
@@ -20,11 +24,18 @@ export async function createPayment({
     } else {
       description = `Payment for ${productLabel} scan`;
     }
+    const { vatRate, vatAmount } = await getTaxInfo({
+      country,
+      amount: productPrice
+    });
+
+    const newProductPrice = (productPrice - vatAmount).toFixed();
+
     // create invoice line item
     await stripe.invoiceItems.create({
       customer: customerId,
       quantity,
-      unit_amount: productPrice,
+      unit_amount: newProductPrice,
       currency: 'usd',
       description
     });
@@ -34,6 +45,7 @@ export async function createPayment({
       customer: customerId,
       billing: 'charge_automatically',
       auto_advance: true,
+      tax_percent: vatRate,
       metadata: {
         coupon
       }
@@ -152,5 +164,42 @@ export async function updateCustomer({ token, customerId, address, name }) {
     console.error('stripe: failed to update customer');
     console.error(err);
     throw err;
+  }
+}
+
+function getCountryCode(country) {
+  const countryEntry = countries.find(c => c.name === country);
+  if (!countryEntry) {
+    throw new Error(`Unknown country name ${country}`);
+  }
+  return countryEntry.code;
+}
+async function getTaxInfo({ amount, country }) {
+  const countryCode = getCountryCode(country);
+  if (countryCode === 'US') {
+    return {
+      vatRate: 0,
+      vatAmount: 0
+    };
+  }
+  try {
+    const url = [
+      'http://apilayer.net/api/price?',
+      `access_key=${payments.vatKey}`,
+      `amount=${amount}`,
+      `country_code=${countryCode}`
+    ].join('&');
+    const response = await axios.get(url);
+    const { vat_rate } = response.data;
+    return {
+      vatRate: vat_rate,
+      vatAmount: amount - amount / (vat_rate / 100 + 1)
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      vatRate: 0,
+      vatAmount: 0
+    };
   }
 }

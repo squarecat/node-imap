@@ -85,6 +85,7 @@ export async function createPaymentForUser({
       customerId = id;
     }
     payment = await createPayment({
+      address,
       customerId: customerId,
       productPrice: price,
       productLabel: label,

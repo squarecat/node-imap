@@ -1,6 +1,3 @@
-import axios from 'axios';
-import { payments } from 'getconfig';
-
 import auth from './auth';
 
 import * as PaymentService from '../services/payments';

@@ -8,6 +8,7 @@ if (process.env.NODE_ENV !== 'development') {
   require('@babel/polyfill');
   require('@babel/register');
   App = require('./server/index').default;
+  // App = require('./build/index').default;
 }
 
 App.start();

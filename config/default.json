@@ -23,7 +23,8 @@
   },
   "payments": {
     "publishableKey": "pk_test_td6LkJVGPINUdmgEnbonAGNk",
-    "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ"
+    "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ",
+    "vatKey": "e53a4aa7b7f9d0aad2b32a22290d1753"
   },
   "urls": {
     "roadmap": "https://trello.com/b/QvJsEk2F",

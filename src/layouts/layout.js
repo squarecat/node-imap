@@ -37,6 +37,7 @@ const Layout = ({ page, children }) => (
         siteName
       } = data.site.siteMetadata;
       const pageTitle = page ? `${page} | ${siteName}` : title;
+      console.log('layout');
       return (
         <>
           <Helmet>
@@ -55,7 +56,7 @@ const Layout = ({ page, children }) => (
               href={favicon}
               id="dynamic-favicon"
             />
-            {/* facebook open graph tags */}
+
             <meta property="og:locale" content="en_US" />
             <meta property="og:image" content={`${baseUrl}${metaImage}`} />
             <meta
@@ -68,7 +69,6 @@ const Layout = ({ page, children }) => (
             <meta property="og:description" content={description} />
             <meta property="og:site_name" content={siteName} />
 
-            {/* twitter card tags additive with the og: tags */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:domain" value={baseUrl} />
             <meta name="twitter:title" value={pageTitle} />

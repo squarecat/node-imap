@@ -15,5 +15,6 @@
 }
 
 .scan-item td {
-  padding: 20px;
+  padding: 5px 20px;
+  height: 65px;
 }

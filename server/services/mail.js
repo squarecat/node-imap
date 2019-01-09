@@ -336,7 +336,16 @@ function isUnsubscribable(mail = {}, ignoredSenderList = []) {
   const { headers = [] } = payload;
   const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
   const from = headers.find(h => h.name === 'From').value;
-  const isIgnoredSender = ignoredSenderList.some(sender => sender === from);
+  let pureFromEmail;
+  if (from.match(/^.*<.*>/)) {
+    const [, , email] = /^(.*)<(.*)>/.exec(from);
+    pureFromEmail = email;
+  } else {
+    pureFromEmail = from;
+  }
+  const isIgnoredSender = ignoredSenderList.some(
+    sender => sender === pureFromEmail
+  );
   return hasListUnsubscribe && !isIgnoredSender;
 }
 
