@@ -76,11 +76,14 @@ const IndexPage = () => {
                 <img src={girlLogo} alt="girl-logo" className="girl-logo" />
               </span>
             </div>
-            <h1 className="title">Leave Me Alone!</h1>
+            <h1 className="title">Leave Me Alone</h1>
 
             <p className="catchy-tagline">
+              A Privacy Focused Email Unsubscription Service
+            </p>
+            <p>
               Take back control of your inbox by telling subscription spammers
-              to leave you alone!
+              to leave you alone.
             </p>
             <a
               href="/login"
@@ -312,6 +315,13 @@ const IndexPage = () => {
         </div>
       </div>
       <Footer />
+      <div className="makerads-container">
+        <p>Other indie made products we support</p>
+        <iframe
+          style={{ border: 0, width: '320px', height: '144px' }}
+          src="https://makerads.xyz/ad"
+        />
+      </div>
     </Layout>
   );
 };
