@@ -106,6 +106,7 @@ const PricingScreen = ({
     valid: null
   });
   const [prices, setPrices] = useState(PRICES);
+  const [isPaymentError, setPaymentError] = useState(false);
   // const [isPaymentRequired, setPaymentRequired] = useState(false);
 
   useEffect(
@@ -123,6 +124,16 @@ const PricingScreen = ({
     },
     [couponData.valid]
   );
+
+  const onPurchaseSuccess = selected => {
+    setPaymentError(false);
+    onClickPurchase(selected);
+  };
+
+  const onPurchaseFailed = err => {
+    console.error('purchase failed', err);
+    setPaymentError(err);
+  };
 
   const applyCoupon = async coupon => {
     try {
@@ -186,6 +197,12 @@ const PricingScreen = ({
             </a>
           ))}
         </div>
+        {isPaymentError ? (
+          <p className="model-error">
+            Something went wrong with your payment. You have not been charged.
+            Please try again or contact support.
+          </p>
+        ) : null}
         <div className="estimates">
           <p className="modal-text--small">
             Not sure what package is best for you? Let us{' '}
@@ -278,7 +295,8 @@ const PricingScreen = ({
             isBeta,
             prices,
             couponData,
-            onClickPurchase
+            onPurchaseSuccess,
+            onPurchaseFailed
           })}
         </div>
       </div>
@@ -291,7 +309,8 @@ function getPaymentButton({
   isBeta,
   prices,
   couponData,
-  onClickPurchase
+  onPurchaseSuccess,
+  onPurchaseFailed
 }) {
   let isFree = false;
   if (selected === 'free' || isBeta) {
@@ -309,7 +328,7 @@ function getPaymentButton({
       await addPaidScan(selected, couponData.coupon);
     } catch (_) {
     } finally {
-      onClickPurchase(selected);
+      onPurchaseSuccess(selected);
       setLoading(false);
     }
   };
@@ -321,7 +340,7 @@ function getPaymentButton({
         compact={true}
         onClick={() => {
           if (selected === 'free' || isBeta) {
-            onClickPurchase(selected, isBeta);
+            onPurchaseSuccess(selected, isBeta);
           } else {
             freePurchase();
           }
@@ -335,10 +354,8 @@ function getPaymentButton({
   return (
     <CheckoutForm
       coupon={couponData.coupon}
-      onCheckoutFailed={() => {
-        console.error('Checkout failed, what do?');
-      }}
-      onCheckoutComplete={() => onClickPurchase(selected)}
+      onCheckoutFailed={err => onPurchaseFailed(err)}
+      onCheckoutComplete={() => onPurchaseSuccess(selected)}
       selected={prices.find(s => s.value === selected)}
     />
   );

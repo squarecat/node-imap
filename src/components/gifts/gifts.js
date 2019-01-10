@@ -11,11 +11,18 @@ export default ({ prices }) => {
   const [isCouponLoading, setCouponLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isQuantityShown, setQuantityShown] = useState(false);
+  const [isPaymentError, setPaymentError] = useState(false);
 
   const onCheckoutComplete = ({ couponData }) => {
+    setPaymentError(false);
     setCouponData(couponData);
     setQuantityShown(false);
     setQuantity(1);
+  };
+
+  const onPurchaseFailed = err => {
+    console.error('purchase failed', err);
+    setPaymentError(err);
   };
 
   return (
@@ -28,14 +35,18 @@ export default ({ prices }) => {
         <GiftCheckout
           key={p.value}
           setCouponLoading={val => setCouponLoading(val)}
-          onCheckoutFailed={() => {
-            console.error('Checkout failed, what do?');
-          }}
+          onCheckoutFailed={err => onPurchaseFailed(err)}
           onCheckoutComplete={data => onCheckoutComplete(data)}
           selected={p}
           quantity={quantity}
         />
       ))}
+      {isPaymentError ? (
+        <p className="gifts-payment-error">
+          Something went wrong with your payment. You have not been charged.
+          Please try again or contact support.
+        </p>
+      ) : null}
       <a className="link add-quantity" onClick={() => setQuantityShown(true)}>
         Want to buy more than 1 scan?
       </a>
