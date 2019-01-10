@@ -6,6 +6,7 @@
   justify-content: center;
   background-color: #fddbd7;
   transition: background-color 600ms ease-in-out;
+  padding: 10px;
 }
 
 .hold-onto-your-butts-we-are-logging-in.active {
@@ -13,7 +14,8 @@
 }
 
 .login-boxy-box {
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
   background-color: white;
   padding: 25px;
   border-radius: 7px;
@@ -87,7 +89,8 @@
 
 .login-me-in-dammit {
   display: inline-block;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   margin: 10px 0;
   text-decoration: none;
 }
