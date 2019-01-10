@@ -30,5 +30,8 @@
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf"
+  },
+  "analytics": {
+    "gaTrackingId": "UA-129815670-1"
   }
 }

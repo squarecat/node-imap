@@ -4741,11 +4741,13 @@ gatsby-plugin-create-client-paths@^2.0.2:
   dependencies:
     "@babel/runtime" "^7.0.0"
 
-gatsby-plugin-google-analytics@^2.0.7:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-google-analytics/-/gatsby-plugin-google-analytics-2.0.8.tgz#bef7913726e70f03533c4d14bfc73f8bd73550e0"
+gatsby-plugin-google-gtag@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-google-gtag/-/gatsby-plugin-google-gtag-1.0.8.tgz#16519b63232f08c5996acc010420f5d50ab8f00f"
+  integrity sha512-RnWy+SWi4HOUdAZ4AiSZu1xRRDongYrHHhdVlvqYcOpOO5i/AFDBgsfhHur/70q/XnC+Nb76OmCX4rG+TogTCg==
   dependencies:
     "@babel/runtime" "^7.0.0"
+    minimatch "^3.0.4"
 
 gatsby-plugin-manifest@^2.0.5:
   version "2.0.12"
