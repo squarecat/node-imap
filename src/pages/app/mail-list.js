@@ -9,6 +9,7 @@ import { toggleFromIgnoreList } from './ignore';
 import ErrorBoundary from '../../components/error-boundary';
 import UnsubModal from '../../components/unsub-modal';
 import Toggle from '../../components/toggle';
+import IgnoreIcon from '../../components/ignore-icon';
 import useUser from '../../utils/hooks/use-user';
 
 import format from 'date-fns/format';
@@ -632,20 +633,8 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
                 </span>
               }
             >
-              <a
-                className={`add-to-ignore ${isIgnored ? 'ignored' : ''}`}
-                onClick={() => clickIgnore()}
-              >
-                <svg
-                  viewBox="0 0 32 32"
-                  width="15"
-                  height="15"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                >
-                  <path d="M4 16 C1 12 2 6 7 4 12 2 15 6 16 8 17 6 21 2 26 4 31 6 31 12 28 16 25 20 16 28 16 28 16 28 7 20 4 16 Z" />
-                </svg>
+              <a onClick={() => clickIgnore()}>
+                <IgnoreIcon ignored={isIgnored} />
               </a>
             </Tooltip>
             {fromName}
@@ -673,6 +662,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
             <Toggle
               status={isSubscribed}
               loading={m.isLoading}
+              disabled={isIgnored}
               onChange={() => onUnsubscribe(m)}
             />
           ) : (
