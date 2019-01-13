@@ -19,9 +19,10 @@ export default app => {
   });
 
   app.post('/api/checkout/:productId/:coupon?', auth, async (req, res) => {
-    const { user } = req;
+    const { user, cookies } = req;
     const { productId, coupon } = req.params;
     const { token, address, name } = req.body;
+    const { referrer } = cookies;
     try {
       await PaymentService.createPaymentForUser({
         user: user,
@@ -29,7 +30,8 @@ export default app => {
         coupon,
         token,
         address,
-        name
+        name,
+        referrer
       });
       return res.send({
         status: 'success'
@@ -44,9 +46,9 @@ export default app => {
     }
   });
   app.post('/api/payments/hook', async (req, res) => {
-    // TODO collect invoice data
-    // const { body } = req;
-    // const { type, data } = body;
+    const { body } = req;
+    const { type, data } = body;
+    debugger;
     // if (type === 'invoice.finalized') {
     //   const { invoice_pdf, metadata } = data;
     //   const

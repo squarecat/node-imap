@@ -31,6 +31,14 @@ export function trackPriceModalOpen() {
   }
 }
 
+export function trackReferralModalOpen() {
+  if (gtag) {
+    gtag('event', 'open_referral', {
+      event_category: 'referral'
+    });
+  }
+}
+
 // export function trackLogin({ method = 'Google' }) {
 //   gtag('event', 'login', {
 //     method,

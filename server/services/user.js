@@ -8,12 +8,13 @@ import {
   resolveUnsubscription,
   addPaidScan,
   updatePaidScan,
-  updateIgnoreList
+  updateIgnoreList,
+  getUserByReferralCode
 } from '../dao/user';
 
 import { updateCoupon } from './payments';
-
 import { addUserToStats } from './stats';
+import { addReferralToReferrer } from './referral';
 
 export async function getUserById(id) {
   try {
@@ -28,16 +29,26 @@ export async function getUserById(id) {
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
-    const { id, emails, photos = [] } = userData;
+    const { id, emails, referralCode, photos = [] } = userData;
+
     const profileImg = photos.length ? photos[0].value : null;
     const { value: email } = emails.find(e => e.type === 'account');
     let user = await getUser(id);
     if (!user) {
+      let referredBy = null;
+      if (referralCode) {
+        const { id: referralUserId } = await getUserByReferralCode(
+          referralCode
+        );
+        await addReferralToReferrer(referralUserId, { userId: id });
+        referredBy = referralUserId;
+      }
       user = await createUser({
         id,
         email,
         profileImg,
         keys,
+        referredBy,
         token: v4()
       });
       addUserToStats();
@@ -142,4 +153,17 @@ export async function removeFromUserIgnoreList(id, email) {
   } catch (err) {
     throw err;
   }
+}
+
+export async function getReferralStats(id) {
+  try {
+    const { referralCode, referrals, referralBalance } = await getUserById(id);
+    return { referralCode, referrals, referralBalance };
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function creditUserAccount(id, { amount }) {
+  return updateUser(id, { $inc: { referralBalance: amount } });
 }

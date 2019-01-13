@@ -402,7 +402,7 @@ pre {
   right: 0;
   background-color: #fffbfb;
   border-top: 1px solid #ffd8d5;
-  z-index: 9;
+  z-index: 8;
   height: 90px;
   transform: translateY(0);
   transition: transform 250ms ease-in-out;

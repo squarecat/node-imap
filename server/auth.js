@@ -17,16 +17,22 @@ const googleStrategy = new GoogleStrategy(
   {
     clientID: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
-    callbackURL: google.redirect
+    callbackURL: google.redirect,
+    passReqToCallback: true
   },
-  async function(accessToken, refreshToken, params, profile, done) {
+  async function(req, accessToken, refreshToken, params, profile, done) {
+    const { cookies } = req;
+    const { referrer } = cookies;
     const { expires_in } = params;
-    const user = await createOrUpdateUserFromGoogle(profile, {
-      refreshToken,
-      accessToken,
-      expires: addSeconds(new Date(), expires_in),
-      expiresIn: expires_in
-    });
+    const user = await createOrUpdateUserFromGoogle(
+      { ...profile, referralCode: referrer },
+      {
+        refreshToken,
+        accessToken,
+        expires: addSeconds(new Date(), expires_in),
+        expiresIn: expires_in
+      }
+    );
     done(null, { ...user });
   }
 );

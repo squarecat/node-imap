@@ -19,7 +19,7 @@ export default ({
   linkArgs = {},
   className: cn
 }) => {
-  const className = cx(`btn ${cn}`, {
+  const className = cx(`btn ${cn ? cn : ''}`, {
     loading,
     compact,
     centered,

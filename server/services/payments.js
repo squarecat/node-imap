@@ -6,6 +6,7 @@ import {
   updateCustomer
 } from '../utils/stripe';
 import { addPaidScanToUser, getUserById } from '../services/user';
+import { updateReferralOnReferrer } from '../services/referral';
 import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
 import { updateUser } from '../dao/user';
 
@@ -52,7 +53,7 @@ export async function createPaymentForUser({
 }) {
   let payment;
   const { id: userId } = user;
-  let { customerId } = await getUserById(userId);
+  let { customerId, referredBy } = await getUserById(userId);
   const { price: amount, label } = getProduct(productId);
   let price = amount;
   let couponObject;
@@ -96,6 +97,11 @@ export async function createPaymentForUser({
       customerId
     });
 
+    updateReferralOnReferrer(referredBy, {
+      userId: userId,
+      scanType: label,
+      price
+    });
     addPaidScanToUser(userId, productId);
     addPaymentToStats({ price: price / 100 });
     if (couponObject) {

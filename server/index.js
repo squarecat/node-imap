@@ -4,6 +4,7 @@ import connectMongo from 'connect-mongo';
 import http from 'http';
 import path from 'path';
 import config from 'getconfig';
+import cookieParser from 'cookie-parser';
 
 import userApi from './rest/user';
 import auth from './auth';
@@ -29,6 +30,7 @@ const MongoStore = connectMongo(session);
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.errorHandler());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded());
 app.use(
   session({
@@ -61,6 +63,13 @@ app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
 app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
 
+app.get('/r/:code', (req, res) => {
+  // make sure only the first referrer gets the gold
+  if (!req.cookies.referrer) {
+    res.cookie('referrer', req.params.code, { maxAge: 900000 });
+  }
+  res.redirect('/');
+});
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {
