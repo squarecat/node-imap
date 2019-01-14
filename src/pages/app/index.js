@@ -26,28 +26,25 @@ export default function App({ location = {} } = {}) {
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
   const [user] = useUser();
-  const { hasSearched, beta: isBeta } = user;
+  const { hasScanned } = user;
 
   return (
     <Template>
       <Transition
-        in={!hasSearched && !timeframe}
+        in={!hasScanned && !timeframe}
         classNames="welcome-content"
         timeout={250}
         unmountOnExit
       >
         {state => (
           <div className={`welcome-content ${state}`}>
-            <Welcome
-              openPriceModal={() => togglePriceModal(true)}
-              isBeta={isBeta}
-            />
+            <Welcome openPriceModal={() => togglePriceModal(true)} />
           </div>
         )}
       </Transition>
 
       <Transition
-        in={!!(hasSearched || timeframe)}
+        in={!!(hasScanned || timeframe)}
         classNames="mail-list-content"
         timeout={250}
         mountOnEnter
@@ -57,7 +54,7 @@ export default function App({ location = {} } = {}) {
           <div className={`mail-list-content ${state}`}>
             <MailList
               timeframe={timeframe}
-              hasSearched={hasSearched}
+              hasSearched={hasScanned}
               showPriceModal={() => togglePriceModal(true)}
             />
           </div>

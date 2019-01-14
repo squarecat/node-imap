@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'gatsby';
 
+import ErrorBoundary from '../../components/error-boundary';
 import ReferralModal from '../../components/referral-modal';
 import ReminderModal from '../../components/reminder-modal';
 import AppLayout from '../../layouts/app-layout';
@@ -161,7 +162,9 @@ export default ({ children }) => {
             </div>
           </div>
         </div>
-        <div className="app-content">{children}</div>
+        <ErrorBoundary>
+          <div className="app-content">{children}</div>
+        </ErrorBoundary>
         {showReferrerModal ? (
           <ReferralModal onClose={() => toggleReferrerModal(false)} />
         ) : null}

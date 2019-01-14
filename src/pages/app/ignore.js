@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'gatsby';
+import ErrorBoundary from '../../components/error-boundary';
 
 import Button from '../../components/btn';
 import Template from './template';
@@ -32,26 +34,36 @@ export default () => {
     <Template>
       <div className="scan-list">
         <p>
+          <Link to="/app">&lt; Back to scan</Link>
+        </p>
+        <p>
           Showing <span className="scan-size">{ignoredSenderList.length}</span>{' '}
           ignored senders. Emails from these addresses will not show up in any
           future scans.
         </p>
-        <table>
-          <tbody>
-            {ignoredSenderList.map(sender => {
-              return (
-                <tr key={sender} className="scan-item">
-                  <td>{sender}</td>
-                  <td>
-                    <Button compact basic muted onClick={() => remove(sender)}>
-                      Remove
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <ErrorBoundary>
+          <table>
+            <tbody>
+              {ignoredSenderList.map(sender => {
+                return (
+                  <tr key={sender} className="scan-item">
+                    <td>{sender}</td>
+                    <td>
+                      <Button
+                        compact
+                        basic
+                        muted
+                        onClick={() => remove(sender)}
+                      >
+                        Remove
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </ErrorBoundary>
       </div>
     </Template>
   );
