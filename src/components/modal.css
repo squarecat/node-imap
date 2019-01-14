@@ -370,3 +370,44 @@ p.unsubscribe-link-alt {
   border: 1px solid rgba(231, 57, 48, 1);
   margin: 10px 0;
 }
+
+.referral-code {
+  padding: 10px;
+}
+
+.referral-balances {
+  display: grid;
+  margin-bottom: 20px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.referral-box {
+  border: 1px solid #fddbd7;
+  border-radius: 10px;
+  padding: 20px 20px 10px 20px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.referral-box-title {
+  font-size: 20px;
+}
+
+.referral-box-value {
+  margin: 15px 0;
+  font-size: 45px;
+  font-weight: 700;
+  color: rgba(231, 57, 48, 0.749);
+  line-height: 40px;
+}
+
+.referral-reasons {
+  padding: 0;
+}
+.referral-reasons li {
+  font-size: 16px;
+  padding: 0;
+}

@@ -1,5 +1,6 @@
 import db, { isoDate } from './db';
-import { encrypt, decrypt, hash } from './encryption';
+import { encrypt, decrypt } from './encryption';
+import shortid from 'shortid';
 
 const COL_NAME = 'users';
 const encryptedUnsubCols = [
@@ -18,6 +19,8 @@ export async function createUser(data) {
       ...data,
       createdAt: isoDate(),
       lastUpdatedAt: isoDate(),
+      referralCode: shortid.generate(),
+      referrals: [],
       keys: {
         refreshToken: encrypt(keys.refreshToken),
         accessToken: encrypt(keys.accessToken),
@@ -296,6 +299,29 @@ export async function addScanReminder(id, { timeframe, remindAt }) {
     console.error(
       `users-dao: error adding scan reminder for timeframe ${timeframe} to user ${id}`
     );
+  }
+}
+
+export async function addReferral(id, { userId, scanType, price }) {
+  try {
+    const col = await db().collection(COL_NAME);
+    if (id === userId) {
+      return console.warn('user tried to redeem own referral code');
+    }
+    return col.updateOne(
+      { id },
+      {
+        $push: {
+          referrals: {
+            userId,
+            scanType,
+            price
+          }
+        }
+      }
+    );
+  } catch (err) {
+    console.error(`users-dao: failed to add referral to ${id}`);
     console.error(err);
     throw err;
   }
@@ -312,6 +338,26 @@ export async function findUsersNeedReminders() {
     return users.toArray();
   } catch (err) {
     console.error(`users-dao: error finding users needing reminders`);
+  }
+}
+
+export async function updateReferral(id, { userId, scanType, price }) {
+  try {
+    const col = await db().collection(COL_NAME);
+    if (id === userId) {
+      return console.warn('user tried to redeem own referral code');
+    }
+    return col.updateOne(
+      { id, 'referrals.userId': userId },
+      {
+        $set: {
+          'referrals.$.scanType': scanType,
+          'referrals.$.price': price
+        }
+      }
+    );
+  } catch (err) {
+    console.error(`users-dao: failed to update referral to ${id}`);
     console.error(err);
     throw err;
   }
@@ -332,6 +378,17 @@ export async function updateUsersReminded(ids) {
     return users;
   } catch (err) {
     console.error(`users-dao: error finding users needing reminders`);
+  }
+}
+
+export async function getUserByReferralCode(referralCode) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.findOne({ referralCode });
+  } catch (err) {
+    console.error(
+      `users-dao: failed to get user by referral code ${referralCode}`
+    );
     console.error(err);
     throw err;
   }

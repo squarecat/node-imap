@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'gatsby';
 
+import ReferralModal from '../../components/referral-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import Button from '../../components/btn';
@@ -10,8 +11,9 @@ import useUser from '../../utils/hooks/use-user';
 
 export default ({ children }) => {
   const [user] = useUser();
-  const [showSettings, setShowSettings] = useState();
+  const [showSettings, setShowSettings] = useState(false);
   const { profileImg } = user;
+  const [showReferrerModal, toggleReferrerModal] = useState(false);
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -35,7 +37,7 @@ export default ({ children }) => {
     },
     [showSettings]
   );
-  console.warn('render tamplte');
+
   return (
     <AppLayout>
       <Auth loaded={!!user}>
@@ -44,43 +46,55 @@ export default ({ children }) => {
             <img alt="logo" src={logo} />
           </Link>
           <div className="header-title">Leave Me Alone </div>
-
-          <div className="settings-dropdown">
+          <div className="header-actions">
             <Button
+              className="refer-btn"
+              basic
               compact
-              className={`settings-dropdown-toggle ${
-                showSettings ? 'shown' : ''
-              }`}
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={() => toggleReferrerModal(true)}
             >
-              <div className="profile">
-                <img className="profile-img" src={profileImg} />
-              </div>
+              Refer a friend
             </Button>
-            <ul
-              className={`settings-dropdown-list ${
-                showSettings ? 'shown' : ''
-              }`}
-            >
-              <li>
-                <a href="/auth/google">Switch account</a>
-              </li>
-              <li>
-                <Link to="/app/history/scans">Scan history</Link>
-              </li>
-              <li>
-                <Link to="/app/ignore">
-                  <IgnoreIcon ignored={true} />
-                  Ignored senders
-                </Link>
-              </li>
-              <li className="logout">
-                <a href="/auth/logout">Logout</a>
-              </li>
-            </ul>
+            <div className="settings-dropdown">
+              <Button
+                compact
+                className={`settings-dropdown-toggle ${
+                  showSettings ? 'shown' : ''
+                }`}
+                onClick={() => setShowSettings(!showSettings)}
+              >
+                <div className="profile">
+                  <img className="profile-img" src={profileImg} />
+                </div>
+              </Button>
+              <ul
+                className={`settings-dropdown-list ${
+                  showSettings ? 'shown' : ''
+                }`}
+              >
+                <li>
+                  <a href="/auth/google">Switch account</a>
+                </li>
+                <li>
+                  <Link to="/app/history/scans">Scan history</Link>
+                </li>
+                <li>
+                  <Link to="/app/ignore">
+                    <IgnoreIcon ignored={true} />
+                    Ignored senders
+                  </Link>
+                </li>
+                <li className="logout">
+                  <a href="/auth/logout">Logout</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div className="app-content">{children}</div>
+        {showReferrerModal ? (
+          <ReferralModal onClose={() => toggleReferrerModal(false)} />
+        ) : null}
       </Auth>
     </AppLayout>
   );

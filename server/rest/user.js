@@ -4,7 +4,8 @@ import {
   addFreeScan,
   addToUserIgnoreList,
   removeFromUserIgnoreList,
-  addUserScanReminder
+  addUserScanReminder,
+  getReferralStats
 } from '../services/user';
 
 export default app => {
@@ -17,7 +18,8 @@ export default app => {
       unsubscriptions,
       scans,
       profileImg,
-      ignoredSenderList
+      ignoredSenderList,
+      referredBy
     } = await getUserById(req.user.id);
     res.send({
       id,
@@ -27,6 +29,7 @@ export default app => {
       unsubscriptions,
       profileImg,
       ignoredSenderList,
+      referredBy,
       hasScanned: scans ? !!scans.length : false
     });
   });
@@ -63,6 +66,7 @@ export default app => {
       res.status(500).send(err);
     }
   });
+
   app.patch('/api/me/ignore', auth, async (req, res) => {
     const { user, body } = req;
     const { id } = user;
@@ -95,6 +99,18 @@ export default app => {
       res.send(newUser);
     } catch (err) {
       console.error(`user-rest: error patching user ${id} with op ${op}`);
+    }
+  });
+
+  app.get('/api/me/referrals', auth, async (req, res) => {
+    const { user } = req;
+    try {
+      const stats = await getReferralStats(user.id);
+      res.send(stats);
+    } catch (err) {
+      console.log('user-rest: error getting referral info', user.id);
+      console.log(err);
+      res.status(500).send(err);
     }
   });
 };

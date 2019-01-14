@@ -88,12 +88,7 @@ export default ({ onClose, onPurchase }) => {
   );
 };
 
-const PricingScreen = ({
-  onClickPurchase,
-  onClickClose,
-  setScreen,
-  isPaymentLoading
-}) => {
+const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
   const [isBeta] = useUser(s => s.beta);
   const [selected, setSelected] = useState('free');
   const [coupon, setCoupon] = useState('');
