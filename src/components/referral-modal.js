@@ -56,8 +56,9 @@ export default ({ onClose }) => {
           <div className="referral-balances">
             <div className="referral-box cash-balance">
               <div className="referral-box-title">Balance</div>
-              <div className="referral-box-value">{`$${referralBalance /
-                100}`}</div>
+              <div className="referral-box-value">{`$${
+                referralBalance ? referralBalance / 100 : 0
+              }`}</div>
             </div>
             <div className="referral-box friends-signedup">
               <div className="referral-box-title">Sign ups</div>

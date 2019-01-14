@@ -19,7 +19,8 @@ export default app => {
       scans,
       profileImg,
       ignoredSenderList,
-      referredBy
+      referredBy,
+      referralCode
     } = await getUserById(req.user.id);
     res.send({
       id,
@@ -30,6 +31,7 @@ export default app => {
       profileImg,
       ignoredSenderList,
       referredBy,
+      referralCode,
       hasScanned: scans ? !!scans.length : false
     });
   });

@@ -89,7 +89,6 @@ export default ({ onClose, onPurchase }) => {
 };
 
 const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
-  const [isBeta] = useUser(s => s.beta);
   const [selected, setSelected] = useState('free');
   const [coupon, setCoupon] = useState('');
   const [isCouponShown, showCoupon] = useState(false);
@@ -287,7 +286,6 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
 
           {getPaymentButton({
             selected,
-            isBeta,
             prices,
             couponData,
             onPurchaseSuccess,
@@ -301,14 +299,13 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
 
 function getPaymentButton({
   selected,
-  isBeta,
   prices,
   couponData,
   onPurchaseSuccess,
   onPurchaseFailed
 }) {
   let isFree = false;
-  if (selected === 'free' || isBeta) {
+  if (selected === 'free') {
     isFree = true;
   } else if (selected !== 'free') {
     const { discountedPrice } = prices.find(p => p.value === selected);
@@ -334,8 +331,8 @@ function getPaymentButton({
         loading={isLoading}
         compact={true}
         onClick={() => {
-          if (selected === 'free' || isBeta) {
-            onPurchaseSuccess(selected, isBeta);
+          if (selected === 'free') {
+            onPurchaseSuccess(selected);
           } else {
             freePurchase();
           }
