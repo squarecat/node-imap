@@ -342,7 +342,7 @@ export default ({ timeframe, showPriceModal }) => {
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
             dispatch={dispatch}
           />
-          {getSocialContent(user.unsubCount)}
+          {getSocialContent(user.unsubCount, user.referralCode)}
         </ErrorBoundary>
       )}
     </>

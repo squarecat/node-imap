@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'gatsby';
 
 import Button from '../../components/btn';
 import Template from './template';
@@ -31,6 +32,9 @@ export default () => {
   return (
     <Template>
       <div className="scan-list">
+        <p>
+          <Link to="/app">&lt; Back to scan</Link>
+        </p>
         <p>
           Showing <span className="scan-size">{ignoredSenderList.length}</span>{' '}
           ignored senders. Emails from these addresses will not show up in any

@@ -3,6 +3,7 @@ import relative from 'tiny-relative-date';
 import Template from '../template';
 import subHours from 'date-fns/sub_hours';
 import isAfter from 'date-fns/is_after';
+import { Link } from 'gatsby';
 
 import { useAsync } from '../../../utils/hooks';
 import Button from '../../../components/btn';
@@ -30,15 +31,26 @@ export default function ScanHistory() {
     <Template>
       <div className="scan-list">
         <p>
+          <Link to="/app">&lt; Back to scan</Link>
+        </p>
+        <p>
           Showing <span className="scan-size">{scans.length}</span> previous
           scans.
         </p>
         <table>
           <tbody>
-            {scans.map(scan => {
+            {scans.map((scan, i) => {
               return (
                 <tr key={scan.scannedAt} className="scan-item">
-                  <td>{relative(scan.scannedAt)}</td>
+                  <td>
+                    {i === 0 ? (
+                      <Link className="link" to="/app">
+                        {relative(scan.scannedAt)}
+                      </Link>
+                    ) : (
+                      relative(scan.scannedAt)
+                    )}
+                  </td>
                   <td>{tfToString[scan.timeframe]}</td>
                   <td>{`${scan.totalUnsubscribableEmails} emails found`}</td>
                   <td>{renderButton(scan)}</td>
