@@ -104,38 +104,6 @@ body {
   max-height: 0;
 }
 
-@media (max-width: 700px) {
-  .mail-actions {
-    padding-bottom: 20px;
-  }
-}
-@media (max-width: 500px) {
-  .app-content {
-    padding: 10px 0;
-  }
-  .results-data {
-    min-width: auto;
-  }
-
-  .mail-actions {
-    padding: 0 20px 10px 20px;
-  }
-  .mail-actions .extra {
-    display: none;
-  }
-  .mail-actions .action-item > .btn {
-    width: 140px;
-    padding: 5px 0;
-    margin: 5px auto;
-  }
-  .header {
-    padding: 0 10px;
-  }
-  .header-title {
-    font-size: 16px;
-  }
-}
-
 .header-actions {
   margin-left: auto;
   display: flex;
@@ -143,11 +111,15 @@ body {
   align-items: center;
 }
 
-.refer-btn {
+.btn.header-btn {
   font-size: 14px;
   height: 30px;
   background-color: rgba(255, 251, 251, 0.25);
   margin-right: 25px;
+}
+
+.btn.header-btn:hover {
+  background-color: #e73a30;
 }
 
 .settings-dropdown a:hover {
@@ -206,4 +178,36 @@ body {
 .settings-dropdown-list .logout {
   border-top: 1px solid #ffc9c5;
   background-color: hsl(0, 100%, 95%);
+}
+
+@media (max-width: 700px) {
+  .mail-actions {
+    padding-bottom: 20px;
+  }
+}
+@media (max-width: 500px) {
+  .app-content {
+    padding: 10px 0;
+  }
+  .results-data {
+    min-width: auto;
+  }
+
+  .mail-actions {
+    padding: 0 20px 10px 20px;
+  }
+  .mail-actions .extra {
+    display: none;
+  }
+  .mail-actions .action-item > .btn {
+    width: 140px;
+    padding: 5px 0;
+    margin: 5px auto;
+  }
+  .header {
+    padding: 0 10px;
+  }
+  .header-title {
+    font-size: 16px;
+  }
 }

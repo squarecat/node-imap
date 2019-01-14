@@ -411,3 +411,9 @@ p.unsubscribe-link-alt {
   font-size: 16px;
   padding: 0;
 }
+
+/* Reminders */
+.reminder-cta {
+  max-width: 370px;
+  margin: 30px auto;
+}

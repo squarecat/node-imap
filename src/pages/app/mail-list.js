@@ -25,6 +25,7 @@ import 'rc-tooltip/assets/bootstrap_white.css';
 import './mail-list.css';
 
 import useLocalStorage from '../../utils/hooks/use-localstorage';
+import { getSubsEstimate } from '../../utils/estimates';
 
 const mailReducer = (state = [], action) => {
   switch (action.type) {
@@ -270,28 +271,10 @@ export default ({ timeframe, showPriceModal }) => {
     [believableProgress !== 100, believableProgress !== 0]
   );
 
-  let scanName;
-  let moreSubsPrice = '$0';
-  let moreSubsEstimate = 0;
-  const tf = timeframe || lastSearchTimeframe;
-  if (tf) {
-    if (tf === '3d') {
-      scanName = '3 days';
-      moreSubsPrice = '$3';
-      moreSubsEstimate = Math.ceil((mail.length / 3) * 7) - mail.length;
-    }
-    if (tf === '1w') {
-      scanName = '1 week';
-      moreSubsPrice = '$5';
-      moreSubsEstimate = Math.ceil(mail.length * 4) - mail.length;
-    }
-    if (tf === '1m') {
-      scanName = '1 month';
-      moreSubsPrice = '$8';
-      moreSubsEstimate = Math.ceil(mail.length * 6) - mail.length;
-    }
-    if (tf === '6m') scanName = '6 months';
-  }
+  const { scanName, moreSubsPrice, moreSubsEstimate } = getSubsEstimate(
+    timeframe || lastSearchTimeframe,
+    mail.length
+  );
 
   const showMoreText =
     isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;

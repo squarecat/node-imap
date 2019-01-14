@@ -43,7 +43,7 @@ export default ({ onClose }) => {
 
   return (
     <>
-      <div className={`modal price-modal ${isShown ? 'shown' : ''}`}>
+      <div className={`modal referral-modal ${isShown ? 'shown' : ''}`}>
         <ModalClose onClose={onClickClose} />
         <h3>Refer a friend and earn $</h3>
         <div className="modal-content">

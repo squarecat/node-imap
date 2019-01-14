@@ -23,6 +23,10 @@ export default globalReducer(
     setIgnoredSenderList: (state, list) => ({
       ...state,
       ignoredSenderList: list
+    }),
+    setReminder: (state, reminder) => ({
+      ...state,
+      reminder
     })
   }
 );

@@ -39,6 +39,14 @@ export function trackReferralModalOpen() {
   }
 }
 
+export function trackReminderModalOpen() {
+  if (gtag) {
+    gtag('event', 'open_reminder', {
+      event_category: 'reminder'
+    });
+  }
+}
+
 // export function trackLogin({ method = 'Google' }) {
 //   gtag('event', 'login', {
 //     method,

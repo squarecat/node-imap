@@ -13,6 +13,7 @@ import {
   updatePaidScan,
   updateIgnoreList,
   addScanReminder,
+  removeScanReminder,
   getUserByReferralCode
 } from '../dao/user';
 
@@ -177,6 +178,10 @@ export async function addUserScanReminder(id, timeframe) {
   } catch (err) {
     throw err;
   }
+}
+
+export function removeUserScanReminder(id) {
+  return removeScanReminder(id);
 }
 
 export async function getReferralStats(id) {

@@ -282,14 +282,19 @@ export async function updateIgnoreList(id, { action, value }) {
 }
 
 export async function addScanReminder(id, { timeframe, remindAt }) {
+  console.log(`users-dao: adding reminder to user ${id} for ${timeframe}`);
+  console.log('users-dao: reminding at', remindAt);
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
         $set: {
-          timeframe,
-          remindAt
+          reminder: {
+            timeframe,
+            remindAt,
+            sent: false
+          }
         }
       }
     );
@@ -299,6 +304,25 @@ export async function addScanReminder(id, { timeframe, remindAt }) {
     console.error(
       `users-dao: error adding scan reminder for timeframe ${timeframe} to user ${id}`
     );
+  }
+}
+
+export async function removeScanReminder(id) {
+  console.log(`users-dao: clearing reminder for user ${id}`);
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          reminder: null
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    console.error(`users-dao: error removing scan reminder for user ${id}`);
   }
 }
 

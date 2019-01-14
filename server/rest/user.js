@@ -5,6 +5,7 @@ import {
   addToUserIgnoreList,
   removeFromUserIgnoreList,
   addUserScanReminder,
+  removeUserScanReminder,
   getReferralStats
 } from '../services/user';
 
@@ -17,10 +18,12 @@ export default app => {
       beta,
       unsubscriptions,
       scans,
+      paidScans = [],
       profileImg,
       ignoredSenderList,
       referredBy,
-      referralCode
+      referralCode,
+      reminder
     } = await getUserById(req.user.id);
     res.send({
       id,
@@ -32,7 +35,9 @@ export default app => {
       ignoredSenderList,
       referredBy,
       referralCode,
-      hasScanned: scans ? !!scans.length : false
+      hasScanned: scans ? !!scans.length : false,
+      lastPaidScan: paidScans.length ? paidScans[paidScans.length - 1] : null,
+      reminder
     });
   });
 
@@ -90,11 +95,13 @@ export default app => {
   app.patch('/api/me/reminder', auth, async (req, res) => {
     const { user, body } = req;
     const { id } = user;
-    const { op, value } = body;
+    const { op, value: timeframe } = body;
     let newUser = user;
     try {
       if (op === 'add') {
-        newUser = await addUserScanReminder(id, value);
+        newUser = await addUserScanReminder(id, timeframe);
+      } else if (op === 'remove') {
+        newUser = await removeUserScanReminder(id);
       } else {
         console.error(`op not supported`);
       }
