@@ -10,6 +10,9 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "urls": {
+    "referral": "https://leavemealone.xyz/r/"
+  },
   "google": {
     "redirect": "https://leavemealone.xyz/auth/google/callback"
   },

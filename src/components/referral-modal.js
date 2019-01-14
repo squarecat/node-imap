@@ -48,8 +48,8 @@ export default ({ onClose }) => {
         <h3>Refer a friend and earn $</h3>
         <div className="modal-content">
           <p>
-            For every 3 people that use your referral code and make a purchase,
-            we will pay you 5 bucks!
+            For every 3 people that sign-up using your referral link and make a
+            purchase, we will pay you 5 bucks!
           </p>
           <p>Your referral URL is...</p>
           <pre className="referral-code">{`https://leavemealone.xyz/r/${referralCode}`}</pre>
@@ -75,7 +75,7 @@ export default ({ onClose }) => {
             </li>
             <li>
               ✔ Give your friend one fewer{' '}
-              <span className="text-important">email notification</span>.
+              <span className="text-important">email notifications</span>.
             </li>
             <li>
               ✔ Help your family{' '}
@@ -95,7 +95,7 @@ export default ({ onClose }) => {
               </a>
             ) : null}
             <a className="btn muted compact" onClick={onClickClose}>
-              Cancel
+              Close
             </a>
           </div>
         </div>
