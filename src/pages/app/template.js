@@ -46,14 +46,16 @@ export default ({ children }) => {
           </Link>
           <div className="header-title">Leave Me Alone </div>
           <div className="header-actions">
-            <Button
-              className="refer-btn"
-              basic
-              compact
-              onClick={() => toggleReferrerModal(true)}
-            >
-              Refer a friend
-            </Button>
+            {user.beta ? (
+              <Button
+                className="refer-btn"
+                basic
+                compact
+                onClick={() => toggleReferrerModal(true)}
+              >
+                Refer a friend
+              </Button>
+            ) : null}
             <div className="settings-dropdown">
               <Button
                 compact

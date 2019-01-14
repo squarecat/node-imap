@@ -447,17 +447,17 @@ const progressTweets = [
   {
     val: -1,
     text: `Start unsubscribing to take back control of your inbox from spammers! 💌`,
-    tweet: `I’m using @LeaveMeAloneApp to take back control of my inbox and unsubscribe from email lists with one click! 💌 leavemealone.xyz`
+    tweet: `I’m using @LeaveMeAloneApp to take back control of my inbox and unsubscribe from email lists with one click! 💌 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 1,
     text: `Congrats! You’ve unsubscribed from NUM spam email, keep going for a cleaner inbox! 🤩`,
-    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz`
+    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 2,
     text: `Congrats! You’ve unsubscribed from NUM spam emails, keep going for a cleaner inbox! 🤩`,
-    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz`
+    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 5,
@@ -704,13 +704,17 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
   );
 }
 
-function getSocialContent(unsubCount = 0) {
+function getSocialContent(unsubCount = 0, referralCode) {
   const socialOutput = progressTweets.reduce(
     (out, progress) => {
       if (unsubCount >= progress.val) {
         return {
           text: progress.text.replace('NUM', unsubCount),
-          tweet: encodeURIComponent(progress.tweet.replace('NUM', unsubCount))
+          tweet: encodeURIComponent(
+            progress.tweet
+              .replace('NUM', unsubCount)
+              .replace('REFERRAL', referralCode)
+          )
         };
       }
       return out;
@@ -719,7 +723,7 @@ function getSocialContent(unsubCount = 0) {
   );
 
   return (
-    <div className={`mail-list-social ${unsubCount < 3 ? 'collapsed' : ''}`}>
+    <div className={`mail-list-social`}>
       <div className="social-item">
         <div className="avatar">
           <AnimatedNumber value={unsubCount} stepPrecision={1} duration={300} />
