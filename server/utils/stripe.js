@@ -97,22 +97,28 @@ export async function updateCouponUses(coupon) {
 }
 
 export async function createCoupon({
-  amount_off,
+  amount_off = 0,
+  percent_off = 0,
   duration = 'once',
   max_redemptions = 1,
   metadata = {}
 }) {
   try {
     const name = generateCoupon();
-    const coupon = await stripe.coupons.create({
+    let data = {
       name: name,
       id: name,
       duration,
-      amount_off,
       currency: 'usd',
       max_redemptions,
       metadata
-    });
+    };
+    if (amount_off) {
+      data = { ...data, amount_off };
+    } else if (percent_off) {
+      data = { ...data, percent_off };
+    }
+    const coupon = await stripe.coupons.create(data);
     return coupon;
   } catch (err) {
     console.error('stripe: failed to create coupon');

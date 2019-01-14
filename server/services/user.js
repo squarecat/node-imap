@@ -1,4 +1,7 @@
 import { v4 } from 'node-uuid';
+import addWeeks from 'date-fns/add_weeks';
+import addMonths from 'date-fns/add_months';
+
 import {
   getUser,
   createUser,
@@ -8,7 +11,8 @@ import {
   resolveUnsubscription,
   addPaidScan,
   updatePaidScan,
-  updateIgnoreList
+  updateIgnoreList,
+  addScanReminder
 } from '../dao/user';
 
 import { updateCoupon } from './payments';
@@ -139,6 +143,26 @@ export async function addToUserIgnoreList(id, email) {
 export async function removeFromUserIgnoreList(id, email) {
   try {
     return updateIgnoreList(id, { action: 'remove', value: email });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function addUserScanReminder(id, timeframe) {
+  try {
+    const now = new Date();
+    let remindAt = null;
+    if (timeframe === '1w') {
+      remindAt = addWeeks(now, 1);
+    } else if (timeframe === '1m') {
+      remindAt = addMonths(now, 1);
+    } else if (timeframe === '6m') {
+      remindAt = addMonths(now, 6);
+    }
+    if (!remindAt) {
+      throw new Error('invalid scan reminder timeframe');
+    }
+    return addScanReminder(id, { timeframe, remindAt });
   } catch (err) {
     throw err;
   }

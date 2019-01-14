@@ -9,7 +9,7 @@ import { addPaidScanToUser, getUserById } from '../services/user';
 import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
 import { updateUser } from '../dao/user';
 
-const products = [
+export const products = [
   {
     price: 300,
     label: '1 week',

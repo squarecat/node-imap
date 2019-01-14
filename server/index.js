@@ -14,7 +14,7 @@ import giftsApi from './rest/gifts';
 
 const Sentry = require('@sentry/node');
 
-import { recordStats } from './dao/stats';
+import { startScheduler } from './utils/scheduler';
 
 import { url as mongoUrl, connect as connectDb } from './dao/db';
 
@@ -72,7 +72,7 @@ const App = {
     console.log('server starting');
     await connectDb();
     server.listen(2345);
-    await recordStats();
+    await startScheduler();
     console.log('server started');
   }
 };

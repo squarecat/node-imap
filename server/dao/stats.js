@@ -1,8 +1,7 @@
-import Agenda from 'agenda';
 import _omit from 'lodash.omit';
 import _get from 'lodash.get';
 
-import db, { url as mongoUrl, isoDate } from './db';
+import db, { isoDate } from './db';
 
 const COL_NAME = 'stats';
 
@@ -52,6 +51,14 @@ export function addGiftRedemption(count = 1) {
 
 export function addEstimate(count = 1) {
   return updateSingleStat('estimates', count);
+}
+
+export function addReminderRequest(count = 1) {
+  return updateSingleStat('remindersRequested', count);
+}
+
+export function addReminderSent(count = 1) {
+  return updateSingleStat('remindersSent', count);
 }
 
 // generic update stat function for anything
@@ -153,9 +160,7 @@ export async function getStats() {
   }
 }
 
-const agenda = new Agenda({ db: { address: mongoUrl } });
-
-agenda.define('record day stats', async (job, done) => {
+export async function recordStats() {
   console.log('recording day stats');
   const allStats = await getStats();
 
@@ -198,13 +203,4 @@ agenda.define('record day stats', async (job, done) => {
     { $set: { 'daily.previousDayTotals': _omit(allStats, 'daily') } }
   );
   await col.updateOne({}, { $push: { 'daily.histogram': today } });
-  done();
-});
-
-export async function recordStats() {
-  console.log('starting agenda');
-  agenda.on('ready', async () => {
-    await agenda.start();
-    await agenda.every('0 0 * * *', 'record day stats');
-  });
 }

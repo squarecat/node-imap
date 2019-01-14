@@ -3,7 +3,8 @@ import {
   getUserById,
   addFreeScan,
   addToUserIgnoreList,
-  removeFromUserIgnoreList
+  removeFromUserIgnoreList,
+  addUserScanReminder
 } from '../services/user';
 
 export default app => {
@@ -66,14 +67,30 @@ export default app => {
     const { user, body } = req;
     const { id } = user;
     const { op, value } = body;
-    let newUser;
+    let newUser = user;
     try {
       if (op === 'add') {
         newUser = await addToUserIgnoreList(id, value);
       } else if (op === 'remove') {
         newUser = await removeFromUserIgnoreList(id, value);
       } else {
-        console.error(`op not supported `);
+        console.error(`op not supported`);
+      }
+      res.send(newUser);
+    } catch (err) {
+      console.error(`user-rest: error patching user ${id} with op ${op}`);
+    }
+  });
+  app.patch('/api/me/reminder', auth, async (req, res) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op, value } = body;
+    let newUser = user;
+    try {
+      if (op === 'add') {
+        newUser = await addUserScanReminder(id, value);
+      } else {
+        console.error(`op not supported`);
       }
       res.send(newUser);
     } catch (err) {
