@@ -24,16 +24,15 @@ const tfToString = {
 };
 
 export default function ScanHistory() {
-  const { value: scans, loading } = useAsync(fetchScanHistory);
-  if (loading) {
-    return null;
-  }
+  const { value, loading } = useAsync(fetchScanHistory);
+  const scans = loading ? [] : value;
   return (
     <Template>
       <div className="scan-list">
         <p>
           <Link to="/app">&lt; Back to scan</Link>
         </p>
+
         <p>
           Showing <span className="scan-size">{scans.length}</span> previous
           scans.
