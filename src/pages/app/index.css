@@ -199,6 +199,10 @@ body {
   background-color: rgba(255, 229, 229, 0.35);
 }
 
+.settings-dropdown-list .support {
+  border-top: 1px solid #ffc9c5;
+}
+
 .settings-dropdown-list .logout {
   border-top: 1px solid #ffc9c5;
   background-color: hsl(0, 100%, 95%);

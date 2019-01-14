@@ -86,6 +86,11 @@ export default ({ children }) => {
                     Ignored senders
                   </Link>
                 </li>
+                <li className="support">
+                  <a href="#" onClick={() => openChat()}>
+                    Get help
+                  </a>
+                </li>
                 <li className="logout">
                   <a href="/auth/logout">Logout</a>
                 </li>
@@ -101,3 +106,18 @@ export default ({ children }) => {
     </AppLayout>
   );
 };
+
+function openChat(message = '') {
+  if (window.$crisp) {
+    window.$crisp.push(['do', 'chat:show']);
+    window.$crisp.push(['do', 'chat:open']);
+    window.$crisp.push(['set', 'message:text', [message]]);
+    window.$crisp.push(['on', 'chat:closed', closeChat]);
+  }
+}
+
+function closeChat() {
+  if (window.$crisp) {
+    window.$crisp.push(['do', 'chat:hide']);
+  }
+}
