@@ -417,3 +417,7 @@ p.unsubscribe-link-alt {
   max-width: 370px;
   margin: 30px auto;
 }
+
+.reminder-date {
+  text-align: center;
+}

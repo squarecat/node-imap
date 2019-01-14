@@ -7,6 +7,7 @@ const localStorageVersion = 1;
 
 const useLocalStorage = (propertyName, defaultValue) => {
   const storedValue = get(propertyName);
+  console.log('use local storage: stored value', storedValue);
   const [property, setProperty] = useState(storedValue || defaultValue);
 
   // on set, set on localstorage, and update the state

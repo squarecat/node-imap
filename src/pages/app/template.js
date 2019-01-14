@@ -20,10 +20,10 @@ export default ({ children }) => {
   const [showReferrerModal, toggleReferrerModal] = useState(false);
   const [showReminderModal, toggleReminderModal] = useState(false);
 
-  const [localMail] = useLocalStorage(`leavemealone.mail.${user.id}`);
-  console.log(localMail);
+  const [localMail] = useLocalStorage(`leavemealone.mail.${user.id}`, []);
+  console.log('template: local mail - ', localMail);
 
-  const { profileImg, hasSearched, lastPaidScan, reminder = {} } = user;
+  const { profileImg, hasScanned, lastPaidScan, reminder = {} } = user;
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -51,7 +51,7 @@ export default ({ children }) => {
 
   let reminderButton = null;
 
-  const isLastSearchPaid = hasSearched && lastPaidScan;
+  const isLastSearchPaid = hasScanned && lastPaidScan;
   const hasReminder = reminder && !reminder.sent;
   let nextReminder = null;
 
@@ -176,10 +176,12 @@ export default ({ children }) => {
             onSetReminder={async timeframe => {
               const { reminder } = await toggleReminder('add', timeframe);
               setUserReminder(reminder);
+              toggleReminderModal(false);
             }}
             onClearReminder={async () => {
               await toggleReminder('remove');
               setUserReminder(null);
+              toggleReminderModal(false);
             }}
             onClose={() => toggleReminderModal(false)}
           />

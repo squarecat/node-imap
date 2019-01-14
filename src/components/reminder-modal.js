@@ -63,10 +63,8 @@ export default ({
     content = (
       <>
         <p>Awesome! You currently have a reminder to scan again set for:</p>
-        <p>
-          <span className="text-important">
-            {format(currentReminder.remindAt, reminderDateFormat)}
-          </span>
+        <p className="text-important reminder-date">
+          {format(currentReminder.remindAt, reminderDateFormat)}
         </p>
         <div className="reminder-cta">
           <Button
@@ -82,7 +80,6 @@ export default ({
       </>
     );
   } else {
-    debugger;
     const { moreSubsEstimate } = getSubsEstimate(
       nextReminder.timeframe,
       mailCount
