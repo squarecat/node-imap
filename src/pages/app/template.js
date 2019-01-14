@@ -6,6 +6,7 @@ import ReferralModal from '../../components/referral-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import Button from '../../components/btn';
+import IgnoreIcon from '../../components/ignore-icon';
 import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
@@ -81,7 +82,10 @@ export default ({ children }) => {
                   <Link to="/app/history/scans">Scan history</Link>
                 </li>
                 <li>
-                  <Link to="/app/ignore">Ignored senders</Link>
+                  <Link to="/app/ignore">
+                    <IgnoreIcon ignored={true} />
+                    Ignored senders
+                  </Link>
                 </li>
                 <li className="logout">
                   <a href="/auth/logout">Logout</a>

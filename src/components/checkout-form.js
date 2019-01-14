@@ -63,8 +63,7 @@ const CheckoutForm = ({
           });
           onCheckoutComplete();
         } catch (err) {
-          console.error(err);
-          onCheckoutFailed();
+          onCheckoutFailed(err);
         }
       };
     },

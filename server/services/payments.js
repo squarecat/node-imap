@@ -10,7 +10,7 @@ import { updateReferralOnReferrer } from '../services/referral';
 import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
 import { updateUser } from '../dao/user';
 
-const products = [
+export const products = [
   {
     price: 300,
     label: '1 week',

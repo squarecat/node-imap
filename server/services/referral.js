@@ -1,5 +1,11 @@
+import config from 'getconfig';
+
 import { addReferral, updateReferral } from '../dao/user';
 import { getUser, creditUserAccount } from './user';
+import {
+  sendReferralLinkUsedMail,
+  sendReferralRewardMail
+} from '../utils/email';
 
 export function addReferralToReferrer(id, { userId, price, scanType }) {
   return addReferral(id, { userId, price, scanType });
@@ -9,7 +15,7 @@ export async function updateReferralOnReferrer(
   id,
   { userId, price, scanType }
 ) {
-  const { referrals } = await getUser(id);
+  const { referrals, email, referralCode } = await getUser(id);
   const { referrals: newReferrals } = await updateReferral(id, {
     userId,
     price,
@@ -26,10 +32,18 @@ export async function updateReferralOnReferrer(
   if (paidReferrals.length % 3 === 0) {
     // credit account with 5 bucks
     await creditUserAccount(id, 500);
-    // TODO send credit earnied email
+    sendReferralRewardMail({
+      toAddress: email,
+      rewardCount: paidReferrals.length / 3,
+      referralUrl: `${config.urls.referral}${referralCode}`
+    });
   } else if (paidReferrals.length < 3) {
-    // TODO send "someone used your referral link" email
     // we only send these if user has <3 referrals so we
     // dont send too much spam if they are a big referrer
+    sendReferralLinkUsedMail({
+      toAddress: email,
+      referralUrl: `${config.urls.referral}${referralCode}`,
+      referralCount: paidReferrals.length
+    });
   }
 }

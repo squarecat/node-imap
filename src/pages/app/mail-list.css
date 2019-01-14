@@ -279,6 +279,13 @@ pre {
   opacity: 1 !important;
 }
 
+.toggle.disabled + .status,
+.toggle.disabled + .status:hover,
+.mail-item:hover .toggle.disabled + .status {
+  opacity: 0.45 !important;
+  pointer-events: none;
+}
+
 .mail-list-item.loading .status {
   display: none;
 }
@@ -364,32 +371,6 @@ pre {
 }
 .scan-more-text.shown {
   opacity: 1;
-}
-
-.add-to-ignore {
-  position: relative;
-  top: 3px;
-  margin-right: 6px;
-  opacity: 0.5;
-  z-index: 1;
-}
-
-.add-to-ignore svg {
-  stroke: #ff5955;
-  fill: none;
-}
-
-.add-to-ignore:hover {
-  opacity: 1;
-  cursor: pointer;
-}
-
-.add-to-ignore.ignored {
-  opacity: 1;
-}
-
-.add-to-ignore.ignored svg {
-  fill: #ffb9b6;
 }
 
 .mail-list-social {

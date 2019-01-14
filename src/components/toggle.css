@@ -57,6 +57,11 @@
   visibility: visible;
 }
 
+.toggle.disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

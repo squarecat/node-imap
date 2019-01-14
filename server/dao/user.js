@@ -281,6 +281,27 @@ export async function updateIgnoreList(id, { action, value }) {
   }
 }
 
+export async function addScanReminder(id, { timeframe, remindAt }) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          timeframe,
+          remindAt
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    console.error(
+      `users-dao: error adding scan reminder for timeframe ${timeframe} to user ${id}`
+    );
+  }
+}
+
 export async function addReferral(id, { userId, scanType, price }) {
   try {
     const col = await db().collection(COL_NAME);
@@ -306,6 +327,20 @@ export async function addReferral(id, { userId, scanType, price }) {
   }
 }
 
+export async function findUsersNeedReminders() {
+  try {
+    const col = await db().collection(COL_NAME);
+    const query = {
+      'reminder.remindAt': { $lt: new Date() },
+      'reminder.sent': { $ne: true }
+    };
+    const users = await col.find(query);
+    return users.toArray();
+  } catch (err) {
+    console.error(`users-dao: error finding users needing reminders`);
+  }
+}
+
 export async function updateReferral(id, { userId, scanType, price }) {
   try {
     const col = await db().collection(COL_NAME);
@@ -325,6 +360,24 @@ export async function updateReferral(id, { userId, scanType, price }) {
     console.error(`users-dao: failed to update referral to ${id}`);
     console.error(err);
     throw err;
+  }
+}
+
+export async function updateUsersReminded(ids) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const users = await col.update(
+      { _id: { $in: ids } },
+      {
+        $set: {
+          'reminder.sent': true
+        }
+      },
+      { multi: true }
+    );
+    return users;
+  } catch (err) {
+    console.error(`users-dao: error finding users needing reminders`);
   }
 }
 

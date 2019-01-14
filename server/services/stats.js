@@ -9,6 +9,8 @@ import {
   addGiftRedemption,
   addUser,
   addEstimate,
+  addReminderRequest,
+  addReminderSent,
   getStats
 } from '../dao/stats';
 
@@ -17,17 +19,17 @@ export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
   if (unsubStrategy === 'mailto') return addUnsubscriptionByEmail();
   return false;
 }
-export function addScanToStats() {
-  return addScan();
+export function addScanToStats(count) {
+  return addScan(count);
 }
-export function addFailedUnsubscriptionToStats() {
-  return addFailedUnsubscription();
+export function addFailedUnsubscriptionToStats(count) {
+  return addFailedUnsubscription(count);
 }
 export function addNumberofEmailsToStats(data) {
   return addNumberofEmails(data);
 }
-export function addUserToStats() {
-  return addUser();
+export function addUserToStats(count) {
+  return addUser(count);
 }
 export function addPaymentToStats({ price }) {
   return addPayment({ price });
@@ -35,11 +37,17 @@ export function addPaymentToStats({ price }) {
 export function addGiftPaymentToStats({ price }, count) {
   return addGiftPayment({ price }, count);
 }
-export function addGiftRedemptionToStats() {
-  return addGiftRedemption();
+export function addGiftRedemptionToStats(count) {
+  return addGiftRedemption(count);
 }
-export function addEstimateToStats() {
-  return addEstimate();
+export function addEstimateToStats(count) {
+  return addEstimate(count);
+}
+export function addReminderRequestToStats(count) {
+  return addReminderRequest(count);
+}
+export function addReminderSentToStats(count) {
+  return addReminderSent(count);
 }
 export function getAllStats() {
   return getStats();

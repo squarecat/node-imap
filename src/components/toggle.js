@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
+import cx from 'classnames';
+
 import './toggle.css';
 
-export default ({ status, loading, onChange }) => {
+export default ({ status, loading, disabled, onChange }) => {
   const [isOn, setStatus] = useState(status);
   // can only toggle off! Can't resubscribe
   return (
     <span
-      className={`toggle ${isOn ? 'on' : 'off'} ${loading ? 'loading' : ''}`}
+      className={cx('toggle', {
+        on: isOn,
+        off: !isOn,
+        loading,
+        disabled
+      })}
       onClick={() => {
+        if (disabled) return false;
         if (isOn) {
           setStatus(false);
           onChange(false);

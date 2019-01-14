@@ -82,6 +82,19 @@
   display: none;
 }
 
+.gifts-payment-error {
+  background: rgba(231, 57, 48, 0.7);
+  color: white;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid rgba(231, 57, 48, 1);
+  margin: 10px 0;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);

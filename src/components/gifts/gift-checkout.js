@@ -65,7 +65,6 @@ const GiftCheckout = ({
         onCheckoutComplete(data);
         setCouponLoading(false);
       } catch (err) {
-        console.error(err);
         onCheckoutFailed(err);
         setCouponLoading(false);
       }

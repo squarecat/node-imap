@@ -100,6 +100,7 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
     valid: null
   });
   const [prices, setPrices] = useState(PRICES);
+  const [isPaymentError, setPaymentError] = useState(false);
   // const [isPaymentRequired, setPaymentRequired] = useState(false);
 
   useEffect(
@@ -117,6 +118,16 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
     },
     [couponData.valid]
   );
+
+  const onPurchaseSuccess = selected => {
+    setPaymentError(false);
+    onClickPurchase(selected);
+  };
+
+  const onPurchaseFailed = err => {
+    console.error('purchase failed', err);
+    setPaymentError(err);
+  };
 
   const applyCoupon = async coupon => {
     try {
@@ -180,6 +191,12 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
             </a>
           ))}
         </div>
+        {isPaymentError ? (
+          <p className="model-error">
+            Something went wrong with your payment. You have not been charged.
+            Please try again or contact support.
+          </p>
+        ) : null}
         <div className="estimates">
           <p className="modal-text--small">
             Not sure what package is best for you? Let us{' '}
@@ -271,7 +288,8 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
             selected,
             prices,
             couponData,
-            onClickPurchase
+            onPurchaseSuccess,
+            onPurchaseFailed
           })}
         </div>
       </div>
@@ -279,7 +297,13 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
   );
 };
 
-function getPaymentButton({ selected, prices, couponData, onClickPurchase }) {
+function getPaymentButton({
+  selected,
+  prices,
+  couponData,
+  onPurchaseSuccess,
+  onPurchaseFailed
+}) {
   let isFree = false;
   if (selected === 'free') {
     isFree = true;
@@ -296,7 +320,7 @@ function getPaymentButton({ selected, prices, couponData, onClickPurchase }) {
       await addPaidScan(selected, couponData.coupon);
     } catch (_) {
     } finally {
-      onClickPurchase(selected);
+      onPurchaseSuccess(selected);
       setLoading(false);
     }
   };
@@ -308,7 +332,7 @@ function getPaymentButton({ selected, prices, couponData, onClickPurchase }) {
         compact={true}
         onClick={() => {
           if (selected === 'free') {
-            onClickPurchase(selected);
+            onPurchaseSuccess(selected);
           } else {
             freePurchase();
           }
@@ -322,10 +346,8 @@ function getPaymentButton({ selected, prices, couponData, onClickPurchase }) {
   return (
     <CheckoutForm
       coupon={couponData.coupon}
-      onCheckoutFailed={() => {
-        console.error('Checkout failed, what do?');
-      }}
-      onCheckoutComplete={() => onClickPurchase(selected)}
+      onCheckoutFailed={err => onPurchaseFailed(err)}
+      onCheckoutComplete={() => onPurchaseSuccess(selected)}
       selected={prices.find(s => s.value === selected)}
     />
   );
