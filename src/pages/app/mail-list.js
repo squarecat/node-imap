@@ -436,7 +436,7 @@ const progressTweets = [
   {
     val: 1,
     text: `Congrats! You’ve unsubscribed from NUM spam email, keep going for a cleaner inbox! 🤩`,
-    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam emails so far using @LeaveMeAloneApp 🤩 leavemealone.xyz/r/REFERRAL`
+    tweet: `I’ve been cleaning up my inbox and have unsubscribed from NUM spam email so far using @LeaveMeAloneApp 🤩 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 2,
@@ -446,22 +446,22 @@ const progressTweets = [
   {
     val: 5,
     text: `Wow! You’ve saved yourself from NUM spam emails so far, great job! 🙌`,
-    tweet: `I’ve saved myself from NUM spam emails so far using @LeaveMeAloneApp 🙌 leavemealone.xyz`
+    tweet: `I’ve saved myself from NUM spam emails so far using @LeaveMeAloneApp 🙌 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 20,
     text: `Bam! You’re on a roll, you’ve unsubscribed from NUM email lists so far 🎉`,
-    tweet: `I’m on a roll, I’ve unsubscribed from NUM email lists so far using @LeaveMeAloneApp 🎉 leavemealone.xyz`
+    tweet: `I’m on a roll, I’ve unsubscribed from NUM spam email lists so far using @LeaveMeAloneApp 🎉 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 50,
     text: `Super user alert! Can you believe you’ve opted out of NUM spam email lists? 🔥`,
-    tweet: `I’m a Leave Me Alone super user! Can you believe I’ve opted out of NUM spam email lists using @LeaveMeAloneApp 🔥 leavemealone.xyz`
+    tweet: `I’m a Leave Me Alone super user! Can you believe I’ve opted out of NUM spam email lists using @LeaveMeAloneApp 🔥 leavemealone.xyz/r/REFERRAL`
   },
   {
     val: 100,
-    text: `Incredible! You’ve hit NUM unsubscribes. I name you an unsubscribing master 👩‍🎓`,
-    tweet: `I’ve hit NUM unsubscribes and been named an email un-subscribing master using @LeaveMeAloneApp 👩‍🎓 leavemealone.xyz`
+    text: `Incredible! You’ve hit NUM unsubscribes. We name you an unsubscribing master 👩‍🎓`,
+    tweet: `I’ve hit NUM unsubscribes and been named an email un-subscribing master using @LeaveMeAloneApp 👩‍🎓 leavemealone.xyz/r/REFERRAL`
   }
 ];
 
