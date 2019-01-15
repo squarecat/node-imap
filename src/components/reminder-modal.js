@@ -8,19 +8,22 @@ import Button from '../components/btn';
 import useUser from '../utils/hooks/use-user';
 import * as track from '../utils/analytics';
 
+import { PRICES as modalPrices } from './price-modal';
+
 const reminderDateFormat = 'Do MMMM YYYY';
 
-export default ({
-  onClose,
-  currentReminder,
-  nextReminder,
-  onSetReminder,
-  onClearReminder
-}) => {
-  const [userId] = useUser(u => u.id);
+export default ({ onClose, onSetReminder, onClearReminder }) => {
+  const [{ userId, currentReminder, lastPaidScan }] = useUser(u => ({
+    userId: u.id,
+    currentReminder: u.reminder,
+    lastPaidScan: u.lastPaidScan
+  }));
+
   const [isShown, setShown] = useState(false);
   const [localMail] = useLocalStorage(`leavemealone.mail.${userId}`);
+
   const mailCount = localMail.length;
+
   const handleKeydown = e => {
     if (e.keyCode === 27 || e.key === 'Escape') {
       onClickClose();
@@ -59,6 +62,7 @@ export default ({
   };
 
   const hasReminder = currentReminder && !currentReminder.sent;
+  let nextReminder = null;
   let content = null;
 
   if (hasReminder) {
@@ -82,6 +86,12 @@ export default ({
       </>
     );
   } else {
+    const scanPerformed = modalPrices.find(p => p.value === lastPaidScan);
+    nextReminder = {
+      label: scanPerformed.label,
+      timeframe: scanPerformed.value
+    };
+
     content = (
       <>
         <p>

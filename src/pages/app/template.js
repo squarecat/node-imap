@@ -11,8 +11,6 @@ import IgnoreIcon from '../../components/ignore-icon';
 import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
-import { PRICES as modalPrices } from '../../components/price-modal';
-
 export default ({ children }) => {
   const [user, { setReminder: setUserReminder }] = useUser();
   const [showSettings, setShowSettings] = useState(false);
@@ -49,17 +47,8 @@ export default ({ children }) => {
 
   const isLastSearchPaid = hasScanned && lastPaidScan;
   const hasReminder = reminder && !reminder.sent;
-  let nextReminder = null;
 
   if (isLastSearchPaid && !hasReminder) {
-    const scanPerformed = modalPrices.find(
-      p => p.value === lastPaidScan.scanType
-    );
-    nextReminder = {
-      label: scanPerformed.label,
-      timeframe: scanPerformed.value
-    };
-
     reminderButton = (
       <Button
         className="header-btn"
@@ -181,8 +170,6 @@ export default ({ children }) => {
         ) : null}
         {showReminderModal ? (
           <ReminderModal
-            currentReminder={reminder}
-            nextReminder={nextReminder}
             onSetReminder={async timeframe => {
               toggleReminderModal(false);
               const { reminder } = await toggleReminder('add', timeframe);

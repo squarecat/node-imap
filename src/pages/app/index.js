@@ -25,7 +25,7 @@ export default function App({ location = {} } = {}) {
   const rescan = state && state.rescan;
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user] = useUser();
+  const [user, { setLastPaidScan }] = useUser();
   const { hasScanned } = user;
 
   return (
@@ -65,6 +65,7 @@ export default function App({ location = {} } = {}) {
         <Modal
           onPurchase={option => {
             setTimeframe(option);
+            setLastPaidScan(option);
             togglePriceModal(false);
           }}
           onClose={() => togglePriceModal(false)}

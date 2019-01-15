@@ -36,7 +36,9 @@ export default app => {
       referredBy,
       referralCode,
       hasScanned: scans ? !!scans.length : false,
-      lastPaidScan: paidScans.length ? paidScans[paidScans.length - 1] : null,
+      lastPaidScan: paidScans.length
+        ? paidScans[paidScans.length - 1].scanType
+        : null,
       reminder
     });
   });
