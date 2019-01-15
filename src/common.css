@@ -110,5 +110,9 @@ input:focus {
 .reminder-icon {
   position: relative;
   top: 2px;
-  margin-right: 5px;
+  margin-right: 7px;
+}
+
+.reminder-icon.unpadded {
+  margin-right: 0;
 }

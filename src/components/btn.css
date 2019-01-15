@@ -58,6 +58,12 @@
   pointer-events: none;
 }
 
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
 .btn.loading .btn-content {
   visibility: hidden;
 }

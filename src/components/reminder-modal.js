@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import format from 'date-fns/format';
 
+import useLocalStorage from '../utils/hooks/use-localstorage';
 import ModalClose from './modal/modal-close';
 import Button from '../components/btn';
 
+import useUser from '../utils/hooks/use-user';
 import * as track from '../utils/analytics';
-import { getSubsEstimate } from '../utils/estimates';
 
 const reminderDateFormat = 'Do MMMM YYYY';
 
@@ -13,12 +14,13 @@ export default ({
   onClose,
   currentReminder,
   nextReminder,
-  mailCount,
   onSetReminder,
   onClearReminder
 }) => {
+  const [userId] = useUser(u => u.id);
   const [isShown, setShown] = useState(false);
-
+  const [localMail] = useLocalStorage(`leavemealone.mail.${userId}`);
+  const mailCount = localMail.length;
   const handleKeydown = e => {
     if (e.keyCode === 27 || e.key === 'Escape') {
       onClickClose();
@@ -80,18 +82,11 @@ export default ({
       </>
     );
   } else {
-    const { moreSubsEstimate } = getSubsEstimate(
-      nextReminder.timeframe,
-      mailCount
-    );
-
     content = (
       <>
         <p>
           You could receive{' '}
-          <span className="text-important">
-            {moreSubsEstimate} more spam emails
-          </span>{' '}
+          <span className="text-important">{mailCount} more spam emails</span>{' '}
           in the next {nextReminder.label} (based on your last scan).
         </p>
         <p>
@@ -116,7 +111,8 @@ export default ({
                 strokeLinejoin="round"
                 strokeWidth="2"
               >
-                <path d="M8 17 C8 12 9 6 16 6 23 6 24 12 24 17 24 22 27 25 27 25 L5 25 C5 25 8 22 8 17 Z M20 25 C20 25 20 29 16 29 12 29 12 25 12 25 M16 3 L16 6" />
+                <circle cx="16" cy="16" r="14" />
+                <path d="M16 8 L16 16 20 20" />
               </svg>
             </span>
             Set a reminder to scan again in {nextReminder.label}

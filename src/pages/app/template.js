@@ -12,7 +12,6 @@ import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
 import { PRICES as modalPrices } from '../../components/price-modal';
-import useLocalStorage from '../../utils/hooks/use-localstorage';
 
 export default ({ children }) => {
   const [user, { setReminder: setUserReminder }] = useUser();
@@ -20,10 +19,7 @@ export default ({ children }) => {
   const [showReferrerModal, toggleReferrerModal] = useState(false);
   const [showReminderModal, toggleReminderModal] = useState(false);
 
-  const [localMail] = useLocalStorage(`leavemealone.mail.${user.id}`, []);
-  console.log('template: local mail - ', localMail);
-
-  const { profileImg, hasScanned, lastPaidScan, reminder = {} } = user;
+  const { profileImg, hasScanned, lastPaidScan, reminder } = user;
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -82,7 +78,8 @@ export default ({ children }) => {
             strokeLinejoin="round"
             strokeWidth="2"
           >
-            <path d="M8 17 C8 12 9 6 16 6 23 6 24 12 24 17 24 22 27 25 27 25 L5 25 C5 25 8 22 8 17 Z M20 25 C20 25 20 29 16 29 12 29 12 25 12 25 M16 3 L16 6" />
+            <circle cx="16" cy="16" r="14" />
+            <path d="M16 8 L16 16 20 20" />
           </svg>
         </span>
         Set reminder
@@ -96,7 +93,21 @@ export default ({ children }) => {
         compact
         onClick={() => toggleReminderModal(true)}
       >
-        Show reminder
+        <span className="reminder-icon unpadded">
+          <svg
+            viewBox="0 0 32 32"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentcolor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          >
+            <circle cx="16" cy="16" r="14" />
+            <path d="M16 8 L16 16 20 20" />
+          </svg>
+        </span>
       </Button>
     );
   }
@@ -172,16 +183,15 @@ export default ({ children }) => {
           <ReminderModal
             currentReminder={reminder}
             nextReminder={nextReminder}
-            mailCount={localMail.length}
             onSetReminder={async timeframe => {
+              toggleReminderModal(false);
               const { reminder } = await toggleReminder('add', timeframe);
               setUserReminder(reminder);
-              toggleReminderModal(false);
             }}
             onClearReminder={async () => {
+              toggleReminderModal(false);
               await toggleReminder('remove');
               setUserReminder(null);
-              toggleReminderModal(false);
             }}
             onClose={() => toggleReminderModal(false)}
           />

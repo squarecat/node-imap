@@ -37,7 +37,6 @@ const Layout = ({ page, children }) => (
         siteName
       } = data.site.siteMetadata;
       const pageTitle = page ? `${page} | ${siteName}` : title;
-      console.log('layout');
       return (
         <>
           <Helmet>

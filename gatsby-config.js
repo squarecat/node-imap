@@ -1,5 +1,3 @@
-const { analytics } = require('getconfig');
-
 module.exports = {
   siteMetadata: {
     title: 'Leave Me Alone - A Privacy Focused Email Unsubscription Service',
@@ -21,7 +19,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
-        trackingIds: [analytics.gaTrackingId],
+        trackingIds: ['UA-129815670-1'],
         gtagConfig: {
           anonymize_ip: true
         },

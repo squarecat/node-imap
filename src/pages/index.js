@@ -28,14 +28,6 @@ import { PRICES as modalPrices } from '../components/price-modal';
 const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
-const searchParams = new URLSearchParams(window.location.search.substr(1));
-const referralCode = searchParams.get('referrer');
-if (typeof window.localStorage !== 'undefined') {
-  const existing = window.localStorage.getItem('leavemealone.referralcode');
-  if (!existing) {
-    window.localStorage.setItem('leavemealone.referralcode', referralCode);
-  }
-}
 
 const IndexPage = () => {
   const activeRef = useRef(null);
