@@ -1,8 +1,7 @@
 module.exports = {
   siteMetadata: {
     title: 'Leave Me Alone - A Privacy Focused Email Unsubscription Service',
-    description: `Leave Me Alone lets you see all of your subscription emails in one place and unsubscribe
-    from them with a single click!`,
+    description: `Leave Me Alone lets you see all of your subscription emails in one place and unsubscribe from them with a single click!`,
     baseUrl: 'https://leavemealone.xyz',
     twitterHandle: '@LeaveMeAloneApp',
     siteName: 'Leave Me Alone'
