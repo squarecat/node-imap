@@ -29,9 +29,13 @@ export function logout() {
 }
 
 export async function fetchLoggedInUser() {
-  const resp = await fetch('/api/me');
-  const user = await resp.json();
-  localStorage.setItem('fetched-user', true);
-  localStorage.setItem('user', JSON.stringify(user));
-  return user;
+  try {
+    const resp = await fetch('/api/me');
+    const user = await resp.json();
+    localStorage.setItem('fetched-user', true);
+    localStorage.setItem('user', JSON.stringify(user));
+    return user;
+  } catch (err) {
+    return null;
+  }
 }
