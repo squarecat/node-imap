@@ -65,7 +65,9 @@ export default function App({ location = {} } = {}) {
         <Modal
           onPurchase={option => {
             setTimeframe(option);
-            setLastPaidScan(option);
+            if (option !== '3d') {
+              setLastPaidScan(option);
+            }
             togglePriceModal(false);
           }}
           onClose={() => togglePriceModal(false)}
