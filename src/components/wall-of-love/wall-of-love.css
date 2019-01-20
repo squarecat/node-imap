@@ -12,6 +12,14 @@
   margin: 0 auto;
 }
 
+.wall-of-love-header {
+  width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  max-width: 100%;
+  padding: 0 20px;
+}
+
 @media (max-width: 800px) {
   .tweet-box {
     margin-top: 45px;

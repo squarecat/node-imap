@@ -8,7 +8,7 @@ import { useAsync } from '../utils/hooks';
 import envelope from '../assets/envelope.png';
 import dogs from '../assets/dogs.jpg';
 import girlLogo from '../assets/leavemealonegirl.png';
-// import xmasLogo from '../assets/xmas-logo.png';
+import smallLogo from '../assets/envelope-logo.png';
 import gif from '../assets/toggle-unsubscribe-hd.gif';
 
 import Colin from '../components/squarecat';
@@ -35,10 +35,10 @@ const IndexPage = () => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
   };
 
-  const scrollToElement = selector => {
+  const scrollToElement = (selector, offset = 0) => {
     // window.history.pushState({}, false, `#${selector}`);
     window.scrollTo({
-      top: document.getElementById(selector).offsetTop,
+      top: document.getElementById(selector).offsetTop + offset,
       left: 0,
       behavior: 'smooth'
     });
@@ -65,60 +65,99 @@ const IndexPage = () => {
     <Layout>
       <Colin />
       <div id="main">
-        {/* <Header onClickNav={name => scrollToElement(name)} /> */}
-        <div className="friendly-neighbourhood-hero">
-          <div>
-            <div className="leave-me-alone-logo" ref={activeRef}>
-              <span>
-                <img src={envelope} alt="gmail-logo" className="gmail-logo" />
-              </span>
-              <span className="logo-emoji">
-                <img src={girlLogo} alt="girl-logo" className="girl-logo" />
-              </span>
-            </div>
-            <h1 className="title">Leave Me Alone</h1>
-
-            <p className="catchy-tagline">
-              A Privacy Focused Email Unsubscription Service
-            </p>
-            <p>
-              Take back control of your inbox by telling subscription spammers
-              to leave you alone.
-            </p>
-            <a
-              href="/login"
-              onMouseEnter={() => setActive(true)}
-              onMouseLeave={() => setActive(false)}
-              className={`beam-me-up-cta beam-me-up-cta--f`}
-            >
-              Get Started For Free!
+        <div className="home-header">
+          <div className="home-header-inner">
+            <a href="/" className="home-header-logo">
+              <img alt="logo" src={smallLogo} />
             </a>
-
-            {!statsError ? (
-              <p
-                className={`${
-                  statsLoading ? 'join-text-loading' : ''
-                } join-text`}
-              >
-                Join{' '}
-                <span className="join-stat">
-                  {formatNumber(statsData.users)} users
-                </span>{' '}
-                who have unsubscribed from a total of{' '}
-                <span className="join-stat">
-                  {formatNumber(statsData.unsubscriptions)} spam
-                </span>{' '}
-                emails
-              </p>
-            ) : null}
-
-            <a
-              className="more-info"
-              onClick={() => scrollToElement('how-it-works')}
-            >
-              Read more 👇
-            </a>
+            <div className="home-header-title">Leave Me Alone </div>
+            <ul className="home-header-nav">
+              <li>
+                <a
+                  className="link"
+                  onClick={() => scrollToElement('how-it-works', 125)}
+                >
+                  How it works
+                </a>
+              </li>
+              <li>
+                <a
+                  className="link"
+                  onClick={() => scrollToElement('pricing', 100)}
+                >
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/app"
+                  onMouseEnter={() => setActive(true)}
+                  onMouseLeave={() => setActive(false)}
+                  className={`beam-me-up-cta beam-me-up-cta--header`}
+                >
+                  Log in
+                </a>
+              </li>
+            </ul>
           </div>
+        </div>
+        <div className="friendly-neighbourhood-hero">
+          <div className="hero-inner">
+            <div className="hero-box hero-left">
+              <div className="leave-me-alone-logo" ref={activeRef}>
+                <span className="logo-envelope">
+                  <img src={envelope} alt="gmail-logo" className="gmail-logo" />
+                </span>
+                <span className="logo-emoji">
+                  <img src={girlLogo} alt="girl-logo" className="girl-logo" />
+                </span>
+              </div>
+              <h1 className="title">Leave Me Alone</h1>
+            </div>
+            <div className="hero-box hero-right">
+              <p className="catchy-tagline">
+                Privacy Focused Email Unsubscription Service
+              </p>
+              <p>
+                Take back control of your inbox by telling subscription spammers
+                to leave you alone.
+              </p>
+
+              <div className="join-container">
+                <a
+                  href="/login"
+                  onMouseEnter={() => setActive(true)}
+                  onMouseLeave={() => setActive(false)}
+                  className={`beam-me-up-cta beam-me-up-cta--f`}
+                >
+                  Get Started For Free!
+                </a>
+                {!statsError ? (
+                  <p
+                    className={`join-text ${
+                      statsLoading ? 'join-text-loading' : ''
+                    }`}
+                  >
+                    Join{' '}
+                    <span className="join-stat">
+                      {formatNumber(statsData.users)} users
+                    </span>{' '}
+                    who have unsubscribed from a total of{' '}
+                    <span className="join-stat">
+                      {formatNumber(statsData.unsubscriptions)} spam
+                    </span>{' '}
+                    emails
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+          <a
+            className="more-info"
+            onClick={() => scrollToElement('how-it-works', 125)}
+          >
+            Read more 👇
+          </a>
         </div>
         <div className="privacy home-container" id="how-it-works">
           <div className="home-container-inner">
@@ -155,7 +194,7 @@ const IndexPage = () => {
 
             <h2 className="privacy-title">We don't steal your data</h2>
             <span className="privacy-padlock">🕵️‍♀️</span>
-            <p className="privacy-stuff">
+            <p>
               We'll NEVER compromise your privacy. When we scan your inbox for
               subscriptions, we{' '}
               <strong>never store any of your emails on our servers.</strong>
@@ -204,15 +243,17 @@ const IndexPage = () => {
           <div className="home-container-inner">
             <h2>Let's talk money</h2>
             <p>
+              So that we can{' '}
+              <span className="text-important">keep your data safe</span> Leave
+              Me Alone is a paid service.
+            </p>
+            <p>
               We’ll scan your inbox for any subscription emails received in the{' '}
-              <span className="pricing-text-important">
-                last 3 days for free
-              </span>
-              .
+              <span className="text-important">last 3 days for free</span>.
             </p>
             <p>
               To scan for email subscriptions received in the{' '}
-              <span className="pricing-text-important">
+              <span className="text-important">
                 last week, last month, or last 6 months
               </span>
               , you can make a one-time purchase of one of these packages.
@@ -236,20 +277,19 @@ const IndexPage = () => {
             <div className="pricing-cta">
               <ul className="bullets">
                 <li>
-                  See all of your subscription emails{' '}
-                  <span className="pricing-text-important">in one place</span>
+                  See all of your subscription emails in{' '}
+                  <span className="text-important">one place</span>
                 </li>
                 <li>
-                  Unsubscribe from spam{' '}
-                  <span className="pricing-text-important">with one click</span>
+                  Unsubscribe from spam with{' '}
+                  <span className="text-important">one click</span>
                 </li>
                 <li>
-                  Know your data is{' '}
-                  <span className="pricing-text-important">in safe hands</span>
+                  Know your data is in{' '}
+                  <span className="text-important">safe hands</span>
                 </li>
                 <li>
-                  Enjoy a{' '}
-                  <span className="pricing-text-important">cleaner inbox</span>
+                  Enjoy a <span className="text-important">cleaner inbox</span>
                 </li>
               </ul>
               <a
@@ -272,8 +312,8 @@ const IndexPage = () => {
               <span className="text-important">team's productivity</span>.
             </p>
             <p>
-              Give your loved one fewer{' '}
-              <span className="text-important">email notifications</span>.
+              Give your loved one{' '}
+              <span className="text-important">fewer email notifications</span>.
             </p>
             <p>
               Help your mom{' '}
@@ -315,13 +355,13 @@ const IndexPage = () => {
         </div>
       </div>
       <Footer />
-      <div className="makerads-container">
+      {/* <div className="makerads-container">
         <p>Other indie made products we support</p>
         <iframe
           style={{ border: 0, width: '320px', height: '144px' }}
           src="https://makerads.xyz/ad"
         />
-      </div>
+      </div> */}
     </Layout>
   );
 };

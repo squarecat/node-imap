@@ -5,11 +5,13 @@ import './wall-of-love.css';
 export default () => {
   return (
     <div>
-      <h2>💌 Wall of love 💌</h2>
-      <p>
-        Our users are awesome and they think we're awesome too. Take a look at
-        all the nice things they've said about us!
-      </p>
+      <div className="wall-of-love-header">
+        <h2>💌 Wall of love 💌</h2>
+        <p>
+          Our users are awesome and they think we're awesome too. Take a look at
+          all the nice things they've said about us!
+        </p>
+      </div>
       <div className="tweet-wall">
         <div className="tweet-box">
           <div className="col">

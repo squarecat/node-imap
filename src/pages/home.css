@@ -19,24 +19,106 @@ img {
   margin: 0;
 }
 
-.xmas-logo {
+/* .xmas-logo {
   position: relative;
   width: 200px;
   top: -25px;
   left: 32px;
+} */
+
+.home-header {
+  height: 100px;
+  width: 100%;
+  overflow: hidden;
+  padding: 0 50px;
+}
+
+.home-header-inner {
+  display: flex;
+  align-items: center;
+  max-width: 1050px;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.home-header-title {
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.home-header-logo {
+  display: inline-block;
+  height: 32px;
+  margin: 0;
+}
+
+.home-header-logo img {
+  height: 100%;
+}
+
+.home-header-nav {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  font-size: 16px;
+}
+
+.home-header-nav li {
+  padding: 10px;
+  margin: 0 5px;
+}
+
+.home-header-nav li:last-child {
+  padding: 0 0 0 10px;
+  margin-right: 0;
+}
+
+.home-header-nav li a,
+.home-header-nav li a:hover,
+a.more-info,
+a.more-info:hover {
+  border-bottom: none;
+}
+
+.home-header .beam-me-up-cta--header {
+  margin: 0;
+  padding: 10px 15px;
+  font-size: 16px;
 }
 
 .friendly-neighbourhood-hero {
-  height: 100vh;
-  padding: 100px 0 100px 0;
-  text-align: center;
-  width: 600px;
-  max-width: 100%;
+  height: calc(100vh - 100px);
+  width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+}
+
+.hero-inner {
+  display: flex;
+  position: relative;
+  padding: 0 20px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1050px;
+  top: -50px;
+}
+
+.hero-box {
+  flex: 1;
+  max-width: 470px;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .more-info {
@@ -47,16 +129,18 @@ img {
   bottom: 20px;
   left: 0;
   right: 0;
+  text-align: center;
 }
 
 .catchy-tagline {
-  font-size: 24px;
-  line-height: 1.5;
-  line-height: 32px;
+  font-size: 35px;
+  line-height: 42px;
 }
 
 .title {
-  font-size: 54px;
+  font-size: 48px;
+  max-width: 300px;
+  text-align: center;
 }
 
 h1 {
@@ -65,9 +149,8 @@ h1 {
 
 .leave-me-alone-logo {
   position: relative;
-  width: 200px;
-  height: 140px;
-  margin: 0 auto 20px auto;
+  width: 300px;
+  height: 210px;
 }
 
 .logo-emoji {
@@ -110,6 +193,7 @@ h1 {
   margin: 10px 0;
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .beam-me-up-cta:hover {
@@ -166,7 +250,6 @@ h1 {
 }
 
 .privacy {
-  /* background-color: var(--secondary-bg-color); */
   background: linear-gradient(to bottom right, #ffefee, #fddbd7 60%);
   color: var(--primary-font-color);
   font-weight: bolder;
@@ -256,7 +339,7 @@ h1 {
 
 .stats {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-top: 175px;
 }
 
@@ -273,7 +356,7 @@ h1 {
   font-size: 12px;
   line-height: 16px;
   max-width: 280px;
-  margin: 15px auto 0 auto;
+  margin: 15px 0;
   opacity: 1;
   transform: translateY(0);
   transition: opacity 500ms cubic-bezier(0.65, 0.05, 0.36, 1),
@@ -376,18 +459,54 @@ h1 {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1), -2px -2px 10px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 400px) {
-  .more-info {
-    position: relative;
-    bottom: -20px;
+@media (max-width: 800px) {
+  .home-header {
+    height: 60px;
+    padding: 0 20px;
+  }
+  .friendly-neighbourhood-hero {
+    height: calc(100vh - 60px);
+  }
+  .hero-inner {
+    flex-direction: column;
+    max-width: 600px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+    top: -30px;
+  }
+  .leave-me-alone-logo {
+    width: 200px;
+    height: 140px;
+  }
+  .title {
+    font-size: 35px;
+  }
+  .catchy-tagline {
+    font-size: 25px;
+    line-height: 30px;
+  }
+  .hero-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-container-inner {
+    width: 100%;
+  }
+  .home-header-title {
+    display: none;
+  }
+  .home-header-nav li:first-child {
+    display: none;
   }
 }
 
 @media (max-width: 500px) {
-  .friendly-neighbourhood-hero {
-    padding: 20px;
-    align-items: flex-start;
-  }
   .title {
     font-size: 35px;
   }
@@ -412,6 +531,23 @@ h1 {
   }
   .stat {
     margin-top: 50px;
+  }
+}
+
+@media (max-width: 400px) {
+  .leave-me-alone-logo {
+    width: 150px;
+    height: 105px;
+  }
+  .friendly-neighbourhood-hero {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  .hero-inner {
+    top: 0;
+  }
+  .more-info {
+    bottom: 100px;
   }
 }
 
