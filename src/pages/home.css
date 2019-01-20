@@ -193,7 +193,7 @@ h1 {
   margin: 10px 0;
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 6px rgba(50, 50, 93, 0.11), 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
 .beam-me-up-cta:hover {
