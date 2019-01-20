@@ -35,14 +35,14 @@ const IndexPage = () => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
   };
 
-  const scrollToElement = (selector, offset = 0) => {
-    // window.history.pushState({}, false, `#${selector}`);
-    window.scrollTo({
-      top: document.getElementById(selector).offsetTop + offset,
-      left: 0,
-      behavior: 'smooth'
-    });
-  };
+  // const scrollToElement = (selector, offset = 0) => {
+  //   // window.history.pushState({}, false, `#${selector}`);
+  //   window.scrollTo({
+  //     top: document.getElementById(selector).offsetTop + offset,
+  //     left: 0,
+  //     behavior: 'smooth'
+  //   });
+  // };
   useEffect(() => {
     [...document.querySelectorAll('twitter-widget')].forEach(e => {
       const style = document.createElement('style');
@@ -73,18 +73,12 @@ const IndexPage = () => {
             <div className="home-header-title">Leave Me Alone </div>
             <ul className="home-header-nav">
               <li>
-                <a
-                  className="link"
-                  onClick={() => scrollToElement('how-it-works', 125)}
-                >
+                <a className="link" href="#how-it-works">
                   How it works
                 </a>
               </li>
               <li>
-                <a
-                  className="link"
-                  onClick={() => scrollToElement('pricing', 100)}
-                >
+                <a className="link" href="#pricing">
                   Pricing
                 </a>
               </li>
@@ -154,7 +148,8 @@ const IndexPage = () => {
           </div>
           <a
             className="more-info"
-            onClick={() => scrollToElement('how-it-works', 125)}
+            href="#how-it-works"
+            // onClick={() => scrollToElement('how-it-works', 125)}
           >
             Read more 👇
           </a>

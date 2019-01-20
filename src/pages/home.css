@@ -4,10 +4,15 @@
   --backup-font-color: rgba(231, 57, 48, 1);
   --primary-font-color: rgba(231, 51, 51, 1);
   --link-color: rgba(231, 57, 48, 0.749);
+  --body-font-color: hsla(0, 0%, 0%, 0.8);
 }
 
+html {
+  scroll-behavior: smooth;
+}
 body {
   background-color: var(--main-bg-color);
+  scroll-behavior: smooth;
 }
 
 #main {
@@ -78,10 +83,22 @@ img {
 }
 
 .home-header-nav li a,
-.home-header-nav li a:hover,
-a.more-info,
-a.more-info:hover {
+.home-header-nav li a:hover {
   border-bottom: none;
+}
+
+a.more-info {
+  color: var(--body-font-color);
+  border-bottom: none;
+  transition: transform 200ms ease-in-out;
+}
+a.more-info:hover {
+  transform: translateY(-2px);
+}
+a.more-info:hover,
+a.more-info:active,
+a.more-info:visited {
+  color: var(--body-font-color);
 }
 
 .home-header .beam-me-up-cta--header {
@@ -139,6 +156,7 @@ a.more-info:hover {
 
 .title {
   font-size: 48px;
+  line-height: 55px;
   max-width: 300px;
   text-align: center;
 }
@@ -193,7 +211,6 @@ h1 {
   margin: 10px 0;
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
-  box-shadow: 0 1px 6px rgba(50, 50, 93, 0.11), 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
 .beam-me-up-cta:hover {
