@@ -36,6 +36,7 @@ img {
   width: 100%;
   overflow: hidden;
   padding: 0 50px;
+  background-color: #fff;
 }
 
 .home-header-inner {
@@ -115,6 +116,7 @@ a.more-info:visited {
   align-items: center;
   justify-content: center;
   position: relative;
+  flex-direction: column;
 }
 
 .hero-inner {
@@ -129,7 +131,6 @@ a.more-info:visited {
 
 .hero-box {
   flex: 1;
-  /* max-width: 470px; */
 }
 
 .hero-left {
@@ -535,7 +536,7 @@ h1 {
   .home-header-title {
     display: none;
   }
-  .home-header-nav li:first-child {
+  .home-header-nav .nav-login {
     display: none;
   }
 }
@@ -574,14 +575,45 @@ h1 {
     height: 105px;
   }
   .friendly-neighbourhood-hero {
-    align-items: flex-start;
-    padding-top: 20px;
+    padding-top: 0;
+    height: calc(100vh - 40px);
   }
   .hero-inner {
-    top: 0;
+    top: -20px;
+    padding: 0 10px;
+  }
+  .home-container-inner {
+    padding: 0 10px;
+  }
+  .home-container h2 {
+    font-size: 1.4rem;
+  }
+  .home-header {
+    height: 40px;
+    padding: 0 10px;
+  }
+  .home-header-logo {
+    height: 24px;
+  }
+  .home-header-nav {
+    font-size: 14px;
+  }
+  .home-header-nav li {
+    padding: 0 10px;
+  }
+  .informative-description {
+    display: none;
   }
   .more-info {
-    bottom: 100px;
+    position: relative;
+    bottom: -20px;
+  }
+  .huskos {
+    height: 260px;
+    width: 260px;
+  }
+  .makerads-container {
+    padding: 0 0 70px 0;
   }
 }
 

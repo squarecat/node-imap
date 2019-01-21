@@ -63,17 +63,17 @@ const IndexPage = () => {
             </a>
             <div className="home-header-title">Leave Me Alone </div>
             <ul className="home-header-nav">
-              <li>
+              <li className="nav-how">
                 <a className="link" href="#how-it-works">
                   How it works
                 </a>
               </li>
-              <li>
+              <li className="nav-pricing">
                 <a className="link" href="#pricing">
                   Pricing
                 </a>
               </li>
-              <li>
+              <li className="nav-login">
                 <a
                   href="/app"
                   onMouseEnter={() => setActive(true)}
@@ -103,7 +103,7 @@ const IndexPage = () => {
               <p className="catchy-tagline">
                 Privacy Focused Email Unsubscription Service
               </p>
-              <p>
+              <p className="informative-description">
                 Take back control of your inbox by telling subscription spammers
                 to leave you alone.
               </p>
@@ -137,11 +137,7 @@ const IndexPage = () => {
               </div>
             </div>
           </div>
-          <a
-            className="more-info"
-            href="#how-it-works"
-            // onClick={() => scrollToElement('how-it-works', 125)}
-          >
+          <a className="more-info" href="#how-it-works">
             Read more 👇
           </a>
         </div>
