@@ -13,7 +13,6 @@ import gif from '../assets/toggle-unsubscribe-hd.gif';
 
 import Colin from '../components/squarecat';
 import Layout from '../layouts/layout';
-// import Header from '../components/landing-header/landing-header';
 import Footer from '../components/footer';
 import WallOfLove from '../components/wall-of-love/wall-of-love';
 import GiftsPayment from '../components/gifts/gifts';
@@ -35,14 +34,6 @@ const IndexPage = () => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
   };
 
-  // const scrollToElement = (selector, offset = 0) => {
-  //   // window.history.pushState({}, false, `#${selector}`);
-  //   window.scrollTo({
-  //     top: document.getElementById(selector).offsetTop + offset,
-  //     left: 0,
-  //     behavior: 'smooth'
-  //   });
-  // };
   useEffect(() => {
     [...document.querySelectorAll('twitter-widget')].forEach(e => {
       const style = document.createElement('style');
@@ -72,17 +63,17 @@ const IndexPage = () => {
             </a>
             <div className="home-header-title">Leave Me Alone </div>
             <ul className="home-header-nav">
-              <li>
+              <li className="nav-how">
                 <a className="link" href="#how-it-works">
                   How it works
                 </a>
               </li>
-              <li>
+              <li className="nav-pricing">
                 <a className="link" href="#pricing">
                   Pricing
                 </a>
               </li>
-              <li>
+              <li className="nav-login">
                 <a
                   href="/app"
                   onMouseEnter={() => setActive(true)}
@@ -112,7 +103,7 @@ const IndexPage = () => {
               <p className="catchy-tagline">
                 Privacy Focused Email Unsubscription Service
               </p>
-              <p>
+              <p className="informative-description">
                 Take back control of your inbox by telling subscription spammers
                 to leave you alone.
               </p>
@@ -146,16 +137,12 @@ const IndexPage = () => {
               </div>
             </div>
           </div>
-          <a
-            className="more-info"
-            href="#how-it-works"
-            // onClick={() => scrollToElement('how-it-works', 125)}
-          >
+          <a className="more-info" href="#how-it-works">
             Read more 👇
           </a>
         </div>
-        <div className="privacy home-container" id="how-it-works">
-          <div className="home-container-inner">
+        <div className="privacy home-container">
+          <div className="home-container-inner" id="how-it-works">
             <h2>Unsubscribe with a single click</h2>
             <p>
               Did you know that in 2018, spam messages account for 48.16% of all
@@ -229,13 +216,13 @@ const IndexPage = () => {
             </p>
           </div>
         </div>
-        <div className="love home-container" id="wall-of-love">
-          <div className="home-container-inner">
+        <div className="love home-container">
+          <div className="home-container-inner" id="wall-of-love">
             <WallOfLove />
           </div>
         </div>
-        <div className="pricing home-container" id="pricing">
-          <div className="home-container-inner">
+        <div className="pricing home-container">
+          <div className="home-container-inner" id="pricing">
             <h2>Let's talk money</h2>
             <p>
               So that we can{' '}
@@ -243,6 +230,10 @@ const IndexPage = () => {
               Me Alone is a paid service.
             </p>
             <p>
+              You <span className="text-important">pay once</span> for how far
+              back in time you want search your inbox for subscription emails.
+            </p>
+            {/* <p>
               We’ll scan your inbox for any subscription emails received in the{' '}
               <span className="text-important">last 3 days for free</span>.
             </p>
@@ -252,23 +243,38 @@ const IndexPage = () => {
                 last week, last month, or last 6 months
               </span>
               , you can make a one-time purchase of one of these packages.
+            </p> */}
+          </div>
+
+          <div className="pricing-list-of-boxes-that-say-how-much">
+            <p className="pricing-scan-text">
+              Search your inbox for subscriptions received in the last...
             </p>
-            <div className="pricing-boxes">
+            <div className="a-load-of-boxes-with-prices">
+              <a className="pricing-box" href="/login">
+                <h3 className="pricing-title">3 days</h3>
+                <p className="pricing-price">Free</p>
+                <span className="pricing-text">no credit card required</span>
+              </a>
               {PRICES.map(p => (
-                <div
+                <a
                   key={p.value}
                   className={`pricing-box ${
                     p.recommended ? 'pricing-box-recommended' : ''
                   }`}
+                  href="/login"
                 >
                   <h3 className="pricing-title">{p.label}</h3>
                   <p className="pricing-price">
                     {p.price ? `$${p.price / 100}` : 'Free'}
                   </p>
                   <span className="pricing-text">one-time payment</span>
-                </div>
+                </a>
               ))}
             </div>
+          </div>
+
+          <div className="home-container-inner">
             <div className="pricing-cta">
               <ul className="bullets">
                 <li>
@@ -276,8 +282,8 @@ const IndexPage = () => {
                   <span className="text-important">one place</span>
                 </li>
                 <li>
-                  Unsubscribe from spam with{' '}
-                  <span className="text-important">one click</span>
+                  Unsubscribe from spam with a{' '}
+                  <span className="text-important">single click</span>
                 </li>
                 <li>
                   Know your data is in{' '}
@@ -298,8 +304,8 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="gifts home-container" id="gifts">
-          <div className="home-container-inner">
+        <div className="gifts home-container">
+          <div className="home-container-inner" id="gifts">
             <h2>Gift a clean inbox</h2>
             <span className="container-emoji">🎁</span>
             <p>
@@ -321,8 +327,8 @@ const IndexPage = () => {
             <GiftsPayment prices={PRICES} />
           </div>
         </div>
-        <div className="makers home-container" id="about">
-          <div className="home-container-inner">
+        <div className="makers home-container">
+          <div className="home-container-inner" id="about">
             <h2>Created by Independent Makers</h2>
             <p className="maker-stuff">
               Hey! 👋 We're Danielle and James. We work on products that help
@@ -350,13 +356,13 @@ const IndexPage = () => {
         </div>
       </div>
       <Footer />
-      {/* <div className="makerads-container">
+      <div className="makerads-container">
         <p>Other indie made products we support</p>
         <iframe
           style={{ border: 0, width: '320px', height: '144px' }}
           src="https://makerads.xyz/ad"
         />
-      </div> */}
+      </div>
     </Layout>
   );
 };
