@@ -40,6 +40,16 @@ export default () => (
           Roadmap
         </a>
       </li>
+      <li>
+        <a
+          className="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://blog.squarecat.io"
+        >
+          Blog
+        </a>
+      </li>
     </ul>
     <ul className="footer-nav">
       <li>

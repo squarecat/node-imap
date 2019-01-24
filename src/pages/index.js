@@ -100,40 +100,42 @@ const IndexPage = () => {
               <h1 className="title">Leave Me Alone</h1>
             </div>
             <div className="hero-box hero-right">
-              <p className="catchy-tagline">
-                Privacy Focused Email Unsubscription Service
-              </p>
-              <p className="informative-description">
-                Take back control of your inbox by telling subscription spammers
-                to leave you alone.
-              </p>
+              <div className="hero-right-inner">
+                <p className="catchy-tagline">
+                  Take back control of your inbox
+                </p>
+                <p className="informative-description">
+                  See all of your subscription emails in one place and
+                  unsubscribe from them with a single click.
+                </p>
 
-              <div className="join-container">
-                <a
-                  href="/login"
-                  onMouseEnter={() => setActive(true)}
-                  onMouseLeave={() => setActive(false)}
-                  className={`beam-me-up-cta beam-me-up-cta--f`}
-                >
-                  Get Started For Free!
-                </a>
-                {!statsError ? (
-                  <p
-                    className={`join-text ${
-                      statsLoading ? 'join-text-loading' : ''
-                    }`}
+                <div className="join-container">
+                  <a
+                    href="/login"
+                    onMouseEnter={() => setActive(true)}
+                    onMouseLeave={() => setActive(false)}
+                    className={`beam-me-up-cta beam-me-up-cta--f`}
                   >
-                    Join{' '}
-                    <span className="join-stat">
-                      {formatNumber(statsData.users)} users
-                    </span>{' '}
-                    who have unsubscribed from a total of{' '}
-                    <span className="join-stat">
-                      {formatNumber(statsData.unsubscriptions)} spam
-                    </span>{' '}
-                    emails
-                  </p>
-                ) : null}
+                    Get Started For Free!
+                  </a>
+                  {!statsError ? (
+                    <p
+                      className={`join-text ${
+                        statsLoading ? 'join-text-loading' : ''
+                      }`}
+                    >
+                      Join{' '}
+                      <span className="join-stat">
+                        {formatNumber(statsData.users)} users
+                      </span>{' '}
+                      who have unsubscribed from a total of{' '}
+                      <span className="join-stat">
+                        {formatNumber(statsData.unsubscriptions)} spam
+                      </span>{' '}
+                      emails
+                    </p>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
@@ -150,8 +152,8 @@ const IndexPage = () => {
               <sub className="privacy-source-ref">[1]</sub>
             </p>
             <p>
-              See all of your subscription emails in one place and unsubscribe
-              from them easily.
+              Leave Me Alone lets you see all of your subscription emails in one
+              place and unsubscribe from them easily.
             </p>
             <cite className="privacy-source">
               [1]:{' '}

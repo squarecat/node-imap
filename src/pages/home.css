@@ -78,7 +78,7 @@ img {
   margin: 0 5px;
 }
 
-.home-header-nav li:last-child {
+.home-header-nav .nav-login {
   padding: 0 0 0 10px;
   margin-right: 0;
 }
@@ -139,8 +139,9 @@ a.more-info:visited {
   align-items: center;
   justify-content: center;
 }
-.hero-right {
-  max-width: 470px;
+
+.hero-right-inner {
+  max-width: 400px;
 }
 
 .more-info {
@@ -157,6 +158,11 @@ a.more-info:visited {
 .catchy-tagline {
   font-size: 35px;
   line-height: 42px;
+  margin-bottom: 20px;
+}
+
+.informative-description {
+  margin-bottom: 25px;
 }
 
 .title {
@@ -208,12 +214,11 @@ h1 {
   display: inline-block;
   padding: 15px 20px;
   font-size: 22px;
-
   font-weight: bolder;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  margin: 10px 0;
+  margin: 0;
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
 }
@@ -250,10 +255,11 @@ h1 {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  min-height: 300px;
+  min-height: 260px;
+  height: 300px;
   width: 300px;
   overflow: hidden;
-  margin: 25px auto 50px auto;
+  margin: 50px auto 50px auto;
   transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
     color 200ms ease-in-out, background-color 200ms ease-in-out;
   cursor: pointer;
@@ -521,10 +527,14 @@ h1 {
     font-size: 25px;
     line-height: 30px;
   }
-  .hero-box {
+  .hero-box,
+  .hero-right-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 100%;
+  }
+  .hero-right-inner {
     max-width: 100%;
   }
 }
@@ -536,7 +546,7 @@ h1 {
   .home-header-title {
     display: none;
   }
-  .home-header-nav .nav-login {
+  .home-header-nav .nav-how {
     display: none;
   }
 }
@@ -576,10 +586,10 @@ h1 {
   }
   .friendly-neighbourhood-hero {
     padding-top: 0;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 50px);
   }
   .hero-inner {
-    top: -20px;
+    top: -25px;
     padding: 0 10px;
   }
   .home-container-inner {
@@ -589,7 +599,7 @@ h1 {
     font-size: 1.4rem;
   }
   .home-header {
-    height: 40px;
+    height: 50px;
     padding: 0 10px;
   }
   .home-header-logo {
@@ -599,7 +609,11 @@ h1 {
     font-size: 14px;
   }
   .home-header-nav li {
-    padding: 0 10px;
+    padding: 0;
+  }
+  .home-header-nav .beam-me-up-cta--header {
+    font-size: 14px;
+    padding: 5px 10px;
   }
   .informative-description {
     display: none;

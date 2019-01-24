@@ -71,7 +71,7 @@
 
 @media screen and (max-width: 400px) {
   .squarecat-widget {
-    left: 10px;
+    display: none;
   }
 }
 
