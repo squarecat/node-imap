@@ -1,11 +1,11 @@
-import config from 'getconfig';
-
 import { addReferral, updateReferral } from '../dao/user';
-import { getUser, creditUserAccount } from './user';
+import { creditUserAccount, getUserById } from './user';
 import {
   sendReferralLinkUsedMail,
   sendReferralRewardMail
 } from '../utils/email';
+
+import config from 'getconfig';
 
 export function addReferralToReferrer(id, { userId, price, scanType }) {
   return addReferral(id, { userId, price, scanType });
@@ -15,7 +15,7 @@ export async function updateReferralOnReferrer(
   id,
   { userId, price, scanType }
 ) {
-  const { referrals, email, referralCode } = await getUser(id);
+  const { referrals, email, referralCode } = await getUserById(id);
   const { referrals: newReferrals } = await updateReferral(id, {
     userId,
     price,

@@ -1,17 +1,40 @@
-import Gmail from 'node-gmail-api';
-import url from 'url';
-import subDays from 'date-fns/sub_days';
-import subWeeks from 'date-fns/sub_weeks';
-import subMonths from 'date-fns/sub_months';
-import format from 'date-fns/format';
-import emailAddresses from 'email-addresses';
-import io from '@pm2/io';
-import subMinutes from 'date-fns/sub_minutes';
-import isAfter from 'date-fns/is_after';
-import subHours from 'date-fns/sub_hours';
-import isBefore from 'date-fns/is_before';
+import {
+  addEstimateToStats,
+  addFailedUnsubscriptionToStats,
+  addNumberofEmailsToStats,
+  addScanToStats,
+  addUnsubscriptionToStats
+} from './stats';
+import {
+  addResolvedUnsubscription,
+  addUnresolvedUnsubscription
+} from '../dao/subscriptions';
+import {
+  addScanToUser,
+  addUnsubscriptionToUser,
+  getUserById,
+  resolveUserUnsubscription,
+  updatePaidScanForUser
+} from './user';
 
+import Gmail from 'node-gmail-api';
+import emailAddresses from 'email-addresses';
+import { emailStringIsEqual } from '../utils/parsers';
+import format from 'date-fns/format';
+import { getUnsubscribeImage } from '../dao/user';
+import io from '@pm2/io';
+import isAfter from 'date-fns/is_after';
+import isBefore from 'date-fns/is_before';
+import { isHashEqual } from '../dao/encryption';
 import { refreshAccessToken } from '../auth';
+import { sendUnsubscribeMail } from '../utils/email';
+import subDays from 'date-fns/sub_days';
+import subHours from 'date-fns/sub_hours';
+import subMinutes from 'date-fns/sub_minutes';
+import subMonths from 'date-fns/sub_months';
+import subWeeks from 'date-fns/sub_weeks';
+import { unsubscribeWithLink } from '../utils/browser';
+import url from 'url';
 
 const mailPerSecond = io.meter({
   name: 'mail/sec'
@@ -20,31 +43,8 @@ const trashPerSecond = io.meter({
   name: 'trash/sec'
 });
 
-import { emailStringIsEqual } from '../utils/parsers';
-import { getUnsubscribeImage } from '../dao/user';
-import { isHashEqual } from '../dao/encryption';
-import {
-  getUserById,
-  addUnsubscriptionToUser,
-  addScanToUser,
-  resolveUserUnsubscription,
-  updatePaidScanForUser
-} from './user';
 
-import {
-  addUnsubscriptionToStats,
-  addFailedUnsubscriptionToStats,
-  addScanToStats,
-  addNumberofEmailsToStats,
-  addEstimateToStats
-} from './stats';
 
-import { unsubscribeWithLink } from '../utils/browser';
-import { sendUnsubscribeMail } from '../utils/email';
-import {
-  addResolvedUnsubscription,
-  addUnresolvedUnsubscription
-} from '../dao/subscriptions';
 
 const googleDateFormat = 'YYYY/MM/DD';
 const estimateTimeframes = ['3d', '1w'];
@@ -333,20 +333,26 @@ function isUnsubscribable(mail = {}, ignoredSenderList = []) {
     return false;
   }
 
-  const { headers = [] } = payload;
-  const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
-  const from = headers.find(h => h.name === 'From').value;
-  let pureFromEmail;
-  if (from.match(/^.*<.*>/)) {
-    const [, , email] = /^(.*)<(.*)>/.exec(from);
-    pureFromEmail = email;
-  } else {
-    pureFromEmail = from;
+  try {
+    const { headers = [] } = payload;
+    const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
+    const from = headers.find(h => h.name === 'From').value;
+    let pureFromEmail;
+    if (from.match(/^.*<.*>/)) {
+      const [, , email] = /^(.*)<(.*)>/.exec(from);
+      pureFromEmail = email;
+    } else {
+      pureFromEmail = from;
+    }
+    const isIgnoredSender = ignoredSenderList.some(
+      sender => sender === pureFromEmail
+    );
+    return hasListUnsubscribe && !isIgnoredSender;
+  } catch (err) {
+    console.error('Failed to determine if email is unsubscribable');
+    console.error(err);
+    return false;
   }
-  const isIgnoredSender = ignoredSenderList.some(
-    sender => sender === pureFromEmail
-  );
-  return hasListUnsubscribe && !isIgnoredSender;
 }
 
 function mapMail(mail, { trash = false } = {}) {
