@@ -10,6 +10,8 @@ import { updateReferralOnReferrer } from '../services/referral';
 import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
 import { updateUser } from '../dao/user';
 
+import logger from '../utils/logger';
+
 export const products = [
   {
     price: 300,
@@ -37,10 +39,16 @@ export async function getCoupon(coupon) {
 }
 
 export async function updateCoupon(name) {
-  const couponData = await getCoupon(name);
-  const { metadata = {} } = couponData;
-  if (metadata.gift) addGiftRedemptionToStats();
-  return updateCouponUses(couponData);
+  try {
+    const couponData = await getCoupon(name);
+    const { metadata = {} } = couponData;
+    if (metadata.gift) addGiftRedemptionToStats();
+    return updateCouponUses(couponData);
+  } catch (err) {
+    logger.error(`payments-service: failed to update coupon ${name}`);
+    logger.error(err);
+    throw err;
+  }
 }
 
 export async function createPaymentForUser({
@@ -51,23 +59,23 @@ export async function createPaymentForUser({
   address,
   name
 }) {
-  let payment;
-  const { id: userId } = user;
-  let { customerId, referredBy } = await getUserById(userId);
-  const { price: amount, label } = getProduct(productId);
-  let price = amount;
-  let couponObject;
-  if (coupon) {
-    couponObject = await getCoupon(coupon);
-    const { percent_off, amount_off } = couponObject;
-    if (percent_off) {
-      price = amount - amount * (percent_off / 100);
-    } else if (amount_off) {
-      price = amount - amount_off;
-    }
-  }
-
   try {
+    let payment;
+    const { id: userId } = user;
+    let { customerId, referredBy } = await getUserById(userId);
+    const { price: amount, label } = getProduct(productId);
+    let price = amount;
+    let couponObject;
+    if (coupon) {
+      couponObject = await getCoupon(coupon);
+      const { percent_off, amount_off } = couponObject;
+      if (percent_off) {
+        price = amount - amount * (percent_off / 100);
+      } else if (amount_off) {
+        price = amount - amount_off;
+      }
+    }
+
     if (customerId) {
       await updateCustomer({
         customerId: customerId,
@@ -110,11 +118,12 @@ export async function createPaymentForUser({
 
     return payment;
   } catch (err) {
-    console.error(
-      'payments-service: failed to create payment for user',
-      userId
+    logger.error(
+      `payments-service: failed to create payment for user ${
+        user ? user.id : ''
+      }`
     );
-    console.error(err);
+    logger.error(err);
     throw err;
   }
 }

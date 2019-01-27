@@ -300,10 +300,10 @@ const IndexPage = () => {
                   <span className="pricing-text">one-time payment</span>
                 </a>
               ))}
-              <a className="link pricing-enterprise" href="/enterprise">
-                Looking for an enterprise plan?
-              </a>
             </div>
+            <a className="link pricing-enterprise" href="/enterprise">
+              Looking for an enterprise plan?
+            </a>
           </div>
 
           <div className="home-container-inner">

@@ -34,6 +34,7 @@ import subMinutes from 'date-fns/sub_minutes';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import { unsubscribeWithLink } from '../utils/browser';
+import logger from '../utils/logger';
 import url from 'url';
 
 const mailPerSecond = io.meter({
@@ -42,9 +43,6 @@ const mailPerSecond = io.meter({
 const trashPerSecond = io.meter({
   name: 'trash/sec'
 });
-
-
-
 
 const googleDateFormat = 'YYYY/MM/DD';
 const estimateTimeframes = ['3d', '1w'];
@@ -102,7 +100,9 @@ export async function scanMail(
 
     const user = await getUserById(userId);
     if (!hasPaidScanAvailable(user, timeframe)) {
-      console.log('mail: User attempted search that has not been paid for');
+      logger.warn(
+        'mail-service: User attempted search that has not been paid for'
+      );
       return onError('Not paid');
     }
     const accessToken = await getAccessToken(user);
@@ -111,7 +111,6 @@ export async function scanMail(
     const searchStr = getSearchString({ then, now });
     const trashSearchStr = getSearchString({ then, now, query: 'in:trash' });
     let total;
-    console.log('mail-service: getting estimate');
 
     if (timeframe === '1m' || timeframe === '6m') {
       const { then: estimateThen } = getTimeRange('1w');
@@ -140,13 +139,12 @@ export async function scanMail(
       );
       total = estimatedTotal + trashEstimatedTotal;
     }
-    console.log('mail-service: total', total);
-    console.log('mail-service: doing scan... ', userId, timeframe, searchStr);
-    console.log(
-      'mail-service: doing trash scan... ',
-      userId,
-      timeframe,
-      trashSearchStr
+    logger.info(`mail-service: estimated total ${total}`);
+    logger.info(
+      `mail-service: doing scan... user:${userId}, timeframe:${timeframe}, searchStr:${searchStr}`
+    );
+    logger.info(
+      `mail-service: doing trash scan... user:${userId}, timeframe:${timeframe}, trashSearchStr:${trashSearchStr}`
     );
 
     let totalEmailsCount = 0;
@@ -193,7 +191,7 @@ export async function scanMail(
     };
 
     const onScanFinished = () => {
-      console.log('mail-service: scan finished');
+      logger.info('mail-service: scan finished');
       addScanToStats();
       addNumberofEmailsToStats({
         totalEmails: totalEmailsCount,
@@ -213,14 +211,14 @@ export async function scanMail(
     };
 
     const onMailTimeout = err => {
-      console.error('mail-service: gmail timeout');
-      console.error(err);
+      logger.error('mail-service: gmail timeout');
+      logger.error(err);
       onError(err.toString());
     };
 
     const onMailError = err => {
-      console.error('mail-service: gmail error');
-      console.error(err);
+      logger.error('mail-service: gmail error');
+      logger.error(err);
       onError(err.toString());
     };
 
@@ -229,7 +227,7 @@ export async function scanMail(
       max: 10000
     };
 
-    console.log('mail-service: -------- INBOX STARTED --------');
+    logger.info('mail-service: -------- INBOX STARTED --------');
     const s = gmail.messages(searchStr, messageOptions);
 
     s.on('data', onMailData);
@@ -237,12 +235,12 @@ export async function scanMail(
     s.on('error', onMailError);
 
     s.on('end', () => {
-      console.log('mail-service: -------- INBOX FINISHED --------');
-      console.log('mail-service: -------- TRASH STARTED --------');
+      logger.info('mail-service: -------- INBOX FINISHED --------');
+      logger.info('mail-service: -------- TRASH STARTED --------');
       const t = gmail.messages(trashSearchStr, messageOptions);
       t.on('data', d => onMailData(d, { trash: true }));
       t.on('end', () => {
-        console.log('mail-service: -------- TRASH FINISHED --------');
+        logger.info('mail-service: -------- TRASH FINISHED --------');
         onScanFinished();
       });
       t.on('timeout', onMailTimeout);
@@ -255,16 +253,14 @@ export async function scanMail(
 
 export async function unsubscribeMail(userId, mail) {
   const { unsubscribeLink, unsubscribeMailTo } = mail;
-  console.log('mail-service: unsubscribe from', mail.id);
+  logger.info(`mail-service: unsubscribe from ${mail.id}`);
   let unsubStrategy;
   let output;
   try {
     if (unsubscribeLink) {
-      console.log('mail-service: unsubscribing with link');
       unsubStrategy = 'link';
       output = await unsubscribeWithLink(unsubscribeLink);
     } else {
-      console.log('mail-service: unsubscribing with mailto');
       unsubStrategy = 'mailto';
       output = await unsubscribeWithMailTo(unsubscribeMailTo);
     }
@@ -284,8 +280,8 @@ export async function unsubscribeMail(userId, mail) {
       unsubStrategy
     };
   } catch (err) {
-    console.error('mail-service: error unsubscribing from mail', mail.id);
-    console.error(err);
+    logger.error(`mail-service: error unsubscribing from mail ${mail.id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -294,41 +290,45 @@ export async function addUnsubscribeErrorResponse(
   { mailId, success, from, image = null, reason = null, unsubStrategy },
   userId
 ) {
-  console.log(
-    `mail-service: add unsubscribe error response, success: ${success}`
-  );
-  const domain = getDomain(from);
-  if (success) {
+  try {
+    const domain = getDomain(from);
+    if (success) {
+      return Promise.all([
+        addUnsubscriptionToStats({ unsubStrategy }),
+        addResolvedUnsubscription({ mailId, image, domain, unsubStrategy }),
+        resolveUserUnsubscription(userId, mailId)
+      ]);
+    }
     return Promise.all([
-      addUnsubscriptionToStats({ unsubStrategy }),
-      addResolvedUnsubscription({ mailId, image, domain, unsubStrategy }),
+      addFailedUnsubscriptionToStats(),
+      addUnresolvedUnsubscription({
+        mailId,
+        image,
+        domain,
+        reason,
+        unsubStrategy
+      }),
       resolveUserUnsubscription(userId, mailId)
     ]);
+  } catch (err) {
+    logger.error(
+      `mail-service: error adding unsubscribe error response for mail ID ${mailId}`
+    );
+    logger.error(err);
+    throw err;
   }
-  return Promise.all([
-    addFailedUnsubscriptionToStats(),
-    addUnresolvedUnsubscription({
-      mailId,
-      image,
-      domain,
-      reason,
-      unsubStrategy
-    }),
-    resolveUserUnsubscription(userId, mailId)
-  ]);
 }
 
 function isUnsubscribable(mail = {}, ignoredSenderList = []) {
   const { id, payload } = mail;
 
   if (!payload) {
-    console.error(
-      'mail-service: cannot check if unsubscribable, mail object has no payload',
-      id
+    logger.warn(
+      `mail-service: cannot check if unsubscribable, mail object has no payload ${id}`
     );
     if (!id) {
-      console.error('mail-service: mail id undefined');
-      console.error(mail);
+      logger.warn('mail-service: mail id undefined');
+      logger.warn(mail);
     }
     return false;
   }
@@ -349,8 +349,8 @@ function isUnsubscribable(mail = {}, ignoredSenderList = []) {
     );
     return hasListUnsubscribe && !isIgnoredSender;
   } catch (err) {
-    console.error('Failed to determine if email is unsubscribable');
-    console.error(err);
+    logger.error('Failed to determine if email is unsubscribable');
+    logger.error(err);
     return false;
   }
 }
@@ -382,8 +382,8 @@ function mapMail(mail, { trash = false } = {}) {
       isTrash
     };
   } catch (err) {
-    console.error('mail-service: error mapping mail');
-    console.error(err);
+    logger.error('mail-service: error mapping mail');
+    logger.error(err);
     return null;
   }
 }
@@ -434,7 +434,6 @@ function hasUnsubscribedAlready(mail, unsubscriptions = []) {
 }
 
 async function getEstimatedEmails(query, gmail) {
-  console.log('mail-service: estimate', query);
   return new Promise((resolve, reject) => {
     gmail.estimatedMessages(
       query,
@@ -467,26 +466,33 @@ function getTimeRange(timeframe) {
 }
 
 function getUnsubValues(unsub) {
-  let unsubscribeMailTo = null;
-  let unsubscribeLink = null;
-  if (/^<.+>,\s*<.+>$/.test(unsub)) {
-    const unsubTypes = unsub.split(',').map(a => a.trim().match(/^<(.*)>$/)[1]);
-    unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
-    unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
-  } else if (/^<.+>,\s*.+$/.test(unsub)) {
-    const unsubTypes = unsub.split(',').map(a => getUnsubValue(a));
-    unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
-    unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
-  } else if (unsub.startsWith('<http')) {
-    unsubscribeLink = unsub.substr(1, unsub.length - 2);
-  } else if (unsub.startsWith('<mailto')) {
-    unsubscribeMailTo = unsub.substr(1, unsub.length - 2);
-  } else if (url.parse(unsub).protocol === 'mailto') {
-    unsubscribeMailTo = unsub;
-  } else if (url.parse(unsub).protocol !== null) {
-    unsubscribeLink = unsub;
+  try {
+    let unsubscribeMailTo = null;
+    let unsubscribeLink = null;
+    if (/^<.+>,\s*<.+>$/.test(unsub)) {
+      const unsubTypes = unsub.split(',').map(a => a.trim().match(/^<(.*)>$/)[1]);
+      unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
+      unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
+    } else if (/^<.+>,\s*.+$/.test(unsub)) {
+      const unsubTypes = unsub.split(',').map(a => getUnsubValue(a));
+      unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
+      unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
+    } else if (unsub.startsWith('<http')) {
+      unsubscribeLink = unsub.substr(1, unsub.length - 2);
+    } else if (unsub.startsWith('<mailto')) {
+      unsubscribeMailTo = unsub.substr(1, unsub.length - 2);
+    } else if (url.parse(unsub).protocol === 'mailto') {
+      unsubscribeMailTo = unsub;
+    } else if (url.parse(unsub).protocol !== null) {
+      unsubscribeLink = unsub;
+    }
+    return { unsubscribeMailTo, unsubscribeLink };
+  } catch (err) {
+    logger.error(`mail-service: failed to get unsub values`);
+    logger.error(unsub);
+    logger.error(err);
+    throw err;
   }
-  return { unsubscribeMailTo, unsubscribeLink };
 }
 
 function getUnsubValue(str) {

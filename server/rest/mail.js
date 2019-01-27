@@ -12,6 +12,8 @@ import {
 } from '../services/mail';
 import { checkAuthToken } from '../services/user';
 
+import logger from '../utils/logger';
+
 let connectedClients = {};
 let mailBuffer = {};
 
@@ -66,15 +68,17 @@ export default function(app, server) {
           }
         }
       } catch (err) {
-        console.error('mail-rest: error authenticating socket');
-        console.error(err);
+        logger.error('mail-rest: error authenticating socket');
+        logger.error(err);
       }
     });
 
     setTimeout(() => {
       // if the socket didn't authenticate, disconnect it
       if (!socket.auth) {
-        console.log('mail-rest: Disconnecting socket ', socket.id);
+        logger.info(
+          `mail-rest: socket unauthorized - disconnecting socket ${socket.id}`
+        );
         socket.disconnect('unauthorized');
       }
     }, 5000);
@@ -83,7 +87,7 @@ export default function(app, server) {
       if (!socket.auth) {
         return 'Not authenticated';
       }
-      console.log('mail-rest: scanning for ', timeframe);
+      logger.info(`mail-rest: scanning for ${timeframe}`);
       const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
         socket.userId
       );
@@ -107,8 +111,8 @@ export default function(app, server) {
         const data = await unsubscribeMail(socket.userId, mail);
         socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
-        console.error('mail-rest: error unsubscribing from mail');
-        console.error(err);
+        logger.error('mail-rest: error unsubscribing from mail');
+        logger.error(err);
         socket.emit('unsubscribe:err', { id: mail.id, err });
       }
     });
@@ -121,14 +125,14 @@ export default function(app, server) {
           data: response
         });
       } catch (err) {
-        console.error('mail-rest: error adding unsubscribe response');
-        console.error(err);
+        logger.error('mail-rest: error adding unsubscribe response');
+        logger.error(err);
         socket.emit('unsubscribe-error-response:err', { id: data.mailId, err });
       }
     });
 
     socket.on('disconnect', () => {
-      console.log('mail-rest: socket disconnected');
+      logger.info('mail-rest: socket disconnected');
       socketsOpen.dec();
       delete connectedClients[socket.userId];
     });
@@ -149,7 +153,7 @@ function getSocketFunctions(userId) {
     onMail: m => {
       const sock = getSocket(userId);
       if (!sock) {
-        console.error('socket: no socket bufferring mail');
+        logger.error('socket: no socket bufferring mail');
         mailBuffered.mark();
         mailBuffer[userId].droppedMail.push(m);
         mailInBuffer.inc(1);
@@ -161,7 +165,7 @@ function getSocketFunctions(userId) {
     onError: err => {
       const sock = getSocket(userId);
       if (!sock) {
-        console.error('socket: no socket dropped event `error`');
+        logger.error('socket: no socket dropped event `error`');
         return false;
       }
       sock.emit('mail:err', err);
@@ -170,7 +174,7 @@ function getSocketFunctions(userId) {
     onEnd: () => {
       const sock = getSocket(userId);
       if (!sock) {
-        console.error('socket: no socket dropped event `end`');
+        logger.error('socket: no socket dropped event `end`');
         return false;
       }
       sock.emit('mail:end');

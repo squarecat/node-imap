@@ -21,13 +21,15 @@ import { updateCoupon } from './payments';
 import { addUserToStats } from './stats';
 import { addReferralToReferrer } from './referral';
 
+import logger from '../utils/logger';
+
 export async function getUserById(id) {
   try {
     let user = await getUser(id);
     return user;
   } catch (err) {
-    console.error('user-service: error getting user by id', id);
-    console.error(err);
+    logger.error(`user-service: error getting user by id ${id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -65,11 +67,11 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
     }
     return user;
   } catch (err) {
-    console.error(
-      'user-service: error creating user from Google',
-      userData.id || 'no userData id'
+    logger.error(
+      `user-service: error creating or updating user from Google ${id ||
+        'no userData id'}`
     );
-    console.error(err);
+    logger.error(err);
     throw err;
   }
 }
@@ -81,11 +83,11 @@ export async function updateUserToken(id, keys) {
     });
     return user;
   } catch (err) {
-    console.error(
-      'user-service: error updating user refreshtoken',
-      id || 'no userData id'
+    logger.error(
+      `user-service: error updating user refresh token ${id ||
+        'no userData id'}`
     );
-    console.error(err);
+    logger.error(err);
     throw err;
   }
 }
@@ -98,21 +100,15 @@ export async function checkAuthToken(userId, token) {
     }
     return true;
   } catch (err) {
-    console.error('user-service: error checking auth token for user', userId);
-    console.error(err);
+    logger.error(`user-service: error checking auth token for user ${userId}`);
+    logger.error(err);
     throw err;
   }
 }
 
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
   const { to, from, id, googleDate } = mail;
-  try {
-    await addUnsubscription(userId, { to, from, id, googleDate, ...rest });
-  } catch (err) {
-    console.error('user-service: error adding unsubscription to user', userId);
-    console.error(err);
-    throw err;
-  }
+  return addUnsubscription(userId, { to, from, id, googleDate, ...rest });
 }
 
 export function addScanToUser(userId, scanData) {

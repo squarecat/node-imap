@@ -4,6 +4,8 @@ import config from 'getconfig';
 const apiKey = config.mailgun.apiKey;
 const domain = config.mailgun.domain;
 
+import logger from './logger';
+
 const transport = mailgun({ apiKey, domain });
 
 const unsubMailOptions = {
@@ -25,7 +27,7 @@ const referralMailOptions = {
 };
 
 export function sendUnsubscribeMail({ toAddress, subject = 'unsubscribe' }) {
-  console.log('email-utils: sending unsubscribe mail');
+  logger.info('email-utils: sending unsubscribe mail');
   return sendMail({
     ...unsubMailOptions,
     to: toAddress,
@@ -39,6 +41,7 @@ export function sendGiftCouponMultiMail({
   coupons,
   quantity = 1
 }) {
+  logger.info('email-utils: sending gift coupon multi mail');
   return sendMail({
     ...giftMailOptions,
     subject: 'Thank you for purchasing gift scans',
@@ -50,6 +53,7 @@ export function sendGiftCouponMultiMail({
 }
 
 export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
+  logger.info('email-utils: sending gift coupon mail');
   return sendMail({
     ...giftMailOptions,
     to: toAddress,
@@ -58,6 +62,7 @@ export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
 }
 
 export function sendReminderMail({ toAddress, reminderPeriod, coupon }) {
+  logger.info('email-utils: sending reminder mail');
   return sendMail({
     ...reminderMailOptions,
     subject: `Reminder 🕐 - it's been ${reminderPeriod} since your last scan`,
@@ -71,6 +76,8 @@ export function sendReferralLinkUsedMail({
   referralCount,
   referralUrl
 }) {
+  logger.info('email-utils: sending referral link used mail');
+
   let subject = 'Yay! 🎉 - someone used your referral link';
   let text = `Just a little email to tell you that you're on your way to earning $5! 👏 Someone bought a scan using your referral link for the first time.\n\nKeep sharing to get rewarded!\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\nYou're receiving this email because you shared your referral link for Leave Me Alone. We will only send you an email when you get another referrer and when you earn a reward.`;
 
@@ -92,6 +99,8 @@ export function sendReferralRewardMail({
   rewardCount,
   referralUrl
 }) {
+  logger.info('email-utils: sending referral reward mail');
+
   let subject = "You've earned your first $5! 🎁";
   let text = `Congratulations! You've just earned your first $5. Cash out at https://leavemealone.xyz/app\n\n3 people have cleaner inboxes because of you ❤️. Keep sharing your link to earn more $$$ and help more people.\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\nYou're receiving this email because you earned a reward from the Leave Me Alone referral program.`;
 
@@ -113,46 +122,11 @@ function sendMail(options) {
   return new Promise((resolve, reject) => {
     transport.messages().send(options, err => {
       if (err) {
-        console.error('email-utils: failed to send mail');
-        console.error(err);
+        logger.error('email-utils: failed to send mail');
+        logger.error(err);
         return reject(err);
       }
-      console.log('email-utils: mail successfully sent');
       return resolve(true);
     });
   });
 }
-
-// import nodemailer from 'nodemailer';
-
-// // create the transporter only once
-// // use the default sendmail binary
-// const transporter = nodemailer.createTransport({
-//   sendmail: true,
-//   newline: 'unix',
-//   path: '/usr/sbin/sendmail'
-// });
-
-// const mailOptions = {
-//   from: 'leavemealone@squarecat.io',
-//   text: 'unsubscribe'
-// };
-
-// export async function sendUnsubscribeMail({
-//   toAddress,
-//   subject = 'unsubscribe'
-// }) {
-//   console.log('email-utils: sending unsubscribe mail');
-//   try {
-//     await transporter.sendMail({
-//       ...mailOptions,
-//       to: toAddress,
-//       subject
-//     });
-//     return true;
-//   } catch (err) {
-//     console.error('email-utils: failed to send unsubscribe mail');
-//     console.error(err);
-//     throw err;
-//   }
-// }

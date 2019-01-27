@@ -4,6 +4,7 @@ import { google } from 'getconfig';
 import addSeconds from 'date-fns/add_seconds';
 import refresh from 'passport-oauth2-refresh';
 
+import logger from './utils/logger';
 import { createOrUpdateUserFromGoogle, updateUserToken } from './services/user';
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'email'];
@@ -11,7 +12,7 @@ const CLIENT_ID =
   '229643572503-d51b5c1infuudehgdlg1q0sigjella2h.apps.googleusercontent.com';
 const CLIENT_SECRET = '9vNmLaNThnZbXmh5RWSys0_0';
 
-console.log('auth: redirect to', google.redirect);
+logger.info(`auth: redirecting to ${google.redirect}`);
 
 const googleStrategy = new GoogleStrategy(
   {
@@ -21,19 +22,25 @@ const googleStrategy = new GoogleStrategy(
     passReqToCallback: true
   },
   async function(req, accessToken, refreshToken, params, profile, done) {
-    const { cookies } = req;
-    const { referrer } = cookies;
-    const { expires_in } = params;
-    const user = await createOrUpdateUserFromGoogle(
-      { ...profile, referralCode: referrer },
-      {
-        refreshToken,
-        accessToken,
-        expires: addSeconds(new Date(), expires_in),
-        expiresIn: expires_in
-      }
-    );
-    done(null, { ...user });
+    try {
+      const { cookies } = req;
+      const { referrer } = cookies;
+      const { expires_in } = params;
+      const user = await createOrUpdateUserFromGoogle(
+        { ...profile, referralCode: referrer },
+        {
+          refreshToken,
+          accessToken,
+          expires: addSeconds(new Date(), expires_in),
+          expiresIn: expires_in
+        }
+      );
+      done(null, { ...user });
+    } catch (err) {
+      logger.error('auth: failed to create or update user from Google');
+      logger.error(err);
+      done(err);
+    }
   }
 );
 passport.use(googleStrategy);
@@ -80,7 +87,8 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
       refreshToken,
       async (err, accessToken) => {
         if (err) {
-          console.error(err);
+          logger.error('auth: error requesting new access token');
+          logger.error(err);
           return reject(err);
         }
         try {
@@ -92,7 +100,8 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           });
           resolve(accessToken);
         } catch (err) {
-          console.error(err);
+          logger.error('auth: error updating user refresh token');
+          logger.error(err);
           reject(err);
         }
       }

@@ -3,6 +3,8 @@ import { payments } from 'getconfig';
 import axios from 'axios';
 import countries from './countries.json';
 
+import logger from './logger';
+
 const stripe = Stripe(payments.secretKey);
 
 export async function createPayment({
@@ -50,11 +52,11 @@ export async function createPayment({
         coupon
       }
     });
-    console.log('stripe: created charge');
+    logger.info('stripe: created charge');
     return payment;
   } catch (err) {
-    console.error('stripe: failed to create charge');
-    console.error(err);
+    logger.error('stripe: failed to create charge');
+    logger.error(err);
     throw err;
   }
 }
@@ -74,7 +76,8 @@ export async function getPaymentCoupon(name) {
     }
     return { percent_off: 0, amount_off: 0, valid: false };
   } catch (err) {
-    console.error('stripe: failed to get coupon');
+    logger.error('stripe: failed to get coupon');
+    logger.error(err);
     return { percent_off: 0, amount_off: 0, valid: false };
   }
 }
@@ -90,8 +93,8 @@ export async function updateCouponUses(coupon) {
     });
     return updated;
   } catch (err) {
-    console.error('stripe: failed to update coupon uses');
-    console.error(err);
+    logger.error('stripe: failed to update coupon uses');
+    logger.error(err);
     throw err;
   }
 }
@@ -121,8 +124,8 @@ export async function createCoupon({
     const coupon = await stripe.coupons.create(data);
     return coupon;
   } catch (err) {
-    console.error('stripe: failed to create coupon');
-    console.error(err);
+    logger.error('stripe: failed to create coupon');
+    logger.error(err);
     throw err;
   }
 }
@@ -145,11 +148,11 @@ export async function createCustomer({ email, token, address, name }) {
       }
     });
     const { id } = customer;
-    console.log('stripe: created customer', id);
+    logger.info(`stripe: created customer ${id}`);
     return { id };
   } catch (err) {
-    console.error('stripe: failed to create customer');
-    console.error(err);
+    logger.error('stripe: failed to create customer');
+    logger.error(err);
     throw err;
   }
 }
@@ -164,11 +167,11 @@ export async function updateCustomer({ token, customerId, address, name }) {
       }
     });
     const { id } = customer;
-    console.log('stripe: updated customer', id);
+    logger.info(`stripe: updated customer ${id}`);
     return { id };
   } catch (err) {
-    console.error('stripe: failed to update customer');
-    console.error(err);
+    logger.error('stripe: failed to update customer');
+    logger.error(err);
     throw err;
   }
 }
@@ -202,7 +205,8 @@ async function getTaxInfo({ amount, country }) {
       vatAmount: amount - amount / (vat_rate / 100 + 1)
     };
   } catch (err) {
-    console.error(err);
+    logger.error(`stripe: failed to get tax info`);
+    logger.error(err);
     return {
       vatRate: 0,
       vatAmount: 0

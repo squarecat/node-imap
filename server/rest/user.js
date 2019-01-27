@@ -9,38 +9,46 @@ import {
   getReferralStats
 } from '../services/user';
 
+import logger from '../utils/logger';
+
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
-    const {
-      id,
-      email,
-      token,
-      beta,
-      unsubscriptions,
-      scans,
-      paidScans = [],
-      profileImg,
-      ignoredSenderList,
-      referredBy,
-      referralCode,
-      reminder
-    } = await getUserById(req.user.id);
-    res.send({
-      id,
-      email,
-      token,
-      beta,
-      unsubscriptions,
-      profileImg,
-      ignoredSenderList,
-      referredBy,
-      referralCode,
-      hasScanned: scans ? !!scans.length : false,
-      lastPaidScan: paidScans.length
-        ? paidScans[paidScans.length - 1].scanType
-        : null,
-      reminder
-    });
+    try {
+      const {
+        id,
+        email,
+        token,
+        beta,
+        unsubscriptions,
+        scans,
+        paidScans = [],
+        profileImg,
+        ignoredSenderList,
+        referredBy,
+        referralCode,
+        reminder
+      } = await getUserById(req.user.id);
+      res.send({
+        id,
+        email,
+        token,
+        beta,
+        unsubscriptions,
+        profileImg,
+        ignoredSenderList,
+        referredBy,
+        referralCode,
+        hasScanned: scans ? !!scans.length : false,
+        lastPaidScan: paidScans.length
+          ? paidScans[paidScans.length - 1].scanType
+          : null,
+        reminder
+      });
+    } catch (err) {
+      logger.error(`user-rest: error getting user ${req.user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
   });
 
   app.get('/api/me/unsubscriptions', async (req, res) => {
@@ -48,8 +56,11 @@ export default app => {
       const { unsubscriptions } = await getUserById(req.user.id);
       res.send(unsubscriptions);
     } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
+      logger.error(
+        `user-rest: error getting user unsubscriptions ${req.user.id}`
+      );
+      logger.error(err);
+      res.status(500).send(err);
     }
   });
 
@@ -58,8 +69,9 @@ export default app => {
       const { scans } = await getUserById(req.user.id);
       res.send(scans.reverse());
     } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
+      logger.error(`user-rest: error getting user scans ${req.user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
     }
   });
 
@@ -70,8 +82,10 @@ export default app => {
       await addFreeScan(user.id, productId, coupon);
       res.send();
     } catch (err) {
-      console.log('user-rest: error adding scan to user', productId);
-      console.log(err);
+      logger.error(
+        `user-rest: error adding scan to user with product ID ${productId}`
+      );
+      logger.error(err);
       res.status(500).send(err);
     }
   });
@@ -80,20 +94,23 @@ export default app => {
     const { user, body } = req;
     const { id } = user;
     const { op, value } = body;
-    let newUser = user;
+    let newUser;
     try {
       if (op === 'add') {
         newUser = await addToUserIgnoreList(id, value);
       } else if (op === 'remove') {
         newUser = await removeFromUserIgnoreList(id, value);
       } else {
-        console.error(`op not supported`);
+        logger.error(`user-rest: ignore patch op not supported`);
       }
       res.send(newUser);
     } catch (err) {
-      console.error(`user-rest: error patching user ${id} with op ${op}`);
+      logger.error(`user-rest: error patching user ignore ${id} with op ${op}`);
+      logger.error(err);
+      res.status(500).send(err);
     }
   });
+
   app.patch('/api/me/reminder', auth, async (req, res) => {
     const { user, body } = req;
     const { id } = user;
@@ -105,11 +122,15 @@ export default app => {
       } else if (op === 'remove') {
         newUser = await removeUserScanReminder(id);
       } else {
-        console.error(`op not supported`);
+        logger.error(`user-rest: reminder patch op not supported`);
       }
       res.send(newUser);
     } catch (err) {
-      console.error(`user-rest: error patching user ${id} with op ${op}`);
+      logger.error(
+        `user-rest: error patching user reminder ${id} with op ${op}`
+      );
+      logger.error(err);
+      res.status(500).send(err);
     }
   });
 
@@ -119,8 +140,8 @@ export default app => {
       const stats = await getReferralStats(user.id);
       res.send(stats);
     } catch (err) {
-      console.log('user-rest: error getting referral info', user.id);
-      console.log(err);
+      logger.error(`user-rest: error getting user referral info ${id}`);
+      logger.error(err);
       res.status(500).send(err);
     }
   });
