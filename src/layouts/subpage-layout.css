@@ -95,6 +95,9 @@ body {
 }
 
 @media (max-width: 600px) {
+  .subpage-centered .subpage-content {
+    max-width: 100%;
+  }
   .subpage-header-title {
     display: none;
   }
