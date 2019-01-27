@@ -1,11 +1,11 @@
 import React from 'react';
-// import Layout from '../layouts/layout';
 import SubPageLayout from '../layouts/subpage-layout';
 
 const EnterprisePage = () => {
   return (
     <SubPageLayout page="Enterprise" className="subpage-enterprise">
-      <h1 className="enterprise-title">Enterprise Pricing Plan 📈</h1>
+      <h1 className="enterprise-title">Enterprise Pricing Plan</h1>
+      <span className="subpage-section-emoji">📈</span>
       <h2>Coming soon!</h2>
       <p>
         We will offer a subscription service for companies looking to help their
