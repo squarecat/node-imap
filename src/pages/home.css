@@ -479,6 +479,10 @@ h1 {
   margin: 20px 0;
 }
 
+.pricing-enterprise {
+  font-size: 14px;
+}
+
 .bullets {
   margin: 0 0 20px 0;
 }

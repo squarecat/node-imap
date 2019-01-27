@@ -52,6 +52,10 @@ body {
   padding-bottom: 0;
 }
 
+.subpage-enterprise {
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .subpage {
     padding: 40px 20px;
