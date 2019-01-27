@@ -48,7 +48,6 @@ export default app => {
   app.post('/api/payments/hook', async (req, res) => {
     const { body } = req;
     const { type, data } = body;
-    debugger;
     // if (type === 'invoice.finalized') {
     //   const { invoice_pdf, metadata } = data;
     //   const
