@@ -1,23 +1,23 @@
-import express from 'express';
-import session from 'express-session';
-import connectMongo from 'connect-mongo';
-import http from 'http';
-import path from 'path';
-import config from 'getconfig';
-import cookieParser from 'cookie-parser';
+import { connect as connectDb, url as mongoUrl } from './dao/db';
 
-import userApi from './rest/user';
 import auth from './auth';
-import mailApi from './rest/mail';
-import paymentsApi from './rest/payments';
-import statsApi from './rest/stats';
+import config from 'getconfig';
+import connectMongo from 'connect-mongo';
+import cookieParser from 'cookie-parser';
+import express from 'express';
 import giftsApi from './rest/gifts';
+import http from 'http';
+import mailApi from './rest/mail';
+import path from 'path';
+import paymentsApi from './rest/payments';
+import session from 'express-session';
+import { startScheduler } from './utils/scheduler';
+import statsApi from './rest/stats';
+import userApi from './rest/user';
 
 const Sentry = require('@sentry/node');
 
-import { startScheduler } from './utils/scheduler';
 
-import { url as mongoUrl, connect as connectDb } from './dao/db';
 
 Sentry.init({
   dsn: 'https://9b4279f65dbd47e09187ed8b1c4f071b@sentry.io/1334902'
@@ -86,3 +86,12 @@ const App = {
   }
 };
 export default App;
+
+process.on('uncaughtException', function(error) {
+  Sentry.captureException(error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', function(error) {
+  Sentry.captureException(error);
+});
