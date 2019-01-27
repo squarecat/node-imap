@@ -102,7 +102,8 @@ a.more-info:visited {
   color: var(--body-font-color);
 }
 
-.home-header .beam-me-up-cta--header {
+.home-header .beam-me-up-cta--header,
+.home-header .beam-me-up-cta--header:hover {
   margin: 0;
   padding: 10px 15px;
   font-size: 16px;

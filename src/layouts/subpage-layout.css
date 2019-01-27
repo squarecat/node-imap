@@ -22,37 +22,6 @@ body {
   font-size: 16px;
 }
 
-.subpage-header-nav li {
-  padding: 10px;
-  margin: 0 5px;
-}
-
-.subpage-header-nav .nav-login {
-  padding: 0 0 0 10px;
-  margin-right: 0;
-}
-
-.subpage-header-nav li a,
-.subpage-header-nav li a:hover {
-  border-bottom: none;
-}
-
-.subpage-header-title {
-  font-size: 18px;
-  margin-left: 15px;
-  font-weight: bold;
-}
-
-.subpage-header-logo {
-  display: inline-block;
-  height: 32px;
-  margin: 0;
-}
-
-.subpage-header-logo img {
-  height: 100%;
-}
-
 .subpage-header-btn {
   width: auto;
   padding: 10px 15px;
@@ -71,6 +40,42 @@ body {
 .subpage-header-btn:hover {
   background-color: #e73a30;
   color: white;
+}
+
+.subpage-header-nav li {
+  margin: 0 5px;
+}
+
+.subpage-header-nav li a,
+.subpage-header-nav li a:hover {
+  padding: 10px;
+  border-bottom: none;
+}
+
+.subpage-header .subpage-header-btn,
+.subpage-header .subpage-header-btn:hover {
+  padding: 10px 15px;
+}
+
+.subpage-header-nav .nav-login {
+  padding: 0 0 0 10px;
+  margin-right: 0;
+}
+
+.subpage-header-title {
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.subpage-header-logo {
+  display: inline-block;
+  height: 32px;
+  margin: 0;
+}
+
+.subpage-header-logo img {
+  height: 100%;
 }
 
 .subpage {
@@ -131,20 +136,20 @@ body {
 }
 
 @media (max-width: 400px) {
-  .home-header {
+  .subpage-header {
     height: 50px;
     padding: 0 10px;
   }
-  .home-header-logo {
+  .subpage-header-logo {
     height: 24px;
   }
-  .home-header-nav {
+  .subpage-header-nav {
     font-size: 14px;
   }
-  .home-header-nav li {
+  .subpage-header-nav li {
     padding: 0;
   }
-  .home-header-nav .beam-me-up-cta--header {
+  .subpage-header-nav .beam-me-up-cta--header {
     font-size: 14px;
     padding: 5px 10px;
   }

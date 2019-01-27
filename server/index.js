@@ -15,11 +15,9 @@ import { startScheduler } from './utils/scheduler';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
 
-import logger, { httpLogger } from './utils/logger';
+import logger from './utils/logger';
 
 const Sentry = require('@sentry/node');
-
-
 
 Sentry.init({
   dsn: 'https://9b4279f65dbd47e09187ed8b1c4f071b@sentry.io/1334902'
@@ -48,8 +46,6 @@ app.use(
     })
   })
 );
-
-app.use(httpLogger);
 
 auth(app);
 userApi(app);
