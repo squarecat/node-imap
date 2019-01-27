@@ -1,31 +1,30 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import Tooltip from 'rc-tooltip';
-import { List as VirtualList, AutoSizer } from 'react-virtualized';
-import { CSSTransition } from 'react-transition-group';
-import _isArray from 'lodash.isarray';
-import AnimatedNumber from 'react-animated-number';
-
-import { toggleFromIgnoreList } from './ignore';
-import ErrorBoundary from '../../components/error-boundary';
-import UnsubModal from '../../components/unsub-modal';
-import Toggle from '../../components/toggle';
-import IgnoreIcon from '../../components/ignore-icon';
-import useUser from '../../utils/hooks/use-user';
-
-import format from 'date-fns/format';
-import io from 'socket.io-client';
-
-import favicon from '../../assets/meta/favicon.png';
-import faviconScanning from '../../assets/meta/favicon-scanning.png';
-import faviconFinished from '../../assets/meta/favicon-done.png';
-
-const mailDateFormat = 'Do MMM YYYY HH:mm';
-
 import 'rc-tooltip/assets/bootstrap_white.css';
 import './mail-list.css';
 
-import useLocalStorage from '../../utils/hooks/use-localstorage';
+import { AutoSizer, List as VirtualList } from 'react-virtualized';
+import React, { useEffect, useReducer, useState } from 'react';
+
+import AnimatedNumber from 'react-animated-number';
+import { CSSTransition } from 'react-transition-group';
+import ErrorBoundary from '../../components/error-boundary';
+import IgnoreIcon from '../../components/ignore-icon';
+import Toggle from '../../components/toggle';
+import Tooltip from 'rc-tooltip';
+import UnsubModal from '../../components/unsub-modal';
+import _isArray from 'lodash.isarray';
+import favicon from '../../assets/meta/favicon.png';
+import faviconFinished from '../../assets/meta/favicon-done.png';
+import faviconScanning from '../../assets/meta/favicon-scanning.png';
+import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
+import io from 'socket.io-client';
+import { toggleFromIgnoreList } from './ignore';
+import useLocalStorage from '../../utils/hooks/use-localstorage';
+import useUser from '../../utils/hooks/use-user';
+
+const mailDateFormat = 'Do MMM YYYY HH:mm';
+
+
 
 const mailReducer = (state = [], action) => {
   switch (action.type) {
@@ -611,7 +610,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
               overlay={
                 <span>
                   {isIgnored
-                    ? 'This sender is on your ignore list'
+                    ? 'This sender is on your favorite list'
                     : 'Click to ignore this sender in future scans'}
                 </span>
               }

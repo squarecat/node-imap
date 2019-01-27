@@ -1,29 +1,30 @@
-import React, { useRef, useEffect, useState } from 'react';
 import 'isomorphic-fetch';
-import numeral from 'numeral';
-import AnimatedNumber from 'react-animated-number';
-import TrackVisibility from 'react-on-screen';
-
-import { useAsync } from '../utils/hooks';
-import envelope from '../assets/envelope.png';
-import dogs from '../assets/dogs.jpg';
-import girlLogo from '../assets/leavemealonegirl.png';
-import smallLogo from '../assets/envelope-logo.png';
-import gif from '../assets/toggle-unsubscribe-hd.gif';
-
-import Colin from '../components/squarecat';
-import Layout from '../layouts/layout';
-import Footer from '../components/footer';
-import WallOfLove from '../components/wall-of-love/wall-of-love';
-import GiftsPayment from '../components/gifts/gifts';
-
 import './home.css';
+
+import React, { useEffect, useRef, useState } from 'react';
+
+import AnimatedNumber from 'react-animated-number';
+import Colin from '../components/squarecat';
+import Footer from '../components/footer';
+import GiftsPayment from '../components/gifts/gifts';
+import Layout from '../layouts/layout';
+import TrackVisibility from 'react-on-screen';
+import WallOfLove from '../components/wall-of-love/wall-of-love';
+import dogs from '../assets/dogs.jpg';
+import envelope from '../assets/envelope.png';
+import girlLogo from '../assets/leavemealonegirl.png';
+import heartGif from '../assets/heart.gif';
+import { PRICES as modalPrices } from '../components/price-modal';
+import numeral from 'numeral';
+import onePlace from '../assets/in-one-place.png';
+import smallLogo from '../assets/envelope-logo.png';
+import unsubGif from '../assets/unsub-btn.gif';
+import { useAsync } from '../utils/hooks';
 
 const indieMakerTweetText = encodeURIComponent(
   `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
 );
 
-import { PRICES as modalPrices } from '../components/price-modal';
 const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
@@ -145,8 +146,31 @@ const IndexPage = () => {
         </div>
         <div className="privacy home-container">
           <div className="home-container-inner" id="how-it-works">
-            <h2>Unsubscribe with a single click</h2>
-            <p>
+            <h2>
+              See all of your spam, newsletters and subscription emails in one
+              place.
+            </h2>
+            <div className="example-img">
+              <img src={onePlace} alt="unsubscribe list" />
+            </div>
+            <div className="features">
+              <div className="feature-a">
+                <h3 className="feature-title">
+                  Unsubscribe with a single click
+                </h3>
+                <div className="feature-img unsub">
+                  <img src={unsubGif} alt="unsub animation" />
+                </div>
+              </div>
+              <div className="feature-b">
+                <h3 className="feature-title">Keep your favorite senders</h3>
+                <div className="feature-img favorite">
+                  <img src={heartGif} alt="heart animation" />
+                </div>
+              </div>
+            </div>
+
+            {/* <p>
               Did you know that in 2018, spam messages account for 48.16% of all
               e-mail traffic worldwide?{' '}
               <sub className="privacy-source-ref">[1]</sub>
@@ -164,17 +188,7 @@ const IndexPage = () => {
             </cite>
             <div className="example-img">
               <img src={gif} alt="unsubscribe list" />
-            </div>
-
-            <TrackVisibility>
-              {({ isVisible }) => (
-                <Stats
-                  isLoading={statsLoading}
-                  data={statsData}
-                  isVisible={isVisible}
-                />
-              )}
-            </TrackVisibility>
+            </div> */}
 
             <h2 className="privacy-title">We don't steal your data</h2>
             <span className="privacy-padlock">🕵️‍♀️</span>
@@ -221,6 +235,15 @@ const IndexPage = () => {
         <div className="love home-container">
           <div className="home-container-inner" id="wall-of-love">
             <WallOfLove />
+            {/* <TrackVisibility>
+              {({ isVisible }) => (
+                <Stats
+                  isLoading={statsLoading}
+                  data={statsData}
+                  isVisible={isVisible}
+                />
+              )}
+            </TrackVisibility> */}
           </div>
         </div>
         <div className="pricing home-container">
