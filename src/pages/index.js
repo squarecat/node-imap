@@ -7,7 +7,6 @@ import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
 import Layout from '../layouts/layout';
-// import TrackVisibility from 'react-on-screen';
 import WallOfLove from '../components/wall-of-love/wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
@@ -28,6 +27,10 @@ const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
 
+let referrer;
+if (typeof URLSearchParams !== 'undefined') {
+  referrer = new URLSearchParams(window.location.search).get('ref');
+}
 const IndexPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {
@@ -55,8 +58,10 @@ const IndexPage = () => {
   return (
     <Layout>
       <Colin />
+
       <div id="main">
         <div className="home-header">
+          {referrer ? referrerBanner(referrer) : null}
           <div className="home-header-inner">
             <a href="/" className="home-header-logo">
               <img alt="logo" src={smallLogo} />
@@ -438,4 +443,53 @@ export default IndexPage;
 
 function formatNumber(n) {
   return n > 99999 ? numeral(n).format('0a') : numeral(n).format('0,0');
+}
+
+function referrerBanner(ref) {
+  const today = new Date();
+  if (ref === 'producthunt') {
+    return (
+      <div className="ref-banner ph-banner">
+        <span>
+          👋 Welcome Product Hunt. Use coupon PH_HATES_SPAM for 20% of your
+          first scan!
+        </span>
+      </div>
+    );
+  } else if (today.getDate() === 27) {
+    return (
+      <div className="ref-banner ph-banner">
+        <iframe
+          className="ph-iframe"
+          src="https://yvoschaap.com/producthunt/counter.html#href=https%3A%2F%2Fwww.producthunt.com%2Fr%2Fp%2F142518&layout=wide&type=vote"
+          width="120"
+          height="25"
+          scrolling="no"
+          frameBorder="0"
+          allowTransparency="true"
+        >
+          Created with{' '}
+          <a href="https://yvoschaap.com/producthunt/button.html" target="_top">
+            Vote Button for Product Hunt
+          </a>
+          .
+        </iframe>
+        <span>
+          We're featured on Product Hunt today! Check it out{' '}
+          <a
+            style={{
+              fontWeight: 'bolder',
+              color: 'white',
+              display: 'inline-block',
+              borderBottom: '1px dotted white',
+              height: 22
+            }}
+            href="https://producthunt.com/posts/leave-me-alone-2"
+          >
+            here.
+          </a>
+        </span>
+      </div>
+    );
+  }
 }

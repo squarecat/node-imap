@@ -9,5 +9,4 @@ if (process.env.NODE_ENV !== 'development') {
   require('@babel/register');
   App = require('./server/index').default;
 }
-
 App.start();
