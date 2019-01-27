@@ -1,8 +1,8 @@
 {
   "name": "leavemealone",
-  "description": "",
-  "version": "0.0.2-beta",
-  "author": "James Ivings <james@squarecat.io>",
+  "description": "See all of your subscription emails in one place and unsubscribe from them with a single click",
+  "version": "1.0.0",
+  "author": "Squarecat <admin@squarecat.io>",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "@pm2/io": "^2.4.7",
@@ -105,6 +105,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+    "url": "https://github.com/squarecat/leavemealone"
   }
 }
