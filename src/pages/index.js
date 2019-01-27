@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
-import GiftsPayment from '../components/gifts/gifts';
 import Layout from '../layouts/layout';
 import WallOfLove from '../components/wall-of-love/wall-of-love';
 import dogs from '../assets/dogs.jpg';
@@ -301,6 +300,9 @@ const IndexPage = () => {
                   <span className="pricing-text">one-time payment</span>
                 </a>
               ))}
+              <a className="link pricing-enterprise" href="/enterprise">
+                Looking for an enterprise plan?
+              </a>
             </div>
           </div>
 
@@ -332,29 +334,6 @@ const IndexPage = () => {
                 Get Started For Free!
               </a>
             </div>
-          </div>
-        </div>
-        <div className="gifts home-container">
-          <div className="home-container-inner" id="gifts">
-            <h2>Gift a clean inbox</h2>
-            <span className="container-emoji">🎁</span>
-            <p>
-              Increase your{' '}
-              <span className="text-important">team's productivity</span>.
-            </p>
-            <p>
-              Give your loved one{' '}
-              <span className="text-important">fewer email notifications</span>.
-            </p>
-            <p>
-              Help your mom{' '}
-              <span className="text-important">ditch the spam</span>.
-            </p>
-            <p>
-              Just a few great reasons to buy a gift scan of Leave Me Alone
-              today!
-            </p>
-            <GiftsPayment prices={PRICES} />
           </div>
         </div>
         <div className="makers home-container">

@@ -312,8 +312,7 @@ h1 {
 }
 .makers,
 .love,
-.pricing,
-.gifts {
+.pricing {
   padding-top: 180px;
   min-height: 80vh;
 }
@@ -482,6 +481,10 @@ h1 {
 
 .pricing-cta {
   margin: 20px 0;
+}
+
+.pricing-enterprise {
+  font-size: 14px;
 }
 
 .bullets {
