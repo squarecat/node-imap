@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'gatsby';
+import React, { useEffect, useState } from 'react';
 
-import ErrorBoundary from '../../components/error-boundary';
-import ReferralModal from '../../components/referral-modal';
-import ReminderModal from '../../components/reminder-modal';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import Button from '../../components/btn';
+import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
+import { Link } from 'gatsby';
+import ReferralModal from '../../components/referral-modal';
+import ReminderModal from '../../components/reminder-modal';
 import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
@@ -148,7 +148,7 @@ export default ({ children }) => {
                 <li>
                   <Link to="/app/ignore">
                     <IgnoreIcon ignored={true} />
-                    Ignored senders
+                    Favorite senders
                   </Link>
                 </li>
                 <li className="support">
