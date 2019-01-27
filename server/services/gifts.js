@@ -5,6 +5,8 @@ import { getProduct } from './payments';
 import { addGiftPaymentToStats } from '../services/stats';
 import { sendGiftCouponMail, sendGiftCouponMultiMail } from '../utils/email';
 
+import logger from '../utils/logger';
+
 export async function createGift({
   productId,
   token,
@@ -62,8 +64,8 @@ export async function createGift({
       return couponId;
     }
   } catch (err) {
-    console.error('gifts-service: failed to create payment for gift');
-    console.error(err);
+    logger.error('gifts-service: failed to create payment for gift');
+    logger.error(err);
     throw err;
   }
 }

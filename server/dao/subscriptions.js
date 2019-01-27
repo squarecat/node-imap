@@ -1,6 +1,8 @@
 import db from './db';
 import { encrypt } from './encryption';
 
+import logger from '../utils/logger';
+
 const COL_NAME = 'unsubscriptions';
 
 export async function addUnresolvedUnsubscription(data) {
@@ -16,8 +18,8 @@ export async function addUnresolvedUnsubscription(data) {
       resolved: false
     });
   } catch (err) {
-    console.error('users-dao: error inserting unresolved unsubsription');
-    console.error(err);
+    logger.error('subscriptions-dao: error inserting unresolved unsubsription');
+    logger.error(err);
     throw err;
   }
 }
@@ -33,8 +35,8 @@ export async function addResolvedUnsubscription(data) {
       resolved: true
     });
   } catch (err) {
-    console.error('users-dao: error inserting resolved unsubsription');
-    console.error(err);
+    logger.error('subscriptions-dao: error inserting resolved unsubsription');
+    logger.error(err);
     throw err;
   }
 }

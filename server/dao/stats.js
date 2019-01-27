@@ -2,6 +2,7 @@ import _omit from 'lodash.omit';
 import _get from 'lodash.get';
 
 import db, { isoDate } from './db';
+import logger from '../utils/logger';
 
 const COL_NAME = 'stats';
 
@@ -13,7 +14,6 @@ export function addUnsubscriptionByEmail(count = 1) {
 }
 
 async function addUnsubscription(type, count = 1) {
-  console.log('stats-dao: adding unsubscribe stat', type, count);
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -27,8 +27,8 @@ async function addUnsubscription(type, count = 1) {
       { upsert: true }
     );
   } catch (err) {
-    console.error('stats-dao: error inserting stat unsubscription', type);
-    console.error(err);
+    logger.error(`stats-dao: error inserting stat unsubscription type ${type}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -75,8 +75,8 @@ async function updateSingleStat(statName, count = 1) {
       { upsert: true }
     );
   } catch (err) {
-    console.error('stats-dao: error inserting stat', statName);
-    console.error(err);
+    logger.error(`stats-dao: error inserting stat ${statName}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -100,12 +100,10 @@ export async function addNumberofEmails({
       { upsert: true }
     );
   } catch (err) {
-    console.error(
-      'stats-dao: error inserting stat total emails and total unsubscribable emails',
-      totalEmails,
-      totalUnsubscribableEmails
+    logger.error(
+      'stats-dao: error inserting stat total emails and total unsubscribable emails'
     );
-    console.error(err);
+    logger.error(err);
     throw err;
   }
 }
@@ -124,8 +122,8 @@ export async function addPayment({ price }, count = 1) {
       { upsert: true }
     );
   } catch (err) {
-    console.error(`stats-dao: error inserting payment stat ${price}`);
-    console.error(err);
+    logger.error(`stats-dao: error inserting payment stat ${price}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -143,8 +141,8 @@ export async function addGiftPayment({ price }, count = 1) {
       { upsert: true }
     );
   } catch (err) {
-    console.error(`stats-dao: error inserting payment stat ${price}`);
-    console.error(err);
+    logger.error(`stats-dao: error inserting payment stat ${price}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -154,14 +152,13 @@ export async function getStats() {
     const col = await db().collection(COL_NAME);
     return await col.findOne();
   } catch (err) {
-    console.error('stats-dao: failed to get stats');
-    console.error(err);
+    logger.error('stats-dao: failed to get stats');
+    logger.error(err);
     throw err;
   }
 }
 
 export async function recordStats() {
-  console.log('recording day stats');
   const allStats = await getStats();
 
   let yesterdayTotals = _get(allStats, 'daily.previousDayTotals', {});

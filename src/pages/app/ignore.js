@@ -38,7 +38,7 @@ export default () => {
         </p>
         <p>
           Showing <span className="scan-size">{ignoredSenderList.length}</span>{' '}
-          ignored senders. Emails from these addresses will not show up in any
+          favorite senders. Emails from these addresses will not show up in any
           future scans.
         </p>
         <ErrorBoundary>

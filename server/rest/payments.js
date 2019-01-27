@@ -2,6 +2,8 @@ import auth from './auth';
 
 import * as PaymentService from '../services/payments';
 
+import logger from '../utils/logger';
+
 export default app => {
   app.get('/api/checkout/:coupon', auth, async (req, res) => {
     const { coupon } = req.params;
@@ -9,8 +11,8 @@ export default app => {
       const c = await PaymentService.getCoupon(coupon);
       res.send(c);
     } catch (err) {
-      console.log('payments-rest: error with coupon');
-      console.log(err);
+      logger.error('payments-rest: error with coupon');
+      logger.error(err);
       return res.status(500).send({
         status: 'failed',
         err: err.toString()
@@ -37,8 +39,8 @@ export default app => {
         status: 'success'
       });
     } catch (err) {
-      console.log('payments-rest: error with payment');
-      console.log(err);
+      logger.error('payments-rest: error with payment');
+      logger.error(err);
       return res.status(500).send({
         status: 'failed',
         err: err.toString()

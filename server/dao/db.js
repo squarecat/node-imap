@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb';
 import config from 'getconfig';
+import logger from '../utils/logger';
 
 export let url;
 
@@ -19,11 +20,11 @@ export function connect() {
   return new Promise((resolve, reject) => {
     client.connect(err => {
       if (err) {
-        console.error('db: error connecting');
-        console.error(err);
+        logger.error('db: error connecting');
+        logger.error(err);
         return reject(err);
       }
-      console.log('db: connected');
+      logger.info('db: connected');
       connection = client.db(config.db.name);
       return resolve(connection);
     });

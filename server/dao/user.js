@@ -2,6 +2,8 @@ import db, { isoDate } from './db';
 import { encrypt, decrypt } from './encryption';
 import shortid from 'shortid';
 
+import logger from '../utils/logger';
+
 const COL_NAME = 'users';
 const encryptedUnsubCols = [
   'unsubscribeLink',
@@ -31,12 +33,12 @@ export async function createUser(data) {
       scans: [],
       paidScans: []
     });
-    console.log(`users-dao: inserted user ${data.id}`);
     const user = await getUser(data.id);
     return user;
   } catch (err) {
-    console.error('users-dao: error inserting user');
-    console.error(err);
+    logger.error('users-dao: error inserting user');
+    logger.error(JSON.stringify(data, null, 2));
+    logger.error(err);
     throw err;
   }
 }
@@ -74,11 +76,10 @@ export async function getUser(id) {
         }, {});
       })
     };
-    console.log(`users-dao: fetched user ${id}`);
     return decryptedUser;
   } catch (err) {
-    console.error('users-dao: error fetching user');
-    console.error(err);
+    logger.error(`users-dao: error fetching user ${id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -107,12 +108,11 @@ export async function updateUser(id, userData) {
         $set: updateObj
       }
     );
-    console.log(`users-dao: updated user ${id}`);
     const user = await getUser(id);
     return user;
   } catch (err) {
-    console.error('users-dao: error updated user');
-    console.error(err);
+    logger.error(`users-dao: error updating user ${id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -140,10 +140,9 @@ export async function addUnsubscription(id, mailData) {
         }
       }
     );
-    console.log(`users-dao: updated users unsubscriptions ${id}`);
   } catch (err) {
-    console.error('users-dao: error updating user unsubscriptions');
-    console.error(err);
+    logger.error(`users-dao: error updating user ${id} unsubscriptions`);
+    logger.error(err);
     throw err;
   }
 }
@@ -155,10 +154,9 @@ export async function resolveUnsubscription(id, mailId) {
       { id, 'unsubscriptions.id': mailId },
       { $set: { 'unsubscriptions.$.resolved': true } }
     );
-    console.log(`users-dao: resolved users unsubscriptions ${id}`);
   } catch (err) {
-    console.error('users-dao: error resolving user unsubscriptions');
-    console.error(err);
+    logger.error(`users-dao: error resolving user ${id} unsubscriptions`);
+    logger.error(err);
     throw err;
   }
 }
@@ -174,10 +172,9 @@ export async function addScan(id, scanData) {
         }
       }
     );
-    console.log(`users-dao: updated users scans ${id}`);
   } catch (err) {
-    console.error('users-dao: error updating user scans');
-    console.error(err);
+    logger.error(`users-dao: error updating user ${id} scans`);
+    logger.error(err);
     throw err;
   }
 }
@@ -188,14 +185,15 @@ export async function getUnsubscribeImage(id, mailId) {
     const user = await col.findOne({ id });
     const { unsubscriptions } = user;
     const unsub = unsubscriptions.find(u => u.id === mailId);
-    console.log(`users-dao: fetching subscription image`);
     if (!unsub) {
       return null;
     }
     return decrypt(unsub.image);
   } catch (err) {
-    console.error(`users-dao: failed to fetch subscription image`);
-    console.error(err);
+    logger.error(
+      `users-dao: failed to fetch user ${id} subscription image for mail ${mailId}`
+    );
+    logger.error(err);
     throw err;
   }
 }
@@ -217,10 +215,11 @@ export async function updatePaidScan(id, scanType) {
       { done: false, scans: [] }
     );
     await col.updateOne({ id }, { $set: { paidScans: newPaidScans.scans } });
-    console.log(`users-dao: updated users scans ${id}`);
   } catch (err) {
-    console.error('users-dao: error updating user scans');
-    console.error(err);
+    logger.error(
+      `users-dao: error updating user ${id} paid scans with scan type ${scanType}`
+    );
+    logger.error(err);
     throw err;
   }
 }
@@ -236,10 +235,11 @@ export async function addPaidScan(id, scanType) {
         }
       }
     );
-    console.log(`users-dao: added users paid scans ${id}`);
   } catch (err) {
-    console.error('users-dao: error adding user paid scans');
-    console.error(err);
+    logger.error(
+      `users-dao: error adding user ${id} paid scans with scan type ${scanType}`
+    );
+    logger.error(err);
     throw err;
   }
 }
@@ -273,17 +273,15 @@ export async function updateIgnoreList(id, { action, value }) {
     const user = await getUser(id);
     return user;
   } catch (err) {
-    console.error(
+    logger.error(
       `users-dao: error performing ${action} to user ${id} ignore list`
     );
-    console.error(err);
+    logger.error(err);
     throw err;
   }
 }
 
 export async function addScanReminder(id, { timeframe, remindAt }) {
-  console.log(`users-dao: adding reminder to user ${id} for ${timeframe}`);
-  console.log('users-dao: reminding at', remindAt);
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -301,14 +299,15 @@ export async function addScanReminder(id, { timeframe, remindAt }) {
     const user = await getUser(id);
     return user;
   } catch (err) {
-    console.error(
+    logger.error(
       `users-dao: error adding scan reminder for timeframe ${timeframe} to user ${id}`
     );
+    logger.error(err);
+    throw err;
   }
 }
 
 export async function removeScanReminder(id) {
-  console.log(`users-dao: clearing reminder for user ${id}`);
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -322,7 +321,9 @@ export async function removeScanReminder(id) {
     const user = await getUser(id);
     return user;
   } catch (err) {
-    console.error(`users-dao: error removing scan reminder for user ${id}`);
+    logger.error(`users-dao: error removing scan reminder for user ${id}`);
+    logger.error(err);
+    throw err;
   }
 }
 
@@ -330,7 +331,9 @@ export async function addReferral(id, { userId, scanType, price }) {
   try {
     const col = await db().collection(COL_NAME);
     if (id === userId) {
-      return console.warn('user tried to redeem own referral code');
+      return logger.warn(
+        `users-dao: user ${id} tried to redeem own referral code`
+      );
     }
     return col.updateOne(
       { id },
@@ -345,8 +348,8 @@ export async function addReferral(id, { userId, scanType, price }) {
       }
     );
   } catch (err) {
-    console.error(`users-dao: failed to add referral to ${id}`);
-    console.error(err);
+    logger.error(`users-dao: failed to add referral to ${id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -361,7 +364,9 @@ export async function findUsersNeedReminders() {
     const users = await col.find(query);
     return users.toArray();
   } catch (err) {
-    console.error(`users-dao: error finding users needing reminders`);
+    logger.error(`users-dao: error finding users needing reminders`);
+    logger.error(err);
+    throw err;
   }
 }
 
@@ -369,7 +374,9 @@ export async function updateReferral(id, { userId, scanType, price }) {
   try {
     const col = await db().collection(COL_NAME);
     if (id === userId) {
-      return console.warn('user tried to redeem own referral code');
+      return logger.warn(
+        `users-dao: user ${id} tried to redeem own referral code`
+      );
     }
     return col.updateOne(
       { id, 'referrals.userId': userId },
@@ -381,8 +388,8 @@ export async function updateReferral(id, { userId, scanType, price }) {
       }
     );
   } catch (err) {
-    console.error(`users-dao: failed to update referral to ${id}`);
-    console.error(err);
+    logger.error(`users-dao: failed to update referral to ${id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -401,7 +408,9 @@ export async function updateUsersReminded(ids) {
     );
     return users;
   } catch (err) {
-    console.error(`users-dao: error finding users needing reminders`);
+    logger.error(`users-dao: error updating reminded users`);
+    logger.error(err);
+    throw err;
   }
 }
 
@@ -410,10 +419,10 @@ export async function getUserByReferralCode(referralCode) {
     const col = await db().collection(COL_NAME);
     return col.findOne({ referralCode });
   } catch (err) {
-    console.error(
+    logger.error(
       `users-dao: failed to get user by referral code ${referralCode}`
     );
-    console.error(err);
+    logger.error(err);
     throw err;
   }
 }

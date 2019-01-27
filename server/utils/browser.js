@@ -2,6 +2,8 @@ import puppeteer from 'puppeteer';
 import config from 'getconfig';
 import io from '@pm2/io';
 
+import logger from './logger';
+
 const currentTabsOpen = io.counter({
   name: 'Current Tabs Open'
 });
@@ -21,7 +23,7 @@ export async function unsubscribeWithLink(unsubUrl) {
   let page;
   try {
     page = await browser.newPage();
-    console.log('browser: opened new tab');
+    logger.info('browser: opened new tab');
     currentTabsOpen.inc();
     await page.goto(unsubUrl, { waitUntil: 'networkidle0' });
     image = await page.screenshot({
@@ -31,7 +33,7 @@ export async function unsubscribeWithLink(unsubUrl) {
     if (!hasSuccessKeywords) {
       // find button to press
       const links = await page.$$('a, input[type=submit], button');
-      console.log('browser: links', links.length);
+      logger.info(`browser: links ${links.length}`);
       const $confirmLink = await links.reduce(async (promise, link) => {
         const [value, text] = await Promise.all([
           (await link.getProperty('value')).jsonValue(),
@@ -41,18 +43,18 @@ export async function unsubscribeWithLink(unsubUrl) {
           `${value} ${text}`.toLowerCase().includes(keyword)
         );
         if (hasButtonKeyword) {
-          console.log('browser: found text in btn');
+          logger.info('browser: found text in btn');
           return link;
         }
         return promise;
       }, Promise.resolve());
       if ($confirmLink) {
-        console.log('browser: clicking and waiting');
+        logger.info('browser: clicking and waiting');
         await Promise.all([
           page.waitForNavigation({ waitUntil: 'networkidle0' }),
           $confirmLink.click()
         ]);
-        console.log('browser: clicked button');
+        logger.info('browser: clicked button');
         hasSuccessKeywords = await hasKeywords(page, unsubSuccessKeywords);
       }
     }
@@ -61,11 +63,12 @@ export async function unsubscribeWithLink(unsubUrl) {
     });
     return { estimatedSuccess: hasSuccessKeywords, image };
   } catch (err) {
-    console.error(err);
+    logger.error('browser: error opening page or searching for content');
+    logger.error(err);
     return { estimatedSuccess: false, err, image };
   } finally {
     // clear tab memory
-    console.log('browser: clearing memory');
+    logger.info('browser: clearing memory');
     await page.goto('about:blank');
     currentTabsOpen.dec();
     await page.close();
@@ -74,11 +77,11 @@ export async function unsubscribeWithLink(unsubUrl) {
 }
 
 async function hasKeywords(page, keywords) {
-  console.log('browser: checking for keywords');
+  logger.info('browser: checking for keywords');
   const bodyText = await page.evaluate(() =>
     document.body.innerText.toLowerCase()
   );
-  console.log('browser: got page text');
+  logger.info('browser: got page text');
   return keywords.some(word => {
     return bodyText.includes(word);
   });
@@ -89,7 +92,7 @@ async function getPuppeteerInstance() {
     return puppeteerInstance;
   }
   puppeteerInstance = await puppeteer.launch(config.puppeteer);
-  console.log('browser: launched new browser');
+  logger.info('browser: launched new browser');
   return puppeteerInstance;
 }
 
@@ -99,14 +102,15 @@ async function closeInstance() {
     const pageCount = (await puppeteerInstance.pages()).length;
     // theres always a blank page to start with
     if (pageCount === 1) {
-      console.log('browser: no pages open, closing browser');
+      logger.info('browser: no pages open, closing browser');
       await puppeteerInstance.close();
       puppeteerInstance = null;
     } else {
-      console.log(`browser: ${pageCount} pages still open`);
+      logger.info(`browser: ${pageCount} pages still open`);
     }
   } catch (err) {
-    console.error(err);
+    logger.error('browser: error closing instance');
+    logger.error(err);
   }
 }
 

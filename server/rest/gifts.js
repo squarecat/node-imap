@@ -1,5 +1,7 @@
 import { createGift } from '../services/gifts';
 
+import logger from '../utils/logger';
+
 export default app => {
   app.post('/api/gift/:productId', async (req, res) => {
     const { productId } = req.params;
@@ -18,8 +20,8 @@ export default app => {
         couponData
       });
     } catch (err) {
-      console.log('gifts-rest: error with payment');
-      console.log(err);
+      logger.error('gifts-rest: error with payment');
+      logger.error(err);
       return res.status(500).send({
         status: 'failed',
         err: err.toString()

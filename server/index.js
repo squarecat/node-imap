@@ -13,6 +13,8 @@ import paymentsApi from './rest/payments';
 import statsApi from './rest/stats';
 import giftsApi from './rest/gifts';
 
+import logger, { httpLogger } from './utils/logger';
+
 const Sentry = require('@sentry/node');
 
 import { startScheduler } from './utils/scheduler';
@@ -47,6 +49,8 @@ app.use(
   })
 );
 
+app.use(httpLogger);
+
 auth(app);
 userApi(app);
 mailApi(app, server);
@@ -55,7 +59,6 @@ statsApi(app);
 giftsApi(app);
 
 app.get('/sitemap.xml', (req, res) => {
-  console.log('sitemap');
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
 });
 app.get('/api', (req, res) => res.send('OK'));
@@ -78,11 +81,11 @@ app.get('*', (req, res) => {
 
 const App = {
   async start() {
-    console.log('server starting');
+    logger.info('server starting');
     await connectDb();
     server.listen(2345);
     await startScheduler();
-    console.log('server started');
+    logger.info('server started');
   }
 };
 export default App;
