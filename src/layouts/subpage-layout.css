@@ -72,8 +72,12 @@ body {
   padding-bottom: 0;
 }
 
-.subpage-enterprise {
+.subpage-centered {
   text-align: center;
+}
+
+.subpage-centered .subpage-content {
+  max-width: 600px;
 }
 
 .subpage-section-emoji {

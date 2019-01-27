@@ -1,11 +1,17 @@
 import React from 'react';
+import cx from 'classnames';
+
 import Layout from '../layouts/layout';
 import logo from '../assets/envelope-logo.png';
 import Footer from '../components/footer';
 
 import './subpage-layout.css';
 
-export default ({ page, className, children }) => {
+export default ({ page, className, children, centered }) => {
+  const classes = cx('subpage', {
+    'subpage-centered': centered,
+    [className]: className
+  });
   return (
     <Layout page={page}>
       <div className="subpage-header">
@@ -31,7 +37,7 @@ export default ({ page, className, children }) => {
           </li>
         </ul>
       </div>
-      <div className={`subpage ${className}`}>
+      <div className={classes}>
         <div className="subpage-content">{children}</div>
         <Footer />
       </div>

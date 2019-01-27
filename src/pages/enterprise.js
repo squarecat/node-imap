@@ -3,14 +3,14 @@ import SubPageLayout from '../layouts/subpage-layout';
 
 const EnterprisePage = () => {
   return (
-    <SubPageLayout page="Enterprise" className="subpage-enterprise">
+    <SubPageLayout page="Enterprise pricing plan" centered>
       <h1 className="enterprise-title">Enterprise Pricing Plan</h1>
       <span className="subpage-section-emoji">📈</span>
       <h2>Coming soon!</h2>
       <p>
         We will offer a subscription service for companies looking to help their
         employees <span className="text-important">boost productivity</span> and
-        spend less time on emails.
+        spend <span className="text-important">less time on emails</span>.
       </p>
       <p>Subscribe for discounted early access:</p>
       {subscribeEnterpriseEarlyAccess()}

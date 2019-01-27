@@ -72,6 +72,11 @@ export default () => (
           Report a bug
         </a>
       </li>
+      <li>
+        <a className="link" href="/gifts">
+          Purchase gift scan
+        </a>
+      </li>
     </ul>
     <ul className="footer-social">
       <li title="@LeaveMeAloneApp">

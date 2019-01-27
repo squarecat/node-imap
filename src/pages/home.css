@@ -312,8 +312,7 @@ h1 {
 }
 .makers,
 .love,
-.pricing,
-.gifts {
+.pricing {
   padding-top: 180px;
   min-height: 80vh;
 }
