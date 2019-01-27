@@ -13,6 +13,30 @@ body {
   background-color: #fddbd7;
 }
 
+.subpage-header-nav {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  font-size: 16px;
+}
+
+.subpage-header-nav li {
+  padding: 10px;
+  margin: 0 5px;
+}
+
+.subpage-header-nav .nav-login {
+  padding: 0 0 0 10px;
+  margin-right: 0;
+}
+
+.subpage-header-nav li a,
+.subpage-header-nav li a:hover {
+  border-bottom: none;
+}
+
 .subpage-header-title {
   font-size: 18px;
   margin-left: 15px;
@@ -21,7 +45,7 @@ body {
 
 .subpage-header-logo {
   display: inline-block;
-  height: 65%;
+  height: 32px;
   margin: 0;
 }
 
@@ -100,5 +124,28 @@ body {
   }
   .subpage-header-title {
     display: none;
+  }
+  .subpage-header-nav .nav-how {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .home-header {
+    height: 50px;
+    padding: 0 10px;
+  }
+  .home-header-logo {
+    height: 24px;
+  }
+  .home-header-nav {
+    font-size: 14px;
+  }
+  .home-header-nav li {
+    padding: 0;
+  }
+  .home-header-nav .beam-me-up-cta--header {
+    font-size: 14px;
+    padding: 5px 10px;
   }
 }

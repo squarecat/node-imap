@@ -19,7 +19,7 @@ export default ({ page, className, children, centered }) => {
           <img alt="logo" src={logo} />
         </a>
         <div className="subpage-header-title">Leave Me Alone </div>
-        <ul className="home-header-nav subpage-header-nav">
+        <ul className="subpage-header-nav subpage-header-nav">
           <li className="nav-how">
             <a className="link" href="/#how-it-works">
               How it works

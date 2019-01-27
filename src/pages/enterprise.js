@@ -1,6 +1,8 @@
 import React from 'react';
 import SubPageLayout from '../layouts/subpage-layout';
 
+import './enterprise.css';
+
 const EnterprisePage = () => {
   return (
     <SubPageLayout page="Enterprise pricing plan" centered>
@@ -72,7 +74,7 @@ function subscribeEnterpriseEarlyAccess() {
             value="Subscribe"
             name="subscribe"
             id="mc-embedded-subscribe"
-            className="button btn centered"
+            className="subscribe-btn"
           />
         </div>
       </div>
