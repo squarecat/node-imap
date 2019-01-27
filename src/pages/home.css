@@ -32,7 +32,7 @@ img {
 } */
 
 .home-header {
-  height: 100px;
+  height: 106px;
   width: 100%;
   overflow: hidden;
   padding: 0 50px;
@@ -536,6 +536,34 @@ h1 {
   font-size: 20px;
   width: 200px;
   margin-bottom: 10px;
+}
+
+.ref-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  color: white;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bolder;
+  font-size: 14px;
+  z-index: 999;
+}
+
+.ph-banner {
+  background: #da552f;
+  border-color: #da552f;
+}
+
+.ref-banner + .home-header-inner {
+  margin-top: 30px;
+}
+
+.ph-iframe {
+  margin: 0;
+  height: 21px;
 }
 
 @media (max-width: 800px) {
