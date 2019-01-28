@@ -8,8 +8,11 @@
 }
 
 .twitter-tweet {
-  max-width: 100% !important;
-  margin: 0 auto;
+  display: block;
+}
+
+.twitter-tweet > div {
+  margin: 0 auto 10px auto;
 }
 
 .wall-of-love-header {
@@ -21,6 +24,22 @@
 }
 
 @media (max-width: 800px) {
+  /* hide everything after the 3rd column */
+  .col:nth-child(n + 3) {
+    display: none;
+  }
+
+  .tweet-box {
+    grid-template-columns: 50% 50%;
+  }
+}
+
+@media (max-width: 400px) {
+  /* hide everything after the 2nd column */
+  .col:nth-child(n + 2) {
+    display: none;
+  }
+
   .tweet-box {
     margin-top: 45px;
     display: grid;
