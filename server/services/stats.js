@@ -14,6 +14,8 @@ import {
   getStats
 } from '../dao/stats';
 
+import { getUnsubscriptionsLeaderboard } from '../dao/user';
+
 export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
   if (unsubStrategy === 'link') return addUnsubscriptionByLink();
   if (unsubStrategy === 'mailto') return addUnsubscriptionByEmail();
@@ -51,4 +53,7 @@ export function addReminderSentToStats(count) {
 }
 export function getAllStats() {
   return getStats();
+}
+export function getLeaderboardStats() {
+  return getUnsubscriptionsLeaderboard();
 }

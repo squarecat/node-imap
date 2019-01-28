@@ -426,3 +426,23 @@ export async function getUserByReferralCode(referralCode) {
     throw err;
   }
 }
+
+export async function getUnsubscriptionsLeaderboard() {
+  try {
+    const col = await db().collection(COL_NAME);
+    const results = await col
+      .aggregate([
+        { $unwind: '$unsubscriptions' },
+        { $group: { _id: '$_id', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 5 },
+        { $project: { _id: 0, count: 1 } }
+      ])
+      .toArray();
+    return results.map(r => r.count.toFixed());
+  } catch (err) {
+    logger.error('stats-dao: failed to get leaderboard');
+    logger.error(err);
+    throw err;
+  }
+}
