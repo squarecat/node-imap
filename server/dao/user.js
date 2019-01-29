@@ -1,8 +1,8 @@
 import db, { isoDate } from './db';
-import { encrypt, decrypt } from './encryption';
-import shortid from 'shortid';
+import { decrypt, encrypt } from './encryption';
 
 import logger from '../utils/logger';
+import shortid from 'shortid';
 
 const COL_NAME = 'users';
 const encryptedUnsubCols = [
@@ -378,7 +378,7 @@ export async function updateReferral(id, { userId, scanType, price }) {
         `users-dao: user ${id} tried to redeem own referral code`
       );
     }
-    return col.updateOne(
+    await col.updateOne(
       { id, 'referrals.userId': userId },
       {
         $set: {
@@ -387,6 +387,7 @@ export async function updateReferral(id, { userId, scanType, price }) {
         }
       }
     );
+    return getUser(id);
   } catch (err) {
     logger.error(`users-dao: failed to update referral to ${id}`);
     logger.error(err);
