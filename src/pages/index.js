@@ -363,14 +363,14 @@ const IndexPage = () => {
             </p>
           </div>
         </div>
-      </div>
-      <Footer />
-      <div className="makerads-container">
-        <p>Other indie made products we support</p>
-        <iframe
-          style={{ border: 0, width: '320px', height: '144px' }}
-          src="https://makerads.xyz/ad"
-        />
+        <Footer />
+        <div className="makerads-container">
+          <p>Other indie made products we support</p>
+          <iframe
+            style={{ border: 0, width: '320px', height: '144px' }}
+            src="https://makerads.xyz/ad"
+          />
+        </div>
       </div>
     </Layout>
   );
