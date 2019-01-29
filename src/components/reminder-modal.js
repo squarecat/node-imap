@@ -94,16 +94,29 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
 
     content = (
       <>
-        <p>
-          You could receive{' '}
-          <span className="text-important">{mailCount} more spam emails</span>{' '}
-          in the next {nextReminder.label} (based on your last scan).
-        </p>
-        <p>
-          Don't worry, we can send an email reminding you to scan again! We will
-          even give you a <span className="text-important">discount code</span>{' '}
-          to say thanks.
-        </p>
+        {mailCount ? (
+          <>
+            <p>
+              You could receive{' '}
+              <span className="text-important">
+                {mailCount} more spam emails
+              </span>{' '}
+              in the next {nextReminder.label} (based on your last scan).
+            </p>
+            <p>
+              Don't worry, we can send an email reminding you to scan again! We
+              will even give you a{' '}
+              <span className="text-important">discount code</span> to say
+              thanks.
+            </p>
+          </>
+        ) : (
+          <p>
+            We can send you an email reminder to scan again! We will even give
+            you a <span className="text-important">discount code</span> to say
+            thanks.
+          </p>
+        )}
         <div className="reminder-cta">
           <Button
             basic

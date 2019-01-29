@@ -45,7 +45,7 @@ export default ({ children }) => {
 
   let reminderButton = null;
 
-  const isLastSearchPaid = hasScanned && lastPaidScan;
+  const isLastSearchPaid = !!lastPaidScan;
   const hasReminder = reminder && !reminder.sent;
 
   if (isLastSearchPaid && !hasReminder) {
