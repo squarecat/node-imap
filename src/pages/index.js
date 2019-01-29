@@ -56,13 +56,15 @@ const IndexPage = () => {
   if (!statsLoading) {
     statsData = value;
   }
+
+  const banner = referrer ? referrerBanner(referrer) : null;
   return (
     <Layout>
       <Colin />
 
       <div id="main">
         <div className="home-header">
-          {referrer ? referrerBanner(referrer) : null}
+          {banner}
           <div className="home-header-inner">
             <a href="/" className="home-header-logo">
               <img alt="logo" src={smallLogo} />
@@ -458,7 +460,9 @@ function formatNumber(n) {
 }
 
 function referrerBanner(ref) {
-  const today = new Date();
+  const d = new Date();
+  const utc = +d + d.getTimezoneOffset() * 60000;
+  const phDate = new Date(utc + 3600000 * -8);
   if (ref === 'producthunt') {
     return (
       <div className="ref-banner ph-banner">
@@ -468,7 +472,7 @@ function referrerBanner(ref) {
         </span>
       </div>
     );
-  } else if (today.getDate() === 29) {
+  } else if (phDate.getDate() === 30) {
     return (
       <div className="ref-banner ph-banner">
         <iframe

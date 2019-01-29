@@ -556,7 +556,7 @@ h1 {
 }
 
 .ref-banner {
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
   color: white;
