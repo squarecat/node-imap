@@ -12,6 +12,7 @@ import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 import heartGif from '../assets/heart.gif';
+import iphoneUnsubGif from '../assets/iphone-unsub.png';
 import { PRICES as modalPrices } from '../components/price-modal';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
@@ -150,12 +151,21 @@ const IndexPage = () => {
         </div>
         <div className="how home-container">
           <div className="home-container-inner" id="how-it-works">
-            <h2>
+            <h2 className="feature-header">
               See all of your spam, newsletters and subscription emails in one
               place.
             </h2>
             <div className="example-img">
-              <img src={onePlace} alt="unsubscribe list" />
+              <img
+                src={onePlace}
+                className="unsub-desktop-img"
+                alt="unsubscribe list"
+              />
+              <img
+                src={iphoneUnsubGif}
+                className="unsub-iphone-img"
+                alt="unsubscribe list"
+              />
             </div>
             <div className="features">
               <div className="feature-a">
@@ -197,17 +207,12 @@ const IndexPage = () => {
               <img src={gif} alt="unsubscribe list" />
             </div> */}
 
-            <h2 className="privacy-title">We don't steal your data</h2>
-            <span className="privacy-padlock">🕵️‍♀️</span>
+            <h2 className="privacy-title">Why us?</h2>
+            {/* <span className="privacy-padlock">🕵️‍♀️</span> */}
             <p>
-              We'll NEVER compromise your privacy. When we scan your inbox for
-              subscriptions, we{' '}
-              <strong>never store any of your emails on our servers.</strong>
-            </p>
-            <p>
-              Although services like this exist already, they make money by
-              selling and marketing your information. You can read more about
-              this on{' '}
+              Other unsubscription services have existed for years, however they
+              make money by selling and marketing your information. You can read
+              more about this on{' '}
               <a href="https://www.nytimes.com/2017/04/24/technology/personal-data-firm-slice-unroll-me-backlash-uber.html">
                 The New York Times
               </a>
@@ -233,18 +238,14 @@ const IndexPage = () => {
               </a>
               .
             </p>
+            <p className="privacy-padlock">🕵️‍♀️</p>
             <p>
-              We promise to never exploit you or your data. We only want to help
-              you regain control of your inbox.
+              We won't EVER sell your data (in fact we don't even store any
+              email content). We actually unsubscribe you from emails rather
+              than just moving them to trash, so those subscriptions are gone
+              forever, even if you decide to stop using our service.
             </p>
-            <h2>Why us?</h2>
-            <p>
-              Unlike our competitors, we won't ever sell your data (in fact we
-              don't even store any email content). We actually unsubscribe you
-              from emails rather than just moving them to trash, so those
-              subscriptions are gone forever, even if you decide to stop using
-              our service. No hidden fees. No lock-in.
-            </p>
+            <p>No hidden fees. No lock-in.</p>
           </div>
         </div>
         <div className="love home-container">

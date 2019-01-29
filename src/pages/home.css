@@ -358,26 +358,17 @@ h1 {
   opacity: 0.6;
 }
 
-.privacy-title {
-  margin-top: 250px;
-}
-
 .example-img {
   overflow: hidden;
   border-radius: 8px;
   margin-bottom: 50px;
   margin-top: 30px;
-  background-color: white;
   box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.1);
   width: 760px;
   max-width: 95vw;
   transform: translateX(-50%);
   left: 50%;
   position: relative;
-}
-
-.example-img img {
-  display: block;
 }
 
 .falling-emoji {
@@ -591,6 +582,17 @@ h1 {
   height: 21px;
 }
 
+.feature-header {
+  margin-bottom: 50px;
+}
+
+.unsub-desktop-img {
+  display: block;
+}
+.unsub-iphone-img {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .home-header {
     height: 60px;
@@ -639,6 +641,16 @@ h1 {
   }
   .home-header-nav .nav-how {
     display: none;
+  }
+  .unsub-desktop-img {
+    display: none;
+  }
+  .unsub-iphone-img {
+    display: block;
+  }
+  .example-img {
+    max-width: 300px;
+    width: 100%;
   }
 }
 
