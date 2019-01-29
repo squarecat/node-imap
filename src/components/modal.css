@@ -10,7 +10,7 @@
   margin: 0 auto;
   background-color: white;
   border-radius: 7px;
-  w/* padding: 25px 25px 10px 25px; */
+  /* padding: 25px 25px 10px 25px; */
   z-index: 10;
   transform: scale(0.8) translateY(-50%);
   opacity: 0;
