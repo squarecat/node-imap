@@ -8,6 +8,15 @@ module.exports = {
   },
   plugins: [
     'gatsby-plugin-react-helmet',
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `tweetImages`,
+        path: `${__dirname}/src/assets/tweets/`
+      }
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
