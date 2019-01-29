@@ -281,7 +281,7 @@ h1 {
 
 .how {
   background: linear-gradient(to bottom right, #ffefee, #fddbd7 60%);
-  color: var(--primary-font-color);
+  color: var(--body-font-color);
   font-weight: bolder;
   min-height: 65vh;
   padding: 250px 0 150px 0;
@@ -302,11 +302,11 @@ h1 {
 
 .privacy {
   background: linear-gradient(to bottom right, #ffefee, #ffefee 60%);
-  color: var(--primary-font-color);
+  color: var(--body-font-color);
   font-weight: bolder;
   min-height: 65vh;
   padding: 250px 0 150px 0;
-  text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.15);
+  text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.1);
 }
 
 .privacy:before {
@@ -474,6 +474,7 @@ h1 {
   background: white;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  border-top: 1px solid #fddbd7;
 }
 
 .pricing-title {
@@ -642,6 +643,7 @@ h1 {
   .home-header-nav .nav-how {
     display: none;
   }
+
   .unsub-desktop-img {
     display: none;
   }
@@ -651,6 +653,13 @@ h1 {
   .example-img {
     max-width: 300px;
     width: 100%;
+  }
+  .features {
+    flex-direction: column;
+    justify-content: center;
+  }
+  .feature-b {
+    margin-top: 35px;
   }
 }
 
@@ -679,12 +688,6 @@ h1 {
   }
   .stat {
     margin-top: 50px;
-  }
-  .features {
-    justify-content: center;
-  }
-  .feature-b {
-    margin-top: 35px;
   }
 }
 
