@@ -105,7 +105,7 @@ function content({
             <span className="text-important">team's productivity</span>.
           </li>
           <li>
-            ✔ Give your friend one fewer{' '}
+            ✔ Give your friends fewer{' '}
             <span className="text-important">email notifications</span>.
           </li>
           <li>
