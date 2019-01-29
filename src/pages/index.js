@@ -148,7 +148,7 @@ const IndexPage = () => {
             Read more 👇
           </a>
         </div>
-        <div className="privacy home-container">
+        <div className="how home-container">
           <div className="home-container-inner" id="how-it-works">
             <h2>
               See all of your spam, newsletters and subscription emails in one
@@ -173,7 +173,10 @@ const IndexPage = () => {
                 </div>
               </div>
             </div>
-
+          </div>
+        </div>
+        <div className="privacy home-container">
+          <div className="home-container-inner" id="how-it-works">
             {/* <p>
               Did you know that in 2018, spam messages account for 48.16% of all
               e-mail traffic worldwide?{' '}
@@ -233,6 +236,14 @@ const IndexPage = () => {
             <p>
               We promise to never exploit you or your data. We only want to help
               you regain control of your inbox.
+            </p>
+            <h2>Why us?</h2>
+            <p>
+              Unlike our competitors, we won't ever sell your data (in fact we
+              don't even store any email content). We actually unsubscribe you
+              from emails rather than just moving them to trash, so those
+              subscriptions are gone forever, even if you decide to stop using
+              our service. No hidden fees. No lock-in.
             </p>
           </div>
         </div>

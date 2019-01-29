@@ -279,8 +279,29 @@ h1 {
   margin: 0;
 }
 
-.privacy {
+.how {
   background: linear-gradient(to bottom right, #ffefee, #fddbd7 60%);
+  color: var(--primary-font-color);
+  font-weight: bolder;
+  min-height: 65vh;
+  padding: 250px 0 150px 0;
+  text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.15);
+}
+
+.how:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border: 100px solid transparent;
+  border-top-color: white;
+  border-left-width: 50vw;
+  border-right-width: 50vw;
+}
+
+.privacy {
+  background: linear-gradient(to bottom right, #ffefee, #ffefee 60%);
   color: var(--primary-font-color);
   font-weight: bolder;
   min-height: 65vh;
@@ -295,7 +316,7 @@ h1 {
   left: 0;
   right: 0;
   border: 100px solid transparent;
-  border-top-color: white;
+  border-top-color: #fddbd7;
   border-left-width: 50vw;
   border-right-width: 50vw;
 }
@@ -307,7 +328,7 @@ h1 {
   left: 0;
   right: 0;
   border: 100px solid transparent;
-  border-top-color: var(--secondary-bg-color);
+  border-top-color: #ffefee;
   border-left-width: 50vw;
   border-right-width: 50vw;
 }
@@ -628,13 +649,13 @@ h1 {
   .catchy-tagline {
     font-size: 20px;
   }
-  .privacy {
+  .how {
     padding: 150px 0 50px 0;
   }
-  .privacy-title {
+  .how-title {
     margin-top: 150px;
   }
-  .privacy > div,
+  .how > div,
   .makers > div {
     padding: 20px;
   }
