@@ -71,7 +71,8 @@ export default ({ children }) => {
             <path d="M16 8 L16 16 20 20" />
           </svg>
         </span>
-        Set reminder
+        <span className="header-btn-text-short">Remind</span>
+        <span className="header-btn-text-long">Set reminder</span>
       </Button>
     );
   } else if (hasReminder) {
@@ -117,7 +118,8 @@ export default ({ children }) => {
               compact
               onClick={() => toggleReferrerModal(true)}
             >
-              Refer a friend
+              <span className="header-btn-text-short">Refer</span>
+              <span className="header-btn-text-long">Refer a friend</span>
             </Button>
             <div className="settings-dropdown">
               <Button

@@ -298,10 +298,6 @@ pre {
 }
 
 @media (max-width: 500px) {
-  .social-content {
-    font-size: 12px;
-    line-height: 18px;
-  }
   .mail-list-social .actions {
     min-width: 90px;
     padding: 0;
@@ -479,6 +475,13 @@ pre {
   }
 }
 
+@media (max-width: 600px) {
+  .social-content {
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
 @media (max-width: 500px) {
   .mail-list-social .avatar {
     margin-right: 0;
@@ -491,6 +494,8 @@ pre {
   }
   .social-content {
     padding: 0 0px 0 10px;
+    font-size: 12px;
+    line-height: 18px;
   }
   .revoke-token-instructions {
     margin-top: 40px;

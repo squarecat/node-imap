@@ -122,6 +122,10 @@ body {
   margin-right: 15px;
 }
 
+.header-btn-text-short {
+  display: none;
+}
+
 .btn.header-btn:hover {
   background-color: #e73a30;
 }
@@ -188,7 +192,20 @@ body {
   .mail-actions {
     padding-bottom: 20px;
   }
+  .header-btn-text-long {
+    display: none;
+  }
+  .header-btn-text-short {
+    display: inline;
+  }
 }
+
+@media (max-width: 600px) {
+  .header-title {
+    display: none;
+  }
+}
+
 @media (max-width: 500px) {
   .app-content {
     padding: 10px 0;
@@ -196,7 +213,6 @@ body {
   .results-data {
     min-width: auto;
   }
-
   .mail-actions {
     padding: 0 20px 10px 20px;
   }
@@ -211,7 +227,14 @@ body {
   .header {
     padding: 0 10px;
   }
-  .header-title {
-    font-size: 16px;
+}
+
+@media (max-width: 400px) {
+  .btn.header-btn {
+    margin-right: 8px;
+    padding: 5px 8px;
+  }
+  .btn.header-btn .btn-content {
+    font-size: 12px;
   }
 }
