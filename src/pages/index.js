@@ -38,17 +38,6 @@ const IndexPage = () => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
   };
 
-  useEffect(() => {
-    [...document.querySelectorAll('twitter-widget')].forEach(e => {
-      const style = document.createElement('style');
-      style.innerHTML = `
-    .Tweet-card {
-      display: none;
-    }`;
-      e.shadowRoot.appendChild(style);
-    });
-  }, []);
-
   const { error: statsError, loading: statsLoading, value } = useAsync(
     fetchStats
   );
@@ -57,10 +46,11 @@ const IndexPage = () => {
     statsData = value;
   }
 
-  console.log(referrer);
   const d = new Date();
   const utc = +d + d.getTimezoneOffset() * 60000;
   const phDate = new Date(utc + 3600000 * -8);
+  const bannerShown = referrer === 'producthunt' || phDate.getDate() === 30;
+
   return (
     <Layout>
       <Colin />
@@ -121,7 +111,11 @@ const IndexPage = () => {
             </ul>
           </div>
         </div>
-        <div className="friendly-neighbourhood-hero">
+        <div
+          className={`friendly-neighbourhood-hero ${
+            bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
+          }`}
+        >
           <div className="hero-inner">
             <div className="hero-box hero-left">
               <div className="leave-me-alone-logo" ref={activeRef}>

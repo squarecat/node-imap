@@ -32,7 +32,8 @@ img {
 } */
 
 .home-header {
-  height: 106px;
+  /* height: 106px; */
+  height: auto;
   width: 100%;
   overflow: hidden;
   padding: 0 50px;
@@ -43,7 +44,7 @@ img {
   display: flex;
   align-items: center;
   max-width: 1050px;
-  height: 100%;
+  height: 106px;
   width: 100%;
   margin: 0 auto;
 }
@@ -118,6 +119,9 @@ a.more-info:visited {
   justify-content: center;
   position: relative;
   flex-direction: column;
+}
+.friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
+  height: calc(100vh - 130px);
 }
 
 .hero-inner {
@@ -567,6 +571,8 @@ h1 {
   font-weight: bolder;
   font-size: 14px;
   z-index: 999;
+  text-align: center;
+  padding: 0 10px;
 }
 
 .ref-banner:empty {
@@ -604,11 +610,16 @@ h1 {
 
 @media (max-width: 800px) {
   .home-header {
-    height: 60px;
     padding: 0 20px;
+  }
+  .home-header-inner {
+    height: 60px;
   }
   .friendly-neighbourhood-hero {
     height: calc(100vh - 60px);
+  }
+  .friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
+    height: calc(100vh - 90px);
   }
   .hero-inner {
     flex-direction: column;
@@ -639,6 +650,10 @@ h1 {
   .hero-right-inner {
     max-width: 100%;
   }
+  .ref-banner {
+    font-size: 12px;
+    line-height: 15px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -667,6 +682,12 @@ h1 {
     justify-content: center;
   }
   .feature-b {
+    margin-top: 35px;
+  }
+  .ref-banner {
+    height: 35px;
+  }
+  .ref-banner + .home-header-inner {
     margin-top: 35px;
   }
 }
@@ -708,6 +729,9 @@ h1 {
     padding-top: 0;
     height: calc(100vh - 50px);
   }
+  .friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
+    height: calc(100vh - 85px);
+  }
   .hero-inner {
     top: -25px;
     padding: 0 10px;
@@ -719,8 +743,10 @@ h1 {
     font-size: 1.4rem;
   }
   .home-header {
-    height: 50px;
     padding: 0 10px;
+  }
+  .home-header-inner {
+    height: 50px;
   }
   .home-header-logo {
     height: 24px;
