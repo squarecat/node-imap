@@ -405,9 +405,9 @@ const EstimatesScreen = ({ setScreen }) => {
       <div className="modal-content">
         <div className="estimates-modal">
           {loading ? (
-            <p>Asking Google to estimating your emails...please wait...</p>
+            <p>Asking Google to estimate your emails...please wait...</p>
           ) : (
-            <p>Here are our estimates.</p>
+            <p>Here are our estimates:</p>
           )}
         </div>
         {estimates ? (
