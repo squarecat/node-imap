@@ -57,14 +57,41 @@ const IndexPage = () => {
     statsData = value;
   }
 
-  const banner = referrer ? referrerBanner(referrer) : null;
+  console.log(referrer);
+  const d = new Date();
+  const utc = +d + d.getTimezoneOffset() * 60000;
+  const phDate = new Date(utc + 3600000 * -8);
   return (
     <Layout>
       <Colin />
-
       <div id="main">
         <div className="home-header">
-          {banner}
+          <div className="ref-banner ph-banner">
+            {referrer === 'producthunt' ? (
+              <span>
+                👋 Welcome Product Hunt. Use coupon PH_HATES_SPAM for 20% of
+                your first scan!
+              </span>
+            ) : phDate.getDate() === 30 ? (
+              <span>
+                <span>
+                  We're featured on Product Hunt today! Check it out{' '}
+                  <a
+                    style={{
+                      fontWeight: 'bolder',
+                      color: 'white',
+                      display: 'inline-block',
+                      borderBottom: '1px dotted white',
+                      height: 22
+                    }}
+                    href="https://producthunt.com/posts/leave-me-alone-3"
+                  >
+                    here.
+                  </a>
+                </span>
+              </span>
+            ) : null}
+          </div>
           <div className="home-header-inner">
             <a href="/" className="home-header-logo">
               <img alt="logo" src={smallLogo} />
@@ -508,4 +535,5 @@ function referrerBanner(ref) {
       </div>
     );
   }
+  return null;
 }

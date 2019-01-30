@@ -569,6 +569,10 @@ h1 {
   z-index: 999;
 }
 
+.ref-banner:empty {
+  display: none;
+}
+
 .ph-banner {
   background: #da552f;
   border-color: #da552f;
@@ -576,6 +580,10 @@ h1 {
 
 .ref-banner + .home-header-inner {
   margin-top: 30px;
+}
+
+.ref-banner:empty + .home-header-inner {
+  margin-top: 0px;
 }
 
 .ph-iframe {

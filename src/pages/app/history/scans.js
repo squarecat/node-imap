@@ -1,15 +1,14 @@
-import React from 'react';
-import relative from 'tiny-relative-date';
-import Template from '../template';
-import subHours from 'date-fns/sub_hours';
-import isAfter from 'date-fns/is_after';
-import { Link } from 'gatsby';
-
-import { useAsync } from '../../../utils/hooks';
-import ErrorBoundary from '../../../components/error-boundary';
-import Button from '../../../components/btn';
-
 import './scans.css';
+
+import Button from '../../../components/btn';
+import ErrorBoundary from '../../../components/error-boundary';
+import { Link } from 'gatsby';
+import React from 'react';
+import Template from '../template';
+import isAfter from 'date-fns/is_after';
+import relative from 'tiny-relative-date';
+import subHours from 'date-fns/sub_hours';
+import { useAsync } from '../../../utils/hooks';
 
 async function fetchScanHistory() {
   const res = await fetch('/api/me/scans');
