@@ -21,9 +21,8 @@ const FaqPage = () => (
         </p>
         <p>
           We actually unsubscribe you from the lists rather than just moving
-          them to trash or applying a label. This is better for both your inbox,
-          and the subscription service as they'll now know they have one less
-          subscriber!
+          them to trash or applying a label. Those subscriptions are gone
+          forever, even if you decide to stop using our service.
         </p>
       </div>
       <div className="faq-box">
