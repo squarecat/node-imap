@@ -18,7 +18,11 @@ import {
 } from '../dao/user';
 
 import { updateCoupon } from './payments';
-import { addUserToStats, addReminderRequestToStats } from './stats';
+import {
+  addUserToStats,
+  addReminderRequestToStats,
+  addReferralSignupToStats
+} from './stats';
 import { addReferralToReferrer } from './referral';
 
 import logger from '../utils/logger';
@@ -48,6 +52,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
           referralCode
         );
         await addReferralToReferrer(referralUserId, { userId: id });
+        addReferralSignupToStats();
         referredBy = referralUserId;
       }
       user = await createUser({

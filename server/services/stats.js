@@ -11,6 +11,9 @@ import {
   addEstimate,
   addReminderRequest,
   addReminderSent,
+  addReferralSignup,
+  addReferralPaidScan,
+  addReferralCredit,
   getStats
 } from '../dao/stats';
 
@@ -50,6 +53,15 @@ export function addReminderRequestToStats(count) {
 }
 export function addReminderSentToStats(count) {
   return addReminderSent(count);
+}
+export function addReferralSignupToStats() {
+  return addReferralSignup();
+}
+export function addReferralPaidScanToStats() {
+  return addReferralPaidScan();
+}
+export function addReferralCreditToStats({ amount }) {
+  return addReferralCredit({ amount });
 }
 export function getAllStats() {
   return getStats();

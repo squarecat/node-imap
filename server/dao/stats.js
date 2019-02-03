@@ -61,6 +61,16 @@ export function addReminderSent(count = 1) {
   return updateSingleStat('remindersSent', count);
 }
 
+export function addReferralSignup(count = 1) {
+  return updateSingleStat('referralSignup', count);
+}
+export function addReferralPaidScan(count = 1) {
+  return updateSingleStat('referralPaidScan', count);
+}
+export function addReferralCredit({ amount = 5 }) {
+  return updateSingleStat('referralCredit', amount);
+}
+
 // generic update stat function for anything
 async function updateSingleStat(statName, count = 1) {
   try {
