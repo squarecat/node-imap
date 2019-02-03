@@ -26,6 +26,7 @@ import io from '@pm2/io';
 import isAfter from 'date-fns/is_after';
 import isBefore from 'date-fns/is_before';
 import { isHashEqual } from '../dao/encryption';
+import logger from '../utils/logger';
 import { refreshAccessToken } from '../auth';
 import { sendUnsubscribeMail } from '../utils/email';
 import subDays from 'date-fns/sub_days';
@@ -34,7 +35,6 @@ import subMinutes from 'date-fns/sub_minutes';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import { unsubscribeWithLink } from '../utils/browser';
-import logger from '../utils/logger';
 import url from 'url';
 
 const mailPerSecond = io.meter({
@@ -224,7 +224,7 @@ export async function scanMail(
 
     const messageOptions = {
       timeout: 10000,
-      max: 10000
+      max: 50000
     };
 
     logger.info('mail-service: -------- INBOX STARTED --------');
@@ -470,7 +470,9 @@ function getUnsubValues(unsub) {
     let unsubscribeMailTo = null;
     let unsubscribeLink = null;
     if (/^<.+>,\s*<.+>$/.test(unsub)) {
-      const unsubTypes = unsub.split(',').map(a => a.trim().match(/^<(.*)>$/)[1]);
+      const unsubTypes = unsub
+        .split(',')
+        .map(a => a.trim().match(/^<(.*)>$/)[1]);
       unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
       unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
     } else if (/^<.+>,\s*.+$/.test(unsub)) {

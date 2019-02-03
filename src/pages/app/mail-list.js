@@ -275,6 +275,9 @@ export default ({ timeframe, showPriceModal }) => {
 
   const showMoreText =
     isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;
+  const scanMessage = `Depending on the size of your inbox this may take a while, feel
+    free to check back later, but please don't close this window.`;
+
   return (
     <>
       <div className={`mail-actions ${isSearchFinished ? 'finished' : ''}`}>
@@ -283,9 +286,14 @@ export default ({ timeframe, showPriceModal }) => {
             <span className="quantity">{mail ? mail.length : 0}</span>
             subscriptions <span className="extra">found</span>
           </span>
-          <span className="action-item progress">{`Scanning ${
-            scanName ? `for ${scanName}` : ''
-          }... ${isSearchFinished ? 100 : believableProgress}%`}</span>
+          <span className="action-item progress">
+            <span>
+              {`Scanning ${scanName ? `for ${scanName}` : ''}... ${
+                isSearchFinished ? 100 : believableProgress
+              }%`}
+            </span>
+            {/* <span>{scanMessage}</span> */}
+          </span>
           <span className="action-item">
             <a onClick={() => showPriceModal()} className="btn compact icon">
               <svg

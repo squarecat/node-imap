@@ -1,15 +1,16 @@
-import auth from './auth';
 import {
-  getUserById,
   addFreeScan,
   addToUserIgnoreList,
-  removeFromUserIgnoreList,
   addUserScanReminder,
-  removeUserScanReminder,
+  deactivateUserAccount,
   getReferralStats,
-  deactivateUserAccount
+  getUserById,
+  removeFromUserIgnoreList,
+  removeUserScanReminder
 } from '../services/user';
 
+import _sortBy from 'lodash.sortby';
+import auth from './auth';
 import logger from '../utils/logger';
 
 export default app => {
@@ -69,8 +70,22 @@ export default app => {
 
   app.get('/api/me/scans', auth, async (req, res) => {
     try {
-      const { scans } = await getUserById(req.user.id);
-      res.send(scans.reverse());
+      const { scans, paidScans } = await getUserById(req.user.id);
+      const paidbyNotPerformed = paidScans
+        .filter(s => !s.performed)
+        .map(s => ({
+          scannedAt: s.paidAt,
+          totalPreviouslyUnsubscribedEmails: 0,
+          totalEmails: 0,
+          totalUnsubscribableEmails: 0,
+          timeframe: s.scanType,
+          performed: false
+        }));
+      const totalScans = _sortBy(
+        [...paidbyNotPerformed, ...scans.map(s => ({ ...s, performed: true }))],
+        'scannedAt'
+      ).reverse();
+      res.send(totalScans);
     } catch (err) {
       logger.error(`user-rest: error getting user scans ${req.user.id}`);
       logger.error(err);
