@@ -90,6 +90,7 @@
     "babel-eslint": "^10.0.1",
     "chart.js": "^2.7.3",
     "classnames": "^2.2.6",
+    "emailjs-imap-client": "^3.0.7",
     "eslint": "^5.9.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-prettier": "^3.0.0",

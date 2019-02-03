@@ -1,18 +1,19 @@
-import socketio from 'socket.io';
+import {
+  addUnsubscribeErrorResponse,
+  getImage,
+  getMailEstimates,
+  scanMail,
+  unsubscribeMail
+} from '../services/mail';
+
+import auth from './auth';
+import { checkAuthToken } from '../services/user';
+import { fetchMail } from '../services/mail/fetcher';
 import io from '@pm2/io';
 import isBefore from 'date-fns/is_before';
-import subMinutes from 'date-fns/sub_minutes';
-
-import {
-  scanMail,
-  unsubscribeMail,
-  addUnsubscribeErrorResponse,
-  getMailEstimates,
-  getImage
-} from '../services/mail';
-import { checkAuthToken } from '../services/user';
-
 import logger from '../utils/logger';
+import socketio from 'socket.io';
+import subMinutes from 'date-fns/sub_minutes';
 
 let connectedClients = {};
 let mailBuffer = {};
@@ -26,6 +27,11 @@ const socketsOpen = io.counter({
 });
 
 export default function(app, server) {
+  app.get('/api/mail/test', auth, async (req, res) => {
+    const { user } = req;
+    const results = await fetchMail('gmail', user);
+    res.send(results);
+  });
   app.get('/api/mail/image/:mailId', async (req, res) => {
     const { user, params } = req;
     const { mailId } = params;

@@ -4027,6 +4027,54 @@ email-addresses@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/email-addresses/-/email-addresses-3.0.3.tgz#fc3c6952f68da24239914e982c8a7783bc2ed96d"
 
+emailjs-addressparser@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/emailjs-addressparser/-/emailjs-addressparser-2.0.2.tgz#fa8e6ff989667da8ae41d7316a7dfe6abe3c9d51"
+
+emailjs-base64@^1.1.2, emailjs-base64@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/emailjs-base64/-/emailjs-base64-1.1.4.tgz#392fa38cb6aa35dccd3af3637ffc14c1c7ce9612"
+
+emailjs-imap-client@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/emailjs-imap-client/-/emailjs-imap-client-3.0.7.tgz#d76f1e7279c8d0d519d82fde1f5e3dc06b1a2a95"
+  dependencies:
+    emailjs-addressparser "^2.0.2"
+    emailjs-base64 "^1.1.2"
+    emailjs-imap-handler "^3.0.2"
+    emailjs-mime-codec "^2.0.7"
+    emailjs-tcp-socket "^2.0.0"
+    emailjs-utf7 "^4.0.1"
+    pako "^1.0.6"
+    ramda "^0.25.0"
+
+emailjs-imap-handler@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/emailjs-imap-handler/-/emailjs-imap-handler-3.0.2.tgz#ab4e6d58ffa46b1cc0f20e14ca8b093b69cda136"
+  dependencies:
+    ramda "^0.25.0"
+
+emailjs-mime-codec@^2.0.7:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/emailjs-mime-codec/-/emailjs-mime-codec-2.0.8.tgz#d5abc191902c560ee56359e0d1d9b090471f3a3f"
+  dependencies:
+    emailjs-base64 "^1.1.4"
+    ramda "^0.25.0"
+    text-encoding "^0.6.4"
+
+emailjs-tcp-socket@^2.0.0:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/emailjs-tcp-socket/-/emailjs-tcp-socket-2.0.2.tgz#e89be8d331b5ab5dddca47428e5f64c1ac5154f4"
+  dependencies:
+    node-forge "^0.7.5"
+    ramda "^0.25.0"
+
+emailjs-utf7@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/emailjs-utf7/-/emailjs-utf7-4.0.1.tgz#ca6bad6b409605d11b4108d8785c70e42644f4b9"
+  dependencies:
+    emailjs-base64 "^1.1.2"
+
 emitter-listener@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/emitter-listener/-/emitter-listener-1.1.2.tgz#56b140e8f6992375b3d7cb2cab1cc7432d9632e8"
@@ -8330,6 +8378,10 @@ package-json@^4.0.0:
     registry-url "^3.0.3"
     semver "^5.1.0"
 
+pako@^1.0.6:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.8.tgz#6844890aab9c635af868ad5fecc62e8acbba3ea4"
+
 pako@~1.0.5:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.7.tgz#2473439021b57f1516c82f58be7275ad8ef1bb27"
@@ -9223,6 +9275,10 @@ raf@^3.2.0, raf@^3.4.0:
   resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
   dependencies:
     performance-now "^2.1.0"
+
+ramda@^0.25.0:
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.25.0.tgz#8fdf68231cffa90bc2f9460390a0cb74a29b29a9"
 
 random-bytes@~1.0.0:
   version "1.0.0"
@@ -10926,6 +10982,10 @@ terser@^3.8.1:
     commander "~2.17.1"
     source-map "~0.6.1"
     source-map-support "~0.5.6"
+
+text-encoding@^0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
 
 text-hex@1.0.x:
   version "1.0.0"
