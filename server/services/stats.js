@@ -14,6 +14,7 @@ import {
   addReferralSignup,
   addReferralPaidScan,
   addReferralCredit,
+  addUserAccountDeactivated,
   getStats
 } from '../dao/stats';
 
@@ -62,6 +63,9 @@ export function addReferralPaidScanToStats() {
 }
 export function addReferralCreditToStats({ amount }) {
   return addReferralCredit({ amount });
+}
+export function addUserAccountDeactivatedToStats() {
+  return addUserAccountDeactivated();
 }
 export function getAllStats() {
   return getStats();

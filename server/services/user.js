@@ -14,16 +14,19 @@ import {
   updateIgnoreList,
   addScanReminder,
   removeScanReminder,
-  getUserByReferralCode
+  getUserByReferralCode,
+  removeUser
 } from '../dao/user';
 
 import { updateCoupon } from './payments';
 import {
   addUserToStats,
   addReminderRequestToStats,
-  addReferralSignupToStats
+  addReferralSignupToStats,
+  addUserAccountDeactivatedToStats
 } from './stats';
 import { addReferralToReferrer } from './referral';
+import { revokeToken } from '../utils/google';
 
 import logger from '../utils/logger';
 
@@ -197,4 +200,19 @@ export async function getReferralStats(id) {
 
 export async function creditUserAccount(id, { amount }) {
   return updateUser(id, { $inc: { referralBalance: amount } });
+}
+
+export async function deactivateUserAccount(user) {
+  const { id, keys } = user;
+  const { refreshToken } = keys;
+  logger.info(`user-service: deactivating user account ${id}`);
+
+  try {
+    await revokeToken(refreshToken);
+    await removeUser(id);
+    addUserAccountDeactivatedToStats();
+  } catch (err) {
+    logger.error(`user-service: error deactivating user account ${id}`);
+    throw err;
+  }
 }

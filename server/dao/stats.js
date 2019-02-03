@@ -45,6 +45,10 @@ export function addUser(count = 1) {
   return updateSingleStat('users', count);
 }
 
+export function addUserAccountDeactivated(count = 1) {
+  return updateSingleStat('usersDeactivated', count);
+}
+
 export function addGiftRedemption(count = 1) {
   return updateSingleStat('giftRedemptions', count);
 }

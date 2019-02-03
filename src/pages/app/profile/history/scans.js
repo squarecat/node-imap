@@ -1,19 +1,21 @@
-import './scans.css';
-
-import Button from '../../../components/btn';
-import ErrorBoundary from '../../../components/error-boundary';
 import { Link } from 'gatsby';
 import React from 'react';
-import Template from '../template';
 import isAfter from 'date-fns/is_after';
 import relative from 'tiny-relative-date';
 import subHours from 'date-fns/sub_hours';
-import { useAsync } from '../../../utils/hooks';
+
+import ProfileLayout from '../layout';
+
+import Button from '../../../../components/btn';
+import ErrorBoundary from '../../../../components/error-boundary';
+import { useAsync } from '../../../../utils/hooks';
 
 async function fetchScanHistory() {
   const res = await fetch('/api/me/scans');
   return res.json();
 }
+
+import './scans.css';
 
 const tfToString = {
   '3d': '3 day scan',
@@ -26,18 +28,14 @@ export default function ScanHistory() {
   const { value, loading } = useAsync(fetchScanHistory);
   const scans = loading ? [] : value;
   return (
-    <Template>
-      <div className="scan-list">
+    <ProfileLayout pageName="Scan History">
+      <div className="profile-section profile-section--unpadded">
         <p>
-          <Link to="/app">&lt; Back to scan</Link>
-        </p>
-
-        <p>
-          Showing <span className="scan-size">{scans.length}</span> previous
-          scans.
+          Showing <span className="text-important">{scans.length}</span>{' '}
+          previous scans.
         </p>
         <ErrorBoundary>
-          <table>
+          <table className="scan-table">
             <tbody>
               {scans.map((scan, i) => {
                 return (
@@ -61,7 +59,7 @@ export default function ScanHistory() {
           </table>
         </ErrorBoundary>
       </div>
-    </Template>
+    </ProfileLayout>
   );
 }
 

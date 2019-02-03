@@ -1,3 +1,4 @@
+import auth from './auth';
 import socketio from 'socket.io';
 import io from '@pm2/io';
 import isBefore from 'date-fns/is_before';
@@ -26,7 +27,7 @@ const socketsOpen = io.counter({
 });
 
 export default function(app, server) {
-  app.get('/api/mail/image/:mailId', async (req, res) => {
+  app.get('/api/mail/image/:mailId', auth, async (req, res) => {
     const { user, params } = req;
     const { mailId } = params;
     try {
@@ -41,7 +42,7 @@ export default function(app, server) {
       res.status(500).send(err);
     }
   });
-  app.get('/api/mail/estimates', async (req, res) => {
+  app.get('/api/mail/estimates', auth, async (req, res) => {
     const estimates = await getMailEstimates(req.user.id);
     res.send(estimates);
   });
