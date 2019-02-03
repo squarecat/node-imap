@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import useUser from '../utils/hooks/use-user';
-import Button from './btn';
+import { PAYMENT_CHECKOUT_OPTS, PAYMENT_CONFIG_OPTS } from '../utils/payments';
+import React, { useEffect, useState } from 'react';
 
-import { PAYMENT_CONFIG_OPTS, PAYMENT_CHECKOUT_OPTS } from '../utils/payments';
+import Button from './btn';
+import useUser from '../utils/hooks/use-user';
 
 let callback;
 let onClose;
@@ -37,9 +37,7 @@ const CheckoutForm = ({
   const { price, discountedPrice, value, label: productName } = selected;
 
   useEffect(() => {
-    onClose = () => {
-      setLoading(false);
-    };
+    onClose = () => {};
   });
   useEffect(
     () => {
@@ -53,7 +51,6 @@ const CheckoutForm = ({
             state: args.billing_address_state,
             postal_code: args.billing_address_zip
           };
-
           await sendPayment({
             token,
             productId: value,
@@ -62,6 +59,7 @@ const CheckoutForm = ({
             name: args.billing_name
           });
           onCheckoutComplete();
+          setLoading(false);
         } catch (err) {
           onCheckoutFailed(err);
         }
