@@ -18,7 +18,7 @@ import {
 } from '../dao/user';
 
 import { updateCoupon } from './payments';
-import { addUserToStats } from './stats';
+import { addUserToStats, addReminderRequestToStats } from './stats';
 import { addReferralToReferrer } from './referral';
 
 import logger from '../utils/logger';
@@ -170,6 +170,7 @@ export async function addUserScanReminder(id, timeframe) {
     if (!remindAt) {
       throw new Error('invalid scan reminder timeframe');
     }
+    addReminderRequestToStats();
     return addScanReminder(id, { timeframe, remindAt });
   } catch (err) {
     throw err;
