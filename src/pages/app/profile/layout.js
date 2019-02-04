@@ -2,7 +2,12 @@ import React from 'react';
 import { Link } from 'gatsby';
 import Template from '../template';
 
-import IgnoreIcon from '../../../components/ignore-icon';
+import {
+  SettingsIcon,
+  MailIcon,
+  CreditCardIcon,
+  HeartIcon
+} from '../../../components/icons';
 
 import './profile.css';
 
@@ -21,7 +26,18 @@ export default ({ pageName, children }) => (
                 className="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
+                <SettingsIcon />
                 Account
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/app/profile/history/billing"
+                className="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <CreditCardIcon />
+                Billing
               </Link>
             </li>
             <li>
@@ -30,6 +46,7 @@ export default ({ pageName, children }) => (
                 className="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
+                <MailIcon />
                 Scan History
               </Link>
             </li>
@@ -39,7 +56,7 @@ export default ({ pageName, children }) => (
                 className="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <IgnoreIcon ignored={true} />
+                <HeartIcon />
                 Favorite senders
               </Link>
             </li>

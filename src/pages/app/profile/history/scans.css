@@ -1,5 +1,5 @@
 .scan-table {
-  font-size: 16px;
+  font-size: 14px;
   margin-bottom: 0;
 }
 
@@ -26,4 +26,29 @@
 .scan-item td {
   padding: 5px 20px;
   height: 65px;
+}
+
+.invoice-price {
+  font-weight: bold;
+}
+
+.invoice-status {
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.invoice--pending {
+  background-color: #f3b155;
+}
+.invoice--failed {
+  background-color: #f1645f;
+}
+.invoice--paid {
+  background-color: #37d288;
+}
+
+.btn.invoice-btn {
+  font-size: 14px;
 }

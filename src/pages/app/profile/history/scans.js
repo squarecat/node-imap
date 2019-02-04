@@ -29,36 +29,42 @@ export default function ScanHistory() {
   const scans = loading ? [] : value;
   return (
     <ProfileLayout pageName="Scan History">
-      <div className="profile-section profile-section--unpadded">
-        <p>
-          Showing <span className="text-important">{scans.length}</span>{' '}
-          previous scans.
-        </p>
-        <ErrorBoundary>
-          <table className="scan-table">
-            <tbody>
-              {scans.map((scan, i) => {
-                return (
-                  <tr key={scan.scannedAt} className="scan-item">
-                    <td>
-                      {i === 0 ? (
-                        <Link className="link" to="/app">
-                          {relative(scan.scannedAt)}
-                        </Link>
-                      ) : (
-                        relative(scan.scannedAt)
-                      )}
-                    </td>
-                    <td>{tfToString[scan.timeframe]}</td>
-                    <td>{`${scan.totalUnsubscribableEmails} emails found`}</td>
-                    <td>{renderButton(scan)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </ErrorBoundary>
-      </div>
+      {loading ? (
+        <span>Loading...</span>
+      ) : (
+        <div className="profile-section profile-section--unpadded">
+          <p>
+            Showing <span className="text-important">{scans.length}</span>{' '}
+            previous scans.
+          </p>
+          <ErrorBoundary>
+            <table className="scan-table">
+              <tbody>
+                {scans.map((scan, i) => {
+                  return (
+                    <tr key={scan.scannedAt} className="scan-item">
+                      <td>
+                        {i === 0 ? (
+                          <Link className="link" to="/app">
+                            {relative(scan.scannedAt)}
+                          </Link>
+                        ) : (
+                          relative(scan.scannedAt)
+                        )}
+                      </td>
+                      <td>{tfToString[scan.timeframe]}</td>
+                      <td>{`${
+                        scan.totalUnsubscribableEmails
+                      } emails found`}</td>
+                      <td>{renderButton(scan)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </ErrorBoundary>
+        </div>
+      )}
     </ProfileLayout>
   );
 }
@@ -67,7 +73,7 @@ function renderButton(scan) {
   const yesterday = subHours(Date.now(), 24);
   if (isAfter(scan.scannedAt, yesterday)) {
     return (
-      <Button compact linkTo="/app" linkArgs={{ rescan: scan.timeframe }}>
+      <Button compact basic linkTo="/app" linkArgs={{ rescan: scan.timeframe }}>
         Re-scan
       </Button>
     );

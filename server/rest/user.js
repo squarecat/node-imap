@@ -6,7 +6,8 @@ import {
   getReferralStats,
   getUserById,
   removeFromUserIgnoreList,
-  removeUserScanReminder
+  removeUserScanReminder,
+  getUserInvoices
 } from '../services/user';
 
 import _sortBy from 'lodash.sortby';
@@ -88,6 +89,18 @@ export default app => {
       res.send(totalScans);
     } catch (err) {
       logger.error(`user-rest: error getting user scans ${req.user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.get('/api/me/billing', auth, async (req, res) => {
+    const { user } = req;
+    try {
+      const invoices = await getUserInvoices(user.id);
+      res.send(invoices);
+    } catch (err) {
+      logger.error(`user-rest: error getting user invoices ${req.user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }

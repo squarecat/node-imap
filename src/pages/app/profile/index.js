@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import useUser from '../../../utils/hooks/use-user';
 
 import ProfileLayout from './layout';
@@ -9,9 +8,8 @@ import WarningModal from '../../../components/warning-modal';
 import './profile.css';
 
 export default () => {
-  const [{ email, lastUpdatedAt }] = useUser(u => ({
-    email: u.email,
-    lastUpdatedAt: u.lastUpdatedAt
+  const [{ email }] = useUser(u => ({
+    email: u.email
   }));
   const [showWarningModal, toggleWarningModal] = useState(false);
   const [warningModalAction, setWarningModalAction] = useState(null);
@@ -58,12 +56,6 @@ export default () => {
         <h2>Details</h2>
         <p>
           Signed in with: <span className="text-important">{email}</span>
-        </p>
-        <p>
-          Last signed in:{' '}
-          <span className="text-important">
-            {distanceInWordsToNow(new Date(lastUpdatedAt))} ago
-          </span>
         </p>
       </div>
 
