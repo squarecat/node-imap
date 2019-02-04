@@ -14,12 +14,19 @@ import {
   updateIgnoreList,
   addScanReminder,
   removeScanReminder,
-  getUserByReferralCode
+  getUserByReferralCode,
+  removeUser
 } from '../dao/user';
 
-import { updateCoupon } from './payments';
-import { addUserToStats } from './stats';
+import { updateCoupon, listInvoicesForUser } from './payments';
+import {
+  addUserToStats,
+  addReminderRequestToStats,
+  addReferralSignupToStats,
+  addUserAccountDeactivatedToStats
+} from './stats';
 import { addReferralToReferrer } from './referral';
+import { revokeToken } from '../utils/google';
 
 import logger from '../utils/logger';
 
@@ -48,6 +55,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
           referralCode
         );
         await addReferralToReferrer(referralUserId, { userId: id });
+        addReferralSignupToStats();
         referredBy = referralUserId;
       }
       user = await createUser({
@@ -170,6 +178,7 @@ export async function addUserScanReminder(id, timeframe) {
     if (!remindAt) {
       throw new Error('invalid scan reminder timeframe');
     }
+    addReminderRequestToStats();
     return addScanReminder(id, { timeframe, remindAt });
   } catch (err) {
     throw err;
@@ -191,4 +200,23 @@ export async function getReferralStats(id) {
 
 export async function creditUserAccount(id, { amount }) {
   return updateUser(id, { $inc: { referralBalance: amount } });
+}
+
+export async function getUserInvoices(id) {
+  return listInvoicesForUser(id);
+}
+
+export async function deactivateUserAccount(user) {
+  const { id, keys } = user;
+  const { refreshToken } = keys;
+  logger.info(`user-service: deactivating user account ${id}`);
+
+  try {
+    await revokeToken(refreshToken);
+    await removeUser(id);
+    addUserAccountDeactivatedToStats();
+  } catch (err) {
+    logger.error(`user-service: error deactivating user account ${id}`);
+    throw err;
+  }
 }

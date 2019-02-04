@@ -45,6 +45,10 @@ export function addUser(count = 1) {
   return updateSingleStat('users', count);
 }
 
+export function addUserAccountDeactivated(count = 1) {
+  return updateSingleStat('usersDeactivated', count);
+}
+
 export function addGiftRedemption(count = 1) {
   return updateSingleStat('giftRedemptions', count);
 }
@@ -59,6 +63,16 @@ export function addReminderRequest(count = 1) {
 
 export function addReminderSent(count = 1) {
   return updateSingleStat('remindersSent', count);
+}
+
+export function addReferralSignup(count = 1) {
+  return updateSingleStat('referralSignup', count);
+}
+export function addReferralPaidScan(count = 1) {
+  return updateSingleStat('referralPaidScan', count);
+}
+export function addReferralCredit({ amount = 5 }) {
+  return updateSingleStat('referralCredit', amount);
 }
 
 // generic update stat function for anything

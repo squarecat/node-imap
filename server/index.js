@@ -19,9 +19,12 @@ import logger from './utils/logger';
 
 const Sentry = require('@sentry/node');
 
-Sentry.init({
-  dsn: 'https://9b4279f65dbd47e09187ed8b1c4f071b@sentry.io/1334902'
-});
+if (process.env.NODE_ENV !== 'development') {
+  logger.info('initialising Sentry');
+  Sentry.init({
+    dsn: 'https://9b4279f65dbd47e09187ed8b1c4f071b@sentry.io/1334902'
+  });
+}
 
 const app = express();
 const server = http.createServer(app);
@@ -86,11 +89,13 @@ const App = {
 };
 export default App;
 
-process.on('uncaughtException', function(error) {
-  Sentry.captureException(error);
-  process.exit(1);
-});
+if (process.env.NODE_ENV !== 'development') {
+  process.on('uncaughtException', function(error) {
+    Sentry.captureException(error);
+    process.exit(1);
+  });
 
-process.on('unhandledRejection', function(error) {
-  Sentry.captureException(error);
-});
+  process.on('unhandledRejection', function(error) {
+    Sentry.captureException(error);
+  });
+}

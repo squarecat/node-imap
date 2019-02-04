@@ -10,11 +10,11 @@ import './layout.css';
 
 setConfig({ pureSFC: true });
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ pageName, children }) => {
   return (
     <>
       <Helmet
-        title="Home | Leave Me Alone"
+        title={`${pageName || 'Home'} | Leave Me Alone`}
         lang="en"
         meta={[
           {

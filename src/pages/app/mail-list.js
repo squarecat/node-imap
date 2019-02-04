@@ -18,7 +18,7 @@ import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
-import { toggleFromIgnoreList } from './ignore';
+import { toggleFromIgnoreList } from './profile/ignore';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
 

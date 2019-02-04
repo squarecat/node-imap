@@ -1,11 +1,12 @@
+import config from 'getconfig';
+
 import { addReferral, updateReferral } from '../dao/user';
 import { creditUserAccount, getUserById } from './user';
 import {
   sendReferralLinkUsedMail,
   sendReferralRewardMail
 } from '../utils/email';
-
-import config from 'getconfig';
+import { addReferralPaidScanToStats, addReferralCreditToStats } from './stats';
 
 export function addReferralToReferrer(id, { userId, price, scanType }) {
   return addReferral(id, { userId, price, scanType });
@@ -28,10 +29,12 @@ export async function updateReferralOnReferrer(
   if (!hasNewReferrals) {
     return paidReferrals;
   }
+  addReferralPaidScanToStats();
   // new paid referral has been recorded, so do some things!
   if (paidReferrals.length % 3 === 0) {
     // credit account with 5 bucks
     await creditUserAccount(id, 500);
+    addReferralCreditToStats({ amount: 5 });
     sendReferralRewardMail({
       toAddress: email,
       rewardCount: paidReferrals.length / 3,

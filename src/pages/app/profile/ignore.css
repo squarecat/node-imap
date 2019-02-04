@@ -1,0 +1,29 @@
+.ignore-table {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.ignore-item {
+  border-bottom: 1px solid #ffc9c5;
+  background-color: rgba(255, 217, 214, 0.1);
+}
+
+.ignore-item:first-child td {
+  border-top: 1px solid rgb(231, 58, 48, 0.1);
+}
+
+.ignore-item td {
+  border-bottom: 1px solid rgb(231, 58, 48, 0.1);
+}
+
+.ignore-item:last-child,
+.ignore-item:last-child td {
+  border-bottom: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.ignore-item td {
+  padding: 5px 20px;
+  height: 65px;
+}
