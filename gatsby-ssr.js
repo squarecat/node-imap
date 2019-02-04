@@ -13,6 +13,12 @@ exports.onRenderBody = ({ setPostBodyComponents }, pluginOptions) => {
       src="https://checkout.stripe.com/checkout.js"
     />,
     <script
+      key="rewardful-script"
+      async
+      src="https://r.wdfl.co/rw.js"
+      data-rewardful="15fc4f"
+    />,
+    <script
       key="chat-widget"
       dangerouslySetInnerHTML={{
         __html: getChat(pluginOptions)
