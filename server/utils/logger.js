@@ -3,6 +3,9 @@
 // const isDev = process.env.NODE_ENV === 'development';
 
 const logger = {
+  debug: msg => {
+    return console.log(msg);
+  },
   info: msg => {
     return console.log(msg);
   },
@@ -15,6 +18,7 @@ const logger = {
 };
 
 // const logger = winston.createLogger({
+
 //   level: isDev ? 'debug' : 'info',
 //   format: winston.format.combine(
 //     winston.format.colorize(),

@@ -25,7 +25,7 @@ export default () => {
     clearLocalStorage();
     await deactivateAccount();
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.href = '/goodbye';
     }, 300);
   };
 
