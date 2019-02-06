@@ -27,6 +27,7 @@ export async function createGift({
     const totalAmount = price * quantity;
 
     await createPayment({
+      address,
       customerId: customerId,
       productPrice: price,
       productLabel: label,
