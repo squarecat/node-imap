@@ -24,7 +24,7 @@ export async function createGift({
       name
     });
 
-    const totalAmount = price * quantity;
+    const totalAmount = calculatePrice(price, quantity);
 
     await createPayment({
       address,
@@ -69,6 +69,18 @@ export async function createGift({
     logger.error(err);
     throw err;
   }
+}
+
+function calculatePrice(price, quantity) {
+  let discount = 0;
+  if (quantity > 50) {
+    discount = (price / 100) * 40;
+  }
+  if (quantity > 4 && quantity <= 50) {
+    discount = (price / 100) * 25;
+  }
+  const discountedPrice = (price - discount) * quantity;
+  return discountedPrice;
 }
 
 async function generateCoupon({ price, purchaser = {} }) {

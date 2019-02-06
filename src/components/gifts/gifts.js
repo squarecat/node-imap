@@ -27,10 +27,7 @@ export default ({ prices }) => {
 
   return (
     <div className="gifts-prices">
-      <p>
-        Purchase one of the scans below and you'll receive a coupon of equal
-        value.
-      </p>
+      <p>Purchase scans below and you'll receive a coupon of equal value.</p>
       {prices.map(p => (
         <GiftCheckout
           key={p.value}
@@ -91,7 +88,6 @@ export default ({ prices }) => {
               </p>
             )}
             <p>We have also emailed you a copy for your records.</p>
-            <p>Happy Holidays! 🎄</p>
           </>
         )}
       </div>
