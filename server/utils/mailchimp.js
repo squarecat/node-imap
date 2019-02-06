@@ -11,7 +11,10 @@ export async function addSubscriber({ email }) {
   logger.debug('mailchimp: adding subscriber');
   try {
     const url = `/lists/${lists.leaveMeAloneCustomers}/members`;
-    await mailchimpClient.post(url, { email_address: email });
+    await mailchimpClient.post(url, {
+      email_address: email,
+      status: 'subscribed'
+    });
   } catch (err) {
     logger.error(`mailchimp: failed to add subscriber`);
     if (err.title === 'Member Exists') {
