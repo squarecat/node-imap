@@ -143,6 +143,10 @@ p.modal-text--small {
 .price-discounted {
   text-decoration: line-through;
 }
+.price-dates {
+  font-size: 14px;
+  text-align: center;
+}
 
 .modal p {
   font-size: 16px;

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import subDays from 'date-fns/sub_days';
+import subWeeks from 'date-fns/sub_weeks';
+import subMonths from 'date-fns/sub_months';
+import format from 'date-fns/format';
 
 import useUser from '../utils/hooks/use-user';
 import useAsync from '../utils/hooks/use-async';
@@ -190,6 +194,10 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
               )}
             </a>
           ))}
+        </div>
+        <div className="price-dates">
+          Scan between <span className="text-important">today</span> and{' '}
+          <span className="text-important">{getScanDate(selected)}</span>
         </div>
         {isPaymentError ? (
           <p className="model-error">
@@ -460,4 +468,26 @@ function openChat(message = '') {
     window.$crisp.push(['do', 'chat:open']);
     window.$crisp.push(['set', 'message:text', [message]]);
   }
+}
+
+const dateFormat = 'Do MMM YYYY';
+function getScanDate(selected) {
+  const timeframe = selected === 'free' ? '3d' : selected;
+  const { then } = getTimeRange(timeframe);
+  const thenStr = format(then, dateFormat);
+  return thenStr;
+}
+
+function getTimeRange(timeframe) {
+  let then;
+  const now = Date.now();
+  const [value, unit] = timeframe;
+  if (unit === 'd') {
+    then = subDays(now, value);
+  } else if (unit === 'w') {
+    then = subWeeks(now, value);
+  } else if (unit === 'm') {
+    then = subMonths(now, value);
+  }
+  return { then, now };
 }
