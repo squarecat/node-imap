@@ -90,6 +90,8 @@ function slide1(
   error,
   unsubStrategy
 ) {
+  const [imageLoading, setImageLoading] = useState(true);
+
   let lead;
   let timeout = false;
   if (error && !image) {
@@ -124,7 +126,17 @@ function slide1(
       <>
         <div className="modal-content">
           <p>{lead}</p>
-          <img alt="unsub image" src={`/api/mail/image/${mailId}`} />
+          <div className="unsub-img-container">
+            <img
+              alt="unsub image"
+              className={`unsub-img ${
+                imageLoading ? 'unsub-img--loading' : ''
+              }`}
+              src={`/api/mail/image/${mailId}`}
+              onLoad={() => setImageLoading(false)}
+            />
+            {imageLoading ? <div className="image-loading" /> : null}
+          </div>
           {/* src={`data:image/jpeg;base64, ${image}`} /> */}
           <p>How does it look?</p>
         </div>
