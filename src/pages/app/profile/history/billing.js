@@ -19,8 +19,8 @@ import './scans.css';
 
 export default function BillingHistory() {
   const { value, loading } = useAsync(fetchBillingHistory);
-  const invoiceData = loading ? {} : value;
-  const { invoices = [], has_more = false } = invoiceData;
+  const billingData = loading ? {} : value;
+  const { payments = [], has_more = false } = billingData;
 
   return (
     <ProfileLayout pageName="Billing History">
@@ -29,18 +29,18 @@ export default function BillingHistory() {
       ) : (
         <div className="profile-section profile-section--unpadded">
           <p>
-            Showing <span className="text-important">{invoices.length}</span>{' '}
-            previous invoices.
+            Showing <span className="text-important">{payments.length}</span>{' '}
+            previous payments.
           </p>
           <ErrorBoundary>
             <table className="scan-table">
               <tbody>
-                {invoices.map(invoice => {
+                {payments.map(invoice => {
                   return (
                     <tr key={invoice.date} className="scan-item">
                       <td>{getDate(invoice)}</td>
                       <td>{invoice.description}</td>
-                      <td className="invoice-price">{getPrice(invoice)}</td>
+                      <td>{getPrice(invoice)}</td>
                       <td>{getStatus(invoice)}</td>
                       <td>
                         {invoice.invoice_pdf ? (
@@ -70,11 +70,21 @@ function getDate({ date }) {
   return format(date * 1000, 'DD/MM/YYYY HH:mm');
 }
 
-function getPrice({ price }) {
-  return `$${price / 100}`;
+function getPrice({ price, refunded }) {
+  const currency = (price / 100).toFixed(2);
+  return (
+    <span
+      className={`invoice-price ${refunded ? 'invoice-price--refunded' : ''}`}
+    >
+      ${currency}
+    </span>
+  );
 }
 
-function getStatus({ attempted, paid }) {
+function getStatus({ attempted, paid, refunded }) {
+  if (refunded) {
+    return <span className="invoice-status invoice--refunded">Refunded</span>;
+  }
   if (!attempted) {
     return <span className="invoice-status invoice--pending">Recieved</span>;
   }

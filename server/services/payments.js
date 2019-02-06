@@ -4,7 +4,8 @@ import {
   updateCouponUses,
   createCustomer,
   updateCustomer,
-  listInvoices
+  listInvoices,
+  listCharges
 } from '../utils/stripe';
 import { addPaidScanToUser, getUserById } from '../services/user';
 import { updateReferralOnReferrer } from '../services/referral';
@@ -129,31 +130,38 @@ export async function createPaymentForUser({
   }
 }
 
-export async function listInvoicesForUser(userId) {
+export async function listPaymentsForUser(userId) {
   try {
     const { customerId } = await getUserById(userId);
     if (!customerId) {
       logger.info(`payments-service: user has no customer ID ${userId}`);
       return [];
     }
-    const response = await listInvoices(customerId);
-    const { data, has_more } = response;
-    const invoices = data.map(invoice => {
+
+    const [invoicesResponse, chargesResponse] = await Promise.all([
+      listInvoices(customerId),
+      listCharges(customerId)
+    ]);
+
+    const payments = invoicesResponse.data.map(invoice => {
       const scan = invoice.lines.data[0];
+      const chargeData = invoice.charge
+        ? chargesResponse.data.find(c => c.id === invoice.charge)
+        : {};
       return {
         number: invoice.number,
         date: invoice.date,
         paid: invoice.paid,
-        charge: invoice.charge,
         attempted: invoice.attempted,
         invoice_pdf: invoice.invoice_pdf,
+        refunded: !!chargeData.refunded,
         description: scan.description,
         price: scan.amount
       };
     });
     return {
-      invoices,
-      has_more
+      payments,
+      has_more: invoicesResponse.has_more
     };
   } catch (err) {
     logger.error(

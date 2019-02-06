@@ -18,7 +18,7 @@ import {
   removeUser
 } from '../dao/user';
 
-import { updateCoupon, listInvoicesForUser } from './payments';
+import { updateCoupon, listPaymentsForUser } from './payments';
 import {
   addUserToStats,
   addReminderRequestToStats,
@@ -204,8 +204,8 @@ export async function creditUserAccount(id, { amount }) {
   return updateUser(id, { $inc: { referralBalance: amount } });
 }
 
-export async function getUserInvoices(id) {
-  return listInvoicesForUser(id);
+export async function getUserPayments(id) {
+  return listPaymentsForUser(id);
 }
 
 export async function deactivateUserAccount(user) {

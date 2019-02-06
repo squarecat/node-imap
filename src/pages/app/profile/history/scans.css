@@ -32,6 +32,10 @@
   font-weight: bold;
 }
 
+.invoice-price--refunded {
+  color: #c3c3c3;
+}
+
 .invoice-status {
   padding: 5px 10px;
   color: white;
@@ -47,6 +51,9 @@
 }
 .invoice--paid {
   background-color: #37d288;
+}
+.invoice--refunded {
+  background-color: #c3c3c3;
 }
 
 .btn.invoice-btn {

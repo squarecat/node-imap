@@ -187,6 +187,16 @@ export async function listInvoices(customerId) {
   }
 }
 
+export async function listCharges(customerId) {
+  try {
+    return stripe.charges.list({ customer: customerId });
+  } catch (err) {
+    logger.error('stripe: failed to list charges');
+    logger.error(err);
+    throw err;
+  }
+}
+
 function getCountryCode(country) {
   const countryEntry = countries.find(c => c.name === country);
   if (!countryEntry) {
