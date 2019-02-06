@@ -1,12 +1,9 @@
-import { Link } from 'gatsby';
 import React from 'react';
 import format from 'date-fns/format';
+import numeral from 'numeral';
 
 import ProfileLayout from '../layout';
 
-import Tooltip from 'rc-tooltip';
-
-import Button from '../../../../components/btn';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { useAsync } from '../../../../utils/hooks';
 
@@ -71,12 +68,15 @@ function getDate({ date }) {
 }
 
 function getPrice({ price, refunded }) {
-  const currency = (price / 100).toFixed(2);
+  const display =
+    price % 2 > 0
+      ? numeral(price / 100).format('$0,0.00')
+      : numeral(price / 100).format('$0,0');
   return (
     <span
       className={`invoice-price ${refunded ? 'invoice-price--refunded' : ''}`}
     >
-      ${currency}
+      {display}
     </span>
   );
 }
