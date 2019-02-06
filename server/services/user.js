@@ -18,7 +18,7 @@ import {
   removeUser
 } from '../dao/user';
 
-import { updateCoupon, listInvoicesForUser } from './payments';
+import { updateCoupon, listPaymentsForUser } from './payments';
 import {
   addUserToStats,
   addReminderRequestToStats,
@@ -27,6 +27,7 @@ import {
 } from './stats';
 import { addReferralToReferrer } from './referral';
 import { revokeToken } from '../utils/google';
+import { addSubscriber, removeSubscriber } from '../utils/mailchimp';
 
 import logger from '../utils/logger';
 
@@ -66,6 +67,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         referredBy,
         token: v4()
       });
+      addSubscriber({ email });
       addUserToStats();
     } else {
       user = await updateUser(id, {
@@ -202,17 +204,18 @@ export async function creditUserAccount(id, { amount }) {
   return updateUser(id, { $inc: { referralBalance: amount } });
 }
 
-export async function getUserInvoices(id) {
-  return listInvoicesForUser(id);
+export async function getUserPayments(id) {
+  return listPaymentsForUser(id);
 }
 
 export async function deactivateUserAccount(user) {
-  const { id, keys } = user;
+  const { id, email, keys } = user;
   const { refreshToken } = keys;
   logger.info(`user-service: deactivating user account ${id}`);
 
   try {
     await revokeToken(refreshToken);
+    await removeSubscriber({ email });
     await removeUser(id);
     addUserAccountDeactivatedToStats();
   } catch (err) {

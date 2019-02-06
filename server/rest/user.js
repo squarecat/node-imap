@@ -7,7 +7,7 @@ import {
   getUserById,
   removeFromUserIgnoreList,
   removeUserScanReminder,
-  getUserInvoices
+  getUserPayments
 } from '../services/user';
 
 import _sortBy from 'lodash.sortby';
@@ -97,10 +97,10 @@ export default app => {
   app.get('/api/me/billing', auth, async (req, res) => {
     const { user } = req;
     try {
-      const invoices = await getUserInvoices(user.id);
-      res.send(invoices);
+      const payments = await getUserPayments(user.id);
+      res.send(payments);
     } catch (err) {
-      logger.error(`user-rest: error getting user invoices ${req.user.id}`);
+      logger.error(`user-rest: error getting user payments ${req.user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }
