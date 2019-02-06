@@ -4,14 +4,13 @@ import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import Button from '../../components/btn';
 import ErrorBoundary from '../../components/error-boundary';
-import IgnoreIcon from '../../components/ignore-icon';
 import { Link } from 'gatsby';
 import ReferralModal from '../../components/referral-modal';
 import ReminderModal from '../../components/reminder-modal';
 import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
-export default ({ children }) => {
+export default ({ pageName, children }) => {
   const [user, { setReminder: setUserReminder }] = useUser();
   const [showSettings, setShowSettings] = useState(false);
   const [showReferrerModal, toggleReferrerModal] = useState(false);
@@ -103,7 +102,7 @@ export default ({ children }) => {
   }
 
   return (
-    <AppLayout>
+    <AppLayout pageName={pageName}>
       <Auth loaded={!!user}>
         <div className="header">
           <Link to="/app/" className="header-logo">
@@ -139,16 +138,10 @@ export default ({ children }) => {
                 }`}
               >
                 <li>
+                  <Link to="/app/profile">Account settings</Link>
+                </li>
+                <li>
                   <a href="/auth/google">Switch account</a>
-                </li>
-                <li>
-                  <Link to="/app/history/scans">Scan history</Link>
-                </li>
-                <li>
-                  <Link to="/app/ignore">
-                    <IgnoreIcon ignored={true} />
-                    Favorite senders
-                  </Link>
                 </li>
                 <li className="support">
                   <a href="#" onClick={() => openChat()}>

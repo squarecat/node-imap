@@ -3,7 +3,9 @@ import {
   getPaymentCoupon,
   updateCouponUses,
   createCustomer,
-  updateCustomer
+  updateCustomer,
+  listInvoices,
+  listCharges
 } from '../utils/stripe';
 import { addPaidScanToUser, getUserById } from '../services/user';
 import { updateReferralOnReferrer } from '../services/referral';
@@ -122,6 +124,48 @@ export async function createPaymentForUser({
       `payments-service: failed to create payment for user ${
         user ? user.id : ''
       }`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function listPaymentsForUser(userId) {
+  try {
+    const { customerId } = await getUserById(userId);
+    if (!customerId) {
+      logger.info(`payments-service: user has no customer ID ${userId}`);
+      return [];
+    }
+
+    const [invoicesResponse, chargesResponse] = await Promise.all([
+      listInvoices(customerId),
+      listCharges(customerId)
+    ]);
+
+    const payments = invoicesResponse.data.map(invoice => {
+      const scan = invoice.lines.data[0];
+      const chargeData = invoice.charge
+        ? chargesResponse.data.find(c => c.id === invoice.charge)
+        : {};
+      return {
+        number: invoice.number,
+        date: invoice.date,
+        paid: invoice.paid,
+        attempted: invoice.attempted,
+        invoice_pdf: invoice.invoice_pdf,
+        refunded: !!chargeData.refunded,
+        description: scan.description,
+        price: scan.amount
+      };
+    });
+    return {
+      payments,
+      has_more: invoicesResponse.has_more
+    };
+  } catch (err) {
+    logger.error(
+      `payments-service: failed to list invoices for user ${userId}`
     );
     logger.error(err);
     throw err;

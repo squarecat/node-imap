@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'gatsby';
-import ErrorBoundary from '../../components/error-boundary';
+import ErrorBoundary from '../../../components/error-boundary';
 
-import Button from '../../components/btn';
-import Template from './template';
-import useUser from '../../utils/hooks/use-user';
+import Button from '../../../components/btn';
+import ProfileLayout from './layout';
+import useUser from '../../../utils/hooks/use-user';
 
 import './ignore.css';
 
@@ -31,22 +30,20 @@ export default () => {
   };
 
   return (
-    <Template>
-      <div className="scan-list">
+    <ProfileLayout pageName="Favorite Senders">
+      <div className="profile-section profile-section--unpadded">
         <p>
-          <Link to="/app">&lt; Back to scan</Link>
-        </p>
-        <p>
-          Showing <span className="scan-size">{ignoredSenderList.length}</span>{' '}
+          Showing{' '}
+          <span className="text-important">{ignoredSenderList.length}</span>{' '}
           favorite senders. Emails from these addresses will not show up in any
           future scans.
         </p>
         <ErrorBoundary>
-          <table>
+          <table className="ignore-table">
             <tbody>
               {ignoredSenderList.map(sender => {
                 return (
-                  <tr key={sender} className="scan-item">
+                  <tr key={sender} className="ignore-item">
                     <td>{sender}</td>
                     <td>
                       <Button
@@ -65,6 +62,6 @@ export default () => {
           </table>
         </ErrorBoundary>
       </div>
-    </Template>
+    </ProfileLayout>
   );
 };

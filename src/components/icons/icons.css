@@ -1,0 +1,11 @@
+.icon {
+  position: relative;
+  top: 1px;
+  margin-right: 10px;
+  z-index: 1;
+  color: #ff5955;
+}
+
+.icon--heart svg {
+  fill: #ffb9b6;
+}

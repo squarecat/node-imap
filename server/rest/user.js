@@ -2,10 +2,12 @@ import {
   addFreeScan,
   addToUserIgnoreList,
   addUserScanReminder,
+  deactivateUserAccount,
   getReferralStats,
   getUserById,
   removeFromUserIgnoreList,
-  removeUserScanReminder
+  removeUserScanReminder,
+  getUserPayments
 } from '../services/user';
 
 import _sortBy from 'lodash.sortby';
@@ -27,7 +29,8 @@ export default app => {
         ignoredSenderList,
         referredBy,
         referralCode,
-        reminder
+        reminder,
+        lastUpdatedAt
       } = await getUserById(req.user.id);
       res.send({
         id,
@@ -43,7 +46,8 @@ export default app => {
         lastPaidScan: paidScans.length
           ? paidScans[paidScans.length - 1].scanType
           : null,
-        reminder
+        reminder,
+        lastUpdatedAt
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);
@@ -52,7 +56,7 @@ export default app => {
     }
   });
 
-  app.get('/api/me/unsubscriptions', async (req, res) => {
+  app.get('/api/me/unsubscriptions', auth, async (req, res) => {
     try {
       const { unsubscriptions } = await getUserById(req.user.id);
       res.send(unsubscriptions);
@@ -65,7 +69,7 @@ export default app => {
     }
   });
 
-  app.get('/api/me/scans', async (req, res) => {
+  app.get('/api/me/scans', auth, async (req, res) => {
     try {
       const { scans, paidScans } = await getUserById(req.user.id);
       const paidbyNotPerformed = paidScans
@@ -85,6 +89,18 @@ export default app => {
       res.send(totalScans);
     } catch (err) {
       logger.error(`user-rest: error getting user scans ${req.user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.get('/api/me/billing', auth, async (req, res) => {
+    const { user } = req;
+    try {
+      const payments = await getUserPayments(user.id);
+      res.send(payments);
+    } catch (err) {
+      logger.error(`user-rest: error getting user payments ${req.user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }
@@ -155,7 +171,20 @@ export default app => {
       const stats = await getReferralStats(user.id);
       res.send(stats);
     } catch (err) {
-      logger.error(`user-rest: error getting user referral info ${id}`);
+      logger.error(`user-rest: error getting user referral info ${user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.delete('/api/user/me', auth, async (req, res) => {
+    const { user } = req;
+    try {
+      await deactivateUserAccount(user);
+      req.logout();
+      res.status(200).send();
+    } catch (err) {
+      logger.error(`user-rest: error removing user ${user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }

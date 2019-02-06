@@ -32,7 +32,7 @@ export default function(app, server) {
     const results = await fetchMail('gmail', user);
     res.send(results);
   });
-  app.get('/api/mail/image/:mailId', async (req, res) => {
+  app.get('/api/mail/image/:mailId', auth, async (req, res) => {
     const { user, params } = req;
     const { mailId } = params;
     try {
@@ -47,7 +47,7 @@ export default function(app, server) {
       res.status(500).send(err);
     }
   });
-  app.get('/api/mail/estimates', async (req, res) => {
+  app.get('/api/mail/estimates', auth, async (req, res) => {
     const estimates = await getMailEstimates(req.user.id);
     res.send(estimates);
   });

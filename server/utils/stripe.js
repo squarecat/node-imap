@@ -176,6 +176,27 @@ export async function updateCustomer({ token, customerId, address, name }) {
   }
 }
 
+export async function listInvoices(customerId) {
+  try {
+    const invoices = await stripe.invoices.list({ customer: customerId });
+    return invoices;
+  } catch (err) {
+    logger.error('stripe: failed to list invoices');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function listCharges(customerId) {
+  try {
+    return stripe.charges.list({ customer: customerId });
+  } catch (err) {
+    logger.error('stripe: failed to list charges');
+    logger.error(err);
+    throw err;
+  }
+}
+
 function getCountryCode(country) {
   const countryEntry = countries.find(c => c.name === country);
   if (!countryEntry) {

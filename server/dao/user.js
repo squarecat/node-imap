@@ -442,7 +442,18 @@ export async function getUnsubscriptionsLeaderboard() {
       .toArray();
     return results.map(r => r.count.toFixed());
   } catch (err) {
-    logger.error('stats-dao: failed to get leaderboard');
+    logger.error('user-dao: failed to get leaderboard');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function removeUser(id) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.deleteOne({ id });
+  } catch (err) {
+    logger.error('user-dao: failed to remove user');
     logger.error(err);
     throw err;
   }
