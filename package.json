@@ -24,7 +24,7 @@
     "gatsby-plugin-twitter": "^2.0.8",
     "gatsby-transformer-sharp": "^2.1.12",
     "getconfig": "^4.5.0",
-    "googleapis": "^35.0.0",
+    "googleapis": "^37.1.0",
     "isomorphic-fetch": "^2.2.1",
     "lodash.get": "^4.4.2",
     "lodash.isarray": "^4.0.0",
