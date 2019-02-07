@@ -1,35 +1,33 @@
-import { v4 } from 'node-uuid';
-import addWeeks from 'date-fns/add_weeks';
-import addMonths from 'date-fns/add_months';
-
 import {
-  getUser,
-  createUser,
-  updateUser,
-  addUnsubscription,
-  addScan,
-  resolveUnsubscription,
   addPaidScan,
-  updatePaidScan,
-  updateIgnoreList,
+  addScan,
   addScanReminder,
-  removeScanReminder,
+  addUnsubscription,
+  createUser,
+  getUser,
   getUserByReferralCode,
-  removeUser
+  removeScanReminder,
+  removeUser,
+  resolveUnsubscription,
+  updateIgnoreList,
+  updatePaidScan,
+  updateUser
 } from '../dao/user';
-
-import { updateCoupon, listPaymentsForUser } from './payments';
 import {
-  addUserToStats,
-  addReminderRequestToStats,
   addReferralSignupToStats,
-  addUserAccountDeactivatedToStats
+  addReminderRequestToStats,
+  addUserAccountDeactivatedToStats,
+  addUserToStats
 } from './stats';
-import { addReferralToReferrer } from './referral';
-import { revokeToken } from '../utils/google';
 import { addSubscriber, removeSubscriber } from '../utils/mailchimp';
+import { listPaymentsForUser, updateCoupon } from './payments';
 
+import addMonths from 'date-fns/add_months';
+import { addReferralToReferrer } from './referral';
+import addWeeks from 'date-fns/add_weeks';
 import logger from '../utils/logger';
+import { revokeToken } from '../utils/google';
+import { v4 } from 'node-uuid';
 
 export async function getUserById(id) {
   try {
@@ -43,9 +41,8 @@ export async function getUserById(id) {
 }
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
+  const { id, emails, referralCode, photos = [] } = userData;
   try {
-    const { id, emails, referralCode, photos = [] } = userData;
-
     const profileImg = photos.length ? photos[0].value : null;
     const { value: email } = emails.find(e => e.type === 'account');
     let user = await getUser(id);
