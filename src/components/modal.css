@@ -143,6 +143,10 @@ p.modal-text--small {
 .price-discounted {
   text-decoration: line-through;
 }
+.price-dates {
+  font-size: 14px;
+  text-align: center;
+}
 
 .modal p {
   font-size: 16px;
@@ -421,4 +425,44 @@ p.unsubscribe-link-alt {
 
 .reminder-date {
   text-align: center;
+}
+
+.unsub-img-container {
+  position: relative;
+  min-height: 100px;
+}
+.unsub-img {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+.unsub-img--loading {
+  opacity: 0;
+}
+
+.image-loading {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+  transform: scale(1);
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+    background-color: #ff726d;
+  }
+  100% {
+    transform: scale(1);
+  }
 }

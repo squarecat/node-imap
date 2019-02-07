@@ -24,6 +24,20 @@ const GiftsPage = () => {
         Just a few great reasons to buy a gift scan of Leave Me Alone today!
       </p>
       <GiftsPayment prices={PRICES} />
+      <div className="gift-discount">
+        <h3>Buy more than 1 scan and receive a discount</h3>
+        <p>
+          5 scans or more - <span className="text-important">25% off</span>
+        </p>
+        <p>
+          50 scans or more - <span className="text-important">40% off</span>
+        </p>
+        <GiftsPayment prices={PRICES} />
+        <p>
+          More than 100 scans - you might be interested in our{' '}
+          <a href="/enterprise">enterprise pricing plan</a>.
+        </p>
+      </div>
     </SubPageLayout>
   );
 };
