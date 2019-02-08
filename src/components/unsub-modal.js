@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import './modal.css';
+
+import React, { useEffect, useState } from 'react';
 
 import ModalClose from './modal/modal-close';
-
-import './modal.css';
 
 export default ({ onClose, onSubmit, mail }) => {
   const {
@@ -17,6 +17,7 @@ export default ({ onClose, onSubmit, mail }) => {
   const [slide, changeSlide] = useState('first');
   const [isShown, setShown] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
   const onClickNegative = () => changeSlide('negative');
   const onClickPositive = () => {
     if (error) {
@@ -53,7 +54,9 @@ export default ({ onClose, onSubmit, mail }) => {
         onClickPositive,
         onClickNegative,
         error,
-        unsubStrategy
+        unsubStrategy,
+        imageLoading,
+        setImageLoading
       );
     } else if (slide === 'negative') {
       return slide2({
@@ -88,10 +91,10 @@ function slide1(
   onClickPositive,
   onClickNegative,
   error,
-  unsubStrategy
+  unsubStrategy,
+  imageLoading,
+  setImageLoading
 ) {
-  const [imageLoading, setImageLoading] = useState(true);
-
   let lead;
   let timeout = false;
   if (error && !image) {
@@ -137,7 +140,6 @@ function slide1(
             />
             {imageLoading ? <div className="image-loading" /> : null}
           </div>
-          {/* src={`data:image/jpeg;base64, ${image}`} /> */}
           <p>How does it look?</p>
         </div>
         <div className="modal-actions">
