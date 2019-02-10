@@ -27,7 +27,7 @@ import {
 } from './stats';
 import { addReferralToReferrer } from './referral';
 import { revokeToken } from '../utils/google';
-import { addSubscriber, removeSubscriber } from '../utils/mailchimp';
+import { removeSubscriber } from '../utils/mailchimp';
 
 import logger from '../utils/logger';
 
@@ -67,7 +67,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         referredBy,
         token: v4()
       });
-      addSubscriber({ email });
+      // addSubscriber({ email });
       addUserToStats();
     } else {
       user = await updateUser(id, {
