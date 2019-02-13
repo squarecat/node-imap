@@ -1,6 +1,7 @@
 import { getSearchString, getTimeRange } from './utils';
 
 import { getMailClient } from './access';
+import logger from '../../utils/logger';
 
 const estimateTimeframes = ['3d', '1w'];
 const SPAM_REGULARITY = 0.48;
@@ -9,7 +10,7 @@ export async function getMailEstimates(
   userOrUserId,
   { includeTrash = true, timeframe } = {}
 ) {
-  addEstimateToStats();
+  // addEstimateToStats();
   if (timeframe) {
     const estimate = getEstimateForTimeframe(userOrUserId, {
       includeTrash,
@@ -78,20 +79,21 @@ export async function getEstimateForTimeframe(
 }
 
 export async function getEstimatedEmails(query, userOrUserId) {
-  const client = await getMailClient('gmail', userOrUserId);
-  return new Promise((resolve, reject) => {
-    client.estimatedMessages(
-      query,
-      {
-        max: 1000,
-        timeout: 5000
-      },
-      (err, count) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(count);
+  try {
+    const client = await getMailClient('gmail', userOrUserId);
+    const { data } = await client.users.messages.list({
+      userId: 'me',
+      requestBody: {
+        fields: 'resultSizeEstimate',
+        q: query
       }
+    });
+    return data;
+  } catch (err) {
+    logger.error(
+      `esimator: failed to estimate messages for user ${userOrUserId.id ||
+        userOrUserId}`
     );
-  });
+    logger.error(err);
+  }
 }

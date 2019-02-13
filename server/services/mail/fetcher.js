@@ -1,5 +1,10 @@
 import { addScanToUser, getUserById, updatePaidScanForUser } from './user';
-import { hasPaidScanAvailable, isMailUnsubscribable } from './utils';
+import {
+  getSearchString,
+  getTimeRange,
+  hasPaidScanAvailable,
+  isMailUnsubscribable
+} from './utils';
 
 import { getClient } from './imap';
 import { getEstimateForTimeframe } from './estimator';
@@ -11,7 +16,6 @@ export async function fetchMail(
   { onMail, onError, onEnd, onProgress }
 ) {
   try {
-    const { then, now } = getTimeRange(tf);
     const user = await getUserById(userId);
     if (!hasPaidScanAvailable(user, timeframe)) {
       logger.warn(
@@ -28,43 +32,19 @@ export async function fetchMail(
       getMailClient('gmail', user)
     ]);
 
-    logger.info('mail-service: -------- INBOX STARTED --------');
     let totalEmailsCount;
 
-    s.on('data', d => {
-      if (options.trash) {
-        trashPerSecond.mark();
-      } else {
-        mailPerSecond.mark();
-      }
-      const mail = parseMailData(d);
+    logger.info('mail-service: -------- INBOX STARTED --------');
+
+    for (let mail of await fetchMailApi(client, { timeframe })) {
+      console.log(`got ${mail.length} mail items!`);
+      mailPerSecond.mark();
+      const m = parseMailData(d);
+      totalEmailsCount = totalEmailsCount + mail.length;
+      progress = progress + mail.length;
       onMail(mail);
-      totalEmailsCount++;
-      progress = progress + 1;
       onProgress({ progress, total: totalEstimate });
-    });
-
-    s.on('timeout', onMailTimeout);
-    s.on('error', onMailError);
-
-    s.on('end', () => {
-      logger.info('mail-service: -------- INBOX FINISHED --------');
-      logger.info('mail-service: -------- TRASH STARTED --------');
-      const t = gmail.messages(trashSearchStr, messageOptions);
-      t.on('data', d => onMailData(d, { trash: true }));
-      t.on('end', () => {
-        logger.info('mail-service: -------- TRASH FINISHED --------');
-        onScanFinished();
-      });
-      t.on('timeout', onMailTimeout);
-      t.on('error', onMailError);
-    });
-
-    // let totalEmailsCount = 0;
-    // let totalUnsubscribableEmailsCount = 0;
-    // let totalPreviouslyUnsubscribedEmails = 0;
-    let progress = 0;
-    onProgress({ progress, total: totalEstimate });
+    }
 
     const onMailData = (m, options = {}) => {
       if (options.trash) {
@@ -147,35 +127,6 @@ export async function fetchMail(
   }
 }
 
-function* mail(query, options = {}) {
-  const messages = client.messages(query, options);
-  yield 'foo';
-  s.on('data', d => {
-    if (options.trash) {
-      trashPerSecond.mark();
-    } else {
-      mailPerSecond.mark();
-    }
-    const mail = parseMailData(d);
-    yield mail;
-  });
-  s.on('timeout', onMailTimeout);
-  s.on('error', onMailError);
-
-  s.on('end', () => {
-    logger.info('mail-service: -------- INBOX FINISHED --------');
-    logger.info('mail-service: -------- TRASH STARTED --------');
-    const t = gmail.messages(trashSearchStr, messageOptions);
-    t.on('data', d => onMailData(d, { trash: true }));
-    t.on('end', () => {
-      logger.info('mail-service: -------- TRASH FINISHED --------');
-      onScanFinished();
-    });
-    t.on('timeout', onMailTimeout);
-    t.on('error', onMailError);
-  });
-}
-
 export async function fetchMailImap(provider = 'gmail', user) {
   if (provider === 'gmail') {
     try {
@@ -194,4 +145,29 @@ export async function fetchMailImap(provider = 'gmail', user) {
   } else {
     console.error('unsupported client');
   }
+}
+
+async function* fetchMailApi(client, { timeframe }) {
+  let pageToken;
+  const { then, now } = getTimeRange(timeframe);
+  const query = getSearchString({
+    then,
+    now
+  });
+  const fields =
+    'messages(id,internalDate,labelIds,payload/headers,snippet),nextPageToken';
+  do {
+    const { data, nextPageToken } = await client.users.messages.list({
+      userId: 'me',
+      requestBody: {
+        fields,
+        q: query,
+        maxResults: 100,
+        pageToken,
+        includeSpamTrash: true
+      }
+    });
+    pageToken = nextPageToken;
+    yield data;
+  } while (pageToken);
 }

@@ -1,23 +1,18 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import { google } from 'getconfig';
-import addSeconds from 'date-fns/add_seconds';
-import refresh from 'passport-oauth2-refresh';
-
-import logger from './utils/logger';
 import { createOrUpdateUserFromGoogle, updateUserToken } from './services/user';
 
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'email'];
-const CLIENT_ID =
-  '229643572503-d51b5c1infuudehgdlg1q0sigjella2h.apps.googleusercontent.com';
-const CLIENT_SECRET = '9vNmLaNThnZbXmh5RWSys0_0';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import addSeconds from 'date-fns/add_seconds';
+import { google } from 'getconfig';
+import logger from './utils/logger';
+import passport from 'passport';
+import refresh from 'passport-oauth2-refresh';
 
 logger.info(`auth: redirecting to ${google.redirect}`);
 
 const googleStrategy = new GoogleStrategy(
   {
-    clientID: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
+    clientID: google.clientId,
+    clientSecret: google.clientSecret,
     callbackURL: google.redirect,
     passReqToCallback: true
   },
@@ -61,7 +56,7 @@ export default app => {
   app.get(
     '/auth/google',
     passport.authenticate('google', {
-      scope: SCOPES,
+      scope: google.scopes,
       prompt: 'consent',
       accessType: 'offline'
     })
