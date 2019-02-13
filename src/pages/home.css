@@ -573,6 +573,17 @@ h1 {
   z-index: 999;
   text-align: center;
   padding: 0 10px;
+  background-color: #e73a30;
+}
+
+.ref-banner a {
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px dotted white;
+}
+
+.ref-banner a:hover {
+  color: white;
 }
 
 .ref-banner:empty {
