@@ -1,10 +1,9 @@
-import { createPayment, createCoupon, createCustomer } from '../utils/stripe';
-import _times from 'lodash.times';
-
-import { getProduct } from './payments';
-import { addGiftPaymentToStats } from '../services/stats';
+import { createCoupon, createCustomer, createPayment } from '../utils/stripe';
 import { sendGiftCouponMail, sendGiftCouponMultiMail } from '../utils/email';
 
+import _times from 'lodash.times';
+import { addGiftPaymentToStats } from '../services/stats';
+import { getProduct } from './payments';
 import logger from '../utils/logger';
 
 export async function createGift({

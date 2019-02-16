@@ -52,14 +52,14 @@ const IndexPage = () => {
       <Colin />
       <div id="main">
         <div className="home-header">
-          <div className="ref-banner">
+          {/* <div className="ref-banner">
             {bannerShown ? (
               <span>
                 ❤ Happy Valentines Day! Today only have 40% off all{' '}
                 <a href="/gifts">gift purchases</a> ❤
               </span>
             ) : null}
-          </div>
+          </div> */}
           <div className="home-header-inner">
             <a href="/" className="home-header-logo">
               <img alt="logo" src={smallLogo} />
