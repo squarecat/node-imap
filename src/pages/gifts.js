@@ -16,9 +16,8 @@ const GiftsPage = () => {
         Give your loved one the gift of a{' '}
         <span className="text-important">clean inbox</span>.
       </p>
-      <p>
-        Use the code <code>BE_MY_VALENTINE</code> for 40% off all gift
-        purchases!
+      <p className="text-important">
+        Today only, have 40% off all gift purchases!
       </p>
       {/* <p>
         Help your mom <span className="text-important">ditch the spam</span>.

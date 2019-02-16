@@ -27,7 +27,6 @@ const indieMakerTweetText = encodeURIComponent(
 const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
-
 let referrer;
 if (typeof URLSearchParams !== 'undefined') {
   referrer = new URLSearchParams(window.location.search).get('ref');
@@ -56,8 +55,8 @@ const IndexPage = () => {
           <div className="ref-banner">
             {bannerShown ? (
               <span>
-                ❤ Happy Valentines Day! Use coupon BE_MY_VALENTINE for 40% off
-                all <a href="/gifts">gift purchases</a> ❤
+                ❤ Happy Valentines Day! Today only have 40% off all{' '}
+                <a href="/gifts">gift purchases</a> ❤
               </span>
             ) : null}
           </div>

@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import subDays from 'date-fns/sub_days';
-import subWeeks from 'date-fns/sub_weeks';
-import subMonths from 'date-fns/sub_months';
-import format from 'date-fns/format';
-
-import useUser from '../utils/hooks/use-user';
-import useAsync from '../utils/hooks/use-async';
-import Button from '../components/btn';
-import ModalClose from './modal/modal-close';
-import CheckoutForm, { getCoupon } from './checkout-form';
+import './modal.css';
 
 import * as track from '../utils/analytics';
 
-import './modal.css';
+import CheckoutForm, { getCoupon } from './checkout-form';
+import React, { useEffect, useState } from 'react';
+
+import Button from '../components/btn';
+import ModalClose from './modal/modal-close';
+import format from 'date-fns/format';
+import subDays from 'date-fns/sub_days';
+import subMonths from 'date-fns/sub_months';
+import subWeeks from 'date-fns/sub_weeks';
+import useAsync from '../utils/hooks/use-async';
+import useUser from '../utils/hooks/use-user';
 
 export const PRICES = [
   {
@@ -380,7 +380,11 @@ async function addPaidScan(productId, coupon) {
       url = `/api/me/paidscans/${productId}`;
     }
     await fetch(url, {
-      method: 'PUT'
+      method: 'PUT',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
     });
   } catch (err) {
     console.error(err);

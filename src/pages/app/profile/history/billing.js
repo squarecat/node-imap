@@ -1,18 +1,22 @@
+import './scans.css';
+
+import ErrorBoundary from '../../../../components/error-boundary';
+import ProfileLayout from '../layout';
 import React from 'react';
 import format from 'date-fns/format';
 import numeral from 'numeral';
-
-import ProfileLayout from '../layout';
-
-import ErrorBoundary from '../../../../components/error-boundary';
 import { useAsync } from '../../../../utils/hooks';
 
 async function fetchBillingHistory() {
-  const res = await fetch('/api/me/billing');
+  const res = await fetch('/api/me/billing', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
   return res.json();
 }
 
-import './scans.css';
 
 export default function BillingHistory() {
   const { value, loading } = useAsync(fetchBillingHistory);

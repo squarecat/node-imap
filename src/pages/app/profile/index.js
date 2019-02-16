@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import useUser from '../../../utils/hooks/use-user';
-
-import ProfileLayout from './layout';
-import Button from '../../../components/btn';
-import WarningModal from '../../../components/warning-modal';
-
 import './profile.css';
+
+import React, { useState } from 'react';
+
+import Button from '../../../components/btn';
+import ProfileLayout from './layout';
+import WarningModal from '../../../components/warning-modal';
+import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [{ email }] = useUser(u => ({
@@ -137,7 +137,13 @@ const deleteModalContent = (
 
 async function deactivateAccount() {
   try {
-    const response = await fetch('/api/user/me', { method: 'DELETE' });
+    const response = await fetch('/api/user/me', {
+      credentials: 'same-origin',
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
+    });
     return response;
   } catch (err) {
     console.error(err);

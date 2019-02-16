@@ -1,21 +1,25 @@
+import './scans.css';
+
+import Button from '../../../../components/btn';
+import ErrorBoundary from '../../../../components/error-boundary';
 import { Link } from 'gatsby';
+import ProfileLayout from '../layout';
 import React from 'react';
 import isAfter from 'date-fns/is_after';
 import relative from 'tiny-relative-date';
 import subHours from 'date-fns/sub_hours';
-
-import ProfileLayout from '../layout';
-
-import Button from '../../../../components/btn';
-import ErrorBoundary from '../../../../components/error-boundary';
 import { useAsync } from '../../../../utils/hooks';
 
 async function fetchScanHistory() {
-  const res = await fetch('/api/me/scans');
+  const res = await fetch('/api/me/scans', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
   return res.json();
 }
 
-import './scans.css';
 
 const tfToString = {
   '3d': '3 day scan',

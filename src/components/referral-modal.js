@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
-
-import AnimatedNumber from 'react-animated-number';
-import useAsync from '../utils/hooks/use-async';
-import ModalClose from './modal/modal-close';
-
 import * as track from '../utils/analytics';
 
+import React, { useEffect, useState } from 'react';
+
+import AnimatedNumber from 'react-animated-number';
+import ModalClose from './modal/modal-close';
+import useAsync from '../utils/hooks/use-async';
+
 async function fetchReferralStats() {
-  const response = await fetch('/api/me/referrals');
+  const response = await fetch('/api/me/referrals', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
   return response.json();
 }
 

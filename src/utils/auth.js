@@ -30,7 +30,12 @@ export function logout() {
 
 export async function fetchLoggedInUser() {
   try {
-    const resp = await fetch('/api/me');
+    const resp = await fetch('/api/me', {
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
+    });
     const user = await resp.json();
     localStorage.setItem('fetched-user', true);
     localStorage.setItem('user', JSON.stringify(user));

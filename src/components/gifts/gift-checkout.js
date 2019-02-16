@@ -1,11 +1,11 @@
+import {
+  PAYMENT_CHECKOUT_OPTS,
+  PAYMENT_CONFIG_OPTS
+} from '../../utils/payments';
 import React, { useState } from 'react';
+
 import Button from '../btn';
 import numeral from 'numeral';
-
-import {
-  PAYMENT_CONFIG_OPTS,
-  PAYMENT_CHECKOUT_OPTS
-} from '../../utils/payments';
 
 let callback;
 let onClose;
@@ -116,7 +116,7 @@ function priceFormat(price) {
     : numeral(price / 100).format('$0,0');
 }
 function calculatePrice(price, quantity) {
-  let discount = 0;
+  let discount = (price / 100) * 40;
   if (quantity > 50) {
     discount = (price / 100) * 40;
   }
