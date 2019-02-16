@@ -172,6 +172,30 @@ export async function getStats() {
   }
 }
 
+const recordedStats = [
+  'users',
+  'scans',
+  'estimates',
+  'unsubscriptions',
+  'emails',
+  'unsubscribableEmails',
+  'previouslyUnsubscribedEmails',
+  'unsubscriptionsFailed',
+  'unsubscriptionsByMailtoStrategy',
+  'unsubscriptionsByLinkStrategy',
+  'totalRevenue',
+  'totalSales',
+  'giftRevenue',
+  'giftSales',
+  'giftRedemptions',
+  'usersDeactivated',
+  'remindersRequested',
+  'remindersSent',
+  'referralSignup',
+  'referralPaidScan',
+  'referralCredit'
+];
+
 export async function recordStats() {
   const allStats = await getStats();
 
@@ -179,34 +203,14 @@ export async function recordStats() {
   // calc today stats
   const today = {
     timestamp: isoDate(),
-    users: allStats.users - (yesterdayTotals.users || 0),
-    scans: allStats.scans - (yesterdayTotals.scans || 0),
-    estimates: allStats.estimates - (yesterdayTotals.estimates || 0),
-    unsubscriptions:
-      allStats.unsubscriptions - (yesterdayTotals.unsubscriptions || 0),
-    emails: allStats.emails - (yesterdayTotals.emails || 0),
-    unsubscribableEmails:
-      allStats.unsubscribableEmails -
-      (yesterdayTotals.unsubscribableEmails || 0),
-    previouslyUnsubscribedEmails:
-      allStats.previouslyUnsubscribedEmails -
-      (yesterdayTotals.previouslyUnsubscribedEmails || 0),
-    unsubscriptionsFailed:
-      allStats.unsubscriptionsFailed -
-      (yesterdayTotals.unsubscriptionsFailed || 0),
-    unsubscriptionsByMailtoStrategy:
-      allStats.unsubscriptionsByMailtoStrategy -
-      (yesterdayTotals.unsubscriptionsByMailtoStrategy || 0),
-    unsubscriptionsByLinkStrategy:
-      allStats.unsubscriptionsByLinkStrategy -
-      (yesterdayTotals.unsubscriptionsByLinkStrategy || 0),
-    totalRevenue: allStats.totalRevenue - (yesterdayTotals.totalRevenue || 0),
-    totalSales: allStats.totalSales - (yesterdayTotals.totalSales || 0),
-    giftRevenue: allStats.giftRevenue - (yesterdayTotals.giftRevenue || 0),
-    giftSales: allStats.giftSales - (yesterdayTotals.giftSales || 0),
-    giftRedemptions:
-      allStats.giftRedemptions - (yesterdayTotals.giftRedemptions || 0)
+    ...recordedStats.reduce((out, stat) => {
+      return {
+        ...out,
+        [stat]: (allStats[stat] || 0) - (yesterdayTotals[stat] || 0)
+      };
+    }, {})
   };
+
   const col = await db().collection(COL_NAME);
   // insert today total
   await col.updateOne(
