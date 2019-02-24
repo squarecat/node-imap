@@ -1,19 +1,18 @@
 import {
   addUnsubscribeErrorResponse,
+  fetchMail,
   getImage,
-  getMailEstimates,
-  scanMail,
-  unsubscribeMail
+  getMailEstimates
 } from '../services/mail';
 
 import auth from './auth';
 import { checkAuthToken } from '../services/user';
-import { fetchMail } from '../services/mail/fetcher';
 import io from '@pm2/io';
 import isBefore from 'date-fns/is_before';
 import logger from '../utils/logger';
 import socketio from 'socket.io';
 import subMinutes from 'date-fns/sub_minutes';
+import { unsubscribeFromMail } from '../services/unsubscriber';
 
 let connectedClients = {};
 let mailBuffer = {};
@@ -27,11 +26,38 @@ const socketsOpen = io.counter({
 });
 
 export default function(app, server) {
-  app.get('/api/mail/test', auth, async (req, res) => {
+  app.get('/api/mail/test/:strategy', auth, async (req, res) => {
+    const { strategy } = req.params;
     const { user } = req;
-    const results = await fetchMail('gmail', user);
-    res.send(results);
+    let mail = [];
+    let err;
+    const start = Date.now();
+    try {
+      fetchMail(
+        { userId: user.id, timeframe: '3d', ignore: true },
+        {
+          onMail: m => {
+            mail = [...mail, ...m];
+          },
+          onError: e => {
+            console.error('onerror', e);
+            console.error(e);
+            err = e;
+          },
+          onEnd: () => {
+            const took = Date.now() - start;
+            res.send(err || { mail, took });
+          },
+          onProgress: p => console.log(p)
+        },
+        { strategy }
+      );
+    } catch (err) {
+      console.log('test errr', err.message);
+      res.send(err.message);
+    }
   });
+
   app.get('/api/mail/image/:mailId', auth, async (req, res) => {
     const { user, params } = req;
     const { mailId } = params;
@@ -47,6 +73,7 @@ export default function(app, server) {
       res.status(500).send(err);
     }
   });
+
   app.get('/api/mail/estimates', auth, async (req, res) => {
     const estimates = await getMailEstimates(req.user.id);
     res.send(estimates);
@@ -98,7 +125,7 @@ export default function(app, server) {
         socket.userId
       );
       // get mail data for user
-      scanMail(
+      fetchMail(
         {
           userId: socket.userId,
           timeframe
@@ -114,7 +141,7 @@ export default function(app, server) {
 
     socket.on('unsubscribe', async mail => {
       try {
-        const data = await unsubscribeMail(socket.userId, mail);
+        const data = await unsubscribeFromMail(socket.userId, mail);
         socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
         logger.error('mail-rest: error unsubscribing from mail');

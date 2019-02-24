@@ -1,4 +1,5 @@
 import {
+  getHeader,
   getUnsubValues,
   hasUnsubscribedAlready,
   isMailUnsubscribable
@@ -6,30 +7,33 @@ import {
 
 import logger from '../../utils/logger';
 
-export default function parseMailList(
+export function parseMailList(
   mailList = [],
   { ignoredSenderList, unsubscriptions }
 ) {
   return mailList.reduce((out, mailItem) => {
-    const mail = mapMail(mailItem);
-    if (!mail || !isMailUnsubscribable(mail, ignoredSenderList)) {
+    if (!mailItem || !isMailUnsubscribable(mailItem, ignoredSenderList)) {
       return out;
     }
-    const prevUnsubscriptionInfo = hasUnsubscribedAlready(
-      mail,
-      unsubscriptions
-    );
-    let outputMail;
-    if (prevUnsubscriptionInfo) {
-      outputMail = {
-        ...mail,
-        ...prevUnsubscriptionInfo,
-        subscribed: false
-      };
-    } else {
-      outputMail = { ...mail, subscribed: true };
+    const mail = mapMail(mailItem);
+    if (mail) {
+      const prevUnsubscriptionInfo = hasUnsubscribedAlready(
+        mail,
+        unsubscriptions
+      );
+      let outputMail;
+      if (prevUnsubscriptionInfo) {
+        outputMail = {
+          ...mail,
+          ...prevUnsubscriptionInfo,
+          subscribed: false
+        };
+      } else {
+        outputMail = { ...mail, subscribed: true };
+      }
+      return [...out, outputMail];
     }
-    return [...out, outputMail];
+    return out;
   }, []);
 }
 
@@ -51,9 +55,9 @@ function mapMail(mail) {
       id,
       snippet,
       googleDate: internalDate,
-      from: payload.headers.find(h => h.name === 'From').value,
-      to: payload.headers.find(h => h.name === 'To').value,
-      subject: payload.headers.find(h => h.name === 'Subject').value,
+      from: getHeader(payload, 'from'),
+      to: getHeader(payload, 'to'),
+      subject: getHeader(payload, 'subject'),
       unsubscribeLink,
       unsubscribeMailTo,
       isTrash,

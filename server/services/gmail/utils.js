@@ -125,3 +125,21 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
     return false;
   }
 }
+
+export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
+  const unsubInfo = unsubscriptions.find(
+    u => mail.from === u.from && mail.to === u.to
+  );
+  if (!unsubInfo) {
+    return null;
+  }
+  const { image, unsubStrategy, estimatedSuccess, resolved } = unsubInfo;
+  return { image, unsubStrategy, estimatedSuccess, resolved };
+}
+
+export function getHeader(payload, name) {
+  const normalizedName = name.toLowerCase();
+  const { headers } = payload;
+  const header = headers.find(h => h.name.toLowerCase() === normalizedName);
+  return header ? header.value : null;
+}

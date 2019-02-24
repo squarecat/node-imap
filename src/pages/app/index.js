@@ -3,7 +3,6 @@ import './index.css';
 
 import React, { useState } from 'react';
 
-import ImapClient from 'emailjs-imap-client';
 import MailList from './mail-list';
 import Modal from '../../components/price-modal';
 import Template from './template';

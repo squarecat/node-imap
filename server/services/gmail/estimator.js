@@ -12,7 +12,7 @@ export async function getMailEstimates(
 ) {
   // addEstimateToStats();
   if (timeframe) {
-    const estimate = getEstimateForTimeframe(userOrUserId, {
+    const estimate = await getEstimateForTimeframe(userOrUserId, {
       includeTrash,
       timeframe
     });
@@ -74,21 +74,21 @@ export async function getEstimateForTimeframe(
     );
     total = total + trashTotal;
   }
-
   return total * multiplier;
 }
 
 export async function getEstimatedEmails(query, userOrUserId) {
   try {
-    const client = await getMailClient('gmail', userOrUserId);
+    console.log('running estimation');
+    const client = await getMailClient(userOrUserId);
     const { data } = await client.users.messages.list({
       userId: 'me',
-      requestBody: {
-        fields: 'resultSizeEstimate',
-        q: query
+      q: query,
+      qs: {
+        fields: 'resultSizeEstimate'
       }
     });
-    return data;
+    return data.resultSizeEstimate;
   } catch (err) {
     logger.error(
       `esimator: failed to estimate messages for user ${userOrUserId.id ||
