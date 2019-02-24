@@ -86,9 +86,6 @@
   margin-top: 10px;
 }
 
-.open-title {
-  text-align: center;
-}
 .open-title h1 {
   font-size: 25px;
   margin: 20px 0 0 0;
@@ -96,4 +93,53 @@
 
 .open-title h2 {
   margin: 20px 0;
+}
+
+.box.box--centered {
+  text-align: center;
+}
+.box.box--unpadded {
+  padding: 0;
+  margin: 0;
+}
+
+.expenses h2 {
+  margin: 20px 0;
+}
+
+.expenses-table {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.expenses-item {
+  border-bottom: 1px solid #ffc9c5;
+  background-color: rgba(255, 217, 214, 0.1);
+}
+
+.expenses-item:first-child td {
+  border-top: 1px solid rgb(231, 58, 48, 0.1);
+}
+
+.expenses-item td {
+  border-bottom: 1px solid rgb(231, 58, 48, 0.1);
+}
+
+.expenses-item:last-child,
+.expenses-item:last-child td {
+  border-bottom: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.expenses-item td {
+  padding: 5px 20px;
+  height: 65px;
+}
+
+.expenses-total {
+  font-weight: bold;
+}
+.expenses-total td {
+  background: white;
 }

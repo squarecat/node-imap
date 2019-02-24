@@ -37,5 +37,11 @@
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
     "referral": "http://local.leavemealone.xyz/r/"
+  },
+  "airtable": {
+    "key": "key0cK6sejCiwx9p0",
+    "expensesBaseId": "app0FrYsnDlnZvGHc",
+    "expensesTableId": "Leave Me Alone",
+    "baseUrl": "https://api.airtable.com/v0"
   }
 }

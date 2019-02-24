@@ -1,22 +1,26 @@
+import './open.css';
+
 import React, { useEffect, useRef } from 'react';
+
 import Chart from 'chart.js';
+import SubPageLayout from '../layouts/subpage-layout';
+import addMonths from 'date-fns/add_months';
+import endOfMonth from 'date-fns/end_of_month';
+import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
-import endOfMonth from 'date-fns/end_of_month';
-import addMonths from 'date-fns/add_months';
-import isWithinRange from 'date-fns/is_within_range';
-
-import SubPageLayout from '../layouts/subpage-layout';
 import { useAsync } from '../utils/hooks';
-
-import './open.css';
 
 const lineColor = '#EB6C69';
 const lineColor2 = 'rgb(158, 87, 174)';
 
 function getStats() {
   return fetch('/api/stats').then(resp => resp.json());
+}
+
+function getExpenses() {
+  return fetch('/api/stats/expenses').then(resp => resp.json());
 }
 
 function unsubscriptionsChart(ctx, stats) {
@@ -34,7 +38,7 @@ function unsubscriptionsChart(ctx, stats) {
           borderColor: lineColor,
           data: histogram.map(d => ({
             x: startOfDay(d.timestamp),
-            y: d.unsubscriptions
+            y: d.unsubscriptions || 0
           }))
         }
       ]
@@ -80,7 +84,7 @@ function dailyRevChart(ctx, stats) {
           borderColor: lineColor,
           data: histogram.map(d => ({
             x: startOfDay(d.timestamp),
-            y: d.totalRevenue
+            y: d.totalRevenue || 0
           }))
         },
         {
@@ -89,7 +93,7 @@ function dailyRevChart(ctx, stats) {
           borderColor: lineColor2,
           data: histogram.map(d => ({
             x: startOfDay(d.timestamp),
-            y: d.giftRevenue
+            y: d.giftRevenue || 0
           }))
         }
       ]
@@ -136,6 +140,9 @@ function dailyRevChart(ctx, stats) {
 function scanChart(ctx, stats) {
   return simpleLineChart(ctx, stats, 'scans');
 }
+function referralChart(ctx, stats) {
+  return simpleLineChart(ctx, stats, 'referralSignup');
+}
 function usersChart(ctx, stats) {
   return simpleLineChart(ctx, stats, 'users');
 }
@@ -154,7 +161,7 @@ function simpleLineChart(ctx, stats, stat) {
           borderColor: lineColor,
           data: histogram.map(d => ({
             x: startOfDay(d.timestamp),
-            y: d[stat]
+            y: d[stat] || 0
           }))
         }
       ]
@@ -211,7 +218,7 @@ function mailtoLinkPieChart(ctx, stats) {
     data: {
       datasets: [
         {
-          backgroundColor: ['#EB6C69', '#fddbd7'],
+          backgroundColor: [lineColor, lineColor2],
           data: [
             data.unsubscriptionsByLinkStrategy,
             data.unsubscriptionsByMailtoStrategy
@@ -222,26 +229,23 @@ function mailtoLinkPieChart(ctx, stats) {
     },
     type: 'pie',
     options: {
+      legend: {
+        display: false
+      },
       responsive: true,
       maintainAspectRatio: false
     }
   });
 }
 
-function scanTypes(ctx, stats) {
-  var myPieChart = new Chart(ctx, {
-    type: 'pie',
-    data: data,
-    options: options
-  });
-}
-
 export default function Terms() {
-  const { error, value: stats, loading } = useAsync(getStats);
+  const { value: stats, loading } = useAsync(getStats);
+  const { value: expenses, loadingExpenses } = useAsync(getExpenses);
 
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const scanRef = useRef(null);
+  const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
   const usersRef = useRef(null);
 
@@ -255,6 +259,9 @@ export default function Terms() {
       }
       if (scanRef.current) {
         scanChart(scanRef.current.getContext('2d'), stats);
+      }
+      if (referralRef.current) {
+        referralChart(referralRef.current.getContext('2d'), stats);
       }
       if (mailtoLinkRef.current) {
         mailtoLinkPieChart(mailtoLinkRef.current.getContext('2d'), stats);
@@ -275,7 +282,7 @@ export default function Terms() {
   return (
     <SubPageLayout page="Open Stats">
       <div className="open-page">
-        <div className="open-title box">
+        <div className="open-title box box--centered">
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
@@ -285,110 +292,199 @@ export default function Terms() {
             movement
           </h2>
         </div>
-        <div className="revenue">
-          <div className="chart box">
-            <h2>
-              Daily Revenue - <span style={{ color: lineColor }}>Sales</span> vs{' '}
-              <span style={{ color: lineColor2 }}>Gift Sales</span>
-            </h2>
-            <canvas ref={dailyRevRef} />
+        {loading ? (
+          <div className="box box--centered">
+            <h2>Loading stats...</h2>
           </div>
-          <div className="totals">
-            <div className="big-stat box">
-              <span className="label">Last month's revenue</span>
-              <span className="value">{currency(lastMonthsRevenue)}</span>
+        ) : (
+          <>
+            <div className="revenue">
+              <div className="chart box">
+                <h2>
+                  Daily Revenue -{' '}
+                  <span style={{ color: lineColor }}>Sales</span> vs{' '}
+                  <span style={{ color: lineColor2 }}>Gift Sales</span>
+                </h2>
+                <canvas ref={dailyRevRef} />
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Last month's revenue</span>
+                  <span className="value">{currency(lastMonthsRevenue)}</span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Total sales</span>
+                  <span className="value">{format(stats.totalSales)}</span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Revenue per user</span>
+                  <span className="value">
+                    {currency(stats.totalRevenue / stats.users)}
+                  </span>
+                </div>
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Revenue from gifts</span>
+                  <span className="value">
+                    {`${(
+                      (stats.giftRevenue /
+                        (stats.totalRevenue + stats.giftRevenue)) *
+                      100
+                    ).toFixed(0)}%`}
+                  </span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Total gift sales</span>
+                  <span className="value">{stats.giftSales}</span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Gifts redeemed</span>
+                  <span className="value">{stats.giftRedemptions}</span>
+                </div>
+              </div>
             </div>
-            <div className="big-stat box">
-              <span className="label">Total sales</span>
-              <span className="value">{format(stats.totalSales)}</span>
+            <div className="users">
+              <div className="chart box">
+                <h2>New Signups</h2>
+                <canvas ref={usersRef} />
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Last month's users</span>
+                  <span className="value">
+                    {getLastMonthValues(stats, 'users')}
+                  </span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Total users</span>
+                  <span className="value">{format(stats.users)}</span>
+                </div>
+              </div>
             </div>
-            <div className="big-stat box">
-              <span className="label">Revenue per user</span>
-              <span className="value">
-                {currency(stats.totalRevenue / stats.users)}
-              </span>
+            <div className="subscriptions">
+              <div className="chart box">
+                <h2>Daily Spam Email Unsubscriptions</h2>
+                <canvas ref={subscriptionRef} />
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Total Spam Emails</span>
+                  <span className="value">
+                    {format(
+                      stats.unsubscribableEmails -
+                        stats.previouslyUnsubscribedEmails
+                    )}
+                  </span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Total Unsubscriptions</span>
+                  <span className="value">{format(stats.unsubscriptions)}</span>
+                </div>
+              </div>
+              <div className="chart box chart--pie">
+                <h2>
+                  Unsubscribes - <span style={{ color: lineColor }}>Link</span>{' '}
+                  vs <span style={{ color: lineColor2 }}>Mailto</span>
+                </h2>
+                <canvas ref={mailtoLinkRef} />
+              </div>
             </div>
-          </div>
-          <div className="totals">
-            <div className="big-stat box">
-              <span className="label">Revenue from gifts</span>
-              <span className="value">
-                {`${(
-                  (stats.giftRevenue /
-                    (stats.totalRevenue + stats.giftRevenue)) *
-                  100
-                ).toFixed(0)}%`}
-              </span>
+            <div className="scans">
+              <div className="chart box">
+                <h2>Scans</h2>
+                <canvas ref={scanRef} />
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Total number of scans</span>
+                  <span className="value">{format(stats.scans)}</span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Total emails scanned</span>
+                  <span className="value">{format(stats.emails)}</span>
+                </div>
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Total reminders requested</span>
+                  <span className="value">
+                    {format(stats.remindersRequested)}
+                  </span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Total reminders sent</span>
+                  <span className="value">{format(stats.remindersSent)}</span>
+                </div>
+              </div>
             </div>
-            <div className="big-stat box">
-              <span className="label">Total gift sales</span>
-              <span className="value">{stats.giftSales}</span>
+
+            <div className="referrals">
+              <div className="chart box">
+                <h2>Referrals</h2>
+                <canvas ref={referralRef} />
+              </div>
+              <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Total referral signups</span>
+                  <span className="value">{format(stats.referralSignup)}</span>
+                </div>
+                <div className="big-stat box">
+                  <span className="label">Referral conversion rate</span>
+                  <span className="value">
+                    {percent(stats.referralPaidScan, stats.referralSignup)}
+                  </span>
+                </div>
+                {/* <div className="big-stat box">
+                  <span className="label">Total referral payouts</span>
+                  <span className="value">{currency(stats.referralCredit)}</span>
+                </div> */}
+              </div>
             </div>
-            <div className="big-stat box">
-              <span className="label">Gifts redeemed</span>
-              <span className="value">{stats.giftRedemptions}</span>
+            <div className="expenses">
+              {loadingExpenses ? (
+                <div className="box box--unpadded">
+                  <h2>Loading expenses...</h2>
+                </div>
+              ) : (
+                <div className="box box--unpadded">
+                  <h2>Last Month's Expenses</h2>
+                  <table className="expenses-table">
+                    <tbody>
+                      {(expenses || []).map((expense, i) => {
+                        return (
+                          <tr key={i} className="expenses-item">
+                            <td>{expense.type}</td>
+                            <td>
+                              <a className="link" href={expense.url}>
+                                {expense.service}
+                              </a>
+                            </td>
+                            <td>{currency(expense.cost)}</td>
+                          </tr>
+                        );
+                      })}
+                      <tr key="total" className="expenses-item expenses-total">
+                        <td />
+                        <td>Total</td>
+                        <td>
+                          <span>
+                            {currency(
+                              (expenses || []).reduce(
+                                (out, e) => out + e.cost,
+                                0
+                              )
+                            )}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-          </div>
-        </div>
-        <div className="users">
-          <div className="chart box">
-            <h2>New Signups</h2>
-            <canvas ref={usersRef} />
-          </div>
-          <div className="totals">
-            <div className="big-stat box">
-              <span className="label">Last month's users</span>
-              <span className="value">
-                {getLastMonthValues(stats, 'users')}
-              </span>
-            </div>
-            <div className="big-stat box">
-              <span className="label">Total users</span>
-              <span className="value">{format(stats.users)}</span>
-            </div>
-          </div>
-        </div>
-        <div className="subscriptions">
-          <div className="chart box">
-            <h2>Unsubscriptions</h2>
-            <canvas ref={subscriptionRef} />
-          </div>
-          <div className="totals">
-            <div className="big-stat box">
-              <span className="label">Total Spam Emails</span>
-              <span className="value">
-                {format(
-                  stats.unsubscribableEmails -
-                    stats.previouslyUnsubscribedEmails
-                )}
-              </span>
-            </div>
-            <div className="big-stat box">
-              <span className="label">Total Unsubscriptions</span>
-              <span className="value">{format(stats.unsubscriptions)}</span>
-            </div>
-          </div>
-          <div className="chart box chart--pie">
-            <h2>Link vs Mailto Unsubscriptions</h2>
-            <canvas ref={mailtoLinkRef} />
-          </div>
-        </div>
-        <div className="scans">
-          <div className="chart box">
-            <h2>Scans</h2>
-            <canvas ref={scanRef} />
-          </div>
-          <div className="totals">
-            <div className="big-stat box">
-              <span className="label">Total number of scans</span>
-              <span className="value">{format(stats.scans)}</span>
-            </div>
-            <div className="big-stat box">
-              <span className="label">Total emails scanned</span>
-              <span className="value">{format(stats.emails)}</span>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </SubPageLayout>
   );
@@ -418,4 +514,8 @@ function format(num) {
 
 function currency(num) {
   return numeral(num).format('$0,0.00');
+}
+
+function percent(num, total) {
+  return numeral(num / total).format('0%');
 }

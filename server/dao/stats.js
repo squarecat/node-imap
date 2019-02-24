@@ -1,7 +1,7 @@
-import _omit from 'lodash.omit';
-import _get from 'lodash.get';
-
 import db, { isoDate } from './db';
+
+import _get from 'lodash.get';
+import _omit from 'lodash.omit';
 import logger from '../utils/logger';
 
 const COL_NAME = 'stats';
