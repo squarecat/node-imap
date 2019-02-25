@@ -1,5 +1,5 @@
 import React from 'react';
-import SubPageLayout from '../layouts/subpage-layout';
+import SubPageLayout from '../../layouts/subpage-layout';
 
 export default function Terms() {
   return (

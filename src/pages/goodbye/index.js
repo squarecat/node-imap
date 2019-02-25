@@ -1,5 +1,6 @@
 import React from 'react';
-import SubPageLayout from '../layouts/subpage-layout';
+import SubPageLayout from '../../layouts/subpage-layout';
+import { TextImportant } from '../../components/text';
 
 const GoodbyePage = () => {
   return (
@@ -7,8 +8,8 @@ const GoodbyePage = () => {
       <h1>Goodbye 👋</h1>
       <p>Thank you for using Leave Me Alone!</p>
       <p>
-        We have deleted <span className="text-important">ALL OF YOUR DATA</span>{' '}
-        and revoked your API key.
+        We have deleted <TextImportant>ALL OF YOUR DATA</TextImportant> and
+        revoked your API key.
       </p>
       <p>
         You are not tied to our service in any way. Any spam email lists you

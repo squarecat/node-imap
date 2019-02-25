@@ -1,16 +1,18 @@
-import './open.css';
+import './open.module.scss';
 
 import React, { useEffect, useRef } from 'react';
+import Table, { TableCell, TableRow } from '../../components/table';
 
 import Chart from 'chart.js';
-import SubPageLayout from '../layouts/subpage-layout';
+import SubPageLayout from '../../layouts/subpage-layout';
+import { TextLink } from '../../components/text';
 import addMonths from 'date-fns/add_months';
 import endOfMonth from 'date-fns/end_of_month';
 import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
-import { useAsync } from '../utils/hooks';
+import { useAsync } from '../../utils/hooks';
 
 const lineColor = '#EB6C69';
 const lineColor2 = 'rgb(158, 87, 174)';
@@ -281,25 +283,23 @@ export default function Terms() {
 
   return (
     <SubPageLayout page="Open Stats">
-      <div className="open-page">
-        <div className="open-title box box--centered">
+      <div styleName="open-page">
+        <div styleName="open-title box box--centered">
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
-            <a className="link" href="https://openstartups.co/">
-              Open Startups
-            </a>{' '}
+            <TextLink href="https://openstartups.co/">Open Startups</TextLink>{' '}
             movement
           </h2>
         </div>
         {loading ? (
-          <div className="box box--centered">
+          <div styleName="box box--centered">
             <h2>Loading stats...</h2>
           </div>
         ) : (
           <>
-            <div className="revenue">
-              <div className="chart box">
+            <div styleName="revenue">
+              <div styleName="chart box">
                 <h2>
                   Daily Revenue -{' '}
                   <span style={{ color: lineColor }}>Sales</span> vs{' '}
@@ -307,26 +307,26 @@ export default function Terms() {
                 </h2>
                 <canvas ref={dailyRevRef} />
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Last month's revenue</span>
-                  <span className="value">{currency(lastMonthsRevenue)}</span>
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Last month's revenue</span>
+                  <span styleName="value">{currency(lastMonthsRevenue)}</span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Total sales</span>
-                  <span className="value">{format(stats.totalSales)}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total sales</span>
+                  <span styleName="value">{format(stats.totalSales)}</span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Revenue per user</span>
-                  <span className="value">
+                <div styleName="big-stat box">
+                  <span styleName="label">Revenue per user</span>
+                  <span styleName="value">
                     {currency(stats.totalRevenue / stats.users)}
                   </span>
                 </div>
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Revenue from gifts</span>
-                  <span className="value">
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Revenue from gifts</span>
+                  <span styleName="value">
                     {`${(
                       (stats.giftRevenue /
                         (stats.totalRevenue + stats.giftRevenue)) *
@@ -334,55 +334,55 @@ export default function Terms() {
                     ).toFixed(0)}%`}
                   </span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Total gift sales</span>
-                  <span className="value">{stats.giftSales}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total gift sales</span>
+                  <span styleName="value">{stats.giftSales}</span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Gifts redeemed</span>
-                  <span className="value">{stats.giftRedemptions}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Gifts redeemed</span>
+                  <span styleName="value">{stats.giftRedemptions}</span>
                 </div>
               </div>
             </div>
-            <div className="users">
-              <div className="chart box">
+            <div styleName="users">
+              <div styleName="chart box">
                 <h2>New Signups</h2>
                 <canvas ref={usersRef} />
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Last month's users</span>
-                  <span className="value">
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Last month's users</span>
+                  <span styleName="value">
                     {getLastMonthValues(stats, 'users')}
                   </span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Total users</span>
-                  <span className="value">{format(stats.users)}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total users</span>
+                  <span styleName="value">{format(stats.users)}</span>
                 </div>
               </div>
             </div>
-            <div className="subscriptions">
-              <div className="chart box">
+            <div styleName="subscriptions">
+              <div styleName="chart box">
                 <h2>Daily Spam Email Unsubscriptions</h2>
                 <canvas ref={subscriptionRef} />
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Total Spam Emails</span>
-                  <span className="value">
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Total Spam Emails</span>
+                  <span styleName="value">
                     {format(
                       stats.unsubscribableEmails -
                         stats.previouslyUnsubscribedEmails
                     )}
                   </span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Total Unsubscriptions</span>
-                  <span className="value">{format(stats.unsubscriptions)}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total Unsubscriptions</span>
+                  <span styleName="value">{format(stats.unsubscriptions)}</span>
                 </div>
               </div>
-              <div className="chart box chart--pie">
+              <div styleName="chart box chart--pie">
                 <h2>
                   Unsubscribes - <span style={{ color: lineColor }}>Link</span>{' '}
                   vs <span style={{ color: lineColor2 }}>Mailto</span>
@@ -390,96 +390,91 @@ export default function Terms() {
                 <canvas ref={mailtoLinkRef} />
               </div>
             </div>
-            <div className="scans">
-              <div className="chart box">
+            <div styleName="scans">
+              <div styleName="chart box">
                 <h2>Scans</h2>
                 <canvas ref={scanRef} />
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Total number of scans</span>
-                  <span className="value">{format(stats.scans)}</span>
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Total number of scans</span>
+                  <span styleName="value">{format(stats.scans)}</span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Total emails scanned</span>
-                  <span className="value">{format(stats.emails)}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total emails scanned</span>
+                  <span styleName="value">{format(stats.emails)}</span>
                 </div>
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Total reminders requested</span>
-                  <span className="value">
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Total reminders requested</span>
+                  <span styleName="value">
                     {format(stats.remindersRequested)}
                   </span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Total reminders sent</span>
-                  <span className="value">{format(stats.remindersSent)}</span>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total reminders sent</span>
+                  <span styleName="value">{format(stats.remindersSent)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="referrals">
-              <div className="chart box">
+            <div styleName="referrals">
+              <div styleName="chart box">
                 <h2>Referrals</h2>
                 <canvas ref={referralRef} />
               </div>
-              <div className="totals">
-                <div className="big-stat box">
-                  <span className="label">Total referral signups</span>
-                  <span className="value">{format(stats.referralSignup)}</span>
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Total referral signups</span>
+                  <span styleName="value">{format(stats.referralSignup)}</span>
                 </div>
-                <div className="big-stat box">
-                  <span className="label">Referral conversion rate</span>
-                  <span className="value">
+                <div styleName="big-stat box">
+                  <span styleName="label">Referral conversion rate</span>
+                  <span styleName="value">
                     {percent(stats.referralPaidScan, stats.referralSignup)}
                   </span>
                 </div>
-                {/* <div className="big-stat box">
-                  <span className="label">Total referral payouts</span>
-                  <span className="value">{currency(stats.referralCredit)}</span>
+                {/* <div styleName="big-stat box">
+                  <span styleName="label">Total referral payouts</span>
+                  <span styleName="value">{currency(stats.referralCredit)}</span>
                 </div> */}
               </div>
             </div>
-            <div className="expenses">
+            <div styleName="expenses">
               {loadingExpenses ? (
-                <div className="box box--unpadded">
+                <div styleName="box box--unpadded">
                   <h2>Loading expenses...</h2>
                 </div>
               ) : (
-                <div className="box box--unpadded">
+                <div styleName="box box--unpadded">
                   <h2>Last Month's Expenses</h2>
-                  <table className="expenses-table">
-                    <tbody>
-                      {(expenses || []).map((expense, i) => {
-                        return (
-                          <tr key={i} className="expenses-item">
-                            <td>{expense.type}</td>
-                            <td>
-                              <a className="link" href={expense.url}>
-                                {expense.service}
-                              </a>
-                            </td>
-                            <td>{currency(expense.cost)}</td>
-                          </tr>
-                        );
-                      })}
-                      <tr key="total" className="expenses-item expenses-total">
-                        <td />
-                        <td>Total</td>
-                        <td>
-                          <span>
-                            {currency(
-                              (expenses || []).reduce(
-                                (out, e) => out + e.cost,
-                                0
-                              )
-                            )}
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <Table>
+                    {(expenses || []).map((expense, i) => {
+                      return (
+                        <TableRow key={i}>
+                          <TableCell>{expense.type}</TableCell>
+                          <TableCell>
+                            <TextLink href={expense.url}>
+                              {expense.service}
+                            </TextLink>
+                          </TableCell>
+                          <TableCell>{currency(expense.cost)}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    <TableRow inverted>
+                      <TableCell />
+                      <TableCell>Total</TableCell>
+                      <TableCell>
+                        <span>
+                          {currency(
+                            (expenses || []).reduce((out, e) => out + e.cost, 0)
+                          )}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  </Table>
                 </div>
               )}
             </div>
