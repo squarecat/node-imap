@@ -1,7 +1,7 @@
-import GiftsPayment from '../components/gifts/gifts';
-import { PRICES } from '../components/price-modal';
+import GiftsPrices from '../../components/gifts/gifts-prices';
+import { PRICES } from '../../components/price-modal';
 import React from 'react';
-import SubPageLayout from '../layouts/subpage-layout';
+import SubPageLayout from '../../layouts/subpage-layout';
 
 const GiftsPage = () => {
   return (
@@ -22,7 +22,7 @@ const GiftsPage = () => {
       <p>
         Just a few great reasons to buy a gift scan of Leave Me Alone today!
       </p>
-      <GiftsPayment prices={PRICES} />
+      <GiftsPrices prices={PRICES} />
       <div className="gift-discount">
         <h3>Buy more than 1 scan and receive a discount</h3>
         <p>
@@ -31,7 +31,7 @@ const GiftsPage = () => {
         <p>
           50 scans or more - <span className="text-important">40% off</span>
         </p>
-        <GiftsPayment prices={PRICES} />
+        <GiftsPrices prices={PRICES} />
         <p>
           More than 100 scans - you might be interested in our{' '}
           <a href="/enterprise">enterprise pricing plan</a>.

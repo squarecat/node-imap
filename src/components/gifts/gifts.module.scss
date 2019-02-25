@@ -1,17 +1,26 @@
-.gifts-prices .btn.muted {
+@import '../btn/btn.module.scss';
+
+.gifts-prices {
+}
+
+.gift-btn {
+  @extend .btn;
+  @extend .compact;
+  @extend .stretch;
+  @extend .muted;
   border: 1px solid #fddbd7;
 }
 
-.gifts .btn.muted[data-selected='true'] {
-  background-color: rgba(231, 57, 48, 0.1);
+.gift-btn-loading {
+  @extend .loading;
 }
 
-.gifts .price {
+.price {
   margin-left: 5px;
   font-size: 70%;
   font-weight: bolder;
   position: relative;
-  top: -1px;
+  top: 1px;
 }
 
 .price--discounted {
@@ -78,14 +87,6 @@
 .gift-quantity-box input {
   width: 100px;
   padding: 5px 10px;
-}
-
-.add-quantity {
-  font-size: 11px;
-}
-
-.gift-quantity-box.shown + .add-quantity {
-  display: none;
 }
 
 .gifts-payment-error {

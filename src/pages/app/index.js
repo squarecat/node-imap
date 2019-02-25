@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
 import 'isomorphic-fetch';
-import { Transition } from 'react-transition-group';
+import './index.scss';
 
-import Template from './template';
-import Modal from '../../components/price-modal';
-
-import useUser from '../../utils/hooks/use-user';
+import React, { useState } from 'react';
 
 import MailList from './mail-list';
+import Modal from '../../components/price-modal';
+import Template from './template';
+import { Transition } from 'react-transition-group';
 import Welcome from './welcome';
-
-import './index.css';
+import useUser from '../../utils/hooks/use-user';
 
 let doScan = false;
 if (typeof URLSearchParams !== 'undefined' && typeof window !== 'undefined') {

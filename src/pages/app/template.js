@@ -1,3 +1,5 @@
+import './index.scss';
+
 import React, { useEffect, useState } from 'react';
 
 import AppLayout from '../../layouts/app-layout';
@@ -70,8 +72,10 @@ export default ({ pageName, children }) => {
             <path d="M16 8 L16 16 20 20" />
           </svg>
         </span>
-        <span className="header-btn-text-short">Remind</span>
-        <span className="header-btn-text-long">Set reminder</span>
+        <span className="header-btn-text header-btn-text--short">Remind</span>
+        <span className="header-btn-text header-btn-text--long">
+          Set reminder
+        </span>
       </Button>
     );
   } else if (hasReminder) {
@@ -111,15 +115,17 @@ export default ({ pageName, children }) => {
           <div className="header-title">Leave Me Alone </div>
           <div className="header-actions">
             {reminderButton}
-            <Button
+            <button
               className="header-btn"
-              basic
-              compact
               onClick={() => toggleReferrerModal(true)}
             >
-              <span className="header-btn-text-short">Refer</span>
-              <span className="header-btn-text-long">Refer a friend</span>
-            </Button>
+              <span className="header-btn-text header-btn-text--short">
+                Refer
+              </span>
+              <span className="header-btn-text header-btn-text--long">
+                Refer a friend
+              </span>
+            </button>
             <div className="settings-dropdown">
               <Button
                 compact

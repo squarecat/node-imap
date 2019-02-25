@@ -1,4 +1,4 @@
-@import '../../components/btn.css';
+@import '../../components/btn/btn.module.scss';
 
 body {
   /* padding-bottom: 100px; */
@@ -12,7 +12,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0 20px;
-  border-bottom: 1px solid rgb(231, 58, 48, 0.1);
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
   height: 100vh;
   width: 100%;
   overflow: hidden;
@@ -37,19 +37,6 @@ body {
 
 .header-logo img {
   height: 100%;
-}
-
-.basic-btn {
-  color: rgba(231, 57, 48, 0.75);
-  font-size: 14px;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 4px;
-}
-
-.basic-btn:hover {
-  background-color: rgba(231, 57, 48, 0.1);
-  color: rgba(231, 57, 48, 1);
 }
 
 .logout {
@@ -115,14 +102,20 @@ body {
   align-items: center;
 }
 
-.btn.header-btn {
-  font-size: 14px;
-  height: 30px;
-  background-color: rgba(255, 251, 251, 0.25);
+.header-btn {
+  @extend .btn;
+  @extend .basic;
+  @extend .compact;
+  @extend .smaller;
+  @extend .on-dark-bg;
   margin-right: 15px;
 }
 
-.header-btn-text-short {
+.header-btn-text {
+  @extend .btn-content;
+}
+
+.header-btn-text--short {
   display: none;
 }
 
@@ -192,10 +185,10 @@ body {
   .mail-actions {
     padding-bottom: 20px;
   }
-  .header-btn-text-long {
+  .header-btn-text--long {
     display: none;
   }
-  .header-btn-text-short {
+  .header-btn-text--short {
     display: inline;
   }
 }
@@ -230,11 +223,7 @@ body {
 }
 
 @media (max-width: 400px) {
-  .btn.header-btn {
+  .header-btn {
     margin-right: 8px;
-    padding: 5px 8px;
-  }
-  .btn.header-btn .btn-content {
-    font-size: 12px;
   }
 }

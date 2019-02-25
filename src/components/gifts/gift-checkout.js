@@ -1,10 +1,11 @@
+import './gifts.module.scss';
+
 import {
   PAYMENT_CHECKOUT_OPTS,
   PAYMENT_CONFIG_OPTS
 } from '../../utils/payments';
 import React, { useState } from 'react';
 
-import Button from '../btn';
 import numeral from 'numeral';
 
 let callback;
@@ -81,17 +82,15 @@ const GiftCheckout = ({
   }
 
   return (
-    <Button
-      loading={isLoading}
+    <button
+      styleName={`gift-btn ${isLoading ? 'gift-btn-loading' : ''}`}
       onClick={() => onClick()}
-      compact={true}
-      muted={true}
     >
       <span>{selected.label}</span>
-      <span className="price">
+      <span styleName="price">
         {getDisplayPrice(selected.price, parsedQuantity)}
       </span>
-    </Button>
+    </button>
   );
 };
 
@@ -103,7 +102,7 @@ const getDisplayPrice = (price, quantity) => {
     return (
       <span>
         {priceFormat(discountedPrice)}
-        <span className="price--discounted">{priceFormat(totalPrice)}</span>
+        <span styleName="price--discounted">{priceFormat(totalPrice)}</span>
       </span>
     );
   }

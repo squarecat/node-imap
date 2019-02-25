@@ -1,10 +1,10 @@
+import './gifts.module.scss';
+
 import React, { useState } from 'react';
-import _isArray from 'lodash.isarray';
+import { TextImportant, TextLink } from '../text';
 
 import GiftCheckout from './gift-checkout';
-
-import './gifts.css';
-import '../btn.css';
+import _isArray from 'lodash.isarray';
 
 export default ({ prices }) => {
   const [couponData, setCouponData] = useState(null);
@@ -26,7 +26,7 @@ export default ({ prices }) => {
   };
 
   return (
-    <div className="gifts-prices">
+    <div styleName="gifts-prices">
       <p>Purchase scans below and you'll receive a coupon of equal value.</p>
       {prices.map(p => (
         <GiftCheckout
@@ -39,15 +39,15 @@ export default ({ prices }) => {
         />
       ))}
       {isPaymentError ? (
-        <p className="gifts-payment-error">
+        <p styleName="gifts-payment-error">
           Something went wrong with your payment. You have not been charged.
           Please try again or contact support.
         </p>
       ) : null}
-      <a className="link add-quantity" onClick={() => setQuantityShown(true)}>
+      <TextLink smaller onClick={() => setQuantityShown(true)}>
         Want to buy more than 1 scan?
-      </a>
-      <div className={`gift-quantity-box ${isQuantityShown ? 'shown' : ''}`}>
+      </TextLink>
+      <div styleName={`gift-quantity-box ${isQuantityShown ? 'shown' : ''}`}>
         <input
           type="number"
           min="1"
@@ -59,24 +59,24 @@ export default ({ prices }) => {
         />
       </div>
       <div
-        className={`gift-coupon ${
+        styleName={`gift-coupon ${
           couponData || isCouponLoading ? 'shown' : ''
         }`}
       >
         {isCouponLoading ? (
           <>
             <p>Fetching your coupon{quantity > 1 ? 's' : ''}...</p>
-            <div className="gift-loading" />
+            <div styleName="gift-loading" />
           </>
         ) : (
           <>
             {couponData && _isArray(couponData) ? (
               <>
                 <p>Thank you for your purchase! Here are your coupons:</p>
-                <div className="coupons-multi">
+                <div styleName="coupons-multi">
                   {couponData.map(c => (
-                    <span key={c} className="text-important">
-                      {c}
+                    <span key={c}>
+                      <TextImportant>{c}</TextImportant>
                     </span>
                   ))}
                 </div>
@@ -84,7 +84,7 @@ export default ({ prices }) => {
             ) : (
               <p>
                 Thank you for your purchase! Here is your coupon:{' '}
-                <span className="text-important">{couponData}</span>
+                <TextImportant>{couponData}</TextImportant>
               </p>
             )}
             <p>We have also emailed you a copy for your records.</p>

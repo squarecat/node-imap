@@ -1,7 +1,13 @@
+@import '../../styles/common/colors.scss';
+
+$color-btn-text: $color-red;
+$color-btn-bg: $color-red-light;
+$color-btn-border-focus: $color-input-border-focus;
+
 .btn {
   width: 240px;
-  background-color: #fddbd7;
-  color: rgba(231, 57, 48, 0.749);
+  background-color: $color-btn-bg;
+  color: $color-btn-text;
   padding: 15px 25px;
   font-size: 22px;
   font-weight: bolder;
@@ -15,46 +21,69 @@
   justify-content: center;
   margin: 10px 0;
   user-select: none;
+  outline: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 1em $color-btn-border-focus;
+    background-color: $color-red-darker;
+    color: white;
+  }
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
-  background-color: #e73a30;
-  color: white;
-}
-
-.btn.disabled {
+.disabled {
   pointer-events: none;
   opacity: 0.5;
   cursor: no-drop;
 }
 
-.btn.compact {
+.compact {
   width: auto;
   padding: 5px 15px;
   font-size: 16px;
 }
 
-.btn.icon svg {
+.smaller {
+  font-size: 14px;
+  height: 30px;
+  padding: 0 15px;
+  @media (max-width: 400px) {
+    padding: 0 8px;
+    .btn-content {
+      font-size: 12px;
+    }
+  }
+}
+
+.on-dark-bg {
+  background-color: rgba(255, 251, 251, 0.25);
+  &:hover {
+    background-color: $color-red-darker;
+  }
+}
+
+.icon svg {
   margin-right: 7px;
   position: relative;
 }
 
-.btn.centered {
+.centered {
   margin: 10px auto;
 }
 
-.btn.muted {
+.muted {
   background-color: transparent;
+  &:hover {
+    color: $color-red;
+    background-color: $color-red-lighter;
+  }
 }
 
-.btn.muted:hover {
-  color: rgba(231, 57, 48, 0.749);
-  background-color: rgba(231, 57, 48, 0.1);
+.stretch {
+  width: 100%;
 }
 
-.btn.loading {
+.loading {
   pointer-events: none;
 }
 
@@ -64,17 +93,19 @@
   justify-content: space-evenly;
 }
 
-.btn.loading .btn-content {
+.loading .btn-content {
   visibility: hidden;
 }
 
-.btn.basic:hover {
-  box-shadow: none;
-  transform: translateY(0);
-}
+.basic {
+  &:hover {
+    box-shadow: none;
+    transform: translateY(0);
+  }
 
-.btn.basic.disabled {
-  background-color: transparent;
+  &.disabled {
+    background-color: transparent;
+  }
 }
 
 .btn-loader {

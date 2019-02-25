@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import format from 'date-fns/format';
-
-import useLocalStorage from '../utils/hooks/use-localstorage';
-import ModalClose from './modal/modal-close';
-import Button from '../components/btn';
-
-import useUser from '../utils/hooks/use-user';
 import * as track from '../utils/analytics';
 
+import React, { useEffect, useState } from 'react';
+
+import Button from '../components/btn';
+import ModalClose from './modal/modal-close';
+import format from 'date-fns/format';
 import { PRICES as modalPrices } from './price-modal';
+import useLocalStorage from '../utils/hooks/use-localstorage';
+import useUser from '../utils/hooks/use-user';
 
 const reminderDateFormat = 'Do MMMM YYYY';
 
@@ -73,13 +72,7 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
           {format(currentReminder.remindAt, reminderDateFormat)}
         </p>
         <div className="reminder-cta">
-          <Button
-            className="clear-reminder-btn"
-            basic
-            compact
-            muted
-            onClick={() => onClickClearReminder()}
-          >
+          <Button basic compact muted onClick={() => onClickClearReminder()}>
             Clear reminder
           </Button>
         </div>
