@@ -1,0 +1,18 @@
+@import '../../styles/common/colors.scss';
+
+.link {
+  color: $color-link;
+  border-bottom: 1px dashed $color-link;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    color: $color-link-hover;
+    border-bottom: 1px dashed $color-link-hover;
+  }
+}
+
+.important {
+  color: $color-text-important;
+  font-weight: bold;
+}
