@@ -4,6 +4,16 @@ $color-btn-text: $color-red-darker;
 $color-btn-bg: $color-red-light;
 $color-btn-border-focus: $color-input-border-focus;
 
+@mixin muted() {
+  background-color: transparent;
+  color: $color-red;
+
+  &:hover {
+    color: $color-red;
+    background-color: $color-red-lighter;
+  }
+}
+
 .btn {
   width: 240px;
   background-color: $color-btn-bg;
@@ -72,13 +82,7 @@ $color-btn-border-focus: $color-input-border-focus;
 }
 
 .muted {
-  background-color: transparent;
-  color: $color-red;
-
-  &:hover {
-    color: $color-red;
-    background-color: $color-red-lighter;
-  }
+  @include muted();
 }
 
 .outlined {

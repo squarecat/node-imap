@@ -1,5 +1,5 @@
 import 'rc-tooltip/assets/bootstrap_white.css';
-import './mail-list.css';
+import './mail-list.scss';
 
 import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
@@ -8,7 +8,7 @@ import AnimatedNumber from 'react-animated-number';
 import { CSSTransition } from 'react-transition-group';
 import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
-import { ReloadIcon } from '../../components/icons';
+import { ReloadIcon, TwitterIcon } from '../../components/icons';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
@@ -704,16 +704,12 @@ function getSocialContent(unsubCount = 0, referralCode) {
               href={`https://twitter.com/intent/tweet?text=${
                 socialOutput.tweet
               }`}
-              className="btn compact"
+              className="tweet-btn"
             >
-              <svg viewBox="0 0 64 64" width="16" height="16">
-                <path
-                  strokeWidth="0"
-                  fill="currentColor"
-                  d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
-                />
-              </svg>
-              Tweet progress
+              <TwitterIcon />
+              <span>
+                Tweet <span className="tweet-text-extra">progress</span>
+              </span>
             </a>
           </div>
         </div>

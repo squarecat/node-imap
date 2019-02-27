@@ -1,4 +1,4 @@
-import './profile.css';
+import './account.module.scss';
 
 import React, { useState } from 'react';
 
@@ -6,6 +6,8 @@ import Button from '../../../components/btn';
 import ProfileLayout from './layout';
 import WarningModal from '../../../components/modal/warning-modal';
 import useUser from '../../../utils/hooks/use-user';
+
+import { TextImportant } from '../../../components/text';
 
 export default () => {
   const [{ email }] = useUser(u => ({
@@ -52,14 +54,14 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Account">
-      <div className="profile-section">
+      <div styleName="account-section">
         <h2>Details</h2>
         <p>
-          Signed in with: <span className="text-important">{email}</span>
+          Signed in with: <TextImportant>{email}</TextImportant>
         </p>
       </div>
 
-      <div className="profile-section">
+      <div styleName="account-section">
         <h2>Clear Local Data</h2>
         <p>
           We do not store any of your emails, everything is stored on your
@@ -71,9 +73,9 @@ export default () => {
         </Button>
       </div>
 
-      <div className="profile-section">
+      <div styleName="account-section">
         <h2>Deactivate Account</h2>
-        <p className="warning">
+        <p styleName="warning">
           We NEVER store the content of your emails in any form.
         </p>
         <p>
@@ -113,9 +115,9 @@ export default () => {
 const clearModalContent = (
   <>
     <p>
-      <span className="text-important">WARNING:</span> this will remove all of
-      the data from your last scan. If it has been more than 24 hours you will
-      be unable to run this scan again.
+      <TextImportant>WARNING:</TextImportant> this will remove all of the data
+      from your last scan. If it has been more than 24 hours you will be unable
+      to run this scan again.
     </p>
     <p>If you continue to have problems please contact support.</p>
   </>
@@ -124,9 +126,9 @@ const clearModalContent = (
 const deleteModalContent = (
   <>
     <p>
-      This will delete <span className="text-important">ALL OF YOUR DATA</span>{' '}
-      including your account details, scan history, favorite senders, reminders,
-      and referral data.
+      This will delete <TextImportant>ALL OF YOUR DATA</TextImportant> including
+      your account details, scan history, favorite senders, reminders, and
+      referral data.
     </p>
     <p>
       You are not tied to our service in any way. Any spam email lists you

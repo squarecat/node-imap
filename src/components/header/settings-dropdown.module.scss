@@ -1,6 +1,6 @@
 @import '../../styles/common/colors.scss';
 
-$color-dropdown-border: #ffc9c5;
+$color-dropdown-border: $color-border-red;
 
 .settings-dropdown a:hover {
   box-shadow: none;

@@ -1,7 +1,4 @@
-:root {
-  --link-color: rgba(231, 57, 48, 0.749);
-  --link-hover-color: rgba(231, 57, 48, 1);
-}
+@import '../../../styles/common/colors.scss';
 
 .profile-page {
   padding: 50px 20px;
@@ -31,7 +28,7 @@
 
 .profile-nav {
   margin: 0 30px 0 0;
-  background-color: rgb(231, 58, 48, 0.05);
+  background-color: rgba(231, 58, 48, 0.05);
   border-radius: 10px;
 }
 
@@ -44,7 +41,7 @@
   display: block;
   padding: 10px 15px;
   white-space: nowrap;
-  background-color: rgb(231, 58, 48, 0.05);
+  background-color: rgba(231, 58, 48, 0.05);
   transition: background-color 150ms ease-in-out;
   cursor: pointer;
 }
@@ -57,19 +54,19 @@
   border-bottom-right-radius: 10px;
 }
 
-.profile-nav-link--active,
-.profile-nav-link:hover {
-  background-color: rgb(231, 58, 48, 0.1);
+:global(.profile-nav-link--active),
+:global(.profile-nav-link:hover) {
+  background-color: $color-red-lighter;
 }
 
 .profile-nav-link {
-  color: var(--link-color);
+  color: $color-link;
   cursor: pointer;
   font-weight: bold;
   transition: color 150ms ease-in-out;
 }
 .profile-nav-link:hover {
-  color: var(--link-hover-color);
+  color: $color-link-hover;
 }
 
 .profile-page h1 {
@@ -81,12 +78,12 @@
 }
 
 .profile-back {
-  padding: 0 15px;
+  padding: 0 5px;
 }
 
 .profile-section {
   padding: 20px;
-  border: 1px solid rgb(231, 58, 48, 0.1);
+  border: 1px solid $color-border-red;
   border-radius: 10px;
 }
 
@@ -104,7 +101,7 @@
 }
 
 .warning {
-  color: var(--primary-font-color);
+  color: $color-primary-font;
   font-weight: bold;
 }
 
