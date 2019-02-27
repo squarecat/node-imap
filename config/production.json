@@ -13,8 +13,13 @@
   "urls": {
     "referral": "https://leavemealone.xyz/r/"
   },
-  "google": {
-    "redirect": "https://leavemealone.xyz/auth/google/callback"
+  "auth": {
+    "google": {
+      "redirect": "https://leavemealone.xyz/auth/google/callback"
+    },
+    "outlook": {
+      "redirect": "https://leavemealone.xyz/auth/outlook/callback"
+    }
   },
   "puppeteer": {
     "args": [

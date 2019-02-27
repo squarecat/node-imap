@@ -1,11 +1,12 @@
 import ImapClient from 'emailjs-imap-client';
+import { auth } from 'getconfig';
 import { getUserById } from '../user';
 import { google } from 'googleapis';
-import { google as googleConfig } from 'getconfig';
 import isBefore from 'date-fns/is_before';
-import { refreshAccessToken } from '../../auth';
+import { refreshAccessToken } from '../../auth/google';
 import subMinutes from 'date-fns/sub_minutes';
 
+const { google: googleConfig } = auth;
 export async function getGmailAccessToken(userOrUserId) {
   let user = userOrUserId;
   if (typeof userOrUserId === 'string') {

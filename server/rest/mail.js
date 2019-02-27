@@ -34,7 +34,7 @@ export default function(app, server) {
     const start = Date.now();
     try {
       fetchMail(
-        { userId: user.id, timeframe: '3d', ignore: true },
+        { userId: user.id, timeframe: '1m', ignore: true },
         {
           onMail: m => {
             mail = [...mail, ...m];
@@ -48,7 +48,7 @@ export default function(app, server) {
             const took = Date.now() - start;
             res.send(err || { mail, took });
           },
-          onProgress: p => console.log(p)
+          onProgress: () => {}
         },
         { strategy }
       );

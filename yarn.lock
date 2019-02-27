@@ -2529,7 +2529,7 @@ buffer@^3.0.1:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
-buffer@^4.3.0:
+buffer@^4.3.0, buffer@^4.9.1:
   version "4.9.1"
   resolved "http://registry.npmjs.org/buffer/-/buffer-4.9.1.tgz#6d1bb601b07a4efced97094132093027c95bc298"
   dependencies:
@@ -3054,7 +3054,7 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
 
-concat-stream@1.6.2, concat-stream@^1.5.0, concat-stream@^1.6.0:
+concat-stream@1.6.2, concat-stream@^1.5.0, concat-stream@^1.5.1, concat-stream@^1.6.0:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
   dependencies:
@@ -5562,6 +5562,10 @@ get-port@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/get-port/-/get-port-3.2.0.tgz#dd7ce7de187c06c8bf353796ac71e099f0980ebc"
 
+get-prop@0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/get-prop/-/get-prop-0.0.10.tgz#a76b4035d170dd728a66456955bc8192367308d2"
+
 get-proxy@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/get-proxy/-/get-proxy-2.1.0.tgz#349f2b4d91d44c4d4d4e9cba2ad90143fac5ef93"
@@ -6121,6 +6125,16 @@ http-errors@^1.3.0:
     setprototypeof "1.1.0"
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
+
+http-message-parser@^0.0.34:
+  version "0.0.34"
+  resolved "https://registry.yarnpkg.com/http-message-parser/-/http-message-parser-0.0.34.tgz#aa90f3c375f7f78cff325d59250634b2ff5531ed"
+  dependencies:
+    buffer "^4.9.1"
+    concat-stream "^1.5.1"
+    get-prop "0.0.10"
+    minimist "^1.2.0"
+    stream-buffers "^3.0.0"
 
 http-parser-js@>=0.4.0:
   version "0.5.0"
@@ -8532,7 +8546,7 @@ passport-oauth2-refresh@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/passport-oauth2-refresh/-/passport-oauth2-refresh-1.1.0.tgz#4e77702bd64f1ec39ddc4142edec85a4f5086f43"
 
-passport-oauth2@^1.1.2:
+passport-oauth2@1.x.x, passport-oauth2@^1.1.2:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/passport-oauth2/-/passport-oauth2-1.4.0.tgz#f62f81583cbe12609be7ce6f160b9395a27b86ad"
   dependencies:
@@ -8540,6 +8554,13 @@ passport-oauth2@^1.1.2:
     passport-strategy "1.x.x"
     uid2 "0.0.x"
     utils-merge "1.x.x"
+
+passport-outlook@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/passport-outlook/-/passport-outlook-2.2.0.tgz#329bf27764ca1dd5bebb90104783f05db4568edf"
+  dependencies:
+    passport-oauth2 "1.x.x"
+    request "2.x.x"
 
 passport-strategy@1.x.x:
   version "1.0.0"
@@ -9884,7 +9905,7 @@ replace-ext@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
 
-request@^2.40.0, request@^2.65.0, request@^2.83.0, request@^2.85.0, request@^2.88.0:
+request@2.x.x, request@^2.40.0, request@^2.65.0, request@^2.83.0, request@^2.85.0, request@^2.88.0:
   version "2.88.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
   dependencies:
@@ -10680,6 +10701,10 @@ stream-browserify@^2.0.1:
   dependencies:
     inherits "~2.0.1"
     readable-stream "^2.0.2"
+
+stream-buffers@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/stream-buffers/-/stream-buffers-3.0.2.tgz#5249005a8d5c2d00b3a32e6e0a6ea209dc4f3521"
 
 stream-counter@~0.2.0:
   version "0.2.0"

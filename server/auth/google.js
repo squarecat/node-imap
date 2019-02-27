@@ -1,15 +1,19 @@
-import { createOrUpdateUserFromGoogle, updateUserToken } from './services/user';
+import {
+  createOrUpdateUserFromGoogle,
+  updateUserToken
+} from '../services/user';
 
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import addSeconds from 'date-fns/add_seconds';
-import { google } from 'getconfig';
-import logger from './utils/logger';
+import { auth } from 'getconfig';
+import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
 
-logger.info(`auth: redirecting to ${google.redirect}`);
+const { google } = auth;
+logger.info(`google-auth: redirecting to ${google.redirect}`);
 
-const googleStrategy = new GoogleStrategy(
+export const Strategy = new GoogleStrategy(
   {
     clientID: google.clientId,
     clientSecret: google.clientSecret,
@@ -38,42 +42,6 @@ const googleStrategy = new GoogleStrategy(
     }
   }
 );
-passport.use(googleStrategy);
-refresh.use(googleStrategy);
-
-passport.serializeUser(function(user, cb) {
-  cb(null, user);
-});
-
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
-});
-
-export default app => {
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  app.get(
-    '/auth/google',
-    passport.authenticate('google', {
-      scope: google.scopes,
-      prompt: 'consent',
-      accessType: 'offline'
-    })
-  );
-
-  app.get(
-    '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function(req, res) {
-      res.redirect('/app');
-    }
-  );
-  app.get('/auth/logout', (req, res) => {
-    req.logout();
-    res.redirect('/');
-  });
-};
 
 export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
   return new Promise((resolve, reject) => {
@@ -103,3 +71,22 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
     );
   });
 }
+
+export default app => {
+  app.get(
+    '/auth/google',
+    passport.authenticate('google', {
+      scope: google.scopes,
+      prompt: 'consent',
+      accessType: 'offline'
+    })
+  );
+
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function(req, res) {
+      res.redirect('/app');
+    }
+  );
+};

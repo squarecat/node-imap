@@ -61,29 +61,22 @@ export async function getEstimateForTimeframe(
     then,
     now
   });
-  let total = await getEstimatedEmails(searchStr, userOrUserId);
-  if (includeTrash) {
-    const trashSearchString = getSearchString({
-      then,
-      now,
-      query: 'in:trash'
-    });
-    const trashTotal = await getEstimatedEmails(
-      trashSearchString,
-      userOrUserId
-    );
-    total = total + trashTotal;
-  }
+  let total = await getEstimatedEmails(searchStr, includeTrash, userOrUserId);
   return total * multiplier;
 }
 
-export async function getEstimatedEmails(query, userOrUserId) {
+export async function getEstimatedEmails(
+  query,
+  includeTrash = true,
+  userOrUserId
+) {
   try {
-    console.log('running estimation');
     const client = await getMailClient(userOrUserId);
     const { data } = await client.users.messages.list({
       userId: 'me',
       q: query,
+      includeSpamTrash: includeTrash,
+      labelIds: ['INBOX'],
       qs: {
         fields: 'resultSizeEstimate'
       }
