@@ -2,32 +2,37 @@
 @import '../btn/btn.module.scss';
 
 .header {
-  /* height: 106px; */
-  height: auto;
-  width: 100%;
-  overflow: hidden;
-  padding: 0 50px;
-  background-color: #fff;
-}
-
-.header-inner {
   display: flex;
   align-items: center;
-  max-width: 1050px;
-  height: 106px;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
+  height: 100vh;
   width: 100%;
-  margin: 0 auto;
+  overflow: hidden;
+  background-color: #fddbd7;
+
+  &.loaded {
+    height: 50px;
+  }
+
+  @media (max-width: 500px) {
+    padding: 0 10px;
+  }
 }
 
 .header-title {
   font-size: 18px;
   margin-left: 15px;
   font-weight: bold;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 .header-logo {
   display: inline-block;
-  height: 32px;
+  height: 65%;
   margin: 0;
 }
 
@@ -35,39 +40,39 @@
   height: 100%;
 }
 
-.header-nav {
-  margin: 0;
-  padding: 0;
-  display: flex;
+.header-actions {
   margin-left: auto;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  font-size: 16px;
 }
 
-.nav-link,
-.nav-login {
-  margin: 0 5px;
-}
-
-.nav-login {
-  padding: 0 0 0 10px;
-  margin-right: 0;
-}
-
-.nav-link a,
-.nav-link a:hover {
-  border-bottom: none;
-  padding: 10px;
-}
-
-.login-btn {
+.header-btn {
   @extend .btn;
+  @extend .basic;
   @extend .compact;
-  margin: 0;
-  padding: 10px 15px;
+  @extend .smaller;
+  @extend .on-dark-bg;
+  margin-right: 15px;
 
   @media (max-width: 400px) {
-    font-size: 14px;
-    padding: 5px 10px;
+    margin-right: 8px;
+  }
+}
+
+.header-btn-text {
+  @extend .btn-content;
+}
+
+.header-btn-text--short {
+  display: none;
+  @media (max-width: 700px) {
+    display: inline;
+  }
+}
+
+.header-btn-text--long {
+  @media (max-width: 700px) {
+    display: none;
   }
 }

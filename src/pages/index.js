@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
-import Header from '../components/header';
+import Header from './header';
 import Layout from '../layouts/layout';
 import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
@@ -305,7 +305,7 @@ const IndexPage = () => {
                 href="/login"
                 onMouseEnter={() => setActive(true)}
                 onMouseLeave={() => setActive(false)}
-                className={`beam-me-up-cta`}
+                className={`beam-me-up-cta beam-me-up-cta-center`}
               >
                 Get Started For Free!
               </a>

@@ -33,3 +33,13 @@
   border: 1px solid #ffd9d6;
   border-radius: 8px;
 }
+
+.first-logon-content {
+  text-align: center;
+  padding: 50px 10px;
+}
+
+.first-logon-image {
+  width: 150px;
+  max-width: 80%;
+}

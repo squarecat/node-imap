@@ -297,7 +297,7 @@ export default ({ timeframe, showPriceModal }) => {
           </span>
           <span className="action-item">
             <a onClick={() => showPriceModal()} className="btn compact icon">
-              <ReloadIcon padright />
+              <ReloadIcon />
               Scan more
             </a>
 

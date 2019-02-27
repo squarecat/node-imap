@@ -166,7 +166,6 @@ export const LockIcon = visProps => (
 
 function getClasses(classes, visProps = {}) {
   return cx(classes, {
-    'pad-left': visProps.padleft,
-    'pad-right': visProps.padright
+    'pad-left': visProps.padleft
   });
 }

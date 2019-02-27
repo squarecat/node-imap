@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import colin from '../assets/colin-yellow-shadow.png';
-import './squarecat.css';
+import colin from '../../assets/colin.png';
+import './squarecat.module.scss';
 
-export default class IndexPage extends Component {
+export default class SquarecatWidget extends Component {
   state = {
     showBubble: false
   };
@@ -14,11 +14,11 @@ export default class IndexPage extends Component {
           ref={r => {
             this.ref = r;
           }}
-          className={`squarecat-widget__bubble ${
+          styleName={`squarecat-widget__bubble ${
             showBubble ? 'squarecat-widget__bubble--shown' : ''
           }`}
         >
-          <div className="container">
+          <div styleName="container">
             <p>
               Hey{' '}
               <span role="img" aria-label="wave-emoji">
@@ -36,13 +36,13 @@ export default class IndexPage extends Component {
             </p>
           </div>
         </div>
-        <a className="squarecat-widget" onClick={this.onClick}>
-          <span className="meow">Meow</span>
-          <span className="meow meow-right">Meow</span>
+        <a styleName="squarecat-widget" onClick={this.onClick}>
+          <span styleName="meow">Meow</span>
+          <span styleName="meow meow-right">Meow</span>
           <img
             alt="The creators"
             src={colin}
-            className="squarecat-widget__colin"
+            styleName="squarecat-widget__colin"
           />
         </a>
       </Fragment>

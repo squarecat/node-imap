@@ -95,6 +95,10 @@
   text-align: center;
   position: relative;
 }
+/* TODO remove this if not used */
+.action {
+  text-align: center;
+}
 
 .unsubscribe {
   font-size: 10px;
@@ -290,39 +294,6 @@ pre {
   display: none;
 }
 
-/* Roughly tablet width */
-@media (max-width: 768px) {
-  .subject {
-    flex: 1;
-  }
-}
-
-@media (max-width: 500px) {
-  .mail-list-social .actions {
-    min-width: 90px;
-    padding: 0;
-  }
-  .mail-list-social .actions .btn {
-    font-size: 14px;
-  }
-  .revoke-token-instructions {
-    padding: 0 10px;
-  }
-  .status {
-    opacity: 0.5;
-  }
-  .subject {
-    display: none;
-  }
-  .mail-actions {
-    margin: 0;
-  }
-  .mail-actions-content {
-    padding: 0;
-    flex-direction: column;
-  }
-}
-
 .rc-tooltip-inner {
   background-color: #ffd9d6 !important;
   border: 0 !important;
@@ -455,9 +426,19 @@ pre {
   flex-direction: row;
 }
 
+/* Roughly tablet width */
+@media (max-width: 768px) {
+  .subject {
+    flex: 1;
+  }
+}
+
 @media (max-width: 700px) {
   .social-switch {
     flex-direction: column;
+  }
+  .mail-actions {
+    padding-bottom: 20px;
   }
   .mail-list-social .actions {
     padding-left: 20px;
@@ -483,6 +464,40 @@ pre {
 }
 
 @media (max-width: 500px) {
+  .mail-list-social .actions {
+    min-width: 90px;
+    padding: 0;
+    padding-left: 10px;
+  }
+  .mail-list-social .actions .btn {
+    font-size: 14px;
+  }
+  .revoke-token-instructions {
+    padding: 0 10px;
+    margin-top: 40px;
+  }
+  .status {
+    opacity: 0.5;
+  }
+  .subject {
+    display: none;
+  }
+  .mail-actions {
+    margin: 0;
+    padding: 0 20px 10px 20px;
+  }
+  .mail-actions .action-item > .btn {
+    width: 140px;
+    padding: 5px 0;
+    margin: 5px auto;
+  }
+  .mail-actions .extra {
+    display: none;
+  }
+  .mail-actions-content {
+    padding: 0;
+    flex-direction: column;
+  }
   .mail-list-social .avatar {
     margin-right: 0;
   }
@@ -497,11 +512,8 @@ pre {
     font-size: 12px;
     line-height: 18px;
   }
-  .revoke-token-instructions {
-    margin-top: 40px;
-  }
-  .mail-list-social .actions {
-    padding-left: 10px;
+  .results-data {
+    min-width: auto;
   }
 }
 

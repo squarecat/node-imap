@@ -1,5 +1,4 @@
 import 'isomorphic-fetch';
-import './index.scss';
 
 import React, { useState } from 'react';
 

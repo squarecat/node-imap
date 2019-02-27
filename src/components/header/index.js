@@ -1,42 +1,78 @@
 import './header.module.scss';
 
+import { ClockIcon } from '../../components/icons';
+import { Link } from 'gatsby';
 import React from 'react';
-import { TextLink } from '../../components/text';
-import smallLogo from '../../assets/envelope-logo.png';
+import SettingsDropdown from './settings-dropdown';
+import logo from '../../assets/envelope-logo.png';
+import useUser from '../../utils/hooks/use-user';
 
-export default ({ setActive }) => (
-  <div styleName="header">
-    {/* <div styleName="ref-banner">
-      {bannerShown ? (
-        <span>
-          ❤ Happy Valentines Day! Today only have 40% off all{' '}
-          <a href="/gifts">gift purchases</a> ❤
+export default ({ loaded, onClickReminder, onClickReferral }) => {
+  const [{ profileImg, lastPaidScan, reminder }] = useUser(
+    ({ profileImg, lastPaidScan, reminder }) => ({
+      profileImg,
+      lastPaidScan,
+      reminder
+    })
+  );
+
+  let reminderButton = null;
+
+  const isLastSearchPaid = !!lastPaidScan;
+  const hasReminder = reminder && !reminder.sent;
+
+  if (isLastSearchPaid && !hasReminder) {
+    reminderButton = (
+      <button styleName="header-btn" onClick={() => onClickReminder()}>
+        <ClockIcon />
+        <span styleName="header-btn-text header-btn-text--short">Remind</span>
+        <span styleName="header-btn-text header-btn-text--long">
+          Set reminder
         </span>
-      ) : null}
-    </div> */}
-    <div styleName="header-inner">
-      <a href="/" styleName="header-logo">
-        <img alt="logo" src={smallLogo} />
-      </a>
+      </button>
+    );
+  } else if (hasReminder) {
+    reminderButton = (
+      <button styleName="header-btn" onClick={() => onClickReminder()}>
+        <ClockIcon />
+      </button>
+    );
+  }
+
+  return (
+    <div styleName={`header ${loaded ? 'loaded' : ''}`}>
+      <Link to="/app/" styleName="header-logo">
+        <img alt="logo" src={logo} />
+      </Link>
       <div styleName="header-title">Leave Me Alone </div>
-      <ul styleName="header-nav">
-        <li styleName="nav-link">
-          <TextLink href="#how-it-works">How it works</TextLink>
-        </li>
-        <li styleName="nav-link">
-          <TextLink href="#pricing">Pricing</TextLink>
-        </li>
-        <li styleName="nav-login">
-          <a
-            href="/app"
-            onMouseEnter={() => setActive(true)}
-            onMouseLeave={() => setActive(false)}
-            styleName="login-btn"
-          >
-            Log in
-          </a>
-        </li>
-      </ul>
+      <div styleName="header-actions">
+        {reminderButton}
+        <button styleName="header-btn" onClick={() => onClickReferral()}>
+          <span styleName="header-btn-text header-btn-text--short">Refer</span>
+          <span styleName="header-btn-text header-btn-text--long">
+            Refer a friend
+          </span>
+        </button>
+        <SettingsDropdown
+          profileImg={profileImg}
+          onClickSupport={() => openChat()}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
+function openChat(message = '') {
+  if (window.$crisp) {
+    window.$crisp.push(['do', 'chat:show']);
+    window.$crisp.push(['do', 'chat:open']);
+    window.$crisp.push(['set', 'message:text', [message]]);
+    window.$crisp.push(['on', 'chat:closed', closeChat]);
+  }
+}
+
+function closeChat() {
+  if (window.$crisp) {
+    window.$crisp.push(['do', 'chat:hide']);
+  }
+}

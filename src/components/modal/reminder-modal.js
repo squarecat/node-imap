@@ -114,7 +114,7 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
             compact
             onClick={() => onClickSetReminder(nextReminder.timeframe)}
           >
-            <ClockIcon padright />
+            <ClockIcon />
             Set a reminder to scan again in {nextReminder.label}
           </Button>
         </div>
