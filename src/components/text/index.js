@@ -17,3 +17,7 @@ export const TextLink = ({ children, smaller, ...props }) => {
 export const TextImportant = ({ children }) => {
   return <span styleName="important">{children}</span>;
 };
+
+export const TextBold = ({ children }) => {
+  return <span styleName="bold">{children}</span>;
+};

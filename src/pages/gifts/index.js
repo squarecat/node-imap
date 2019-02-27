@@ -1,4 +1,4 @@
-import GiftsPrices from '../../components/gifts/gifts-prices';
+import GiftsPrices from './gifts-prices';
 import { PRICES } from '../../components/price-modal';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';

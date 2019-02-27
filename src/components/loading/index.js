@@ -1,15 +1,17 @@
+import './loading.module.scss';
+
 import React from 'react';
 import envelopeLogo from '../../assets/envelope.png';
 import girlLogo from '../../assets/leavemealonegirl.png';
 
-export default () => {
+export default ({ loaded = false }) => {
   return (
-    <div className="dice">
-      <div className="auth-loading-pane auth-loading-pane--front">
-        <img src={girlLogo} alt="girl-logo" className="girl-logo" />
+    <div styleName={`dice ${loaded ? 'loaded' : ''}`}>
+      <div styleName="loading-pane front">
+        <img src={girlLogo} alt="girl-logo" styleName="girl-logo" />
       </div>
-      <div className="auth-loading-pane auth-loading-pane--back">
-        <img src={envelopeLogo} alt="envelope-logo" className="envelope-logo" />
+      <div styleName="loading-pane back">
+        <img src={envelopeLogo} alt="envelope-logo" styleName="envelope-logo" />
       </div>
     </div>
   );

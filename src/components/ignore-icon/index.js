@@ -1,10 +1,10 @@
+import './ignore-icon.module.scss';
+
 import React from 'react';
 import cx from 'classnames';
 
-import './ignore-icon.css';
-
 export default ({ ignored }) => (
-  <span className={cx('add-to-ignore', { ignored })}>
+  <span styleName={cx('add-to-ignore', { ignored })}>
     <svg
       viewBox="0 0 32 32"
       width="15"

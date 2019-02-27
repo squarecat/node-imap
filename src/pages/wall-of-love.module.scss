@@ -1,3 +1,6 @@
+.tweet-wall {
+}
+
 .tweet-box {
   margin-top: 45px;
   display: grid;
@@ -15,12 +18,15 @@
   margin: 0 auto 10px auto;
 }
 
-.wall-of-love-header {
+.header {
   width: 600px;
   margin: 0 auto;
   text-align: center;
   max-width: 100%;
   padding: 0 20px;
+}
+
+.ph-badge {
 }
 
 @media (max-width: 800px) {

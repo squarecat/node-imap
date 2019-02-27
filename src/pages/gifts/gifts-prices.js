@@ -1,7 +1,7 @@
 import './gifts.module.scss';
 
 import React, { useState } from 'react';
-import { TextImportant, TextLink } from '../text';
+import { TextImportant, TextLink } from '../../components/text';
 
 import GiftCheckout from './gift-checkout';
 import _isArray from 'lodash.isarray';

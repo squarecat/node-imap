@@ -1,9 +1,9 @@
+import './icons.module.scss';
+
 import React from 'react';
 
-import './icons.css';
-
 export const HeartIcon = () => (
-  <span className="icon icon--heart">
+  <span styleName="icon heart">
     <svg
       viewBox="0 0 32 32"
       width="15"
@@ -19,7 +19,7 @@ export const HeartIcon = () => (
 );
 
 export const SettingsIcon = () => (
-  <span className="icon icon--settings">
+  <span styleName="icon settings">
     <svg
       id="i-settings"
       viewBox="0 0 32 32"
@@ -38,7 +38,7 @@ export const SettingsIcon = () => (
 );
 
 export const MailIcon = () => (
-  <span className="icon icon--mail">
+  <span styleName="icon mail">
     <svg
       id="i-mail"
       viewBox="0 0 32 32"
@@ -56,7 +56,7 @@ export const MailIcon = () => (
 );
 
 export const CreditCardIcon = () => (
-  <span className="icon icon--card">
+  <span styleName="icon card">
     <svg
       id="i-creditcard"
       viewBox="0 0 32 32"

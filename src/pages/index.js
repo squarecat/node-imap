@@ -1,13 +1,14 @@
 import 'isomorphic-fetch';
-import './home.css';
+import './home.scss';
 
 import React, { useEffect, useRef, useState } from 'react';
 
 import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
+import Header from '../components/header';
 import Layout from '../layouts/layout';
-import WallOfLove from '../components/wall-of-love/wall-of-love';
+import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
@@ -16,7 +17,6 @@ import iphoneUnsubGif from '../assets/iphone-unsub.png';
 import { PRICES as modalPrices } from '../components/price-modal';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
-import smallLogo from '../assets/envelope-logo.png';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
 
@@ -51,44 +51,7 @@ const IndexPage = () => {
     <Layout>
       <Colin />
       <div id="main">
-        <div className="home-header">
-          {/* <div className="ref-banner">
-            {bannerShown ? (
-              <span>
-                ❤ Happy Valentines Day! Today only have 40% off all{' '}
-                <a href="/gifts">gift purchases</a> ❤
-              </span>
-            ) : null}
-          </div> */}
-          <div className="home-header-inner">
-            <a href="/" className="home-header-logo">
-              <img alt="logo" src={smallLogo} />
-            </a>
-            <div className="home-header-title">Leave Me Alone </div>
-            <ul className="home-header-nav">
-              <li className="nav-how">
-                <a className="link" href="#how-it-works">
-                  How it works
-                </a>
-              </li>
-              <li className="nav-pricing">
-                <a className="link" href="#pricing">
-                  Pricing
-                </a>
-              </li>
-              <li className="nav-login">
-                <a
-                  href="/app"
-                  onMouseEnter={() => setActive(true)}
-                  onMouseLeave={() => setActive(false)}
-                  className={`beam-me-up-cta beam-me-up-cta--header`}
-                >
-                  Log in
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <Header setActive={setActive} />
         <div
           className={`friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
@@ -121,7 +84,7 @@ const IndexPage = () => {
                     href="/login"
                     onMouseEnter={() => setActive(true)}
                     onMouseLeave={() => setActive(false)}
-                    className={`beam-me-up-cta beam-me-up-cta--f`}
+                    className={`beam-me-up-cta`}
                   >
                     Get Started For Free!
                   </a>
@@ -342,7 +305,7 @@ const IndexPage = () => {
                 href="/login"
                 onMouseEnter={() => setActive(true)}
                 onMouseLeave={() => setActive(false)}
-                className={`beam-me-up-cta beam-me-up-cta--f`}
+                className={`beam-me-up-cta`}
               >
                 Get Started For Free!
               </a>

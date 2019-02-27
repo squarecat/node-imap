@@ -17,10 +17,10 @@ body {
   width: 100%;
   overflow: hidden;
   background-color: #fddbd7;
-}
 
-.auth-loading--loaded .header {
-  height: 50px;
+  &.loaded {
+    height: 50px;
+  }
 }
 
 .header-title {

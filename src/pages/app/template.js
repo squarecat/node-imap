@@ -105,10 +105,11 @@ export default ({ pageName, children }) => {
     );
   }
 
+  const loaded = !!user;
   return (
     <AppLayout pageName={pageName}>
-      <Auth loaded={!!user}>
-        <div className="header">
+      <Auth loaded={loaded}>
+        <div className={`header ${loaded ? 'loaded' : ''}`}>
           <Link to="/app/" className="header-logo">
             <img alt="logo" src={logo} />
           </Link>

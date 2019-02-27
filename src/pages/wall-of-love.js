@@ -1,4 +1,4 @@
-import './wall-of-love.css';
+import './wall-of-love.module.scss';
 
 import { StaticQuery, graphql } from 'gatsby';
 
@@ -28,14 +28,14 @@ const query = graphql`
 export default () => {
   return (
     <div>
-      <div className="wall-of-love-header">
+      <div styleName="header">
         <h2>💌 Wall of love 💌</h2>
         <p>
           Our users are awesome and they think we're awesome too. Take a look at
           all the nice things they've said about us!
         </p>
         <a
-          className="ph-badge"
+          styleName="ph-badge"
           href="https://www.producthunt.com/posts/leave-me-alone-3?utm_source=badge-top-post-badge"
           target="_blank"
           rel="noopener noreferrer"
@@ -49,8 +49,8 @@ export default () => {
           />
         </a>
       </div>
-      <div className="tweet-wall">
-        <div className="tweet-box">
+      <div styleName="tweet-wall">
+        <div styleName="tweet-box">
           <StaticQuery
             query={query}
             render={data => {
@@ -73,14 +73,14 @@ export default () => {
 };
 
 const Col = ({ tweets }) => (
-  <div className="col">
+  <div styleName="col">
     {tweets.map(({ node }, index) => {
       const handle = /\d+-(.*).png$/.exec(node.relativePath)[1];
       return (
         node.childImageSharp && ( // have to filter out null fields from bad data
           <a
             key={handle}
-            className="twitter-tweet"
+            styleName="twitter-tweet"
             target="_blank"
             rel="noopener noreferrer"
             href={`https://twitter.com/${handle}`}
