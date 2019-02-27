@@ -14,7 +14,7 @@ import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 import heartGif from '../assets/heart.gif';
 import iphoneUnsubGif from '../assets/iphone-unsub.png';
-import { PRICES as modalPrices } from '../components/price-modal';
+import { PRICES as modalPrices } from '../components/modal/price-modal';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
 import unsubGif from '../assets/unsub-btn.gif';

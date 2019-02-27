@@ -14,7 +14,7 @@ export default ({
   ...visProps
 }) => {
   const classes = cx('btn', {
-    loading: visProps.loading,
+    loading,
     compact: visProps.compact,
     centered: visProps.centered,
     muted: visProps.muted,
@@ -23,19 +23,21 @@ export default ({
     basic: visProps.basic,
     smaller: visProps.smaller,
     stretch: visProps.stretch,
+    outlined: visProps.outlined,
+    fill: visProps.fill,
     'on-dark-bg': visProps.onDarkBg
   });
   if (linkTo) {
     return (
       <Link styleName={classes} to={linkTo} state={linkArgs}>
-        <span className="btn-content">{label || children}</span>
+        <span styleName="btn-content">{label || children}</span>
       </Link>
     );
   }
   return (
     <a styleName={classes} onClick={onClick}>
-      <span className="btn-content">{label || children}</span>
-      {loading ? <span className="btn-loader" /> : null}
+      <span styleName="btn-content">{label || children}</span>
+      {loading ? <span styleName="btn-loader" /> : null}
     </a>
   );
 };

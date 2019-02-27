@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import Button from '../../../components/btn';
 import ProfileLayout from './layout';
-import WarningModal from '../../../components/warning-modal';
+import WarningModal from '../../../components/modal/warning-modal';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {

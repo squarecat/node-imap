@@ -1,8 +1,9 @@
-import './modal.css';
+import './modal.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
-import ModalClose from './modal/modal-close';
+import { ExternalIcon } from '../icons';
+import ModalClose from './modal-close';
 
 export default ({ onClose, onSubmit, mail }) => {
   const {
@@ -75,12 +76,12 @@ export default ({ onClose, onSubmit, mail }) => {
   const title = error ? 'Something went wrong...' : 'Successfully unsubscribed';
   return (
     <>
-      <div className={`modal error-modal ${isShown ? 'shown' : ''}`}>
+      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
         <ModalClose onClose={onClickClose} />
         <h3>{title}</h3>
         {pickSlide()}
       </div>
-      <div className={`modal-bg ${isShown ? 'shown' : ''}`} />
+      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
     </>
   );
 };
@@ -114,11 +115,11 @@ function slide1(
   if (timeout) {
     content = (
       <>
-        <div className="modal-content">
+        <div styleName="modal-content">
           <p>{lead}</p>
         </div>
-        <div className="modal-actions">
-          <a className="btn compact" onClick={onClickNegative}>
+        <div styleName="modal-actions">
+          <a styleName="modal-btn" onClick={onClickNegative}>
             Unsubscribe manually
           </a>
         </div>
@@ -127,32 +128,32 @@ function slide1(
   } else if (unsubStrategy === 'link') {
     content = (
       <>
-        <div className="modal-content">
+        <div styleName="modal-content">
           <p>{lead}</p>
-          <div className="unsub-img-container">
+          <div styleName="unsub-img-container">
             <img
               alt="unsub image"
-              className={`unsub-img ${
+              styleName={`unsub-img ${
                 imageLoading ? 'unsub-img--loading' : ''
               }`}
               src={`/api/mail/image/${mailId}`}
               onLoad={() => setImageLoading(false)}
             />
-            {imageLoading ? <div className="image-loading" /> : null}
+            {imageLoading ? <div styleName="image-loading" /> : null}
           </div>
           <p>How does it look?</p>
         </div>
-        <div className="modal-actions">
-          <a className="btn muted compact" onClick={onClickNegative}>
+        <div styleName="modal-actions">
+          <a styleName="modal-btn" onClick={onClickNegative}>
             It didn't work{' '}
-            <span className="emoji" role="img" aria-label="frowning face emoji">
-              ️️☹️
+            <span styleName="emoji" role="img" aria-label="thumbs-down emoji">
+              ️👎
             </span>
           </a>
 
-          <a className="btn compact" onClick={onClickPositive}>
+          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
             It looks great{' '}
-            <span className="emoji" role="img" aria-label="thumbs up emoji">
+            <span styleName="emoji" role="img" aria-label="thumbs-up emoji">
               ️️👍
             </span>
           </a>
@@ -162,17 +163,17 @@ function slide1(
   } else {
     content = (
       <>
-        <div className="modal-content">
+        <div styleName="modal-content">
           <p>{lead}</p>
           <p>
             If the provider is behaving themselves, then you shouldn't get any
             more subscription emails from them!
           </p>
         </div>
-        <div className="modal-actions">
-          <a className="btn compact" onClick={onClickPositive}>
+        <div styleName="modal-actions">
+          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
             Awesome!{' '}
-            <span className="emoji" role="img" aria-label="thumbs up emoji">
+            <span styleName="emoji" role="img" aria-label="thumbs up emoji">
               ️👍
             </span>
           </a>
@@ -196,41 +197,40 @@ function slide2({
   selected,
   setSelected
 }) {
-  const lead =
-    type === 'link'
-      ? `Oh snap! Sorry about that. This one you'll have to do manually. Just
-        click or copy the following link to unsubscribe`
-      : `Oh snap! Sorry about that. This one you'll have to do manually. This
-      particular service only accepts email unsubs, just click the following
-      link or send an email to the address in order to unsubscribe`;
+  let lead;
+
+  if (type === 'link') {
+    lead = (
+      <span>
+        Oh snap! Sorry about that. This one you'll have to do manually. Just
+        click or copy the following link to unsubscribe
+      </span>
+    );
+  } else {
+    lead = (
+      <span>
+        Oh snap! Sorry about that. This one you'll have to do manually. This
+        particular service only accepts email unsubscribes, just click the
+        following link or send an email to the address in order to unsubscribe
+      </span>
+    );
+  }
 
   return (
     <>
-      <div className="modal-content">
+      <div styleName="modal-content">
         <p>{lead}</p>
         <a
-          className="btn compact manual-unsubscribe-btn"
+          styleName="modal-btn modal-btn--cta manual-unsubscribe-btn"
           target="_"
           href={link}
         >
           Unsubscribe manually
-          <svg
-            className="icon-external"
-            viewBox="0 0 32 32"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentcolor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          >
-            <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
-          </svg>
+          <ExternalIcon padleft />
         </a>
-        <p className="unsubscribe-link-alt">
+        <p styleName="unsubscribe-link-alt">
           <span>Or use this link:</span>
-          <a className="unsubscribe-link" target="_" href={link}>
+          <a styleName="unsubscribe-link" target="_" href={link}>
             {type === 'link' ? link : mailTo}
           </a>
         </p>
@@ -238,7 +238,7 @@ function slide2({
           Can you tell us what you think went wrong this time? We'll use the
           information to improve our service. Here are some common reasons;
         </p>
-        <ul className="feedback-options">
+        <ul styleName="feedback-options">
           <li
             onClick={() => setSelected('button')}
             data-selected={selected === 'button'}
@@ -270,17 +270,22 @@ function slide2({
             Other
           </li>
         </ul>
-        <p className={`${!selected ? 'hidden' : ''}`}>
+        <p styleName={`${!selected ? 'hidden' : ''}`}>
           Thanks! Is it okay if we use that image so that next time we don't
           make the same mistake?
         </p>
       </div>
-      <div className="modal-actions">
-        <a className={`btn muted compact`} onClick={onClickBack}>
+      <div styleName="modal-actions">
+        <a
+          styleName={`modal-btn modal-btn--secondary modal-btn--cancel`}
+          onClick={onClickBack}
+        >
           Back
         </a>
         <a
-          className={`btn muted compact ${!selected ? 'disabled' : ''}`}
+          styleName={`modal-btn modal-btn--secondary ${
+            !selected ? 'disabled' : ''
+          }`}
           onClick={() =>
             onSubmit({
               success: false,
@@ -292,7 +297,7 @@ function slide2({
           Nope
         </a>
         <a
-          className={`btn compact ${!selected ? 'disabled' : ''}`}
+          styleName={`modal-btn modal-btn--cta ${!selected ? 'disabled' : ''}`}
           onClick={() =>
             onSubmit({
               success: false,
@@ -311,21 +316,21 @@ function slide2({
 function slide3(image, onSubmit) {
   return (
     <>
-      <div className="modal-content">
+      <div styleName="modal-content">
         <p>
           Awesome! Is it okay if we use that image so that next time we don't
           make the same mistake?
         </p>
       </div>
-      <div className="modal-actions">
+      <div styleName="modal-actions">
         <a
-          className="btn muted compact"
+          styleName="modal-btn modal-btn--secondary"
           onClick={() => onSubmit({ success: true, useImage: false })}
         >
           Nope
         </a>
         <a
-          className="btn compact"
+          styleName="modal-btn modal-btn--secondary"
           onClick={() => onSubmit({ success: true, useImage: true })}
         >
           Yes of course!

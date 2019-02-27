@@ -1,5 +1,5 @@
 import GiftsPrices from './gifts-prices';
-import { PRICES } from '../../components/price-modal';
+import { PRICES } from '../../components/modal/price-modal';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 

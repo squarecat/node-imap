@@ -8,9 +8,10 @@ import AnimatedNumber from 'react-animated-number';
 import { CSSTransition } from 'react-transition-group';
 import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
+import { ReloadIcon } from '../../components/icons';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
-import UnsubModal from '../../components/unsub-modal';
+import UnsubModal from '../../components/modal/unsub-modal';
 import _isArray from 'lodash.isarray';
 import favicon from '../../assets/meta/favicon.png';
 import faviconFinished from '../../assets/meta/favicon-done.png';
@@ -296,18 +297,7 @@ export default ({ timeframe, showPriceModal }) => {
           </span>
           <span className="action-item">
             <a onClick={() => showPriceModal()} className="btn compact icon">
-              <svg
-                viewBox="0 0 32 32"
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentcolor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="3"
-              >
-                <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
-              </svg>
+              <ReloadIcon padright />
               Scan more
             </a>
 

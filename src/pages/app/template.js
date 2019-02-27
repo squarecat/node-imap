@@ -5,10 +5,11 @@ import React, { useEffect, useState } from 'react';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import Button from '../../components/btn';
+import { ClockIcon } from '../../components/icons';
 import ErrorBoundary from '../../components/error-boundary';
 import { Link } from 'gatsby';
-import ReferralModal from '../../components/referral-modal';
-import ReminderModal from '../../components/reminder-modal';
+import ReferralModal from '../../components/modal/referral-modal';
+import ReminderModal from '../../components/modal/reminder-modal';
 import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
@@ -51,57 +52,19 @@ export default ({ pageName, children }) => {
 
   if (isLastSearchPaid && !hasReminder) {
     reminderButton = (
-      <Button
-        className="header-btn"
-        basic
-        compact
-        onClick={() => toggleReminderModal(true)}
-      >
-        <span className="reminder-icon">
-          <svg
-            viewBox="0 0 32 32"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentcolor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          >
-            <circle cx="16" cy="16" r="14" />
-            <path d="M16 8 L16 16 20 20" />
-          </svg>
-        </span>
+      <button className="header-btn" onClick={() => toggleReminderModal(true)}>
+        <ClockIcon padright />
         <span className="header-btn-text header-btn-text--short">Remind</span>
         <span className="header-btn-text header-btn-text--long">
           Set reminder
         </span>
-      </Button>
+      </button>
     );
   } else if (hasReminder) {
     reminderButton = (
-      <Button
-        className="header-btn"
-        basic
-        compact
-        onClick={() => toggleReminderModal(true)}
-      >
-        <span className="reminder-icon unpadded">
-          <svg
-            viewBox="0 0 32 32"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentcolor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          >
-            <circle cx="16" cy="16" r="14" />
-            <path d="M16 8 L16 16 20 20" />
-          </svg>
-        </span>
-      </Button>
+      <button className="header-btn" onClick={() => toggleReminderModal(true)}>
+        <ClockIcon />
+      </button>
     );
   }
 

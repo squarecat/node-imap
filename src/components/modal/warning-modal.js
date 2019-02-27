@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import './modal.module.scss';
 
-import ModalClose from './modal/modal-close';
+import React, { useEffect, useState } from 'react';
+
+import ModalClose from './modal-close';
 
 export default ({ onClose, onClickConfirm, content, confirmText }) => {
   const [isShown, setShown] = useState(false);
@@ -27,20 +29,20 @@ export default ({ onClose, onClickConfirm, content, confirmText }) => {
 
   return (
     <>
-      <div className={`modal warning-modal ${isShown ? 'shown' : ''}`}>
+      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
         <ModalClose onClose={onClickClose} />
         <h3>Are you sure?</h3>
-        <div className="modal-content">{content}</div>
-        <div className="modal-actions">
-          <a className="btn compact" onClick={onClickClose}>
+        <div styleName="modal-content">{content}</div>
+        <div styleName="modal-actions">
+          <a styleName="modal-btn modal-btn--secondary" onClick={onClickClose}>
             Cancel
           </a>
-          <a className="btn compact" onClick={onClickConfirm}>
+          <a styleName="modal-btn modal-btn--cta" onClick={onClickConfirm}>
             {confirmText}
           </a>
         </div>
       </div>
-      <div className={`modal-bg ${isShown ? 'shown' : ''}`} />
+      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
     </>
   );
 };

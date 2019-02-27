@@ -55,16 +55,16 @@ $color-btn-border-focus: $color-input-border-focus;
   }
 }
 
+.fill {
+  margin: 0;
+  height: 100%;
+}
+
 .on-dark-bg {
   background-color: rgba(255, 251, 251, 0.25);
   &:hover {
     background-color: $color-red-darker;
   }
-}
-
-.icon svg {
-  margin-right: 7px;
-  position: relative;
 }
 
 .centered {
@@ -73,10 +73,16 @@ $color-btn-border-focus: $color-input-border-focus;
 
 .muted {
   background-color: transparent;
+  color: $color-red;
+
   &:hover {
     color: $color-red;
     background-color: $color-red-lighter;
   }
+}
+
+.outlined {
+  border: 1px solid $color-red-light;
 }
 
 .stretch {
@@ -85,6 +91,10 @@ $color-btn-border-focus: $color-input-border-focus;
 
 .loading {
   pointer-events: none;
+
+  .btn-content {
+    visibility: hidden;
+  }
 }
 
 .btn-content {
@@ -93,19 +103,15 @@ $color-btn-border-focus: $color-input-border-focus;
   justify-content: space-evenly;
 }
 
-.loading .btn-content {
-  visibility: hidden;
-}
-
 .basic {
   &:hover {
     box-shadow: none;
     transform: translateY(0);
   }
 
-  &.disabled {
-    background-color: transparent;
-  }
+  // &.disabled {
+  //   background-color: transparent;
+  // }
 }
 
 .btn-loader {

@@ -9,7 +9,7 @@
   transition: opacity 200ms ease-in-out, filter 200ms ease-in-out;
 }
 
-.toggle.off {
+.off {
   filter: grayscale(80%);
   opacity: 0.5;
   pointer-events: none;
@@ -30,7 +30,7 @@
   background-color: rgba(255, 165, 159, 1);
 }
 
-.toggle.on .toggle-switch {
+.on .toggle-switch {
   transform: translateX(100%);
 }
 
@@ -48,16 +48,16 @@
   visibility: hidden;
 }
 
-.toggle.on .toggle-loader {
+.on .toggle-loader {
   left: 32px;
 }
 
-.toggle.loading .toggle-loader {
+.loading .toggle-loader {
   display: inline;
   visibility: visible;
 }
 
-.toggle.disabled {
+.disabled {
   opacity: 0.25;
   pointer-events: none;
 }

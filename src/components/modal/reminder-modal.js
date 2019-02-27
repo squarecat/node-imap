@@ -1,13 +1,17 @@
-import * as track from '../utils/analytics';
+import './modal.module.scss';
+
+import * as track from '../../utils/analytics';
 
 import React, { useEffect, useState } from 'react';
 
-import Button from '../components/btn';
-import ModalClose from './modal/modal-close';
+import Button from '../btn';
+import { ClockIcon } from '../icons';
+import ModalClose from './modal-close';
+import { TextImportant } from '../text';
 import format from 'date-fns/format';
 import { PRICES as modalPrices } from './price-modal';
-import useLocalStorage from '../utils/hooks/use-localstorage';
-import useUser from '../utils/hooks/use-user';
+import useLocalStorage from '../../utils/hooks/use-localstorage';
+import useUser from '../../utils/hooks/use-user';
 
 const reminderDateFormat = 'Do MMMM YYYY';
 
@@ -45,7 +49,6 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
   };
 
   const onClickSetReminder = async timeframe => {
-    console.log('set reminder for', nextReminder);
     setShown(false);
     setTimeout(() => {
       return onSetReminder(timeframe);
@@ -53,7 +56,6 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
   };
 
   const onClickClearReminder = async () => {
-    console.log('clear reminder');
     setShown(false);
     setTimeout(() => {
       return onClearReminder();
@@ -68,10 +70,10 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
     content = (
       <>
         <p>Awesome! You currently have a reminder to scan again set for:</p>
-        <p className="text-important reminder-date">
+        <p styleName="reminder-date">
           {format(currentReminder.remindAt, reminderDateFormat)}
         </p>
-        <div className="reminder-cta">
+        <div styleName="reminder-cta">
           <Button basic compact muted onClick={() => onClickClearReminder()}>
             Clear reminder
           </Button>
@@ -91,46 +93,28 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
           <>
             <p>
               You could receive{' '}
-              <span className="text-important">
-                {mailCount} more spam emails
-              </span>{' '}
-              in the next {nextReminder.label} (based on your last scan).
+              <TextImportant>{mailCount} more spam emails</TextImportant> in the
+              next {nextReminder.label} (based on your last scan).
             </p>
             <p>
               Don't worry, we can send an email reminding you to scan again! We
-              will even give you a{' '}
-              <span className="text-important">discount code</span> to say
-              thanks.
+              will even give you a <TextImportant>discount code</TextImportant>{' '}
+              to say thanks.
             </p>
           </>
         ) : (
           <p>
             We can send you an email reminder to scan again! We will even give
-            you a <span className="text-important">discount code</span> to say
-            thanks.
+            you a <TextImportant>discount code</TextImportant> to say thanks.
           </p>
         )}
-        <div className="reminder-cta">
+        <div styleName="reminder-cta">
           <Button
             basic
             compact
             onClick={() => onClickSetReminder(nextReminder.timeframe)}
           >
-            <span className="reminder-icon">
-              <svg
-                viewBox="0 0 32 32"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentcolor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-              >
-                <circle cx="16" cy="16" r="14" />
-                <path d="M16 8 L16 16 20 20" />
-              </svg>
-            </span>
+            <ClockIcon padright />
             Set a reminder to scan again in {nextReminder.label}
           </Button>
         </div>
@@ -140,16 +124,16 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
 
   return (
     <>
-      <div className={`modal reminder-modal ${isShown ? 'shown' : ''}`}>
+      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
         <ModalClose onClose={onClickClose} />
         <h3>
           {hasReminder
             ? 'Reminder active'
             : `Remind me in ${nextReminder.label}`}
         </h3>
-        <div className="modal-content">{content}</div>
+        <div styleName="modal-content">{content}</div>
       </div>
-      <div className={`modal-bg ${isShown ? 'shown' : ''}`} />
+      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
     </>
   );
 };
