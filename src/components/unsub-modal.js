@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import './modal.css';
+
+import React, { useEffect, useState } from 'react';
 
 import ModalClose from './modal/modal-close';
-
-import './modal.css';
 
 export default ({ onClose, onSubmit, mail }) => {
   const {
@@ -17,6 +17,7 @@ export default ({ onClose, onSubmit, mail }) => {
   const [slide, changeSlide] = useState('first');
   const [isShown, setShown] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
   const onClickNegative = () => changeSlide('negative');
   const onClickPositive = () => {
     if (error) {
@@ -53,7 +54,9 @@ export default ({ onClose, onSubmit, mail }) => {
         onClickPositive,
         onClickNegative,
         error,
-        unsubStrategy
+        unsubStrategy,
+        imageLoading,
+        setImageLoading
       );
     } else if (slide === 'negative') {
       return slide2({
@@ -88,7 +91,9 @@ function slide1(
   onClickPositive,
   onClickNegative,
   error,
-  unsubStrategy
+  unsubStrategy,
+  imageLoading,
+  setImageLoading
 ) {
   let lead;
   let timeout = false;
@@ -124,8 +129,17 @@ function slide1(
       <>
         <div className="modal-content">
           <p>{lead}</p>
-          <img alt="unsub image" src={`/api/mail/image/${mailId}`} />
-          {/* src={`data:image/jpeg;base64, ${image}`} /> */}
+          <div className="unsub-img-container">
+            <img
+              alt="unsub image"
+              className={`unsub-img ${
+                imageLoading ? 'unsub-img--loading' : ''
+              }`}
+              src={`/api/mail/image/${mailId}`}
+              onLoad={() => setImageLoading(false)}
+            />
+            {imageLoading ? <div className="image-loading" /> : null}
+          </div>
           <p>How does it look?</p>
         </div>
         <div className="modal-actions">

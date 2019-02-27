@@ -47,20 +47,6 @@ export function trackReminderModalOpen() {
   }
 }
 
-// export function trackLogin({ method = 'Google' }) {
-//   gtag('event', 'login', {
-//     method,
-//     event_category: 'users'
-//   });
-// }
-
-// export function trackSignup({ method = 'Google' }) {
-//   gtag('event', 'sign_up', {
-//     method,
-//     event_category: 'users'
-//   });
-// }
-
 function getPrice(timeframe) {
   const scan = PRICES.find(p => p.value === timeframe);
   return scan.price / 100;

@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
-
-import useUser from '../utils/hooks/use-user';
-import useAsync from '../utils/hooks/use-async';
-import Button from '../components/btn';
-import ModalClose from './modal/modal-close';
-import CheckoutForm, { getCoupon } from './checkout-form';
+import './modal.css';
 
 import * as track from '../utils/analytics';
 
-import './modal.css';
+import CheckoutForm, { getCoupon } from './checkout-form';
+import React, { useEffect, useState } from 'react';
+
+import Button from '../components/btn';
+import ModalClose from './modal/modal-close';
+import format from 'date-fns/format';
+import subDays from 'date-fns/sub_days';
+import subMonths from 'date-fns/sub_months';
+import subWeeks from 'date-fns/sub_weeks';
+import useAsync from '../utils/hooks/use-async';
+import useUser from '../utils/hooks/use-user';
 
 export const PRICES = [
   {
@@ -191,6 +195,10 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
             </a>
           ))}
         </div>
+        <div className="price-dates">
+          Scan between <span className="text-important">today</span> and{' '}
+          <span className="text-important">{getScanDate(selected)}</span>
+        </div>
         {isPaymentError ? (
           <p className="model-error">
             Something went wrong with your payment. You have not been charged.
@@ -372,7 +380,11 @@ async function addPaidScan(productId, coupon) {
       url = `/api/me/paidscans/${productId}`;
     }
     await fetch(url, {
-      method: 'PUT'
+      method: 'PUT',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
     });
   } catch (err) {
     console.error(err);
@@ -460,4 +472,26 @@ function openChat(message = '') {
     window.$crisp.push(['do', 'chat:open']);
     window.$crisp.push(['set', 'message:text', [message]]);
   }
+}
+
+const dateFormat = 'Do MMM YYYY';
+function getScanDate(selected) {
+  const timeframe = selected === 'free' ? '3d' : selected;
+  const { then } = getTimeRange(timeframe);
+  const thenStr = format(then, dateFormat);
+  return thenStr;
+}
+
+function getTimeRange(timeframe) {
+  let then;
+  const now = Date.now();
+  const [value, unit] = timeframe;
+  if (unit === 'd') {
+    then = subDays(now, value);
+  } else if (unit === 'w') {
+    then = subWeeks(now, value);
+  } else if (unit === 'm') {
+    then = subMonths(now, value);
+  }
+  return { then, now };
 }

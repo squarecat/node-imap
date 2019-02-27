@@ -1,10 +1,9 @@
-import { createPayment, createCoupon, createCustomer } from '../utils/stripe';
-import _times from 'lodash.times';
-
-import { getProduct } from './payments';
-import { addGiftPaymentToStats } from '../services/stats';
+import { createCoupon, createCustomer, createPayment } from '../utils/stripe';
 import { sendGiftCouponMail, sendGiftCouponMultiMail } from '../utils/email';
 
+import _times from 'lodash.times';
+import { addGiftPaymentToStats } from '../services/stats';
+import { getProduct } from './payments';
 import logger from '../utils/logger';
 
 export async function createGift({
@@ -24,9 +23,10 @@ export async function createGift({
       name
     });
 
-    const totalAmount = price * quantity;
+    const totalAmount = calculatePrice(price, quantity);
 
     await createPayment({
+      address,
       customerId: customerId,
       productPrice: price,
       productLabel: label,
@@ -68,6 +68,18 @@ export async function createGift({
     logger.error(err);
     throw err;
   }
+}
+
+function calculatePrice(price, quantity) {
+  let discount = 0;
+  if (quantity > 50) {
+    discount = (price / 100) * 40;
+  }
+  if (quantity > 4 && quantity <= 50) {
+    discount = (price / 100) * 25;
+  }
+  const discountedPrice = (price - discount) * quantity;
+  return discountedPrice;
 }
 
 async function generateCoupon({ price, purchaser = {} }) {

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import Button from '../btn';
-
 import {
-  PAYMENT_CONFIG_OPTS,
-  PAYMENT_CHECKOUT_OPTS
+  PAYMENT_CHECKOUT_OPTS,
+  PAYMENT_CONFIG_OPTS
 } from '../../utils/payments';
+import React, { useState } from 'react';
+
+import Button from '../btn';
+import numeral from 'numeral';
 
 let callback;
 let onClose;
@@ -69,12 +70,13 @@ const GiftCheckout = ({
         setCouponLoading(false);
       }
     };
+    const { discountedPrice } = calculatePrice(price, parsedQuantity);
     doCheckout({
       description:
         parsedQuantity > 1
           ? `Gift ${parsedQuantity} ${productName} scans`
           : `Gift a ${productName} scan`,
-      amount: parsedQuantity * price
+      amount: discountedPrice
     });
   }
 
@@ -86,13 +88,48 @@ const GiftCheckout = ({
       muted={true}
     >
       <span>{selected.label}</span>
-      <span className="price">{`($${(selected.price / 100) *
-        parsedQuantity})`}</span>
+      <span className="price">
+        {getDisplayPrice(selected.price, parsedQuantity)}
+      </span>
     </Button>
   );
 };
 
 export default GiftCheckout;
+
+const getDisplayPrice = (price, quantity) => {
+  const { totalPrice, discountedPrice } = calculatePrice(price, quantity);
+  if (discountedPrice < totalPrice) {
+    return (
+      <span>
+        {priceFormat(discountedPrice)}
+        <span className="price--discounted">{priceFormat(totalPrice)}</span>
+      </span>
+    );
+  }
+  return priceFormat(discountedPrice);
+};
+
+function priceFormat(price) {
+  return price % 2 > 0
+    ? numeral(price / 100).format('$0,0.00')
+    : numeral(price / 100).format('$0,0');
+}
+function calculatePrice(price, quantity) {
+  let discount = (price / 100) * 40;
+  if (quantity > 50) {
+    discount = (price / 100) * 40;
+  }
+  if (quantity > 4 && quantity <= 50) {
+    discount = (price / 100) * 25;
+  }
+  const regularPrice = price * quantity;
+  const discountedPrice = (price - discount) * quantity;
+  return {
+    totalPrice: regularPrice,
+    discountedPrice
+  };
+}
 
 async function sendGiftPayment({ token, productId, address, name, quantity }) {
   console.log('payment for', productId);

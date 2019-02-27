@@ -1,21 +1,22 @@
-import { Link } from 'gatsby';
+import './scans.css';
+
+import ErrorBoundary from '../../../../components/error-boundary';
+import ProfileLayout from '../layout';
 import React from 'react';
 import format from 'date-fns/format';
-
-import ProfileLayout from '../layout';
-
-import Tooltip from 'rc-tooltip';
-
-import Button from '../../../../components/btn';
-import ErrorBoundary from '../../../../components/error-boundary';
+import numeral from 'numeral';
 import { useAsync } from '../../../../utils/hooks';
 
 async function fetchBillingHistory() {
-  const res = await fetch('/api/me/billing');
+  const res = await fetch('/api/me/billing', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
   return res.json();
 }
 
-import './scans.css';
 
 export default function BillingHistory() {
   const { value, loading } = useAsync(fetchBillingHistory);
@@ -71,12 +72,15 @@ function getDate({ date }) {
 }
 
 function getPrice({ price, refunded }) {
-  const currency = (price / 100).toFixed(2);
+  const display =
+    price % 2 > 0
+      ? numeral(price / 100).format('$0,0.00')
+      : numeral(price / 100).format('$0,0');
   return (
     <span
       className={`invoice-price ${refunded ? 'invoice-price--refunded' : ''}`}
     >
-      ${currency}
+      {display}
     </span>
   );
 }

@@ -9,6 +9,10 @@ const mailchimpClient = new Mailchimp(apiKey);
 // POST /lists/{list_id}/members
 export async function addSubscriber({ email }) {
   logger.debug('mailchimp: adding subscriber');
+  if (process.env.NODE_ENV === 'development') {
+    logger.debug('mailchimp: dev environment, not adding');
+    return true;
+  }
   try {
     const url = `/lists/${lists.leaveMeAloneCustomers}/members`;
     await mailchimpClient.post(url, {
@@ -29,6 +33,10 @@ export async function addSubscriber({ email }) {
 // DELETE /lists/{list_id}/members/{subscriber_hash}
 export async function removeSubscriber({ email }) {
   logger.debug('mailchimp: removing subscriber');
+  if (process.env.NODE_ENV === 'development') {
+    logger.debug('mailchimp: dev environment, not removing');
+    return true;
+  }
   try {
     const subscriberHash = md5(email);
     const url = `/lists/${

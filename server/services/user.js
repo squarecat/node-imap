@@ -19,13 +19,13 @@ import {
   addUserAccountDeactivatedToStats,
   addUserToStats
 } from './stats';
-import { addSubscriber, removeSubscriber } from '../utils/mailchimp';
 import { listPaymentsForUser, updateCoupon } from './payments';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
 import addWeeks from 'date-fns/add_weeks';
 import logger from '../utils/logger';
+import { removeSubscriber } from '../utils/mailchimp';
 import { revokeToken } from '../utils/google';
 import { v4 } from 'node-uuid';
 
@@ -109,7 +109,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         referredBy,
         token: v4()
       });
-      addSubscriber({ email });
+      // addSubscriber({ email });
       addUserToStats();
     } else {
       user = await updateUser(id, {

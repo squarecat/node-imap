@@ -1,7 +1,7 @@
 import logo from '../assets/envelope-logo.png';
 
 export const PAYMENT_CONFIG_OPTS = {
-  key: `${process.env.STRIPE_PK}`,
+  key: 'pk_live_2thpKDxq45nmO8NBG4wCJr0j',
   image: logo,
   locale: 'auto'
 };

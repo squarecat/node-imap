@@ -13,6 +13,12 @@
   position: relative;
   top: -1px;
 }
+
+.price--discounted {
+  text-decoration: line-through;
+  margin-left: 5px;
+}
+
 .gift-coupon {
   opacity: 0;
   height: 0;
@@ -93,6 +99,10 @@
   text-align: center;
   border: 1px solid rgba(231, 57, 48, 1);
   margin: 10px 0;
+}
+
+.gift-discount {
+  margin-top: 50px;
 }
 
 @keyframes pulse {

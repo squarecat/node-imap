@@ -1,8 +1,9 @@
-import React from 'react';
-import { graphql, StaticQuery } from 'gatsby';
-import Img from 'gatsby-image';
-
 import './wall-of-love.css';
+
+import { StaticQuery, graphql } from 'gatsby';
+
+import Img from 'gatsby-image';
+import React from 'react';
 
 const query = graphql`
   query TweetImagesQuery {
@@ -33,6 +34,20 @@ export default () => {
           Our users are awesome and they think we're awesome too. Take a look at
           all the nice things they've said about us!
         </p>
+        <a
+          className="ph-badge"
+          href="https://www.producthunt.com/posts/leave-me-alone-3?utm_source=badge-top-post-badge"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=143797&theme=light"
+            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | Product Hunt Embed"
+            style={{ width: 250, height: 54 }}
+            width="250px"
+            height="54px"
+          />
+        </a>
       </div>
       <div className="tweet-wall">
         <div className="tweet-box">

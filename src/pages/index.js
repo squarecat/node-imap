@@ -27,7 +27,6 @@ const indieMakerTweetText = encodeURIComponent(
 const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
-
 let referrer;
 if (typeof URLSearchParams !== 'undefined') {
   referrer = new URLSearchParams(window.location.search).get('ref');
@@ -46,21 +45,21 @@ const IndexPage = () => {
     statsData = value;
   }
 
-  const bannerShown = referrer === 'producthunt';
+  const bannerShown = true;
 
   return (
     <Layout>
       <Colin />
       <div id="main">
         <div className="home-header">
-          <div className="ref-banner ph-banner">
+          {/* <div className="ref-banner">
             {bannerShown ? (
               <span>
-                👋 Welcome Product Hunt. Use coupon PH_HATES_SPAM for 20% of
-                your first scan!
+                ❤ Happy Valentines Day! Today only have 40% off all{' '}
+                <a href="/gifts">gift purchases</a> ❤
               </span>
             ) : null}
-          </div>
+          </div> */}
           <div className="home-header-inner">
             <a href="/" className="home-header-logo">
               <img alt="logo" src={smallLogo} />
@@ -457,56 +456,4 @@ export default IndexPage;
 
 function formatNumber(n) {
   return n > 99999 ? numeral(n).format('0a') : numeral(n).format('0,0');
-}
-
-function referrerBanner(ref) {
-  const d = new Date();
-  const utc = +d + d.getTimezoneOffset() * 60000;
-  const phDate = new Date(utc + 3600000 * -8);
-  if (ref === 'producthunt') {
-    return (
-      <div className="ref-banner ph-banner">
-        <span>
-          👋 Welcome Product Hunt. Use coupon PH_HATES_SPAM for 20% of your
-          first scan!
-        </span>
-      </div>
-    );
-  } else if (phDate.getDate() === 30) {
-    return (
-      <div className="ref-banner ph-banner">
-        <iframe
-          className="ph-iframe"
-          src="https://yvoschaap.com/producthunt/counter.html#href=https%3A%2F%2Fwww.producthunt.com%2Fr%2Fp%2F142518&layout=wide&type=vote"
-          width="120"
-          height="25"
-          scrolling="no"
-          frameBorder="0"
-          allowTransparency="true"
-        >
-          Created with{' '}
-          <a href="https://yvoschaap.com/producthunt/button.html" target="_top">
-            Vote Button for Product Hunt
-          </a>
-          .
-        </iframe>
-        <span>
-          We're featured on Product Hunt today! Check it out{' '}
-          <a
-            style={{
-              fontWeight: 'bolder',
-              color: 'white',
-              display: 'inline-block',
-              borderBottom: '1px dotted white',
-              height: 22
-            }}
-            href="https://producthunt.com/posts/leave-me-alone-2"
-          >
-            here.
-          </a>
-        </span>
-      </div>
-    );
-  }
-  return null;
 }
