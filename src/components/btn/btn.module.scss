@@ -1,0 +1,147 @@
+@import '../../styles/common/colors.scss';
+
+$color-btn-text: $color-red-darker;
+$color-btn-bg: $color-red-light;
+$color-btn-border-focus: $color-input-border-focus;
+
+@mixin muted() {
+  background-color: transparent;
+  color: $color-red;
+
+  &:hover {
+    color: $color-red;
+    background-color: $color-red-lighter;
+  }
+}
+
+@mixin on-dark-bg() {
+  background-color: rgba(255, 251, 251, 0.45);
+  &:hover {
+    background-color: $color-red-darker;
+  }
+}
+
+@mixin basic() {
+  &:hover {
+    box-shadow: none;
+    transform: translateY(0);
+  }
+}
+
+.btn {
+  width: 240px;
+  background-color: $color-btn-bg;
+  color: $color-btn-text;
+  padding: 15px 25px;
+  font-size: 22px;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out,
+    color 200ms ease-in-out, background-color 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  user-select: none;
+  outline: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 1em $color-btn-border-focus;
+    background-color: $color-red-darker;
+    color: white;
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: no-drop;
+}
+
+.compact {
+  width: auto;
+  padding: 5px 15px;
+  font-size: 16px;
+}
+
+.smaller {
+  font-size: 14px;
+  height: 30px;
+  padding: 0 15px;
+  @media (max-width: 400px) {
+    padding: 0 8px;
+    .btn-content {
+      font-size: 12px;
+    }
+  }
+}
+
+.fill {
+  margin: 0;
+  height: 100%;
+}
+
+.on-dark-bg {
+  @include on-dark-bg();
+}
+
+.centered {
+  margin: 10px auto;
+}
+
+.muted {
+  @include muted();
+}
+
+.outlined {
+  border: 1px solid $color-red-light;
+}
+
+.stretch {
+  width: 100%;
+}
+
+.loading {
+  pointer-events: none;
+
+  .btn-content {
+    visibility: hidden;
+  }
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.basic {
+  @include basic();
+}
+
+.btn-loader {
+  position: absolute;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: #ff9794;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+  transform: scale(1);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+    background-color: #ff726d;
+  }
+  100% {
+    transform: scale(1);
+  }
+}

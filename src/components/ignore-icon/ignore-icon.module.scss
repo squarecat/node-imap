@@ -1,0 +1,25 @@
+.add-to-ignore {
+  position: relative;
+  top: 3px;
+  margin-right: 6px;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.add-to-ignore svg {
+  stroke: #ff5955;
+  fill: none;
+}
+
+.add-to-ignore:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.ignored {
+  opacity: 1;
+}
+
+.ignored svg {
+  fill: #ffb9b6;
+}

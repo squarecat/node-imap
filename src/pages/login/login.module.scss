@@ -1,0 +1,46 @@
+@import '../../styles/common/colors.scss';
+@import '../../components/btn/btn.module.scss';
+
+$active-bg-color: #ffc7c1;
+
+.hold-onto-your-butts-we-are-logging-in {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-secondary-bg;
+  transition: background-color 600ms ease-in-out;
+  padding: 10px;
+
+  &.active {
+    background-color: $active-bg-color;
+  }
+}
+
+.login-boxy-box {
+  width: 100%;
+  max-width: 500px;
+  background-color: white;
+  padding: 25px;
+  border-radius: 7px;
+  box-shadow: 0 7px 1em $color-input-border-focus;
+  text-align: center;
+}
+
+.beautiful-logo {
+  width: 100px;
+  margin: 20px auto;
+}
+
+.login-me-in-dammit {
+  @extend .btn;
+  @extend .centered;
+  width: 100%;
+  max-width: 300px;
+
+  svg {
+    margin-right: 7px;
+    position: relative;
+  }
+}

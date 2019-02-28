@@ -1,7 +1,7 @@
 import { PAYMENT_CHECKOUT_OPTS, PAYMENT_CONFIG_OPTS } from '../utils/payments';
 import React, { useEffect, useState } from 'react';
 
-import Button from './btn';
+import Button from '../components/btn';
 import useUser from '../utils/hooks/use-user';
 
 let callback;
