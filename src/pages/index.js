@@ -45,7 +45,7 @@ const IndexPage = () => {
     statsData = value;
   }
 
-  const bannerShown = true;
+  const bannerShown = false;
 
   return (
     <Layout>

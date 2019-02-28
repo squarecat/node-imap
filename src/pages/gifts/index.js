@@ -2,34 +2,36 @@ import GiftsPrices from './gifts-prices';
 import { PRICES } from '../../components/modal/price-modal';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import { TextImportant } from '../../components/text';
+
+import './gifts.module.scss';
 
 const GiftsPage = () => {
   return (
     <SubPageLayout page="Gift a scan" centered>
       <h1>Gift a clean inbox</h1>
-      <span className="subpage-section-emoji">🎁</span>
+      <span styleName="emoji">🎁</span>
       <p>
-        Increase your{' '}
-        <span className="text-important">team's productivity</span>.
+        Increase your <TextImportant>team's productivity</TextImportant>.
       </p>
       <p>
         Give your loved one the gift of a{' '}
-        <span className="text-important">clean inbox</span>.
+        <TextImportant>clean inbox</TextImportant>.
       </p>
       <p>
-        Help your mom <span className="text-important">ditch the spam</span>.
+        Help your mom <TextImportant>ditch the spam</TextImportant>.
       </p>
       <p>
         Just a few great reasons to buy a gift scan of Leave Me Alone today!
       </p>
       <GiftsPrices prices={PRICES} />
-      <div className="gift-discount">
+      <div styleName="gift-discount">
         <h3>Buy more than 1 scan and receive a discount</h3>
         <p>
-          5 scans or more - <span className="text-important">25% off</span>
+          5 scans or more - <TextImportant>25% off</TextImportant>
         </p>
         <p>
-          50 scans or more - <span className="text-important">40% off</span>
+          50 scans or more - <TextImportant>40% off</TextImportant>
         </p>
         <GiftsPrices prices={PRICES} />
         <p>

@@ -2,7 +2,7 @@ import React from 'react';
 
 import logo from '../../assets/envelope-logo.png';
 import gif from '../../assets/toggle-unsubscribe-hd.gif';
-import './welcome.css';
+import './welcome.scss';
 
 const betaTweetText = encodeURIComponent(
   `🙌 I've been beta testing @LeaveMeAloneApp and it's the best because... \n\nCheck it out at https://leavemealone.xyz`

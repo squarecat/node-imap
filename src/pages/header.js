@@ -1,11 +1,12 @@
 import './header.module.scss';
 
+import cx from 'classnames';
 import React from 'react';
 import { TextLink } from '../components/text';
 import smallLogo from '../assets/envelope-logo.png';
 
-export default ({ setActive }) => (
-  <div styleName="header">
+export default ({ setActive = () => {}, inverted = false }) => (
+  <div styleName={cx('header', { 'header-inverted': inverted })}>
     {/* <div styleName="ref-banner">
       {bannerShown ? (
         <span>
@@ -20,7 +21,7 @@ export default ({ setActive }) => (
       </a>
       <div styleName="header-title">Leave Me Alone </div>
       <ul styleName="header-nav">
-        <li styleName="nav-link">
+        <li styleName="nav-link nav-how">
           <TextLink href="#how-it-works">How it works</TextLink>
         </li>
         <li styleName="nav-link">

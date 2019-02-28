@@ -2,12 +2,21 @@
 @import '../components/btn/btn.module.scss';
 
 .header {
-  /* height: 106px; */
   height: auto;
   width: 100%;
   overflow: hidden;
   padding: 0 50px;
   background-color: #fff;
+
+  @media (max-width: 800px) {
+    padding: 0 20px;
+  }
+}
+
+.header-inverted {
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
+  background-color: $color-secondary-bg;
 }
 
 .header-inner {
@@ -17,18 +26,37 @@
   height: 106px;
   width: 100%;
   margin: 0 auto;
+
+  .header-inverted & {
+    height: 50px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 800px) {
+    height: 60px;
+  }
 }
 
 .header-title {
   font-size: 18px;
   margin-left: 15px;
   font-weight: bold;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 .header-logo {
   display: inline-block;
   height: 32px;
   margin: 0;
+
+  .header-inverted & {
+    @media (max-width: 400px) {
+      height: 24px;
+    }
+  }
 }
 
 .header-logo img {
@@ -47,6 +75,12 @@
 .nav-link,
 .nav-login {
   margin: 0 5px;
+}
+
+.nav-how {
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 .nav-login {
@@ -69,5 +103,11 @@
   @media (max-width: 400px) {
     font-size: 14px;
     padding: 5px 10px;
+  }
+
+  .header-inverted & {
+    @include basic();
+    @include on-dark-bg();
+    padding: 5px 15px;
   }
 }

@@ -1,12 +1,16 @@
 import './footer.module.scss';
-
+import cx from 'classnames';
 import { MailIcon, TwitterIcon } from '../icons';
 
 import React from 'react';
 import { TextLink } from '../text';
 
-export default () => (
-  <div styleName="footer">
+export default visProps => (
+  <div
+    styleName={cx('footer', {
+      subpage: visProps.subpage
+    })}
+  >
     <ul styleName="footer-nav">
       <li>
         <TextLink href="/privacy">Privacy</TextLink>

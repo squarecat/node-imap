@@ -1,6 +1,15 @@
 @import '../../components/btn/btn.module.scss';
+@import '../../layouts/subpage-layout.module.scss';
 
 .gifts-prices {
+}
+
+.emoji {
+  font-size: 60px;
+  height: 80px;
+  line-height: 70px;
+  margin: 50px 0 20px 0;
+  display: block;
 }
 
 .gift-btn {

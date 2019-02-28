@@ -14,6 +14,20 @@ $color-btn-border-focus: $color-input-border-focus;
   }
 }
 
+@mixin on-dark-bg() {
+  background-color: rgba(255, 251, 251, 0.45);
+  &:hover {
+    background-color: $color-red-darker;
+  }
+}
+
+@mixin basic() {
+  &:hover {
+    box-shadow: none;
+    transform: translateY(0);
+  }
+}
+
 .btn {
   width: 240px;
   background-color: $color-btn-bg;
@@ -71,10 +85,7 @@ $color-btn-border-focus: $color-input-border-focus;
 }
 
 .on-dark-bg {
-  background-color: rgba(255, 251, 251, 0.25);
-  &:hover {
-    background-color: $color-red-darker;
-  }
+  @include on-dark-bg();
 }
 
 .centered {
@@ -108,14 +119,7 @@ $color-btn-border-focus: $color-input-border-focus;
 }
 
 .basic {
-  &:hover {
-    box-shadow: none;
-    transform: translateY(0);
-  }
-
-  // &.disabled {
-  //   background-color: transparent;
-  // }
+  @include basic();
 }
 
 .btn-loader {
