@@ -329,14 +329,9 @@ const IndexPage = () => {
               funding or outside support. We're real people (not the huskies!),
               we're not a soulless corporation out to steal your money! 🙅‍
             </p>
-            <p>
-              <a
-                target="_"
-                href={`https://twitter.com/intent/tweet?text=${indieMakerTweetText}`}
-              >
-                Support the Indie Maker movement!
-              </a>
-            </p>
+            <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
+              Clean My Inbox!
+            </a>
           </div>
         </div>
         <Footer />
@@ -356,64 +351,64 @@ function fetchStats() {
   return fetch('/api/stats').then(r => r.json());
 }
 
-function Stats({ isLoading, data, isVisible }) {
-  const [stats, setStats] = useState({
-    unsubscribableEmails: 0,
-    unsubscriptions: 0
-  });
+// function Stats({ isLoading, data, isVisible }) {
+//   const [stats, setStats] = useState({
+//     unsubscribableEmails: 0,
+//     unsubscriptions: 0
+//   });
 
-  useEffect(
-    () => {
-      if (!isLoading && isVisible) {
-        const {
-          unsubscribableEmails,
-          unsubscriptions,
-          previouslyUnsubscribedEmails
-        } = data;
-        setStats({
-          unsubscribableEmails:
-            unsubscribableEmails - previouslyUnsubscribedEmails,
-          unsubscriptions,
-          set: true
-        });
-      }
-    },
-    [isVisible]
-  );
+//   useEffect(
+//     () => {
+//       if (!isLoading && isVisible) {
+//         const {
+//           unsubscribableEmails,
+//           unsubscriptions,
+//           previouslyUnsubscribedEmails
+//         } = data;
+//         setStats({
+//           unsubscribableEmails:
+//             unsubscribableEmails - previouslyUnsubscribedEmails,
+//           unsubscriptions,
+//           set: true
+//         });
+//       }
+//     },
+//     [isVisible]
+//   );
 
-  return (
-    <div className="stats">
-      <div className="stat">
-        <span className="stat-value">
-          <AnimatedNumber
-            value={stats.unsubscribableEmails}
-            style={{
-              transition: '0.8s ease-out',
-              fontSize: 48
-            }}
-            duration={1000}
-            formatValue={n => formatNumber(n)}
-          />
-        </span>
-        <span>Spam emails scanned</span>
-      </div>
-      <div className="stat">
-        <span className="stat-value">
-          <AnimatedNumber
-            value={stats.unsubscriptions}
-            style={{
-              transition: '0.8s ease-out',
-              fontSize: 48
-            }}
-            duration={1000}
-            formatValue={n => formatNumber(n)}
-          />
-        </span>
-        <span>Spam emails unsubscribed</span>
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className="stats">
+//       <div className="stat">
+//         <span className="stat-value">
+//           <AnimatedNumber
+//             value={stats.unsubscribableEmails}
+//             style={{
+//               transition: '0.8s ease-out',
+//               fontSize: 48
+//             }}
+//             duration={1000}
+//             formatValue={n => formatNumber(n)}
+//           />
+//         </span>
+//         <span>Spam emails scanned</span>
+//       </div>
+//       <div className="stat">
+//         <span className="stat-value">
+//           <AnimatedNumber
+//             value={stats.unsubscriptions}
+//             style={{
+//               transition: '0.8s ease-out',
+//               fontSize: 48
+//             }}
+//             duration={1000}
+//             formatValue={n => formatNumber(n)}
+//           />
+//         </span>
+//         <span>Spam emails unsubscribed</span>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default IndexPage;
 
