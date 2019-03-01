@@ -47,6 +47,12 @@
   justify-content: space-between;
   margin: 0 10px 10px 0;
 }
+.positive {
+  color: #37d288;
+}
+.negative {
+  color: #f1645f;
+}
 
 .big-stat:first-child {
   margin-left: 0;
@@ -87,7 +93,7 @@
 }
 
 .open-title h1 {
-  font-size: 25px;
+  font-size: 25px !important;
   margin: 20px 0 0 0;
 }
 
