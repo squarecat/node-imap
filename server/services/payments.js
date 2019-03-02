@@ -1,18 +1,18 @@
+import { addGiftRedemptionToStats, addPaymentToStats } from '../services/stats';
+import { addPaidScanToUser, getUserById } from '../services/user';
 import {
+  createCustomer,
   createPayment,
   getPaymentCoupon,
-  updateCouponUses,
-  createCustomer,
-  updateCustomer,
+  listCharges,
   listInvoices,
-  listCharges
+  updateCouponUses,
+  updateCustomer
 } from '../utils/stripe';
-import { addPaidScanToUser, getUserById } from '../services/user';
-import { updateReferralOnReferrer } from '../services/referral';
-import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
-import { updateUser } from '../dao/user';
 
 import logger from '../utils/logger';
+import { updateReferralOnReferrer } from '../services/referral';
+import { updateUser } from '../dao/user';
 
 export const products = [
   {
@@ -107,11 +107,13 @@ export async function createPaymentForUser({
       customerId
     });
 
-    updateReferralOnReferrer(referredBy, {
-      userId: userId,
-      scanType: label,
-      price
-    });
+    if (referredBy) {
+      updateReferralOnReferrer(referredBy, {
+        userId: userId,
+        scanType: label,
+        price
+      });
+    }
     addPaidScanToUser(userId, productId);
     addPaymentToStats({ price: price / 100 });
     if (couponObject) {

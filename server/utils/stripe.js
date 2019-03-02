@@ -1,13 +1,43 @@
 import Stripe from 'stripe';
-import { payments } from 'getconfig';
 import axios from 'axios';
 import countries from './countries.json';
-
 import logger from './logger';
+import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
 
 export async function createPayment({
+  productPrice,
+  productLabel,
+  quantity = 1,
+  customerId,
+  coupon,
+  gift = false
+}) {
+  try {
+    const description = getDescription({ quantity, productLabel, gift });
+    const totalAmount = productPrice * quantity;
+
+    const payment = await stripe.charges.create({
+      customer: customerId,
+      amount: totalAmount,
+      description,
+      currency: 'usd',
+      metadata: {
+        coupon
+      }
+    });
+
+    logger.info('stripe: created charge');
+    return payment;
+  } catch (err) {
+    logger.error('stripe: failed to create charge');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function createInvoice({
   productPrice,
   productLabel,
   quantity = 1,
@@ -18,14 +48,7 @@ export async function createPayment({
 }) {
   const { country } = address;
   try {
-    let description;
-    if (gift) {
-      description = `Payment for ${quantity} ${productLabel} gift scan${
-        quantity > 1 ? 's' : ''
-      }`;
-    } else {
-      description = `Payment for ${productLabel} scan`;
-    }
+    const description = getDescription({ quantity, productLabel, gift });
     const { vatRate, vatAmount } = await getTaxInfo({
       country,
       amount: productPrice
@@ -52,10 +75,10 @@ export async function createPayment({
         coupon
       }
     });
-    logger.info('stripe: created charge');
+    logger.info('stripe: created invoice');
     return payment;
   } catch (err) {
-    logger.error('stripe: failed to create charge');
+    logger.error('stripe: failed to create invoice');
     logger.error(err);
     throw err;
   }
@@ -233,4 +256,13 @@ async function getTaxInfo({ amount, country }) {
       vatAmount: 0
     };
   }
+}
+
+function getDescription({ quantity, productLabel, gift }) {
+  if (gift) {
+    return `Payment for ${quantity} ${productLabel} gift scan${
+      quantity > 1 ? 's' : ''
+    }`;
+  }
+  return `Payment for ${productLabel} scan`;
 }
