@@ -334,9 +334,9 @@ export default function Terms() {
                   </span>
                 </div>
                 <div className="big-stat box">
-                  <span className="label">Revenue per user</span>
+                  <span className="label">Total Revenue</span>
                   <span className="value">
-                    {currency(stats.totalRevenue / stats.users)}
+                    {currency(stats.totalRevenue + stats.giftRevenue)}
                   </span>
                 </div>
               </div>
@@ -366,6 +366,12 @@ export default function Terms() {
                 </div>
               </div>
               <div className="totals">
+                <div className="big-stat box">
+                  <span className="label">Revenue per user</span>
+                  <span className="value">
+                    {currency(stats.totalRevenue / stats.users)}
+                  </span>
+                </div>
                 <div className="big-stat box">
                   <span className="label">Revenue from gifts</span>
                   <span className="value">
@@ -568,7 +574,7 @@ function getThisMonthToDate(stats, stat) {
   const { histogram, previousDayTotals } = daily;
 
   const today = new Date();
-  const start = startOfMonth(addMonths(today));
+  const start = startOfMonth(today);
 
   const cumulative = histogram.reduce((out, d) => {
     if (isAfter(d.timestamp, start)) return out + d[stat] || 0;
