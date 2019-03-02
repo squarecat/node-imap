@@ -8,6 +8,7 @@ import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 import addMonths from 'date-fns/add_months';
 import endOfMonth from 'date-fns/end_of_month';
+import { isAfter } from 'date-fns';
 import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
 import startOfDay from 'date-fns/start_of_day';
@@ -277,9 +278,10 @@ export default function Terms() {
   if (loading) {
     return null;
   }
-  const prevMonthRev = getLastMonthValues(stats, 'totalRevenue');
-  const prevMonthGiftRev = getLastMonthValues(stats, 'giftRevenue');
-  const lastMonthsRevenue = prevMonthRev + prevMonthGiftRev;
+
+  const totalRevenueStats = getBoxStats(stats, 'totalRevenue');
+  const salesStats = getBoxStats(stats, 'totalSales');
+  const usersStats = getBoxStats(stats, 'users');
 
   return (
     <SubPageLayout page="Open Stats">
@@ -310,20 +312,66 @@ export default function Terms() {
               <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's revenue</span>
-                  <span styleName="value">{currency(lastMonthsRevenue)}</span>
+                  <span styleName="value">
+                    {currency(totalRevenueStats.lastMonth)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Revenue Growth Rate (MoM)</span>
+                  <span
+                    styleName={`value ${
+                      totalRevenueStats.growthRate > 0 ? 'positive' : 'negative'
+                    }`}
+                  >
+                    {totalRevenueStats.growthRate > 0 ? '+' : '-'}
+                    {percent(totalRevenueStats.growthRate)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">This month's revenue to date</span>
+                  <span styleName="value">
+                    {currency(totalRevenueStats.thisMonth)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total Revenue</span>
+                  <span styleName="value">
+                    {currency(stats.totalRevenue + stats.giftRevenue)}
+                  </span>
+                </div>
+              </div>
+              <div styleName="totals">
+                <div styleName="big-stat box">
+                  <span styleName="label">Last month's sales</span>
+                  <span styleName="value">{format(salesStats.lastMonth)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Sales Growth Rate (MoM)</span>
+                  <span
+                    styleName={`value ${
+                      salesStats.growthRate > 0 ? 'positive' : 'negative'
+                    }`}
+                  >
+                    {salesStats.growthRate > 0 ? '+' : '-'}
+                    {percent(salesStats.growthRate)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">This month's sales to date</span>
+                  <span styleName="value">{format(salesStats.thisMonth)}</span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Total sales</span>
                   <span styleName="value">{format(stats.totalSales)}</span>
                 </div>
+              </div>
+              <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue per user</span>
                   <span styleName="value">
                     {currency(stats.totalRevenue / stats.users)}
                   </span>
                 </div>
-              </div>
-              <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue from gifts</span>
                   <span styleName="value">
@@ -351,10 +399,25 @@ export default function Terms() {
               </div>
               <div styleName="totals">
                 <div styleName="big-stat box">
-                  <span styleName="label">Last month's users</span>
-                  <span styleName="value">
-                    {getLastMonthValues(stats, 'users')}
+                  <span styleName="label">Last month's new signups</span>
+                  <span styleName="value">{format(usersStats.lastMonth)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">New Signups Growth Rate (MoM)</span>
+                  <span
+                    styleName={`value ${
+                      usersStats.growthRate > 0 ? 'positive' : 'negative'
+                    }`}
+                  >
+                    {usersStats.growthRate > 0 ? '+' : '-'}
+                    {percent(usersStats.growthRate)}
                   </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">
+                    This month's new signups to date
+                  </span>
+                  <span styleName="value">{format(usersStats.thisMonth)}</span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Total users</span>
@@ -420,10 +483,10 @@ export default function Terms() {
             </div>
 
             <div styleName="referrals">
-              <div styleName="chart box">
+              {/* <div styleName="chart box">
                 <h2>Referrals</h2>
                 <canvas ref={referralRef} />
-              </div>
+              </div> */}
               <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Total referral signups</span>
@@ -432,7 +495,7 @@ export default function Terms() {
                 <div styleName="big-stat box">
                   <span styleName="label">Referral conversion rate</span>
                   <span styleName="value">
-                    {percent(stats.referralPaidScan, stats.referralSignup)}
+                    {percent(stats.referralPaidScan / stats.referralSignup)}
                   </span>
                 </div>
                 {/* <div styleName="big-stat box">
@@ -485,19 +548,71 @@ export default function Terms() {
   );
 }
 
-function getLastMonthValues(stats, stat) {
+function getPreviousMonthValues(stats, stat, timeframe = 0) {
   if (!stats) return null;
   const { daily } = stats;
   const { histogram } = daily;
 
   const today = new Date();
-  const start = startOfMonth(addMonths(today, -1));
-  const end = endOfMonth(addMonths(today, -1));
+  const start = startOfMonth(addMonths(today, timeframe));
+  const end = endOfMonth(addMonths(today, timeframe));
 
   return histogram.reduce((out, d) => {
     if (isWithinRange(d.timestamp, start, end)) return out + d[stat] || 0;
     return out;
   }, 0);
+}
+
+function getThisMonthToDate(stats, stat) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram, previousDayTotals } = daily;
+
+  const today = new Date();
+  const start = startOfMonth(today);
+
+  const cumulative = histogram.reduce((out, d) => {
+    if (isAfter(d.timestamp, start)) return out + d[stat] || 0;
+    return out;
+  }, 0);
+
+  const sinceLastHistogram =
+    (stats[stat] || 0) - (previousDayTotals[stat] || 0);
+
+  return cumulative + sinceLastHistogram;
+}
+
+function getBoxStats(stats, stat) {
+  const twoMonthsAgo = getPreviousMonthValues(stats, stat, -2);
+  const lastMonth = getPreviousMonthValues(stats, stat, -1);
+  const thisMonth = getThisMonthToDate(stats, stat);
+  // Percent increase = ((new value - original value)/original value) * 100
+  const growthRate = (lastMonth - twoMonthsAgo) / twoMonthsAgo;
+
+  if (stat === 'totalRevenue') {
+    const twoMonthsAgoGifts = getPreviousMonthValues(stats, 'giftRevenue', -2);
+    const lastMonthGifts = getPreviousMonthValues(stats, 'giftRevenue', -1);
+    const thisMonthGifts = getThisMonthToDate(stats, 'giftRevenue');
+
+    const totalTwoMonths = twoMonthsAgo + twoMonthsAgoGifts;
+    const totalLastMonth = lastMonth + lastMonthGifts;
+    const totalThisMonth = thisMonth + thisMonthGifts;
+
+    const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+
+    return {
+      twoMonthsAgo: totalTwoMonths,
+      lastMonth: totalLastMonth,
+      thisMonth: totalThisMonth,
+      growthRate: totalGrowth
+    };
+  }
+  return {
+    twoMonthsAgo,
+    lastMonth,
+    thisMonth,
+    growthRate
+  };
 }
 
 function format(num) {
@@ -511,6 +626,6 @@ function currency(num) {
   return numeral(num).format('$0,0.00');
 }
 
-function percent(num, total) {
-  return numeral(num / total).format('0%');
+function percent(num) {
+  return numeral(num).format('0%');
 }

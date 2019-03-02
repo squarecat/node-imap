@@ -55,6 +55,12 @@
   justify-content: space-between;
   margin: 0 10px 10px 0;
 }
+.positive {
+  color: $color-bg-success;
+}
+.negative {
+  color: $color-bg-error;
+}
 
 .big-stat:first-child {
   margin-left: 0;
@@ -95,7 +101,7 @@
 }
 
 .open-title h1 {
-  font-size: 25px;
+  font-size: 25px !important;
   margin: 20px 0 0 0;
 }
 
