@@ -50,6 +50,7 @@ export async function createInvoice({
   customerId,
   coupon,
   address,
+  provider,
   gift = false
 }) {
   const { country } = address;
