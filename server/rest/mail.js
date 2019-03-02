@@ -116,7 +116,7 @@ export default function(app, server) {
       }
     }, 5000);
 
-    socket.on('fetch', ({ timeframe }) => {
+    socket.on('fetch', async ({ timeframe }) => {
       if (!socket.auth) {
         return 'Not authenticated';
       }
@@ -124,19 +124,27 @@ export default function(app, server) {
       const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
         socket.userId
       );
-      // get mail data for user
-      fetchMail(
-        {
+      try {
+        // get mail data for user
+        const it = await fetchMail({
           userId: socket.userId,
           timeframe
-        },
-        {
-          onMail,
-          onError,
-          onEnd,
-          onProgress
+        });
+        let next = await it.next();
+        while (!next.done) {
+          const { value } = next;
+          const { type, data } = value;
+          if (type === 'mail') {
+            onMail(data);
+          } else if (type === 'progress') {
+            onProgress(data);
+          }
+          next = await it.next();
         }
-      );
+        onEnd(next.value);
+      } catch (err) {
+        onError(err);
+      }
     });
 
     socket.on('unsubscribe', async mail => {

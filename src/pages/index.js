@@ -28,7 +28,7 @@ const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
 let referrer;
-if (typeof URLSearchParams !== 'undefined') {
+if (typeof URLSearchParams !== 'undefined' && typeof window !== 'undefined') {
   referrer = new URLSearchParams(window.location.search).get('ref');
 }
 const IndexPage = () => {

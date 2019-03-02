@@ -72,7 +72,6 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
 }
 
 export default app => {
-  console.log('scope', outlook.scopes);
   app.get(
     '/auth/outlook',
     passport.authenticate('windowslive', {

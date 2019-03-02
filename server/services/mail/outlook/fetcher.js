@@ -5,18 +5,16 @@ import { getEstimateForTimeframe } from './estimator';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
-export async function fetchMail(
-  { user, timeframe = '3d' },
-  { onMail, onError, onEnd, onProgress }
-) {
+export async function* fetchMail({ user, timeframe = '3d' }) {
+  const start = Date.now();
   try {
     if (!hasPaidScanAvailable(user, timeframe)) {
       logger.warn(
         'mail-service: User attempted search that has not been paid for'
       );
-      return onError('Not paid');
+      return { type: 'error', message: 'Not paid' };
     }
-    logger.info(`gmail-fetcher: started ${timeframe} scan (${user.id})`);
+    logger.info(`outlook-fetcher: started ${timeframe} scan (${user.id})`);
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, accessToken] = await Promise.all([
       getEstimateForTimeframe(user, {
@@ -50,15 +48,24 @@ export async function fetchMail(
       totalPrevUnsubbedCount = totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
       if (unsubscribableMail.length) {
-        onMail(unsubscribableMail);
+        yield { type: 'mail', data: unsubscribableMail };
       }
-      onProgress({ progress, total: totalEstimate });
+      yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
-
-    onEnd();
+    logger.info(
+      `outlook-fetcher: finished ${timeframe} scan (${
+        user.id
+      }) [took ${(Date.now() - start) / 1000}s]`
+    );
+    return {
+      totalMail: totalEmailsCount,
+      totalUnsubscribableMail: totalUnsubCount,
+      totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount
+    };
   } catch (err) {
+    logger.error('outlook-fetcher: failed to fetch mail');
     logger.error(err);
-    onError(err);
+    throw err;
   }
 }
 

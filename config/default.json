@@ -13,11 +13,7 @@
       "redirect": "http://local.leavemealone.xyz/auth/google/callback",
       "clientId": "$GOOGLE_CLIENT_ID",
       "clientSecret": "$GOOGLE_CLIENT_SECRET",
-      "scopes": [
-        "https://mail.google.com/",
-        "https://www.googleapis.com/auth/gmail.readonly",
-        "email"
-      ]
+      "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
     },
     "outlook": {
       "redirect": "https://tolocalhost.com/auth/outlook/callback",

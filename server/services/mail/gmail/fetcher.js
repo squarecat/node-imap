@@ -9,18 +9,17 @@ import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
 // todo convert to generator?
-export async function fetchMail(
+export async function* fetchMail(
   { user, timeframe },
-  { onMail, onError, onEnd, onProgress },
   { strategy = 'api', batch = false } = {}
 ) {
+  const start = Date.now();
   try {
-    const start = Date.now();
     if (!hasPaidScanAvailable(user, timeframe)) {
       logger.warn(
         'mail-service: User attempted search that has not been paid for'
       );
-      return onError('Not paid');
+      throw new Error('Not paid');
     }
     logger.info(`gmail-fetcher: started ${timeframe} scan (${user.id})`);
     const { unsubscriptions, ignoredSenderList } = user;
@@ -57,9 +56,9 @@ export async function fetchMail(
           totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
         if (unsubscribableMail.length) {
-          onMail(unsubscribableMail);
+          yield { type: 'mail', data: unsubscribableMail };
         }
-        onProgress({ progress, total: totalEstimate });
+        yield { type: 'progress', data: totalEstimate };
       }
     } else if (strategy === 'imap') {
       for await (let mail of fetchMailImap(client, { timeframe })) {
@@ -70,9 +69,9 @@ export async function fetchMail(
           unsubscriptions
         });
         if (unsubscribableMail.length) {
-          onMail(unsubscribableMail);
+          yield { type: 'mail', data: unsubscribableMail };
         }
-        onProgress({ progress, total: totalEstimate });
+        yield { type: 'progress', data: totalEstimate };
       }
     }
 
@@ -81,13 +80,15 @@ export async function fetchMail(
         user.id
       }) [took ${(Date.now() - start) / 1000}s]`
     );
-    return onEnd({
+    return {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
       totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount
-    });
+    };
   } catch (err) {
-    onError(err);
+    logger.error('gmail-fetcher: failed to fetch mail');
+    logger.error(err);
+    throw err;
   }
 }
 
