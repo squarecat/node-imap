@@ -3,12 +3,13 @@ import './mail-list.scss';
 
 import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
+import { ReloadIcon, TwitterIcon } from '../../components/icons';
 
 import AnimatedNumber from 'react-animated-number';
 import { CSSTransition } from 'react-transition-group';
 import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
-import { ReloadIcon, TwitterIcon } from '../../components/icons';
+import MailListEmptyState from './mail-list/empty-state';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
@@ -216,7 +217,7 @@ function useSocket(callback) {
   };
 }
 
-export default ({ timeframe, showPriceModal }) => {
+export default ({ timeframe, setTimeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
   const [user, { setHasSearched }] = useUser();
 
@@ -319,6 +320,7 @@ export default ({ timeframe, showPriceModal }) => {
             isSearchFinished={isSearchFinished}
             showPriceModal={showPriceModal}
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
+            onClickRescan={tf => setTimeframe(tf)}
             dispatch={dispatch}
           />
           {getSocialContent(user.unsubCount, user.referralCode)}
@@ -466,21 +468,17 @@ function List({
   isSearchFinished,
   showPriceModal,
   addUnsubscribeErrorResponse,
+  onClickRescan,
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
-  const [unsubCount] = useUser(s => s.unsubCount);
 
   if (!mail.length && isSearchFinished) {
     return (
-      <div className="mail-empty-state">
-        <h3>No mail subscriptions found! 🎉</h3>
-        <p>Enjoy your clear inbox!</p>
-        <p>
-          If you're still getting subscription emails then try searching{' '}
-          <a onClick={showPriceModal}>over a longer period</a>.
-        </p>
-      </div>
+      <MailListEmptyState
+        onClickRescan={tf => onClickRescan(tf)}
+        showPriceModal={showPriceModal}
+      />
     );
   }
 

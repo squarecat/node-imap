@@ -8,17 +8,17 @@ import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
-  const [{ profileImg, lastPaidScan, reminder }] = useUser(
-    ({ profileImg, lastPaidScan, reminder }) => ({
+  const [{ profileImg, lastPaidScanType, reminder }] = useUser(
+    ({ profileImg, lastPaidScanType, reminder }) => ({
       profileImg,
-      lastPaidScan,
+      lastPaidScanType,
       reminder
     })
   );
 
   let reminderButton = null;
 
-  const isLastSearchPaid = !!lastPaidScan;
+  const isLastSearchPaid = !!lastPaidScanType;
   const hasReminder = reminder && !reminder.sent;
 
   if (isLastSearchPaid && !hasReminder) {

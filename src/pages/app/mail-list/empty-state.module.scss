@@ -1,0 +1,26 @@
+@import '../../../styles/common/colors.scss';
+@import '../../../components/btn/btn.module.scss';
+
+.mail-empty-state {
+}
+
+.content {
+  margin: 50px 20px;
+  padding: 30px 15px;
+  text-align: center;
+  background-color: rgba(252, 219, 216, 0.2);
+  border-radius: 7px;
+
+  @media (max-width: 600px) {
+    margin: 20px;
+  }
+}
+
+.scan-btn {
+  @extend .btn;
+  @extend .compact;
+  @extend .basic;
+  @extend .centered;
+
+  min-width: 200px;
+}
