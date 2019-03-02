@@ -22,15 +22,21 @@ const tfToString = {
 
 export default ({ showPriceModal, onClickRescan }) => {
   const [lastScan] = useUser(u => u.lastScan);
-  // if they have done a scan then suggest they use the same browser
+
+  const yesterday = subHours(Date.now(), 24);
+  const isRescanAvailable = isAfter(lastScan.scannedAt, yesterday);
+
   const fromDate = format(getTimeRange(lastScan), dateFormat);
   const toDate = format(lastScan.scannedAt, dateFormat);
 
+  let title = isRescanAvailable
+    ? 'Re-run your last scan'
+    : 'Use the same device and browser you used to run this scan';
   let content = null;
   if (lastScan) {
     content = (
       <>
-        <h3>No mail subscriptions found</h3>
+        <h3>{title}</h3>
         <p>
           We can see that you performed a{' '}
           <TextImportant>{tfToString[lastScan.timeframe]}</TextImportant> on{' '}
@@ -45,7 +51,13 @@ export default ({ showPriceModal, onClickRescan }) => {
           To adhere to our privacy policy we do not store store any of your
           emails on our server, they are all stored in your browser.
         </p>
-        {renderScanText(lastScan, onClickRescan)}
+        <p>
+          The results of your scan will still be available on the device and
+          browser you used to originally run this scan.
+        </p>
+        {renderScanText(isRescanAvailable, () =>
+          onClickRescan(lastScan.timeframe)
+        )}
       </>
     );
   } else {
@@ -81,30 +93,20 @@ function getTimeRange({ scannedAt, timeframe }) {
   return then;
 }
 
-function renderScanText(lastScan, onClickRescan) {
-  const yesterday = subHours(Date.now(), 24);
-  if (isAfter(lastScan.scannedAt, yesterday)) {
+function renderScanText(isRescanAvailable, onClickRescan) {
+  if (isRescanAvailable) {
     return (
       <>
         <p>
           Your scan was last run less than 24 hours, so you can{' '}
-          <TextImportant>run it again</TextImportant> by clicking the button
-          below.
+          <TextImportant>run it again for free</TextImportant> by clicking the
+          button below.
         </p>
-        <button
-          styleName="scan-btn"
-          onClick={() => onClickRescan(lastScan.timeframe)}
-        >
+        <button styleName="scan-btn" onClick={() => onClickRescan()}>
           Re-run my last scan
         </button>
       </>
     );
-  } else {
-    return (
-      <p>
-        To see the results of your scan please use the device and browser you
-        originally scanned on.
-      </p>
-    );
   }
+  return null;
 }
