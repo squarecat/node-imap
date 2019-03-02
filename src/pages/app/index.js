@@ -51,7 +51,7 @@ export default function App({ location = {} } = {}) {
           <div className={`mail-list-content ${state}`}>
             <MailList
               timeframe={timeframe}
-              setTimeframe={(tf) => setTimeframe(tf)}
+              setTimeframe={tf => setTimeframe(tf)}
               hasSearched={hasScanned}
               showPriceModal={() => togglePriceModal(true)}
             />

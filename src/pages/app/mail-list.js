@@ -6,10 +6,13 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { ReloadIcon, TwitterIcon } from '../../components/icons';
 
 import AnimatedNumber from 'react-animated-number';
+import Button from '../../components/btn';
 import { CSSTransition } from 'react-transition-group';
 import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
 import MailListEmptyState from './mail-list/empty-state';
+import RescanModal from '../../components/modal/rescan-modal';
+import { TextLink } from '../../components/text';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
@@ -20,6 +23,8 @@ import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
+import isAfter from 'date-fns/is_after';
+import subHours from 'date-fns/sub_hours';
 import { toggleFromIgnoreList } from './profile/ignore';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
@@ -219,7 +224,10 @@ function useSocket(callback) {
 
 export default ({ timeframe, setTimeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
+  const [showRescanModal, toggleRescanModal] = useState(false);
   const [user, { setHasSearched }] = useUser();
+
+  const { lastScan } = user;
 
   const {
     mail,
@@ -238,6 +246,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     `leavemealone.timeframe.${user ? user.id : ''}`,
     []
   );
+
   function doSearch() {
     setSearchFinished(false);
     fetchMail(timeframe);
@@ -275,10 +284,23 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     mail.length
   );
 
+  const onShowPriceModal = () => {
+    if (!lastScan) {
+      return showPriceModal(true);
+    }
+
+    const yesterday = subHours(Date.now(), 24);
+    const rescanAvailable = isAfter(lastScan.scannedAt, yesterday);
+
+    if (!rescanAvailable) return showPriceModal(true);
+
+    return toggleRescanModal(true);
+  };
+
   const showMoreText =
     isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;
-  const scanMessage = `Depending on the size of your inbox this may take a while, feel
-    free to check back later, but please don't close this window.`;
+  // const scanMessage = `Depending on the size of your inbox this may take a while, feel
+  //   free to check back later, but please don't close this window.`;
 
   return (
     <>
@@ -297,7 +319,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
             {/* <span>{scanMessage}</span> */}
           </span>
           <span className="action-item">
-            <a onClick={() => showPriceModal()} className="btn compact icon">
+            <a onClick={() => onShowPriceModal()} className="scan-more-btn">
               <ReloadIcon />
               Scan more
             </a>
@@ -326,6 +348,21 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
           {getSocialContent(user.unsubCount, user.referralCode)}
         </ErrorBoundary>
       )}
+      {showRescanModal ? (
+        <RescanModal
+          onRescan={tf => {
+            setTimeframe(tf);
+            toggleRescanModal(false);
+          }}
+          onPurchase={() => {
+            toggleRescanModal(false);
+            showPriceModal(true);
+          }}
+          onClose={() => {
+            toggleRescanModal(false);
+          }}
+        />
+      ) : null}
     </>
   );
 };
@@ -339,14 +376,14 @@ function ErrorScreen({ error, retry }) {
           somehow, perhaps you revoked your token?
         </p>
 
-        <a className="btn centered muted" onClick={retry}>
+        <Button centered muted basic onClick={retry}>
           Retry
-        </a>
+        </Button>
 
         <p>
           If this keeps happening please try{' '}
-          <a href="/auth/logout">logging out</a> and back in again to refresh
-          your credentials. Thanks!
+          <TextLink href="/auth/logout">logging out</TextLink> and back in again
+          to refresh your credentials. Thanks!
         </p>
         <pre className="error-details">{error}</pre>
       </div>
@@ -360,13 +397,13 @@ function ErrorScreen({ error, retry }) {
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
-          <a
+          <TextLink
             onClick={() =>
               openChat("Hi! I've paid for a scan but I can't perform it!")
             }
           >
             Let us know!
-          </a>
+          </TextLink>
         </p>
       </div>
     );
@@ -375,9 +412,9 @@ function ErrorScreen({ error, retry }) {
     <div className="mail-error">
       <p>Oh no, something went wrong on our end. Please try and scan again</p>
 
-      <a className="btn centered muted" onClick={retry}>
+      <Button centered muted basic onClick={retry}>
         Retry
-      </a>
+      </Button>
 
       <p>
         This is definitely our fault, so if it still doesn't work then please
@@ -644,7 +681,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
           ) : (
             <svg
               onClick={() => setUnsubModal(m, true)}
-              className="failed-to-unsub-btn"
+              className="failed-to-unsub-icon"
               viewBox="0 0 32 32"
               width="20"
               height="20"

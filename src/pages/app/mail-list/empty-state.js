@@ -1,6 +1,5 @@
 import './empty-state.module.scss';
 
-import { Link } from 'gatsby';
 import React from 'react';
 import { TextImportant } from '../../../components/text';
 import format from 'date-fns/format';
@@ -11,7 +10,7 @@ import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import useUser from '../../../utils/hooks/use-user';
 
-const dateFormat = 'Do MMM YYYY';
+const dateFormat = 'Do MMMM YYYY';
 
 const tfToString = {
   '3d': '3 day scan',
