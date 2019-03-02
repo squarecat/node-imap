@@ -12,10 +12,16 @@ export async function createPayment({
   quantity = 1,
   customerId,
   coupon,
-  gift = false
+  gift = false,
+  provider = 'google'
 }) {
   try {
-    const description = getDescription({ quantity, productLabel, gift });
+    const description = getDescription({
+      quantity,
+      productLabel,
+      provider,
+      gift
+    });
     const totalAmount = productPrice * quantity;
 
     const payment = await stripe.charges.create({
@@ -48,7 +54,12 @@ export async function createInvoice({
 }) {
   const { country } = address;
   try {
-    const description = getDescription({ quantity, productLabel, gift });
+    const description = getDescription({
+      quantity,
+      productLabel,
+      provider,
+      gift
+    });
     const { vatRate, vatAmount } = await getTaxInfo({
       country,
       amount: productPrice
@@ -258,11 +269,11 @@ async function getTaxInfo({ amount, country }) {
   }
 }
 
-function getDescription({ quantity, productLabel, gift }) {
+function getDescription({ quantity, productLabel, provider, gift }) {
   if (gift) {
     return `Payment for ${quantity} ${productLabel} gift scan${
       quantity > 1 ? 's' : ''
     }`;
   }
-  return `Payment for ${productLabel} scan`;
+  return `Payment for ${productLabel} scan for ${provider}`;
 }
