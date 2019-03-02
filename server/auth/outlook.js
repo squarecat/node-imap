@@ -45,7 +45,7 @@ export const Strategy = new OutlookStrategy(
 export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
   return new Promise((resolve, reject) => {
     refresh.requestNewAccessToken(
-      'outlook',
+      'windowslive',
       refreshToken,
       async (err, accessToken) => {
         if (err) {
@@ -84,7 +84,7 @@ export default app => {
     '/auth/outlook/callback',
     passport.authenticate('windowslive', { failureRedirect: '/login' }),
     function(req, res) {
-      res.redirect('/');
+      res.redirect('/app');
     }
   );
 };

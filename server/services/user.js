@@ -66,7 +66,6 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
         provider: 'outlook',
         token: v4()
       });
-      addSubscriber({ email });
       addUserToStats();
     } else {
       user = await updateUser(id, {
@@ -158,9 +157,16 @@ export async function checkAuthToken(userId, token) {
   }
 }
 
+// google date is the legacy version of the date object
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, googleDate } = mail;
-  return addUnsubscription(userId, { to, from, id, googleDate, ...rest });
+  const { to, from, id, date, googleDate } = mail;
+  return addUnsubscription(userId, {
+    to,
+    from,
+    id,
+    date: date || googleDate,
+    ...rest
+  });
 }
 
 export function addScanToUser(userId, scanData) {

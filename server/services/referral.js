@@ -1,12 +1,12 @@
-import config from 'getconfig';
-
 import { addReferral, updateReferral } from '../dao/user';
+import { addReferralCreditToStats, addReferralPaidScanToStats } from './stats';
 import { creditUserAccount, getUserById } from './user';
 import {
   sendReferralLinkUsedMail,
   sendReferralRewardMail
 } from '../utils/email';
-import { addReferralPaidScanToStats, addReferralCreditToStats } from './stats';
+
+import config from 'getconfig';
 
 export function addReferralToReferrer(id, { userId, price, scanType }) {
   return addReferral(id, { userId, price, scanType });

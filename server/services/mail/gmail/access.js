@@ -1,9 +1,9 @@
 import ImapClient from 'emailjs-imap-client';
 import { auth } from 'getconfig';
-import { getUserById } from '../user';
+import { getUserById } from '../../user';
 import { google } from 'googleapis';
 import isBefore from 'date-fns/is_before';
-import { refreshAccessToken } from '../../auth/google';
+import { refreshAccessToken } from '../../../auth/google';
 import subMinutes from 'date-fns/sub_minutes';
 
 const { google: googleConfig } = auth;

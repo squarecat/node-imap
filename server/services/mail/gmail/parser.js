@@ -5,7 +5,7 @@ import {
   isMailUnsubscribable
 } from './utils';
 
-import logger from '../../utils/logger';
+import logger from '../../../utils/logger';
 
 export function parseMailList(
   mailList = [],
@@ -54,6 +54,7 @@ function mapMail(mail) {
     return {
       id,
       snippet,
+      date: internalDate,
       googleDate: internalDate,
       from: getHeader(payload, 'from'),
       to: getHeader(payload, 'to'),

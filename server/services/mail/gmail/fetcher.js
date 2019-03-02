@@ -5,7 +5,7 @@ import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { getEstimateForTimeframe } from './estimator';
 import httpMessageParser from 'http-message-parser';
-import logger from '../../utils/logger';
+import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
 // todo convert to generator?

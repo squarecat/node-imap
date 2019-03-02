@@ -201,7 +201,11 @@ function getSocketFunctions(userId) {
         logger.error('socket: no socket dropped event `error`');
         return false;
       }
-      sock.emit('mail:err', err);
+      if (process.NODE_ENV !== 'production') {
+        sock.emit('mail:err', err.stack);
+      } else {
+        sock.emit('mail:err', err.toString());
+      }
       return true;
     },
     onEnd: () => {

@@ -1,7 +1,7 @@
 import { getSearchString, getTimeRange } from './utils';
 
 import { getMailClient } from './access';
-import logger from '../../utils/logger';
+import logger from '../../../utils/logger';
 
 const estimateTimeframes = ['3d', '1w'];
 const SPAM_REGULARITY = 0.48;

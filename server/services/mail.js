@@ -18,7 +18,11 @@ import {
 import {
   fetchMail as fetchMailFromGmail,
   getEstimates as getMailEstimatesFromGmail
-} from './gmail';
+} from './mail/gmail';
+import {
+  fetchMail as fetchMailFromOutlook,
+  getEstimates as getMailEstimatesFromOutlook
+} from './mail/outlook';
 
 import emailAddresses from 'email-addresses';
 import { getUserById } from './user';
@@ -30,8 +34,9 @@ export async function fetchMail(
   { onMail, onError, onEnd, onProgress }
 ) {
   const user = await getUserById(userId);
+  const { provider } = user;
   try {
-    if (user.provider === 'google') {
+    if (provider === 'google') {
       return fetchMailFromGmail(
         { user, timeframe },
         {
@@ -68,6 +73,16 @@ export async function fetchMail(
           onProgress
         },
         { strategy: 'api', batch: true }
+      );
+    } else if (provider === 'outlook') {
+      return fetchMailFromOutlook(
+        { user, timeframe },
+        {
+          onMail,
+          onError,
+          onEnd,
+          onProgress
+        }
       );
     }
     throw new Error('mail-service unknown provider');
@@ -117,13 +132,18 @@ export async function addUnsubscribeErrorResponse(
 
 export async function getMailEstimates(userId) {
   const user = await getUserById(userId);
+  const { provider } = user;
+  let estimates;
   try {
-    if (user.provider === 'google') {
-      const estimates = await getMailEstimatesFromGmail(user);
-      addEstimateToStats();
-      return estimates;
+    if (provider === 'google') {
+      estimates = await getMailEstimatesFromGmail(user);
+    } else if (provider === 'outlook') {
+      estimates = await getMailEstimatesFromOutlook(user);
+    } else {
+      throw new Error('mail-service unknown provider');
     }
-    throw new Error('mail-service unknown provider');
+    addEstimateToStats();
+    return estimates;
   } catch (err) {
     logger.error(
       `mail-service: error getting mail estimates for user ${userId}`

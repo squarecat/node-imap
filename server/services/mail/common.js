@@ -1,4 +1,3 @@
-import format from 'date-fns/format';
 import isAfter from 'date-fns/is_after';
 import logger from '../../utils/logger';
 import subDays from 'date-fns/sub_days';
@@ -7,8 +6,9 @@ import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import url from 'url';
 
-const googleDateFormat = 'YYYY/MM/DD';
-
+/**
+ * Get the start and end dates from a timeframe
+ */
 export function getTimeRange(timeframe) {
   let then;
   const now = Date.now();
@@ -22,12 +22,10 @@ export function getTimeRange(timeframe) {
   }
   return { then, now };
 }
-
-export function getSearchString({ then, query = '' }) {
-  const thenStr = format(then, googleDateFormat);
-  return `after:${thenStr} ${query}`;
-}
-
+/**
+ * Parse the unsub header to get the URL
+ * and MailTo values
+ */
 export function getUnsubValues(unsub) {
   try {
     let unsubscribeMailTo = null;
@@ -60,11 +58,29 @@ export function getUnsubValues(unsub) {
   }
 }
 
+/**
+ * Get value from unsub header string
+ */
 export function getUnsubValue(str) {
   if (str.trim().match(/^<.+>$/)) {
     return str.substr(1, str.length - 2);
   }
   return str;
+}
+
+/**
+ * Check if the users has already unsubscribed from
+ * this mail already
+ */
+export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
+  const unsubInfo = unsubscriptions.find(
+    u => mail.from === u.from && mail.to === u.to
+  );
+  if (!unsubInfo) {
+    return null;
+  }
+  const { image, unsubStrategy, estimatedSuccess, resolved } = unsubInfo;
+  return { image, unsubStrategy, estimatedSuccess, resolved };
 }
 
 // a scan is available if it has not yet been
@@ -80,66 +96,4 @@ export function hasPaidScanAvailable(user, scanType) {
     }
     return false;
   });
-}
-
-export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
-  const { id, payload } = mail;
-
-  if (!payload) {
-    logger.warn(
-      `mail-service: cannot check if unsubscribable, mail object has no payload ${id}`
-    );
-    if (!id) {
-      logger.warn('mail-service: mail id undefined');
-      logger.warn(mail);
-    }
-    return false;
-  }
-
-  try {
-    const { headers = [] } = payload;
-    const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
-    if (!hasListUnsubscribe) {
-      return false;
-    }
-    const fromHeader = headers.find(h => h.name === 'From');
-    if (!fromHeader) {
-      logger.warn('mail-utils: email has no from header');
-      return false;
-    }
-    const from = fromHeader.value;
-    let pureFromEmail;
-    if (from.match(/^.*<.*>/)) {
-      const [, , email] = /^(.*)<(.*)>/.exec(from);
-      pureFromEmail = email;
-    } else {
-      pureFromEmail = from;
-    }
-    const isIgnoredSender = ignoredSenderList.some(
-      sender => sender === pureFromEmail
-    );
-    return !isIgnoredSender;
-  } catch (err) {
-    logger.error('Failed to determine if email is unsubscribable');
-    logger.error(err);
-    return false;
-  }
-}
-
-export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
-  const unsubInfo = unsubscriptions.find(
-    u => mail.from === u.from && mail.to === u.to
-  );
-  if (!unsubInfo) {
-    return null;
-  }
-  const { image, unsubStrategy, estimatedSuccess, resolved } = unsubInfo;
-  return { image, unsubStrategy, estimatedSuccess, resolved };
-}
-
-export function getHeader(payload, name) {
-  const normalizedName = name.toLowerCase();
-  const { headers } = payload;
-  const header = headers.find(h => h.name.toLowerCase() === normalizedName);
-  return header ? header.value : null;
 }
