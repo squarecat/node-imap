@@ -2,6 +2,8 @@
 @import '../../../components/btn/btn.module.scss';
 
 .mail-empty-state {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .content {
@@ -14,6 +16,17 @@
   @media (max-width: 600px) {
     margin: 20px;
   }
+}
+
+.scan-history-link {
+  display: block;
+}
+.scan-dates {
+  background: white;
+  border: 1px solid $color-input-border;
+  border-radius: 7px;
+  padding: 10px;
+  font-weight: bold;
 }
 
 .scan-btn {

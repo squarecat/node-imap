@@ -1,7 +1,9 @@
 import './empty-state.module.scss';
 
+import { Link } from 'gatsby';
 import React from 'react';
 import { TextImportant } from '../../../components/text';
+import distanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import format from 'date-fns/format';
 import isAfter from 'date-fns/is_after';
 import subDays from 'date-fns/sub_days';
@@ -28,31 +30,28 @@ export default ({ showPriceModal, onClickRescan }) => {
   const fromDate = format(getTimeRange(lastScan), dateFormat);
   const toDate = format(lastScan.scannedAt, dateFormat);
 
-  let title = isRescanAvailable
-    ? 'Re-run your last scan'
-    : 'Use the same device and browser you used to run this scan';
   let content = null;
   if (lastScan) {
     content = (
       <>
-        <h3>{title}</h3>
+        <h3>No mail subscriptions found</h3>
+        <h4>Are you using a different device/browser?</h4>
+        <p styleName="scan-dates">
+          You performed a {tfToString[lastScan.timeframe]}{' '}
+          {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago.
+          <span styleName="scan-history-link">
+            (<Link to="/profile/history/scans">see your scan history</Link>)
+          </span>
+        </p>
         <p>
-          We can see that you performed a{' '}
-          <TextImportant>{tfToString[lastScan.timeframe]}</TextImportant> on{' '}
-          <TextImportant>
-            {format(lastScan.scannedAt, dateFormat)}
-          </TextImportant>{' '}
-          for subscription emails received between{' '}
+          In line with our privacy policy we do not store store any of your
+          emails on our servers, they are all stored in your browser.
+        </p>
+        <p>
+          The results of your scan between{' '}
           <TextImportant>{fromDate}</TextImportant> and{' '}
-          <TextImportant>{toDate}</TextImportant>.
-        </p>
-        <p>
-          To adhere to our privacy policy we do not store store any of your
-          emails on our server, they are all stored in your browser.
-        </p>
-        <p>
-          The results of your scan will still be available on the device and
-          browser you used to originally run this scan.
+          <TextImportant>{toDate}</TextImportant> will still be available on the
+          device and browser you used to originally run this scan.
         </p>
         {renderScanText(isRescanAvailable, () =>
           onClickRescan(lastScan.timeframe)
@@ -97,9 +96,9 @@ function renderScanText(isRescanAvailable, onClickRescan) {
     return (
       <>
         <p>
-          Your scan was last run less than 24 hours, so you can{' '}
-          <TextImportant>run it again for free</TextImportant> by clicking the
-          button below.
+          You purchased a scan less than 24 hours. You can{' '}
+          <TextImportant>run this scan again for free</TextImportant> up to 24
+          hours after purchase.
         </p>
         <button styleName="scan-btn" onClick={() => onClickRescan()}>
           Re-run my last scan
