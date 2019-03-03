@@ -74,7 +74,7 @@
   "scripts": {
     "build": "npm run build:client && npm run build:server",
     "build:client": "gatsby build",
-    "build:server": "babel -d ./build ./server",
+    "build:server": "babel -d ./build ./server && cp server/utils/countries.json build/utils/countries.json",
     "develop": "gatsby develop",
     "start": "NODE_ENV=production node index",
     "start:dev": "NODE_ENV=development node --inspect-brk index",
