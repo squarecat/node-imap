@@ -13,7 +13,6 @@ WORKDIR /usr/src
 COPY . .
 RUN PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 yarn install
 RUN yarn run build
-RUN yarn run build:server
 RUN PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 yarn install --production --ignore-scripts --prefer-offline
 RUN yarn cache clean
 RUN rm -rf .git src plugins .cache .vscode server
