@@ -39,7 +39,9 @@ function subscribeEnterpriseEarlyAccess() {
       <div id="mc_embed_signup_scroll">
         <FormGroup>
           <FormInput id="mce-EMAIL" type="text" name="email" required />
-          <FormLabel htmlFor="mce-EMAIL">Email Address</FormLabel>
+          <FormLabel animated htmlFor="mce-EMAIL">
+            Email Address
+          </FormLabel>
         </FormGroup>
         <div
           style={{ position: 'absolute', left: '-5000px' }}
@@ -52,12 +54,9 @@ function subscribeEnterpriseEarlyAccess() {
           />
         </div>
         <div>
-          <input
-            type="submit"
-            value="Subscribe"
-            name="subscribe"
-            styleName="subscribe-btn"
-          />
+          <button type="submit" name="subscribe" styleName="subscribe-btn">
+            Subscribe
+          </button>
         </div>
       </div>
     </form>

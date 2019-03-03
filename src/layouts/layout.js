@@ -1,15 +1,14 @@
-import { setConfig } from 'react-hot-loader';
+import '../common.scss';
+import './layout.css';
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import Helmet from 'react-helmet';
 import { StaticQuery, graphql } from 'gatsby';
 
+import Helmet from 'react-helmet';
+import PropTypes from 'prop-types';
+import React from 'react';
 import favicon from '../assets/meta/favicon.png';
 import metaImage from '../assets/meta/meta-img.png';
-
-import '../common.css';
-import './layout.css';
+import { setConfig } from 'react-hot-loader';
 
 setConfig({ pureSFC: true });
 

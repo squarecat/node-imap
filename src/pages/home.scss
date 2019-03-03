@@ -1,5 +1,6 @@
 @import '../styles/common/colors.scss';
 @import '../components/btn/btn.module.scss';
+@import '../components/text/text.module.scss';
 
 html {
   scroll-behavior: smooth;
@@ -407,6 +408,7 @@ h1 {
 }
 
 .pricing-enterprise {
+  @extend .link;
   font-size: 14px;
 }
 

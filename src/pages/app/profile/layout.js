@@ -1,15 +1,16 @@
-import React from 'react';
-import { Link } from 'gatsby';
-import Template from '../template';
+import './layout.module.scss';
 
 import {
-  SettingsIcon,
-  MailIcon,
   CreditCardIcon,
-  HeartIcon
+  HeartIcon,
+  MailIcon,
+  PhotoIcon,
+  SettingsIcon
 } from '../../../components/icons';
 
-import './layout.module.scss';
+import { Link } from 'gatsby';
+import React from 'react';
+import Template from '../template';
 
 export default ({ pageName, children }) => (
   <Template pageName={pageName}>
@@ -58,6 +59,16 @@ export default ({ pageName, children }) => (
               >
                 <HeartIcon />
                 Favorite senders
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/app/profile/preferences"
+                styleName="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <PhotoIcon />
+                Preferences
               </Link>
             </li>
           </ul>

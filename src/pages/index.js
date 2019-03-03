@@ -1,13 +1,13 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
-import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
 import Header from './header';
 import Layout from '../layouts/layout';
+import { TextImportant } from '../components/text';
 import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
@@ -20,17 +20,17 @@ import onePlace from '../assets/in-one-place.png';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
 
-const indieMakerTweetText = encodeURIComponent(
-  `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
-);
+// const indieMakerTweetText = encodeURIComponent(
+//   `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
+// );
 
 const PRICES = modalPrices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
-let referrer;
-if (typeof URLSearchParams !== 'undefined') {
-  referrer = new URLSearchParams(window.location.search).get('ref');
-}
+// let referrer;
+// if (typeof URLSearchParams !== 'undefined') {
+//   referrer = new URLSearchParams(window.location.search).get('ref');
+// }
 const IndexPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {
@@ -230,25 +230,13 @@ const IndexPage = () => {
           <div className="home-container-inner" id="pricing">
             <h2>Let's talk money</h2>
             <p>
-              So that we can{' '}
-              <span className="text-important">keep your data safe</span> Leave
-              Me Alone is a paid service.
+              So that we can <TextImportant>keep your data safe</TextImportant>{' '}
+              Leave Me Alone is a paid service.
             </p>
             <p>
-              You <span className="text-important">pay once</span> for how far
-              back in time you want search your inbox for subscription emails.
+              You <TextImportant>pay once</TextImportant> for how far back in
+              time you want search your inbox for subscription emails.
             </p>
-            {/* <p>
-              We’ll scan your inbox for any subscription emails received in the{' '}
-              <span className="text-important">last 3 days for free</span>.
-            </p>
-            <p>
-              To scan for email subscriptions received in the{' '}
-              <span className="text-important">
-                last week, last month, or last 6 months
-              </span>
-              , you can make a one-time purchase of one of these packages.
-            </p> */}
           </div>
 
           <div className="pricing-list-of-boxes-that-say-how-much">
@@ -277,7 +265,7 @@ const IndexPage = () => {
                 </a>
               ))}
             </div>
-            <a className="link pricing-enterprise" href="/enterprise">
+            <a className="pricing-enterprise" href="/enterprise">
               Looking for an enterprise plan?
             </a>
           </div>
@@ -287,18 +275,17 @@ const IndexPage = () => {
               <ul className="bullets">
                 <li>
                   See all of your subscription emails in{' '}
-                  <span className="text-important">one place</span>
+                  <TextImportant>one place</TextImportant>
                 </li>
                 <li>
                   Unsubscribe from spam with a{' '}
-                  <span className="text-important">single click</span>
+                  <TextImportant>single click</TextImportant>
                 </li>
                 <li>
-                  Know your data is in{' '}
-                  <span className="text-important">safe hands</span>
+                  Know your data is in <TextImportant>safe hands</TextImportant>
                 </li>
                 <li>
-                  Enjoy a <span className="text-important">cleaner inbox</span>
+                  Enjoy a <TextImportant>cleaner inbox</TextImportant>
                 </li>
               </ul>
               <a

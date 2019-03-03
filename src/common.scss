@@ -1,0 +1,48 @@
+@import './styles/common/colors.scss';
+
+body,
+html,
+#___gatsby,
+#___gatsby > div {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  padding-bottom: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+.link,
+a.link,
+.link:visited,
+a.link:visited,
+.link:active,
+a.link:active,
+.link:focus,
+a.link:focus,
+p a,
+p a:visited,
+p a:active,
+p a:focus,
+cite a,
+cite a:visited,
+cite a:active,
+cite a:focus {
+  color: $color-link;
+  border-bottom: 1px dashed $color-link;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    color: $color-link-hover;
+    border-bottom: 1px dashed $color-link-hover;
+  }
+}

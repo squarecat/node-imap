@@ -205,6 +205,10 @@ export async function getUserPayments(id) {
   return listPaymentsForUser(id);
 }
 
+export async function updateUserPreferences(id, preferences) {
+  return updateUser(id, { preferences });
+}
+
 export async function deactivateUserAccount(user) {
   const { id, email, keys } = user;
   const { refreshToken } = keys;

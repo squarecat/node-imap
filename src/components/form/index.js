@@ -1,10 +1,11 @@
 import './form.module.scss';
 
 import React from 'react';
+import cx from 'classnames';
 
-export const FormLabel = ({ children, ...props }) => {
+export const FormLabel = ({ animated, children, ...props }) => {
   return (
-    <label styleName="form-label" {...props}>
+    <label styleName={cx('form-label', { animated })} {...props}>
       {children}
     </label>
   );
@@ -20,6 +21,21 @@ export const FormInput = ({ id, type = 'text', name, required, ...props }) => {
       styleName="form-input"
       required={required}
     />
+  );
+};
+
+export const FormCheckbox = ({ id, name, label, ...props }) => {
+  return (
+    <label>
+      <input
+        {...props}
+        id={id}
+        type="checkbox"
+        name={name}
+        styleName="form-checkbox"
+      />
+      <span styleName="checkbox-label">{label}</span>
+    </label>
   );
 };
 
