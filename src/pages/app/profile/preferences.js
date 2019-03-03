@@ -46,7 +46,7 @@ export default () => {
             )
           }
           checked={preferences.hideUnsubscribedMails}
-          label="Hide unsubscribed mails"
+          label="Hide unsubscribed mails in future scans"
         />
       </div>
     </ProfileLayout>

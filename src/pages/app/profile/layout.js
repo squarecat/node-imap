@@ -4,7 +4,7 @@ import {
   CreditCardIcon,
   HeartIcon,
   MailIcon,
-  PhotoIcon,
+  UserIcon,
   SettingsIcon
 } from '../../../components/icons';
 
@@ -27,7 +27,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <SettingsIcon />
+                <UserIcon />
                 Account
               </Link>
             </li>
@@ -67,7 +67,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <PhotoIcon />
+                <SettingsIcon />
                 Preferences
               </Link>
             </li>
