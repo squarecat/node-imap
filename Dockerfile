@@ -28,6 +28,7 @@ ENV CHROME_BIN=/usr/bin/chromium-browser \
    CHROME_PATH=/usr/lib/chromium/
 COPY --from=build /usr/src .
 
-EXPOSE 2345
+EXPOSE 80
+ENV PORT=80
 ENV NODE_ENV="production"
 CMD [ "sh", "./start.sh" ]

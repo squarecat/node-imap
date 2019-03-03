@@ -6,6 +6,9 @@
       "password": "secret"
     }
   },
+  "http": {
+    "port": 2345
+  },
   "auth": {
     "google": {
       "redirect": "http://local.leavemealone.xyz/auth/google/callback",

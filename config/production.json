@@ -6,6 +6,9 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "http": {
+    "port": "$PORT"
+  },
   "urls": {
     "referral": "https://leavemealone.xyz/r/"
   },
