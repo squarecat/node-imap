@@ -1,8 +1,6 @@
 {
   "db": {
-    "host": "127.0.0.1",
-    "port": 27017,
-    "name": "leavemealone",
+    "url": "$MONGO_URL",
     "encryption": {
       "algorithm": "aes-256-cbc",
       "password": "secret"

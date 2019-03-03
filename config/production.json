@@ -1,10 +1,6 @@
 {
   "db": {
-    "user": "$DB_USER",
-    "password": "$DB_PASSWORD",
-    "host": "db.leavemealone.xyz",
-    "port": 27017,
-    "name": "leavemealone",
+    "url": "$MONGO_URL",
     "encryption": {
       "algorithm": "aes-256-ctr",
       "password": "$DB_ENCRYPT_PASSWORD"
