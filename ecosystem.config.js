@@ -27,8 +27,6 @@ module.exports = {
       repo: 'git@github.com:squarecat/leavemealone.git',
       // path in the server
       path: '/var/www/leavemealone',
-      // copy the env file into the deployment
-      'post-setup': './scripts/post-setup.sh',
       // post-deploy action
       'post-deploy': './scripts/post-deploy.sh'
     }
