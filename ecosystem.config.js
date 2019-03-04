@@ -28,7 +28,8 @@ module.exports = {
       // path in the server
       path: '/var/www/leavemealone',
       // post-deploy action
-      'post-deploy': './scripts/post-deploy.sh'
+      'post-deploy':
+        './scripts/post-deploy.sh && pm2 reload ecosystem.config.js --env=beta --update-env'
     }
   }
 };
