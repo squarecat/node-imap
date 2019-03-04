@@ -1,13 +1,13 @@
-import React from 'react';
-import ErrorBoundary from '../../../components/error-boundary';
+import './ignore.module.scss';
+
+import Table, { TableCell, TableRow } from '../../../components/table';
 
 import Button from '../../../components/btn';
+import ErrorBoundary from '../../../components/error-boundary';
 import ProfileLayout from './layout';
-import useUser from '../../../utils/hooks/use-user';
-import Table, { TableRow, TableCell } from '../../../components/table';
+import React from 'react';
 import { TextImportant } from '../../../components/text';
-
-import './ignore.module.scss';
+import useUser from '../../../utils/hooks/use-user';
 
 export async function toggleFromIgnoreList(email, op) {
   const resp = await fetch('/api/me/ignore', {
@@ -43,7 +43,7 @@ export default () => {
           <Table>
             {ignoredSenderList.map(sender => {
               return (
-                <TableRow key={sender} className="ignore-item">
+                <TableRow key={sender}>
                   <TableCell>{sender}</TableCell>
                   <TableCell>
                     <Button compact basic muted onClick={() => remove(sender)}>
