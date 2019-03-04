@@ -20,17 +20,10 @@ import { PRICES as prices } from '../utils/prices';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
 
-// const indieMakerTweetText = encodeURIComponent(
-//   `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
-// );
-
 const PRICES = prices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
-// let referrer;
-// if (typeof URLSearchParams !== 'undefined') {
-//   referrer = new URLSearchParams(window.location.search).get('ref');
-// }
+
 const IndexPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {

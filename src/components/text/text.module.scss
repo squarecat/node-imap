@@ -8,7 +8,7 @@
 
   &:hover {
     color: $color-link-hover;
-    border-bottom: 1px dashed $color-link-hover;
+    border-bottom-color: $color-link-hover;
   }
 }
 
@@ -32,4 +32,8 @@
 
 .bold {
   font-weight: bold;
+}
+
+.undecorated {
+  border-bottom: 0;
 }
