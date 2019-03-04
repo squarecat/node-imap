@@ -100,6 +100,7 @@ export async function createPaymentForUser({
       customerId: customerId,
       productPrice: price,
       productLabel: label,
+      provider: user.provider,
       coupon: couponObject && couponObject.valid ? coupon : null
     });
 
