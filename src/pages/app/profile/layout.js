@@ -9,21 +9,21 @@ import {
   HeartIcon
 } from '../../../components/icons';
 
-import './profile.css';
+import './layout.module.scss';
 
 export default ({ pageName, children }) => (
   <Template pageName={pageName}>
-    <div className="profile-page">
-      <div className="profile-container">
-        <div className="profile-nav-container">
-          <p className="profile-back">
+    <div styleName="profile-page">
+      <div styleName="profile-container">
+        <div styleName="profile-nav-container">
+          <p styleName="profile-back">
             <Link to="/app">&lt; Back to scan</Link>
           </p>
-          <ul className="profile-nav">
+          <ul styleName="profile-nav">
             <li>
               <Link
                 to="/app/profile"
-                className="profile-nav-link"
+                styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
                 <SettingsIcon />
@@ -33,7 +33,7 @@ export default ({ pageName, children }) => (
             <li>
               <Link
                 to="/app/profile/history/billing"
-                className="profile-nav-link"
+                styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
                 <CreditCardIcon />
@@ -43,7 +43,7 @@ export default ({ pageName, children }) => (
             <li>
               <Link
                 to="/app/profile/history/scans"
-                className="profile-nav-link"
+                styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
                 <MailIcon />
@@ -53,7 +53,7 @@ export default ({ pageName, children }) => (
             <li>
               <Link
                 to="/app/profile/ignore"
-                className="profile-nav-link"
+                styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
                 <HeartIcon />
@@ -62,8 +62,8 @@ export default ({ pageName, children }) => (
             </li>
           </ul>
         </div>
-        <div className="profile-content">
-          <h1 className="profile-title">{pageName}</h1>
+        <div styleName="profile-content">
+          <h1 styleName="profile-title">{pageName}</h1>
           {children}
         </div>
       </div>

@@ -1,0 +1,6 @@
+@import './layout.module.scss';
+
+.ignore-section {
+  @extend .profile-section;
+  @extend .profile-section--unpadded;
+}

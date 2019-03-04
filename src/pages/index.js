@@ -1,22 +1,22 @@
 import 'isomorphic-fetch';
-import './home.css';
+import './home.scss';
 
 import React, { useEffect, useRef, useState } from 'react';
 
 import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
+import Header from './header';
 import Layout from '../layouts/layout';
-import WallOfLove from '../components/wall-of-love/wall-of-love';
+import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 import heartGif from '../assets/heart.gif';
 import iphoneUnsubGif from '../assets/iphone-unsub.png';
-import { PRICES as modalPrices } from '../components/price-modal';
+import { PRICES as modalPrices } from '../components/modal/price-modal';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
-import smallLogo from '../assets/envelope-logo.png';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
 
@@ -45,50 +45,13 @@ const IndexPage = () => {
     statsData = value;
   }
 
-  const bannerShown = true;
+  const bannerShown = false;
 
   return (
     <Layout>
       <Colin />
       <div id="main">
-        <div className="home-header">
-          {/* <div className="ref-banner">
-            {bannerShown ? (
-              <span>
-                ❤ Happy Valentines Day! Today only have 40% off all{' '}
-                <a href="/gifts">gift purchases</a> ❤
-              </span>
-            ) : null}
-          </div> */}
-          <div className="home-header-inner">
-            <a href="/" className="home-header-logo">
-              <img alt="logo" src={smallLogo} />
-            </a>
-            <div className="home-header-title">Leave Me Alone </div>
-            <ul className="home-header-nav">
-              <li className="nav-how">
-                <a className="link" href="#how-it-works">
-                  How it works
-                </a>
-              </li>
-              <li className="nav-pricing">
-                <a className="link" href="#pricing">
-                  Pricing
-                </a>
-              </li>
-              <li className="nav-login">
-                <a
-                  href="/app"
-                  onMouseEnter={() => setActive(true)}
-                  onMouseLeave={() => setActive(false)}
-                  className={`beam-me-up-cta beam-me-up-cta--header`}
-                >
-                  Log in
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <Header setActive={setActive} />
         <div
           className={`friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
@@ -121,7 +84,7 @@ const IndexPage = () => {
                     href="/login"
                     onMouseEnter={() => setActive(true)}
                     onMouseLeave={() => setActive(false)}
-                    className={`beam-me-up-cta beam-me-up-cta--f`}
+                    className={`beam-me-up-cta`}
                   >
                     Get Started For Free!
                   </a>
@@ -342,7 +305,7 @@ const IndexPage = () => {
                 href="/login"
                 onMouseEnter={() => setActive(true)}
                 onMouseLeave={() => setActive(false)}
-                className={`beam-me-up-cta beam-me-up-cta--f`}
+                className={`beam-me-up-cta beam-me-up-cta-center`}
               >
                 Get Started For Free!
               </a>
@@ -366,14 +329,9 @@ const IndexPage = () => {
               funding or outside support. We're real people (not the huskies!),
               we're not a soulless corporation out to steal your money! 🙅‍
             </p>
-            <p>
-              <a
-                target="_"
-                href={`https://twitter.com/intent/tweet?text=${indieMakerTweetText}`}
-              >
-                Support the Indie Maker movement!
-              </a>
-            </p>
+            <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
+              Clean My Inbox!
+            </a>
           </div>
         </div>
         <Footer />
@@ -393,64 +351,64 @@ function fetchStats() {
   return fetch('/api/stats').then(r => r.json());
 }
 
-function Stats({ isLoading, data, isVisible }) {
-  const [stats, setStats] = useState({
-    unsubscribableEmails: 0,
-    unsubscriptions: 0
-  });
+// function Stats({ isLoading, data, isVisible }) {
+//   const [stats, setStats] = useState({
+//     unsubscribableEmails: 0,
+//     unsubscriptions: 0
+//   });
 
-  useEffect(
-    () => {
-      if (!isLoading && isVisible) {
-        const {
-          unsubscribableEmails,
-          unsubscriptions,
-          previouslyUnsubscribedEmails
-        } = data;
-        setStats({
-          unsubscribableEmails:
-            unsubscribableEmails - previouslyUnsubscribedEmails,
-          unsubscriptions,
-          set: true
-        });
-      }
-    },
-    [isVisible]
-  );
+//   useEffect(
+//     () => {
+//       if (!isLoading && isVisible) {
+//         const {
+//           unsubscribableEmails,
+//           unsubscriptions,
+//           previouslyUnsubscribedEmails
+//         } = data;
+//         setStats({
+//           unsubscribableEmails:
+//             unsubscribableEmails - previouslyUnsubscribedEmails,
+//           unsubscriptions,
+//           set: true
+//         });
+//       }
+//     },
+//     [isVisible]
+//   );
 
-  return (
-    <div className="stats">
-      <div className="stat">
-        <span className="stat-value">
-          <AnimatedNumber
-            value={stats.unsubscribableEmails}
-            style={{
-              transition: '0.8s ease-out',
-              fontSize: 48
-            }}
-            duration={1000}
-            formatValue={n => formatNumber(n)}
-          />
-        </span>
-        <span>Spam emails scanned</span>
-      </div>
-      <div className="stat">
-        <span className="stat-value">
-          <AnimatedNumber
-            value={stats.unsubscriptions}
-            style={{
-              transition: '0.8s ease-out',
-              fontSize: 48
-            }}
-            duration={1000}
-            formatValue={n => formatNumber(n)}
-          />
-        </span>
-        <span>Spam emails unsubscribed</span>
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className="stats">
+//       <div className="stat">
+//         <span className="stat-value">
+//           <AnimatedNumber
+//             value={stats.unsubscribableEmails}
+//             style={{
+//               transition: '0.8s ease-out',
+//               fontSize: 48
+//             }}
+//             duration={1000}
+//             formatValue={n => formatNumber(n)}
+//           />
+//         </span>
+//         <span>Spam emails scanned</span>
+//       </div>
+//       <div className="stat">
+//         <span className="stat-value">
+//           <AnimatedNumber
+//             value={stats.unsubscriptions}
+//             style={{
+//               transition: '0.8s ease-out',
+//               fontSize: 48
+//             }}
+//             duration={1000}
+//             formatValue={n => formatNumber(n)}
+//           />
+//         </span>
+//         <span>Spam emails unsubscribed</span>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default IndexPage;
 

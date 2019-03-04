@@ -1,0 +1,72 @@
+.toggle {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 32px;
+  background-color: #ffd9d6;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: opacity 200ms ease-in-out, filter 200ms ease-in-out;
+}
+
+.off {
+  filter: grayscale(80%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.toggle-switch {
+  position: absolute;
+  background-color: rgba(255, 165, 159, 0.55);
+  height: 32px;
+  width: 32px;
+  border-radius: 16px;
+  left: 0;
+  top: 0;
+  transition: transform 250ms ease-in-out, background-color 250ms ease-in-out;
+}
+
+.toggle:hover .toggle-switch {
+  background-color: rgba(255, 165, 159, 1);
+}
+
+.on .toggle-switch {
+  transform: translateX(100%);
+}
+
+.toggle-loader {
+  position: absolute;
+  height: 32px;
+  width: 32px;
+  border-radius: 16px;
+  left: 0;
+  top: 0;
+  transition: left 250ms ease-in-out, background-color 250ms ease-in-out;
+  border: 2px solid transparent;
+  border-top-color: rgb(255, 111, 108);
+  animation: spin 1s infinite;
+  visibility: hidden;
+}
+
+.on .toggle-loader {
+  left: 32px;
+}
+
+.loading .toggle-loader {
+  display: inline;
+  visibility: visible;
+}
+
+.disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

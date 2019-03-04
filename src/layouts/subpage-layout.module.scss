@@ -1,0 +1,38 @@
+.subpage {
+  padding: 80px 44px;
+  background-color: #fff;
+  min-height: calc(100% - 50px);
+  display: flex;
+  flex-direction: column;
+}
+
+.subpage-content {
+  width: 990px;
+  max-width: 100%;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.subpage h1 {
+  font-size: 50px;
+}
+
+.centered {
+  text-align: center;
+}
+
+.centered .subpage-content {
+  max-width: 600px;
+}
+
+@media (max-width: 768px) {
+  .subpage {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .centered .subpage-content {
+    max-width: 100%;
+  }
+}

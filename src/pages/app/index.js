@@ -1,10 +1,9 @@
 import 'isomorphic-fetch';
-import './index.css';
 
 import React, { useState } from 'react';
 
 import MailList from './mail-list';
-import Modal from '../../components/price-modal';
+import Modal from '../../components/modal/price-modal';
 import Template from './template';
 import { Transition } from 'react-transition-group';
 import Welcome from './welcome';
