@@ -206,7 +206,7 @@ function getCountryCode(country) {
 }
 async function getTaxInfo({ amount, country }) {
   const countryCode = getCountryCode(country);
-  if (countryCode === 'US') {
+  if (!countryCode || countryCode === 'US') {
     return {
       vatRate: 0,
       vatAmount: 0

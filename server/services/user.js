@@ -11,7 +11,8 @@ import {
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
-  updateUser
+  updateUser,
+  incrementUserReferralBalance
 } from '../dao/user';
 import {
   addReferralSignupToStats,
@@ -198,7 +199,7 @@ export async function getReferralStats(id) {
 }
 
 export async function creditUserAccount(id, { amount }) {
-  return updateUser(id, { $inc: { referralBalance: amount } });
+  return incrementUserReferralBalance(id, amount);
 }
 
 export async function getUserPayments(id) {
