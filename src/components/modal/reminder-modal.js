@@ -16,10 +16,10 @@ import useUser from '../../utils/hooks/use-user';
 const reminderDateFormat = 'Do MMMM YYYY';
 
 export default ({ onClose, onSetReminder, onClearReminder }) => {
-  const [{ userId, currentReminder, lastPaidScan }] = useUser(u => ({
+  const [{ userId, currentReminder, lastPaidScanType }] = useUser(u => ({
     userId: u.id,
     currentReminder: u.reminder,
-    lastPaidScan: u.lastPaidScan
+    lastPaidScanType: u.lastPaidScanType
   }));
 
   const [isShown, setShown] = useState(false);
