@@ -333,8 +333,8 @@ function ErrorScreen({ error, retry }) {
     return (
       <div className="mail-error">
         <p>
-          Oh no, it looks like your Google credentials have become invalid
-          somehow, perhaps you revoked your token?
+          Oh no, it looks like your credentials have become invalid somehow,
+          perhaps you revoked your token?
         </p>
 
         <a className="btn centered muted" onClick={retry}>
@@ -386,32 +386,56 @@ function ErrorScreen({ error, retry }) {
   );
 }
 
-function RevokeTokenInstructions({ style }) {
+function RevokeTokenInstructions({ style, provider }) {
   return (
     <div className="revoke-token-instructions" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
-        <a
-          href="https://security.google.com/settings/security/permissions"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="revoke-link"
-        >
-          Google Account Settings
-          <svg
-            className="icon-external"
-            viewBox="0 0 32 32"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentcolor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
+        {provider === 'google' ? (
+          <a
+            href="https://security.google.com/settings/security/permissions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="revoke-link"
           >
-            <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
-          </svg>
-        </a>
+            Google Account Settings
+            <svg
+              className="icon-external"
+              viewBox="0 0 32 32"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentcolor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+            >
+              <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+            </svg>
+          </a>
+        ) : (
+          <a
+            href="https://account.live.com/consent/Manage"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="revoke-link"
+          >
+            Outlook Account Settings
+            <svg
+              className="icon-external"
+              viewBox="0 0 32 32"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentcolor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+            >
+              <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+            </svg>
+          </a>
+        )}
         .
         <span className="revoke-warning">
           <strong>WARNING</strong>: if you revoke your token you will need to
@@ -490,7 +514,7 @@ function List({
 
   let sortedMail = mail
     .sort((a, b) => {
-      return +b.googleDate - +a.googleDate;
+      return +b.date - +a.date;
     })
     .reduce((out, mailItem, i) => {
       if (isTweetPosition(i, mail.length)) {
@@ -619,7 +643,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
           </span>
           <span className="from-email">{fromEmail}</span>
           <span className="from-date">
-            {format(+m.googleDate, mailDateFormat)}
+            {format(new Date(m.date), mailDateFormat)}
           </span>
           {m.isTrash ? (
             <Tooltip
@@ -631,6 +655,18 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
               overlay={<span>This email was in your trash folder</span>}
             >
               <span className="trash">trash</span>
+            </Tooltip>
+          ) : null}
+          {m.isSpam ? (
+            <Tooltip
+              placement="top"
+              trigger={['hover']}
+              mouseLeaveDelay={0}
+              overlayClassName="tooltip"
+              destroyTooltipOnHide={true}
+              overlay={<span>This email was in your spam folder</span>}
+            >
+              <span className="trash">spam</span>
             </Tooltip>
           ) : null}
         </div>

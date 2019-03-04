@@ -1,17 +1,11 @@
-import mailgun from 'mailgun-js';
 import config from 'getconfig';
+import logger from './logger';
+import mailgun from 'mailgun-js';
 
 const apiKey = config.mailgun.apiKey;
 const domain = config.mailgun.domain;
 
-import logger from './logger';
-
 const transport = mailgun({ apiKey, domain });
-
-const unsubMailOptions = {
-  from: 'Leave Me Alone <unsubscribebot@leavemealone.app>',
-  text: 'unsubscribe'
-};
 
 const giftMailOptions = {
   from: 'Leave Me Alone <purchases@leavemealone.app>',
@@ -25,15 +19,6 @@ const reminderMailOptions = {
 const referralMailOptions = {
   from: 'Leave Me Alone <referrals@leavemealone.app>'
 };
-
-export function sendUnsubscribeMail({ toAddress, subject = 'unsubscribe' }) {
-  logger.info('email-utils: sending unsubscribe mail');
-  return sendMail({
-    ...unsubMailOptions,
-    to: toAddress,
-    subject
-  });
-}
 
 export function sendGiftCouponMultiMail({
   toAddress,
@@ -118,7 +103,7 @@ export function sendReferralRewardMail({
   });
 }
 
-function sendMail(options) {
+export function sendMail(options) {
   return new Promise((resolve, reject) => {
     transport.messages().send(options, err => {
       if (err) {

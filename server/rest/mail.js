@@ -1,19 +1,18 @@
+import {
+  addUnsubscribeErrorResponse,
+  fetchMail,
+  getImage,
+  getMailEstimates
+} from '../services/mail';
+
 import auth from './auth';
-import socketio from 'socket.io';
+import { checkAuthToken } from '../services/user';
 import io from '@pm2/io';
 import isBefore from 'date-fns/is_before';
-import subMinutes from 'date-fns/sub_minutes';
-
-import {
-  scanMail,
-  unsubscribeMail,
-  addUnsubscribeErrorResponse,
-  getMailEstimates,
-  getImage
-} from '../services/mail';
-import { checkAuthToken } from '../services/user';
-
 import logger from '../utils/logger';
+import socketio from 'socket.io';
+import subMinutes from 'date-fns/sub_minutes';
+import { unsubscribeFromMail } from '../services/unsubscriber';
 
 let connectedClients = {};
 let mailBuffer = {};
@@ -27,6 +26,38 @@ const socketsOpen = io.counter({
 });
 
 export default function(app, server) {
+  app.get('/api/mail/test/:strategy', auth, async (req, res) => {
+    const { strategy } = req.params;
+    const { user } = req;
+    let mail = [];
+    let err;
+    const start = Date.now();
+    try {
+      fetchMail(
+        { userId: user.id, timeframe: '1m', ignore: true },
+        {
+          onMail: m => {
+            mail = [...mail, ...m];
+          },
+          onError: e => {
+            console.error('onerror', e);
+            console.error(e);
+            err = e;
+          },
+          onEnd: () => {
+            const took = Date.now() - start;
+            res.send(err || { mail, took });
+          },
+          onProgress: () => {}
+        },
+        { strategy }
+      );
+    } catch (err) {
+      console.log('test errr', err.message);
+      res.send(err.message);
+    }
+  });
+
   app.get('/api/mail/image/:mailId', auth, async (req, res) => {
     const { user, params } = req;
     const { mailId } = params;
@@ -42,6 +73,7 @@ export default function(app, server) {
       res.status(500).send(err);
     }
   });
+
   app.get('/api/mail/estimates', auth, async (req, res) => {
     const estimates = await getMailEstimates(req.user.id);
     res.send(estimates);
@@ -84,7 +116,7 @@ export default function(app, server) {
       }
     }, 5000);
 
-    socket.on('fetch', ({ timeframe }) => {
+    socket.on('fetch', async ({ timeframe }) => {
       if (!socket.auth) {
         return 'Not authenticated';
       }
@@ -92,24 +124,32 @@ export default function(app, server) {
       const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
         socket.userId
       );
-      // get mail data for user
-      scanMail(
-        {
+      try {
+        // get mail data for user
+        const it = await fetchMail({
           userId: socket.userId,
           timeframe
-        },
-        {
-          onMail,
-          onError,
-          onEnd,
-          onProgress
+        });
+        let next = await it.next();
+        while (!next.done) {
+          const { value } = next;
+          const { type, data } = value;
+          if (type === 'mail') {
+            onMail(data);
+          } else if (type === 'progress') {
+            onProgress(data);
+          }
+          next = await it.next();
         }
-      );
+        onEnd(next.value);
+      } catch (err) {
+        onError(err);
+      }
     });
 
     socket.on('unsubscribe', async mail => {
       try {
-        const data = await unsubscribeMail(socket.userId, mail);
+        const data = await unsubscribeFromMail(socket.userId, mail);
         socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
         logger.error('mail-rest: error unsubscribing from mail');
@@ -169,7 +209,11 @@ function getSocketFunctions(userId) {
         logger.error('socket: no socket dropped event `error`');
         return false;
       }
-      sock.emit('mail:err', err);
+      if (process.NODE_ENV !== 'production') {
+        sock.emit('mail:err', err.stack);
+      } else {
+        sock.emit('mail:err', err.toString());
+      }
       return true;
     },
     onEnd: () => {

@@ -1,0 +1,253 @@
+import { getGmailAccessToken, getMailClient } from './access';
+import { getSearchString, getTimeRange, hasPaidScanAvailable } from './utils';
+
+import { URLSearchParams } from 'url';
+import axios from 'axios';
+import { getEstimateForTimeframe } from './estimator';
+import httpMessageParser from 'http-message-parser';
+import logger from '../../../utils/logger';
+import { parseMailList } from './parser';
+
+// todo convert to generator?
+export async function* fetchMail(
+  { user, timeframe },
+  { strategy = 'api', batch = false } = {}
+) {
+  const start = Date.now();
+  try {
+    if (!hasPaidScanAvailable(user, timeframe)) {
+      logger.warn(
+        'mail-service: User attempted search that has not been paid for'
+      );
+      throw new Error('Not paid');
+    }
+    logger.info(`gmail-fetcher: started ${timeframe} scan (${user.id})`);
+    const { unsubscriptions, ignoredSenderList } = user;
+    const [totalEstimate, client, accessToken] = await Promise.all([
+      getEstimateForTimeframe(user, {
+        timeframe,
+        includeTrash: true
+      }),
+      getMailClient(user, strategy),
+      getGmailAccessToken(user)
+    ]);
+
+    let totalEmailsCount = 0;
+    let totalUnsubCount = 0;
+    let totalPrevUnsubbedCount = 0;
+    let progress = 0;
+    if (strategy === 'api') {
+      for await (let mail of fetchMailApi(client, {
+        accessToken,
+        timeframe,
+        batch
+      })) {
+        totalEmailsCount = totalEmailsCount + mail.length;
+        progress = progress + mail.length;
+        const unsubscribableMail = parseMailList(mail, {
+          ignoredSenderList,
+          unsubscriptions
+        });
+        totalUnsubCount = totalUnsubCount + unsubscribableMail.length;
+        const previouslyUnsubbedCount = unsubscribableMail.filter(
+          sm => !sm.subscribed
+        ).length;
+        totalPrevUnsubbedCount =
+          totalPrevUnsubbedCount + previouslyUnsubbedCount;
+
+        if (unsubscribableMail.length) {
+          yield { type: 'mail', data: unsubscribableMail };
+        }
+        yield { type: 'progress', data: totalEstimate };
+      }
+    } else if (strategy === 'imap') {
+      for await (let mail of fetchMailImap(client, { timeframe })) {
+        totalEmailsCount = totalEmailsCount + mail.length;
+        progress = progress + mail.length;
+        const unsubscribableMail = parseMailList(mail, {
+          ignoredSenderList,
+          unsubscriptions
+        });
+        if (unsubscribableMail.length) {
+          yield { type: 'mail', data: unsubscribableMail };
+        }
+        yield { type: 'progress', data: totalEstimate };
+      }
+    }
+
+    logger.info(
+      `gmail-fetcher: finished ${timeframe} scan (${
+        user.id
+      }) [took ${(Date.now() - start) / 1000}s]`
+    );
+    return {
+      totalMail: totalEmailsCount,
+      totalUnsubscribableMail: totalUnsubCount,
+      totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount
+    };
+  } catch (err) {
+    logger.error('gmail-fetcher: failed to fetch mail');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function* fetchMailImap(client, { timeframe }) {
+  try {
+    const { then } = getTimeRange(timeframe);
+    client.onerror = err => console.error(err);
+    console.log('authenticating with imap');
+    await client.connect();
+    const key = 'body[header.fields (from to subject list-unsubscribe)]';
+    const query = [
+      'uid',
+      'BODY.PEEK[HEADER.FIELDS (From To Subject List-Unsubscribe)]'
+    ];
+    const resultUUIDs = await client.search('INBOX', {
+      since: then
+    });
+    let results = await client.listMessages(
+      'INBOX',
+      `${resultUUIDs[0]}:${resultUUIDs[resultUUIDs.length - 1]}`,
+      query,
+      {
+        byUid: true,
+        valueAsString: true
+      }
+    );
+    results = results.map(r => {
+      const headers = r[key].split('\r\n').filter(s => s);
+      return {
+        payload: { headers, snippet: '' },
+        id: r.uid,
+        labelIds: [],
+        internalDate: Date.now()
+      };
+    });
+    yield results;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function* fetchMailApi(
+  client,
+  { accessToken, timeframe, batch = true, perPage = 100 }
+) {
+  let pageToken;
+  try {
+    const { then, now } = getTimeRange(timeframe);
+    const query = getSearchString({
+      then,
+      now
+    });
+    const fields = 'nextPageToken';
+    do {
+      const response = await fetchPage(client, {
+        fields,
+        query,
+        perPage,
+        pageToken
+      });
+      const { data } = response;
+      const { messages, nextPageToken } = data;
+      pageToken = nextPageToken;
+      let populatedMessages;
+      if (batch) {
+        populatedMessages = await fetchMessagesBatch(
+          accessToken,
+          messages.map(m => m.id)
+        );
+      } else {
+        populatedMessages = await Promise.all(
+          messages.map(m => fetchMessageById(client, { id: m.id }))
+        );
+      }
+      yield populatedMessages;
+    } while (pageToken);
+  } catch (err) {
+    console.error('gmail-fetcher: failed to fetch mail');
+    console.error(err);
+    throw err;
+  }
+}
+
+async function fetchPage(client, { fields, query, perPage, pageToken }) {
+  const { data, nextPageToken } = await client.users.messages.list({
+    userId: 'me',
+    includeSpamTrash: true,
+    q: query,
+    labelIds: ['INBOX'],
+    qs: {
+      fields,
+      maxResults: perPage,
+      pageToken
+    }
+  });
+  return { data, nextPageToken };
+}
+
+async function fetchMessageById(client, { id }) {
+  const fields = 'id,internalDate,labelIds,payload/headers,snippet';
+  const { data } = await client.users.messages.get({
+    userId: 'me',
+    id,
+    format: 'METADATA',
+    metadataHeaders: ['from', 'to', 'list-unsubscribe'],
+    fields
+  });
+  return data;
+}
+
+const batchUrl = 'https://www.googleapis.com/batch/gmail/v1';
+
+async function fetchMessagesBatch(accessToken, messageIds) {
+  const boundary = 'leave-me-alone';
+
+  let queryParams = new URLSearchParams({
+    format: 'metadata',
+    fields: 'id,internalDate,labelIds,payload/headers,snippet',
+    metadataHeaders: 'from'
+  }).toString();
+  // google accepts metadataHeaders in a weird fucking way,
+  // so we add that on after. dumbass.
+  queryParams = `${queryParams}&metadataHeaders=to&metadataHeaders=list-unsubscribe`;
+
+  let content = messageIds.map(id =>
+    [
+      `--${boundary}`,
+      `Content-ID: ${id}`,
+      `Content-Type: application/http`,
+      ``,
+      `GET https://www.googleapis.com/gmail/v1/users/me/messages/${id}?${queryParams}`,
+      ``
+    ].join('\n')
+  );
+  content = `${content.join('\n')}\n\n--${boundary}--`;
+  try {
+    const response = await axios.request({
+      url: batchUrl,
+      method: 'POST',
+      headers: {
+        'Content-Type': `multipart/mixed; boundary=${boundary}`,
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Length': content.length
+      },
+      data: content
+    });
+    const respJson = httpMessageParser(response.data);
+    const messages = respJson.multipart.map(({ body }) => {
+      const messageRaw = body.toString();
+      const contentLen = messageRaw.match(/Content-Length: (.+)/)[1];
+      const content = messageRaw
+        .substr(messageRaw.indexOf('{'), contentLen)
+        .trim();
+      return JSON.parse(content);
+    });
+    return messages;
+  } catch (err) {
+    logger.error('gmail-fetcher: failed batch message request');
+    logger.error(err);
+    throw err;
+  }
+}

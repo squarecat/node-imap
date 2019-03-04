@@ -411,7 +411,7 @@ const EstimatesScreen = ({ setScreen }) => {
       <div styleName="modal-content">
         <div>
           {loading ? (
-            <p>Asking Google to estimate your emails...please wait...</p>
+            <p>Requesting an estimate for your emails...please wait...</p>
           ) : (
             <p>Here are our estimates:</p>
           )}
@@ -436,8 +436,8 @@ const EstimatesScreen = ({ setScreen }) => {
             <div styleName="source">
               <h5>How do we get this information?</h5>
               <p>
-                Google provides estimates of the quantity of emails in your
-                inbox. Using this and{' '}
+                Your mail provider gives us estimates of the quantity of emails
+                in your inbox. Using this and{' '}
                 <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
                   research into the number of spam emails users receive on
                   average (48.16%)
