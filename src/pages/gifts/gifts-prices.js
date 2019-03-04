@@ -3,6 +3,7 @@ import './gifts.module.scss';
 import React, { useState } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
+import { FormInput } from '../../components/form';
 import GiftCheckout from './gift-checkout';
 import _isArray from 'lodash.isarray';
 
@@ -48,7 +49,7 @@ export default ({ prices }) => {
         Want to buy more than 1 scan?
       </TextLink>
       <div styleName={`gift-quantity-box ${isQuantityShown ? 'shown' : ''}`}>
-        <input
+        <FormInput
           type="number"
           min="1"
           step="1"

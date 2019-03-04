@@ -30,7 +30,11 @@ export default globalReducer(
     }),
     setLastPaidScanType: (state, timeframe) => ({
       ...state,
-      lastPaidScanType: timeframe
+      lastPaidScan: timeframe
+    }),
+    setPreferences: (state, preferences) => ({
+      ...state,
+      preferences
     })
   }
 );

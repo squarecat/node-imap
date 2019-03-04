@@ -114,6 +114,7 @@ const mailReducer = (state = [], action) => {
 
 function useSocket(callback) {
   const [user, { incrementUnsubCount }] = useUser();
+  const preferences = user.preferences || {};
 
   const [localMail, setLocalMail] = useLocalStorage(
     `leavemealone.mail.${user ? user.id : ''}`,
@@ -149,11 +150,7 @@ function useSocket(callback) {
       setSocket(socket);
     });
     socket.on('mail', data => {
-      if (_isArray(data)) {
-        dispatch({ type: 'add-all', data: data });
-      } else {
-        dispatch({ type: 'add', data: data });
-      }
+      setMail(data);
     });
     socket.on('mail:end', callback);
     socket.on('mail:err', err => {
@@ -178,6 +175,23 @@ function useSocket(callback) {
       dispatch({ type: 'set-loading', data: { id, isLoading: false } });
     });
   }, []);
+
+  function setMail(data) {
+    if (_isArray(data)) {
+      const filtered = data.filter(d => showMailItem(d));
+      dispatch({ type: 'add-all', data: filtered });
+    } else {
+      if (showMailItem(data)) {
+        dispatch({ type: 'add', data });
+      }
+    }
+  }
+
+  function showMailItem(m) {
+    if (!preferences.hideUnsubscribedMails) return true;
+    if (m.estimatedSuccess === false || m.resolved === false) return true;
+    return m.subscribed;
+  }
 
   function fetchMail(timeframe) {
     setProgress(0);

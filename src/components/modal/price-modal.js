@@ -15,6 +15,7 @@ import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import useAsync from '../../utils/hooks/use-async';
 import { LockIcon } from '../icons';
+import { FormInput } from '../form';
 
 export const PRICES = [
   {
@@ -224,7 +225,7 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
               invalid: couponData.valid === false
             })}
           >
-            <input
+            <FormInput
               value={coupon}
               placeholder="Discount coupon"
               onChange={e => {

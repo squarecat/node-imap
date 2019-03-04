@@ -1,12 +1,11 @@
-import { setConfig } from 'react-hot-loader';
 import 'babel-polyfill';
-import React from 'react';
-import Helmet from 'react-helmet';
-
-import favicon from '../assets/meta/favicon.png';
-
-import '../common.css';
+import '../common.scss';
 import './layout.css';
+
+import Helmet from 'react-helmet';
+import React from 'react';
+import favicon from '../assets/meta/favicon.png';
+import { setConfig } from 'react-hot-loader';
 
 setConfig({ pureSFC: true });
 

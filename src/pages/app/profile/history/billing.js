@@ -1,13 +1,14 @@
 import './billing.module.scss';
 
+import Table, { TableCell, TableRow } from '../../../../components/table';
+
 import ErrorBoundary from '../../../../components/error-boundary';
 import ProfileLayout from '../layout';
 import React from 'react';
+import { TextImportant } from '../../../../components/text';
 import format from 'date-fns/format';
 import numeral from 'numeral';
 import { useAsync } from '../../../../utils/hooks';
-
-import Table, { TableRow, TableCell } from '../../../../components/table';
 
 async function fetchBillingHistory() {
   const res = await fetch('/api/me/billing', {
@@ -31,8 +32,8 @@ export default function BillingHistory() {
       ) : (
         <div styleName="billing-section">
           <p>
-            Showing <span className="text-important">{payments.length}</span>{' '}
-            previous payments.
+            Showing <TextImportant>{payments.length}</TextImportant> previous
+            payments.
           </p>
           <ErrorBoundary>
             <Table>

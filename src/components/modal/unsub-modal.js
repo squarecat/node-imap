@@ -330,7 +330,7 @@ function slide3(image, onSubmit) {
           Nope
         </a>
         <a
-          styleName="modal-btn modal-btn--secondary"
+          styleName="modal-btn modal-btn--cta"
           onClick={() => onSubmit({ success: true, useImage: true })}
         >
           Yes of course!
