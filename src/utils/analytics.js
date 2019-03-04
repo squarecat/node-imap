@@ -1,4 +1,4 @@
-import { PRICES } from '../components/modal/price-modal';
+import { PRICES } from '../utils/prices';
 
 let gtag;
 if (typeof window !== 'undefined') {

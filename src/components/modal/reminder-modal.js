@@ -7,9 +7,9 @@ import React, { useEffect, useState } from 'react';
 import Button from '../btn';
 import { ClockIcon } from '../icons';
 import ModalClose from './modal-close';
+import { PRICES } from '../../utils/prices';
 import { TextImportant } from '../text';
 import format from 'date-fns/format';
-import { PRICES as modalPrices } from './price-modal';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
 
@@ -81,7 +81,7 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
       </>
     );
   } else {
-    const scanPerformed = modalPrices.find(p => p.value === lastPaidScan);
+    const scanPerformed = PRICES.find(p => p.value === lastPaidScanType);
     nextReminder = {
       label: scanPerformed.label,
       timeframe: scanPerformed.value
