@@ -22,7 +22,7 @@ const tfToString = {
 };
 
 export default ({ showPriceModal, onClickRescan }) => {
-  const [lastScan] = useUser(u => u.lastScan || {});
+  const [lastScan] = useUser(u => u.lastScan);
 
   let content = null;
 
@@ -30,7 +30,7 @@ export default ({ showPriceModal, onClickRescan }) => {
     const yesterday = subHours(Date.now(), 24);
     const isRescanAvailable = isAfter(lastScan.scannedAt, yesterday);
 
-    const fromDate = format(getTimeRange(lastScan.timeframe), dateFormat);
+    const fromDate = format(getTimeRange(lastScan), dateFormat);
     const toDate = format(lastScan.scannedAt, dateFormat);
     content = (
       <>
