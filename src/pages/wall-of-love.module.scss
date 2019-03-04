@@ -27,6 +27,8 @@
 }
 
 .ph-badge {
+  margin: 0 5px;
+  display: inline-block;
 }
 
 @media (max-width: 800px) {
@@ -40,7 +42,7 @@
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   /* hide everything after the 2nd column */
   .col:nth-child(n + 2) {
     display: none;

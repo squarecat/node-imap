@@ -1,9 +1,10 @@
 import './footer.module.scss';
-import cx from 'classnames';
+
 import { MailIcon, TwitterIcon } from '../icons';
 
 import React from 'react';
 import { TextLink } from '../text';
+import cx from 'classnames';
 
 export default visProps => (
   <div
@@ -62,14 +63,14 @@ export default visProps => (
     </ul>
     <ul styleName="footer-social">
       <li title="@LeaveMeAloneApp">
-        <a href="https://twitter.com/leavemealoneapp">
+        <TextLink undecorated href="https://twitter.com/leavemealoneapp">
           <TwitterIcon />
-        </a>
+        </TextLink>
       </li>
       <li title="leavemealone@squarecat.io">
-        <a href="mailto:leavemealone@squarecat.io">
+        <TextLink undecorated href="mailto:leavemealone@squarecat.io">
           <MailIcon />
-        </a>
+        </TextLink>
       </li>
     </ul>
   </div>
