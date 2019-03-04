@@ -78,7 +78,7 @@
     "build:client": "gatsby build",
     "build:server": "babel -d ./build ./server && cp server/utils/countries.json build/utils/countries.json",
     "develop": "gatsby develop",
-    "start": "NODE_ENV=production node index",
+    "start": "node index",
     "start:dev": "NODE_ENV=development node --inspect-brk index",
     "format": "prettier --write \"src/**/*.js\"",
     "test": "eslint ./server ./src"

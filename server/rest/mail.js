@@ -94,10 +94,19 @@ export default function(app, server) {
           socket.auth = true;
           socket.userId = userId;
           socket.emit('authenticated');
-          if (mailBuffer[userId] && mailBuffer[userId].droppedMail.length) {
-            socket.emit('mail', mailBuffer[userId].droppedMail);
-            mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
-            mailBuffer[userId].droppedMail = [];
+          // if the client is reconnecting, we may have some mail
+          // in the buffer for them, check and send it
+          if (mailBuffer[userId]) {
+            if (mailBuffer[userId].droppedMail.length) {
+              socket.emit('mail', mailBuffer[userId].droppedMail);
+              mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
+              mailBuffer[userId].droppedMail = [];
+            }
+            if (mailBuffer[userId].droppedEnd) {
+              socket.emit('mail:end');
+            }
+          } else {
+            throw new Error('mail-rest: invalid wss token');
           }
         }
       } catch (err) {
@@ -209,6 +218,8 @@ function getSocketFunctions(userId) {
         logger.error('socket: no socket dropped event `error`');
         return false;
       }
+      // if in production, just return a regular
+      // error message
       if (process.NODE_ENV !== 'production') {
         sock.emit('mail:err', err.stack);
       } else {
@@ -222,6 +233,7 @@ function getSocketFunctions(userId) {
         logger.error('socket: no socket dropped event `end`');
         return false;
       }
+      mailBuffer[userId].droppedEnd = true;
       sock.emit('mail:end');
       return true;
     },
@@ -236,16 +248,17 @@ function getSocketFunctions(userId) {
   };
 }
 
-// delete any mail buffer that is older than 5 minutes
-setTimeout(() => {
+// TODO move this to redis
+// delete any mail in the buffer that is older than 60 minutes
+setInterval(() => {
   Object.keys(mailBuffer).forEach(userId => {
     const { start } = mailBuffer[userId];
-    if (isBefore(start, subMinutes(new Date(), 5))) {
+    if (isBefore(start, subMinutes(new Date(), 60))) {
       mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
       delete mailBuffer[userId];
     }
   });
-}, 5000);
+}, 60000);
 
 io.action('mail-buffer:clear', cb => {
   mailBuffer = {};

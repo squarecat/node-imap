@@ -9,7 +9,7 @@ const betaTweetText = encodeURIComponent(
   `🙌 I've been beta testing @LeaveMeAloneApp and it's the best because... \n\nCheck it out at https://leavemealone.xyz`
 );
 
-export default ({ openPriceModal, isBeta }) => {
+export default ({ openPriceModal, isBeta = false, provider } = {}) => {
   return (
     <>
       <div>
@@ -36,8 +36,9 @@ export default ({ openPriceModal, isBeta }) => {
             </>
           ) : null}
           <p>
-            <strong>Leave Me Alone</strong> will scan your Gmail inbox, and find
-            all the subscripion emails that you are receiving.
+            <strong>Leave Me Alone</strong> will scan your{' '}
+            <span styleName="provider">{provider}</span> inbox, and find all the
+            subscripion emails that you are receiving.
           </p>
           <div styleName="welcome-logo">
             <img src={logo} alt="logo" styleName="first-logon-image" />

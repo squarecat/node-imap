@@ -23,7 +23,7 @@ export default function App({ location = {} } = {}) {
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
   const [user, { setLastPaidScanType }] = useUser();
-  const { hasScanned } = user;
+  const { hasScanned, provider } = user;
 
   return (
     <Template>
@@ -35,7 +35,10 @@ export default function App({ location = {} } = {}) {
       >
         {state => (
           <div className={`welcome-content ${state}`}>
-            <Welcome openPriceModal={() => togglePriceModal(true)} />
+            <Welcome
+              openPriceModal={() => togglePriceModal(true)}
+              provider={provider}
+            />
           </div>
         )}
       </Transition>
