@@ -6,6 +6,7 @@ import ErrorBoundary from '../../../../components/error-boundary';
 import ProfileLayout from '../layout';
 import React from 'react';
 import { TextImportant } from '../../../../components/text';
+import cx from 'classnames';
 import format from 'date-fns/format';
 import numeral from 'numeral';
 import { useAsync } from '../../../../utils/hooks';
@@ -76,13 +77,10 @@ function getPrice({ price, refunded }) {
     price % 2 > 0
       ? numeral(price / 100).format('$0,0.00')
       : numeral(price / 100).format('$0,0');
-  return (
-    <span
-      className={`invoice-price ${refunded ? 'invoice-price--refunded' : ''}`}
-    >
-      {display}
-    </span>
-  );
+  const classes = cx('invoice-price', {
+    'invoice-price--refunded': refunded
+  });
+  return <span styleName={classes}>{display}</span>;
 }
 
 function getStatus({ attempted, paid, refunded }) {

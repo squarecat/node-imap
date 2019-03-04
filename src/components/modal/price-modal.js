@@ -6,7 +6,10 @@ import CheckoutForm, { getCoupon } from '../checkout-form';
 import React, { useEffect, useState } from 'react';
 
 import Button from '../btn';
+import { FormInput } from '../form';
+import { LockIcon } from '../icons';
 import ModalClose from './modal-close';
+import { PRICES } from '../../utils/prices';
 import { TextImportant } from '../text';
 import cx from 'classnames';
 import format from 'date-fns/format';
@@ -14,26 +17,7 @@ import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import useAsync from '../../utils/hooks/use-async';
-import { LockIcon } from '../icons';
-import { FormInput } from '../form';
 
-export const PRICES = [
-  {
-    price: 300,
-    label: '1 week',
-    value: '1w'
-  },
-  {
-    price: 500,
-    label: '1 month',
-    value: '1m'
-  },
-  {
-    price: 800,
-    label: '6 months',
-    value: '6m'
-  }
-];
 export default ({ onClose, onPurchase }) => {
   const [isShown, setShown] = useState(false);
   const [screen, setScreen] = useState('pricing');

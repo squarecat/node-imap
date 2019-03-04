@@ -22,7 +22,7 @@ const tfToString = {
 };
 
 export default ({ showPriceModal, onClickRescan }) => {
-  const [lastScan] = useUser(u => u.lastScan || {});
+  const [lastScan] = useUser(u => u.lastScan);
 
   let content = null;
 

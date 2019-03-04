@@ -1,10 +1,10 @@
+import './gifts.module.scss';
+
 import GiftsPrices from './gifts-prices';
-import { PRICES } from '../../components/modal/price-modal';
+import { PRICES } from '../../utils/prices';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextImportant } from '../../components/text';
-
-import './gifts.module.scss';
 
 const GiftsPage = () => {
   return (

@@ -14,7 +14,7 @@ const tfToString = {
 };
 
 export default ({ onClose, onRescan, onPurchase }) => {
-  const [lastScan] = useUser(u => u.lastScan || {});
+  const [lastScan] = useUser(u => u.lastScan);
   const [isShown, setShown] = useState(false);
 
   const handleKeydown = e => {
