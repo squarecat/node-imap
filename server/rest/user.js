@@ -45,8 +45,9 @@ export default app => {
         referredBy,
         referralCode,
         hasScanned: scans ? !!scans.length : false,
-        lastPaidScan: paidScans.length
-          ? paidScans[paidScans.length - 1].scanType
+        lastScan: scans.length ? scans[scans.length - 1] : null,
+        lastPaidScanType: paidScans.length
+          ? paidScans[paidScans.length - 1]
           : null,
         reminder,
         preferences,

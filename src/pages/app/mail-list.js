@@ -3,12 +3,16 @@ import './mail-list.scss';
 
 import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
+import { ReloadIcon, TwitterIcon } from '../../components/icons';
 
 import AnimatedNumber from 'react-animated-number';
+import Button from '../../components/btn';
 import { CSSTransition } from 'react-transition-group';
 import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
-import { ReloadIcon, TwitterIcon } from '../../components/icons';
+import MailListEmptyState from './mail-list/empty-state';
+import RescanModal from '../../components/modal/rescan-modal';
+import { TextLink } from '../../components/text';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
@@ -19,6 +23,8 @@ import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
+import isAfter from 'date-fns/is_after';
+import subHours from 'date-fns/sub_hours';
 import { toggleFromIgnoreList } from './profile/ignore';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
@@ -230,9 +236,12 @@ function useSocket(callback) {
   };
 }
 
-export default ({ timeframe, showPriceModal }) => {
+export default ({ timeframe, setTimeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
+  const [showRescanModal, toggleRescanModal] = useState(false);
   const [user, { setHasSearched }] = useUser();
+
+  const { lastScan } = user;
 
   const {
     mail,
@@ -251,6 +260,7 @@ export default ({ timeframe, showPriceModal }) => {
     `leavemealone.timeframe.${user ? user.id : ''}`,
     []
   );
+
   function doSearch() {
     setSearchFinished(false);
     fetchMail(timeframe);
@@ -288,10 +298,23 @@ export default ({ timeframe, showPriceModal }) => {
     mail.length
   );
 
+  const onShowPriceModal = () => {
+    if (!lastScan) {
+      return showPriceModal(true);
+    }
+
+    const yesterday = subHours(Date.now(), 24);
+    const rescanAvailable = isAfter(lastScan.scannedAt, yesterday);
+
+    if (!rescanAvailable) return showPriceModal(true);
+
+    return toggleRescanModal(true);
+  };
+
   const showMoreText =
     isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;
-  const scanMessage = `Depending on the size of your inbox this may take a while, feel
-    free to check back later, but please don't close this window.`;
+  // const scanMessage = `Depending on the size of your inbox this may take a while, feel
+  //   free to check back later, but please don't close this window.`;
 
   return (
     <>
@@ -310,7 +333,7 @@ export default ({ timeframe, showPriceModal }) => {
             {/* <span>{scanMessage}</span> */}
           </span>
           <span className="action-item">
-            <a onClick={() => showPriceModal()} className="btn compact icon">
+            <a onClick={() => onShowPriceModal()} className="scan-more-btn">
               <ReloadIcon />
               Scan more
             </a>
@@ -333,11 +356,27 @@ export default ({ timeframe, showPriceModal }) => {
             isSearchFinished={isSearchFinished}
             showPriceModal={showPriceModal}
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
+            onClickRescan={tf => setTimeframe(tf)}
             dispatch={dispatch}
           />
           {getSocialContent(user.unsubCount, user.referralCode)}
         </ErrorBoundary>
       )}
+      {showRescanModal ? (
+        <RescanModal
+          onRescan={tf => {
+            setTimeframe(tf);
+            toggleRescanModal(false);
+          }}
+          onPurchase={() => {
+            toggleRescanModal(false);
+            showPriceModal(true);
+          }}
+          onClose={() => {
+            toggleRescanModal(false);
+          }}
+        />
+      ) : null}
     </>
   );
 };
@@ -347,18 +386,18 @@ function ErrorScreen({ error, retry }) {
     return (
       <div className="mail-error">
         <p>
-          Oh no, it looks like your Google credentials have become invalid
-          somehow, perhaps you revoked your token?
+          Oh no, it looks like your credentials have become invalid somehow,
+          perhaps you revoked your token?
         </p>
 
-        <a className="btn centered muted" onClick={retry}>
+        <Button centered muted basic onClick={retry}>
           Retry
-        </a>
+        </Button>
 
         <p>
           If this keeps happening please try{' '}
-          <a href="/auth/logout">logging out</a> and back in again to refresh
-          your credentials. Thanks!
+          <TextLink href="/auth/logout">logging out</TextLink> and back in again
+          to refresh your credentials. Thanks!
         </p>
         <pre className="error-details">{error}</pre>
       </div>
@@ -372,13 +411,13 @@ function ErrorScreen({ error, retry }) {
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
-          <a
+          <TextLink
             onClick={() =>
               openChat("Hi! I've paid for a scan but I can't perform it!")
             }
           >
             Let us know!
-          </a>
+          </TextLink>
         </p>
       </div>
     );
@@ -387,9 +426,9 @@ function ErrorScreen({ error, retry }) {
     <div className="mail-error">
       <p>Oh no, something went wrong on our end. Please try and scan again</p>
 
-      <a className="btn centered muted" onClick={retry}>
+      <Button centered muted basic onClick={retry}>
         Retry
-      </a>
+      </Button>
 
       <p>
         This is definitely our fault, so if it still doesn't work then please
@@ -400,32 +439,56 @@ function ErrorScreen({ error, retry }) {
   );
 }
 
-function RevokeTokenInstructions({ style }) {
+function RevokeTokenInstructions({ style, provider }) {
   return (
     <div className="revoke-token-instructions" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
-        <a
-          href="https://security.google.com/settings/security/permissions"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="revoke-link"
-        >
-          Google Account Settings
-          <svg
-            className="icon-external"
-            viewBox="0 0 32 32"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentcolor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
+        {provider === 'google' ? (
+          <a
+            href="https://security.google.com/settings/security/permissions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="revoke-link"
           >
-            <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
-          </svg>
-        </a>
+            Google Account Settings
+            <svg
+              className="icon-external"
+              viewBox="0 0 32 32"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentcolor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+            >
+              <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+            </svg>
+          </a>
+        ) : (
+          <a
+            href="https://account.live.com/consent/Manage"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="revoke-link"
+          >
+            Outlook Account Settings
+            <svg
+              className="icon-external"
+              viewBox="0 0 32 32"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentcolor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+            >
+              <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+            </svg>
+          </a>
+        )}
         .
         <span className="revoke-warning">
           <strong>WARNING</strong>: if you revoke your token you will need to
@@ -480,20 +543,17 @@ function List({
   isSearchFinished,
   showPriceModal,
   addUnsubscribeErrorResponse,
+  onClickRescan,
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
 
   if (!mail.length && isSearchFinished) {
     return (
-      <div className="mail-empty-state">
-        <h3>No mail subscriptions found! 🎉</h3>
-        <p>Enjoy your clear inbox!</p>
-        <p>
-          If you're still getting subscription emails then try searching{' '}
-          <a onClick={showPriceModal}>over a longer period</a>.
-        </p>
-      </div>
+      <MailListEmptyState
+        onClickRescan={tf => onClickRescan(tf)}
+        showPriceModal={showPriceModal}
+      />
     );
   }
 
@@ -503,7 +563,7 @@ function List({
 
   let sortedMail = mail
     .sort((a, b) => {
-      return +b.googleDate - +a.googleDate;
+      return +b.date - +a.date;
     })
     .reduce((out, mailItem, i) => {
       if (isTweetPosition(i, mail.length)) {
@@ -632,7 +692,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
           </span>
           <span className="from-email">{fromEmail}</span>
           <span className="from-date">
-            {format(+m.googleDate, mailDateFormat)}
+            {format(new Date(m.date), mailDateFormat)}
           </span>
           {m.isTrash ? (
             <Tooltip
@@ -644,6 +704,18 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
               overlay={<span>This email was in your trash folder</span>}
             >
               <span className="trash">trash</span>
+            </Tooltip>
+          ) : null}
+          {m.isSpam ? (
+            <Tooltip
+              placement="top"
+              trigger={['hover']}
+              mouseLeaveDelay={0}
+              overlayClassName="tooltip"
+              destroyTooltipOnHide={true}
+              overlay={<span>This email was in your spam folder</span>}
+            >
+              <span className="trash">spam</span>
             </Tooltip>
           ) : null}
         </div>
@@ -659,7 +731,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
           ) : (
             <svg
               onClick={() => setUnsubModal(m, true)}
-              className="failed-to-unsub-btn"
+              className="failed-to-unsub-icon"
               viewBox="0 0 32 32"
               width="20"
               height="20"

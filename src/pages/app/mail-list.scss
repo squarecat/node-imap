@@ -69,9 +69,10 @@
   vertical-align: top;
   margin-left: 7px;
   cursor: default;
-}
-.trash:hover {
-  background-color: #ffb9b6;
+
+  &:hover {
+    background-color: #ffb9b6;
+  }
 }
 
 .from-email {
@@ -98,7 +99,7 @@
   text-align: center;
   position: relative;
 }
-/* TODO remove this if not used */
+
 .action {
   text-align: center;
 }
@@ -130,7 +131,9 @@
   flex: 1;
 }
 
-.action-item > .btn.compact {
+.scan-more-btn {
+  @extend .btn;
+  @extend .compact;
   width: 140px;
   margin-left: auto;
   padding: 5px 0;
@@ -147,21 +150,13 @@
   margin-right: 2px;
 }
 
-.mail-empty-state {
-  background-color: rgba(252, 219, 216, 0.2);
-  padding: 30px 15px;
-  border-radius: 7px;
-  text-align: center;
-  margin: 50px auto;
-}
-
-.failed-to-unsub-btn {
+.failed-to-unsub-icon {
   cursor: pointer;
-  stroke: rgba(231, 57, 48, 0.749);
+  stroke: $color-link;
 }
 
-.failed-to-unsub-btn:hover {
-  stroke: rgba(231, 57, 48, 1);
+.failed-to-unsub-icon:hover {
+  stroke: $color-link-hover;
 }
 
 .progress {
@@ -513,7 +508,7 @@ pre {
     margin: 0;
     padding: 0 20px 10px 20px;
   }
-  .mail-actions .action-item > .btn {
+  .scan-more-btn {
     width: 140px;
     padding: 5px 0;
     margin: 5px auto;
@@ -531,10 +526,9 @@ pre {
   .mail-list-social .avatar:before {
     background-size: 100px auto;
   }
-  .btn {
+  .scan-more-btn {
     line-height: 20px;
   }
-
   .results-data {
     min-width: auto;
   }

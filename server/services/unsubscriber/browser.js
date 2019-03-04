@@ -1,8 +1,7 @@
-import puppeteer from 'puppeteer';
 import config from 'getconfig';
 import io from '@pm2/io';
-
-import logger from './logger';
+import logger from '../../utils/logger';
+import puppeteer from 'puppeteer';
 
 const currentTabsOpen = io.counter({
   name: 'Current Tabs Open'

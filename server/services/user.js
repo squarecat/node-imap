@@ -11,7 +11,8 @@ import {
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
-  updateUser
+  updateUser,
+  incrementUserReferralBalance
 } from '../dao/user';
 import {
   addReferralSignupToStats,
@@ -35,6 +36,50 @@ export async function getUserById(id) {
     return user;
   } catch (err) {
     logger.error(`user-service: error getting user by id ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
+  const { id, emails, referralCode, photos = [], displayName } = userData;
+  try {
+    const profileImg = photos.length ? photos[0].value : null;
+    const { value: email } = emails[0]; // fixme is this correct, could be?
+    let user = await getUser(id);
+    if (!user) {
+      let referredBy = null;
+      if (referralCode) {
+        const { id: referralUserId } = await getUserByReferralCode(
+          referralCode
+        );
+        await addReferralToReferrer(referralUserId, { userId: id });
+        addReferralSignupToStats();
+        referredBy = referralUserId;
+      }
+      user = await createUser({
+        id,
+        name: displayName,
+        email,
+        profileImg,
+        keys,
+        referredBy,
+        provider: 'outlook',
+        token: v4()
+      });
+      addUserToStats();
+    } else {
+      user = await updateUser(id, {
+        keys,
+        profileImg
+      });
+    }
+    return user;
+  } catch (err) {
+    logger.error(
+      `user-service: error creating or updating user from Google ${id ||
+        'no userData id'}`
+    );
     logger.error(err);
     throw err;
   }
@@ -113,9 +158,16 @@ export async function checkAuthToken(userId, token) {
   }
 }
 
+// google date is the legacy version of the date object
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, googleDate } = mail;
-  return addUnsubscription(userId, { to, from, id, googleDate, ...rest });
+  const { to, from, id, date, googleDate } = mail;
+  return addUnsubscription(userId, {
+    to,
+    from,
+    id,
+    date: date || googleDate,
+    ...rest
+  });
 }
 
 export function addScanToUser(userId, scanData) {
@@ -198,7 +250,7 @@ export async function getReferralStats(id) {
 }
 
 export async function creditUserAccount(id, { amount }) {
-  return updateUser(id, { $inc: { referralBalance: amount } });
+  return incrementUserReferralBalance(id, amount);
 }
 
 export async function getUserPayments(id) {

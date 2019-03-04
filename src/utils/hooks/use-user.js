@@ -28,7 +28,7 @@ export default globalReducer(
       ...state,
       reminder
     }),
-    setLastPaidScan: (state, timeframe) => ({
+    setLastPaidScanType: (state, timeframe) => ({
       ...state,
       lastPaidScan: timeframe
     }),

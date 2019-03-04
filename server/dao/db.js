@@ -2,15 +2,7 @@ import { MongoClient } from 'mongodb';
 import config from 'getconfig';
 import logger from '../utils/logger';
 
-export let url;
-
-if (config.db.user) {
-  url = `mongodb://${config.db.user}:${config.db.password}@${config.db.host}:${
-    config.db.port
-  }/${config.db.name}?authSource=admin`;
-} else {
-  url = `mongodb://${config.db.host}:${config.db.port}/${config.db.name}`;
-}
+export const { url } = config.db;
 
 const client = new MongoClient(url, { useNewUrlParser: true });
 
