@@ -33,7 +33,7 @@
     "devtools": false
   },
   "payments": {
-    "publishableKey": "pk_live_2thpKDxq45nmO8NBG4wCJr0j",
-    "secretKey": "sk_live_3SbQqVsq3kybRISez1MtdeGp"
+    "publishableKey": "$STRIPE_PK",
+    "secretKey": "$STRIPE_SK"
   }
 }

@@ -3,7 +3,7 @@
     "url": "$MONGO_URL",
     "encryption": {
       "algorithm": "aes-256-cbc",
-      "password": "secret"
+      "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
   "http": {
@@ -30,11 +30,11 @@
   },
   "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
   "mailgun": {
-    "apiKey": "key-2y-9ivl7dzujgdv9ht38u61zdbwhcpl8",
+    "apiKey": "$MAILGUN_API_KEY",
     "domain": "mail.leavemealone.app"
   },
   "mailchimp": {
-    "apiKey": "7cf6acaa42a868ac81f78a97497495fd-us16",
+    "apiKey": "$MAILCHIMP_API_KEY",
     "lists": {
       "leaveMeAloneCustomers": "77a7bf92b9"
     }
@@ -45,9 +45,9 @@
     "headeless": false
   },
   "payments": {
-    "publishableKey": "pk_test_td6LkJVGPINUdmgEnbonAGNk",
-    "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ",
-    "vatKey": "e53a4aa7b7f9d0aad2b32a22290d1753"
+    "publishableKey": "$STRIPE_PK",
+    "secretKey": "$STRIPE_SK",
+    "vatKey": "$VAT_KEY"
   },
   "urls": {
     "roadmap": "https://trello.com/b/QvJsEk2F",
