@@ -1,16 +1,21 @@
 import 'rc-tooltip/assets/bootstrap_white.css';
-import './mail-list.css';
+import './mail-list.scss';
 
 import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
+import { ReloadIcon, TwitterIcon } from '../../components/icons';
 
 import AnimatedNumber from 'react-animated-number';
+import Button from '../../components/btn';
 import { CSSTransition } from 'react-transition-group';
 import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
+import MailListEmptyState from './mail-list/empty-state';
+import RescanModal from '../../components/modal/rescan-modal';
+import { TextLink } from '../../components/text';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
-import UnsubModal from '../../components/unsub-modal';
+import UnsubModal from '../../components/modal/unsub-modal';
 import _isArray from 'lodash.isarray';
 import favicon from '../../assets/meta/favicon.png';
 import faviconFinished from '../../assets/meta/favicon-done.png';
@@ -18,6 +23,8 @@ import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
+import isAfter from 'date-fns/is_after';
+import subHours from 'date-fns/sub_hours';
 import { toggleFromIgnoreList } from './profile/ignore';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
@@ -107,6 +114,7 @@ const mailReducer = (state = [], action) => {
 
 function useSocket(callback) {
   const [user, { incrementUnsubCount }] = useUser();
+  const preferences = user.preferences || {};
 
   const [localMail, setLocalMail] = useLocalStorage(
     `leavemealone.mail.${user ? user.id : ''}`,
@@ -142,11 +150,7 @@ function useSocket(callback) {
       setSocket(socket);
     });
     socket.on('mail', data => {
-      if (_isArray(data)) {
-        dispatch({ type: 'add-all', data: data });
-      } else {
-        dispatch({ type: 'add', data: data });
-      }
+      setMail(data);
     });
     socket.on('mail:end', callback);
     socket.on('mail:err', err => {
@@ -171,6 +175,23 @@ function useSocket(callback) {
       dispatch({ type: 'set-loading', data: { id, isLoading: false } });
     });
   }, []);
+
+  function setMail(data) {
+    if (_isArray(data)) {
+      const filtered = data.filter(d => showMailItem(d));
+      dispatch({ type: 'add-all', data: filtered });
+    } else {
+      if (showMailItem(data)) {
+        dispatch({ type: 'add', data });
+      }
+    }
+  }
+
+  function showMailItem(m) {
+    if (!preferences.hideUnsubscribedMails) return true;
+    if (m.estimatedSuccess === false || m.resolved === false) return true;
+    return m.subscribed;
+  }
 
   function fetchMail(timeframe) {
     setProgress(0);
@@ -215,9 +236,12 @@ function useSocket(callback) {
   };
 }
 
-export default ({ timeframe, showPriceModal }) => {
+export default ({ timeframe, setTimeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
+  const [showRescanModal, toggleRescanModal] = useState(false);
   const [user, { setHasSearched }] = useUser();
+
+  const { lastScan } = user;
 
   const {
     mail,
@@ -236,6 +260,7 @@ export default ({ timeframe, showPriceModal }) => {
     `leavemealone.timeframe.${user ? user.id : ''}`,
     []
   );
+
   function doSearch() {
     setSearchFinished(false);
     fetchMail(timeframe);
@@ -273,10 +298,23 @@ export default ({ timeframe, showPriceModal }) => {
     mail.length
   );
 
+  const onShowPriceModal = () => {
+    if (!lastScan) {
+      return showPriceModal(true);
+    }
+
+    const yesterday = subHours(Date.now(), 24);
+    const rescanAvailable = isAfter(lastScan.scannedAt, yesterday);
+
+    if (!rescanAvailable) return showPriceModal(true);
+
+    return toggleRescanModal(true);
+  };
+
   const showMoreText =
     isSearchFinished && timeframe !== '6m' && moreSubsEstimate !== 0;
-  const scanMessage = `Depending on the size of your inbox this may take a while, feel
-    free to check back later, but please don't close this window.`;
+  // const scanMessage = `Depending on the size of your inbox this may take a while, feel
+  //   free to check back later, but please don't close this window.`;
 
   return (
     <>
@@ -295,19 +333,8 @@ export default ({ timeframe, showPriceModal }) => {
             {/* <span>{scanMessage}</span> */}
           </span>
           <span className="action-item">
-            <a onClick={() => showPriceModal()} className="btn compact icon">
-              <svg
-                viewBox="0 0 32 32"
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentcolor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="3"
-              >
-                <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
-              </svg>
+            <a onClick={() => onShowPriceModal()} className="scan-more-btn">
+              <ReloadIcon />
               Scan more
             </a>
 
@@ -329,11 +356,27 @@ export default ({ timeframe, showPriceModal }) => {
             isSearchFinished={isSearchFinished}
             showPriceModal={showPriceModal}
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
+            onClickRescan={tf => setTimeframe(tf)}
             dispatch={dispatch}
           />
           {getSocialContent(user.unsubCount, user.referralCode)}
         </ErrorBoundary>
       )}
+      {showRescanModal ? (
+        <RescanModal
+          onRescan={tf => {
+            setTimeframe(tf);
+            toggleRescanModal(false);
+          }}
+          onPurchase={() => {
+            toggleRescanModal(false);
+            showPriceModal(true);
+          }}
+          onClose={() => {
+            toggleRescanModal(false);
+          }}
+        />
+      ) : null}
     </>
   );
 };
@@ -347,14 +390,14 @@ function ErrorScreen({ error, retry }) {
           perhaps you revoked your token?
         </p>
 
-        <a className="btn centered muted" onClick={retry}>
+        <Button centered muted basic onClick={retry}>
           Retry
-        </a>
+        </Button>
 
         <p>
           If this keeps happening please try{' '}
-          <a href="/auth/logout">logging out</a> and back in again to refresh
-          your credentials. Thanks!
+          <TextLink href="/auth/logout">logging out</TextLink> and back in again
+          to refresh your credentials. Thanks!
         </p>
         <pre className="error-details">{error}</pre>
       </div>
@@ -368,13 +411,13 @@ function ErrorScreen({ error, retry }) {
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
-          <a
+          <TextLink
             onClick={() =>
               openChat("Hi! I've paid for a scan but I can't perform it!")
             }
           >
             Let us know!
-          </a>
+          </TextLink>
         </p>
       </div>
     );
@@ -383,9 +426,9 @@ function ErrorScreen({ error, retry }) {
     <div className="mail-error">
       <p>Oh no, something went wrong on our end. Please try and scan again</p>
 
-      <a className="btn centered muted" onClick={retry}>
+      <Button centered muted basic onClick={retry}>
         Retry
-      </a>
+      </Button>
 
       <p>
         This is definitely our fault, so if it still doesn't work then please
@@ -500,21 +543,17 @@ function List({
   isSearchFinished,
   showPriceModal,
   addUnsubscribeErrorResponse,
+  onClickRescan,
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
-  const [unsubCount] = useUser(s => s.unsubCount);
 
   if (!mail.length && isSearchFinished) {
     return (
-      <div className="mail-empty-state">
-        <h3>No mail subscriptions found! 🎉</h3>
-        <p>Enjoy your clear inbox!</p>
-        <p>
-          If you're still getting subscription emails then try searching{' '}
-          <a onClick={showPriceModal}>over a longer period</a>.
-        </p>
-      </div>
+      <MailListEmptyState
+        onClickRescan={tf => onClickRescan(tf)}
+        showPriceModal={showPriceModal}
+      />
     );
   }
 
@@ -692,7 +731,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
           ) : (
             <svg
               onClick={() => setUnsubModal(m, true)}
-              className="failed-to-unsub-btn"
+              className="failed-to-unsub-icon"
               viewBox="0 0 32 32"
               width="20"
               height="20"
@@ -750,16 +789,12 @@ function getSocialContent(unsubCount = 0, referralCode) {
               href={`https://twitter.com/intent/tweet?text=${
                 socialOutput.tweet
               }`}
-              className="btn compact"
+              className="tweet-btn"
             >
-              <svg viewBox="0 0 64 64" width="16" height="16">
-                <path
-                  strokeWidth="0"
-                  fill="currentColor"
-                  d="M60 16 L54 17 L58 12 L51 14 C42 4 28 15 32 24 C16 24 8 12 8 12 C8 12 2 21 12 28 L6 26 C6 32 10 36 17 38 L10 38 C14 46 21 46 21 46 C21 46 15 51 4 51 C37 67 57 37 54 21 Z"
-                />
-              </svg>
-              Tweet progress
+              <TwitterIcon />
+              <span>
+                Tweet <span className="tweet-text-extra">progress</span>
+              </span>
             </a>
           </div>
         </div>

@@ -1,0 +1,113 @@
+@import '../styles/common/colors.scss';
+@import '../components/btn/btn.module.scss';
+
+.header {
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+  padding: 0 50px;
+  background-color: #fff;
+
+  @media (max-width: 800px) {
+    padding: 0 20px;
+  }
+}
+
+.header-inverted {
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
+  background-color: $color-secondary-bg;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  max-width: 1050px;
+  height: 106px;
+  width: 100%;
+  margin: 0 auto;
+
+  .header-inverted & {
+    height: 50px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 800px) {
+    height: 60px;
+  }
+}
+
+.header-title {
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.header-logo {
+  display: inline-block;
+  height: 32px;
+  margin: 0;
+
+  .header-inverted & {
+    @media (max-width: 400px) {
+      height: 24px;
+    }
+  }
+}
+
+.header-logo img {
+  height: 100%;
+}
+
+.header-nav {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  font-size: 16px;
+}
+
+.nav-link,
+.nav-login {
+  margin: 0 5px;
+}
+
+.nav-how {
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.nav-login {
+  padding: 0 0 0 10px;
+  margin-right: 0;
+}
+
+.nav-link a,
+.nav-link a:hover {
+  border-bottom: none;
+  padding: 10px;
+}
+
+.login-btn {
+  @extend .btn;
+  @extend .compact;
+  margin: 0;
+  padding: 10px 15px;
+
+  @media (max-width: 400px) {
+    font-size: 14px;
+    padding: 5px 10px;
+  }
+
+  .header-inverted & {
+    @include basic();
+    @include on-dark-bg();
+    padding: 5px 15px;
+  }
+}

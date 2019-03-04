@@ -1,10 +1,9 @@
 import 'isomorphic-fetch';
-import './index.css';
 
 import React, { useState } from 'react';
 
 import MailList from './mail-list';
-import Modal from '../../components/price-modal';
+import Modal from '../../components/modal/price-modal';
 import Template from './template';
 import { Transition } from 'react-transition-group';
 import Welcome from './welcome';
@@ -23,7 +22,7 @@ export default function App({ location = {} } = {}) {
   const rescan = state && state.rescan;
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user, { setLastPaidScan }] = useUser();
+  const [user, { setLastPaidScanType }] = useUser();
   const { hasScanned } = user;
 
   return (
@@ -52,6 +51,7 @@ export default function App({ location = {} } = {}) {
           <div className={`mail-list-content ${state}`}>
             <MailList
               timeframe={timeframe}
+              setTimeframe={tf => setTimeframe(tf)}
               hasSearched={hasScanned}
               showPriceModal={() => togglePriceModal(true)}
             />
@@ -64,7 +64,7 @@ export default function App({ location = {} } = {}) {
           onPurchase={option => {
             setTimeframe(option);
             if (option !== '3d') {
-              setLastPaidScan(option);
+              setLastPaidScanType(option);
             }
             togglePriceModal(false);
           }}

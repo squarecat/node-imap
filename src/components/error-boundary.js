@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
+import './error-boundary.module.scss';
+
 import * as Sentry from '@sentry/browser';
+
+import React, { Component } from 'react';
 
 export default class ErrorBoundary extends Component {
   state = { hasError: false };
@@ -25,7 +28,7 @@ export default class ErrorBoundary extends Component {
     if (error) {
       // You can render any custom fallback UI
       return (
-        <div className="mail-error">
+        <div styleName="error">
           <p>Oh no, it looks like something went badly wrong...</p>
           <p>Please refresh the page and try what you were doing again.</p>
           <p>
@@ -33,7 +36,7 @@ export default class ErrorBoundary extends Component {
             please bear with us and we'll try and get it sorted for you!
           </p>
           <a onClick={() => Sentry.showReportDialog()}>Report feedback</a>
-          <pre className="error-details">{error}</pre>
+          <pre>{error}</pre>
         </div>
       );
     }

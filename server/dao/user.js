@@ -415,6 +415,24 @@ export async function updateUsersReminded(ids) {
   }
 }
 
+export async function incrementUserReferralBalance(id, amount) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $inc: { referralBalance: amount }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(`users-dao: error updating reminded users`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function getUserByReferralCode(referralCode) {
   try {
     const col = await db().collection(COL_NAME);

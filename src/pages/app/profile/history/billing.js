@@ -1,8 +1,11 @@
-import './scans.css';
+import './billing.module.scss';
+
+import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import ErrorBoundary from '../../../../components/error-boundary';
 import ProfileLayout from '../layout';
 import React from 'react';
+import { TextImportant } from '../../../../components/text';
 import format from 'date-fns/format';
 import numeral from 'numeral';
 import { useAsync } from '../../../../utils/hooks';
@@ -17,7 +20,6 @@ async function fetchBillingHistory() {
   return res.json();
 }
 
-
 export default function BillingHistory() {
   const { value, loading } = useAsync(fetchBillingHistory);
   const billingData = loading ? {} : value;
@@ -28,37 +30,35 @@ export default function BillingHistory() {
       {loading ? (
         <span>Loading...</span>
       ) : (
-        <div className="profile-section profile-section--unpadded">
+        <div styleName="billing-section">
           <p>
-            Showing <span className="text-important">{payments.length}</span>{' '}
-            previous payments.
+            Showing <TextImportant>{payments.length}</TextImportant> previous
+            payments.
           </p>
           <ErrorBoundary>
-            <table className="scan-table">
-              <tbody>
-                {payments.map(invoice => {
-                  return (
-                    <tr key={invoice.date} className="scan-item">
-                      <td>{getDate(invoice)}</td>
-                      <td>{invoice.description}</td>
-                      <td>{getPrice(invoice)}</td>
-                      <td>{getStatus(invoice)}</td>
-                      <td>
-                        {invoice.invoice_pdf ? (
-                          <a
-                            className="btn muted compact basic invoice-btn"
-                            href={invoice.invoice_pdf}
-                            target="_"
-                          >
-                            Download
-                          </a>
-                        ) : null}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <Table>
+              {payments.map(invoice => {
+                return (
+                  <TableRow key={invoice.date}>
+                    <TableCell>{getDate(invoice)}</TableCell>
+                    <TableCell>{invoice.description}</TableCell>
+                    <TableCell>{getPrice(invoice)}</TableCell>
+                    <TableCell>{getStatus(invoice)}</TableCell>
+                    <TableCell>
+                      {invoice.invoice_pdf ? (
+                        <a
+                          styleName="invoice-btn"
+                          href={invoice.invoice_pdf}
+                          target="_"
+                        >
+                          Download
+                        </a>
+                      ) : null}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </Table>
           </ErrorBoundary>
           {has_more ? <p>For older invoices please contact support.</p> : null}
         </div>
@@ -87,13 +87,13 @@ function getPrice({ price, refunded }) {
 
 function getStatus({ attempted, paid, refunded }) {
   if (refunded) {
-    return <span className="invoice-status invoice--refunded">Refunded</span>;
+    return <span styleName="invoice-status invoice--refunded">Refunded</span>;
   }
   if (!attempted) {
-    return <span className="invoice-status invoice--pending">Recieved</span>;
+    return <span styleName="invoice-status invoice--pending">Recieved</span>;
   }
   if (!paid) {
-    return <span className="invoice-status invoice--failed">Failed</span>;
+    return <span styleName="invoice-status invoice--failed">Failed</span>;
   }
-  return <span className="invoice-status invoice--paid">Paid</span>;
+  return <span styleName="invoice-status invoice--paid">Paid</span>;
 }

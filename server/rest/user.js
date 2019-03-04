@@ -5,9 +5,10 @@ import {
   deactivateUserAccount,
   getReferralStats,
   getUserById,
+  getUserPayments,
   removeFromUserIgnoreList,
   removeUserScanReminder,
-  getUserPayments
+  updateUserPreferences
 } from '../services/user';
 
 import _sortBy from 'lodash.sortby';
@@ -30,6 +31,7 @@ export default app => {
         referredBy,
         referralCode,
         reminder,
+        preferences,
         lastUpdatedAt
       } = await getUserById(req.user.id);
       res.send({
@@ -43,10 +45,12 @@ export default app => {
         referredBy,
         referralCode,
         hasScanned: scans ? !!scans.length : false,
-        lastPaidScan: paidScans.length
-          ? paidScans[paidScans.length - 1].scanType
+        lastScan: scans.length ? scans[scans.length - 1] : null,
+        lastPaidScanType: paidScans.length
+          ? paidScans[paidScans.length - 1]
           : null,
         reminder,
+        preferences,
         lastUpdatedAt
       });
     } catch (err) {
@@ -160,6 +164,25 @@ export default app => {
       logger.error(
         `user-rest: error patching user reminder ${id} with op ${op}`
       );
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.patch('/api/me', auth, async (req, res) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op, value } = body;
+    let updatedUser = user;
+    try {
+      if (op === 'preferences') {
+        updatedUser = await updateUserPreferences(id, value);
+      } else {
+        logger.error(`user-rest: user patch op not supported`);
+      }
+      res.send(updatedUser);
+    } catch (err) {
+      logger.error(`user-rest: error patching user ${id} with op ${op}`);
       logger.error(err);
       res.status(500).send(err);
     }
