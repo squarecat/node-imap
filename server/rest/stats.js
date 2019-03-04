@@ -1,4 +1,9 @@
-import { getAllStats, getLeaderboardStats } from '../services/stats';
+import {
+  getAllStats,
+  getExpensesStats,
+  getLeaderboardStats
+} from '../services/stats';
+
 import logger from '../utils/logger';
 
 export default app => {
@@ -18,6 +23,16 @@ export default app => {
       res.send(stats);
     } catch (err) {
       logger.error(`stats-rest: error getting leaderboard`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+  app.get('/api/stats/expenses', async (req, res) => {
+    try {
+      const stats = await getExpensesStats();
+      res.send(stats);
+    } catch (err) {
+      logger.error(`stats-rest: error getting expenses`);
       logger.error(err);
       res.status(500).send(err);
     }

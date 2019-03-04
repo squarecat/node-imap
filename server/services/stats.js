@@ -1,23 +1,24 @@
 import {
-  addUnsubscriptionByLink,
-  addUnsubscriptionByEmail,
-  addScan,
+  addEstimate,
   addFailedUnsubscription,
-  addNumberofEmails,
-  addPayment,
   addGiftPayment,
   addGiftRedemption,
-  addUser,
-  addEstimate,
+  addNumberofEmails,
+  addPayment,
+  addReferralCredit,
+  addReferralPaidScan,
+  addReferralSignup,
   addReminderRequest,
   addReminderSent,
-  addReferralSignup,
-  addReferralPaidScan,
-  addReferralCredit,
+  addScan,
+  addUnsubscriptionByEmail,
+  addUnsubscriptionByLink,
+  addUser,
   addUserAccountDeactivated,
   getStats
 } from '../dao/stats';
 
+import { getExpenses } from '../utils/airtable';
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
 
 export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
@@ -70,6 +71,11 @@ export function addUserAccountDeactivatedToStats() {
 export function getAllStats() {
   return getStats();
 }
+
 export function getLeaderboardStats() {
   return getUnsubscriptionsLeaderboard();
+}
+
+export function getExpensesStats() {
+  return getExpenses();
 }
