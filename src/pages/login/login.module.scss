@@ -5,7 +5,7 @@
 $active-bg-color: #ffc7c1;
 
 .hold-onto-your-butts-we-are-logging-in {
-  height: 100vh;
+  min-height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
@@ -34,15 +34,38 @@ $active-bg-color: #ffc7c1;
   margin: 20px auto;
 }
 
+.title {
+  font-size: 1.62671rem;
+  line-height: 1.1;
+}
+.buttons {
+}
+
 .login-me-in-dammit {
   @extend .btn;
   @extend .centered;
+  background: white;
+  border: 1px solid #8c8c8c;
+  color: $color-primary-font;
+  font-weight: 600;
   width: 100%;
-  max-width: 300px;
+  max-width: 340px;
+  margin: 20px auto;
+  text-align: left;
 
-  svg {
-    margin-right: 7px;
-    position: relative;
+  .text {
+    margin-left: 15px;
+    width: 300px;
+  }
+
+  &:hover {
+    box-shadow: 0 7px 1em rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
+    color: $color-primary-font;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 16px;
   }
 }
 
