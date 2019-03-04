@@ -10,16 +10,19 @@ let connection = null;
 
 export function connect() {
   return new Promise((resolve, reject) => {
-    client.connect(err => {
-      if (err) {
-        logger.error('db: error connecting');
-        logger.error(err);
-        return reject(err);
-      }
-      logger.info('db: connected');
-      connection = client.db(config.db.name);
-      return resolve(connection);
-    });
+    client.connect(
+      err => {
+        if (err) {
+          logger.error('db: error connecting');
+          logger.error(err);
+          return reject(err);
+        }
+        logger.info('db: connected');
+        connection = client.db(config.db.name);
+        return resolve(connection);
+      },
+      { useNewUrlParser: true }
+    );
   });
 }
 

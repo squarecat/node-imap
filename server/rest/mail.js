@@ -105,6 +105,8 @@ export default function(app, server) {
             if (mailBuffer[userId].droppedEnd) {
               socket.emit('mail:end');
             }
+          } else {
+            throw new Error('mail-rest: invalid wss token');
           }
         }
       } catch (err) {
@@ -216,6 +218,8 @@ function getSocketFunctions(userId) {
         logger.error('socket: no socket dropped event `error`');
         return false;
       }
+      // if in production, just return a regular
+      // error message
       if (process.NODE_ENV !== 'production') {
         sock.emit('mail:err', err.stack);
       } else {
