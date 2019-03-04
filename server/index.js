@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import giftsApi from './rest/gifts';
 import http from 'http';
+import logger from './utils/logger';
 import mailApi from './rest/mail';
 import path from 'path';
 import paymentsApi from './rest/payments';
@@ -14,8 +15,6 @@ import session from 'express-session';
 import { startScheduler } from './utils/scheduler';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
-
-import logger from './utils/logger';
 
 const Sentry = require('@sentry/node');
 
@@ -64,6 +63,7 @@ app.get('/api', (req, res) => res.send('OK'));
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
 app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
+app.get('/join-beta', (req, res) => res.redirect(config.urls.requestBeta));
 
 app.get('/r/:code', (req, res) => {
   // make sure only the first referrer gets the gold

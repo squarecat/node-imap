@@ -53,12 +53,19 @@
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
-    "referral": "http://local.leavemealone.xyz/r/"
+    "referral": "http://local.leavemealone.xyz/r/",
+    "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA"
   },
   "airtable": {
     "key": "key0cK6sejCiwx9p0",
-    "expensesBaseId": "app0FrYsnDlnZvGHc",
-    "expensesTableId": "Leave Me Alone",
+    "expenses": {
+      "baseId": "app0FrYsnDlnZvGHc",
+      "tableId": "Leave Me Alone"
+    },
+    "beta": {
+      "baseId": "appq5b5dkcmMPEbBA",
+      "tableId": "Beta Users"
+    },
     "baseUrl": "https://api.airtable.com/v0"
   }
 }

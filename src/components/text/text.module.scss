@@ -12,6 +12,15 @@
   }
 }
 
+.link-inverted {
+  color: white;
+  border-color: white;
+  &:hover {
+    color: rgba(white, 0.8);
+    border-bottom-color: rgba(white, 0.8);
+  }
+}
+
 .smaller {
   font-size: 11px;
 }

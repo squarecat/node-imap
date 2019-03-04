@@ -1,7 +1,7 @@
-import config from 'getconfig';
-import md5 from 'md5';
 import Mailchimp from 'mailchimp-api-v3';
+import config from 'getconfig';
 import logger from './logger';
+import md5 from 'md5';
 
 const { apiKey, lists } = config.mailchimp;
 const mailchimpClient = new Mailchimp(apiKey);
@@ -9,8 +9,8 @@ const mailchimpClient = new Mailchimp(apiKey);
 // POST /lists/{list_id}/members
 export async function addSubscriber({ email }) {
   logger.debug('mailchimp: adding subscriber');
-  if (process.env.NODE_ENV === 'development') {
-    logger.debug('mailchimp: dev environment, not adding');
+  if (process.env.NODE_ENV !== 'production') {
+    logger.debug('mailchimp: not prod environment, not adding');
     return true;
   }
   try {
@@ -33,8 +33,8 @@ export async function addSubscriber({ email }) {
 // DELETE /lists/{list_id}/members/{subscriber_hash}
 export async function removeSubscriber({ email }) {
   logger.debug('mailchimp: removing subscriber');
-  if (process.env.NODE_ENV === 'development') {
-    logger.debug('mailchimp: dev environment, not removing');
+  if (process.env.NODE_ENV !== 'production') {
+    logger.debug('mailchimp: not prod environment, not removing');
     return true;
   }
   try {

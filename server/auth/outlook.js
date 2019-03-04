@@ -6,6 +6,7 @@ import {
 import { Strategy as OutlookStrategy } from 'passport-outlook';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
+import { isBetaUser } from './access';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
@@ -24,6 +25,17 @@ export const Strategy = new OutlookStrategy(
     try {
       const { cookies } = req;
       const { referrer } = cookies;
+
+      if (process.env.NODE_ENV === 'beta') {
+        const { emails } = profile;
+        const { value: email } = emails[0];
+        const allowed = await isBetaUser({ email });
+        if (!allowed) {
+          logger.debug('auth: user does not have access to the beta');
+          return done({ type: 'beta' }, null);
+        }
+      }
+
       const user = await createOrUpdateUserFromOutlook(
         { ...profile, referrer },
         {

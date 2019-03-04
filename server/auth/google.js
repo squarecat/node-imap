@@ -6,6 +6,7 @@ import {
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
+import { isBetaUser } from './access';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
@@ -25,6 +26,17 @@ export const Strategy = new GoogleStrategy(
       const { cookies } = req;
       const { referrer } = cookies;
       const { expires_in } = params;
+
+      if (process.env.NODE_ENV === 'beta') {
+        const { emails } = profile;
+        const { value: email } = emails.find(e => e.type === 'account');
+        const allowed = await isBetaUser({ email });
+        if (!allowed) {
+          logger.debug('auth: user does not have access to the beta');
+          return done({ type: 'beta' }, null);
+        }
+      }
+
       const user = await createOrUpdateUserFromGoogle(
         { ...profile, referralCode: referrer },
         {
@@ -82,11 +94,32 @@ export default app => {
     })
   );
 
-  app.get(
-    '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function(req, res) {
-      res.redirect('/app');
-    }
-  );
+  // app.get(
+  //   '/auth/google/callback',
+  //   passport.authenticate('google', { failureRedirect: '/login' }),
+  //   function(req, res) {
+  //     res.redirect('/app');
+  //   }
+  // );
+
+  app.get('/auth/google/callback', (req, res, next) => {
+    return passport.authenticate('google', (err, user) => {
+      const baseUrl = `/login?error=true`;
+      if (err) {
+        let errUrl = baseUrl;
+        const { type } = err;
+        if (type) errUrl += `&type=${type}`;
+        return res.redirect(errUrl);
+      }
+
+      return req.logIn(user, loginErr => {
+        if (loginErr) {
+          logger.error('login error');
+          logger.error(loginErr);
+          return res.redirect(baseUrl);
+        }
+        return res.redirect('/app');
+      });
+    })(req, res, next);
+  });
 };
