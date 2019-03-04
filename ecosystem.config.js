@@ -9,11 +9,13 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production'
       },
+      env_beta: {
+        NODE_ENV: 'production'
+      },
       log_date_format: 'YYYY-MM-DD HH:mm'
     }
   ],
   deploy: {
-    // "production" is the environment name
     beta: {
       // SSH user
       user: 'colin',
@@ -25,6 +27,8 @@ module.exports = {
       repo: 'git@github.com:squarecat/leavemealone.git',
       // path in the server
       path: '/var/www/leavemealone',
+      // copy the env file into the deployment
+      'post-setup': './scripts/post-setup.sh',
       // post-deploy action
       'post-deploy': './scripts/post-deploy.sh'
     }
