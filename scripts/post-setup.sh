@@ -1,0 +1,1 @@
+cp /var/www/leavemealone/.env .

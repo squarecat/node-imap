@@ -74,7 +74,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "build": "npm run build:client && npm run build:server",
+    "build": "yarn run build:client && yarn run build:server",
     "build:client": "gatsby build",
     "build:server": "babel -d ./build ./server && cp server/utils/countries.json build/utils/countries.json",
     "develop": "gatsby develop",
