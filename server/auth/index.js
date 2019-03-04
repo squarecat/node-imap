@@ -22,6 +22,10 @@ export default app => {
   app.use(passport.session());
   initGoogle(app);
   initOutlook(app);
+  app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+  });
   app.get('/auth/logout', (req, res) => {
     req.logout();
     res.redirect('/');

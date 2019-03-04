@@ -1,5 +1,6 @@
 @import '../../styles/common/colors.scss';
 @import '../../components/btn/btn.module.scss';
+@import '../../components/text/text.module.scss';
 
 $active-bg-color: #ffc7c1;
 
@@ -42,5 +43,27 @@ $active-bg-color: #ffc7c1;
   svg {
     margin-right: 7px;
     position: relative;
+  }
+}
+
+.error {
+  background: $color-red;
+  color: white;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid $color-text-error;
+  margin-top: 40px;
+
+  p {
+    margin: 0;
+  }
+
+  .beta-link {
+    @extend .link;
+    @extend .link-inverted;
   }
 }
