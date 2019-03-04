@@ -74,13 +74,20 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
           {format(currentReminder.remindAt, reminderDateFormat)}
         </p>
         <div styleName="reminder-cta">
-          <Button basic compact muted onClick={() => onClickClearReminder()}>
+          <Button
+            basic
+            compact
+            muted
+            outlined
+            onClick={() => onClickClearReminder()}
+          >
             Clear reminder
           </Button>
         </div>
       </>
     );
   } else {
+    console.log(PRICES);
     const scanPerformed = PRICES.find(p => p.value === lastPaidScanType);
     nextReminder = {
       label: scanPerformed.label,

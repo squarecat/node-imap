@@ -33,7 +33,10 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
     );
   } else if (hasReminder) {
     reminderButton = (
-      <button styleName="header-btn" onClick={() => onClickReminder()}>
+      <button
+        styleName="header-btn only-icon"
+        onClick={() => onClickReminder()}
+      >
         <ClockIcon />
       </button>
     );

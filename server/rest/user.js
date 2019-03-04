@@ -47,7 +47,7 @@ export default app => {
         hasScanned: scans ? !!scans.length : false,
         lastScan: scans.length ? scans[scans.length - 1] : null,
         lastPaidScanType: paidScans.length
-          ? paidScans[paidScans.length - 1]
+          ? paidScans[paidScans.length - 1].scanType
           : null,
         reminder,
         preferences,
