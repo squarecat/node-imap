@@ -5,7 +5,7 @@ import { TextLink } from '../../components/text';
 const NotFoundPage = () => (
   <SubPageLayout page="Maintenance" centered>
     <h1>Down for maintenance</h1>
-    <h2>We're improving Leave Me Alone!</h2>
+    <h2>We're working hard on some improvments.</h2>
     <p>
       We're currently upgrading the Leave Me Alone system, check back in a
       little while for the updates!

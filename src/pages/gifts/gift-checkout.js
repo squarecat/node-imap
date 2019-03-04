@@ -30,7 +30,7 @@ async function doCheckout({ description, amount }) {
 }
 
 const GiftCheckout = ({
-  selected,
+  selected = {},
   quantity = 1,
   setCouponLoading,
   onCheckoutComplete,

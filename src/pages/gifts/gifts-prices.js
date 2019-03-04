@@ -7,7 +7,7 @@ import { FormInput } from '../../components/form';
 import GiftCheckout from './gift-checkout';
 import _isArray from 'lodash.isarray';
 
-export default ({ prices }) => {
+export default ({ prices = [] } = {}) => {
   const [couponData, setCouponData] = useState(null);
   const [isCouponLoading, setCouponLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
