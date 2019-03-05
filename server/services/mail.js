@@ -34,7 +34,7 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
   const { provider } = user;
   let it;
   try {
-    if (provider === 'google') {
+    if (!provider || provider === 'google') {
       it = await fetchMailFromGmail(
         { user, timeframe },
         { strategy: 'api', batch: true }
@@ -128,7 +128,7 @@ export async function getMailEstimates(userId) {
   const { provider } = user;
   let estimates;
   try {
-    if (provider === 'google') {
+    if (!provider || provider === 'google') {
       estimates = await getMailEstimatesFromGmail(user);
     } else if (provider === 'outlook') {
       estimates = await getMailEstimatesFromOutlook(user);

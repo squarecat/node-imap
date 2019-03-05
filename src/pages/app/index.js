@@ -22,7 +22,7 @@ export default function App({ location = {} } = {}) {
   const rescan = state && state.rescan;
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user, { setLastPaidScanType }] = useUser();
+  const [user, { setLastScan, setLastPaidScanType }] = useUser();
   const { hasScanned, provider } = user;
 
   return (
@@ -55,7 +55,6 @@ export default function App({ location = {} } = {}) {
             <MailList
               timeframe={timeframe}
               setTimeframe={tf => setTimeframe(tf)}
-              hasSearched={hasScanned}
               showPriceModal={() => togglePriceModal(true)}
             />
           </div>
@@ -66,6 +65,7 @@ export default function App({ location = {} } = {}) {
         <Modal
           onPurchase={option => {
             setTimeframe(option);
+            setLastScan(option);
             if (option !== '3d') {
               setLastPaidScanType(option);
             }

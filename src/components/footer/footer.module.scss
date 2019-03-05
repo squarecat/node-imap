@@ -1,3 +1,5 @@
+@import '../../styles/common/colors.scss';
+
 .footer {
   display: flex;
   flex-direction: column;
@@ -32,8 +34,8 @@
 }
 
 .footer-social li svg {
-  color: var(--link-color);
+  color: $color-link;
 }
 .footer-social li:hover svg {
-  color: var(--primary-font-color);
+  color: $color-red;
 }

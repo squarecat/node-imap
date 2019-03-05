@@ -46,9 +46,9 @@ const FaqPage = () => (
       <div styleName="faq-box">
         <h3 styleName="faq-title">What mail providers do you support?</h3>
         <p>
-          We currently only support Gmail but{' '}
-          <a href="mailto:leavemalone@squarecat.io">let us know</a> what
-          services you'd like us to integrate with and we'll add it to our{' '}
+          We currently support Gmail and Outlook. We have plans to support more
+          providers. <a href="mailto:leavemalone@squarecat.io">Let us know</a>{' '}
+          which services you'd like us to integrate with and we'll add it to our{' '}
           <TextLink target="_blank" rel="noopener noreferrer" href="/roadmap">
             roadmap
           </TextLink>
