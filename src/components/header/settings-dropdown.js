@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Button from '../../components/btn';
 import { Link } from 'gatsby';
 
-export default ({ profileImg, onClickSupport }) => {
+export default ({ profileImg, email, onClickSupport }) => {
   const [showSettings, setShowSettings] = useState(false);
 
   const onClickBody = ({ target }) => {
@@ -32,6 +32,7 @@ export default ({ profileImg, onClickSupport }) => {
     [showSettings]
   );
 
+  const accountLetter = email[0];
   return (
     <div styleName="settings-dropdown">
       <Button
@@ -40,7 +41,11 @@ export default ({ profileImg, onClickSupport }) => {
         onClick={() => setShowSettings(!showSettings)}
       >
         <div styleName="profile">
-          <img styleName="profile-img" src={profileImg} />
+          {profileImg ? (
+            <img styleName="profile-img" src={profileImg} />
+          ) : (
+            <span styleName="profile-text">{accountLetter}</span>
+          )}
         </div>
       </Button>
       <ul styleName={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}>

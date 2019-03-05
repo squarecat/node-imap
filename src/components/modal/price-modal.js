@@ -291,7 +291,8 @@ function getPaymentButton({
   onPurchaseFailed
 }) {
   let isFree = false;
-  if (selected === 'free') {
+
+  if (selected === 'free' || process.env.NODE_ENV === 'beta') {
     isFree = true;
   } else if (selected !== 'free') {
     const { discountedPrice } = prices.find(p => p.value === selected);

@@ -5,6 +5,12 @@
   @extend .profile-section;
 }
 
+.details {
+  p:last-child {
+    margin: 0;
+  }
+}
+
 .warning {
   color: $color-primary-font;
   font-weight: bold;
