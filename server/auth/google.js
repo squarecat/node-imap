@@ -95,14 +95,6 @@ export default app => {
     })
   );
 
-  // app.get(
-  //   '/auth/google/callback',
-  //   passport.authenticate('google', { failureRedirect: '/login' }),
-  //   function(req, res) {
-  //     res.redirect('/app');
-  //   }
-  // );
-
   app.get('/auth/google/callback', (req, res, next) => {
     return passport.authenticate('google', (err, user) => {
       const baseUrl = `/login?error=true`;

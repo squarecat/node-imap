@@ -90,13 +90,26 @@ export default app => {
     })
   );
 
-  app.get(
-    '/auth/outlook/callback',
-    passport.authenticate('windowslive', { failureRedirect: '/login' }),
-    function(req, res) {
-      res.redirect('/app');
-    }
-  );
+  app.get('/auth/outlook/callback', (req, res, next) => {
+    return passport.authenticate('windowslive', (err, user) => {
+      const baseUrl = `/login?error=true`;
+      if (err) {
+        let errUrl = baseUrl;
+        const { type } = err;
+        if (type) errUrl += `&type=${type}`;
+        return res.redirect(errUrl);
+      }
+
+      return req.logIn(user, loginErr => {
+        if (loginErr) {
+          logger.error('login error');
+          logger.error(loginErr);
+          return res.redirect(baseUrl);
+        }
+        return res.redirect('/app');
+      });
+    })(req, res, next);
+  });
 };
 
 function getEmail(profile) {
