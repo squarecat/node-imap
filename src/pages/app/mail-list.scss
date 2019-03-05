@@ -235,10 +235,10 @@ pre {
   display: block;
   opacity: 0;
   transition: opacity 150ms ease-in-out;
-  color: var(--primary-font-color);
+  color: $color-red;
 }
 
-.revoke-link:hover + .revoke-warning {
+.revoke-link:hover ~ .revoke-warning {
   opacity: 1;
 }
 

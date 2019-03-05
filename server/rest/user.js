@@ -32,6 +32,7 @@ export default app => {
         referralCode,
         reminder,
         preferences,
+        provider,
         lastUpdatedAt
       } = await getUserById(req.user.id);
       res.send({
@@ -51,6 +52,7 @@ export default app => {
           : null,
         reminder,
         preferences,
+        provider,
         lastUpdatedAt
       });
     } catch (err) {

@@ -447,55 +447,40 @@ function ErrorScreen({ error, retry }) {
 }
 
 function RevokeTokenInstructions({ style, provider }) {
+  let providerName;
+  let url;
+  if (provider === 'google') {
+    providerName = 'Google';
+    url = 'https://security.google.com/settings/security/permissions';
+  } else if (provider === 'outlook') {
+    providerName = 'Microsoft';
+    url = 'https://account.live.com/consent/Manage';
+  }
   return (
     <div className="revoke-token-instructions" style={style}>
       <p>
         You can revoke access to Leave Me Alone any time by visiting your{' '}
-        {provider === 'google' ? (
-          <a
-            href="https://security.google.com/settings/security/permissions"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="revoke-link"
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="revoke-link"
+        >
+          {providerName} Account Settings
+          <svg
+            className="icon-external"
+            viewBox="0 0 32 32"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentcolor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
           >
-            Google Account Settings
-            <svg
-              className="icon-external"
-              viewBox="0 0 32 32"
-              width="14"
-              height="14"
-              fill="none"
-              stroke="currentcolor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-            >
-              <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
-            </svg>
-          </a>
-        ) : (
-          <a
-            href="https://account.live.com/consent/Manage"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="revoke-link"
-          >
-            Outlook Account Settings
-            <svg
-              className="icon-external"
-              viewBox="0 0 32 32"
-              width="14"
-              height="14"
-              fill="none"
-              stroke="currentcolor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-            >
-              <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
-            </svg>
-          </a>
-        )}
+            <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18" />
+          </svg>
+        </a>
         .
         <span className="revoke-warning">
           <strong>WARNING</strong>: if you revoke your token you will need to
@@ -554,6 +539,7 @@ function List({
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
+  const [provider] = useUser(u => u.provider);
 
   if (!mail.length && isSearchFinished) {
     return (
@@ -611,7 +597,13 @@ function List({
                   </CSSTransition>
                 );
               } else if (m.type === 'notice') {
-                return <RevokeTokenInstructions key={key} style={style} />;
+                return (
+                  <RevokeTokenInstructions
+                    key={key}
+                    provider={provider}
+                    style={style}
+                  />
+                );
               }
             }}
           />
