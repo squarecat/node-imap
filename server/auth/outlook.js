@@ -114,5 +114,5 @@ export default app => {
 
 function getEmail(profile) {
   const { emails } = profile;
-  return emails.length ? emails[0] : null;
+  return emails.length ? emails[0].value : null;
 }
