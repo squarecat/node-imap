@@ -234,7 +234,7 @@ function useSocket(callback) {
 export default ({ timeframe, setTimeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
   const [showRescanModal, toggleRescanModal] = useState(false);
-  const [user, { setHasSearched }] = useUser();
+  const [user] = useUser();
 
   const { lastScan } = user;
 
@@ -261,13 +261,24 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     fetchMail(timeframe);
   }
 
+  function performScan() {
+    setLastSearchTimeframe(timeframe);
+    changeFavicon(true, false);
+    doSearch();
+  }
+
+  function onRescan(tf) {
+    if (tf !== timeframe) {
+      setTimeframe(tf);
+    } else {
+      performScan();
+    }
+  }
+
   useEffect(
     () => {
       if (isConnected && timeframe) {
-        setLastSearchTimeframe(timeframe);
-        changeFavicon(true, false);
-        doSearch();
-        setHasSearched(true);
+        performScan();
       } else if (!timeframe) {
         changeFavicon(false, false);
         setSearchFinished(true);
@@ -298,10 +309,11 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
       return showPriceModal(true);
     }
 
+    const { timeframe, scannedAt } = lastScan;
     const yesterday = subHours(Date.now(), 24);
-    const rescanAvailable = isAfter(lastScan.scannedAt, yesterday);
+    const rescanAvailable = isAfter(scannedAt, yesterday);
 
-    if (!rescanAvailable) return showPriceModal(true);
+    if (timeframe === '3d' || !rescanAvailable) return showPriceModal(true);
 
     return toggleRescanModal(true);
   };
@@ -351,7 +363,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
             isSearchFinished={isSearchFinished}
             showPriceModal={showPriceModal}
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
-            onClickRescan={tf => setTimeframe(tf)}
+            onClickRescan={tf => onRescan(tf)}
             dispatch={dispatch}
           />
           {getSocialContent(user.unsubCount, user.referralCode)}
@@ -360,7 +372,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
       {showRescanModal ? (
         <RescanModal
           onRescan={tf => {
-            setTimeframe(tf);
+            onRescan(tf);
             toggleRescanModal(false);
           }}
           onPurchase={() => {
