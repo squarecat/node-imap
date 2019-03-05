@@ -6,13 +6,13 @@ import {
   createUser,
   getUser,
   getUserByReferralCode,
+  incrementUserReferralBalance,
   removeScanReminder,
   removeUser,
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
-  updateUser,
-  incrementUserReferralBalance
+  updateUser
 } from '../dao/user';
 import {
   addReferralSignupToStats,
@@ -42,10 +42,9 @@ export async function getUserById(id) {
 }
 
 export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
-  const { id, emails, referralCode, photos = [], displayName } = userData;
+  const { id, email, referralCode, photos = [], displayName } = userData;
   try {
     const profileImg = photos.length ? photos[0].value : null;
-    const { value: email } = emails[0]; // fixme is this correct, could be?
     let user = await getUser(id);
     if (!user) {
       let referredBy = null;
@@ -86,10 +85,9 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
 }
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
-  const { id, emails, referralCode, photos = [] } = userData;
+  const { id, email, referralCode, photos = [] } = userData;
   try {
     const profileImg = photos.length ? photos[0].value : null;
-    const { value: email } = emails.find(e => e.type === 'account');
     let user = await getUser(id);
     if (!user) {
       let referredBy = null;

@@ -25,10 +25,9 @@ export const Strategy = new OutlookStrategy(
     try {
       const { cookies } = req;
       const { referrer } = cookies;
+      const email = getEmail(profile);
 
       if (process.env.NODE_ENV === 'beta') {
-        const { emails } = profile;
-        const { value: email } = emails[0];
         const allowed = await isBetaUser({ email });
         if (!allowed) {
           logger.debug('auth: user does not have access to the beta');
@@ -37,7 +36,7 @@ export const Strategy = new OutlookStrategy(
       }
 
       const user = await createOrUpdateUserFromOutlook(
-        { ...profile, referrer },
+        { ...profile, email, referralCode: referrer },
         {
           refreshToken,
           accessToken,
@@ -99,3 +98,8 @@ export default app => {
     }
   );
 };
+
+function getEmail(profile) {
+  const { emails } = profile;
+  return emails.length ? emails[0] : null;
+}
