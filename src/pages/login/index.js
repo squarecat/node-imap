@@ -80,8 +80,8 @@ function getError(error) {
   return (
     <div styleName="error">
       <p>
-        Something went wrong logging you in. Please try again or contact
-        support.
+        Something went wrong logging you in. Please try again or send us a
+        message.
       </p>
     </div>
   );

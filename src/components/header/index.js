@@ -8,9 +8,10 @@ import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
-  const [{ profileImg, lastPaidScanType, reminder }] = useUser(
-    ({ profileImg, lastPaidScanType, reminder }) => ({
+  const [{ profileImg, email, lastPaidScanType, reminder }] = useUser(
+    ({ profileImg, email, lastPaidScanType, reminder }) => ({
       profileImg,
+      email,
       lastPaidScanType,
       reminder
     })
@@ -58,6 +59,7 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
         </button>
         <SettingsDropdown
           profileImg={profileImg}
+          email={email}
           onClickSupport={() => openChat()}
         />
       </div>

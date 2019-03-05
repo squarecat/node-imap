@@ -4,10 +4,9 @@ import React, { useState } from 'react';
 
 import Button from '../../../components/btn';
 import ProfileLayout from './layout';
+import { TextImportant } from '../../../components/text';
 import WarningModal from '../../../components/modal/warning-modal';
 import useUser from '../../../utils/hooks/use-user';
-
-import { TextImportant } from '../../../components/text';
 
 export default () => {
   const [{ email }] = useUser(u => ({
@@ -54,7 +53,7 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Account">
-      <div styleName="account-section">
+      <div styleName="account-section details">
         <h2>Details</h2>
         <p>
           Signed in with: <TextImportant>{email}</TextImportant>
