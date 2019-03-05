@@ -224,14 +224,14 @@ function getSocketFunctions(userId) {
       }
       return true;
     },
-    onEnd: () => {
+    onEnd: stats => {
       const sock = getSocket(userId);
       if (!sock) {
         logger.error('socket: no socket dropped event `end`');
         return false;
       }
       mailBuffer[userId].droppedEnd = true;
-      sock.emit('mail:end');
+      sock.emit('mail:end', stats);
       return true;
     },
     onProgress: async progress => {

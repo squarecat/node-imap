@@ -31,6 +31,7 @@ import logger from '../utils/logger';
 // todo convert to generator?
 export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
   const user = await getUserById(userId);
+  const scannedAt = Date.now();
   const { provider } = user;
   let it;
   try {
@@ -65,6 +66,7 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
         totalPreviouslyUnsubscribedEmails: totalPreviouslyUnsubscribedMail
       });
       addScanToUser(user.id, {
+        scannedAt,
         timeframe,
         totalEmails: totalMail,
         totalUnsubscribableEmails: totalUnsubscribableMail,
@@ -75,6 +77,7 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
       }
     }
     return {
+      scannedAt,
       totalMail,
       totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail

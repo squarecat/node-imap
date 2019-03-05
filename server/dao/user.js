@@ -168,7 +168,7 @@ export async function addScan(id, scanData) {
       { id },
       {
         $push: {
-          scans: { ...scanData, scannedAt: isoDate() }
+          scans: { ...scanData, scannedAt: isoDate(scanData.scannedAt) }
         }
       }
     );

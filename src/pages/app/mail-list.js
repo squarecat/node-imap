@@ -254,7 +254,8 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     progress,
     error,
     dispatch
-  } = useSocket(() => {
+  } = useSocket((err, scanStats) => {
+    console.log(scanStats);
     changeFavicon(false, true);
     setSearchFinished(true);
   });
