@@ -134,18 +134,24 @@ function useSocket(callback) {
   const [socket, setSocket] = useState(null);
   // only once
   useEffect(() => {
-    let socket = io.connect(process.env.WEBSOCKET_URL);
+    let socket = io(process.env.WEBSOCKET_URL, {
+      query: {
+        token: user.token,
+        userId: user.id
+      }
+    });
     console.log('setting up socket');
     socket.on('connect', () => {
       console.log('socket connected');
-      socket.emit('authenticate', { token: user.token, userId: user.id });
-    });
-    socket.on('authenticated', () => {
-      console.log('socket authenticated');
       setSocket(socket);
     });
-    socket.on('mail', data => {
+    socket.on('error', err => {
+      // todo make this better ux
+      alert(`socket error: ${err}`);
+    });
+    socket.on('mail', (data, ack) => {
       setMail(data);
+      ack();
     });
     socket.on('mail:end', callback);
     socket.on('mail:err', err => {
@@ -153,9 +159,10 @@ function useSocket(callback) {
       setError(err);
       callback(err);
     });
-    socket.on('mail:progress', ({ progress, total }) => {
+    socket.on('mail:progress', ({ progress, total }, ack) => {
       const percentage = (progress / total) * 100;
       setProgress((+percentage).toFixed());
+      ack();
     });
 
     socket.on('unsubscribe:success', ({ id, data }) => {
@@ -633,7 +640,6 @@ function List({
 function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
   const [user, { setIgnoredSenderList }] = useUser();
   const ignoredSenderList = user.ignoredSenderList || [];
-
   const isSubscribed = !!m.subscribed;
   let fromName;
   let fromEmail;

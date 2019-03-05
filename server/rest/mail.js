@@ -81,54 +81,32 @@ export default function(app, server) {
 
   const io = socketio(server).of('mail');
 
+  // socket auth middleware
+  io.use(async (socket, next) => {
+    let { userId, token } = socket.handshake.query;
+    const isValid = await checkAuthToken(userId, token);
+    if (isValid) {
+      socket.auth = true;
+      socket.userId = userId;
+      return next();
+    }
+    logger.error('mail-rest: socket failed authentication, dropping socket');
+    return next(new Error('authentication error'));
+  });
+
   io.on('connection', socket => {
     socketsOpen.inc();
-    socket.auth = false;
-    socket.on('authenticate', async data => {
-      try {
-        const { userId, token } = data;
-        connectedClients[userId] = socket;
-        // check the auth data sent by the client
-        const isValid = await checkAuthToken(userId, token);
-        if (isValid) {
-          socket.auth = true;
-          socket.userId = userId;
-          socket.emit('authenticated');
-          // if the client is reconnecting, we may have some mail
-          // in the buffer for them, check and send it
-          if (mailBuffer[userId]) {
-            if (mailBuffer[userId].droppedMail.length) {
-              socket.emit('mail', mailBuffer[userId].droppedMail);
-              mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
-              mailBuffer[userId].droppedMail = [];
-            }
-            if (mailBuffer[userId].droppedEnd) {
-              socket.emit('mail:end');
-            }
-          } else {
-            throw new Error('mail-rest: invalid wss token');
-          }
-        }
-      } catch (err) {
-        logger.error('mail-rest: error authenticating socket');
-        logger.error(err);
-      }
+    const { userId } = socket;
+    connectedClients[userId] = socket;
+    logger.info('mail-rest: socket connected');
+
+    checkBuffer(socket, userId);
+
+    socket.on('reconnect_attempt', () => {
+      checkBuffer(socket, userId);
     });
 
-    setTimeout(() => {
-      // if the socket didn't authenticate, disconnect it
-      if (!socket.auth) {
-        logger.info(
-          `mail-rest: socket unauthorized - disconnecting socket ${socket.id}`
-        );
-        socket.disconnect('unauthorized');
-      }
-    }, 5000);
-
     socket.on('fetch', async ({ timeframe }) => {
-      if (!socket.auth) {
-        return 'Not authenticated';
-      }
       logger.info(`mail-rest: scanning for ${timeframe}`);
       const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
         socket.userId
@@ -144,9 +122,9 @@ export default function(app, server) {
           const { value } = next;
           const { type, data } = value;
           if (type === 'mail') {
-            onMail(data);
+            await onMail(data);
           } else if (type === 'progress') {
-            onProgress(data);
+            await onProgress(data);
           }
           next = await it.next();
         }
@@ -189,6 +167,21 @@ export default function(app, server) {
   });
 }
 
+function checkBuffer(socket, userId) {
+  logger.info('checking buffer');
+  // check to see if this user has stuff in the buffer
+  if (mailBuffer[userId]) {
+    if (mailBuffer[userId].droppedMail.length) {
+      socket.emit('mail', mailBuffer[userId].droppedMail);
+      mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
+      mailBuffer[userId].droppedMail = [];
+    }
+    if (mailBuffer[userId].droppedEnd) {
+      socket.emit('mail:end');
+    }
+  }
+}
+
 function getSocket(userId) {
   return connectedClients[userId];
 }
@@ -200,7 +193,7 @@ const mailBuffered = io.meter({
 function getSocketFunctions(userId) {
   mailBuffer[userId] = { start: Date.now(), droppedMail: [] };
   return {
-    onMail: m => {
+    onMail: async m => {
       const sock = getSocket(userId);
       if (!sock) {
         logger.error('socket: no socket bufferring mail');
@@ -209,8 +202,12 @@ function getSocketFunctions(userId) {
         mailInBuffer.inc(1);
         return false;
       }
-      sock.emit('mail', m);
-      return true;
+
+      return new Promise(ack => {
+        sock.emit('mail', m, () => {
+          ack();
+        });
+      });
     },
     onError: err => {
       const sock = getSocket(userId);
@@ -237,13 +234,16 @@ function getSocketFunctions(userId) {
       sock.emit('mail:end');
       return true;
     },
-    onProgress: progress => {
+    onProgress: async progress => {
       const sock = getSocket(userId);
       if (!sock) {
         return false;
       }
-      sock.emit('mail:progress', progress);
-      return true;
+      return new Promise(ack => {
+        sock.emit('mail:progress', progress, () => {
+          ack();
+        });
+      });
     }
   };
 }

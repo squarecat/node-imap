@@ -58,7 +58,7 @@ export async function* fetchMail(
         if (unsubscribableMail.length) {
           yield { type: 'mail', data: unsubscribableMail };
         }
-        yield { type: 'progress', data: totalEstimate };
+        yield { type: 'progress', data: { progress, total: totalEstimate } };
       }
     } else if (strategy === 'imap') {
       for await (let mail of fetchMailImap(client, { timeframe })) {
@@ -178,10 +178,10 @@ async function fetchPage(client, { fields, query, perPage, pageToken }) {
     includeSpamTrash: true,
     q: query,
     labelIds: ['INBOX'],
+    pageToken,
     qs: {
       fields,
-      maxResults: perPage,
-      pageToken
+      maxResults: perPage
     }
   });
   return { data, nextPageToken };
@@ -193,7 +193,7 @@ async function fetchMessageById(client, { id }) {
     userId: 'me',
     id,
     format: 'METADATA',
-    metadataHeaders: ['from', 'to', 'list-unsubscribe'],
+    metadataHeaders: ['from', 'to', 'list-unsubscribe', 'subject'],
     fields
   });
   return data;
@@ -210,8 +210,8 @@ async function fetchMessagesBatch(accessToken, messageIds) {
     metadataHeaders: 'from'
   }).toString();
   // google accepts metadataHeaders in a weird fucking way,
-  // so we add that on after. dumbass.
-  queryParams = `${queryParams}&metadataHeaders=to&metadataHeaders=list-unsubscribe`;
+  // so we add that on after.
+  queryParams = `${queryParams}&metadataHeaders=to&metadataHeaders=list-unsubscribe&metadataHeaders=subject`;
 
   let content = messageIds.map(id =>
     [
