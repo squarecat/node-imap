@@ -7,7 +7,7 @@
     }
   },
   "http": {
-    "port": 2345
+    "port": "$PORT"
   },
   "auth": {
     "google": {
