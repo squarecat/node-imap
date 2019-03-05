@@ -3,7 +3,7 @@ import {
   updateUserToken
 } from '../services/user';
 
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20-without-google-plus';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
 import { isBetaUser } from './access';
@@ -19,17 +19,18 @@ export const Strategy = new GoogleStrategy(
     clientID: google.clientId,
     clientSecret: google.clientSecret,
     callbackURL: google.redirect,
-    passReqToCallback: true
+    passReqToCallback: true,
+    // This option tells the strategy to use the userinfo endpoint instead
+    userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
   },
   async function(req, accessToken, refreshToken, params, profile, done) {
     try {
       const { cookies } = req;
       const { referrer } = cookies;
       const { expires_in } = params;
+      const email = getEmail(profile);
 
       if (process.env.NODE_ENV === 'beta') {
-        const { emails } = profile;
-        const { value: email } = emails.find(e => e.type === 'account');
         const allowed = await isBetaUser({ email });
         if (!allowed) {
           logger.debug('auth: user does not have access to the beta');
@@ -38,7 +39,7 @@ export const Strategy = new GoogleStrategy(
       }
 
       const user = await createOrUpdateUserFromGoogle(
-        { ...profile, referralCode: referrer },
+        { ...profile, email, referralCode: referrer },
         {
           refreshToken,
           accessToken,
@@ -123,3 +124,8 @@ export default app => {
     })(req, res, next);
   });
 };
+
+function getEmail(profile) {
+  const { emails } = profile;
+  return emails.length ? emails[0].value : null;
+}

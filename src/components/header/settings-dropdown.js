@@ -48,7 +48,7 @@ export default ({ profileImg, onClickSupport }) => {
           <Link to="/app/profile">Account settings</Link>
         </li>
         <li>
-          <a href="/auth/google">Switch account</a>
+          <a href="/login">Switch account</a>
         </li>
         <li styleName="support">
           <a href="#" onClick={() => onClickSupport()}>
