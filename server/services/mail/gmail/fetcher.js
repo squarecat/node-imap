@@ -188,13 +188,14 @@ async function fetchPage(client, { fields, query, perPage, pageToken }) {
     userId: 'me',
     includeSpamTrash: true,
     q: query,
-    labelIds: ['INBOX'],
+    // labelIds: ['INBOX'],
     pageToken,
     qs: {
       fields,
       maxResults: perPage
     }
   });
+
   return { data, nextPageToken };
 }
 
