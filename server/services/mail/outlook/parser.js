@@ -5,43 +5,52 @@ import {
   isMailUnsubscribable
 } from './utils';
 
+import logger from '../../../utils/logger';
+
 const ignoreMailFrom = ['Outbox', 'Sent Items', 'Drafts'];
 export function parseMailList(
   mailList = [],
   { ignoredSenderList, unsubscriptions, mailFolders } = {}
 ) {
   return mailList.reduce((out, mailItem) => {
-    if (!mailItem || !isMailUnsubscribable(mailItem, ignoredSenderList)) {
-      return out;
-    }
-    const { ParentFolderId } = mailItem;
-    const hasFolder = mailFolders.find(folder => folder.Id === ParentFolderId);
-    const folderName = hasFolder ? hasFolder.DisplayName : '';
-    if (ignoreMailFrom.includes(folderName)) {
-      return out;
-    }
-    const mail = mapMail(mailItem, {
-      isTrash: folderName === 'Deleted Items',
-      isSpam: folderName === 'Junk Email'
-    });
-    if (mail) {
-      const prevUnsubscriptionInfo = hasUnsubscribedAlready(
-        mail,
-        unsubscriptions
-      );
-      let outputMail;
-      if (prevUnsubscriptionInfo) {
-        outputMail = {
-          ...mail,
-          ...prevUnsubscriptionInfo,
-          subscribed: false
-        };
-      } else {
-        outputMail = { ...mail, subscribed: true };
+    try {
+      if (!mailItem || !isMailUnsubscribable(mailItem, ignoredSenderList)) {
+        return out;
       }
-      return [...out, outputMail];
+      const { ParentFolderId } = mailItem;
+      const hasFolder = mailFolders.find(
+        folder => folder.Id === ParentFolderId
+      );
+      const folderName = hasFolder ? hasFolder.DisplayName : '';
+      if (ignoreMailFrom.includes(folderName)) {
+        return out;
+      }
+      const mail = mapMail(mailItem, {
+        isTrash: folderName === 'Deleted Items',
+        isSpam: folderName === 'Junk Email'
+      });
+      if (mail) {
+        const prevUnsubscriptionInfo = hasUnsubscribedAlready(
+          mail,
+          unsubscriptions
+        );
+        let outputMail;
+        if (prevUnsubscriptionInfo) {
+          outputMail = {
+            ...mail,
+            ...prevUnsubscriptionInfo,
+            subscribed: false
+          };
+        } else {
+          outputMail = { ...mail, subscribed: true };
+        }
+        return [...out, outputMail];
+      }
+      return out;
+    } catch (err) {
+      logger.error(`outlook-parser: failed to parse mail - ${err.message}`);
+      return out;
     }
-    return out;
   }, []);
 }
 
