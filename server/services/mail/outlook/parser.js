@@ -15,9 +15,8 @@ export function parseMailList(
       return out;
     }
     const { ParentFolderId } = mailItem;
-    const { DisplayName: folderName } = mailFolders.find(
-      folder => folder.Id === ParentFolderId
-    );
+    const hasFolder = mailFolders.find(folder => folder.Id === ParentFolderId);
+    const folderName = hasFolder ? hasFolder.DisplayName : '';
     if (ignoreMailFrom.includes(folderName)) {
       return out;
     }
