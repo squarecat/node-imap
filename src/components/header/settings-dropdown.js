@@ -4,9 +4,14 @@ import React, { useEffect, useState } from 'react';
 
 import Button from '../../components/btn';
 import { Link } from 'gatsby';
+import useUser from '../../utils/hooks/use-user';
 
-export default ({ profileImg, email, onClickSupport }) => {
+export default ({ onClickSupport }) => {
   const [showSettings, setShowSettings] = useState(false);
+  const [{ profileImg, email }] = useUser(({ profileImg, email }) => ({
+    profileImg,
+    email
+  }));
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -32,7 +37,7 @@ export default ({ profileImg, email, onClickSupport }) => {
     [showSettings]
   );
 
-  const accountLetter = email[0];
+  const accountLetter = email.length ? email[0] : '';
   return (
     <div styleName="settings-dropdown">
       <Button

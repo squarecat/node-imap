@@ -28,12 +28,9 @@ export default globalReducer(
       ...state,
       lastPaidScan: timeframe
     }),
-    setLastScan: (state, timeframe) => ({
+    setLastScan: (state, scan) => ({
       ...state,
-      lastScan: {
-        timeframe,
-        scannedAt: new Date()
-      }
+      lastScan: scan
     }),
     setPreferences: (state, preferences) => ({
       ...state,

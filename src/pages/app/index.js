@@ -22,7 +22,7 @@ export default function App({ location = {} } = {}) {
   const rescan = state && state.rescan;
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user, { setLastScan, setLastPaidScanType }] = useUser();
+  const [user, { setLastPaidScanType }] = useUser();
   const { hasScanned, provider } = user;
 
   return (
@@ -65,7 +65,7 @@ export default function App({ location = {} } = {}) {
         <Modal
           onPurchase={option => {
             setTimeframe(option);
-            setLastScan(option);
+            // setLastScan(option);
             if (option !== '3d') {
               setLastPaidScanType(option);
             }

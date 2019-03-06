@@ -5,9 +5,8 @@ import React from 'react';
 import { TextImportant } from '../../../components/text';
 import distanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import format from 'date-fns/format';
-import isAfter from 'date-fns/is_after';
+import { isRescanAvailable } from '../../../utils/scans';
 import subDays from 'date-fns/sub_days';
-import subHours from 'date-fns/sub_hours';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import useUser from '../../../utils/hooks/use-user';
@@ -25,24 +24,30 @@ export default ({ showPriceModal, onClickRescan }) => {
   const [lastScan] = useUser(u => u.lastScan);
 
   let content = null;
+  let dateContent = null;
+
+  const rescanAvailable = isRescanAvailable(lastScan);
 
   if (lastScan) {
-    const yesterday = subHours(Date.now(), 24);
-    const isRescanAvailable = isAfter(lastScan.scannedAt, yesterday);
+    dateContent = (
+      <p styleName="scan-dates">
+        You performed a {tfToString[lastScan.timeframe]}{' '}
+        {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago.
+        <span styleName="scan-history-link">
+          (<Link to="/app/profile/history/scans">see your scan history</Link>)
+        </span>
+      </p>
+    );
+  }
 
+  if (rescanAvailable) {
     const fromDate = format(getTimeRange(lastScan), dateFormat);
     const toDate = format(lastScan.scannedAt, dateFormat);
     content = (
       <>
         <h3>No mail subscriptions found</h3>
         <h4>Are you using a different device/browser?</h4>
-        <p styleName="scan-dates">
-          You performed a {tfToString[lastScan.timeframe]}{' '}
-          {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago.
-          <span styleName="scan-history-link">
-            (<Link to="/profile/history/scans">see your scan history</Link>)
-          </span>
-        </p>
+        {dateContent}
         <p>
           In line with our privacy policy we do not store store any of your
           emails on our servers, they are all stored in your browser.
@@ -62,6 +67,7 @@ export default ({ showPriceModal, onClickRescan }) => {
     content = (
       <>
         <h3>No mail subscriptions found! 🎉</h3>
+        {dateContent}
         <p>Enjoy your clear inbox!</p>
         <p>
           If you're still getting subscription emails then try searching{' '}

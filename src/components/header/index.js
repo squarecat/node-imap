@@ -8,10 +8,8 @@ import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
-  const [{ profileImg, email, lastPaidScanType, reminder }] = useUser(
-    ({ profileImg, email, lastPaidScanType, reminder }) => ({
-      profileImg,
-      email,
+  const [{ lastPaidScanType, reminder }] = useUser(
+    ({ lastPaidScanType, reminder }) => ({
       lastPaidScanType,
       reminder
     })
@@ -57,11 +55,7 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
             Refer a friend
           </span>
         </button>
-        <SettingsDropdown
-          profileImg={profileImg}
-          email={email}
-          onClickSupport={() => openChat()}
-        />
+        <SettingsDropdown onClickSupport={() => openChat()} />
       </div>
     </div>
   );
