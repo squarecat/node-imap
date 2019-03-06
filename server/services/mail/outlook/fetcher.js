@@ -15,7 +15,6 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
       );
       return { type: 'error', message: 'Not paid' };
     }
-    logger.info(`outlook-fetcher: started ${timeframe} scan (${user.id})`);
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, accessToken] = await Promise.all([
       getEstimateForTimeframe(user, {
@@ -29,7 +28,11 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
     let dupeCache = {};
-
+    logger.info(
+      `outlook-fetcher: started ${timeframe} scan (${
+        user.id
+      }) [estimated ${totalEstimate} mail]`
+    );
     // get the folders so we can associate them later
     const mailFolders = await getMailFolders(accessToken);
     for await (let mail of requestMail({
@@ -62,7 +65,7 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     logger.info(
       `outlook-fetcher: finished ${timeframe} scan (${
         user.id
-      }) [took ${(Date.now() - start) / 1000}s]`
+      }) [took ${(Date.now() - start) / 1000}s, ${totalEmailsCount} results]`
     );
     return {
       totalMail: totalEmailsCount,

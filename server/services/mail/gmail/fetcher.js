@@ -22,7 +22,6 @@ export async function* fetchMail(
       );
       throw new Error('Not paid');
     }
-    logger.info(`gmail-fetcher: started ${timeframe} scan (${user.id})`);
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, client, accessToken] = await Promise.all([
       getEstimateForTimeframe(user, {
@@ -32,7 +31,11 @@ export async function* fetchMail(
       getMailClient(user, strategy),
       getGmailAccessToken(user)
     ]);
-
+    logger.info(
+      `gmail-fetcher: started ${timeframe} scan (${
+        user.id
+      }) [estimated ${totalEstimate} mail]`
+    );
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
@@ -85,7 +88,7 @@ export async function* fetchMail(
     logger.info(
       `gmail-fetcher: finished ${timeframe} scan (${
         user.id
-      }) [took ${(Date.now() - start) / 1000}s]`
+      }) [took ${(Date.now() - start) / 1000}s, ${totalEmailsCount} results]`
     );
     return {
       totalMail: totalEmailsCount,

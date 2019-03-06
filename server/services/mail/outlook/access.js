@@ -23,6 +23,7 @@ export async function getAccessToken(userOrUserId) {
 }
 
 export async function doRequest(url, token) {
+  logger.debug(`outlook-request: fetching mail (${url})`);
   try {
     const reqOpts = {
       url: `${apiRootUrl}/${url}`,
