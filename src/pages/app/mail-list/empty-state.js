@@ -58,7 +58,7 @@ export default ({ showPriceModal, onClickRescan }) => {
           <TextImportant>{toDate}</TextImportant> will still be available on the
           device and browser you used to originally run this scan.
         </p>
-        {renderScanText(isRescanAvailable, () =>
+        {renderScanText(rescanAvailable, () =>
           onClickRescan(lastScan.timeframe)
         )}
       </>
@@ -97,8 +97,8 @@ function getTimeRange({ scannedAt, timeframe }) {
   return then;
 }
 
-function renderScanText(isRescanAvailable, onClickRescan) {
-  if (isRescanAvailable) {
+function renderScanText(rescanAvailable, onClickRescan) {
+  if (rescanAvailable) {
     return (
       <>
         <p>

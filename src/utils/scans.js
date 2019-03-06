@@ -8,7 +8,7 @@ export function isRescanAvailable(lastScan) {
 
   const { totalUnsubscribableEmails, timeframe, scannedAt } = lastScan;
 
-  if (totalUnsubscribableEmails === 0 || timeframe === '3d') {
+  if (!totalUnsubscribableEmails || timeframe === '3d') {
     return false;
   }
 
