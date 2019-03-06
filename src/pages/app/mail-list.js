@@ -152,7 +152,9 @@ function useSocket(callback) {
       setMail(data);
       ack();
     });
-    socket.on('mail:end', callback);
+    socket.on('mail:end', scan => {
+      callback(null, scan);
+    });
     socket.on('mail:err', err => {
       console.error(err);
       setError(err);
@@ -539,11 +541,15 @@ function List({
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
-  const [provider] = useUser(u => u.provider);
+  const [{ provider, lastScan }] = useUser(({ provider, lastScan }) => ({
+    provider,
+    lastScan
+  }));
 
   if (!mail.length && isSearchFinished) {
     return (
       <MailListEmptyState
+        lastScan={lastScan}
         onClickRescan={tf => onClickRescan(tf)}
         showPriceModal={showPriceModal}
       />

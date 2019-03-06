@@ -9,7 +9,6 @@ import { isRescanAvailable } from '../../../utils/scans';
 import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
-import useUser from '../../../utils/hooks/use-user';
 
 const dateFormat = 'Do MMMM YYYY';
 
@@ -20,9 +19,7 @@ const tfToString = {
   '6m': '6 month scan'
 };
 
-export default ({ showPriceModal, onClickRescan }) => {
-  const [lastScan] = useUser(u => u.lastScan);
-
+export default ({ showPriceModal, lastScan, onClickRescan }) => {
   let content = null;
   let dateContent = null;
 
@@ -30,7 +27,7 @@ export default ({ showPriceModal, onClickRescan }) => {
 
   if (lastScan) {
     dateContent = (
-      <p styleName="scan-dates">
+      <p key={lastScan.timeframe} styleName="scan-dates">
         You performed a {tfToString[lastScan.timeframe]}{' '}
         {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago.
         <span styleName="scan-history-link">

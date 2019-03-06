@@ -65,7 +65,6 @@ export default function App({ location = {} } = {}) {
         <Modal
           onPurchase={option => {
             setTimeframe(option);
-            // setLastScan(option);
             if (option !== '3d') {
               setLastPaidScanType(option);
             }
