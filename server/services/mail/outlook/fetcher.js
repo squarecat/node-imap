@@ -1,6 +1,7 @@
 import { doRequest, getAccessToken } from './access';
 import { getSearchString, getTimeRange, hasPaidScanAvailable } from './utils';
 
+import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
@@ -27,6 +28,7 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
+    let dupeCache = {};
 
     // get the folders so we can associate them later
     const mailFolders = await getMailFolders(accessToken);
@@ -36,7 +38,7 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     })) {
       totalEmailsCount = totalEmailsCount + mail.length;
       progress = progress + mail.length;
-      const unsubscribableMail = parseMailList(mail, {
+      let unsubscribableMail = parseMailList(mail, {
         ignoredSenderList,
         unsubscriptions,
         mailFolders
@@ -48,7 +50,12 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
       totalPrevUnsubbedCount = totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
       if (unsubscribableMail.length) {
-        yield { type: 'mail', data: unsubscribableMail };
+        const { dupes: newDupeCache, deduped } = dedupeMailList(
+          dupeCache,
+          unsubscribableMail
+        );
+        dupeCache = newDupeCache;
+        yield { type: 'mail', data: deduped };
       }
       yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
@@ -60,7 +67,8 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     return {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
-      totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount
+      totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount,
+      occurances: dupeCache
     };
   } catch (err) {
     logger.error('outlook-fetcher: failed to fetch mail');

@@ -97,3 +97,35 @@ export function hasPaidScanAvailable(user, scanType) {
     return false;
   });
 }
+
+/**
+ * Given a list of mail, dedupe it based on sender and reciever
+ * output a occurance count for each mail and a deduped list
+ */
+export function dedupeMailList(dupeCache = {}, mailList = []) {
+  const { deduped, dupes } = mailList.reduce(
+    (out, mail) => {
+      const dupeKey = `${mail.from}-${mail.to}`;
+      const dupeOccurances = out.dupes[dupeKey] || 0;
+      if (!dupeOccurances) {
+        return {
+          dupes: {
+            ...out.dupes,
+            [dupeKey]: 1
+          },
+          deduped: [...out.deduped, mail]
+        };
+      }
+      return {
+        ...out,
+        dupes: {
+          ...out.dupes,
+          [dupeKey]: dupeOccurances + 1
+        }
+      };
+    },
+    { dupes: dupeCache, deduped: [] }
+  );
+
+  return { deduped, dupes };
+}

@@ -55,7 +55,8 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
     const {
       totalMail,
       totalUnsubscribableMail,
-      totalPreviouslyUnsubscribedMail
+      totalPreviouslyUnsubscribedMail,
+      occurances
     } = next.value;
 
     if (!ignore) {
@@ -80,7 +81,8 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
       scannedAt,
       totalMail,
       totalUnsubscribableMail,
-      totalPreviouslyUnsubscribedMail
+      totalPreviouslyUnsubscribedMail,
+      occurances
     };
   } catch (err) {
     console.error('mail-service: failed to fetch mail for user', user.id);

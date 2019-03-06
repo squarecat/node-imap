@@ -3,6 +3,7 @@ import { getSearchString, getTimeRange, hasPaidScanAvailable } from './utils';
 
 import { URLSearchParams } from 'url';
 import axios from 'axios';
+import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import httpMessageParser from 'http-message-parser';
 import logger from '../../../utils/logger';
@@ -36,6 +37,7 @@ export async function* fetchMail(
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
+    let dupeCache = {};
     if (strategy === 'api') {
       for await (let mail of fetchMailApi(client, {
         accessToken,
@@ -56,7 +58,12 @@ export async function* fetchMail(
           totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
         if (unsubscribableMail.length) {
-          yield { type: 'mail', data: unsubscribableMail };
+          const { dupes: newDupeCache, deduped } = dedupeMailList(
+            dupeCache,
+            unsubscribableMail
+          );
+          dupeCache = newDupeCache;
+          yield { type: 'mail', data: deduped };
         }
         yield { type: 'progress', data: { progress, total: totalEstimate } };
       }
@@ -83,7 +90,8 @@ export async function* fetchMail(
     return {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
-      totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount
+      totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount,
+      occurances: dupeCache
     };
   } catch (err) {
     logger.error('gmail-fetcher: failed to fetch mail');
