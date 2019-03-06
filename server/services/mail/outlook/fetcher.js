@@ -95,9 +95,12 @@ async function* requestMail({ accessToken, timeframe }) {
         page,
         limit
       });
+      if (!data.length) {
+        break;
+      }
       yield data;
       page = page + 1;
-    } while (page < 2); // fixme testing
+    } while (true);
   } catch (err) {
     logger.error('outlook-fetcher: failed to request mail', err.message);
     throw err;
