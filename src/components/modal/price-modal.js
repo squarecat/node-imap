@@ -292,7 +292,7 @@ function getPaymentButton({
 }) {
   let isFree = false;
 
-  if (selected === 'free' || process.env.NODE_ENV === 'beta') {
+  if (selected === 'free' || process.env.BETA) {
     isFree = true;
   } else if (selected !== 'free') {
     const { discountedPrice } = prices.find(p => p.value === selected);
