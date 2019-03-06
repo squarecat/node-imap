@@ -76,7 +76,7 @@ export async function getEstimatedEmails(
       userId: 'me',
       q: query,
       includeSpamTrash: includeTrash,
-      labelIds: ['INBOX'],
+      // labelIds: ['INBOX'],
       qs: {
         fields: 'resultSizeEstimate'
       }
