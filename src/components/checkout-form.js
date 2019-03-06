@@ -88,7 +88,7 @@ const CheckoutForm = ({
 
 export default CheckoutForm;
 
-async function sendPayment({ token, productId, coupon, address, name }) {
+export async function sendPayment({ token, productId, coupon, address, name }) {
   let url;
   if (coupon) {
     url = `/api/checkout/${productId}/${coupon}`;

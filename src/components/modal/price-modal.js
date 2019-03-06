@@ -2,7 +2,7 @@ import './modal.module.scss';
 
 import * as track from '../../utils/analytics';
 
-import CheckoutForm, { getCoupon } from '../checkout-form';
+import CheckoutForm, { getCoupon, sendPayment } from '../checkout-form';
 import React, { useEffect, useState } from 'react';
 
 import Button from '../btn';
@@ -292,7 +292,7 @@ function getPaymentButton({
 }) {
   let isFree = false;
 
-  if (selected === 'free' || process.env.NODE_ENV === 'beta') {
+  if (selected === 'free' || process.env.BETA) {
     isFree = true;
   } else if (selected !== 'free') {
     const { discountedPrice } = prices.find(p => p.value === selected);
@@ -301,13 +301,22 @@ function getPaymentButton({
 
   const [isLoading, setLoading] = useState(false);
 
-  const freePurchase = async () => {
+  const sendFreePurchase = async () => {
     try {
       setLoading(true);
-      await addPaidScan(selected, couponData.coupon);
-    } catch (_) {
-    } finally {
+      if (selected !== 'free') {
+        await sendPayment({
+          token: null,
+          productId: selected,
+          coupon: couponData.coupon,
+          address: null,
+          name: null
+        });
+      }
       onPurchaseSuccess(selected);
+    } catch (err) {
+      onPurchaseFailed(err);
+    } finally {
       setLoading(false);
     }
   };
@@ -319,11 +328,7 @@ function getPaymentButton({
         compact={true}
         basic={true}
         onClick={() => {
-          if (selected === 'free') {
-            onPurchaseSuccess(selected);
-          } else {
-            freePurchase();
-          }
+          sendFreePurchase();
         }}
       >
         Scan now
@@ -349,27 +354,6 @@ function getDiscountedPrice(amount, { percent_off, amount_off } = {}) {
     price = amount - amount_off;
   }
   return price < 50 ? 0 : price;
-}
-
-async function addPaidScan(productId, coupon) {
-  try {
-    let url;
-    if (coupon) {
-      url = `/api/me/paidscans/${productId}/${coupon}`;
-    } else {
-      url = `/api/me/paidscans/${productId}`;
-    }
-    await fetch(url, {
-      method: 'PUT',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
 }
 
 async function getEstimates() {

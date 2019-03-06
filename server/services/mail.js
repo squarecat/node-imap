@@ -59,6 +59,13 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
       occurances
     } = next.value;
 
+    const scanData = {
+      scannedAt,
+      timeframe,
+      totalEmails: totalMail,
+      totalUnsubscribableEmails: totalUnsubscribableMail,
+      totalPreviouslyUnsubscribedMail
+    };
     if (!ignore) {
       addScanToStats();
       addNumberofEmailsToStats({
@@ -66,24 +73,12 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
         totalUnsubscribableEmails: totalUnsubscribableMail,
         totalPreviouslyUnsubscribedEmails: totalPreviouslyUnsubscribedMail
       });
-      addScanToUser(user.id, {
-        scannedAt,
-        timeframe,
-        totalEmails: totalMail,
-        totalUnsubscribableEmails: totalUnsubscribableMail,
-        totalPreviouslyUnsubscribedMail
-      });
+      addScanToUser(user.id, scanData);
       if (timeframe !== '3d') {
         updatePaidScanForUser(userId, timeframe);
       }
     }
-    return {
-      scannedAt,
-      totalMail,
-      totalUnsubscribableMail,
-      totalPreviouslyUnsubscribedMail,
-      occurances
-    };
+    return { ...scanData, occurances };
   } catch (err) {
     console.error('mail-service: failed to fetch mail for user', user.id);
     console.error(err);

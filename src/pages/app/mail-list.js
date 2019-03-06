@@ -23,8 +23,7 @@ import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
-import isAfter from 'date-fns/is_after';
-import subHours from 'date-fns/sub_hours';
+import { isRescanAvailable } from '../../utils/scans';
 import { toggleFromIgnoreList } from './profile/ignore';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
@@ -153,7 +152,9 @@ function useSocket(callback) {
       setMail(data);
       ack();
     });
-    socket.on('mail:end', callback);
+    socket.on('mail:end', scan => {
+      callback(null, scan);
+    });
     socket.on('mail:err', err => {
       console.error(err);
       setError(err);
@@ -241,7 +242,7 @@ function useSocket(callback) {
 export default ({ timeframe, setTimeframe, showPriceModal }) => {
   const [isSearchFinished, setSearchFinished] = useState(false);
   const [showRescanModal, toggleRescanModal] = useState(false);
-  const [user] = useUser();
+  const [user, { setLastScan }] = useUser();
 
   const { lastScan } = user;
 
@@ -254,10 +255,10 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     progress,
     error,
     dispatch
-  } = useSocket((err, scanStats) => {
-    console.log(scanStats);
+  } = useSocket((err, scan) => {
     changeFavicon(false, true);
     setSearchFinished(true);
+    if (scan) setLastScan(scan);
   });
   const [lastSearchTimeframe, setLastSearchTimeframe] = useLocalStorage(
     `leavemealone.timeframe.${user ? user.id : ''}`,
@@ -313,17 +314,10 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
   );
 
   const onShowPriceModal = () => {
-    if (!lastScan) {
-      return showPriceModal(true);
+    if (isRescanAvailable(lastScan)) {
+      return toggleRescanModal(true);
     }
-
-    const { timeframe, scannedAt } = lastScan;
-    const yesterday = subHours(Date.now(), 24);
-    const rescanAvailable = isAfter(scannedAt, yesterday);
-
-    if (timeframe === '3d' || !rescanAvailable) return showPriceModal(true);
-
-    return toggleRescanModal(true);
+    return showPriceModal(true);
   };
 
   const showMoreText =
@@ -547,11 +541,15 @@ function List({
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
-  const [provider] = useUser(u => u.provider);
+  const [{ provider, lastScan }] = useUser(({ provider, lastScan }) => ({
+    provider,
+    lastScan
+  }));
 
   if (!mail.length && isSearchFinished) {
     return (
       <MailListEmptyState
+        lastScan={lastScan}
         onClickRescan={tf => onClickRescan(tf)}
         showPriceModal={showPriceModal}
       />

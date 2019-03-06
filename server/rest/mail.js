@@ -168,7 +168,7 @@ export default function(app, server) {
 }
 
 function checkBuffer(socket, userId) {
-  logger.info('checking buffer');
+  logger.info('mail-rest: checking buffer');
   // check to see if this user has stuff in the buffer
   if (mailBuffer[userId]) {
     if (mailBuffer[userId].droppedMail.length) {

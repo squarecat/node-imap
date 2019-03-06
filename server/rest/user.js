@@ -112,21 +112,6 @@ export default app => {
     }
   });
 
-  app.put('/api/me/paidscans/:productId/:coupon?', auth, async (req, res) => {
-    const { user } = req;
-    const { productId, coupon } = req.params;
-    try {
-      await addFreeScan(user.id, productId, coupon);
-      res.send();
-    } catch (err) {
-      logger.error(
-        `user-rest: error adding scan to user with product ID ${productId}`
-      );
-      logger.error(err);
-      res.status(500).send(err);
-    }
-  });
-
   app.patch('/api/me/ignore', auth, async (req, res) => {
     const { user, body } = req;
     const { id } = user;

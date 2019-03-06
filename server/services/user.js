@@ -20,11 +20,11 @@ import {
   addUserAccountDeactivatedToStats,
   addUserToStats
 } from './stats';
-import { listPaymentsForUser, updateCoupon } from './payments';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
 import addWeeks from 'date-fns/add_weeks';
+import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
 import { removeSubscriber } from '../utils/mailchimp';
 import { revokeToken } from '../utils/google';
@@ -186,16 +186,6 @@ export function addPaidScanToUser(userId, scanType) {
 
 export function updatePaidScanForUser(userId, scanType) {
   return updatePaidScan(userId, scanType);
-}
-
-export async function addFreeScan(userId, scanType, coupon) {
-  try {
-    await addPaidScanToUser(userId, scanType);
-    if (coupon) updateCoupon(coupon);
-    return true;
-  } catch (err) {
-    throw err;
-  }
 }
 
 export async function addToUserIgnoreList(id, email) {
