@@ -30,6 +30,12 @@ export default ({ showPriceModal, lastScan, onClickRescan }) => {
       <p key={lastScan.timeframe} styleName="scan-dates">
         You performed a {tfToString[lastScan.timeframe]}{' '}
         {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago.
+        {rescanAvailable ? (
+          <span>
+            You can <TextImportant>run this scan again for free</TextImportant>{' '}
+            up to 24 hours after purchase
+          </span>
+        ) : null}
         <span styleName="scan-history-link">
           (<Link to="/app/profile/history/scans">see your scan history</Link>)
         </span>
@@ -55,7 +61,7 @@ export default ({ showPriceModal, lastScan, onClickRescan }) => {
           <TextImportant>{toDate}</TextImportant> will still be available on the
           device and browser you used to originally run this scan.
         </p>
-        {renderScanText(rescanAvailable, () =>
+        {renderScanBtn(rescanAvailable, () =>
           onClickRescan(lastScan.timeframe)
         )}
       </>
@@ -94,19 +100,12 @@ function getTimeRange({ scannedAt, timeframe }) {
   return then;
 }
 
-function renderScanText(rescanAvailable, onClickRescan) {
+function renderScanBtn(rescanAvailable, onClickRescan) {
   if (rescanAvailable) {
     return (
-      <>
-        <p>
-          You purchased a scan less than 24 hours. You can{' '}
-          <TextImportant>run this scan again for free</TextImportant> up to 24
-          hours after purchase.
-        </p>
-        <button styleName="scan-btn" onClick={() => onClickRescan()}>
-          Re-run my last scan
-        </button>
-      </>
+      <button styleName="scan-btn" onClick={() => onClickRescan()}>
+        Re-run my last scan
+      </button>
     );
   }
   return null;
