@@ -468,7 +468,7 @@ function RevokeTokenInstructions({ style, provider }) {
           rel="noopener noreferrer"
           className="revoke-link"
         >
-          {providerName} Account Settings
+          <span>{providerName} Account Settings</span>
           <svg
             className="icon-external"
             viewBox="0 0 32 32"

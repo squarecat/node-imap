@@ -13,7 +13,7 @@ export async function createPayment({
   customerId,
   coupon,
   gift = false,
-  provider = 'google'
+  provider
 }) {
   try {
     const description = getDescription({

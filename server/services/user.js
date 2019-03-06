@@ -70,7 +70,8 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
     } else {
       user = await updateUser(id, {
         keys,
-        profileImg
+        profileImg,
+        name: displayName
       });
     }
     return user;
@@ -85,7 +86,7 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
 }
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
-  const { id, email, referralCode, photos = [] } = userData;
+  const { id, email, referralCode, photos = [], displayName } = userData;
   try {
     const profileImg = photos.length ? photos[0].value : null;
     let user = await getUser(id);
@@ -101,10 +102,12 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
       }
       user = await createUser({
         id,
+        name: displayName,
         email,
         profileImg,
         keys,
         referredBy,
+        provider: 'google',
         token: v4()
       });
       // addSubscriber({ email });
@@ -112,7 +115,8 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
     } else {
       user = await updateUser(id, {
         keys,
-        profileImg
+        profileImg,
+        name: displayName
       });
     }
     return user;
