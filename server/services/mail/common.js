@@ -79,8 +79,13 @@ export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
   if (!unsubInfo) {
     return null;
   }
-  const { image, unsubStrategy, estimatedSuccess, resolved } = unsubInfo;
-  return { image, unsubStrategy, estimatedSuccess, resolved };
+  const { image, unsubscribeStrategy, estimatedSuccess, resolved } = unsubInfo;
+  return {
+    image,
+    unsubStrategy: unsubscribeStrategy,
+    estimatedSuccess,
+    resolved
+  };
 }
 
 // a scan is available if it has not yet been
