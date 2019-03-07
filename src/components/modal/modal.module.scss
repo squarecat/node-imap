@@ -460,6 +460,7 @@ p.unsubscribe-link-alt {
   border-radius: 50%;
   animation: pulse 1s ease-in-out infinite;
   transform: scale(1);
+  position: absolute;
 }
 
 @keyframes pulse {

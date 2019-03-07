@@ -56,7 +56,6 @@ const mailReducer = (state = [], action) => {
               ...email,
               subscribed: false,
               error: false,
-              image: action.data.image,
               estimatedSuccess: action.data.estimatedSuccess,
               unsubStrategy: action.data.unsubStrategy
             }
@@ -69,7 +68,6 @@ const mailReducer = (state = [], action) => {
               ...email,
               error: true,
               subscribed: null,
-              image: action.data.image,
               estimatedSuccess: action.data.estimatedSuccess,
               unsubStrategy: action.data.unsubStrategy
             }

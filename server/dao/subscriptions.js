@@ -1,18 +1,16 @@
 import db from './db';
 import { encrypt } from './encryption';
-
 import logger from '../utils/logger';
 
 const COL_NAME = 'unsubscriptions';
 
 export async function addUnresolvedUnsubscription(data) {
-  const { mailId, image, reason, unsubStrategy, domain } = data;
+  const { mailId, reason, unsubStrategy, domain } = data;
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
       mailId,
       domain: encrypt(domain),
-      image: encrypt(image),
       reason,
       unsubStrategy,
       resolved: false
@@ -25,13 +23,12 @@ export async function addUnresolvedUnsubscription(data) {
 }
 
 export async function addResolvedUnsubscription(data) {
-  const { mailId, image, domain } = data;
+  const { mailId, domain } = data;
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
       mailId,
       domain: encrypt(domain),
-      image: encrypt(image),
       resolved: true
     });
   } catch (err) {

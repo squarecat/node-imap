@@ -10,7 +10,6 @@ export default ({ onClose, onSubmit, mail }) => {
   const {
     id: mailId,
     estimatedSuccess,
-    image,
     unsubscribeLink,
     unsubscribeMailTo,
     unsubStrategy,
@@ -54,7 +53,6 @@ export default ({ onClose, onSubmit, mail }) => {
     if (slide === 'first') {
       return slide1(
         mailId,
-        image,
         onClickPositive,
         onClickNegative,
         error,
@@ -74,7 +72,7 @@ export default ({ onClose, onSubmit, mail }) => {
         setSelected
       });
     } else if (slide === 'positive') {
-      return slide3(image, onClickSubmit);
+      return slide3(onClickSubmit);
     }
   };
   const title = error ? 'Something went wrong...' : 'Successfully unsubscribed';
@@ -92,7 +90,6 @@ export default ({ onClose, onSubmit, mail }) => {
 
 function slide1(
   mailId,
-  image,
   onClickPositive,
   onClickNegative,
   error,
@@ -103,7 +100,7 @@ function slide1(
 ) {
   let lead;
   let timeout = false;
-  if (error && !image) {
+  if (error) {
     lead = `We couldn't tell if we successfully unsubscribed and we got no response from the provider...`;
     timeout = true;
   } else if (error) {
@@ -343,7 +340,7 @@ function slide2({
   );
 }
 
-function slide3(image, onSubmit) {
+function slide3(onSubmit) {
   return (
     <>
       <div styleName="modal-content">

@@ -58,7 +58,8 @@ export async function unsubscribeWithLink(unsubUrl) {
       }
     }
     image = await page.screenshot({
-      encoding: 'base64'
+      encoding: 'binary',
+      type: 'png'
     });
     return { estimatedSuccess: hasSuccessKeywords, image };
   } catch (err) {
