@@ -10,6 +10,7 @@ export default ({ onClose, onSubmit, mail }) => {
   const {
     id: mailId,
     estimatedSuccess,
+    hasImage,
     unsubscribeLink,
     unsubscribeMailTo,
     unsubStrategy,
@@ -21,6 +22,7 @@ export default ({ onClose, onSubmit, mail }) => {
   const [isShown, setShown] = useState(false);
   const [selected, setSelected] = useState(null);
   const [imageLoading, setImageLoading] = useState(true);
+
   const onClickNegative = () => changeSlide('negative');
   const onClickPositive = () => {
     if (error && !resolved) {
@@ -56,6 +58,7 @@ export default ({ onClose, onSubmit, mail }) => {
         onClickPositive,
         onClickNegative,
         error,
+        hasImage,
         unsubStrategy,
         resolved,
         imageLoading,
@@ -69,7 +72,8 @@ export default ({ onClose, onSubmit, mail }) => {
         onClickSubmit,
         onClickBack: () => changeSlide('first'),
         selected,
-        setSelected
+        setSelected,
+        hasImage
       });
     } else if (slide === 'positive') {
       return slide3(onClickSubmit);
@@ -93,6 +97,7 @@ function slide1(
   onClickPositive,
   onClickNegative,
   error,
+  hasImage,
   unsubStrategy,
   resolved,
   imageLoading,
@@ -100,7 +105,7 @@ function slide1(
 ) {
   let lead;
   let timeout = false;
-  if (error) {
+  if (error && !hasImage) {
     lead = `We couldn't tell if we successfully unsubscribed and we got no response from the provider...`;
     timeout = true;
   } else if (error) {
@@ -222,9 +227,11 @@ function slide2({
   onClickSubmit: onSubmit,
   onClickBack,
   selected,
-  setSelected
+  setSelected,
+  hasImage
 }) {
   let lead;
+  let actions;
 
   if (type === 'link') {
     lead = (
@@ -240,6 +247,54 @@ function slide2({
         particular service only accepts email unsubscribes, just click the
         following link or send an email to the address in order to unsubscribe
       </span>
+    );
+  }
+
+  if (hasImage) {
+    actions = (
+      <>
+        <a
+          styleName={`modal-btn modal-btn--secondary ${
+            !selected ? 'disabled' : ''
+          }`}
+          onClick={() =>
+            onSubmit({
+              success: false,
+              useImage: false,
+              failReason: selected
+            })
+          }
+        >
+          Nope
+        </a>
+        <a
+          styleName={`modal-btn modal-btn--cta ${!selected ? 'disabled' : ''}`}
+          onClick={() =>
+            onSubmit({
+              success: false,
+              useImage: true,
+              failReason: selected
+            })
+          }
+        >
+          Yes of course!
+        </a>
+      </>
+    );
+  } else {
+    actions = (
+      <a
+        styleName={`modal-btn modal-btn--cta ${!selected ? 'disabled' : ''}`}
+        onClick={() =>
+          onSubmit({
+            success: false,
+            useImage: false,
+            failReason: selected
+          })
+        }
+      >
+        Submit
+      </a>
     );
   }
 
@@ -298,8 +353,10 @@ function slide2({
           </li>
         </ul>
         <p styleName={`${!selected ? 'hidden' : ''}`}>
-          Thanks! Is it okay if we use that image so that next time we don't
-          make the same mistake?
+          Thanks!{' '}
+          {hasImage
+            ? "Is it okay if we use that image so that next time we don't make the same mistake?"
+            : ''}
         </p>
       </div>
       <div styleName="modal-actions">
@@ -309,32 +366,7 @@ function slide2({
         >
           Back
         </a>
-        <a
-          styleName={`modal-btn modal-btn--secondary ${
-            !selected ? 'disabled' : ''
-          }`}
-          onClick={() =>
-            onSubmit({
-              success: false,
-              useImage: false,
-              failReason: selected
-            })
-          }
-        >
-          Nope
-        </a>
-        <a
-          styleName={`modal-btn modal-btn--cta ${!selected ? 'disabled' : ''}`}
-          onClick={() =>
-            onSubmit({
-              success: false,
-              useImage: true,
-              failReason: selected
-            })
-          }
-        >
-          Yes of course!
-        </a>
+        {actions}
       </div>
     </>
   );

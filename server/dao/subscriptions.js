@@ -5,7 +5,7 @@ import logger from '../utils/logger';
 const COL_NAME = 'unsubscriptions';
 
 export async function addUnresolvedUnsubscription(data) {
-  const { mailId, reason, unsubStrategy, domain } = data;
+  const { mailId, reason, unsubStrategy, domain, useImage } = data;
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
@@ -13,6 +13,7 @@ export async function addUnresolvedUnsubscription(data) {
       domain: encrypt(domain),
       reason,
       unsubStrategy,
+      useImage,
       resolved: false
     });
   } catch (err) {
@@ -23,12 +24,13 @@ export async function addUnresolvedUnsubscription(data) {
 }
 
 export async function addResolvedUnsubscription(data) {
-  const { mailId, domain } = data;
+  const { mailId, domain, useImage } = data;
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
       mailId,
       domain: encrypt(domain),
+      useImage,
       resolved: true
     });
   } catch (err) {

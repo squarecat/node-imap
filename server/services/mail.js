@@ -111,7 +111,7 @@ export async function addUnsubscribeErrorResponse(
     if (success) {
       return Promise.all([
         addUnsubscriptionToStats({ unsubStrategy }),
-        addResolvedUnsubscription({ mailId, domain, unsubStrategy }),
+        addResolvedUnsubscription({ mailId, domain, unsubStrategy, useImage }),
         resolveUserUnsubscription(userId, mailId)
       ]);
     }
@@ -121,6 +121,7 @@ export async function addUnsubscribeErrorResponse(
         mailId,
         domain,
         reason,
+        useImage,
         unsubStrategy
       }),
       resolveUserUnsubscription(userId, mailId)
