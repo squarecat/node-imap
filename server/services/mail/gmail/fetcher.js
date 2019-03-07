@@ -184,7 +184,6 @@ async function* fetchMailApi(
 }
 
 async function fetchPage(client, { fields, query, perPage, pageToken }) {
-  logger.info(`gmail-fetcher: fetching page ${pageToken}`);
   const { data, nextPageToken } = await client.users.messages.list({
     userId: 'me',
     includeSpamTrash: true,
