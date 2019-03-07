@@ -53,7 +53,6 @@ export async function* fetchMail(
           ignoredSenderList,
           unsubscriptions
         });
-        totalUnsubCount = totalUnsubCount + unsubscribableMail.length;
         const previouslyUnsubbedCount = unsubscribableMail.filter(
           sm => !sm.subscribed
         ).length;
@@ -65,6 +64,7 @@ export async function* fetchMail(
             dupeCache,
             unsubscribableMail
           );
+          totalUnsubCount = totalUnsubCount + deduped.length;
           dupeCache = newDupeCache;
           yield { type: 'mail', data: deduped };
         }
@@ -184,6 +184,7 @@ async function* fetchMailApi(
 }
 
 async function fetchPage(client, { fields, query, perPage, pageToken }) {
+  logger.info(`gmail-fetcher: fetching page ${pageToken}`);
   const { data, nextPageToken } = await client.users.messages.list({
     userId: 'me',
     includeSpamTrash: true,
