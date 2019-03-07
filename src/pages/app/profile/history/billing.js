@@ -55,6 +55,15 @@ export default function BillingHistory() {
                           Download
                         </a>
                       ) : null}
+                      {invoice.receipt_url ? (
+                        <a
+                          styleName="invoice-btn"
+                          href={invoice.receipt_url}
+                          target="_"
+                        >
+                          Receipt
+                        </a>
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 );
