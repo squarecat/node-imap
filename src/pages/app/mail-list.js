@@ -4,6 +4,7 @@ import './mail-list.scss';
 import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
 import { ReloadIcon, TwitterIcon } from '../../components/icons';
+import { isRescanAvailable, tfToStringShort } from '../../utils/scans';
 
 import AnimatedNumber from 'react-animated-number';
 import Button from '../../components/btn';
@@ -23,7 +24,6 @@ import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
-import { isRescanAvailable } from '../../utils/scans';
 import { toggleFromIgnoreList } from './profile/ignore';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
@@ -45,6 +45,13 @@ const mailReducer = (state = [], action) => {
           error: !action.data.estimatedSuccess
         }))
       ];
+    case 'set-occurances': {
+      return state.map(mailItem => {
+        const dupeKey = `${mailItem.from}-${mailItem.to}`;
+        const occurances = action.data[dupeKey] || 0;
+        return { ...mailItem, occurances };
+      });
+    }
     case 'unsubscribe':
       return state.map(email =>
         email.id === action.data ? { ...email, subscribed: null } : email
@@ -259,7 +266,10 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
   } = useSocket((err, scan) => {
     changeFavicon(false, true);
     setSearchFinished(true);
-    if (scan) setLastScan(scan);
+    if (scan) {
+      setLastScan(scan);
+      dispatch({ type: 'set-occurances', data: scan.occurances || {} });
+    }
   });
   const [lastSearchTimeframe, setLastSearchTimeframe] = useLocalStorage(
     `leavemealone.timeframe.${user ? user.id : ''}`,
@@ -557,18 +567,15 @@ function List({
     );
   }
 
-  const isTweetPosition = (pos, arrLen) => {
-    return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
-  };
+  // const isTweetPosition = (pos, arrLen) => {
+  //   return pos === 9 || (isSearchFinished && arrLen < 10 && pos === arrLen - 1);
+  // };
 
   let sortedMail = mail
     .sort((a, b) => {
       return +b.date - +a.date;
     })
-    .reduce((out, mailItem, i) => {
-      if (isTweetPosition(i, mail.length)) {
-        return [...out, { type: 'mail', ...mailItem }];
-      }
+    .reduce((out, mailItem) => {
       return [...out, { type: 'mail', ...mailItem }];
     }, []);
   if (isSearchFinished) {
@@ -595,6 +602,7 @@ function List({
                   >
                     <MailItem
                       key={m.id}
+                      timeframe={lastScan.timeframe}
                       style={style}
                       mail={m}
                       onUnsubscribe={onUnsubscribe}
@@ -641,20 +649,13 @@ function List({
   );
 }
 
-function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
+function MailItem({ mail: m, onUnsubscribe, setUnsubModal, timeframe, style }) {
   const [user, { setIgnoredSenderList }] = useUser();
   const ignoredSenderList = user.ignoredSenderList || [];
   const isSubscribed = !!m.subscribed;
-  let fromName;
-  let fromEmail;
-  if (m.from.match(/^.*<.*>/)) {
-    const [, name, email] = /^(.*)(<.*>)/.exec(m.from);
-    fromName = name;
-    fromEmail = email;
-  } else {
-    fromName = '';
-    fromEmail = m.from;
-  }
+
+  const { fromName, fromEmail } = parseFrom(m);
+
   const pureEmail = fromEmail.substr(1).substr(0, fromEmail.length - 2);
   const isIgnored = ignoredSenderList.includes(pureEmail);
   const clickIgnore = () => {
@@ -674,27 +675,46 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, style }) {
       <div className="mail-item">
         <div className="avatar" />
         <div className="from">
-          <span className="from-name">
-            <Tooltip
-              placement="top"
-              trigger={['hover']}
-              mouseLeaveDelay={0}
-              overlayClassName="tooltip"
-              destroyTooltipOnHide={true}
-              overlay={
-                <span>
-                  {isIgnored
-                    ? 'This sender is on your favorite list'
-                    : 'Click to ignore this sender in future scans'}
-                </span>
-              }
-            >
-              <a onClick={() => clickIgnore()}>
-                <IgnoreIcon ignored={isIgnored} />
-              </a>
-            </Tooltip>
-            {fromName}
-          </span>
+          <div className="from-name-container">
+            <span className="from-name">
+              <Tooltip
+                placement="top"
+                trigger={['hover']}
+                mouseLeaveDelay={0}
+                overlayClassName="tooltip"
+                destroyTooltipOnHide={true}
+                overlay={
+                  <span>
+                    {isIgnored
+                      ? 'This sender is on your favorite list'
+                      : 'Click to ignore this sender in future scans'}
+                  </span>
+                }
+              >
+                <a onClick={() => clickIgnore()}>
+                  <IgnoreIcon ignored={isIgnored} />
+                </a>
+              </Tooltip>
+              {fromName}
+            </span>
+            {m.occurances > 1 ? (
+              <Tooltip
+                placement="top"
+                trigger={['hover']}
+                mouseLeaveDelay={0}
+                overlayClassName="tooltip"
+                destroyTooltipOnHide={true}
+                overlay={
+                  <span>
+                    You received {m.occurances} emails from this sender in the
+                    past {tfToStringShort[timeframe]}
+                  </span>
+                }
+              >
+                <span className="occurances">x{m.occurances}</span>
+              </Tooltip>
+            ) : null}
+          </div>
           <span className="from-email">{fromEmail}</span>
           <span className="from-date">
             {format(new Date(m.date), mailDateFormat)}
@@ -806,6 +826,22 @@ function getSocialContent(unsubCount = 0, referralCode) {
       </div>
     </div>
   );
+}
+
+function parseFrom(m) {
+  if (m.from.match(/^.*<.*>/)) {
+    const [, name, email] = /^(.*)(<.*>)/.exec(m.from);
+    return {
+      fromName: name,
+      fromEmail: email
+    };
+  }
+
+  const [, name] = /(.*)@/.exec(m.from);
+  return {
+    fromName: name,
+    fromEmail: m.from
+  };
 }
 
 function openChat(message = '') {
