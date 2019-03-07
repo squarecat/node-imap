@@ -64,7 +64,8 @@ const mailReducer = (state = [], action) => {
               subscribed: false,
               error: false,
               estimatedSuccess: action.data.estimatedSuccess,
-              unsubStrategy: action.data.unsubStrategy
+              unsubStrategy: action.data.unsubStrategy,
+              hasImage: action.data.hasImage
             }
           : email
       );
@@ -76,7 +77,8 @@ const mailReducer = (state = [], action) => {
               error: true,
               subscribed: null,
               estimatedSuccess: action.data.estimatedSuccess,
-              unsubStrategy: action.data.unsubStrategy
+              unsubStrategy: action.data.unsubStrategy,
+              hasImage: action.data.hasImage
             }
           : email
       );
@@ -375,6 +377,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
             showPriceModal={showPriceModal}
             addUnsubscribeErrorResponse={addUnsubscribeErrorResponse}
             onClickRescan={tf => onRescan(tf)}
+            timeframe={lastSearchTimeframe}
             dispatch={dispatch}
           />
           {getSocialContent(user.unsubCount, user.referralCode)}
@@ -547,6 +550,7 @@ function List({
   showPriceModal,
   addUnsubscribeErrorResponse,
   onClickRescan,
+  timeframe,
   dispatch
 }) {
   const [unsubData, setUnsubData] = useState(null);
@@ -600,7 +604,7 @@ function List({
                   >
                     <MailItem
                       key={m.id}
-                      timeframe={lastScan.timeframe}
+                      timeframe={timeframe}
                       style={style}
                       mail={m}
                       onUnsubscribe={onUnsubscribe}
