@@ -30,6 +30,21 @@ module.exports = {
       // post-deploy action
       'post-deploy':
         './scripts/post-deploy.sh && pm2 reload ecosystem.config.js --env=beta --update-env'
+    },
+    prod: {
+      // SSH user
+      user: 'colin',
+      // SSH host
+      host: ['web.leavemealone.xyz'],
+      // GIT remote/branch
+      ref: 'origin/master',
+      // GIT remote
+      repo: 'git@github.com:squarecat/leavemealone.git',
+      // path in the server
+      path: '/var/www/leavemealone',
+      // post-deploy action
+      'post-deploy':
+        './scripts/post-deploy.sh && pm2 reload ecosystem.config.js --env=production --update-env'
     }
   }
 };
