@@ -226,6 +226,7 @@ p.unsubscribe-link-alt {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-weight: normal;
+  max-width: 100%;
 }
 
 .strike {
@@ -437,7 +438,12 @@ p.unsubscribe-link-alt {
 
 .unsub-img-container {
   position: relative;
-  min-height: 100px;
+  height: 375px;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
 }
 .unsub-img {
   opacity: 1;
@@ -454,12 +460,6 @@ p.unsubscribe-link-alt {
   border-radius: 50%;
   animation: pulse 1s ease-in-out infinite;
   transform: scale(1);
-  margin: 0 auto;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
 }
 
 @keyframes pulse {

@@ -82,7 +82,8 @@ const mailReducer = (state = [], action) => {
               ...email,
               error: false,
               subscribed: false,
-              estimatedSuccess: true
+              estimatedSuccess: action.data.success,
+              resolved: true
             }
           : email
       );
@@ -219,7 +220,7 @@ function useSocket(callback) {
     if (socket) {
       dispatch({
         type: 'unsubscribe-error-resolved',
-        data: { id: data.mailId }
+        data: { id: data.mailId, success: data.success }
       });
       socket.emit('unsubscribe-error-response', data);
     } else {
@@ -625,7 +626,7 @@ function List({
                 addUnsubscribeErrorResponse({
                   success,
                   mailId: unsubData.id,
-                  image: useImage ? unsubData.image : null,
+                  useImage,
                   from: unsubData.from,
                   reason: failReason,
                   unsubStrategy: unsubData.unsubStrategy

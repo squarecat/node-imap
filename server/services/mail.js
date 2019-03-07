@@ -91,10 +91,14 @@ export function getImage(userId, mailId) {
 }
 
 export async function addUnsubscribeErrorResponse(
-  { mailId, success, from, image = null, reason = null, unsubStrategy },
+  { mailId, success, from, useImage, reason = null, unsubStrategy },
   userId
 ) {
   try {
+    let image = null;
+    if (useImage) {
+      image = await getImage(userId, mailId);
+    }
     const { domain } = emailAddresses.parseOneAddress(from);
     if (success) {
       return Promise.all([

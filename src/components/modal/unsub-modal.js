@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ExternalIcon } from '../icons';
 import ModalClose from './modal-close';
+import { TextImportant } from '../text';
 
 export default ({ onClose, onSubmit, mail }) => {
   const {
@@ -12,16 +13,18 @@ export default ({ onClose, onSubmit, mail }) => {
     image,
     unsubscribeLink,
     unsubscribeMailTo,
-    unsubStrategy
+    unsubStrategy,
+    resolved
   } = mail;
+
   const error = !estimatedSuccess;
   const [slide, changeSlide] = useState('first');
   const [isShown, setShown] = useState(false);
   const [selected, setSelected] = useState(null);
-  const [imageLoading, setImageLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   const onClickNegative = () => changeSlide('negative');
   const onClickPositive = () => {
-    if (error) {
+    if (error && !resolved) {
       return changeSlide('positive');
     }
     onClickClose();
@@ -56,6 +59,7 @@ export default ({ onClose, onSubmit, mail }) => {
         onClickNegative,
         error,
         unsubStrategy,
+        resolved,
         imageLoading,
         setImageLoading
       );
@@ -93,6 +97,7 @@ function slide1(
   onClickNegative,
   error,
   unsubStrategy,
+  resolved,
   imageLoading,
   setImageLoading
 ) {
@@ -108,7 +113,7 @@ function slide1(
     lead = `We unsubscribed you via ${
       unsubStrategy === 'link'
         ? `a URL link here's the response we got;`
-        : `sending an unsubscribe email`
+        : `sending an unsubscribe email.`
     }`;
   }
   let content;
@@ -126,6 +131,35 @@ function slide1(
       </>
     );
   } else if (unsubStrategy === 'link') {
+    let actions = null;
+    if (resolved) {
+      actions = (
+        <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
+          Awesome!{' '}
+          <span styleName="emoji" role="img" aria-label="thumbs up emoji">
+            ️👍
+          </span>
+        </a>
+      );
+    } else {
+      actions = (
+        <>
+          <a styleName="modal-btn" onClick={onClickNegative}>
+            It didn't work{' '}
+            <span styleName="emoji" role="img" aria-label="thumbs-down emoji">
+              ️👎
+            </span>
+          </a>
+
+          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
+            It looks great{' '}
+            <span styleName="emoji" role="img" aria-label="thumbs-up emoji">
+              ️️👍
+            </span>
+          </a>
+        </>
+      );
+    }
     content = (
       <>
         <div styleName="modal-content">
@@ -141,23 +175,19 @@ function slide1(
             />
             {imageLoading ? <div styleName="image-loading" /> : null}
           </div>
-          <p>How does it look?</p>
+          {resolved ? (
+            <p>
+              You have already let us know this was{' '}
+              <TextImportant>
+                {error ? 'unsuccessful' : 'successful'}
+              </TextImportant>
+              .
+            </p>
+          ) : (
+            <p>How does it look?</p>
+          )}
         </div>
-        <div styleName="modal-actions">
-          <a styleName="modal-btn" onClick={onClickNegative}>
-            It didn't work{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs-down emoji">
-              ️👎
-            </span>
-          </a>
-
-          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
-            It looks great{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs-up emoji">
-              ️️👍
-            </span>
-          </a>
-        </div>
+        <div styleName="modal-actions">{actions}</div>
       </>
     );
   } else {
