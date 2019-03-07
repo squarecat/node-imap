@@ -1,10 +1,13 @@
-import './scans.css';
+import './scans.module.scss';
+
+import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { Link } from 'gatsby';
 import ProfileLayout from '../layout';
 import React from 'react';
+import { TextImportant } from '../../../../components/text';
 import isAfter from 'date-fns/is_after';
 import relative from 'tiny-relative-date';
 import subHours from 'date-fns/sub_hours';
@@ -19,7 +22,6 @@ async function fetchScanHistory() {
   });
   return res.json();
 }
-
 
 const tfToString = {
   '3d': '3 day scan',
@@ -36,36 +38,34 @@ export default function ScanHistory() {
       {loading ? (
         <span>Loading...</span>
       ) : (
-        <div className="profile-section profile-section--unpadded">
+        <div styleName="scan-section">
           <p>
-            Showing <span className="text-important">{scans.length}</span>{' '}
-            previous scans.
+            Showing <TextImportant>{scans.length}</TextImportant> previous
+            scans.
           </p>
           <ErrorBoundary>
-            <table className="scan-table">
-              <tbody>
-                {scans.map((scan, i) => {
-                  return (
-                    <tr key={scan.scannedAt} className="scan-item">
-                      <td>
-                        {i === 0 ? (
-                          <Link className="link" to="/app">
-                            {relative(scan.scannedAt)}
-                          </Link>
-                        ) : (
-                          relative(scan.scannedAt)
-                        )}
-                      </td>
-                      <td>{tfToString[scan.timeframe]}</td>
-                      <td>{`${
-                        scan.totalUnsubscribableEmails
-                      } emails found`}</td>
-                      <td>{renderButton(scan)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <Table>
+              {scans.map((scan, i) => {
+                return (
+                  <TableRow key={scan.scannedAt}>
+                    <TableCell>
+                      {i === 0 ? (
+                        <Link styleName="scan-link" to="/app">
+                          {relative(scan.scannedAt)}
+                        </Link>
+                      ) : (
+                        relative(scan.scannedAt)
+                      )}
+                    </TableCell>
+                    <TableCell>{tfToString[scan.timeframe]}</TableCell>
+                    <TableCell>{`${
+                      scan.totalUnsubscribableEmails
+                    } emails found`}</TableCell>
+                    <TableCell>{renderButton(scan)}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </Table>
           </ErrorBoundary>
         </div>
       )}
@@ -77,16 +77,9 @@ function renderButton(scan) {
   const yesterday = subHours(Date.now(), 24);
   if (isAfter(scan.scannedAt, yesterday)) {
     return (
-      <Button compact basic linkTo="/app" linkArgs={{ rescan: scan.timeframe }}>
+      <Link styleName="scan-btn" to="/app" state={{ rescan: scan.timeframe }}>
         Re-scan
-      </Button>
-    );
-  } else if (scan.receiptUrl) {
-    // TODO
-    return (
-      <Button compact basic muted>
-        Invoice
-      </Button>
+      </Link>
     );
   }
   return null;

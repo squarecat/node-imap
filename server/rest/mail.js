@@ -1,19 +1,18 @@
+import {
+  addUnsubscribeErrorResponse,
+  fetchMail,
+  getImage,
+  getMailEstimates
+} from '../services/mail';
+
 import auth from './auth';
-import socketio from 'socket.io';
+import { checkAuthToken } from '../services/user';
 import io from '@pm2/io';
 import isBefore from 'date-fns/is_before';
-import subMinutes from 'date-fns/sub_minutes';
-
-import {
-  scanMail,
-  unsubscribeMail,
-  addUnsubscribeErrorResponse,
-  getMailEstimates,
-  getImage
-} from '../services/mail';
-import { checkAuthToken } from '../services/user';
-
 import logger from '../utils/logger';
+import socketio from 'socket.io';
+import subMinutes from 'date-fns/sub_minutes';
+import { unsubscribeFromMail } from '../services/unsubscriber';
 
 let connectedClients = {};
 let mailBuffer = {};
@@ -27,6 +26,38 @@ const socketsOpen = io.counter({
 });
 
 export default function(app, server) {
+  app.get('/api/mail/test/:strategy', auth, async (req, res) => {
+    const { strategy } = req.params;
+    const { user } = req;
+    let mail = [];
+    let err;
+    const start = Date.now();
+    try {
+      fetchMail(
+        { userId: user.id, timeframe: '1m', ignore: true },
+        {
+          onMail: m => {
+            mail = [...mail, ...m];
+          },
+          onError: e => {
+            console.error('onerror', e);
+            console.error(e);
+            err = e;
+          },
+          onEnd: () => {
+            const took = Date.now() - start;
+            res.send(err || { mail, took });
+          },
+          onProgress: () => {}
+        },
+        { strategy }
+      );
+    } catch (err) {
+      console.log('test errr', err.message);
+      res.send(err.message);
+    }
+  });
+
   app.get('/api/mail/image/:mailId', auth, async (req, res) => {
     const { user, params } = req;
     const { mailId } = params;
@@ -42,6 +73,7 @@ export default function(app, server) {
       res.status(500).send(err);
     }
   });
+
   app.get('/api/mail/estimates', auth, async (req, res) => {
     const estimates = await getMailEstimates(req.user.id);
     res.send(estimates);
@@ -49,67 +81,62 @@ export default function(app, server) {
 
   const io = socketio(server).of('mail');
 
+  // socket auth middleware
+  io.use(async (socket, next) => {
+    let { userId, token } = socket.handshake.query;
+    const isValid = await checkAuthToken(userId, token);
+    if (isValid) {
+      socket.auth = true;
+      socket.userId = userId;
+      return next();
+    }
+    logger.error('mail-rest: socket failed authentication, dropping socket');
+    return next(new Error('authentication error'));
+  });
+
   io.on('connection', socket => {
     socketsOpen.inc();
-    socket.auth = false;
-    socket.on('authenticate', async data => {
-      try {
-        const { userId, token } = data;
-        connectedClients[userId] = socket;
-        // check the auth data sent by the client
-        const isValid = await checkAuthToken(userId, token);
-        if (isValid) {
-          socket.auth = true;
-          socket.userId = userId;
-          socket.emit('authenticated');
-          if (mailBuffer[userId] && mailBuffer[userId].droppedMail.length) {
-            socket.emit('mail', mailBuffer[userId].droppedMail);
-            mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
-            mailBuffer[userId].droppedMail = [];
-          }
-        }
-      } catch (err) {
-        logger.error('mail-rest: error authenticating socket');
-        logger.error(err);
-      }
+    const { userId } = socket;
+    connectedClients[userId] = socket;
+    logger.info('mail-rest: socket connected');
+
+    checkBuffer(socket, userId);
+
+    socket.on('reconnect_attempt', () => {
+      checkBuffer(socket, userId);
     });
 
-    setTimeout(() => {
-      // if the socket didn't authenticate, disconnect it
-      if (!socket.auth) {
-        logger.info(
-          `mail-rest: socket unauthorized - disconnecting socket ${socket.id}`
-        );
-        socket.disconnect('unauthorized');
-      }
-    }, 5000);
-
-    socket.on('fetch', ({ timeframe }) => {
-      if (!socket.auth) {
-        return 'Not authenticated';
-      }
+    socket.on('fetch', async ({ timeframe }) => {
       logger.info(`mail-rest: scanning for ${timeframe}`);
       const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
         socket.userId
       );
-      // get mail data for user
-      scanMail(
-        {
+      try {
+        // get mail data for user
+        const it = await fetchMail({
           userId: socket.userId,
           timeframe
-        },
-        {
-          onMail,
-          onError,
-          onEnd,
-          onProgress
+        });
+        let next = await it.next();
+        while (!next.done) {
+          const { value } = next;
+          const { type, data } = value;
+          if (type === 'mail') {
+            await onMail(data);
+          } else if (type === 'progress') {
+            await onProgress(data);
+          }
+          next = await it.next();
         }
-      );
+        onEnd(next.value);
+      } catch (err) {
+        onError(err);
+      }
     });
 
     socket.on('unsubscribe', async mail => {
       try {
-        const data = await unsubscribeMail(socket.userId, mail);
+        const data = await unsubscribeFromMail(socket.userId, mail);
         socket.emit('unsubscribe:success', { id: mail.id, data });
       } catch (err) {
         logger.error('mail-rest: error unsubscribing from mail');
@@ -140,6 +167,21 @@ export default function(app, server) {
   });
 }
 
+function checkBuffer(socket, userId) {
+  logger.info('mail-rest: checking buffer');
+  // check to see if this user has stuff in the buffer
+  if (mailBuffer[userId]) {
+    if (mailBuffer[userId].droppedMail.length) {
+      socket.emit('mail', mailBuffer[userId].droppedMail);
+      mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
+      mailBuffer[userId].droppedMail = [];
+    }
+    if (mailBuffer[userId].droppedEnd) {
+      socket.emit('mail:end');
+    }
+  }
+}
+
 function getSocket(userId) {
   return connectedClients[userId];
 }
@@ -151,7 +193,7 @@ const mailBuffered = io.meter({
 function getSocketFunctions(userId) {
   mailBuffer[userId] = { start: Date.now(), droppedMail: [] };
   return {
-    onMail: m => {
+    onMail: async m => {
       const sock = getSocket(userId);
       if (!sock) {
         logger.error('socket: no socket bufferring mail');
@@ -160,8 +202,12 @@ function getSocketFunctions(userId) {
         mailInBuffer.inc(1);
         return false;
       }
-      sock.emit('mail', m);
-      return true;
+
+      return new Promise(ack => {
+        sock.emit('mail', m, () => {
+          ack();
+        });
+      });
     },
     onError: err => {
       const sock = getSocket(userId);
@@ -169,39 +215,50 @@ function getSocketFunctions(userId) {
         logger.error('socket: no socket dropped event `error`');
         return false;
       }
-      sock.emit('mail:err', err);
+      // if in production, just return a regular
+      // error message
+      if (process.NODE_ENV !== 'production') {
+        sock.emit('mail:err', err.stack);
+      } else {
+        sock.emit('mail:err', err.toString());
+      }
       return true;
     },
-    onEnd: () => {
+    onEnd: stats => {
       const sock = getSocket(userId);
       if (!sock) {
         logger.error('socket: no socket dropped event `end`');
         return false;
       }
-      sock.emit('mail:end');
+      mailBuffer[userId].droppedEnd = true;
+      sock.emit('mail:end', stats);
       return true;
     },
-    onProgress: progress => {
+    onProgress: async progress => {
       const sock = getSocket(userId);
       if (!sock) {
         return false;
       }
-      sock.emit('mail:progress', progress);
-      return true;
+      return new Promise(ack => {
+        sock.emit('mail:progress', progress, () => {
+          ack();
+        });
+      });
     }
   };
 }
 
-// delete any mail buffer that is older than 5 minutes
-setTimeout(() => {
+// TODO move this to redis
+// delete any mail in the buffer that is older than 60 minutes
+setInterval(() => {
   Object.keys(mailBuffer).forEach(userId => {
     const { start } = mailBuffer[userId];
-    if (isBefore(start, subMinutes(new Date(), 5))) {
+    if (isBefore(start, subMinutes(new Date(), 60))) {
       mailInBuffer.dec(mailBuffer[userId].droppedMail.length);
       delete mailBuffer[userId];
     }
   });
-}, 5000);
+}, 60000);
 
 io.action('mail-buffer:clear', cb => {
   mailBuffer = {};

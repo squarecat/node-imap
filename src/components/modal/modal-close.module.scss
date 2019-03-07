@@ -1,0 +1,27 @@
+@import './modal.module.scss';
+
+.modal-close-btn {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  cursor: pointer;
+  transform: scale(0.8);
+  transition: transform 150ms ease-in-out;
+
+  @media (max-width: 350px) {
+    right: 10px;
+    top: 10px;
+  }
+  @media (max-width: 500px) {
+    right: 15px;
+    top: 15px;
+  }
+}
+
+.modal-close-btn svg {
+  stroke-width: 3px;
+}
+
+.modal-close-btn:hover {
+  transform: scale(1);
+}

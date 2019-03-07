@@ -1,7 +1,7 @@
 import { PAYMENT_CHECKOUT_OPTS, PAYMENT_CONFIG_OPTS } from '../utils/payments';
 import React, { useEffect, useState } from 'react';
 
-import Button from './btn';
+import Button from '../components/btn';
 import useUser from '../utils/hooks/use-user';
 
 let callback;
@@ -88,7 +88,7 @@ const CheckoutForm = ({
 
 export default CheckoutForm;
 
-async function sendPayment({ token, productId, coupon, address, name }) {
+export async function sendPayment({ token, productId, coupon, address, name }) {
   let url;
   if (coupon) {
     url = `/api/checkout/${productId}/${coupon}`;

@@ -1,36 +1,29 @@
 import 'isomorphic-fetch';
-import './home.css';
+import './home.scss';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
-import AnimatedNumber from 'react-animated-number';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
+import Header from './header';
 import Layout from '../layouts/layout';
-import WallOfLove from '../components/wall-of-love/wall-of-love';
+import { TextImportant } from '../components/text';
+import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 import heartGif from '../assets/heart.gif';
 import iphoneUnsubGif from '../assets/iphone-unsub.png';
-import { PRICES as modalPrices } from '../components/price-modal';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
-import smallLogo from '../assets/envelope-logo.png';
+import { PRICES as prices } from '../utils/prices';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
 
-const indieMakerTweetText = encodeURIComponent(
-  `🙌 I'm supporting products made with love 💛 by Indie Makers @dinkydani21 and @JamesIvings. They're building @LeaveMeAloneApp 🙅‍♀️ - see all your subscription emails in one place and unsubscribe from them with a single click.\n\nCheck it out at https://leavemealone.xyz`
-);
-
-const PRICES = modalPrices.map(p =>
+const PRICES = prices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
-let referrer;
-if (typeof URLSearchParams !== 'undefined') {
-  referrer = new URLSearchParams(window.location.search).get('ref');
-}
+
 const IndexPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {
@@ -45,50 +38,13 @@ const IndexPage = () => {
     statsData = value;
   }
 
-  const bannerShown = true;
+  const bannerShown = false;
 
   return (
     <Layout>
       <Colin />
       <div id="main">
-        <div className="home-header">
-          {/* <div className="ref-banner">
-            {bannerShown ? (
-              <span>
-                ❤ Happy Valentines Day! Today only have 40% off all{' '}
-                <a href="/gifts">gift purchases</a> ❤
-              </span>
-            ) : null}
-          </div> */}
-          <div className="home-header-inner">
-            <a href="/" className="home-header-logo">
-              <img alt="logo" src={smallLogo} />
-            </a>
-            <div className="home-header-title">Leave Me Alone </div>
-            <ul className="home-header-nav">
-              <li className="nav-how">
-                <a className="link" href="#how-it-works">
-                  How it works
-                </a>
-              </li>
-              <li className="nav-pricing">
-                <a className="link" href="#pricing">
-                  Pricing
-                </a>
-              </li>
-              <li className="nav-login">
-                <a
-                  href="/app"
-                  onMouseEnter={() => setActive(true)}
-                  onMouseLeave={() => setActive(false)}
-                  className={`beam-me-up-cta beam-me-up-cta--header`}
-                >
-                  Log in
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <Header setActive={setActive} />
         <div
           className={`friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
@@ -121,7 +77,7 @@ const IndexPage = () => {
                     href="/login"
                     onMouseEnter={() => setActive(true)}
                     onMouseLeave={() => setActive(false)}
-                    className={`beam-me-up-cta beam-me-up-cta--f`}
+                    className={`beam-me-up-cta`}
                   >
                     Get Started For Free!
                   </a>
@@ -267,25 +223,13 @@ const IndexPage = () => {
           <div className="home-container-inner" id="pricing">
             <h2>Let's talk money</h2>
             <p>
-              So that we can{' '}
-              <span className="text-important">keep your data safe</span> Leave
-              Me Alone is a paid service.
+              So that we can <TextImportant>keep your data safe</TextImportant>{' '}
+              Leave Me Alone is a paid service.
             </p>
             <p>
-              You <span className="text-important">pay once</span> for how far
-              back in time you want search your inbox for subscription emails.
+              You <TextImportant>pay once</TextImportant> for how far back in
+              time you want search your inbox for subscription emails.
             </p>
-            {/* <p>
-              We’ll scan your inbox for any subscription emails received in the{' '}
-              <span className="text-important">last 3 days for free</span>.
-            </p>
-            <p>
-              To scan for email subscriptions received in the{' '}
-              <span className="text-important">
-                last week, last month, or last 6 months
-              </span>
-              , you can make a one-time purchase of one of these packages.
-            </p> */}
           </div>
 
           <div className="pricing-list-of-boxes-that-say-how-much">
@@ -314,7 +258,7 @@ const IndexPage = () => {
                 </a>
               ))}
             </div>
-            <a className="link pricing-enterprise" href="/enterprise">
+            <a className="pricing-enterprise" href="/enterprise">
               Looking for an enterprise plan?
             </a>
           </div>
@@ -324,25 +268,24 @@ const IndexPage = () => {
               <ul className="bullets">
                 <li>
                   See all of your subscription emails in{' '}
-                  <span className="text-important">one place</span>
+                  <TextImportant>one place</TextImportant>
                 </li>
                 <li>
                   Unsubscribe from spam with a{' '}
-                  <span className="text-important">single click</span>
+                  <TextImportant>single click</TextImportant>
                 </li>
                 <li>
-                  Know your data is in{' '}
-                  <span className="text-important">safe hands</span>
+                  Know your data is in <TextImportant>safe hands</TextImportant>
                 </li>
                 <li>
-                  Enjoy a <span className="text-important">cleaner inbox</span>
+                  Enjoy a <TextImportant>cleaner inbox</TextImportant>
                 </li>
               </ul>
               <a
                 href="/login"
                 onMouseEnter={() => setActive(true)}
                 onMouseLeave={() => setActive(false)}
-                className={`beam-me-up-cta beam-me-up-cta--f`}
+                className={`beam-me-up-cta beam-me-up-cta-center`}
               >
                 Get Started For Free!
               </a>
@@ -366,14 +309,9 @@ const IndexPage = () => {
               funding or outside support. We're real people (not the huskies!),
               we're not a soulless corporation out to steal your money! 🙅‍
             </p>
-            <p>
-              <a
-                target="_"
-                href={`https://twitter.com/intent/tweet?text=${indieMakerTweetText}`}
-              >
-                Support the Indie Maker movement!
-              </a>
-            </p>
+            <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
+              Clean My Inbox!
+            </a>
           </div>
         </div>
         <Footer />
@@ -393,64 +331,64 @@ function fetchStats() {
   return fetch('/api/stats').then(r => r.json());
 }
 
-function Stats({ isLoading, data, isVisible }) {
-  const [stats, setStats] = useState({
-    unsubscribableEmails: 0,
-    unsubscriptions: 0
-  });
+// function Stats({ isLoading, data, isVisible }) {
+//   const [stats, setStats] = useState({
+//     unsubscribableEmails: 0,
+//     unsubscriptions: 0
+//   });
 
-  useEffect(
-    () => {
-      if (!isLoading && isVisible) {
-        const {
-          unsubscribableEmails,
-          unsubscriptions,
-          previouslyUnsubscribedEmails
-        } = data;
-        setStats({
-          unsubscribableEmails:
-            unsubscribableEmails - previouslyUnsubscribedEmails,
-          unsubscriptions,
-          set: true
-        });
-      }
-    },
-    [isVisible]
-  );
+//   useEffect(
+//     () => {
+//       if (!isLoading && isVisible) {
+//         const {
+//           unsubscribableEmails,
+//           unsubscriptions,
+//           previouslyUnsubscribedEmails
+//         } = data;
+//         setStats({
+//           unsubscribableEmails:
+//             unsubscribableEmails - previouslyUnsubscribedEmails,
+//           unsubscriptions,
+//           set: true
+//         });
+//       }
+//     },
+//     [isVisible]
+//   );
 
-  return (
-    <div className="stats">
-      <div className="stat">
-        <span className="stat-value">
-          <AnimatedNumber
-            value={stats.unsubscribableEmails}
-            style={{
-              transition: '0.8s ease-out',
-              fontSize: 48
-            }}
-            duration={1000}
-            formatValue={n => formatNumber(n)}
-          />
-        </span>
-        <span>Spam emails scanned</span>
-      </div>
-      <div className="stat">
-        <span className="stat-value">
-          <AnimatedNumber
-            value={stats.unsubscriptions}
-            style={{
-              transition: '0.8s ease-out',
-              fontSize: 48
-            }}
-            duration={1000}
-            formatValue={n => formatNumber(n)}
-          />
-        </span>
-        <span>Spam emails unsubscribed</span>
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className="stats">
+//       <div className="stat">
+//         <span className="stat-value">
+//           <AnimatedNumber
+//             value={stats.unsubscribableEmails}
+//             style={{
+//               transition: '0.8s ease-out',
+//               fontSize: 48
+//             }}
+//             duration={1000}
+//             formatValue={n => formatNumber(n)}
+//           />
+//         </span>
+//         <span>Spam emails scanned</span>
+//       </div>
+//       <div className="stat">
+//         <span className="stat-value">
+//           <AnimatedNumber
+//             value={stats.unsubscriptions}
+//             style={{
+//               transition: '0.8s ease-out',
+//               fontSize: 48
+//             }}
+//             duration={1000}
+//             formatValue={n => formatNumber(n)}
+//           />
+//         </span>
+//         <span>Spam emails unsubscribed</span>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default IndexPage;
 

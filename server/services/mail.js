@@ -10,288 +10,96 @@ import {
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
 import {
-  addScanToUser,
-  addUnsubscriptionToUser,
-  getUserById,
-  resolveUserUnsubscription,
-  updatePaidScanForUser
-} from './user';
+  addScan as addScanToUser,
+  getUnsubscribeImage,
+  resolveUnsubscription as resolveUserUnsubscription,
+  updatePaidScan as updatePaidScanForUser
+} from '../dao/user';
+import {
+  fetchMail as fetchMailFromGmail,
+  getEstimates as getMailEstimatesFromGmail
+} from './mail/gmail';
+import {
+  fetchMail as fetchMailFromOutlook,
+  getEstimates as getMailEstimatesFromOutlook
+} from './mail/outlook';
 
-import Gmail from 'node-gmail-api';
 import emailAddresses from 'email-addresses';
-import { emailStringIsEqual } from '../utils/parsers';
-import format from 'date-fns/format';
-import { getUnsubscribeImage } from '../dao/user';
-import io from '@pm2/io';
-import isAfter from 'date-fns/is_after';
-import isBefore from 'date-fns/is_before';
-import { isHashEqual } from '../dao/encryption';
+import { getUserById } from './user';
 import logger from '../utils/logger';
-import { refreshAccessToken } from '../auth';
-import { sendUnsubscribeMail } from '../utils/email';
-import subDays from 'date-fns/sub_days';
-import subHours from 'date-fns/sub_hours';
-import subMinutes from 'date-fns/sub_minutes';
-import subMonths from 'date-fns/sub_months';
-import subWeeks from 'date-fns/sub_weeks';
-import { unsubscribeWithLink } from '../utils/browser';
-import url from 'url';
 
-const mailPerSecond = io.meter({
-  name: 'mail/sec'
-});
-const trashPerSecond = io.meter({
-  name: 'trash/sec'
-});
-
-const googleDateFormat = 'YYYY/MM/DD';
-const estimateTimeframes = ['3d', '1w'];
-
-function getAccessToken(user) {
-  const { keys, id: userId } = user;
-  const { accessToken, refreshToken, expires, expiresIn } = keys;
-
-  if (isBefore(subMinutes(expires, 5), new Date())) {
-    return refreshAccessToken(userId, { refreshToken, expiresIn });
-  }
-  return accessToken;
-}
-
-export async function getMailEstimates(userId) {
+// todo convert to generator?
+export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
   const user = await getUserById(userId);
-  const accessToken = await getAccessToken(user);
-  const gmail = new Gmail(accessToken);
-  const now = new Date();
-  let estimates = await Promise.all(
-    estimateTimeframes.map(async timeframe => {
-      const [value, unit] = timeframe;
-      let then;
-      if (unit === 'd') {
-        then = subDays(now, value);
-      } else if (unit === 'w') {
-        then = subWeeks(now, value);
-      }
-      const searchStr = getSearchString({ then, now });
-      const total = await getEstimatedEmails(searchStr, gmail);
-      return {
-        timeframe,
-        total
-      };
-    })
-  );
-  estimates = [
-    ...estimates,
-    { timeframe: '1m', total: estimates[1].total * 4 },
-    { timeframe: '6m', total: estimates[1].total * 4 * 6 }
-  ].map(e => ({ ...e, totalSpam: (e.total * 0.48).toFixed() }));
-
-  addEstimateToStats();
-  return estimates;
-}
-
-export async function scanMail(
-  { userId, timeframe },
-  { onMail, onError, onEnd, onProgress }
-) {
+  const scannedAt = Date.now();
+  const { provider } = user;
+  let it;
   try {
-    let dupes = [];
-
-    const { then, now } = getTimeRange(timeframe);
-
-    const user = await getUserById(userId);
-    if (!hasPaidScanAvailable(user, timeframe)) {
-      logger.warn(
-        'mail-service: User attempted search that has not been paid for'
+    if (provider === 'google') {
+      it = await fetchMailFromGmail(
+        { user, timeframe },
+        { strategy: 'api', batch: true }
       );
-      return onError('Not paid');
-    }
-    const accessToken = await getAccessToken(user);
-    const gmail = new Gmail(accessToken);
-    const { unsubscriptions, ignoredSenderList } = user;
-    const searchStr = getSearchString({ then, now });
-    const trashSearchStr = getSearchString({ then, now, query: 'in:trash' });
-    let total;
-
-    if (timeframe === '1m' || timeframe === '6m') {
-      const { then: estimateThen } = getTimeRange('1w');
-      const estimatedSearchString = getSearchString({
-        then: estimateThen,
-        now
-      });
-      const trashEstimatedSearchString = getSearchString({
-        then: estimateThen,
-        now,
-        query: 'in:trash'
-      });
-      const oneWTotal = await getEstimatedEmails(estimatedSearchString, gmail);
-      const trashOneWTotal = await getEstimatedEmails(
-        trashEstimatedSearchString,
-        gmail
-      );
-      const combinedOneWTotal = oneWTotal + trashOneWTotal;
-      total =
-        timeframe === '1m' ? combinedOneWTotal * 4 : combinedOneWTotal * 4 * 6;
+    } else if (provider === 'outlook') {
+      it = await fetchMailFromOutlook({ user, timeframe });
     } else {
-      const estimatedTotal = await getEstimatedEmails(searchStr, gmail);
-      const trashEstimatedTotal = await getEstimatedEmails(
-        trashSearchStr,
-        gmail
-      );
-      total = estimatedTotal + trashEstimatedTotal;
+      throw new Error('mail-service unknown provider');
     }
-    logger.info(`mail-service: estimated total ${total}`);
-    logger.info(
-      `mail-service: doing scan... user:${userId}, timeframe:${timeframe}, searchStr:${searchStr}`
-    );
-    logger.info(
-      `mail-service: doing trash scan... user:${userId}, timeframe:${timeframe}, trashSearchStr:${trashSearchStr}`
-    );
 
-    let totalEmailsCount = 0;
-    let totalUnsubscribableEmailsCount = 0;
-    let totalPreviouslyUnsubscribedEmails = 0;
-    let progress = 0;
+    let next = await it.next();
+    while (!next.done) {
+      const { value } = next;
+      yield value;
+      next = await it.next();
+    }
+    const {
+      totalMail,
+      totalUnsubscribableMail,
+      totalPreviouslyUnsubscribedMail,
+      occurances
+    } = next.value;
 
-    onProgress({ progress, total });
-
-    const onMailData = (m, options = {}) => {
-      if (options.trash) {
-        trashPerSecond.mark();
-      } else {
-        mailPerSecond.mark();
-      }
-      if (isUnsubscribable(m, ignoredSenderList)) {
-        const mail = mapMail(m, options);
-        if (mail) {
-          const prevUnsubscriptionInfo = hasUnsubscribedAlready(
-            mail,
-            unsubscriptions
-          );
-          // don't send duplicates
-          const hasDupe = dupes.some(
-            dupe =>
-              emailStringIsEqual(dupe.from, mail.from) &&
-              emailStringIsEqual(dupe.to, mail.to)
-          );
-          if (mail && !hasDupe) {
-            dupes = [...dupes, { to: mail.to, from: mail.from }];
-            if (prevUnsubscriptionInfo) {
-              totalPreviouslyUnsubscribedEmails++;
-              onMail({ ...mail, subscribed: false, ...prevUnsubscriptionInfo });
-            } else {
-              onMail({ ...mail, subscribed: true });
-            }
-            totalUnsubscribableEmailsCount++;
-          }
-        }
-      }
-      totalEmailsCount++;
-      progress = progress + 1;
-      onProgress({ progress, total });
+    const scanData = {
+      scannedAt,
+      timeframe,
+      totalEmails: totalMail,
+      totalUnsubscribableEmails: totalUnsubscribableMail,
+      totalPreviouslyUnsubscribedMail
     };
-
-    const onScanFinished = () => {
-      logger.info('mail-service: scan finished');
+    if (!ignore) {
       addScanToStats();
       addNumberofEmailsToStats({
-        totalEmails: totalEmailsCount,
-        totalUnsubscribableEmails: totalUnsubscribableEmailsCount,
-        totalPreviouslyUnsubscribedEmails
+        totalEmails: totalMail,
+        totalUnsubscribableEmails: totalUnsubscribableMail,
+        totalPreviouslyUnsubscribedEmails: totalPreviouslyUnsubscribedMail
       });
-      addScanToUser(userId, {
-        timeframe,
-        totalEmails: totalEmailsCount,
-        totalUnsubscribableEmails: totalUnsubscribableEmailsCount,
-        totalPreviouslyUnsubscribedEmails
-      });
+      addScanToUser(user.id, scanData);
       if (timeframe !== '3d') {
         updatePaidScanForUser(userId, timeframe);
       }
-      onEnd();
-    };
-
-    const onMailTimeout = err => {
-      logger.error('mail-service: gmail timeout');
-      logger.error(err);
-      onError(err.toString());
-    };
-
-    const onMailError = err => {
-      logger.error('mail-service: gmail error');
-      logger.error(err);
-      onError(err.toString());
-    };
-
-    const messageOptions = {
-      timeout: 10000,
-      max: 50000
-    };
-
-    logger.info('mail-service: -------- INBOX STARTED --------');
-    const s = gmail.messages(searchStr, messageOptions);
-
-    s.on('data', onMailData);
-    s.on('timeout', onMailTimeout);
-    s.on('error', onMailError);
-
-    s.on('end', () => {
-      logger.info('mail-service: -------- INBOX FINISHED --------');
-      logger.info('mail-service: -------- TRASH STARTED --------');
-      const t = gmail.messages(trashSearchStr, messageOptions);
-      t.on('data', d => onMailData(d, { trash: true }));
-      t.on('end', () => {
-        logger.info('mail-service: -------- TRASH FINISHED --------');
-        onScanFinished();
-      });
-      t.on('timeout', onMailTimeout);
-      t.on('error', onMailError);
-    });
-  } catch (err) {
-    onError(err.toString());
-  }
-}
-
-export async function unsubscribeMail(userId, mail) {
-  const { unsubscribeLink, unsubscribeMailTo } = mail;
-  logger.info(`mail-service: unsubscribe from ${mail.id}`);
-  let unsubStrategy;
-  let output;
-  try {
-    if (unsubscribeLink) {
-      unsubStrategy = 'link';
-      output = await unsubscribeWithLink(unsubscribeLink);
-    } else {
-      unsubStrategy = 'mailto';
-      output = await unsubscribeWithMailTo(unsubscribeMailTo);
     }
-    addUnsubscriptionToUser(userId, {
-      mail,
-      image: output.image,
-      unsubscribeStrategy: unsubStrategy,
-      unsubscribeLink,
-      unsubscribeMailTo,
-      estimatedSuccess: output.estimatedSuccess
-    });
-    if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
-    return {
-      id: output.id,
-      estimatedSuccess: output.estimatedSuccess,
-      image: !!output.image,
-      unsubStrategy
-    };
+    return { ...scanData, occurances };
   } catch (err) {
-    logger.error(`mail-service: error unsubscribing from mail ${mail.id}`);
-    logger.error(err);
+    console.error('mail-service: failed to fetch mail for user', user.id);
+    console.error(err);
     throw err;
   }
 }
 
+export function getImage(userId, mailId) {
+  return getUnsubscribeImage(userId, mailId);
+}
+
 export async function addUnsubscribeErrorResponse(
-  { mailId, success, from, image = null, reason = null, unsubStrategy },
+  { mailId, success, from, useImage, reason = null, unsubStrategy },
   userId
 ) {
   try {
-    const domain = getDomain(from);
+    let image = null;
+    if (useImage) {
+      image = await getImage(userId, mailId);
+    }
+    const { domain } = emailAddresses.parseOneAddress(from);
     if (success) {
       return Promise.all([
         addUnsubscriptionToStats({ unsubStrategy }),
@@ -319,202 +127,25 @@ export async function addUnsubscribeErrorResponse(
   }
 }
 
-function isUnsubscribable(mail = {}, ignoredSenderList = []) {
-  const { id, payload } = mail;
-
-  if (!payload) {
-    logger.warn(
-      `mail-service: cannot check if unsubscribable, mail object has no payload ${id}`
-    );
-    if (!id) {
-      logger.warn('mail-service: mail id undefined');
-      logger.warn(mail);
-    }
-    return false;
-  }
-
+export async function getMailEstimates(userId) {
+  const user = await getUserById(userId);
+  const { provider } = user;
+  let estimates;
   try {
-    const { headers = [] } = payload;
-    const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
-    const from = headers.find(h => h.name === 'From').value;
-    let pureFromEmail;
-    if (from.match(/^.*<.*>/)) {
-      const [, , email] = /^(.*)<(.*)>/.exec(from);
-      pureFromEmail = email;
+    if (provider === 'google') {
+      estimates = await getMailEstimatesFromGmail(user);
+    } else if (provider === 'outlook') {
+      estimates = await getMailEstimatesFromOutlook(user);
     } else {
-      pureFromEmail = from;
+      throw new Error('mail-service unknown provider');
     }
-    const isIgnoredSender = ignoredSenderList.some(
-      sender => sender === pureFromEmail
+    addEstimateToStats();
+    return estimates;
+  } catch (err) {
+    logger.error(
+      `mail-service: error getting mail estimates for user ${userId}`
     );
-    return hasListUnsubscribe && !isIgnoredSender;
-  } catch (err) {
-    logger.error('Failed to determine if email is unsubscribable');
-    logger.error(err);
-    return false;
-  }
-}
-
-function mapMail(mail, { trash = false } = {}) {
-  const { payload, id, snippet, internalDate, labelIds } = mail;
-
-  try {
-    if (!payload) {
-      throw new Error('mail object has no payload', id);
-    }
-
-    const isTrash = trash || labelIds.includes('TRASH');
-    const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
-      .value;
-    const { unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub);
-    if (!unsubscribeMailTo && !unsubscribeLink) {
-      return null;
-    }
-    return {
-      id,
-      snippet,
-      googleDate: internalDate,
-      from: payload.headers.find(h => h.name === 'From').value,
-      to: payload.headers.find(h => h.name === 'To').value,
-      subject: payload.headers.find(h => h.name === 'Subject').value,
-      unsubscribeLink,
-      unsubscribeMailTo,
-      isTrash
-    };
-  } catch (err) {
-    logger.error('mail-service: error mapping mail');
-    logger.error(err);
-    return null;
-  }
-}
-
-export function getImage(userId, mailId) {
-  return getUnsubscribeImage(userId, mailId);
-}
-
-function getSearchString({ then, query = '' }) {
-  const thenStr = format(then, googleDateFormat);
-  return `after:${thenStr} ${query}`;
-}
-
-async function unsubscribeWithMailTo(unsubMailto) {
-  try {
-    // const address = unsubMailto.replace('mailto:', '');
-    const [mailto, paramsString = ''] = unsubMailto.split('?');
-    const toAddress = mailto.replace('mailto:', '');
-    const params = paramsString.split('&').reduce((out, p) => {
-      var d = p.split('=');
-      return { ...out, [d[0]]: d[1] };
-    }, {});
-
-    const sent = await sendUnsubscribeMail({ toAddress, ...params });
-    return { estimatedSuccess: !!sent };
-  } catch (err) {
-    return { estimatedSuccess: false };
-  }
-}
-
-function getDomain(mailFrom) {
-  const { domain } = emailAddresses.parseOneAddress(mailFrom);
-  return domain;
-}
-
-// a mail has been unsubscribed already if the from and to
-// are the same as previously
-// TODO and the date is prior to the unsubscription event?
-function hasUnsubscribedAlready(mail, unsubscriptions = []) {
-  const unsubInfo = unsubscriptions.find(
-    u => mail.from === u.from && mail.to === u.to
-  );
-  if (!unsubInfo) {
-    return null;
-  }
-  const { image, unsubStrategy, estimatedSuccess, resolved } = unsubInfo;
-  return { image, unsubStrategy, estimatedSuccess, resolved };
-}
-
-async function getEstimatedEmails(query, gmail) {
-  return new Promise((resolve, reject) => {
-    gmail.estimatedMessages(
-      query,
-      {
-        max: 1000,
-        timeout: 5000
-      },
-      (err, count) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(count);
-      }
-    );
-  });
-}
-
-function getTimeRange(timeframe) {
-  let then;
-  const now = Date.now();
-  const [value, unit] = timeframe;
-  if (unit === 'd') {
-    then = subDays(now, value);
-  } else if (unit === 'w') {
-    then = subWeeks(now, value);
-  } else if (unit === 'm') {
-    then = subMonths(now, value);
-  }
-  return { then, now };
-}
-
-function getUnsubValues(unsub) {
-  try {
-    let unsubscribeMailTo = null;
-    let unsubscribeLink = null;
-    if (/^<.+>,\s*<.+>$/.test(unsub)) {
-      const unsubTypes = unsub
-        .split(',')
-        .map(a => a.trim().match(/^<(.*)>$/)[1]);
-      unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
-      unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
-    } else if (/^<.+>,\s*.+$/.test(unsub)) {
-      const unsubTypes = unsub.split(',').map(a => getUnsubValue(a));
-      unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
-      unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
-    } else if (unsub.startsWith('<http')) {
-      unsubscribeLink = unsub.substr(1, unsub.length - 2);
-    } else if (unsub.startsWith('<mailto')) {
-      unsubscribeMailTo = unsub.substr(1, unsub.length - 2);
-    } else if (url.parse(unsub).protocol === 'mailto') {
-      unsubscribeMailTo = unsub;
-    } else if (url.parse(unsub).protocol !== null) {
-      unsubscribeLink = unsub;
-    }
-    return { unsubscribeMailTo, unsubscribeLink };
-  } catch (err) {
-    logger.error(`mail-service: failed to get unsub values`);
-    logger.error(unsub);
     logger.error(err);
     throw err;
   }
-}
-
-function getUnsubValue(str) {
-  if (str.trim().match(/^<.+>$/)) {
-    return str.substr(1, str.length - 2);
-  }
-  return str;
-}
-
-// a scan is available if it has not yet been
-// completed, or it was completed in the last
-// 24 hours
-function hasPaidScanAvailable(user, scanType) {
-  const yesterday = subHours(Date.now(), 24);
-  if (scanType === '3d' || user.beta) return true;
-  return (user.paidScans || []).some(s => {
-    if (s.scanType === scanType) {
-      const performedWithin24Hrs = isAfter(s.paidAt, yesterday);
-      return !s.performed || performedWithin24Hrs;
-    }
-    return false;
-  });
 }

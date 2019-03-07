@@ -1,0 +1,92 @@
+@import '../../styles/common/colors.scss';
+@import '../../components/btn/btn.module.scss';
+@import '../../components/text/text.module.scss';
+
+$active-bg-color: #ffc7c1;
+
+.hold-onto-your-butts-we-are-logging-in {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-secondary-bg;
+  transition: background-color 600ms ease-in-out;
+  padding: 10px;
+
+  &.active {
+    background-color: $active-bg-color;
+  }
+}
+
+.login-boxy-box {
+  width: 100%;
+  max-width: 500px;
+  background-color: white;
+  padding: 25px;
+  border-radius: 7px;
+  box-shadow: 0 7px 1em $color-input-border-focus;
+  text-align: center;
+}
+
+.beautiful-logo {
+  width: 100px;
+  margin: 20px auto;
+}
+
+.title {
+  font-size: 1.62671rem;
+  line-height: 1.1;
+}
+.buttons {
+}
+
+.login-me-in-dammit {
+  @extend .btn;
+  @extend .centered;
+  background: white;
+  border: 1px solid #8c8c8c;
+  color: $color-primary-font;
+  font-weight: 600;
+  width: 100%;
+  max-width: 340px;
+  margin: 20px auto;
+  text-align: left;
+
+  .text {
+    margin-left: 15px;
+    width: 300px;
+  }
+
+  &:hover {
+    box-shadow: 0 7px 1em rgba(194, 58, 0, 0.15);
+    background-color: rgba(255, 218, 214, 0.2);
+    color: $color-primary-font;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
+}
+
+.error {
+  background: $color-red;
+  color: white;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid $color-text-error;
+  margin-top: 40px;
+
+  p {
+    margin: 0;
+  }
+
+  .beta-link {
+    @extend .link;
+    @extend .link-inverted;
+  }
+}

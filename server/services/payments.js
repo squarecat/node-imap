@@ -1,18 +1,18 @@
+import { addGiftRedemptionToStats, addPaymentToStats } from '../services/stats';
+import { addPaidScanToUser, getUserById } from '../services/user';
 import {
+  createCustomer,
   createPayment,
   getPaymentCoupon,
-  updateCouponUses,
-  createCustomer,
-  updateCustomer,
+  listCharges,
   listInvoices,
-  listCharges
+  updateCouponUses,
+  updateCustomer
 } from '../utils/stripe';
-import { addPaidScanToUser, getUserById } from '../services/user';
-import { updateReferralOnReferrer } from '../services/referral';
-import { addPaymentToStats, addGiftRedemptionToStats } from '../services/stats';
-import { updateUser } from '../dao/user';
 
 import logger from '../utils/logger';
+import { updateReferralOnReferrer } from '../services/referral';
+import { updateUser } from '../dao/user';
 
 export const products = [
   {
@@ -53,6 +53,14 @@ export async function updateCoupon(name) {
   }
 }
 
+export function applyCoupon(amount, { percent_off = 0, amount_off = 0 }) {
+  if (percent_off) {
+    return amount - amount * (percent_off / 100);
+  } else if (amount_off) {
+    return amount - amount_off;
+  }
+}
+
 export async function createPaymentForUser({
   token,
   user,
@@ -70,50 +78,53 @@ export async function createPaymentForUser({
     let couponObject;
     if (coupon) {
       couponObject = await getCoupon(coupon);
-      const { percent_off, amount_off } = couponObject;
-      if (percent_off) {
-        price = amount - amount * (percent_off / 100);
-      } else if (amount_off) {
-        price = amount - amount_off;
-      }
+      price = applyCoupon(amount, couponObject);
     }
 
-    if (customerId) {
-      await updateCustomer({
-        customerId: customerId,
-        token,
-        email: user.email,
-        address,
-        name
-      });
+    if (price < 50 || process.env.NODE_ENV === 'beta') {
+      payment = true;
     } else {
-      const { id } = await createCustomer({
-        token,
-        email: user.email,
+      if (customerId) {
+        await updateCustomer({
+          customerId: customerId,
+          token,
+          email: user.email,
+          address,
+          name
+        });
+      } else {
+        const { id } = await createCustomer({
+          token,
+          email: user.email,
+          address,
+          name
+        });
+        customerId = id;
+      }
+      payment = await createPayment({
         address,
-        name
+        customerId: customerId,
+        productPrice: price,
+        productLabel: label,
+        provider: user.provider,
+        coupon: couponObject && couponObject.valid ? coupon : null
       });
-      customerId = id;
+
+      await updateUser(userId, {
+        customerId
+      });
+
+      if (referredBy) {
+        updateReferralOnReferrer(referredBy, {
+          userId: userId,
+          scanType: label,
+          price
+        });
+      }
+      addPaymentToStats({ price: price / 100 });
     }
-    payment = await createPayment({
-      address,
-      customerId: customerId,
-      productPrice: price,
-      productLabel: label,
-      coupon: couponObject && couponObject.valid ? coupon : null
-    });
 
-    await updateUser(userId, {
-      customerId
-    });
-
-    updateReferralOnReferrer(referredBy, {
-      userId: userId,
-      scanType: label,
-      price
-    });
     addPaidScanToUser(userId, productId);
-    addPaymentToStats({ price: price / 100 });
     if (couponObject) {
       updateCoupon(coupon);
     }

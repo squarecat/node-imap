@@ -16,10 +16,6 @@ export default globalReducer(
         unsubCount: state.unsubCount + count
       };
     },
-    setHasSearched: (state, hasSearched) => ({
-      ...state,
-      hasSearched
-    }),
     setIgnoredSenderList: (state, list) => ({
       ...state,
       ignoredSenderList: list
@@ -28,9 +24,17 @@ export default globalReducer(
       ...state,
       reminder
     }),
-    setLastPaidScan: (state, timeframe) => ({
+    setLastPaidScanType: (state, timeframe) => ({
       ...state,
-      lastPaidScan: timeframe
+      lastPaidScanType: timeframe
+    }),
+    setLastScan: (state, scan) => ({
+      ...state,
+      lastScan: scan
+    }),
+    setPreferences: (state, preferences) => ({
+      ...state,
+      preferences
     })
   }
 );

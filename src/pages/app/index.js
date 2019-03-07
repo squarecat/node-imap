@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
 import 'isomorphic-fetch';
-import { Transition } from 'react-transition-group';
 
-import Template from './template';
-import Modal from '../../components/price-modal';
-
-import useUser from '../../utils/hooks/use-user';
+import React, { useState } from 'react';
 
 import MailList from './mail-list';
+import Modal from '../../components/modal/price-modal';
+import Template from './template';
+import { Transition } from 'react-transition-group';
 import Welcome from './welcome';
-
-import './index.css';
+import useUser from '../../utils/hooks/use-user';
 
 let doScan = false;
 if (typeof URLSearchParams !== 'undefined' && typeof window !== 'undefined') {
@@ -25,8 +22,8 @@ export default function App({ location = {} } = {}) {
   const rescan = state && state.rescan;
   const [showPriceModal, togglePriceModal] = useState(false);
   const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user, { setLastPaidScan }] = useUser();
-  const { hasScanned } = user;
+  const [user, { setLastPaidScanType }] = useUser();
+  const { hasScanned, provider } = user;
 
   return (
     <Template>
@@ -38,7 +35,10 @@ export default function App({ location = {} } = {}) {
       >
         {state => (
           <div className={`welcome-content ${state}`}>
-            <Welcome openPriceModal={() => togglePriceModal(true)} />
+            <Welcome
+              openPriceModal={() => togglePriceModal(true)}
+              provider={provider}
+            />
           </div>
         )}
       </Transition>
@@ -54,7 +54,7 @@ export default function App({ location = {} } = {}) {
           <div className={`mail-list-content ${state}`}>
             <MailList
               timeframe={timeframe}
-              hasSearched={hasScanned}
+              setTimeframe={tf => setTimeframe(tf)}
               showPriceModal={() => togglePriceModal(true)}
             />
           </div>
@@ -66,7 +66,7 @@ export default function App({ location = {} } = {}) {
           onPurchase={option => {
             setTimeframe(option);
             if (option !== '3d') {
-              setLastPaidScan(option);
+              setLastPaidScanType(option);
             }
             togglePriceModal(false);
           }}

@@ -1,0 +1,6 @@
+@import '../../components/btn/btn.module.scss';
+
+.subscribe-btn {
+  @extend .btn;
+  @extend .centered;
+}

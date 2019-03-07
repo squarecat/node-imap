@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import './auth.module.scss';
 
-import { fetchLoggedInUser } from '../utils/auth';
+import React, { useEffect, useState } from 'react';
 import { useAsync, useLoader } from '../utils/hooks';
+
 import Loading from './loading';
+import { fetchLoggedInUser } from '../utils/auth';
 import useUser from '../utils/hooks/use-user';
-import './auth.css';
 
 export default ({ children }) => {
   const { error, value: user, loading: userLoading } = useAsync(
@@ -49,9 +50,9 @@ function UserAuth({ children }) {
   );
 
   return (
-    <div className={`auth-loading ${isLoading ? '' : 'auth-loading--loaded'}`}>
-      <Loading />
-      <div className="loaded-content">{!isLoading ? children : null}</div>
+    <div styleName={`auth-loading ${isLoading ? '' : 'loaded'}`}>
+      <Loading loaded={!isLoading} />
+      <div styleName="loaded-content">{!isLoading ? children : null}</div>
     </div>
   );
 }

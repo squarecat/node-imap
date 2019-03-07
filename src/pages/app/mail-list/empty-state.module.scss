@@ -1,0 +1,50 @@
+@import '../../../styles/common/colors.scss';
+@import '../../../components/btn/btn.module.scss';
+
+.mail-empty-state {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 180px;
+}
+
+.content {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 30px 15px;
+  text-align: center;
+  background-color: rgba(252, 219, 216, 0.2);
+  border-radius: 7px;
+
+  @media (max-width: 600px) {
+    margin: 20px;
+  }
+}
+
+.scan-history-link {
+  // display: block;
+}
+.scan-dates {
+  background: white;
+  border: 1px solid $color-input-border;
+  border-radius: 7px;
+  padding: 10px;
+  font-weight: bold;
+  margin-bottom: 20px;
+
+  p {
+    margin-bottom: 10px;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.scan-btn {
+  @extend .btn;
+  @extend .compact;
+  @extend .basic;
+  @extend .centered;
+
+  min-width: 200px;
+}

@@ -1,0 +1,106 @@
+@import '../../styles/common/colors.scss';
+
+.form-input {
+  border-radius: 5px;
+  padding: 20px 25px;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 300px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 1px solid $color-input-border;
+}
+
+.form-input:focus {
+  outline: 0;
+  box-shadow: 0 7px 1em $color-input-border-focus;
+}
+
+.form-input:focus + .form-label,
+.form-input:valid + .form-label {
+  transform: translate(-5px, -30px);
+  font-size: 0.75em;
+}
+
+.form-group {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.form-label {
+  color: $color-input-label;
+  background-color: $color-input-bg;
+
+  &.animated {
+    position: absolute;
+    pointer-events: none;
+    left: 20px;
+    top: 20px;
+    padding: 0 5px;
+    transition: transform 150ms ease-out, font-size 150ms ease-out;
+  }
+}
+
+.form-checkbox {
+  display: none;
+
+  + .checkbox-label:before {
+    content: '';
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    left: 0;
+    top: 4px;
+    border: 1px solid $color-red-light;
+    background-color: white;
+    border-radius: 3px;
+    transition: border-color 200ms ease-in-out;
+  }
+
+  &:hover + .checkbox-label:before {
+    border-color: rgba(231, 57, 48, 0.5);
+  }
+
+  + .checkbox-label:after {
+    content: '';
+    color: $color-red;
+    border: 3px solid;
+    width: 7px;
+    height: 15px;
+    display: block;
+    border-top: 0;
+    border-left: 0;
+    transform: rotate(45deg);
+    position: absolute;
+    left: 6px;
+    top: 3px;
+    opacity: 0;
+    transition: opacity 100ms ease-in-out;
+  }
+
+  &:checked + .checkbox-label:after {
+    opacity: 1;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    + .checkbox-label {
+      color: $color-input-disabled;
+    }
+    + .checkbox-label:before {
+      border-color: $color-input-disabled;
+      background-color: $color-input-disabled;
+    }
+  }
+}
+
+.checkbox-label {
+  display: block;
+  padding-left: 24px;
+  position: relative;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 24px;
+}

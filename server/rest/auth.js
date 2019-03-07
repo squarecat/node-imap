@@ -10,5 +10,5 @@ export default (req, res, next) => {
 
   // IF A USER ISN'T LOGGED IN, THEN REDIRECT THEM SOMEWHERE
   logger.info('auth: user NOT authenticated');
-  res.send(403);
+  res.sendStatus(403);
 };

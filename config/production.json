@@ -1,20 +1,24 @@
 {
   "db": {
-    "user": "$DB_USER",
-    "password": "$DB_PASSWORD",
-    "host": "db.leavemealone.xyz",
-    "port": 27017,
-    "name": "leavemealone",
+    "url": "$MONGO_URL",
     "encryption": {
       "algorithm": "aes-256-ctr",
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "http": {
+    "port": "$PORT"
+  },
   "urls": {
     "referral": "https://leavemealone.xyz/r/"
   },
-  "google": {
-    "redirect": "https://leavemealone.xyz/auth/google/callback"
+  "auth": {
+    "google": {
+      "redirect": "https://leavemealone.xyz/auth/google/callback"
+    },
+    "outlook": {
+      "redirect": "https://leavemealone.xyz/auth/outlook/callback"
+    }
   },
   "puppeteer": {
     "args": [
@@ -29,7 +33,7 @@
     "devtools": false
   },
   "payments": {
-    "publishableKey": "pk_live_2thpKDxq45nmO8NBG4wCJr0j",
-    "secretKey": "sk_live_3SbQqVsq3kybRISez1MtdeGp"
+    "publishableKey": "$STRIPE_PK",
+    "secretKey": "$STRIPE_SK"
   }
 }

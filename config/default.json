@@ -1,23 +1,40 @@
 {
   "db": {
-    "host": "127.0.0.1",
-    "port": 27017,
-    "name": "leavemealone",
+    "url": "$MONGO_URL",
     "encryption": {
       "algorithm": "aes-256-cbc",
-      "password": "secret"
+      "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
-  "google": {
-    "redirect": "http://local.leavemealone.xyz/auth/google/callback"
+  "http": {
+    "port": "$PORT"
+  },
+  "auth": {
+    "google": {
+      "redirect": "http://local.leavemealone.xyz/auth/google/callback",
+      "clientId": "$GOOGLE_CLIENT_ID",
+      "clientSecret": "$GOOGLE_CLIENT_SECRET",
+      "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
+    },
+    "outlook": {
+      "redirect": "https://tolocalhost.com/auth/outlook/callback",
+      "clientId": "$OUTLOOK_CLIENT_ID",
+      "clientSecret": "$OUTLOOK_CLIENT_SECRET",
+      "scopes": [
+        "openid",
+        "profile",
+        "offline_access",
+        "https://outlook.office.com/Mail.Read"
+      ]
+    }
   },
   "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
   "mailgun": {
-    "apiKey": "key-2y-9ivl7dzujgdv9ht38u61zdbwhcpl8",
+    "apiKey": "$MAILGUN_API_KEY",
     "domain": "mail.leavemealone.app"
   },
   "mailchimp": {
-    "apiKey": "7cf6acaa42a868ac81f78a97497495fd-us16",
+    "apiKey": "$MAILCHIMP_API_KEY",
     "lists": {
       "leaveMeAloneCustomers": "77a7bf92b9"
     }
@@ -28,20 +45,27 @@
     "headeless": false
   },
   "payments": {
-    "publishableKey": "pk_test_td6LkJVGPINUdmgEnbonAGNk",
-    "secretKey": "sk_test_DLHqhmdvjCPwcnzsz0rbwvvZ",
-    "vatKey": "e53a4aa7b7f9d0aad2b32a22290d1753"
+    "publishableKey": "$STRIPE_PK",
+    "secretKey": "$STRIPE_SK",
+    "vatKey": "$VAT_KEY"
   },
   "urls": {
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
-    "referral": "http://local.leavemealone.xyz/r/"
+    "referral": "http://local.leavemealone.xyz/r/",
+    "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA"
   },
   "airtable": {
     "key": "key0cK6sejCiwx9p0",
-    "expensesBaseId": "app0FrYsnDlnZvGHc",
-    "expensesTableId": "Leave Me Alone",
+    "expenses": {
+      "baseId": "app0FrYsnDlnZvGHc",
+      "tableId": "Leave Me Alone"
+    },
+    "beta": {
+      "baseId": "appq5b5dkcmMPEbBA",
+      "tableId": "Beta Users"
+    },
     "baseUrl": "https://api.airtable.com/v0"
   }
 }

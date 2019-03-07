@@ -1,0 +1,39 @@
+@import '../../styles/common/colors.scss';
+
+.link {
+  color: $color-link;
+  border-bottom: 1px dashed $color-link;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    color: $color-link-hover;
+    border-bottom-color: $color-link-hover;
+  }
+}
+
+.link-inverted {
+  color: white;
+  border-color: white;
+  &:hover {
+    color: rgba(white, 0.8);
+    border-bottom-color: rgba(white, 0.8);
+  }
+}
+
+.smaller {
+  font-size: 11px;
+}
+
+.important {
+  color: $color-text-important;
+  font-weight: bold;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.undecorated {
+  border-bottom: 0;
+}

@@ -6,13 +6,13 @@ import {
   createUser,
   getUser,
   getUserByReferralCode,
+  incrementUserReferralBalance,
   removeScanReminder,
   removeUser,
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
-  updateUser,
-  incrementUserReferralBalance
+  updateUser
 } from '../dao/user';
 import {
   addReferralSignupToStats,
@@ -20,11 +20,11 @@ import {
   addUserAccountDeactivatedToStats,
   addUserToStats
 } from './stats';
-import { listPaymentsForUser, updateCoupon } from './payments';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
 import addWeeks from 'date-fns/add_weeks';
+import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
 import { removeSubscriber } from '../utils/mailchimp';
 import { revokeToken } from '../utils/google';
@@ -41,11 +41,10 @@ export async function getUserById(id) {
   }
 }
 
-export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
-  const { id, emails, referralCode, photos = [] } = userData;
+export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
+  const { id, email, referralCode, photos = [], displayName } = userData;
   try {
     const profileImg = photos.length ? photos[0].value : null;
-    const { value: email } = emails.find(e => e.type === 'account');
     let user = await getUser(id);
     if (!user) {
       let referredBy = null;
@@ -59,10 +58,56 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
       }
       user = await createUser({
         id,
+        name: displayName,
         email,
         profileImg,
         keys,
         referredBy,
+        provider: 'outlook',
+        token: v4()
+      });
+      addUserToStats();
+    } else {
+      user = await updateUser(id, {
+        keys,
+        profileImg,
+        name: displayName
+      });
+    }
+    return user;
+  } catch (err) {
+    logger.error(
+      `user-service: error creating or updating user from Google ${id ||
+        'no userData id'}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
+  const { id, email, referralCode, photos = [], displayName } = userData;
+  try {
+    const profileImg = photos.length ? photos[0].value : null;
+    let user = await getUser(id);
+    if (!user) {
+      let referredBy = null;
+      if (referralCode) {
+        const { id: referralUserId } = await getUserByReferralCode(
+          referralCode
+        );
+        await addReferralToReferrer(referralUserId, { userId: id });
+        addReferralSignupToStats();
+        referredBy = referralUserId;
+      }
+      user = await createUser({
+        id,
+        name: displayName,
+        email,
+        profileImg,
+        keys,
+        referredBy,
+        provider: 'google',
         token: v4()
       });
       // addSubscriber({ email });
@@ -70,7 +115,8 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
     } else {
       user = await updateUser(id, {
         keys,
-        profileImg
+        profileImg,
+        name: displayName
       });
     }
     return user;
@@ -114,9 +160,16 @@ export async function checkAuthToken(userId, token) {
   }
 }
 
+// google date is the legacy version of the date object
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, googleDate } = mail;
-  return addUnsubscription(userId, { to, from, id, googleDate, ...rest });
+  const { to, from, id, date, googleDate } = mail;
+  return addUnsubscription(userId, {
+    to,
+    from,
+    id,
+    date: date || googleDate,
+    ...rest
+  });
 }
 
 export function addScanToUser(userId, scanData) {
@@ -137,16 +190,6 @@ export function addPaidScanToUser(userId, scanType) {
 
 export function updatePaidScanForUser(userId, scanType) {
   return updatePaidScan(userId, scanType);
-}
-
-export async function addFreeScan(userId, scanType, coupon) {
-  try {
-    await addPaidScanToUser(userId, scanType);
-    if (coupon) updateCoupon(coupon);
-    return true;
-  } catch (err) {
-    throw err;
-  }
 }
 
 export async function addToUserIgnoreList(id, email) {
@@ -204,6 +247,10 @@ export async function creditUserAccount(id, { amount }) {
 
 export async function getUserPayments(id) {
   return listPaymentsForUser(id);
+}
+
+export async function updateUserPreferences(id, preferences) {
+  return updateUser(id, { preferences });
 }
 
 export async function deactivateUserAccount(user) {

@@ -3,16 +3,18 @@ import config from 'getconfig';
 import logger from './logger';
 
 const airtableKey = config.airtable.key;
-const baseId = config.airtable.expensesBaseId;
-const tableId = config.airtable.expensesTableId;
+const { expenses, beta } = config.airtable;
 
-const base = new Airtable({
+const airtable = new Airtable({
   apiKey: airtableKey
-}).base(baseId);
+});
+
+const expensesBase = airtable.base(expenses.baseId);
+const betaBase = airtable.base(beta.baseId);
 
 export function getExpenses() {
   return new Promise((resolve, reject) => {
-    base(tableId)
+    expensesBase(expenses.tableId)
       .select({
         view: 'Grid view'
       })
@@ -29,6 +31,29 @@ export function getExpenses() {
           url: r.get('URL')
         }));
         return resolve(expenses);
+      });
+  });
+}
+
+export function getBetaUser({ email }) {
+  logger.debug('airtable: trying to find user by email', email);
+  return new Promise((resolve, reject) => {
+    betaBase(beta.tableId)
+      .select({
+        filterByFormula: `({Email}='${email}')`
+      })
+      .firstPage((err, records) => {
+        if (err) {
+          logger.error('airtable: failed to get expenses stats');
+          logger.error(err);
+          return reject(err);
+        }
+        if (!records.length) {
+          logger.debug('airtable: user not found');
+          return resolve(null);
+        }
+        logger.debug('airtable: user found, resolving');
+        return resolve({ email });
       });
   });
 }

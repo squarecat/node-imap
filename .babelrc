@@ -3,7 +3,8 @@
   "plugins": [
     "@babel/plugin-transform-regenerator",
     "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-transform-async-to-generator",
-    "@babel/plugin-proposal-class-properties"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-syntax-async-generators",
+    "@babel/plugin-proposal-async-generator-functions"
   ]
 }

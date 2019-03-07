@@ -1,11 +1,13 @@
-import React from 'react';
-import ErrorBoundary from '../../../components/error-boundary';
+import './ignore.module.scss';
+
+import Table, { TableCell, TableRow } from '../../../components/table';
 
 import Button from '../../../components/btn';
+import ErrorBoundary from '../../../components/error-boundary';
 import ProfileLayout from './layout';
+import React from 'react';
+import { TextImportant } from '../../../components/text';
 import useUser from '../../../utils/hooks/use-user';
-
-import './ignore.css';
 
 export async function toggleFromIgnoreList(email, op) {
   const resp = await fetch('/api/me/ignore', {
@@ -31,35 +33,27 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Favorite Senders">
-      <div className="profile-section profile-section--unpadded">
+      <div styleName="ignore-section">
         <p>
-          Showing{' '}
-          <span className="text-important">{ignoredSenderList.length}</span>{' '}
+          Showing <TextImportant>{ignoredSenderList.length}</TextImportant>{' '}
           favorite senders. Emails from these addresses will not show up in any
           future scans.
         </p>
         <ErrorBoundary>
-          <table className="ignore-table">
-            <tbody>
-              {ignoredSenderList.map(sender => {
-                return (
-                  <tr key={sender} className="ignore-item">
-                    <td>{sender}</td>
-                    <td>
-                      <Button
-                        compact
-                        basic
-                        muted
-                        onClick={() => remove(sender)}
-                      >
-                        Remove
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <Table>
+            {ignoredSenderList.map(sender => {
+              return (
+                <TableRow key={sender}>
+                  <TableCell>{sender}</TableCell>
+                  <TableCell>
+                    <Button compact basic muted onClick={() => remove(sender)}>
+                      Remove
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </Table>
         </ErrorBoundary>
       </div>
     </ProfileLayout>
