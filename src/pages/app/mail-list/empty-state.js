@@ -1,8 +1,9 @@
 import './empty-state.module.scss';
 
+import { TextImportant, TextLink } from '../../../components/text';
+
 import { Link } from 'gatsby';
 import React from 'react';
-import { TextImportant } from '../../../components/text';
 import distanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import format from 'date-fns/format';
 import { isRescanAvailable } from '../../../utils/scans';
@@ -27,19 +28,27 @@ export default ({ showPriceModal, lastScan, onClickRescan }) => {
 
   if (lastScan) {
     dateContent = (
-      <p key={lastScan.timeframe} styleName="scan-dates">
-        You performed a {tfToString[lastScan.timeframe]}{' '}
-        {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago.
-        {rescanAvailable ? (
-          <span>
-            You can <TextImportant>run this scan again for free</TextImportant>{' '}
-            up to 24 hours after purchase
+      <div styleName="scan-dates">
+        <p key={lastScan.timeframe}>
+          You performed a {tfToString[lastScan.timeframe]}{' '}
+          {distanceInWordsStrict(new Date(), lastScan.scannedAt)} ago -{' '}
+          <span styleName="scan-history-link">
+            <Link to="/app/profile/history/scans">see your scan history</Link>.
           </span>
+        </p>
+        {rescanAvailable ? (
+          <p>
+            You can{' '}
+            <TextLink
+              undecorated
+              onClick={() => onClickRescan(lastScan.timeframe)}
+            >
+              run this scan again
+            </TextLink>{' '}
+            up to 24 hours after purchase.
+          </p>
         ) : null}
-        <span styleName="scan-history-link">
-          (<Link to="/app/profile/history/scans">see your scan history</Link>)
-        </span>
-      </p>
+      </div>
     );
   }
 
