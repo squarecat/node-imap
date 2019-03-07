@@ -14,27 +14,32 @@ export const unsubscribeFromMail = async (userId, mail) => {
   logger.info(`mail-service: unsubscribe from ${mail.id}`);
   let unsubStrategy;
   let output;
+  let hasImage = false;
   try {
     if (unsubscribeLink) {
       unsubStrategy = 'link';
       output = await unsubscribeByLink(unsubscribeLink);
-      saveImageToDisk(userId, mail.id, output.image);
+      hasImage = !!output.image;
     } else {
       unsubStrategy = 'mailto';
       output = await unsubscribeByMailTo(unsubscribeMailTo);
+    }
+    if (hasImage) {
+      saveImageToDisk(userId, mail.id, output.image);
     }
     addUnsubscriptionToUser(userId, {
       mail,
       unsubscribeStrategy: unsubStrategy,
       unsubscribeLink,
       unsubscribeMailTo,
+      hasImage,
       estimatedSuccess: output.estimatedSuccess
     });
     if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
     return {
       id: output.id,
       estimatedSuccess: output.estimatedSuccess,
-      image: !!output.image,
+      hasImage,
       unsubStrategy
     };
   } catch (err) {
