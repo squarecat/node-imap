@@ -54,7 +54,7 @@ export default function(app, server) {
         { strategy }
       );
     } catch (err) {
-      console.log('test errr', err.message);
+      logger.error('mail-rest: test err', err.message);
       res.send(err.message);
     }
   });

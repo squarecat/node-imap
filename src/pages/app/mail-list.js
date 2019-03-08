@@ -47,7 +47,7 @@ const mailReducer = (state = [], action) => {
       ];
     case 'set-occurances': {
       return state.map(mailItem => {
-        const dupeKey = `${mailItem.from}-${mailItem.to}`;
+        const dupeKey = getDupeKey(mailItem.from, mailItem.to);
         const occurances = action.data[dupeKey] || 0;
         return { ...mailItem, occurances };
       });
@@ -656,7 +656,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, timeframe, style }) {
   const ignoredSenderList = user.ignoredSenderList || [];
   const isSubscribed = !!m.subscribed;
 
-  const { fromName, fromEmail } = parseFrom(m);
+  const { fromName, fromEmail } = parseFrom(m.from);
 
   const pureEmail = fromEmail.substr(1).substr(0, fromEmail.length - 2);
   const isIgnored = ignoredSenderList.includes(pureEmail);
@@ -830,20 +830,26 @@ function getSocialContent(unsubCount = 0, referralCode) {
   );
 }
 
-function parseFrom(m) {
-  if (m.from.match(/^.*<.*>/)) {
-    const [, name, email] = /^(.*)(<.*>)/.exec(m.from);
-    return {
-      fromName: name,
-      fromEmail: email
-    };
-  }
+function parseFrom(str) {
+  let fromName;
+  let fromEmail;
+  if (str.match(/^.*<.*>/)) {
+    const [, name, email] = /^(.*)(<.*>)/.exec(str);
+    fromName = name;
+    fromEmail = email;
+  } else {
+    const [, name] = /<?(.*)@/.exec(str);
 
-  const [, name] = /(.*)@/.exec(m.from);
-  return {
-    fromName: name,
-    fromEmail: m.from
-  };
+    fromName = name || str;
+    fromEmail = str;
+  }
+  return { fromName, fromEmail };
+}
+
+function getDupeKey(from, to) {
+  const { fromEmail } = parseFrom(from);
+  const { fromEmail: toEmail } = parseFrom(to);
+  return `${fromEmail}-${toEmail}`.toLowerCase();
 }
 
 function openChat(message = '') {

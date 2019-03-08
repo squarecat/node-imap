@@ -7,13 +7,19 @@ export function parseEmail(str) {
     fromEmail = email;
   } else {
     fromName = '';
-    fromEmail = str.from;
+    fromEmail = str;
   }
   return { fromName, fromEmail };
 }
 
-export function emailStringIsEqual(str1, str2) {
-  const { fromEmail } = parseEmail(str1);
-  const { fromEmail: fromEmail2 } = parseEmail(str2);
-  return fromEmail === fromEmail2;
+// export function emailStringIsEqual(str1, str2) {
+//   const { fromEmail } = parseEmail(str1);
+//   const { fromEmail: fromEmail2 } = parseEmail(str2);
+//   return fromEmail === fromEmail2;
+// }
+
+export function getDupeKey(from, to) {
+  const { fromEmail } = parseEmail(from);
+  const { fromEmail: toEmail } = parseEmail(to);
+  return `${fromEmail}-${toEmail}`.toLowerCase();
 }

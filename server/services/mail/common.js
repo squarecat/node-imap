@@ -1,3 +1,4 @@
+import { getDupeKey } from '../../utils/parsers';
 import isAfter from 'date-fns/is_after';
 import logger from '../../utils/logger';
 import subDays from 'date-fns/sub_days';
@@ -109,7 +110,7 @@ export function hasPaidScanAvailable(user, scanType) {
 export function dedupeMailList(dupeCache = {}, mailList = []) {
   const { deduped, dupes } = mailList.reduce(
     (out, mail) => {
-      const dupeKey = `${mail.from}-${mail.to}`;
+      const dupeKey = getDupeKey(mail.from, mail.to);
       const dupeOccurances = out.dupes[dupeKey] || 0;
       if (!dupeOccurances) {
         return {
