@@ -132,14 +132,5 @@ export function dedupeMailList(dupeCache = {}, mailList = []) {
     { dupes: dupeCache, deduped: [] }
   );
 
-  const filteredDupes = Object.keys(dupes).reduce((out, k) => {
-    if (dupes[k] > 1) {
-      return {
-        ...out,
-        [k]: dupes[k]
-      };
-    }
-    return out;
-  }, {});
-  return { deduped, dupes: filteredDupes };
+  return { deduped, dupes };
 }

@@ -230,7 +230,18 @@ function getSocketFunctions(userId) {
         return false;
       }
       mailBuffer[userId].droppedEnd = true;
-      sock.emit('mail:end', stats);
+
+      const { occurances } = stats;
+      const filteredOccurances = Object.keys(occurances).reduce((out, k) => {
+        if (occurances[k] > 1) {
+          return {
+            ...out,
+            [k]: occurances[k]
+          };
+        }
+        return out;
+      }, {});
+      sock.emit('mail:end', { ...stats, occurances: filteredOccurances });
       return true;
     },
     onProgress: async progress => {
