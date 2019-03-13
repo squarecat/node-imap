@@ -30,7 +30,11 @@ export async function createUser(data) {
       },
       unsubscriptions: [],
       scans: [],
-      paidScans: []
+      paidScans: [],
+      preferences: {
+        hideUnsubscribedMails: false,
+        marketingConsent: true
+      }
     });
     const user = await getUser(data.id);
     return user;

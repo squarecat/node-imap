@@ -34,12 +34,6 @@
     "apiKey": "$MAILGUN_API_KEY",
     "domain": "mail.leavemealone.app"
   },
-  "mailchimp": {
-    "apiKey": "$MAILCHIMP_API_KEY",
-    "lists": {
-      "leaveMeAloneCustomers": "77a7bf92b9"
-    }
-  },
   "puppeteer": {
     "dumpio": true,
     "devtools": false,

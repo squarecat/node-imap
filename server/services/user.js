@@ -26,7 +26,6 @@ import { addReferralToReferrer } from './referral';
 import addWeeks from 'date-fns/add_weeks';
 import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
-import { removeSubscriber } from '../utils/mailchimp';
 import { revokeToken } from '../utils/google';
 import { v4 } from 'node-uuid';
 
@@ -110,7 +109,6 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         provider: 'google',
         token: v4()
       });
-      // addSubscriber({ email });
       addUserToStats();
     } else {
       user = await updateUser(id, {
@@ -260,7 +258,6 @@ export async function deactivateUserAccount(user) {
 
   try {
     await revokeToken(refreshToken);
-    await removeSubscriber({ email });
     await removeUser(id);
     addUserAccountDeactivatedToStats();
   } catch (err) {
