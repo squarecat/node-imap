@@ -44,6 +44,15 @@
 }
 
 .form-checkbox {
+  display: block;
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.checkbox {
   display: none;
 
   + .checkbox-label:before {

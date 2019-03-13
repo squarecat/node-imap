@@ -1,9 +1,8 @@
 import './preferences.module.scss';
 
-import React from 'react';
-
 import { FormCheckbox } from '../../../components/form';
 import ProfileLayout from './layout';
+import React from 'react';
 import useUser from '../../../utils/hooks/use-user';
 
 export async function savePreferences(data) {
@@ -25,9 +24,11 @@ const DEFAULTS = {
 };
 
 export default () => {
-  const [preferences, { setPreferences }] = useUser(
-    u => u.preferences || DEFAULTS
-  );
+  const [user, { setPreferences }] = useUser();
+  const preferences = {
+    hideUnsubscribedMails: getPref(user.preferences, 'hideUnsubscribedMails'),
+    marketingConsent: getPref(user.preferences, 'marketingConsent')
+  };
 
   const onChange = (key, value) => {
     const prefs = { ...preferences, [key]: value };
@@ -46,17 +47,26 @@ export default () => {
               !preferences.hideUnsubscribedMails
             )
           }
-          checked={preferences.hideUnsubscribedMails}
-          label="Hide unsubscribed mails in future scans"
+          checked={getPref(preferences, 'hideUnsubscribedMails')}
+          label="Hide unsubscribed emails in future scans"
         />
+      </div>
+      <div styleName="preferences-section">
+        <h2>Marketing</h2>
         <FormCheckbox
           onChange={() =>
             onChange('marketingConsent', !preferences.marketingConsent)
           }
-          checked={preferences.marketingConsent}
-          label="Get notified of updates to Leave Me Alone"
+          checked={getPref(preferences, 'marketingConsent')}
+          label="Receive product updates"
         />
       </div>
     </ProfileLayout>
   );
 };
+
+function getPref(prefs = {}, key) {
+  const val = prefs[key];
+  if (typeof val === 'undefined') return DEFAULTS[key];
+  return val;
+}
