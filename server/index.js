@@ -9,6 +9,7 @@ import giftsApi from './rest/gifts';
 import http from 'http';
 import logger from './utils/logger';
 import mailApi from './rest/mail';
+import mailgunWebhooks from './rest/webhooks/mailgun';
 import path from 'path';
 import paymentsApi from './rest/payments';
 import session from 'express-session';
@@ -50,11 +51,14 @@ app.use(
 );
 
 auth(app);
+
 userApi(app);
 mailApi(app, server);
 paymentsApi(app);
 statsApi(app);
 giftsApi(app);
+
+mailgunWebhooks(app);
 
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'sitemap.xml'));
