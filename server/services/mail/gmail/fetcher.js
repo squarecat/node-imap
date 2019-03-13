@@ -53,7 +53,6 @@ export async function* fetchMail(
           ignoredSenderList,
           unsubscriptions
         });
-        totalUnsubCount = totalUnsubCount + unsubscribableMail.length;
         const previouslyUnsubbedCount = unsubscribableMail.filter(
           sm => !sm.subscribed
         ).length;
@@ -65,6 +64,7 @@ export async function* fetchMail(
             dupeCache,
             unsubscribableMail
           );
+          totalUnsubCount = totalUnsubCount + deduped.length;
           dupeCache = newDupeCache;
           yield { type: 'mail', data: deduped };
         }

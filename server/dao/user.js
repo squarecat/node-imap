@@ -9,8 +9,7 @@ const encryptedUnsubCols = [
   'unsubscribeLink',
   'unsubscribeMailTo',
   'to',
-  'from',
-  'image'
+  'from'
 ];
 
 export async function createUser(data) {
@@ -57,12 +56,6 @@ export async function getUser(id) {
       },
       unsubscriptions: user.unsubscriptions.map(unsub => {
         return Object.keys(unsub).reduce((out, k) => {
-          if (k === 'image') {
-            return {
-              ...out,
-              image: !!unsub.image
-            };
-          }
           if (encryptedUnsubCols.includes(k)) {
             return {
               ...out,
@@ -118,7 +111,7 @@ export async function updateUser(id, userData) {
 }
 
 export async function addUnsubscription(id, mailData) {
-  const data = Object.keys(mailData).reduce((out, k) => {
+  let data = Object.keys(mailData).reduce((out, k) => {
     if (encryptedUnsubCols.includes(k)) {
       return {
         ...out,
@@ -130,13 +123,23 @@ export async function addUnsubscription(id, mailData) {
       [k]: mailData[k]
     };
   }, {});
+  if (data.unsubscribeStrategy === 'mailto') {
+    data = {
+      ...data,
+      status: 'pending',
+      message: ''
+    };
+  }
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
         $push: {
-          unsubscriptions: { ...data, unsubscribedAt: isoDate() }
+          unsubscriptions: {
+            ...data,
+            unsubscribedAt: isoDate()
+          }
         }
       }
     );
@@ -174,25 +177,6 @@ export async function addScan(id, scanData) {
     );
   } catch (err) {
     logger.error(`users-dao: error updating user ${id} scans`);
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function getUnsubscribeImage(id, mailId) {
-  try {
-    const col = await db().collection(COL_NAME);
-    const user = await col.findOne({ id });
-    const { unsubscriptions } = user;
-    const unsub = unsubscriptions.find(u => u.id === mailId);
-    if (!unsub) {
-      return null;
-    }
-    return decrypt(unsub.image);
-  } catch (err) {
-    logger.error(
-      `users-dao: failed to fetch user ${id} subscription image for mail ${mailId}`
-    );
     logger.error(err);
     throw err;
   }
@@ -472,6 +456,28 @@ export async function removeUser(id) {
     await col.deleteOne({ id });
   } catch (err) {
     logger.error('user-dao: failed to remove user');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function updateUnsubStatus(
+  id,
+  { mailId, status, message = '' } = {}
+) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'unsubscriptions.id': mailId },
+      {
+        $set: {
+          'unsubscriptions.$.status': status,
+          'unsubscriptions.$.message': message
+        }
+      }
+    );
+  } catch (err) {
+    logger.error('user-dao: failed to update unsub status');
     logger.error(err);
     throw err;
   }

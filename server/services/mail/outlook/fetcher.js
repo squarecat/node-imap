@@ -46,7 +46,6 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
         unsubscriptions,
         mailFolders
       });
-      totalUnsubCount = totalUnsubCount + unsubscribableMail.length;
       const previouslyUnsubbedCount = unsubscribableMail.filter(
         sm => !sm.subscribed
       ).length;
@@ -58,6 +57,7 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
           unsubscribableMail
         );
         dupeCache = newDupeCache;
+        totalUnsubCount = totalUnsubCount + deduped.length;
         yield { type: 'mail', data: deduped };
       }
       yield { type: 'progress', data: { progress, total: totalEstimate } };

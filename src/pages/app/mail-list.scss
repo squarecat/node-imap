@@ -55,13 +55,19 @@
   white-space: nowrap;
 }
 
+.from-name-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .from-date {
   display: inline-block;
 }
 
-.trash {
+.trash,
+.occurances {
   display: inline-block;
-  background-color: #ffd7d5;
   padding: 2px 5px;
   border-radius: 3px;
   font-size: 12px;
@@ -69,7 +75,17 @@
   vertical-align: top;
   margin-left: 7px;
   cursor: default;
+}
 
+.trash {
+  background-color: $color-grey;
+  &:hover {
+    background-color: $color-grey-darker;
+  }
+}
+
+.occurances {
+  background-color: #ffd7d5;
   &:hover {
     background-color: #ffb9b6;
   }

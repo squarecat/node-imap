@@ -154,25 +154,45 @@ export async function listPaymentsForUser(userId) {
       listCharges(customerId)
     ]);
 
-    const payments = invoicesResponse.data.map(invoice => {
-      const scan = invoice.lines.data[0];
-      const chargeData = invoice.charge
-        ? chargesResponse.data.find(c => c.id === invoice.charge)
-        : {};
-      return {
-        number: invoice.number,
-        date: invoice.date,
-        paid: invoice.paid,
-        attempted: invoice.attempted,
-        invoice_pdf: invoice.invoice_pdf,
-        refunded: !!chargeData.refunded,
-        description: scan.description,
-        price: scan.amount
-      };
-    });
+    let payments;
+    let has_more;
+
+    // user paid after we changed to charges from invoices
+    if (!invoicesResponse.data.length && chargesResponse.data.length) {
+      payments = chargesResponse.data.map(charge => {
+        return {
+          date: charge.created,
+          paid: charge.paid,
+          attempted: charge.paid,
+          receipt_url: charge.receipt_url,
+          refunded: !!charge.refunded,
+          description: charge.description,
+          price: charge.amount
+        };
+      });
+      has_more = chargesResponse.has_more;
+    } else {
+      payments = invoicesResponse.data.map(invoice => {
+        const scan = invoice.lines.data[0];
+        const chargeData = invoice.charge
+          ? chargesResponse.data.find(c => c.id === invoice.charge)
+          : {};
+        return {
+          date: invoice.date,
+          paid: invoice.paid,
+          attempted: invoice.attempted,
+          invoice_pdf: invoice.invoice_pdf,
+          refunded: !!chargeData.refunded,
+          description: scan.description,
+          price: scan.amount
+        };
+      });
+      has_more = invoicesResponse.has_more;
+    }
+
     return {
       payments,
-      has_more: invoicesResponse.has_more
+      has_more
     };
   } catch (err) {
     logger.error(

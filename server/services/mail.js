@@ -11,7 +11,6 @@ import {
 } from '../dao/subscriptions';
 import {
   addScan as addScanToUser,
-  getUnsubscribeImage,
   resolveUnsubscription as resolveUserUnsubscription,
   updatePaidScan as updatePaidScanForUser
 } from '../dao/user';
@@ -25,7 +24,9 @@ import {
 } from './mail/outlook';
 
 import emailAddresses from 'email-addresses';
+import fs from 'fs';
 import { getUserById } from './user';
+import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 
 // todo convert to generator?
@@ -86,8 +87,16 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
   }
 }
 
-export function getImage(userId, mailId) {
-  return getUnsubscribeImage(userId, mailId);
+export async function copyImageToUsefulImages(userId, mailId) {
+  const path = `${imageStoragePath}/${userId}/${mailId}.png`;
+  const usefulPath = `${imageStoragePath}/useful/${mailId}.png`;
+
+  return new Promise((good, bad) => {
+    fs.copyFile(path, usefulPath, err => {
+      if (err) return bad(err);
+      good();
+    });
+  });
 }
 
 export async function addUnsubscribeErrorResponse(
@@ -95,15 +104,14 @@ export async function addUnsubscribeErrorResponse(
   userId
 ) {
   try {
-    let image = null;
     if (useImage) {
-      image = await getImage(userId, mailId);
+      await copyImageToUsefulImages(userId, mailId);
     }
     const { domain } = emailAddresses.parseOneAddress(from);
     if (success) {
       return Promise.all([
         addUnsubscriptionToStats({ unsubStrategy }),
-        addResolvedUnsubscription({ mailId, image, domain, unsubStrategy }),
+        addResolvedUnsubscription({ mailId, domain, unsubStrategy, useImage }),
         resolveUserUnsubscription(userId, mailId)
       ]);
     }
@@ -111,9 +119,9 @@ export async function addUnsubscribeErrorResponse(
       addFailedUnsubscriptionToStats(),
       addUnresolvedUnsubscription({
         mailId,
-        image,
         domain,
         reason,
+        useImage,
         unsubStrategy
       }),
       resolveUserUnsubscription(userId, mailId)

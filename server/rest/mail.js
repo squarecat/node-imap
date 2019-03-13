@@ -1,12 +1,13 @@
 import {
   addUnsubscribeErrorResponse,
   fetchMail,
-  getImage,
   getMailEstimates
 } from '../services/mail';
 
 import auth from './auth';
 import { checkAuthToken } from '../services/user';
+import fs from 'fs';
+import { imageStoragePath } from 'getconfig';
 import io from '@pm2/io';
 import isBefore from 'date-fns/is_before';
 import logger from '../utils/logger';
@@ -53,7 +54,7 @@ export default function(app, server) {
         { strategy }
       );
     } catch (err) {
-      console.log('test errr', err.message);
+      logger.error('mail-rest: test err', err.message);
       res.send(err.message);
     }
   });
@@ -62,13 +63,11 @@ export default function(app, server) {
     const { user, params } = req;
     const { mailId } = params;
     try {
-      const image = await getImage(user.id, mailId);
-      const img = new Buffer(image, 'base64');
-      res.writeHead(200, {
-        'Content-Type': 'image/png',
-        'Content-Length': img.length
-      });
-      res.end(img);
+      const path = `${imageStoragePath}/${user.id}/${mailId}.png`;
+      if (fs.existsSync(path)) {
+        return res.sendFile(path);
+      }
+      return res.sendStatus(404);
     } catch (err) {
       res.status(500).send(err);
     }
@@ -231,7 +230,18 @@ function getSocketFunctions(userId) {
         return false;
       }
       mailBuffer[userId].droppedEnd = true;
-      sock.emit('mail:end', stats);
+
+      const { occurances } = stats;
+      const filteredOccurances = Object.keys(occurances).reduce((out, k) => {
+        if (occurances[k] > 1) {
+          return {
+            ...out,
+            [k]: occurances[k]
+          };
+        }
+        return out;
+      }, {});
+      sock.emit('mail:end', { ...stats, occurances: filteredOccurances });
       return true;
     },
     onProgress: async progress => {

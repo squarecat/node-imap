@@ -262,7 +262,11 @@ export async function unsubscribeMail(userId, mail) {
       output = await unsubscribeWithLink(unsubscribeLink);
     } else {
       unsubStrategy = 'mailto';
-      output = await unsubscribeWithMailTo(unsubscribeMailTo);
+      output = await unsubscribeWithMailTo({
+        mailId: mail.id,
+        userId,
+        unsubscribeMailTo
+      });
     }
     addUnsubscriptionToUser(userId, {
       mail,

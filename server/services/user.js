@@ -268,3 +268,14 @@ export async function deactivateUserAccount(user) {
     throw err;
   }
 }
+
+export function updateUnsubStatus({ userId, mailId, status, message }) {
+  try {
+    return updateUnsubStatus(userId, { mailId, status, message });
+  } catch (err) {
+    logger.error(
+      `user-service: failed to update ubsub status for user ${userId} and mail ${mailId}`
+    );
+    throw err;
+  }
+}

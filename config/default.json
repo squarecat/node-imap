@@ -28,6 +28,7 @@
       ]
     }
   },
+  "imageStoragePath": "$IMAGE_STORAGE_PATH",
   "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
   "mailgun": {
     "apiKey": "$MAILGUN_API_KEY",
