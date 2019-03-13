@@ -10,6 +10,7 @@ export default app => {
       const variables = eventData['user-variables'];
       const { userId, mailId } = variables;
       const { message } = eventData['delivery-status'];
+      console.log(JSON.stringify(variables, null, 2));
       switch (eventType) {
         // Mailgun accepted the request to send/forward the email and the
         // message has been placed in queue."
