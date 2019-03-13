@@ -440,6 +440,22 @@ export async function getUnsubscriptionsLeaderboard() {
   }
 }
 
+export async function getProviderStats() {
+  try {
+    const col = await db().collection(COL_NAME);
+    const googleUsers = await col.countDocuments({ provider: 'google' });
+    const outlookUsers = await col.countDocuments({ provider: 'outlook' });
+    return {
+      googleUsers,
+      outlookUsers
+    };
+  } catch (err) {
+    logger.error('user-dao: failed to get provider stats');
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function removeUser(id) {
   try {
     const col = await db().collection(COL_NAME);

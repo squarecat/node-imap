@@ -20,7 +20,8 @@ export async function savePreferences(data) {
 }
 
 const DEFAULTS = {
-  hideUnsubscribedMails: false
+  hideUnsubscribedMails: false,
+  marketingConsent: true
 };
 
 export default () => {
@@ -47,6 +48,13 @@ export default () => {
           }
           checked={preferences.hideUnsubscribedMails}
           label="Hide unsubscribed mails in future scans"
+        />
+        <FormCheckbox
+          onChange={() =>
+            onChange('marketingConsent', !preferences.marketingConsent)
+          }
+          checked={preferences.marketingConsent}
+          label="Get notified of updates to Leave Me Alone"
         />
       </div>
     </ProfileLayout>
