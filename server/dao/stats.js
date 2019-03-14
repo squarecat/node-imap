@@ -2,6 +2,7 @@ import db, { isoDate } from './db';
 
 import _get from 'lodash.get';
 import _omit from 'lodash.omit';
+import { getProviderStats } from './user';
 import logger from '../utils/logger';
 
 const COL_NAME = 'stats';
@@ -167,7 +168,12 @@ export async function addGiftPayment({ price }, count = 1) {
 export async function getStats() {
   try {
     const col = await db().collection(COL_NAME);
-    return await col.findOne();
+    const stats = await col.findOne();
+    const providerStats = await getProviderStats();
+    return {
+      ...stats,
+      ...providerStats
+    };
   } catch (err) {
     logger.error('stats-dao: failed to get stats');
     logger.error(err);

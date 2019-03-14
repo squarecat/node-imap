@@ -52,6 +52,10 @@ const LoginPage = () => {
             </a>
           </div>
           {getError(error)}
+          <p styleName="notice">
+            We will use your email to send you product updates. You can opt-out
+            at any time. We will NEVER share it with any third parties.
+          </p>
         </div>
       </div>
     </Layout>

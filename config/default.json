@@ -38,12 +38,6 @@
       "newsletter": "mail.leavemealone.xyz"
     }
   },
-  "mailchimp": {
-    "apiKey": "$MAILCHIMP_API_KEY",
-    "lists": {
-      "leaveMeAloneCustomers": "77a7bf92b9"
-    }
-  },
   "puppeteer": {
     "dumpio": true,
     "devtools": false,

@@ -30,7 +30,11 @@ export async function createUser(data) {
       },
       unsubscriptions: [],
       scans: [],
-      paidScans: []
+      paidScans: [],
+      preferences: {
+        hideUnsubscribedMails: false,
+        marketingConsent: true
+      }
     });
     const user = await getUser(data.id);
     return user;
@@ -461,6 +465,22 @@ export async function getUnsubscriptionsLeaderboard() {
     return results.map(r => r.count.toFixed());
   } catch (err) {
     logger.error('user-dao: failed to get leaderboard');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function getProviderStats() {
+  try {
+    const col = await db().collection(COL_NAME);
+    const googleUsers = await col.countDocuments({ provider: 'google' });
+    const outlookUsers = await col.countDocuments({ provider: 'outlook' });
+    return {
+      googleUsers,
+      outlookUsers
+    };
+  } catch (err) {
+    logger.error('user-dao: failed to get provider stats');
     logger.error(err);
     throw err;
   }
