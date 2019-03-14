@@ -1,6 +1,7 @@
 import {
   addSubscriber as addNewsletterSubscriber,
-  removeSubscriber as removeNewsletterSubscriber
+  removeSubscriber as removeNewsletterSubscriber,
+  updateSubscriber as updateNewsletterSubscriber
 } from '../utils/emails/newsletter';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -261,20 +262,21 @@ export async function updateUserPreferences(id, preferences) {
     const { email, preferences: currentPreferences } = await getUserById(id);
 
     if (preferences.marketingConsent !== currentPreferences.marketingConsent) {
-      logger.info(`user-service: marketing consent changed ${id}`);
-      if (preferences.marketingConsent) {
-        logger.info(
-          `user-service: marketing consent enabled, adding subscriber ${id}`
-        );
-        addNewsletterSubscriber(email);
-      } else {
-        logger.info(
-          `user-service: marketing consent disabled, removing subscriber ${id}`
-        );
-        removeNewsletterSubscriber(email);
-      }
+      logger.info(
+        `user-service: marketing consent changed for ${id} to ${
+          preferences.marketingConsent
+        }`
+      );
+      updateNewsletterSubscriber(email, {
+        subscribed: preferences.marketingConsent
+      });
     }
-    return updateUser(id, { preferences });
+    return updateUser(id, {
+      preferences: {
+        ...currentPreferences,
+        ...preferences
+      }
+    });
   } catch (err) {
     throw err;
   }
@@ -288,11 +290,10 @@ export async function updateUserMarketingConsent(
     const user = await getUserByEmail(email);
     if (!user) return null;
 
-    const { id, preferences } = user;
+    const { id } = user;
 
     addNewsletterUnsubscriptionToStats();
     return updateUserPreferences(id, {
-      ...preferences,
       marketingConsent
     });
   } catch (err) {

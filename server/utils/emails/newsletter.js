@@ -1,3 +1,4 @@
+import { PromiseProvider } from 'mongoose';
 import config from 'getconfig';
 import mailgun from 'mailgun-js';
 
@@ -28,6 +29,19 @@ export async function addSubscriber(email) {
     list.members().create(member, err => {
       if (err) {
         console.log('emails-newsletter: failed to add subscriber');
+        console.log(err);
+        return reject(err);
+      }
+      return resolve(true);
+    });
+  });
+}
+
+export async function updateSubscriber(email, { subscribed = true } = {}) {
+  return new Promise((resolve, reject) => {
+    list.members(email).update({ subscribed }, err => {
+      if (err) {
+        console.log('emails-newsletter: failed to update subscriber');
         console.log(err);
         return reject(err);
       }
