@@ -1,9 +1,4 @@
 import {
-  addSubscriber as addNewsletterSubscriber,
-  removeSubscriber as removeNewsletterSubscriber,
-  updateSubscriber as updateNewsletterSubscriber
-} from '../utils/emails/newsletter';
-import {
   addNewsletterUnsubscriptionToStats,
   addReferralSignupToStats,
   addReminderRequestToStats,
@@ -28,6 +23,10 @@ import {
   updateUnsubStatus,
   updateUser
 } from '../dao/user';
+import {
+  addUpdateSubscriber as addUpdateNewsletterSubscriber,
+  removeSubscriber as removeNewsletterSubscriber
+} from '../utils/emails/newsletter';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
@@ -74,7 +73,7 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
         token: v4()
       });
       addUserToStats();
-      addNewsletterSubscriber(email);
+      addUpdateNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
         keys,
@@ -119,7 +118,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         token: v4()
       });
       addUserToStats();
-      addNewsletterSubscriber(email);
+      addUpdateNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
         keys,
@@ -267,7 +266,7 @@ export async function updateUserPreferences(id, preferences) {
           preferences.marketingConsent
         }`
       );
-      updateNewsletterSubscriber(email, {
+      addUpdateNewsletterSubscriber(email, {
         subscribed: preferences.marketingConsent
       });
     }
