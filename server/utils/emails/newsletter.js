@@ -21,7 +21,8 @@ const list = newsletterTransport.lists(address);
 export async function addSubscriber(email) {
   const member = {
     address: email,
-    subscribed: true
+    subscribed: true,
+    upsert: true
   };
   return new Promise((resolve, reject) => {
     list.members().create(member, err => {
