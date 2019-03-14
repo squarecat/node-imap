@@ -12,7 +12,8 @@ export default app => {
       const eventData = body['event-data'];
       const { event: eventType } = eventData;
       const variables = eventData['user-variables'];
-      const { userId, mailId } = variables;
+      const userId = variables['user-id'];
+      const mailId = variables['email-id'];
       logger.info(`mailgun: webhook status ${eventType}`);
       if (!userId) {
         return res.sendStatus(200);
