@@ -81,17 +81,12 @@ export async function getUser(id) {
   }
 }
 
-export async function getPreferencesByEmail(email) {
+export async function getUserByEmail(email) {
   try {
     const col = await db().collection(COL_NAME);
-    const user = await col.findOne(
-      { email },
-      { fields: { id: 1, preferences: 1 } }
-    );
-    if (!user) return null;
-    return user;
+    return col.findOne({ email });
   } catch (err) {
-    logger.error(`users-dao: error fetching user id by email`);
+    logger.error(`users-dao: failed to get user by email`);
     logger.error(err);
     throw err;
   }
