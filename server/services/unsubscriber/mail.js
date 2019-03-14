@@ -14,23 +14,25 @@ function sendUnsubscribeMail({
   });
 }
 
-export async function unsubscribeWithMailTo({ userId, emailId, unsubMailto }) {
+export async function unsubscribeWithMailTo({ userId, mailId, unsubMailto }) {
   try {
-    // const address = unsubMailto.replace('mailto:', '');
     const [mailto, paramsString = ''] = unsubMailto.split('?');
     const toAddress = mailto.replace('mailto:', '');
     const params = paramsString.split('&').reduce((out, p) => {
       var d = p.split('=');
-      return { ...out, [d[0]]: d[1] };
+      const [k, v] = d;
+      return { ...out, [k]: v };
     }, {});
     const sent = await sendUnsubscribeMail({
       toAddress,
       'v:user-id': userId,
-      'v:email-id': emailId,
+      'v:email-id': mailId,
       ...params
     });
     return { estimatedSuccess: !!sent };
   } catch (err) {
+    logger.error('mail-service: failed to unsubscribe');
+    logger.error(err);
     return { estimatedSuccess: false };
   }
 }

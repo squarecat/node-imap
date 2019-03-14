@@ -25,7 +25,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       output = await unsubscribeByMailTo({
         mailId: mail.id,
         userId,
-        unsubscribeMailTo
+        unsubMailto: unsubscribeMailTo
       });
     }
     if (hasImage) {
