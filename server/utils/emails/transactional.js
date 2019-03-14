@@ -1,23 +1,27 @@
 import config from 'getconfig';
-import logger from './logger';
+import logger from '../logger';
 import mailgun from 'mailgun-js';
+import { sendMail } from './index';
 
 const apiKey = config.mailgun.apiKey;
-const domain = config.mailgun.domain;
+const domains = config.mailgun.domains;
 
-const transport = mailgun({ apiKey, domain });
+const transactionalTransport = mailgun({
+  apiKey,
+  domain: domains.transactional
+});
 
 const giftMailOptions = {
-  from: 'Leave Me Alone <purchases@leavemealone.app>',
+  from: `Leave Me Alone <purchases@${config.mailgun.domains.transactional}>`,
   subject: 'Thank you for purchasing a gift scan'
 };
 
 const reminderMailOptions = {
-  from: 'Leave Me Alone <reminders@leavemealone.app>'
+  from: `Leave Me Alone <reminders@${config.mailgun.domains.transactional}>`
 };
 
 const referralMailOptions = {
-  from: 'Leave Me Alone <referrals@leavemealone.app>'
+  from: `Leave Me Alone <referrals@${config.mailgun.domains.transactional}>`
 };
 
 export function sendGiftCouponMultiMail({
@@ -27,7 +31,7 @@ export function sendGiftCouponMultiMail({
   quantity = 1
 }) {
   logger.info('email-utils: sending gift coupon multi mail');
-  return sendMail({
+  return sendTransactionalMail({
     ...giftMailOptions,
     subject: 'Thank you for purchasing gift scans',
     to: toAddress,
@@ -39,7 +43,7 @@ export function sendGiftCouponMultiMail({
 
 export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
   logger.info('email-utils: sending gift coupon mail');
-  return sendMail({
+  return sendTransactionalMail({
     ...giftMailOptions,
     to: toAddress,
     text: `Thank you for purchasing a gift scan for ${scanPeriod}. Your coupon code is:\n\n${coupon}\n\nJames & Danielle\n\nLeave Me Alone`
@@ -48,7 +52,7 @@ export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
 
 export function sendReminderMail({ toAddress, reminderPeriod, coupon }) {
   logger.info('email-utils: sending reminder mail');
-  return sendMail({
+  return sendTransactionalMail({
     ...reminderMailOptions,
     subject: `Reminder 🕐 - it's been ${reminderPeriod} since your last scan`,
     to: toAddress,
@@ -71,7 +75,7 @@ export function sendReferralLinkUsedMail({
     text = `Another person just purchased a scan using your referral link 🎉.\n\nYou're one ONE referral away from earning $5! Keep sharing your link.\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\nYou're receiving this email because you shared your referral link for Leave Me Alone. We will only send you an email to let you know when you earn a reward.`;
   }
 
-  return sendMail({
+  return sendTransactionalMail({
     ...referralMailOptions,
     to: toAddress,
     subject,
@@ -95,7 +99,7 @@ export function sendReferralRewardMail({
       5} earned and ${rewardCount *
       3} people have cleaner inboxes because of you ❤️. Keep sharing your link to earn more $$$ and help more people.\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\n.You're receiving this email because you earned a reward from the Leave Me Alone referral program.`;
   }
-  return sendMail({
+  return sendTransactionalMail({
     ...referralMailOptions,
     to: toAddress,
     subject,
@@ -103,15 +107,6 @@ export function sendReferralRewardMail({
   });
 }
 
-export function sendMail(options) {
-  return new Promise((resolve, reject) => {
-    transport.messages().send(options, err => {
-      if (err) {
-        logger.error('email-utils: failed to send mail');
-        logger.error(err);
-        return reject(err);
-      }
-      return resolve(true);
-    });
-  });
+export function sendTransactionalMail(options) {
+  return sendMail(options, transactionalTransport);
 }

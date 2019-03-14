@@ -32,7 +32,11 @@
   "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
   "mailgun": {
     "apiKey": "$MAILGUN_API_KEY",
-    "domain": "mail.leavemealone.app"
+    "domains": {
+      "unsubscribe": "mail.leavemealone.app",
+      "transactional": "mail.leavemealone.xyz",
+      "newsletter": "mail.leavemealone.xyz"
+    }
   },
   "mailchimp": {
     "apiKey": "$MAILCHIMP_API_KEY",

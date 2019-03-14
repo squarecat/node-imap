@@ -1,19 +1,13 @@
 import logger from '../../utils/logger';
-import { sendMail } from '../../utils/email';
-
-const unsubMailOptions = {
-  from: 'Leave Me Alone <unsubscribebot@leavemealone.app>',
-  text: 'unsubscribe'
-};
+import { sendUnsubscribeMail as sendMail } from '../../utils/emails/unsubscribe';
 
 function sendUnsubscribeMail({
   toAddress,
   subject = 'unsubscribe',
   variables
 }) {
-  logger.info('email-utils: sending unsubscribe mail');
+  logger.info('unsubscriber-mail: sending unsubscribe mail');
   return sendMail({
-    ...unsubMailOptions,
     to: toAddress,
     subject,
     variables
