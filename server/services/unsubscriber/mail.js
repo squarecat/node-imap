@@ -19,7 +19,7 @@ export async function unsubscribeWithMailTo({ userId, mailId, unsubMailto }) {
     const [mailto, paramsString = ''] = unsubMailto.split('?');
     const toAddress = mailto.replace('mailto:', '');
     const params = paramsString.split('&').reduce((out, p) => {
-      var d = p.split('=');
+      var d = p.split(/=(.+)/);
       const [k, v] = d;
       return { ...out, [k]: v };
     }, {});
