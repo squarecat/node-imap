@@ -13,9 +13,11 @@ export default app => {
       const { event: eventType } = eventData;
       const variables = eventData['user-variables'];
       const { userId, mailId } = variables;
+      logger.info(`mailgun: webhook status ${eventType}`);
       if (!userId) {
         return res.sendStatus(200);
       }
+      logger.info(`mailgun: webhook for mail ${mailId} & user ${userId}`);
       const { message } = eventData['delivery-status'];
       switch (eventType) {
         // Mailgun accepted the request to send/forward the email and the
@@ -23,22 +25,24 @@ export default app => {
         case 'accepted':
           break;
         // Mailgun rejected the request to send/forward the email.
-        case 'rejected':
+        case 'rejected': {
           updateUserUnsubStatus(userId, {
             mailId,
             status: 'rejected',
             message
           });
           break;
+        }
         // Mailgun sent the email and it was accepted by the recipient
         // email server.
-        case 'delivered':
+        case 'delivered': {
           updateUserUnsubStatus(userId, {
             mailId,
             status: 'delivered',
             message
           });
           break;
+        }
         // Mailgun could not deliver the email to the recipient email server.
         case 'failed': {
           updateUserUnsubStatus(userId, { mailId, status: 'failed', message });
