@@ -1,5 +1,4 @@
 export function sendMail(options, transport) {
-  debugger;
   return new Promise((resolve, reject) => {
     transport.messages().send(options, err => {
       if (err) {
