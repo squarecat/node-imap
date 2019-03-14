@@ -114,6 +114,7 @@ export default app => {
         // control panel.
         case 'unsubscribed': {
           const { recipient } = eventData;
+          logger.debug(`mailgun-webhook: unsubscribe request ${recipient}`);
           updateUserMarketingConsent(recipient, false);
           break;
         }
