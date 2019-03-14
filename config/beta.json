@@ -25,7 +25,7 @@
     "domains": {
       "unsubscribe": "beta.mail.leavemealone.xyz",
       "transactional": "beta.mail.leavemealone.xyz",
-      "newsletter": "bata.mail.leavemealone.xyz"
+      "newsletter": "beta.mail.leavemealone.xyz"
     }
   },
   "puppeteer": {
