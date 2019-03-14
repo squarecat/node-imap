@@ -25,7 +25,7 @@ export async function getMailEstimates(
       estimateTimeframes.map(async tf => {
         const total = await getEstimateForTimeframe(userOrUserId, {
           includeTrash,
-          tf
+          timeframe: tf
         });
         return {
           timeframe: tf,

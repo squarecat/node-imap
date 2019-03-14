@@ -237,7 +237,7 @@ function slide2({
     lead = (
       <span>
         Oh snap! Sorry about that. This one you'll have to do manually. Just
-        click or copy the following link to unsubscribe
+        click or copy the following link to unsubscribe:
       </span>
     );
   } else {
@@ -245,7 +245,7 @@ function slide2({
       <span>
         Oh snap! Sorry about that. This one you'll have to do manually. This
         particular service only accepts email unsubscribes, just click the
-        following link or send an email to the address in order to unsubscribe
+        following link or send an email to the address in order to unsubscribe:
       </span>
     );
   }
@@ -305,14 +305,18 @@ function slide2({
         <a
           styleName="modal-btn modal-btn--cta manual-unsubscribe-btn"
           target="_"
-          href={link}
+          href={type === 'link' ? link : mailTo}
         >
           Unsubscribe manually
           <ExternalIcon padleft />
         </a>
         <p styleName="unsubscribe-link-alt">
           <span>Or use this link:</span>
-          <a styleName="unsubscribe-link" target="_" href={link}>
+          <a
+            styleName="unsubscribe-link"
+            target="_"
+            href={type === 'link' ? link : mailTo}
+          >
             {type === 'link' ? link : mailTo}
           </a>
         </p>

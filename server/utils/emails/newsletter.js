@@ -22,7 +22,7 @@ export async function addSubscriber(email) {
   const member = {
     address: email,
     subscribed: true,
-    upsert: true
+    upsert: 'yes'
   };
   return new Promise((resolve, reject) => {
     list.members().create(member, err => {

@@ -119,7 +119,7 @@ export default app => {
         // control panel.
         case 'unsubscribed': {
           const { recipient } = eventData;
-          logger.debug(`mailgun-webhook: unsubscribe request ${recipient}`);
+          logger.debug(`mailgun-webhook: newsletter unsubscribe request`);
           updateUserMarketingConsent(recipient, false);
           break;
         }
@@ -142,7 +142,3 @@ export default app => {
     }
   });
 };
-
-function getVariables(item) {
-  debugger;
-}
