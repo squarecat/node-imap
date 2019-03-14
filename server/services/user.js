@@ -1,4 +1,8 @@
 import {
+  addSubscriber as addNewsletterSubscriber,
+  removeSubscriber as removeNewsletterSubscriber
+} from '../utils/emails/newsletter';
+import {
   addNewsletterUnsubscriptionToStats,
   addReferralSignupToStats,
   addReminderRequestToStats,
@@ -69,6 +73,7 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
         token: v4()
       });
       addUserToStats();
+      addNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
         keys,
@@ -113,6 +118,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         token: v4()
       });
       addUserToStats();
+      addNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
         keys,
@@ -254,7 +260,10 @@ export async function updateUserPreferences(id, preferences) {
   return updateUser(id, { preferences });
 }
 
-export async function unsubscribeUserFromNewsletter(email) {
+export async function updateUserMarketingConsent(
+  email,
+  marketingConsent = true
+) {
   try {
     const { id, preferences: currentPreferences } = await getPreferencesByEmail(
       email
@@ -262,7 +271,7 @@ export async function unsubscribeUserFromNewsletter(email) {
     addNewsletterUnsubscriptionToStats();
     return updateUserPreferences(id, {
       ...currentPreferences,
-      marketingConsent: false
+      marketingConsent
     });
   } catch (err) {
     logger.error(`user-service: failed to update user prefs by email`);
@@ -278,6 +287,7 @@ export async function deactivateUserAccount(user) {
   try {
     await revokeToken(refreshToken);
     await removeUser(id);
+    removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
   } catch (err) {
     logger.error(`user-service: error deactivating user account ${id}`);

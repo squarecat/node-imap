@@ -1,5 +1,5 @@
 import {
-  unsubscribeUserFromNewsletter,
+  updateUserMarketingConsent,
   updateUserUnsubStatus
 } from '../../services/user';
 
@@ -114,7 +114,7 @@ export default app => {
         // control panel.
         case 'unsubscribed': {
           const { recipient } = eventData;
-          unsubscribeUserFromNewsletter(recipient);
+          updateUserMarketingConsent(recipient, false);
           break;
         }
         // The email recipient clicked on the spam complaint button
