@@ -53,6 +53,8 @@ export async function sendNewsletterMail(options) {
     ...newsletterOptions,
     ...options
   };
+  console.log('emails-newsletter: sending newsletter mail to', opts.to);
+  console.log('emails-newsletter: sending newsletter mail from', opts.from);
   return new Promise((resolve, reject) => {
     newsletterTransport.messages().send(opts, err => {
       if (err) {
@@ -63,5 +65,4 @@ export async function sendNewsletterMail(options) {
       return resolve(true);
     });
   });
-  // return sendMail({ ...newsletterOptions, ...options }, newsletterTransport);
 }

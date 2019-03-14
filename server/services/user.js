@@ -15,8 +15,8 @@ import {
   addScanReminder,
   addUnsubscription,
   createUser,
-  getPreferencesByEmail,
   getUser,
+  getUserByEmail,
   getUserByReferralCode,
   incrementUserReferralBalance,
   removeScanReminder,
@@ -265,12 +265,14 @@ export async function updateUserMarketingConsent(
   marketingConsent = true
 ) {
   try {
-    const { id, preferences: currentPreferences } = await getPreferencesByEmail(
-      email
-    );
+    const user = await getUserByEmail(email);
+    if (!user) return null;
+
+    const { id, preferences } = user;
+
     addNewsletterUnsubscriptionToStats();
     return updateUserPreferences(id, {
-      ...currentPreferences,
+      ...preferences,
       marketingConsent
     });
   } catch (err) {
