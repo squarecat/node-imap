@@ -545,12 +545,10 @@ export const html = `<!doctype html>
 			/*@editable*/line-height:150% !important;
 		}
 
-}</style>
-                    <script>var w=window;if(w.performance||w.mozPerformance||w.msPerformance||w.webkitPerformance){var d=document;AKSB=w.AKSB||{},AKSB.q=AKSB.q||[],AKSB.mark=AKSB.mark||function(e,_){AKSB.q.push(["mark",e,_||(new Date).getTime()])},AKSB.measure=AKSB.measure||function(e,_,t){AKSB.q.push(["measure",e,_,t||(new Date).getTime()])},AKSB.done=AKSB.done||function(e){AKSB.q.push(["done",e])},AKSB.mark("firstbyte",(new Date).getTime()),AKSB.prof={custid:"405172",ustr:"",originlat:"0",clientrtt:"37",ghostip:"200.25.54.92",ipv6:false,pct:"10",clientip:"190.252.113.64",requestid:"28c94e41",region:"15276",protocol:"h2",blver:14,akM:"x",akN:"ae",akTT:"O",akTX:"1",akTI:"28c94e41",ai:"365711",ra:"false",pmgn:"",pmgi:"",pmp:"",qc:""},function(e){var _=d.createElement("script");_.async="async",_.src=e;var t=d.getElementsByTagName("script"),t=t[t.length-1];t.parentNode.insertBefore(_,t)}(("https:"===d.location.protocol?"https:":"http:")+"//ds-aksb-a.akamaihd.net/aksb.min.js")}</script>
-                    </head>
+}</style></head>
     <body>
+
         <!--[if !gte mso 9]><!----><span class="mcnPreviewText" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;">Clean your Outlook inbox of spam subscriptions</span><!--<![endif]-->
-        <!--*|END:IF|*-->
         <center>
             <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
                 <tr>
@@ -563,39 +561,7 @@ export const html = `<!doctype html>
                         <![endif]-->
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer">
                             <tr>
-                                <td valign="top" id="templatePreheader"><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
-    <tbody class="mcnTextBlockOuter">
-        <tr>
-            <td valign="top" class="mcnTextBlockInner" style="padding-top:9px;">
-              	<!--[if mso]>
-				<table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
-				<tr>
-				<![endif]-->
-
-				<!--[if mso]>
-				<td valign="top" width="600" style="width:600px;">
-				<![endif]-->
-                <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width:100%; min-width:100%;" width="100%" class="mcnTextContentContainer">
-                    <tbody><tr>
-
-                        <td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px; text-align: center;">
-
-                            <a href="*|ARCHIVE|*" target="_blank">View this email in your browser</a>
-                        </td>
-                    </tr>
-                </tbody></table>
-				<!--[if mso]>
-				</td>
-				<![endif]-->
-
-				<!--[if mso]>
-				</tr>
-				</table>
-				<![endif]-->
-            </td>
-        </tr>
-    </tbody>
-</table></td>
+                                <td valign="top" id="templatePreheader"></td>
                             </tr>
                             <tr>
                                 <td valign="top" id="templateHeader"></td>
@@ -618,7 +584,7 @@ export const html = `<!doctype html>
 
                         <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <h1 class="null" style="text-align: center;"><img align="center" data-file-id="838637" height="132" src="https://gallery.mailchimp.com/cdadb0a9f5c77af011b1d5243/images/164f26c5-feda-4a11-8a29-339d5e3a2c65.png" style="border: 0px  ; width: 200px; height: 132px; margin: 0px;" width="200"><br>
+                            <h1 class="null" style="text-align: center;"><img align="center" data-file-id="838637" height="132" src="https://cdn.leavemealone.xyz/images/logo.png" style="border: 0px  ; width: 200px; height: 132px; margin: 0px;" width="200"><br>
 <br>
 Outlook support is here!</h1>
 
@@ -669,14 +635,14 @@ As we continue to grow we needed to make some performance improvements.&nbsp;Sca
 You can now see exactly&nbsp;how many emails you have received from a sender for your scan period, and identify who the "spammiest" senders are.&nbsp;This is James' favourite new feature!<br>
 &nbsp;</p>
 
-<p style="text-align: center;"><img align="center" alt="count of emails received from a sender" data-file-id="929345" height="151" src="https://gallery.mailchimp.com/cdadb0a9f5c77af011b1d5243/images/36221f83-49b6-456f-9193-d47655bd5729.png" style="border: 0px  ; width: 400px; height: 151px; margin: 0px;" width="400"><br>
+<p style="text-align: center;"><img align="center" alt="number of emails received from a sender" data-file-id="929345" height="151" src="https://cdn.leavemealone.xyz/images/outlook-occurances.png" style="border: 0px  ; width: 400px; height: 151px; margin: 0px;" width="400"><br>
 &nbsp;</p>
 
 <p><br>
 <u>Spam folder scanning</u><br>
 We already scanned your trash and now we also scan your spam folder so you can really clear out absolutely all of your subscription emails and get an even cleaner inbox!</p>
 
-<p style="text-align: center;"><img alt="spam email label" data-file-id="929353" height="161" src="https://gallery.mailchimp.com/cdadb0a9f5c77af011b1d5243/images/35d7a2d8-d173-498b-8e39-c1c534036585.png" style="border: 0px  ; width: 400px; height: 161px; margin: 0px;" width="400"></p>
+<p style="text-align: center;"><img alt="spam email label" data-file-id="929353" height="161" src="https://cdn.leavemealone.xyz/images/outlook-spam-label.png" style="border: 0px  ; width: 400px; height: 161px; margin: 0px;" width="400"></p>
 
                         </td>
                     </tr>
@@ -835,7 +801,7 @@ Peace and love<br>
                                                                         <tbody><tr>
 
                                                                                 <td align="center" valign="middle" width="24" class="mcnFollowIconContent">
-                                                                                    <a href="https://www.twitter.com/leavemealoneapp" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-twitter-48.png" style="display:block;" height="24" width="24" class=""></a>
+                                                                                    <a href="https://www.twitter.com/leavemealoneapp" target="_blank"><img src="https://cdn.leavemealone.xyz/images/icons/twitter.png" style="display:block;" height="24" width="24" class=""></a>
                                                                                 </td>
 
 
@@ -871,7 +837,7 @@ Peace and love<br>
                                                                         <tbody><tr>
 
                                                                                 <td align="center" valign="middle" width="24" class="mcnFollowIconContent">
-                                                                                    <a href="https://leavemealone.xyz" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-link-48.png" style="display:block;" height="24" width="24" class=""></a>
+                                                                                    <a href="https://leavemealone.xyz" target="_blank"><img src="https://cdn.leavemealone.xyz/images/icons/link.png" style="display:block;" height="24" width="24" class=""></a>
                                                                                 </td>
 
 
@@ -907,7 +873,7 @@ Peace and love<br>
                                                                         <tbody><tr>
 
                                                                                 <td align="center" valign="middle" width="24" class="mcnFollowIconContent">
-                                                                                    <a href="mailto:leavemealone@squarecat.io" target="_blank"><img src="https://cdn-images.mailchimp.com/icons/social-block-v2/color-forwardtofriend-48.png" style="display:block;" height="24" width="24" class=""></a>
+                                                                                    <a href="mailto:leavemealone@squarecat.io" target="_blank"><img src="https://cdn.leavemealone.xyz/images/icons/mail.png" style="display:block;" height="24" width="24" class=""></a>
                                                                                 </td>
 
 
@@ -965,8 +931,7 @@ Peace and love<br>
                             <em>Copyright © 2019 Squarecat, All rights reserved.</em><br>
 <br>
 Want to change how you receive these emails?<br>
-You can <a href="%mailing_list_unsubscribe_url%">unsubscribe from this list</a>.<br>
-
+<a href="%mailing_list_unsubscribe_url%" target="_blank">Unsubscribe from this list</a>
                         </td>
                     </tr>
                 </tbody></table>
@@ -995,7 +960,8 @@ You can <a href="%mailing_list_unsubscribe_url%">unsubscribe from this list</a>.
             </table>
         </center>
     </body>
-</html>`;
+</html>
+`;
 
 export const text = `
 Outlook support is here!

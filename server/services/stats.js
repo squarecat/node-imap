@@ -3,6 +3,7 @@ import {
   addFailedUnsubscription,
   addGiftPayment,
   addGiftRedemption,
+  addNewsletterUnsubscription,
   addNumberofEmails,
   addPayment,
   addReferralCredit,
@@ -65,8 +66,11 @@ export function addReferralPaidScanToStats() {
 export function addReferralCreditToStats({ amount }) {
   return addReferralCredit({ amount });
 }
-export function addUserAccountDeactivatedToStats() {
-  return addUserAccountDeactivated();
+export function addUserAccountDeactivatedToStats(count) {
+  return addUserAccountDeactivated(count);
+}
+export function addNewsletterUnsubscriptionToStats(count) {
+  return addNewsletterUnsubscription(count);
 }
 export function getAllStats() {
   return getStats();

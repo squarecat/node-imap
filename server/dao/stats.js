@@ -74,6 +74,9 @@ export function addReferralPaidScan(count = 1) {
 export function addReferralCredit({ amount = 5 }) {
   return updateSingleStat('referralCredit', amount);
 }
+export function addNewsletterUnsubscription(count = 1) {
+  return updateSingleStat('newsletterUnsubscription', count);
+}
 
 // generic update stat function for anything
 async function updateSingleStat(statName, count = 1) {
@@ -193,7 +196,8 @@ const recordedStats = [
   'remindersSent',
   'referralSignup',
   'referralPaidScan',
-  'referralCredit'
+  'referralCredit',
+  'newsletterUnsubscription'
 ];
 
 export async function recordStats() {

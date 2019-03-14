@@ -1,9 +1,17 @@
 import {
+  addNewsletterUnsubscriptionToStats,
+  addReferralSignupToStats,
+  addReminderRequestToStats,
+  addUserAccountDeactivatedToStats,
+  addUserToStats
+} from './stats';
+import {
   addPaidScan,
   addScan,
   addScanReminder,
   addUnsubscription,
   createUser,
+  getPreferencesByEmail,
   getUser,
   getUserByReferralCode,
   incrementUserReferralBalance,
@@ -15,12 +23,6 @@ import {
   updateUnsubStatus,
   updateUser
 } from '../dao/user';
-import {
-  addReferralSignupToStats,
-  addReminderRequestToStats,
-  addUserAccountDeactivatedToStats,
-  addUserToStats
-} from './stats';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
@@ -252,6 +254,22 @@ export async function getUserPayments(id) {
 
 export async function updateUserPreferences(id, preferences) {
   return updateUser(id, { preferences });
+}
+
+export async function unsubscribeUserFromNewsletter(email) {
+  try {
+    const { id, preferences: currentPreferences } = await getPreferencesByEmail(
+      email
+    );
+    addNewsletterUnsubscriptionToStats();
+    return updateUserPreferences(id, {
+      ...currentPreferences,
+      marketingConsent: false
+    });
+  } catch (err) {
+    logger.error(`user-service: failed to update user prefs by email`);
+    throw err;
+  }
 }
 
 export async function deactivateUserAccount(user) {
