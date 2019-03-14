@@ -257,7 +257,27 @@ export async function getUserPayments(id) {
 }
 
 export async function updateUserPreferences(id, preferences) {
-  return updateUser(id, { preferences });
+  try {
+    const { email, preferences: currentPreferences } = await getUserById(id);
+
+    if (preferences.marketingConsent !== currentPreferences.marketingConsent) {
+      logger.info(`user-service: marketing consent changed ${id}`);
+      if (preferences.marketingConsent) {
+        logger.info(
+          `user-service: marketing consent enabled, adding subscriber ${id}`
+        );
+        addNewsletterSubscriber(email);
+      } else {
+        logger.info(
+          `user-service: marketing consent disabled, removing subscriber ${id}`
+        );
+        removeNewsletterSubscriber(email);
+      }
+    }
+    return updateUser(id, { preferences });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function updateUserMarketingConsent(
