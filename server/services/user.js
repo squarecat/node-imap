@@ -12,6 +12,7 @@ import {
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
+  updateUnsubStatus,
   updateUser
 } from '../dao/user';
 import {
@@ -269,7 +270,7 @@ export async function deactivateUserAccount(user) {
   }
 }
 
-export function updateUnsubStatus({ userId, mailId, status, message }) {
+export function updateUserUnsubStatus(userId, { mailId, status, message }) {
   try {
     return updateUnsubStatus(userId, { mailId, status, message });
   } catch (err) {

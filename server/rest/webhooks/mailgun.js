@@ -1,5 +1,5 @@
 import logger from '../../utils/logger';
-import { updateUnsubStatus } from '../../services/user';
+import { updateUserUnsubStatus } from '../../services/user';
 
 export default app => {
   app.post('/webhooks/mailgun/unsubs', async (req, res) => {
@@ -20,16 +20,24 @@ export default app => {
           break;
         // Mailgun rejected the request to send/forward the email.
         case 'rejected':
-          updateUnsubStatus({ userId, mailId, status: 'rejected', message });
+          updateUserUnsubStatus(userId, {
+            mailId,
+            status: 'rejected',
+            message
+          });
           break;
         // Mailgun sent the email and it was accepted by the recipient
         // email server.
         case 'delivered':
-          updateUnsubStatus({ userId, mailId, status: 'delivered', message });
+          updateUserUnsubStatus(userId, {
+            mailId,
+            status: 'delivered',
+            message
+          });
           break;
         // Mailgun could not deliver the email to the recipient email server.
         case 'failed': {
-          updateUnsubStatus({ userId, mailId, status: 'failed', message });
+          updateUserUnsubStatus(userId, { mailId, status: 'failed', message });
           break;
         }
         // The email recipient opened the email and enabled image viewing.
