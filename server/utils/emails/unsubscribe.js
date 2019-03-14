@@ -17,5 +17,5 @@ export const unsubOptions = {
 };
 
 export function sendUnsubscribeMail(options) {
-  return sendMail({ ...unsubOptions, ...options }, unsubscribeTransport);
+  return sendMail({ ...options, ...unsubOptions }, unsubscribeTransport);
 }

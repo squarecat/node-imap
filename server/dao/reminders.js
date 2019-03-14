@@ -1,10 +1,10 @@
 import { findUsersNeedReminders, updateUsersReminded } from './user';
-import { sendReminderMail } from '../utils/email';
-import { createCoupon } from '../utils/stripe';
-import { products } from '../services/payments';
-import { addReminderSentToStats } from '../services/stats';
 
+import { addReminderSentToStats } from '../services/stats';
+import { createCoupon } from '../utils/stripe';
 import logger from '../utils/logger';
+import { products } from '../services/payments';
+import { sendReminderMail } from '../utils/emails/transactional';
 
 export async function checkUserReminders() {
   try {

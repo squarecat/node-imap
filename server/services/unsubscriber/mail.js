@@ -4,13 +4,13 @@ import { sendUnsubscribeMail as sendMail } from '../../utils/emails/unsubscribe'
 function sendUnsubscribeMail({
   toAddress,
   subject = 'unsubscribe',
-  variables
+  ...variables
 }) {
   logger.info('unsubscriber-mail: sending unsubscribe mail');
   return sendMail({
     to: toAddress,
     subject,
-    variables
+    ...variables
   });
 }
 
@@ -25,10 +25,8 @@ export async function unsubscribeWithMailTo({ userId, emailId, unsubMailto }) {
     }, {});
     const sent = await sendUnsubscribeMail({
       toAddress,
-      variables: {
-        userId,
-        emailId
-      },
+      'v:user-id': userId,
+      'v:email-id': emailId,
       ...params
     });
     return { estimatedSuccess: !!sent };

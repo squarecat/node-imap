@@ -1,5 +1,8 @@
 import { createCoupon, createCustomer, createPayment } from '../utils/stripe';
-import { sendGiftCouponMail, sendGiftCouponMultiMail } from '../utils/email';
+import {
+  sendGiftCouponMail,
+  sendGiftCouponMultiMail
+} from '../utils/emails/transactional';
 
 import _times from 'lodash.times';
 import { addGiftPaymentToStats } from '../services/stats';
