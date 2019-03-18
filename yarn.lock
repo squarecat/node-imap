@@ -2377,7 +2377,7 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-bluebird@^3.4.0, bluebird@^3.5.0, bluebird@^3.5.1:
+bluebird@^3.5.0, bluebird@^3.5.1:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.3.tgz#7d01c6f9616c9a51ab0f8c549a79dfe6ec33efa7"
 
@@ -7465,6 +7465,11 @@ lodash.camelcase@^4.3.0:
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
   integrity sha1-soqmKIorn8ZRA1x3EfZathkDMaY=
 
+lodash.capitalize@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/lodash.capitalize/-/lodash.capitalize-4.2.1.tgz#f826c9b4e2a8511d84e3aca29db05e1a4f3b72a9"
+  integrity sha1-+CbJtOKoUR2E46yinbBeGk87cqk=
+
 lodash.clonedeep@^4.3.2:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
@@ -7689,16 +7694,6 @@ ltcdr@^2.2.1:
 lz-string@^1.4.4:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/lz-string/-/lz-string-1.4.4.tgz#c0d8eaf36059f705796e1e344811cf4c498d3a26"
-
-mailchimp-api-v3@^1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/mailchimp-api-v3/-/mailchimp-api-v3-1.12.1.tgz#a147792e2b335da8c4345a24ae8aa4fec07f0abb"
-  integrity sha512-mNJLIJpljc/UqWckk5XbxD8kh6w0ZB+ud2vRBjgdwDHvKsZmvFp5o2wdQ/db8VpB8Xbogs14zSJQDiGM27Jihg==
-  dependencies:
-    bluebird "^3.4.0"
-    lodash "^4.17.10"
-    request "^2.88.0"
-    tar "^4.0.2"
 
 mailgun-js@^0.22.0:
   version "0.22.0"
@@ -11489,7 +11484,7 @@ tar@^2.0.0:
     fstream "^1.0.2"
     inherits "2"
 
-tar@^4, tar@^4.0.2, tar@^4.4.8:
+tar@^4, tar@^4.4.8:
   version "4.4.8"
   resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.8.tgz#b19eec3fde2a96e64666df9fdb40c5ca1bc3747d"
   dependencies:

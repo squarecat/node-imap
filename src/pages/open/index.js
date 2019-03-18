@@ -16,7 +16,10 @@ import startOfMonth from 'date-fns/start_of_month';
 import { useAsync } from '../../utils/hooks';
 
 const lineColor = '#EB6C69';
-const lineColor2 = 'rgb(158, 87, 174)';
+const lineColorLight = '#fedbd5';
+
+const lineColor2 = '#9D5AAC';
+const lineColor2Light = '#CA9CD4';
 
 function getStats() {
   return fetch('/api/stats').then(resp => resp.json());
@@ -51,7 +54,6 @@ function unsubscriptionsChart(ctx, stats) {
       legend: {
         display: false
       },
-      maintainAspectRatio: false,
       scales: {
         xAxes: [
           {
@@ -70,7 +72,8 @@ function unsubscriptionsChart(ctx, stats) {
           }
         ]
       },
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
@@ -106,7 +109,6 @@ function dailyRevChart(ctx, stats) {
       legend: {
         display: false
       },
-      maintainAspectRatio: false,
       tooltips: {
         callbacks: {
           label: function(items, data) {
@@ -135,7 +137,8 @@ function dailyRevChart(ctx, stats) {
           }
         ]
       },
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
@@ -174,7 +177,6 @@ function simpleLineChart(ctx, stats, stat) {
       legend: {
         display: false
       },
-      maintainAspectRatio: false,
       scales: {
         xAxes: [
           {
@@ -193,7 +195,8 @@ function simpleLineChart(ctx, stats, stat) {
           }
         ]
       },
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
@@ -241,6 +244,56 @@ function mailtoLinkPieChart(ctx, stats) {
   });
 }
 
+function providerBarChart(ctx, stats) {
+  if (!stats) return null;
+
+  const data = {
+    google: stats.googleUsers,
+    outlook: stats.outlookUsers
+  };
+
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          backgroundColor: [lineColorLight, lineColor2Light],
+          borderWidth: 2,
+          borderColor: [lineColor, lineColor2],
+          data: [data.google, data.outlook]
+        }
+      ],
+      labels: ['Google', 'Outlook']
+    },
+    type: 'bar',
+    options: {
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [
+          {
+            barPercentage: 0.4
+          }
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              callback: function(value) {
+                if (value % 1 === 0) {
+                  return value;
+                }
+              }
+            }
+          }
+        ]
+      },
+
+      responsive: true
+    }
+  });
+}
+
 export default function Terms() {
   const { value: stats, loading } = useAsync(getStats);
   const { value: expenses, loadingExpenses } = useAsync(getExpenses);
@@ -251,6 +304,7 @@ export default function Terms() {
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
   const usersRef = useRef(null);
+  const providersRef = useRef(null);
 
   useEffect(
     () => {
@@ -271,6 +325,9 @@ export default function Terms() {
       }
       if (usersRef.current) {
         usersChart(usersRef.current.getContext('2d'), stats);
+      }
+      if (providersRef.current) {
+        providerBarChart(providersRef.current.getContext('2d'), stats);
       }
     },
     [stats, subscriptionRef.current, dailyRevRef.current, scanRef.current]
@@ -412,7 +469,7 @@ export default function Terms() {
                     {usersStats.growthRate > 0 ? '+' : '-'}
                     {percent(usersStats.growthRate)}
                   </span>
-                </div>
+                </div>`
                 <div styleName="big-stat box">
                   <span styleName="label">
                     This month's new signups to date
@@ -423,6 +480,13 @@ export default function Terms() {
                   <span styleName="label">Total users</span>
                   <span styleName="value">{format(stats.users)}</span>
                 </div>
+              </div>
+              <div styleName="chart box">
+                <h2>
+                  Users - <span style={{ color: lineColor }}>Google</span> vs{' '}
+                  <span style={{ color: lineColor2 }}>Outlook</span>
+                </h2>
+                <canvas ref={providersRef} />
               </div>
             </div>
             <div styleName="subscriptions">
@@ -445,7 +509,7 @@ export default function Terms() {
                   <span styleName="value">{format(stats.unsubscriptions)}</span>
                 </div>
               </div>
-              <div styleName="chart box chart--pie">
+              <div styleName="chart box">
                 <h2>
                   Unsubscribes - <span style={{ color: lineColor }}>Link</span>{' '}
                   vs <span style={{ color: lineColor2 }}>Mailto</span>

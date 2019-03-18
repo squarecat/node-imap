@@ -26,13 +26,13 @@ export const FormInput = ({ id, type = 'text', name, required, ...props }) => {
 
 export const FormCheckbox = ({ id, name, label, ...props }) => {
   return (
-    <label>
+    <label styleName="form-checkbox">
       <input
         {...props}
         id={id}
         type="checkbox"
         name={name}
-        styleName="form-checkbox"
+        styleName="checkbox"
       />
       <span styleName="checkbox-label">{label}</span>
     </label>

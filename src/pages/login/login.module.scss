@@ -90,3 +90,9 @@ $active-bg-color: #ffc7c1;
     @extend .link-inverted;
   }
 }
+
+.notice {
+  font-size: 11px;
+  line-height: 16px;
+  margin: 0;
+}

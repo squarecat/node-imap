@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import axios from 'axios';
 import countries from './countries.json';
 import logger from './logger';
+import _capitalize from 'lodash.capitalize';
 import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
@@ -276,5 +277,5 @@ function getDescription({ quantity, productLabel, provider, gift }) {
       quantity > 1 ? 's' : ''
     }`;
   }
-  return `Payment for ${productLabel} scan for ${provider}`;
+  return `Payment for ${productLabel} scan for ${_capitalize(provider)}`;
 }
