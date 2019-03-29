@@ -16,7 +16,7 @@ export default ({ onClickSupport }) => {
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
     if (!parentElement) return;
-    while (parentElement !== document.body) {
+    while (parentElement && parentElement !== document.body) {
       if (parentElement.classList.contains('settings-dropdown-toggle')) {
         return;
       }
