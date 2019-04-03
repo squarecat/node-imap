@@ -70,7 +70,7 @@ function getCountlyCodeStr(options) {
       cly.src =
         '${options.script_url}';
       cly.onload = function() {
-        Countly.init();
+        return Countly && Countly.init();
       };
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(cly, s);

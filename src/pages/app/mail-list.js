@@ -420,7 +420,9 @@ function ErrorScreen({ error, retry }) {
           <TextLink href="/auth/logout">logging out</TextLink> and back in again
           to refresh your credentials. Thanks!
         </p>
-        <pre className="error-details">{error}</pre>
+        {process.env.NODE_ENV === 'development' ? (
+          <pre className="error-details">{error}</pre>
+        ) : null}
       </div>
     );
   } else if (error === 'Not paid') {
@@ -455,7 +457,9 @@ function ErrorScreen({ error, retry }) {
         This is definitely our fault, so if it still doesn't work then please
         bear with us and we'll try and get it sorted for you!
       </p>
-      <pre className="error-details">{error}</pre>
+      {process.env.NODE_ENV === 'development' ? (
+        <pre className="error-details">{error}</pre>
+      ) : null}
     </div>
   );
 }
