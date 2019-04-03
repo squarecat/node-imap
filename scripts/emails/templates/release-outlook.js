@@ -695,7 +695,7 @@ We already scanned your trash and now we also scan your spam folder so you can r
 
                             <h2 class="null">What’s next?</h2>
 <br>
-We're continuing to work on adding support for more providers. You can follow along with our progress on our public roadmap and vote for which one we work on.
+We're continuing to work on adding support for more providers. You can follow along with our progress on our <a href="https://leavemealone.xyz/roadmap" target="_blank">public roadmap</a>&nbsp;and vote for which one we work on.
                         </td>
                     </tr>
                 </tbody></table>
@@ -745,7 +745,7 @@ We're continuing to work on adding support for more providers. You can follow al
 
                         <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            Leave Me Alone wouldn't exist with you. To say thank you we're giving you 20% off your next scan with the code&nbsp; which you can use with Outlook or Gmail.<br>
+                            Leave Me Alone wouldn't exist with you. To say thank you we're giving you 20% off your next scan with the code OUTLOOK_20&nbsp; which you can use with Outlook or Gmail.<br>
 <br>
 Peace and love<br>
 ✌️❤️<br>
