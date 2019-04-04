@@ -2,6 +2,7 @@ import {
   addNewsletterUnsubscriptionToStats,
   addReferralSignupToStats,
   addReminderRequestToStats,
+  addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
   addUserToStats
 } from './stats';
@@ -323,6 +324,7 @@ export async function deactivateUserAccount(user) {
 
 export function updateUserUnsubStatus(userId, { mailId, status, message }) {
   try {
+    addUnsubStatusToStats(status);
     return updateUnsubStatus(userId, { mailId, status, message });
   } catch (err) {
     logger.error(
