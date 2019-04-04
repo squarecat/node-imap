@@ -10,7 +10,7 @@ const unsubscribeTransport = mailgun({
   domain: domains.unsubscribe
 });
 
-const address = `unsubscribebot@${config.mailgun.domains.newsletter}`;
+const address = `unsubscribebot@${domains.unsubscribe}`;
 export const unsubOptions = {
   from: `Leave Me Alone <${address}>`,
   text: 'unsubscribe'

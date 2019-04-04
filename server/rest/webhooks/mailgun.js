@@ -1,5 +1,5 @@
 import {
-  updateUserMarketingConsent,
+  unsubscribeUserFromNewsletter,
   updateUserUnsubStatus
 } from '../../services/user';
 
@@ -79,6 +79,7 @@ export default app => {
       res.sendStatus(200);
     } catch (err) {
       logger.error('mailgun-webhook: failed to parse hook');
+      logger.error(err);
       res.sendStatus(406);
     }
   });
@@ -120,7 +121,7 @@ export default app => {
         case 'unsubscribed': {
           const { recipient } = eventData;
           logger.debug(`mailgun-webhook: newsletter unsubscribe request`);
-          updateUserMarketingConsent(recipient, false);
+          unsubscribeUserFromNewsletter(recipient);
           break;
         }
         // The email recipient clicked on the spam complaint button
@@ -140,6 +141,7 @@ export default app => {
       res.sendStatus(200);
     } catch (err) {
       logger.error('mailgun-webhook: failed to parse hook');
+      logger.error(err);
       res.sendStatus(406);
     }
   });
