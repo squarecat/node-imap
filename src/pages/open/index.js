@@ -380,7 +380,7 @@ export default function Terms() {
                       totalRevenueStats.growthRate > 0 ? 'positive' : 'negative'
                     }`}
                   >
-                    {totalRevenueStats.growthRate > 0 ? '+' : '-'}
+                    {totalRevenueStats.growthRate > 0 ? '+' : ''}
                     {percent(totalRevenueStats.growthRate)}
                   </span>
                 </div>
@@ -409,7 +409,7 @@ export default function Terms() {
                       salesStats.growthRate > 0 ? 'positive' : 'negative'
                     }`}
                   >
-                    {salesStats.growthRate > 0 ? '+' : '-'}
+                    {salesStats.growthRate > 0 ? '+' : ''}
                     {percent(salesStats.growthRate)}
                   </span>
                 </div>
@@ -466,7 +466,7 @@ export default function Terms() {
                       usersStats.growthRate > 0 ? 'positive' : 'negative'
                     }`}
                   >
-                    {usersStats.growthRate > 0 ? '+' : '-'}
+                    {usersStats.growthRate > 0 ? '+' : ''}
                     {percent(usersStats.growthRate)}
                   </span>
                 </div>`

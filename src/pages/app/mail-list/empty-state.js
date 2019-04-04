@@ -25,6 +25,9 @@ export default ({ showPriceModal, lastScan, onClickRescan }) => {
   let dateContent = null;
 
   const rescanAvailable = isRescanAvailable(lastScan);
+  const lastScanResultsCount = lastScan
+    ? lastScan.totalUnsubscribableEmails
+    : 0;
 
   if (lastScan) {
     dateContent = (
@@ -52,7 +55,7 @@ export default ({ showPriceModal, lastScan, onClickRescan }) => {
     );
   }
 
-  if (rescanAvailable) {
+  if (lastScanResultsCount) {
     const fromDate = format(getTimeRange(lastScan), dateFormat);
     const toDate = format(lastScan.scannedAt, dateFormat);
     content = (

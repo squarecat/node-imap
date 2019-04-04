@@ -132,7 +132,9 @@ export default app => {
         case 'stored':
           break;
         default: {
-          throw new Error(`Unknown event from mailgun: ${eventType}`);
+          throw new Error(
+            `mailgun-webhook: unknown event from mailgun: ${eventType}`
+          );
         }
       }
       res.sendStatus(200);

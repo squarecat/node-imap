@@ -164,6 +164,11 @@ async function* fetchMailApi(
       const { messages, nextPageToken } = data;
       pageToken = nextPageToken;
       let populatedMessages;
+      // sometimes the last page or the first page
+      // wont have any messages
+      if (!messages.length) {
+        continue;
+      }
       if (batch) {
         populatedMessages = await fetchMessagesBatch(
           accessToken,

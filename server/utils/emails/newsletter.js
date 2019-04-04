@@ -1,4 +1,5 @@
 import config from 'getconfig';
+import logger from '../logger';
 import mailgun from 'mailgun-js';
 
 const apiKey = config.mailgun.apiKey;
@@ -18,17 +19,17 @@ const newsletterTransport = mailgun({
 
 const list = newsletterTransport.lists(address);
 
-export async function addSubscriber(email) {
+export async function addUpdateSubscriber(email, { subscribed = true } = {}) {
   const member = {
     address: email,
-    subscribed: true,
+    subscribed,
     upsert: 'yes'
   };
   return new Promise((resolve, reject) => {
     list.members().create(member, err => {
       if (err) {
-        console.log('emails-newsletter: failed to add subscriber');
-        console.log(err);
+        logger.error('emails-newsletter: failed to add subscriber');
+        logger.error(err);
         return reject(err);
       }
       return resolve(true);
@@ -40,8 +41,8 @@ export async function removeSubscriber(email) {
   return new Promise((resolve, reject) => {
     list.members(email).delete(err => {
       if (err) {
-        console.log('emails-newsletter: failed to remove subscriber');
-        console.log(err);
+        logger.error('emails-newsletter: failed to remove subscriber');
+        logger.error(err);
         return reject(err);
       }
       return resolve(true);
@@ -54,13 +55,12 @@ export async function sendNewsletterMail(options) {
     ...newsletterOptions,
     ...options
   };
-  console.log('emails-newsletter: sending newsletter mail to', opts.to);
-  console.log('emails-newsletter: sending newsletter mail from', opts.from);
+  logger.debug('emails-newsletter: sending newsletter mail');
   return new Promise((resolve, reject) => {
     newsletterTransport.messages().send(opts, err => {
       if (err) {
-        console.log('failed to send mail');
-        console.log(err);
+        logger.error('failed to send mail');
+        logger.error(err);
         return reject(err);
       }
       return resolve(true);
