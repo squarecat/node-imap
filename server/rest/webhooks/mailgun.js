@@ -79,6 +79,7 @@ export default app => {
       res.sendStatus(200);
     } catch (err) {
       logger.error('mailgun-webhook: failed to parse hook');
+      logger.error(err);
       res.sendStatus(406);
     }
   });
@@ -140,6 +141,7 @@ export default app => {
       res.sendStatus(200);
     } catch (err) {
       logger.error('mailgun-webhook: failed to parse hook');
+      logger.error(err);
       res.sendStatus(406);
     }
   });

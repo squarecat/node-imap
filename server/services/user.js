@@ -328,7 +328,7 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
     return updateUnsubStatus(userId, { mailId, status, message });
   } catch (err) {
     logger.error(
-      `user-service: failed to update ubsub status for user ${userId} and mail ${mailId}`
+      `user-service: failed to update unsub status for user ${userId} and mail ${mailId}`
     );
     throw err;
   }
