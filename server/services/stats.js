@@ -16,7 +16,8 @@ import {
   addUnsubscriptionByLink,
   addUser,
   addUserAccountDeactivated,
-  getStats
+  getStats,
+  updateSingleStat
 } from '../dao/stats';
 
 import { getExpenses } from '../utils/airtable';
@@ -71,6 +72,14 @@ export function addUserAccountDeactivatedToStats(count) {
 }
 export function addNewsletterUnsubscriptionToStats(count) {
   return addNewsletterUnsubscription(count);
+}
+export function addUnsubStatusToStats(status) {
+  if (status === 'rejected') {
+    return updateSingleStat('failedEmailUnsubscribes');
+  }
+  if (status === 'delivered') {
+    return updateSingleStat('successfulEmailUnsubscribes');
+  }
 }
 export function getAllStats() {
   return getStats();
