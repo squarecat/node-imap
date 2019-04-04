@@ -80,7 +80,7 @@ export function addNewsletterUnsubscription(count = 1) {
 }
 
 // generic update stat function for anything
-async function updateSingleStat(statName, count = 1) {
+export async function updateSingleStat(statName, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
