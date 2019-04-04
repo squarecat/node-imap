@@ -20,6 +20,14 @@
       "redirect": "https://beta.leavemealone.xyz/auth/outlook/callback"
     }
   },
+  "mailgun": {
+    "apiKey": "$MAILGUN_API_KEY",
+    "domains": {
+      "unsubscribe": "beta.mail.leavemealone.xyz",
+      "transactional": "beta.mail.leavemealone.xyz",
+      "newsletter": "beta.mail.leavemealone.xyz"
+    }
+  },
   "puppeteer": {
     "args": [
       "--no-sandbox",

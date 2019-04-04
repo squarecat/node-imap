@@ -1,33 +1,38 @@
 import logger from '../../utils/logger';
-import { sendMail } from '../../utils/email';
+import { sendUnsubscribeMail as sendMail } from '../../utils/emails/unsubscribe';
 
-const unsubMailOptions = {
-  from: 'Leave Me Alone <unsubscribebot@leavemealone.app>',
-  text: 'unsubscribe'
-};
-
-function sendUnsubscribeMail({ toAddress, subject = 'unsubscribe' }) {
-  logger.info('email-utils: sending unsubscribe mail');
+function sendUnsubscribeMail({
+  toAddress,
+  subject = 'unsubscribe',
+  ...variables
+}) {
+  logger.info('unsubscriber-mail: sending unsubscribe mail');
   return sendMail({
-    ...unsubMailOptions,
     to: toAddress,
-    subject
+    subject,
+    ...variables
   });
 }
 
-export async function unsubscribeWithMailTo(unsubMailto) {
+export async function unsubscribeWithMailTo({ userId, mailId, unsubMailto }) {
   try {
-    // const address = unsubMailto.replace('mailto:', '');
     const [mailto, paramsString = ''] = unsubMailto.split('?');
     const toAddress = mailto.replace('mailto:', '');
     const params = paramsString.split('&').reduce((out, p) => {
-      var d = p.split('=');
-      return { ...out, [d[0]]: d[1] };
+      var d = p.split(/=(.+)/);
+      const [k, v] = d;
+      return { ...out, [k]: v };
     }, {});
-
-    const sent = await sendUnsubscribeMail({ toAddress, ...params });
+    const sent = await sendUnsubscribeMail({
+      toAddress,
+      'v:user-id': userId,
+      'v:email-id': mailId,
+      ...params
+    });
     return { estimatedSuccess: !!sent };
   } catch (err) {
+    logger.error('mail-service: failed to unsubscribe');
+    logger.error(err);
     return { estimatedSuccess: false };
   }
 }

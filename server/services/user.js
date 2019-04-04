@@ -1,10 +1,19 @@
 import {
+  addNewsletterUnsubscriptionToStats,
+  addReferralSignupToStats,
+  addReminderRequestToStats,
+  addUnsubStatusToStats,
+  addUserAccountDeactivatedToStats,
+  addUserToStats
+} from './stats';
+import {
   addPaidScan,
   addScan,
   addScanReminder,
   addUnsubscription,
   createUser,
   getUser,
+  getUserByEmail,
   getUserByReferralCode,
   incrementUserReferralBalance,
   removeScanReminder,
@@ -12,14 +21,13 @@ import {
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
+  updateUnsubStatus,
   updateUser
 } from '../dao/user';
 import {
-  addReferralSignupToStats,
-  addReminderRequestToStats,
-  addUserAccountDeactivatedToStats,
-  addUserToStats
-} from './stats';
+  addUpdateSubscriber as addUpdateNewsletterSubscriber,
+  removeSubscriber as removeNewsletterSubscriber
+} from '../utils/emails/newsletter';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
@@ -66,6 +74,7 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
         token: v4()
       });
       addUserToStats();
+      addUpdateNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
         keys,
@@ -110,6 +119,7 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         token: v4()
       });
       addUserToStats();
+      addUpdateNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
         keys,
@@ -248,7 +258,52 @@ export async function getUserPayments(id) {
 }
 
 export async function updateUserPreferences(id, preferences) {
-  return updateUser(id, { preferences });
+  try {
+    const { email, preferences: currentPreferences } = await getUserById(id);
+
+    if (preferences.marketingConsent !== currentPreferences.marketingConsent) {
+      logger.info(
+        `user-service: marketing consent changed for ${id} to ${
+          preferences.marketingConsent
+        }`
+      );
+      addUpdateNewsletterSubscriber(email, {
+        subscribed: preferences.marketingConsent
+      });
+    }
+    return updateUser(id, {
+      preferences: {
+        ...currentPreferences,
+        ...preferences
+      }
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function unsubscribeUserFromNewsletter(email) {
+  addNewsletterUnsubscriptionToStats();
+  return updateUserMarketingConsent(email, false);
+}
+
+export async function updateUserMarketingConsent(
+  email,
+  marketingConsent = true
+) {
+  try {
+    const user = await getUserByEmail(email);
+    if (!user) return null;
+
+    const { id } = user;
+
+    return updateUserPreferences(id, {
+      marketingConsent
+    });
+  } catch (err) {
+    logger.error(`user-service: failed to update user prefs by email`);
+    throw err;
+  }
 }
 
 export async function deactivateUserAccount(user) {
@@ -259,9 +314,22 @@ export async function deactivateUserAccount(user) {
   try {
     await revokeToken(refreshToken);
     await removeUser(id);
+    removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
   } catch (err) {
     logger.error(`user-service: error deactivating user account ${id}`);
+    throw err;
+  }
+}
+
+export function updateUserUnsubStatus(userId, { mailId, status, message }) {
+  try {
+    addUnsubStatusToStats(status);
+    return updateUnsubStatus(userId, { mailId, status, message });
+  } catch (err) {
+    logger.error(
+      `user-service: failed to update unsub status for user ${userId} and mail ${mailId}`
+    );
     throw err;
   }
 }

@@ -81,6 +81,17 @@ export async function getUser(id) {
   }
 }
 
+export async function getUserByEmail(email) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.findOne({ email });
+  } catch (err) {
+    logger.error(`users-dao: failed to get user by email`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function updateUser(id, userData) {
   const { keys } = userData;
   let updateObj = {
@@ -115,7 +126,7 @@ export async function updateUser(id, userData) {
 }
 
 export async function addUnsubscription(id, mailData) {
-  const data = Object.keys(mailData).reduce((out, k) => {
+  let data = Object.keys(mailData).reduce((out, k) => {
     if (encryptedUnsubCols.includes(k)) {
       return {
         ...out,
@@ -127,13 +138,23 @@ export async function addUnsubscription(id, mailData) {
       [k]: mailData[k]
     };
   }, {});
+  if (data.unsubscribeStrategy === 'mailto') {
+    data = {
+      ...data,
+      status: 'pending',
+      message: ''
+    };
+  }
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
         $push: {
-          unsubscriptions: { ...data, unsubscribedAt: isoDate() }
+          unsubscriptions: {
+            ...data,
+            unsubscribedAt: isoDate()
+          }
         }
       }
     );
@@ -466,6 +487,28 @@ export async function removeUser(id) {
     await col.deleteOne({ id });
   } catch (err) {
     logger.error('user-dao: failed to remove user');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function updateUnsubStatus(
+  id,
+  { mailId, status, message = '' } = {}
+) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'unsubscriptions.id': mailId },
+      {
+        $set: {
+          'unsubscriptions.$.status': status,
+          'unsubscriptions.$.message': message
+        }
+      }
+    );
+  } catch (err) {
+    logger.error('user-dao: failed to update unsub status');
     logger.error(err);
     throw err;
   }

@@ -4,7 +4,7 @@ import { creditUserAccount, getUserById } from './user';
 import {
   sendReferralLinkUsedMail,
   sendReferralRewardMail
-} from '../utils/email';
+} from '../utils/emails/transactional';
 
 import config from 'getconfig';
 

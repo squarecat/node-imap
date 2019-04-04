@@ -258,6 +258,11 @@ p.unsubscribe-link-alt {
   font-size: 12px;
   font-weight: bolder;
   margin-bottom: 5px;
+  text-decoration: underline;
+}
+
+.source h5 + p {
+  font-size: 12px;
 }
 
 .disabled {

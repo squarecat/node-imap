@@ -22,7 +22,11 @@ export const unsubscribeFromMail = async (userId, mail) => {
       hasImage = !!output.image;
     } else {
       unsubStrategy = 'mailto';
-      output = await unsubscribeByMailTo(unsubscribeMailTo);
+      output = await unsubscribeByMailTo({
+        mailId: mail.id,
+        userId,
+        unsubMailto: unsubscribeMailTo
+      });
     }
     if (hasImage) {
       saveImageToDisk(userId, mail.id, output.image);
