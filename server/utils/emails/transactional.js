@@ -12,16 +12,16 @@ const transactionalTransport = mailgun({
 });
 
 const giftMailOptions = {
-  from: `Leave Me Alone <purchases@${config.mailgun.domains.transactional}>`,
+  from: `Leave Me Alone <purchases@${domains.transactional}>`,
   subject: 'Thank you for purchasing a gift scan'
 };
 
 const reminderMailOptions = {
-  from: `Leave Me Alone <reminders@${config.mailgun.domains.transactional}>`
+  from: `Leave Me Alone <reminders@${domains.transactional}>`
 };
 
 const referralMailOptions = {
-  from: `Leave Me Alone <referrals@${config.mailgun.domains.transactional}>`
+  from: `Leave Me Alone <referrals@${domains.transactional}>`
 };
 
 export function sendGiftCouponMultiMail({
