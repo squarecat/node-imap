@@ -281,6 +281,11 @@ export async function updateUserPreferences(id, preferences) {
   }
 }
 
+export async function unsubscribeUserFromNewsletter(email) {
+  addNewsletterUnsubscriptionToStats();
+  return updateUserMarketingConsent(email, false);
+}
+
 export async function updateUserMarketingConsent(
   email,
   marketingConsent = true
@@ -291,7 +296,6 @@ export async function updateUserMarketingConsent(
 
     const { id } = user;
 
-    addNewsletterUnsubscriptionToStats();
     return updateUserPreferences(id, {
       marketingConsent
     });

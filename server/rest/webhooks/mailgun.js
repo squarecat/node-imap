@@ -1,5 +1,5 @@
 import {
-  updateUserMarketingConsent,
+  unsubscribeUserFromNewsletter,
   updateUserUnsubStatus
 } from '../../services/user';
 
@@ -120,7 +120,7 @@ export default app => {
         case 'unsubscribed': {
           const { recipient } = eventData;
           logger.debug(`mailgun-webhook: newsletter unsubscribe request`);
-          updateUserMarketingConsent(recipient, false);
+          unsubscribeUserFromNewsletter(recipient);
           break;
         }
         // The email recipient clicked on the spam complaint button
