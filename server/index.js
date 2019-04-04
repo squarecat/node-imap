@@ -89,6 +89,19 @@ const App = {
     server.listen(2345);
     await startScheduler();
     logger.info('server started');
+    // tell pm2 that the server is ready
+    // to start receiving requests
+    process.send('ready');
+  },
+  async stop() {
+    logger.info('server stopping');
+    // const runningScans = await getRunningScans();
+    // if (runningScans > 0) {
+    //   logger.info(`waiting for ${runningScans} scans to finish`);
+    //   await runningScans();
+    //   logger.info('done');
+    // }
+    logger.info('server stopped');
   }
 };
 export default App;
