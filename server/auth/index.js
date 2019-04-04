@@ -1,6 +1,8 @@
 import initGoogle, { Strategy as GoogleStrategy } from './google';
 import initOutlook, { Strategy as OutlookStrategy } from './outlook';
 
+import { getUser } from '../services/user';
+import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
 
@@ -10,11 +12,18 @@ passport.use(OutlookStrategy);
 refresh.use(OutlookStrategy);
 
 passport.serializeUser(function(user, cb) {
-  cb(null, user);
+  cb(null, user.id);
 });
 
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
+passport.deserializeUser(async function(id, cb) {
+  try {
+    const user = await getUser(id);
+    cb(null, user);
+  } catch (err) {
+    logger.error('auth: failed to deserialize user');
+    logger.error(err, null);
+    cb(err);
+  }
 });
 
 export default app => {

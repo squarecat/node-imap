@@ -15,6 +15,8 @@ import socketio from 'socket.io';
 import subMinutes from 'date-fns/sub_minutes';
 import { unsubscribeFromMail } from '../services/unsubscriber';
 
+const Sentry = require('@sentry/node');
+
 let connectedClients = {};
 let mailBuffer = {};
 
@@ -129,6 +131,8 @@ export default function(app, server) {
         }
         onEnd(next.value);
       } catch (err) {
+        logger.error('mail-rest: error scanning mail');
+        Sentry.captureException(err);
         onError(err);
       }
     });
@@ -140,6 +144,7 @@ export default function(app, server) {
       } catch (err) {
         logger.error('mail-rest: error unsubscribing from mail');
         logger.error(err);
+        Sentry.captureException(err);
         socket.emit('unsubscribe:err', { id: mail.id, err });
       }
     });
@@ -154,6 +159,7 @@ export default function(app, server) {
       } catch (err) {
         logger.error('mail-rest: error adding unsubscribe response');
         logger.error(err);
+        Sentry.captureException(err);
         socket.emit('unsubscribe-error-response:err', { id: data.mailId, err });
       }
     });

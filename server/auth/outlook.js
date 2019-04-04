@@ -30,7 +30,7 @@ export const Strategy = new OutlookStrategy(
       if (process.env.NODE_ENV === 'beta') {
         const allowed = await isBetaUser({ email });
         if (!allowed) {
-          logger.debug('auth: user does not have access to the beta');
+          logger.debug('outlook-auth: user does not have access to the beta');
           return done({ type: 'beta' }, null);
         }
       }
@@ -46,7 +46,9 @@ export const Strategy = new OutlookStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error('auth: failed to create or update user from Google');
+      logger.error(
+        'outlook-auth: failed to create or update user from Outlook'
+      );
       logger.error(err);
       done(err);
     }
@@ -60,7 +62,7 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
       refreshToken,
       async (err, accessToken) => {
         if (err) {
-          logger.error('auth: error requesting new access token');
+          logger.error('outlook-auth: error requesting new access token');
           logger.error(err);
           return reject(err);
         }
@@ -73,7 +75,7 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           });
           resolve(accessToken);
         } catch (err) {
-          logger.error('auth: error updating user refresh token');
+          logger.error('outlook-auth: error updating user refresh token');
           logger.error(err);
           reject(err);
         }
@@ -97,12 +99,14 @@ export default app => {
         let errUrl = baseUrl;
         const { type } = err;
         if (type) errUrl += `&type=${type}`;
+        logger.error(`outlook-auth: passport authentication error ${type}`);
+        logger.error(err);
         return res.redirect(errUrl);
       }
 
       return req.logIn(user, loginErr => {
         if (loginErr) {
-          logger.error('login error');
+          logger.error('outlook-auth: login error');
           logger.error(loginErr);
           return res.redirect(baseUrl);
         }
