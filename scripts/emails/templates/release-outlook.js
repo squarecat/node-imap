@@ -987,9 +987,9 @@ We already scanned your trash and now we also scan your spam folder so you can r
 
 What’s next?
 
-We're continuing to work on adding support for more providers. You can follow along with our progress on our public roadmap and vote for which one we work on.
+We're continuing to work on adding support for more providers. You can follow along with our progress on our public roadmap and vote for which one we work on https://leavemealone.xyz/roadmap
 
-Leave Me Alone wouldn't exist with you. To say thank you we're giving you 20% off your next scan with the code  which you can use with Outlook or Gmail.
+Leave Me Alone wouldn't exist with you. To say thank you we're giving you 20% off your next scan with the code OUTLOOK_20 which you can use with Outlook or Gmail.
 
 Peace and love
 
