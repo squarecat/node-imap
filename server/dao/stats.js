@@ -78,9 +78,17 @@ export function addReferralCredit({ amount = 5 }) {
 export function addNewsletterUnsubscription(count = 1) {
   return updateSingleStat('newsletterUnsubscription', count);
 }
+export function addUnsubStatus(status) {
+  if (status === 'rejected') {
+    return updateSingleStat('failedEmailUnsubscribes');
+  }
+  if (status === 'delivered') {
+    return updateSingleStat('successfulEmailUnsubscribes');
+  }
+}
 
 // generic update stat function for anything
-async function updateSingleStat(statName, count = 1) {
+export async function updateSingleStat(statName, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -203,7 +211,9 @@ const recordedStats = [
   'referralSignup',
   'referralPaidScan',
   'referralCredit',
-  'newsletterUnsubscription'
+  'newsletterUnsubscription',
+  'failedEmailUnsubscribes',
+  'successfulEmailUnsubscribes'
 ];
 
 export async function recordStats() {

@@ -12,12 +12,12 @@ import {
   addReminderRequest,
   addReminderSent,
   addScan,
+  addUnsubStatus,
   addUnsubscriptionByEmail,
   addUnsubscriptionByLink,
   addUser,
   addUserAccountDeactivated,
-  getStats,
-  updateSingleStat
+  getStats
 } from '../dao/stats';
 
 import { getExpenses } from '../utils/airtable';
@@ -74,12 +74,7 @@ export function addNewsletterUnsubscriptionToStats(count) {
   return addNewsletterUnsubscription(count);
 }
 export function addUnsubStatusToStats(status) {
-  if (status === 'rejected') {
-    return updateSingleStat('failedEmailUnsubscribes');
-  }
-  if (status === 'delivered') {
-    return updateSingleStat('successfulEmailUnsubscribes');
-  }
+  addUnsubStatus(status);
 }
 export function getAllStats() {
   return getStats();
