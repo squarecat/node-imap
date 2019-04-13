@@ -561,12 +561,12 @@ function getGraphStats(stats, stat) {
 
   const today = new Date();
   // get last day of month before. 28th Feb not 1st March
-  const lastDayTwoMonthsAgo = endOfMonth(addMonths(today, -2));
+  const lastDayToShow = endOfMonth(addMonths(today, -3));
 
   // only show data from the last month and this month to date
   return histogram.reduce((out, d) => {
     const date = startOfDay(d.timestamp);
-    if (isAfter(date, lastDayTwoMonthsAgo)) {
+    if (isAfter(date, lastDayToShow)) {
       return [
         ...out,
         {
