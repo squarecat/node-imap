@@ -1,10 +1,6 @@
 @import '../../../styles/common/colors.scss';
 @import './layout.module.scss';
 
-.account-section {
-  @extend .profile-section;
-}
-
 .details {
   p:last-child {
     margin: 0;

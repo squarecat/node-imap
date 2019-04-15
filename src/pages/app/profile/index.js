@@ -1,4 +1,4 @@
-import './account.module.scss';
+import './profile.module.scss';
 
 import React, { useState } from 'react';
 
@@ -52,15 +52,15 @@ export default () => {
   };
 
   return (
-    <ProfileLayout pageName="Account">
-      <div styleName="account-section details">
+    <ProfileLayout pageName="Profile">
+      <div styleName="profile-section details">
         <h2>Details</h2>
         <p>
           Signed in with: <TextImportant>{email}</TextImportant>
         </p>
       </div>
 
-      <div styleName="account-section">
+      <div styleName="profile-section">
         <h2>Clear Local Data</h2>
         <p>
           We do not store any of your emails, everything is stored on your
@@ -72,7 +72,7 @@ export default () => {
         </Button>
       </div>
 
-      <div styleName="account-section">
+      <div styleName="profile-section">
         <h2>Deactivate Account</h2>
         <p styleName="warning">
           We NEVER store the content of your emails in any form.

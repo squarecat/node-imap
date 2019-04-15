@@ -513,3 +513,28 @@ export async function updateUnsubStatus(
     throw err;
   }
 }
+
+export async function disconnectAccount(userId, accountId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id: userId },
+      {
+        $set: {
+          lastUpdatedAt: isoDate()
+        },
+        $pull: {
+          accounts: { id: accountId }
+        }
+      }
+    );
+    const user = await getUser(userId);
+    return user;
+  } catch (err) {
+    logger.error(
+      `user-dao: failed to disconnect user account for user ${userId} and account ${accountId}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}

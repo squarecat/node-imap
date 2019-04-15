@@ -3,6 +3,7 @@ import {
   addToUserIgnoreList,
   addUserScanReminder,
   deactivateUserAccount,
+  disconnectUserAccount,
   getReferralStats,
   getUserById,
   getUserPayments,
@@ -33,7 +34,8 @@ export default app => {
         reminder,
         preferences,
         provider,
-        lastUpdatedAt
+        lastUpdatedAt,
+        accounts
       } = await getUserById(req.user.id);
       res.send({
         id,
@@ -53,7 +55,8 @@ export default app => {
         reminder,
         preferences,
         provider,
-        lastUpdatedAt
+        lastUpdatedAt,
+        accounts: accounts || []
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);
@@ -164,6 +167,8 @@ export default app => {
     try {
       if (op === 'preferences') {
         updatedUser = await updateUserPreferences(id, value);
+      } else if (op === 'disconnect-account') {
+        updatedUser = await disconnectUserAccount(user, value);
       } else {
         logger.error(`user-rest: user patch op not supported`);
       }

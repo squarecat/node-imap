@@ -1,5 +1,5 @@
 import axios from 'axios';
-import logger from './logger';
+import logger from '../logger';
 
 const REVOKE_URL = 'https://accounts.google.com/o/oauth2/revoke';
 
