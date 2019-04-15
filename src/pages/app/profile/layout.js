@@ -55,7 +55,7 @@ export default ({ pageName, children }) => (
             </li>
             <li>
               <Link
-                to="/app/profile/history/billing"
+                to="/app/profile/billing"
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >

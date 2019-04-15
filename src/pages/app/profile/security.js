@@ -7,8 +7,6 @@ import Button from '../../../components/btn';
 import { FormInput } from '../../../components/form';
 import ProfileLayout from './layout';
 import { TextImportant } from '../../../components/text';
-import WarningModal from '../../../components/modal/warning-modal';
-import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [passwords, setPasswords] = useState({

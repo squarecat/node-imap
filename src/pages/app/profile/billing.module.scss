@@ -1,9 +1,16 @@
-@import '../layout.module.scss';
-@import '../../../../components/btn/btn.module.scss';
+@import './layout.module.scss';
+@import '../../../components/btn/btn.module.scss';
 
 .billing-section {
   @extend .profile-section;
+}
+
+.history {
   @extend .profile-section--unpadded;
+}
+
+.content {
+  @extend .unpadded-content;
 }
 
 .invoice-price {
