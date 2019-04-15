@@ -21,6 +21,10 @@
   font-size: 14px;
   border-bottom: 1px solid $color-border-red;
   padding: 5px;
+
+  &:only-child {
+    border-bottom: none;
+  }
 }
 
 .email-container {
