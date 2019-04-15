@@ -147,12 +147,12 @@ export const CloseIcon = visProps => (
   </svg>
 );
 
-export const LockIcon = visProps => (
+export const LockIcon = ({ width = '12', height = '12', ...visProps }) => (
   <svg
     styleName={getClasses('icon lock', visProps)}
     viewBox="0 0 32 32"
-    width="12"
-    height="12"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"

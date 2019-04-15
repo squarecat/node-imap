@@ -4,6 +4,7 @@ import {
   CreditCardIcon,
   HeartIcon,
   LinkIcon,
+  LockIcon,
   MailIcon,
   SettingsIcon,
   UserIcon
@@ -40,6 +41,16 @@ export default ({ pageName, children }) => (
               >
                 <LinkIcon />
                 Accounts
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/app/profile/security"
+                styleName="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <LockIcon width="16" height="16" />
+                Security
               </Link>
             </li>
             <li>
