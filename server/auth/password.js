@@ -1,0 +1,124 @@
+import {
+  authenticateUser,
+  createOrUpdateUserFromPassword
+} from '../services/user';
+
+import Joi from 'joi';
+import { Strategy as LocalStrategy } from 'passport-local';
+import logger from '../utils/logger';
+import passport from 'passport';
+import { validateBody } from '../middleware/validation';
+
+const createUserParams = {
+  username: Joi.string()
+    .email()
+    .label('Username must be a valid email address'),
+  password: Joi.string()
+    .min(6)
+    .label('Password must be a minimum of 6 characters'),
+  ['password-confirm']: Joi.string()
+    .valid(Joi.ref('password'))
+    .label('Passwords must match')
+};
+
+export const Strategy = new LocalStrategy(
+  {
+    usernameField: 'username',
+    passwordField: 'password'
+  },
+  async (username, password, done) => {
+    try {
+      const user = await authenticateUser({ email: username, password });
+      if (!user) {
+        return done(null, false);
+      }
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
+  }
+);
+
+export default app => {
+  app.post(
+    '/auth/login',
+    validateBody(createUserParams, {
+      passthrough: true
+    }),
+    (req, res, next) => {
+      const { body: userData } = res.locals;
+      passport.authenticate('local', (err, user) => {
+        if (err) return handleLoginError(res, err);
+        if (!user) {
+          return res.redirect(
+            `/login?error=unknown&strategy=password&username=${
+              userData.username
+            }`
+          );
+        }
+        req.logIn(user, err => {
+          if (err) return handleLoginError(res, err);
+          return res.redirect('/app');
+        });
+      })(req, res, next);
+    }
+  );
+
+  app.post(
+    '/auth/signup',
+    validateBody(createUserParams, {
+      passthrough: true
+    }),
+    async (req, res) => {
+      const { cookies } = req;
+      const { body: userData, err: validationError } = res.locals;
+      const { referrer } = cookies;
+
+      try {
+        if (validationError) {
+          return res.redirect(
+            `/signup?error=validation&message=${
+              validationError.message
+            }&strategy=password&username=${userData.username}`
+          );
+        }
+        const { username, password } = userData;
+        const user = await createOrUpdateUserFromPassword({
+          email: username,
+          password,
+          referralCode: referrer
+        });
+        req.logIn(user, err => {
+          if (err) return handleLoginError(res, err);
+          return res.redirect('/app');
+        });
+      } catch (err) {
+        return handleSignupError(res, err);
+      }
+    }
+  );
+};
+
+function handleLoginError(res, err) {
+  let type = 'unknown';
+  let message;
+  message = `Something went wrong with the login process. Please contact support.`;
+  if (err.message === 'user not found or password incorrect') {
+    type = 'not-found';
+    message = `User not found or the password is incorrect`;
+  }
+
+  logger.warn('login error');
+  logger.warn(err);
+  return res.redirect(
+    `/login?error=${type}&message=${message}&strategy=password`
+  );
+}
+
+function handleSignupError(res) {
+  let type = 'unknown';
+  const message = `Something went wrong with the sign up process. Please contact support.`;
+  return res.redirect(
+    `/signup?error=${type}&message=${message}&strategy=password`
+  );
+}

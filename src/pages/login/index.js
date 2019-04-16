@@ -1,147 +1,244 @@
-import { GoogleIcon, OutlookIcon } from '../../components/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import '../login/login.module.scss';
 
+import React, { createContext, useReducer, useRef } from 'react';
+
+import AuthButton from './auth-btn';
+import EmailForm from './email';
 import Layout from '../../layouts/layout';
-import { TextBold } from '../../components/text';
+import PasswordForm from './password';
+import cx from 'classnames';
 import logo from '../../assets/envelope-logo.png';
-import styles from './login.module.scss';
 
 let error;
+let strategy;
+let message;
+let username = '';
+let defaultStep = 'select';
+
 if (typeof URLSearchParams !== 'undefined') {
-  error = new URLSearchParams(window.location.search).get('error');
+  const urlParams = new URLSearchParams(window.location.search);
+  error = urlParams.get('error');
+  strategy = urlParams.get('strategy');
+  message = urlParams.get('message');
+  username = urlParams.get('username');
 }
 
-let windowObjectReference = null;
-let previousUrl = null;
-const strWindowFeatures = [
-  'height=700',
-  'width=600',
-  'top=100',
-  'left=100',
-  // A dependent window closes when its parent window closes.
-  'dependent=yes',
-  // hide menubars and toolbars for the simplest popup
-  'menubar=no',
-  'toolbar=no',
-  'location=yes',
-  // enable for accessibility
-  'resizable=yes',
-  'scrollbars=yes',
-  'status=yes',
-  // chrome specific
-  'chrome=yes',
-  'centerscreen=yes'
-].join(',');
+if (strategy === 'password') {
+  defaultStep = 'enter-email';
+}
+
+const selectCardHeight = 690;
+const loginEmailCardHeight = 480;
+const loginWithPasswordHeight = 550;
+const loginNewUserHeight = 580;
+const existingStratHeight = 470;
+
+// steps;
+// 1. select-strategy
+//    the first page when the user arrives,
+//    shows a list of the sign in strategies
+// 2. password-strategy
+//    the pw form
+function loginReducer(state, action) {
+  const { type, data } = action;
+  switch (type) {
+    case 'set-loading':
+      return { ...state, loading: data };
+    case 'set-step': {
+      if (action.data === 'select') {
+        return {
+          ...state,
+          step: action.data,
+          newUser: false,
+          requirePassword: false
+        };
+      }
+      return { ...state, step: action.data };
+    }
+    case 'set-password':
+      return { ...state, password: action.data };
+    case 'set-email':
+      return { ...state, email: action.data };
+    case 'set-error':
+      return { ...state, error: action.data };
+    case 'set-active':
+      return { ...state, isActive: action.data };
+    case 'set-existing-provider':
+      return { ...state, existingProvider: action.data };
+    default:
+      return state;
+  }
+}
+
+const initialState = {
+  loading: false,
+  step: defaultStep,
+  password: '',
+  email: username,
+  error,
+  newUser: false,
+  requirePassword: false,
+  message,
+  existingProvider: null
+};
+
+export const LoginContext = createContext({ state: initialState });
 
 const LoginPage = () => {
   const activeRef = useRef(null);
-  const setActive = isActive => {
-    activeRef.current.classList[isActive ? 'add' : 'remove'](styles.active);
-  };
+  const [state, dispatch] = useReducer(loginReducer, initialState);
+  const { step } = state;
 
-  const [provider, setProvider] = useState(null);
+  let windowHeight;
+  if (step === 'signup') {
+    windowHeight = loginNewUserHeight;
+  } else if (step === 'enter-password') {
+    windowHeight = loginWithPasswordHeight;
+  } else if (step === 'enter-email') {
+    windowHeight = loginEmailCardHeight;
+  } else if (step === 'select-existing') {
+    windowHeight = existingStratHeight;
+  } else {
+    windowHeight = selectCardHeight;
+  }
+  if (error) {
+    windowHeight = windowHeight + 40;
+  }
 
-  const receiveMessage = event => {
-    // Do we trust the sender of this message?  (might be
-    // different from what we originally opened, for example).
-    if (event.origin !== process.env.ROOT_URL) {
-      return;
-    }
-
-    const params = event.data;
-    const redirectUrl = `/auth/${provider}/callback${params}`;
-    window.location.pathname = redirectUrl;
-  };
-
-  useEffect(() => {
-    window.addEventListener('message', receiveMessage, false);
-    return () => window.removeEventListener('message', receiveMessage);
+  const classes = cx('hold-onto-your-butts-we-are-logging-in', {
+    errored: !!state.error
   });
 
   return (
     <Layout page="Login">
-      <div ref={activeRef} styleName="hold-onto-your-butts-we-are-logging-in">
-        <div styleName="login-boxy-box">
-          <div styleName="beautiful-logo">
-            <img src={logo} alt="logo" />
-          </div>
-          <h1 styleName="title">Login to Leave Me Alone</h1>
-          <p>We need to connect to your email account.</p>
-          <p>
+      <LoginContext.Provider value={{ state, dispatch }}>
+        <div ref={activeRef} styleName={classes}>
+          <div styleName="card-flip" style={{ maxHeight: windowHeight }}>
+            <div styleName="login-boxy-box" data-active={step === 'select'}>
+              <div styleName="beautiful-logo">
+                <img src={logo} alt="logo" />
+              </div>
+              <h1 styleName="title">Login to Leave Me Alone</h1>
+              <p>
+                Google and Outlook authorize Leave Me Alone without a password.
+              </p>
+              {/* <p>
             Although we inspect your mail in order to find your subscriptions,
             unlike other services we <TextBold>NEVER</TextBold> store any of the
             content of your mail or any other private information!
-          </p>
-          <div styleName="buttons">
-            <a
-              href="/auth/google"
-              target="SignInWindow"
-              onClick={() => {
-                setProvider('google');
-                openSignInWindow('/auth/google', 'SignInWindow');
-                return false;
-              }}
-              onMouseEnter={() => setActive(true)}
-              onMouseLeave={() => setActive(false)}
-              styleName="login-me-in-dammit"
+          </p> */}
+              <div styleName="buttons">
+                <a
+                  onClick={() =>
+                    dispatch({ type: 'set-step', data: 'enter-email' })
+                  }
+                  onMouseEnter={() =>
+                    dispatch({ type: 'set-active', data: true })
+                  }
+                  onMouseLeave={() =>
+                    dispatch({ type: 'set-active', data: false })
+                  }
+                  styleName="login-me-in-dammit"
+                >
+                  <span styleName="text">Login with Password</span>
+                </a>
+                <AuthButton provider="google" />
+                <AuthButton provider="outlook" />
+              </div>
+              {getError(error)}
+              <p styleName="notice">
+                We will use your email to very occassionally send you product
+                updates. You can opt-out at any time. We will NEVER share it
+                with anyone, for any reason, EVER.
+              </p>
+            </div>
+            <div
+              styleName="email-login-box"
+              data-active={step === 'enter-email'}
             >
-              <GoogleIcon />
-              <span styleName="text">Sign in with Google</span>
-            </a>
-            <a
-              href="/auth/outlook"
-              target="SignInWindow"
-              onClick={() => {
-                setProvider('outlook');
-                openSignInWindow('/auth/outlook', 'SignInWindow');
-                return false;
-              }}
-              onMouseEnter={() => setActive(true)}
-              onMouseLeave={() => setActive(false)}
-              styleName="login-me-in-dammit"
+              <div styleName="beautiful-logo">
+                <img src={logo} alt="logo" />
+              </div>
+              <h1 styleName="title">Login to Leave Me Alone</h1>
+              <p>You're one step away from a clean inbox!</p>
+              <EmailForm />
+            </div>
+            <div styleName="new-user-login-box" data-active={step === 'signup'}>
+              <div styleName="beautiful-logo">
+                <img src={logo} alt="logo" />
+              </div>
+              <h1 styleName="title">Welcome to Leave Me Alone!</h1>
+              <p>
+                Signing in with{' '}
+                <span styleName="email-label">{state.email}</span>
+              </p>
+
+              <PasswordForm
+                confirm={true}
+                checkPwned={true}
+                submitAction="/auth/signup"
+              />
+            </div>
+            <div
+              styleName="existing-user-login-box"
+              data-active={step === 'enter-password'}
             >
-              <OutlookIcon />
-              <span styleName="text">Sign in with Outlook</span>
-            </a>
+              <div styleName="beautiful-logo">
+                <img src={logo} alt="logo" />
+              </div>
+              <h1 styleName="title">Login to Leave Me Alone</h1>
+              <p>Welcome back!</p>
+              <p>
+                Signing in with{' '}
+                <span styleName="email-label">{state.email}</span>
+              </p>
+              <PasswordForm
+                confirm={false}
+                submitAction="/auth/login"
+                checkIfPwned={false}
+              />
+            </div>
+            <div
+              styleName="existing-user-suggestion-box"
+              data-active={step === 'select-existing'}
+            >
+              <div styleName="beautiful-logo">
+                <img src={logo} alt="logo" />
+              </div>
+              <h1 styleName="title">Login to Leave Me Alone</h1>
+              <p>
+                That email address has already been used to sign in with{' '}
+                <span styleName="provider-label">{state.existingProvider}</span>
+              </p>
+              <div styleName="existing-provider-btn">
+                <AuthButton provider={state.existingProvider} />
+              </div>
+              <div styleName="signup-buttons">
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch({ type: 'set-step', data: 'select' });
+                  }}
+                  onMouseEnter={() =>
+                    dispatch({ type: 'set-active', data: true })
+                  }
+                  onMouseLeave={() =>
+                    dispatch({ type: 'set-active', data: false })
+                  }
+                  styleName="signup-btn back-btn"
+                >
+                  <span styleName="text">Back</span>
+                </button>
+              </div>
+            </div>
           </div>
-          {getError(error)}
-          <p styleName="notice">
-            We will use your email to send you product updates. You can opt-out
-            at any time. We will NEVER share it with any third parties.
-          </p>
         </div>
-      </div>
+      </LoginContext.Provider>
     </Layout>
   );
 };
 
 export default LoginPage;
-
-// https://developer.mozilla.org/en-US/docs/Web/API/Window/open
-function openSignInWindow(url, name) {
-  if (windowObjectReference === null || windowObjectReference.closed) {
-    /* if the pointer to the window object in memory does not exist
-     or if such pointer exists but the window was closed */
-
-    windowObjectReference = window.open(url, name, strWindowFeatures);
-    /* then create it. The new window will be created and
-       will be brought on top of any other window. */
-  } else if (previousUrl !== url) {
-    windowObjectReference = window.open(url, name, strWindowFeatures);
-    /* if the resource to load is different,
-       then we load it in the already opened secondary window and then
-       we bring such window back on top/in front of its parent window. */
-    windowObjectReference.focus();
-  } else {
-    windowObjectReference.focus();
-    /* else the window reference must exist and the window
-       is not closed; therefore, we can bring it back on top of any other
-       window with the focus() method. There would be no need to re-create
-       the window or to reload the referenced resource. */
-  }
-
-  previousUrl = url;
-}
 
 function getError(error) {
   if (!error) return null;

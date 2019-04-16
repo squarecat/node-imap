@@ -1,5 +1,6 @@
 import initGoogle, { Strategy as GoogleStrategy } from './google';
 import initOutlook, { Strategy as OutlookStrategy } from './outlook';
+import initPassword, { Strategy as PasswordStrategy } from './password';
 
 import { getUserById } from '../services/user';
 import logger from '../utils/logger';
@@ -10,6 +11,7 @@ passport.use(GoogleStrategy);
 refresh.use(GoogleStrategy);
 passport.use(OutlookStrategy);
 refresh.use(OutlookStrategy);
+passport.use(PasswordStrategy);
 
 passport.serializeUser(function(user, cb) {
   cb(null, user.id);
@@ -31,6 +33,7 @@ export default app => {
   app.use(passport.session());
   initGoogle(app);
   initOutlook(app);
+  initPassword(app);
   app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');

@@ -1,6 +1,7 @@
 import './form.module.scss';
 
-import React from 'react';
+import React, { useRef } from 'react';
+
 import cx from 'classnames';
 
 export const FormLabel = ({ animated, children, ...props }) => {
@@ -11,18 +12,50 @@ export const FormLabel = ({ animated, children, ...props }) => {
   );
 };
 
-export const FormInput = ({ id, type = 'text', name, required, ...props }) => {
+export const FormInput = ({
+  id,
+  type = 'text',
+  name,
+  required,
+  noFocus,
+  compact,
+  validation = () => '',
+  onChange = () => {},
+  errorMessage = '',
+  ...props
+}) => {
+  const ref = useRef(null);
+  const classes = cx('form-input', {
+    'no-focus': noFocus,
+    compact
+  });
   return (
     <input
       {...props}
+      ref={ref}
       id={id}
       type={type}
       name={name}
-      styleName="form-input"
+      styleName={classes}
       required={required}
+      spellCheck="false"
+      onChange={e => {
+        validateInput(e, ref, validation, errorMessage);
+        onChange(e);
+      }}
     />
   );
 };
+
+function validateInput(e, ref, validationFn) {
+  if (!ref) return;
+  const { value } = e.currentTarget;
+  let message = validationFn(value) || '';
+  if (message === true) {
+    message = '';
+  }
+  ref.current.setCustomValidity(message);
+}
 
 export const FormCheckbox = ({ id, name, label, ...props }) => {
   return (
@@ -33,12 +66,13 @@ export const FormCheckbox = ({ id, name, label, ...props }) => {
         type="checkbox"
         name={name}
         styleName="checkbox"
+        spellCheck="false"
       />
       <span styleName="checkbox-label">{label}</span>
     </label>
   );
 };
 
-export const FormGroup = ({ children }) => {
-  return <div styleName="form-group">{children}</div>;
+export const FormGroup = ({ children, fluid, column }) => {
+  return <div styleName={cx('form-group', { fluid, column })}>{children}</div>;
 };

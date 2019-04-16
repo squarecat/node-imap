@@ -11,8 +11,11 @@ import {
   addScan,
   addScanReminder,
   addUnsubscription,
+  authenticate,
   createUser,
+  createUserFromPassword,
   disconnectAccount,
+  getLoginProvider,
   getUser,
   getUserByEmail,
   getUserByReferralCode,
@@ -65,29 +68,38 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
         addReferralSignupToStats();
         referredBy = referralUserId;
       }
-      user = await createUser({
-        id,
-        name: displayName,
-        email,
-        profileImg,
-        keys,
-        referredBy,
-        provider: 'outlook',
-        token: v4()
-      });
+      user = await createUser(
+        {
+          id,
+          name: displayName,
+          email,
+          profileImg,
+          referredBy,
+          loginProvider: 'outlook',
+          token: v4()
+        },
+        {
+          provider: 'outlook',
+          email,
+          keys
+        }
+      );
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
     } else {
-      user = await updateUser(id, {
-        keys,
-        profileImg,
-        name: displayName
-      });
+      user = await updateUser(
+        { id, 'accounts.email': email },
+        {
+          'accounts.$.keys': keys,
+          profileImg,
+          name: displayName
+        }
+      );
     }
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error creating or updating user from Google ${id ||
+      `user-service: error creating or updating user from Outlook ${id ||
         'no userData id'}`
     );
     logger.error(err);
@@ -110,30 +122,80 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
         addReferralSignupToStats();
         referredBy = referralUserId;
       }
-      user = await createUser({
-        id,
-        name: displayName,
-        email,
-        profileImg,
-        keys,
-        referredBy,
-        provider: 'google',
-        token: v4()
-      });
+      user = await createUser(
+        {
+          id,
+          name: displayName,
+          email,
+          profileImg,
+          referredBy,
+          loginProvider: 'google',
+          token: v4()
+        },
+        {
+          provider: 'google',
+          email,
+          keys
+        }
+      );
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
     } else {
-      user = await updateUser(id, {
-        keys,
-        profileImg,
-        name: displayName
-      });
+      user = await updateUser(
+        { id, 'accounts.email': email },
+        {
+          'accounts.$.keys': keys,
+          profileImg,
+          name: displayName
+        }
+      );
     }
     return user;
   } catch (err) {
     logger.error(
       `user-service: error creating or updating user from Google ${id ||
         'no userData id'}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function createOrUpdateUserFromPassword(userData = {}) {
+  const { id, email, referralCode, displayName, password } = userData;
+  let user;
+  try {
+    if (!id) {
+      let referredBy = null;
+      if (referralCode) {
+        const { id: referralUserId } = await getUserByReferralCode(
+          referralCode
+        );
+        await addReferralToReferrer(referralUserId, { userId: id });
+        addReferralSignupToStats();
+        referredBy = referralUserId;
+      }
+      user = await createUserFromPassword({
+        id,
+        name: displayName,
+        email,
+        password,
+        referredBy,
+        loginProvider: 'password',
+        token: v4(),
+        accounts: []
+      });
+      addUserToStats();
+      addUpdateNewsletterSubscriber(email);
+    } else {
+      user = await updateUser(id, {
+        name: displayName
+      });
+    }
+    return user;
+  } catch (err) {
+    logger.error(
+      `user-service: error creating or updating user from Username & Password`
     );
     logger.error(err);
     throw err;
@@ -358,6 +420,23 @@ export async function disconnectUserAccount(user, email) {
     logger.error(
       `user-service: failed to disconnect user account for user ${userId}`
     );
+  }
+}
+
+export async function authenticateUser({ email, password }) {
+  try {
+    const user = await authenticate({ email, password });
+    if (user === null) throw new Error('user not found or password incorrect');
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getUserLoginProvider({ email }) {
+  try {
+    return getLoginProvider(email);
+  } catch (err) {
     throw err;
   }
 }

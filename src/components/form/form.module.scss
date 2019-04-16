@@ -5,15 +5,22 @@
   padding: 20px 25px;
   margin-bottom: 1rem;
   width: 100%;
-  max-width: 300px;
   font-size: 16px;
   box-sizing: border-box;
   border: 1px solid $color-input-border;
 }
 
+.compact {
+  padding: 15px 20px;
+}
+
 .form-input:focus {
   outline: 0;
   box-shadow: 0 7px 1em $color-input-border-focus;
+}
+
+.no-focus:focus {
+  box-shadow: 0;
 }
 
 .form-input:focus + .form-label,
@@ -27,11 +34,21 @@
   flex: 1;
   max-width: 300px;
   margin: 0 auto;
+
+  &.fluid {
+    max-width: 90%;
+    margin: auto;
+  }
+  &.column {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .form-label {
   color: $color-input-label;
   background-color: $color-input-bg;
+  padding-left: 5px;
 
   &.animated {
     position: absolute;

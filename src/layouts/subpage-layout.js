@@ -1,11 +1,10 @@
+import './subpage-layout.module.scss';
+
+import Footer from '../components/footer';
+import Header from '../components/landing/header';
+import Layout from '../layouts/layout';
 import React from 'react';
 import cx from 'classnames';
-
-import Layout from '../layouts/layout';
-import Footer from '../components/footer';
-import Header from '../pages/header';
-
-import './subpage-layout.module.scss';
 
 export default ({ page, children, ...visProps }) => {
   const classes = cx('subpage', {

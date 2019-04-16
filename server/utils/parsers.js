@@ -1,4 +1,10 @@
 export function parseEmail(str = '') {
+  if (!str) {
+    return {
+      fromName: 'Unknown',
+      fromEmail: '<unknown>'
+    };
+  }
   let fromName;
   let fromEmail;
   if (str.match(/^.*<.*>/)) {
