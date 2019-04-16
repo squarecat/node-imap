@@ -3,6 +3,7 @@ import './login.module.scss';
 import { FormGroup, FormInput, FormLabel } from '../../components/form';
 import React, { useContext } from 'react';
 
+import Hashes from 'jshashes';
 import { LoginContext } from './index';
 
 export default () => {
@@ -39,7 +40,7 @@ export default () => {
           id="username"
           type="email"
           name="username"
-          placeholder="..."
+          placeholder=""
           required
           onChange={({ currentTarget }) => {
             dispatch({ type: 'set-email', data: currentTarget.value });
@@ -79,7 +80,8 @@ export default () => {
 };
 
 async function getUserLoginStrategy(username) {
-  const resp = await fetch(`/api/user/${username}/provider`);
+  const userDigest = new Hashes.SHA1().hex(username);
+  const resp = await fetch(`/api/user/${userDigest}/provider`);
   if (resp.status === 404) {
     return null;
   } else if (resp.status === 200) {

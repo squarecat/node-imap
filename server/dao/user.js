@@ -2,6 +2,7 @@ import {
   checkPassword,
   decryptUnsubscriptions,
   encrypt,
+  hashEmail,
   hashPassword
 } from './encryption';
 import db, { isoDate } from './db';
@@ -26,6 +27,7 @@ export async function createUserFromPassword(data) {
     await col.insertOne({
       ...data,
       id,
+      hashedEmails: [hashEmail(data.email)],
       password: hashPassword(data.password),
       createdAt: isoDate(),
       lastUpdatedAt: isoDate(),
@@ -56,6 +58,7 @@ export async function createUser(data, provider) {
       createdAt: isoDate(),
       lastUpdatedAt: isoDate(),
       referralCode: shortid.generate(),
+      hashedEmails: [hashEmail(data.email)],
       referrals: [],
       accounts: [
         {
