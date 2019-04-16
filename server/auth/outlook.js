@@ -4,6 +4,7 @@ import {
 } from '../services/user';
 
 import { Strategy as OutlookStrategy } from 'passport-outlook';
+import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
 import { isBetaUser } from './access';
@@ -18,7 +19,7 @@ export const Strategy = new OutlookStrategy(
   {
     clientID: outlook.clientId,
     clientSecret: outlook.clientSecret,
-    callbackURL: outlook.redirect,
+    callbackURL: outlook.loginRedirect,
     passReqToCallback: true
   },
   async (req, accessToken, refreshToken, profile, done) => {
@@ -92,7 +93,13 @@ export default app => {
     })
   );
 
-  app.get('/auth/outlook/callback', (req, res, next) => {
+  app.get('/auth/outlook/callback*', (req, res, next) => {
+    const params = new URLSearchParams(req.params[0]);
+    const query = {
+      code: params.get('code')
+    };
+    req.query = query;
+
     return passport.authenticate('windowslive', (err, user) => {
       const baseUrl = `/login?error=true`;
       if (err) {

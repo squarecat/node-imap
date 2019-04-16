@@ -1,5 +1,5 @@
 import { GoogleIcon, OutlookIcon } from '../../components/icons';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Layout from '../../layouts/layout';
 import { TextBold } from '../../components/text';
@@ -11,11 +11,52 @@ if (typeof URLSearchParams !== 'undefined') {
   error = new URLSearchParams(window.location.search).get('error');
 }
 
+let windowObjectReference = null;
+let previousUrl = null;
+const strWindowFeatures = [
+  'height=700',
+  'width=600',
+  'top=100',
+  'left=100',
+  // A dependent window closes when its parent window closes.
+  'dependent=yes',
+  // hide menubars and toolbars for the simplest popup
+  'menubar=no',
+  'toolbar=no',
+  'location=yes',
+  // enable for accessibility
+  'resizable=yes',
+  'scrollbars=yes',
+  'status=yes',
+  // chrome specific
+  'chrome=yes',
+  'centerscreen=yes'
+].join(',');
+
 const LoginPage = () => {
   const activeRef = useRef(null);
   const setActive = isActive => {
     activeRef.current.classList[isActive ? 'add' : 'remove'](styles.active);
   };
+
+  const [provider, setProvider] = useState(null);
+
+  const receiveMessage = event => {
+    // Do we trust the sender of this message?  (might be
+    // different from what we originally opened, for example).
+    if (event.origin !== process.env.ROOT_URL) {
+      return;
+    }
+
+    const params = event.data;
+    const redirectUrl = `/auth/${provider}/callback${params}`;
+    window.location.pathname = redirectUrl;
+  };
+
+  useEffect(() => {
+    window.addEventListener('message', receiveMessage, false);
+    return () => window.removeEventListener('message', receiveMessage);
+  });
 
   return (
     <Layout page="Login">
@@ -34,6 +75,12 @@ const LoginPage = () => {
           <div styleName="buttons">
             <a
               href="/auth/google"
+              target="SignInWindow"
+              onClick={() => {
+                setProvider('google');
+                openSignInWindow('/auth/google', 'SignInWindow');
+                return false;
+              }}
               onMouseEnter={() => setActive(true)}
               onMouseLeave={() => setActive(false)}
               styleName="login-me-in-dammit"
@@ -43,6 +90,12 @@ const LoginPage = () => {
             </a>
             <a
               href="/auth/outlook"
+              target="SignInWindow"
+              onClick={() => {
+                setProvider('outlook');
+                openSignInWindow('/auth/outlook', 'SignInWindow');
+                return false;
+              }}
               onMouseEnter={() => setActive(true)}
               onMouseLeave={() => setActive(false)}
               styleName="login-me-in-dammit"
@@ -63,6 +116,32 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/open
+function openSignInWindow(url, name) {
+  if (windowObjectReference === null || windowObjectReference.closed) {
+    /* if the pointer to the window object in memory does not exist
+     or if such pointer exists but the window was closed */
+
+    windowObjectReference = window.open(url, name, strWindowFeatures);
+    /* then create it. The new window will be created and
+       will be brought on top of any other window. */
+  } else if (previousUrl !== url) {
+    windowObjectReference = window.open(url, name, strWindowFeatures);
+    /* if the resource to load is different,
+       then we load it in the already opened secondary window and then
+       we bring such window back on top/in front of its parent window. */
+    windowObjectReference.focus();
+  } else {
+    windowObjectReference.focus();
+    /* else the window reference must exist and the window
+       is not closed; therefore, we can bring it back on top of any other
+       window with the focus() method. There would be no need to re-create
+       the window or to reload the referenced resource. */
+  }
+
+  previousUrl = url;
+}
 
 function getError(error) {
   if (!error) return null;

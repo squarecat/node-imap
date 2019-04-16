@@ -10,14 +10,15 @@
     "port": "$PORT"
   },
   "urls": {
+    "root": "$ROOT_URL",
     "referral": "https://beta.leavemealone.xyz/r/"
   },
   "auth": {
     "google": {
-      "redirect": "https://beta.leavemealone.xyz/auth/google/callback"
+      "loginRedirect": "https://beta.leavemealone.xyz/login/google/redirect"
     },
     "outlook": {
-      "redirect": "https://beta.leavemealone.xyz/auth/outlook/callback"
+      "loginRedirect": "https://beta.leavemealone.xyz/login/outlook/redirect"
     }
   },
   "mailgun": {
