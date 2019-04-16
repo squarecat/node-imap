@@ -62,30 +62,38 @@ export default () => {
     <ProfileLayout pageName="Accounts">
       <div styleName="accounts-section">
         <h2>Connected accounts</h2>
-        <ul styleName="account-list">
-          {accounts.map(({ provider, email }) => (
-            <li styleName="account" key={email}>
-              <span styleName="email-container">
-                {getIcon(provider)}
-                <span styleName="email">
-                  {email} {email === primaryEmail ? '(primary)' : ''}
+        {!accounts.length ? (
+          <p>
+            You haven't connected any accounts yet. Connect your Google or
+            Outlook accounts below to start scanning your inboxes for
+            subscription spam.
+          </p>
+        ) : (
+          <ul styleName="account-list">
+            {accounts.map(({ provider, email }) => (
+              <li styleName="account" key={email}>
+                <span styleName="email-container">
+                  {getIcon(provider)}
+                  <span styleName="email">
+                    {email} {email === primaryEmail ? '(primary)' : ''}
+                  </span>
                 </span>
-              </span>
-              {email === primaryEmail ? null : (
-                <Button
-                  compact
-                  muted
-                  basic
-                  fill
-                  onClick={() => onClickRevokeAccount(email)}
-                  loading={revoking[email]}
-                >
-                  Remove
-                </Button>
-              )}
-            </li>
-          ))}
-        </ul>
+                {email === primaryEmail ? null : (
+                  <Button
+                    compact
+                    muted
+                    basic
+                    fill
+                    onClick={() => onClickRevokeAccount(email)}
+                    loading={revoking[email]}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div styleName="accounts-section connect">
         <h2>Connect more accounts</h2>
