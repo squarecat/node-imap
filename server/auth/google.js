@@ -1,4 +1,5 @@
 import {
+  connectUserGoogleAccount,
   createOrUpdateUserFromGoogle,
   updateUserToken
 } from '../services/user';
@@ -13,7 +14,7 @@ import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
 
 const { google } = auth;
-logger.info(`google-auth: redirecting to ${google.redirect}`);
+logger.info(`google-auth: redirecting to ${google.loginRedirect}`);
 
 export const Strategy = new GoogleStrategy(
   {
@@ -40,7 +41,12 @@ export const Strategy = new GoogleStrategy(
       }
 
       const user = await createOrUpdateUserFromGoogle(
-        { ...profile, email, referralCode: referrer },
+        {
+          ...profile,
+          email,
+          profileImg: getProfileImg(profile),
+          referralCode: referrer
+        },
         {
           refreshToken,
           accessToken,
@@ -57,10 +63,46 @@ export const Strategy = new GoogleStrategy(
   }
 );
 
+export const ConnectAccountStrategy = new GoogleStrategy(
+  {
+    clientID: google.clientId,
+    clientSecret: google.clientSecret,
+    callbackURL: google.connectRedirect,
+    passReqToCallback: true,
+    // This option tells the strategy to use the userinfo endpoint instead
+    userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
+  },
+  async function(req, accessToken, refreshToken, params, profile, done) {
+    try {
+      const { expires_in } = params;
+
+      const user = await connectUserGoogleAccount(
+        req.user.id,
+        {
+          ...profile,
+          email: getEmail(profile),
+          profileImg: getProfileImg(profile)
+        },
+        {
+          refreshToken,
+          accessToken,
+          expires: addSeconds(new Date(), expires_in),
+          expiresIn: expires_in
+        }
+      );
+      done(null, { ...user });
+    } catch (err) {
+      logger.error('google-auth: failed to connect account from Google');
+      logger.error(err);
+      done(err);
+    }
+  }
+);
+
 export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
   return new Promise((resolve, reject) => {
     refresh.requestNewAccessToken(
-      'google',
+      'google-login',
       refreshToken,
       async (err, accessToken) => {
         if (err) {
@@ -89,7 +131,16 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
 export default app => {
   app.get(
     '/auth/google',
-    passport.authenticate('google', {
+    passport.authenticate('google-login', {
+      scope: google.scopes,
+      prompt: 'consent',
+      accessType: 'offline'
+    })
+  );
+
+  app.get(
+    '/auth/google/connect',
+    passport.authenticate('connect-account-google', {
       scope: google.scopes,
       prompt: 'consent',
       accessType: 'offline'
@@ -97,6 +148,7 @@ export default app => {
   );
 
   app.get('/auth/google/callback*', (req, res, next) => {
+    logger.debug('google-auth: /auth/google/callback');
     const params = new URLSearchParams(req.params[0]);
     const query = {
       code: params.get('code'),
@@ -106,14 +158,13 @@ export default app => {
     };
     req.query = query;
 
-    return passport.authenticate('google', (err, user) => {
-      const baseUrl = `/login?error=true`;
+    return passport.authenticate('google-login', (err, user) => {
+      let errUrl = `/login?error=true`;
       if (err) {
-        let errUrl = baseUrl;
+        logger.error('google-auth: passport authentication error');
         const { type } = err;
         if (type) {
           errUrl += `&type=${type}`;
-          logger.error(`google-auth: passport authentication error ${type}`);
         }
         logger.error(err);
         return res.redirect(errUrl);
@@ -123,10 +174,27 @@ export default app => {
         if (loginErr) {
           logger.error('google-auth: login error');
           logger.error(loginErr);
-          return res.redirect(baseUrl);
+          return res.redirect(errUrl);
         }
         return res.redirect('/app');
       });
+    })(req, res, next);
+  });
+
+  app.get('/auth/google/connect/callback', (req, res, next) => {
+    logger.debug('google-auth: /auth/google/connect/callback');
+    return passport.authenticate('connect-account-google', err => {
+      const baseUrl = `/app/profile/accounts/connected`;
+      let errUrl = `${baseUrl}?error=true`;
+      if (err) {
+        logger.error(
+          'google-auth: passport authentication error connecting account'
+        );
+        logger.error(err);
+        return res.redirect(errUrl);
+      }
+
+      return res.redirect(baseUrl);
     })(req, res, next);
   });
 };
@@ -134,4 +202,9 @@ export default app => {
 function getEmail(profile) {
   const { emails } = profile;
   return emails.length ? emails[0].value : null;
+}
+
+function getProfileImg(profile) {
+  const { photos = [] } = profile;
+  return photos.length ? photos[0].value : null;
 }

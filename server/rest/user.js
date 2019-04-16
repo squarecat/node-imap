@@ -2,12 +2,12 @@ import {
   addToUserIgnoreList,
   addUserScanReminder,
   deactivateUserAccount,
-  disconnectUserAccount,
   getReferralStats,
   getUserById,
   getUserLoginProvider,
   getUserPayments,
   removeFromUserIgnoreList,
+  removeUserAccount,
   removeUserScanReminder,
   updateUserPreferences
 } from '../services/user';
@@ -35,7 +35,7 @@ export default app => {
         referralCode,
         reminder,
         preferences,
-        provider,
+        loginProvider,
         lastUpdatedAt,
         accounts
       } = await getUserById(req.user.id);
@@ -56,7 +56,7 @@ export default app => {
           : null,
         reminder,
         preferences,
-        provider,
+        loginProvider,
         lastUpdatedAt,
         accounts: accounts || []
       });
@@ -169,8 +169,8 @@ export default app => {
     try {
       if (op === 'preferences') {
         updatedUser = await updateUserPreferences(id, value);
-      } else if (op === 'disconnect-account') {
-        updatedUser = await disconnectUserAccount(user, value);
+      } else if (op === 'remove-account') {
+        updatedUser = await removeUserAccount(user, value);
       } else {
         logger.error(`user-rest: user patch op not supported`);
       }

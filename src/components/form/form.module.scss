@@ -130,3 +130,21 @@
   font-size: 16px;
   line-height: 24px;
 }
+
+.form-error {
+  background: $color-red;
+  color: white;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid $color-text-error;
+  width: 90%;
+  margin: 0 auto;
+
+  p {
+    margin: 0;
+  }
+}

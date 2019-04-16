@@ -68,6 +68,10 @@ app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
 app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
 app.get('/join-beta', (req, res) => res.redirect(config.urls.requestBeta));
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
 
 app.get('/r/:code', (req, res) => {
   // make sure only the first referrer gets the gold

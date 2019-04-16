@@ -12,12 +12,14 @@
   "auth": {
     "google": {
       "loginRedirect": "https://dev.leavemealone.xyz/login/google/redirect",
+      "connectRedirect": "https://dev.leavemealone.xyz/auth/google/connect/callback",
       "clientId": "$GOOGLE_CLIENT_ID",
       "clientSecret": "$GOOGLE_CLIENT_SECRET",
       "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
     },
     "outlook": {
       "loginRedirect": "https://dev.leavemealone.xyz/login/outlook/redirect",
+      "connectRedirect": "https://dev.leavemealone.xyz/auth/outlook/connect/callback",
       "clientId": "$OUTLOOK_CLIENT_ID",
       "clientSecret": "$OUTLOOK_CLIENT_SECRET",
       "scopes": [

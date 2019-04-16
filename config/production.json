@@ -15,10 +15,12 @@
   },
   "auth": {
     "google": {
-      "loginRedirect": "https://leavemealone.xyz/login/google/redirect"
+      "loginRedirect": "https://leavemealone.xyz/login/google/redirect",
+      "connectRedirect": "https://leavemealone.xyz/auth/google/connect/callback"
     },
     "outlook": {
-      "loginRedirect": "https://leavemealone.xyz/login/outlook/redirect"
+      "loginRedirect": "https://leavemealone.xyz/login/outlook/redirect",
+      "connectRedirect": "https://leavemealone.xyz/auth/outlook/connect/callback"
     }
   },
   "puppeteer": {

@@ -76,3 +76,9 @@ export const FormCheckbox = ({ id, name, label, ...props }) => {
 export const FormGroup = ({ children, fluid, column }) => {
   return <div styleName={cx('form-group', { fluid, column })}>{children}</div>;
 };
+
+export const FormError = ({ children }) => (
+  <div styleName="form-error">
+    <p>{children}</p>
+  </div>
+);

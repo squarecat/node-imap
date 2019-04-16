@@ -1,4 +1,5 @@
 import {
+  connectUserOutlookAccount,
   createOrUpdateUserFromOutlook,
   updateUserToken
 } from '../services/user';
@@ -13,7 +14,7 @@ import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
 
 const { outlook } = auth;
-logger.info(`outlook-auth: redirecting to ${outlook.redirect}`);
+logger.info(`outlook-auth: redirecting to ${outlook.loginRedirect}`);
 
 export const Strategy = new OutlookStrategy(
   {
@@ -37,7 +38,12 @@ export const Strategy = new OutlookStrategy(
       }
 
       const user = await createOrUpdateUserFromOutlook(
-        { ...profile, email, referralCode: referrer },
+        {
+          ...profile,
+          email,
+          profileImg: getProfileImg(profile),
+          referralCode: referrer
+        },
         {
           refreshToken,
           accessToken,
@@ -56,10 +62,43 @@ export const Strategy = new OutlookStrategy(
   }
 );
 
+export const ConnectAccountStrategy = new OutlookStrategy(
+  {
+    clientID: outlook.clientId,
+    clientSecret: outlook.clientSecret,
+    callbackURL: outlook.connectRedirect,
+    passReqToCallback: true
+  },
+  async (req, accessToken, refreshToken, profile, done) => {
+    try {
+      const email = getEmail(profile);
+      const user = await connectUserOutlookAccount(
+        req.user.id,
+        {
+          ...profile,
+          email,
+          profileImg: getProfileImg(profile)
+        },
+        {
+          refreshToken,
+          accessToken,
+          expires: addSeconds(new Date(), 3600),
+          expiresIn: 3600
+        }
+      );
+      done(null, { ...user });
+    } catch (err) {
+      logger.error('outlook-auth: failed to connect account from Outlook');
+      logger.error(err);
+      done(err);
+    }
+  }
+);
+
 export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
   return new Promise((resolve, reject) => {
     refresh.requestNewAccessToken(
-      'windowslive',
+      'outlook-login',
       refreshToken,
       async (err, accessToken) => {
         if (err) {
@@ -88,7 +127,14 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
 export default app => {
   app.get(
     '/auth/outlook',
-    passport.authenticate('windowslive', {
+    passport.authenticate('outlook-login', {
+      scope: outlook.scopes
+    })
+  );
+
+  app.get(
+    '/auth/outlook/connect',
+    passport.authenticate('connect-account-outlook', {
       scope: outlook.scopes
     })
   );
@@ -100,7 +146,7 @@ export default app => {
     };
     req.query = query;
 
-    return passport.authenticate('windowslive', (err, user) => {
+    return passport.authenticate('outlook-login', (err, user) => {
       const baseUrl = `/login?error=true`;
       if (err) {
         let errUrl = baseUrl;
@@ -121,9 +167,31 @@ export default app => {
       });
     })(req, res, next);
   });
+
+  app.get('/auth/outlook/connect/callback', (req, res, next) => {
+    logger.debug('outlook-auth: /auth/outlook/connect/callback');
+    return passport.authenticate('connect-account-outlook', err => {
+      const baseUrl = `/app/profile/accounts/connected`;
+      let errUrl = `${baseUrl}?error=true`;
+      if (err) {
+        logger.error(
+          'outlook-auth: passport authentication error connecting account'
+        );
+        logger.error(err);
+        return res.redirect(errUrl);
+      }
+
+      return res.redirect(baseUrl);
+    })(req, res, next);
+  });
 };
 
 function getEmail(profile) {
   const { emails } = profile;
   return emails.length ? emails[0].value : null;
+}
+
+function getProfileImg(profile) {
+  const { photos = [] } = profile;
+  return photos.length ? photos[0].value : null;
 }

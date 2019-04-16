@@ -15,10 +15,12 @@
   },
   "auth": {
     "google": {
-      "loginRedirect": "https://beta.leavemealone.xyz/login/google/redirect"
+      "loginRedirect": "https://beta.leavemealone.xyz/login/google/redirect",
+      "connectRedirect": "https://beta.leavemealone.xyz/auth/google/connect/callback"
     },
     "outlook": {
-      "loginRedirect": "https://beta.leavemealone.xyz/login/outlook/redirect"
+      "loginRedirect": "https://beta.leavemealone.xyz/login/outlook/redirect",
+      "connectRedirect": "https://beta.leavemealone.xyz/auth/outlook/connect/callback"
     }
   },
   "mailgun": {

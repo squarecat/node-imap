@@ -27,25 +27,45 @@ const strWindowFeatures = [
   'centerscreen=yes'
 ].join(',');
 
+const receiveMessage = (event, provider) => {
+  // Do we trust the sender of this message?  (might be
+  // different from what we originally opened, for example).
+  if (event.origin !== process.env.BASE_URL) {
+    return;
+  }
+  const params = event.data;
+  const redirectUrl = `/auth/${provider}/callback${params}`;
+  window.location.pathname = redirectUrl;
+};
+
 export default ({ provider }) => {
   const { dispatch } = useContext(LoginContext);
 
-  const receiveMessage = event => {
-    // Do we trust the sender of this message?  (might be
-    // different from what we originally opened, for example).
-    if (event.origin !== process.env.BASE_URL) {
-      return;
+  useEffect(() => {
+    return function cleanup() {
+      window.removeEventListener('message', receiveMessage);
+    };
+  });
+
+  const openSignInWindow = (url, name) => {
+    window.removeEventListener('message', receiveMessage);
+
+    if (windowObjectReference === null || windowObjectReference.closed) {
+      windowObjectReference = window.open(url, name, strWindowFeatures);
+    } else if (previousUrl !== url) {
+      windowObjectReference = window.open(url, name, strWindowFeatures);
+      windowObjectReference.focus();
+    } else {
+      windowObjectReference.focus();
     }
 
-    const params = event.data;
-    const redirectUrl = `/auth/${provider}/callback${params}`;
-    window.location.pathname = redirectUrl;
+    window.addEventListener(
+      'message',
+      event => receiveMessage(event, provider),
+      false
+    );
+    previousUrl = url;
   };
-
-  useEffect(() => {
-    window.addEventListener('message', receiveMessage, false);
-    return () => window.removeEventListener('message', receiveMessage);
-  });
 
   if (provider === 'google') {
     return (
@@ -85,29 +105,3 @@ export default ({ provider }) => {
     return null;
   }
 };
-
-// https://developer.mozilla.org/en-US/docs/Web/API/Window/open
-function openSignInWindow(url, name) {
-  if (windowObjectReference === null || windowObjectReference.closed) {
-    /* if the pointer to the window object in memory does not exist
-     or if such pointer exists but the window was closed */
-
-    windowObjectReference = window.open(url, name, strWindowFeatures);
-    /* then create it. The new window will be created and
-       will be brought on top of any other window. */
-  } else if (previousUrl !== url) {
-    windowObjectReference = window.open(url, name, strWindowFeatures);
-    /* if the resource to load is different,
-       then we load it in the already opened secondary window and then
-       we bring such window back on top/in front of its parent window. */
-    windowObjectReference.focus();
-  } else {
-    windowObjectReference.focus();
-    /* else the window reference must exist and the window
-       is not closed; therefore, we can bring it back on top of any other
-       window with the focus() method. There would be no need to re-create
-       the window or to reload the referenced resource. */
-  }
-
-  previousUrl = url;
-}

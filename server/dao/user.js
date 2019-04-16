@@ -137,7 +137,26 @@ export async function updateUser(id, userData) {
   }
 }
 
-export async function addAccount() {}
+export async function addAccount(id, data) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $push: {
+          // hashedEmails: hashEmail(data.email),
+          accounts: { ...data, addedAt: isoDate() }
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(
+      `user-dao: failed to add user account for user ${userId} and account ${accountId}`
+    );
+  }
+}
 
 export async function addUnsubscription(id, mailData) {
   let data = Object.keys(mailData).reduce((out, k) => {
@@ -528,7 +547,7 @@ export async function updateUnsubStatus(
   }
 }
 
-export async function disconnectAccount(userId, accountId) {
+export async function removeAccount(userId, accountId) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(

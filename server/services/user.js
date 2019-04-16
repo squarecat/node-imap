@@ -1,12 +1,5 @@
 import {
-  addNewsletterUnsubscriptionToStats,
-  addReferralSignupToStats,
-  addReminderRequestToStats,
-  addUnsubStatusToStats,
-  addUserAccountDeactivatedToStats,
-  addUserToStats
-} from './stats';
-import {
+  addAccount,
   addPaidScan,
   addScan,
   addScanReminder,
@@ -14,12 +7,12 @@ import {
   authenticate,
   createUser,
   createUserFromPassword,
-  disconnectAccount,
   getLoginProvider,
   getUser,
   getUserByEmail,
   getUserByReferralCode,
   incrementUserReferralBalance,
+  removeAccount,
   removeScanReminder,
   removeUser,
   resolveUnsubscription,
@@ -28,6 +21,14 @@ import {
   updateUnsubStatus,
   updateUser
 } from '../dao/user';
+import {
+  addNewsletterUnsubscriptionToStats,
+  addReferralSignupToStats,
+  addReminderRequestToStats,
+  addUnsubStatusToStats,
+  addUserAccountDeactivatedToStats,
+  addUserToStats
+} from './stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
@@ -53,10 +54,17 @@ export async function getUserById(id) {
   }
 }
 
-export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
-  const { id, email, referralCode, photos = [], displayName } = userData;
+export function createOrUpdateUserFromOutlook(userData = {}, keys) {
+  return createOrUpdateUser(userData, keys, 'outlook');
+}
+
+export function createOrUpdateUserFromGoogle(userData = {}, keys) {
+  return createOrUpdateUser(userData, keys, 'google');
+}
+
+async function createOrUpdateUser(userData = {}, keys, provider) {
+  const { id, email, referralCode, profileImg, displayName } = userData;
   try {
-    const profileImg = photos.length ? photos[0].value : null;
     let user = await getUser(id);
     if (!user) {
       let referredBy = null;
@@ -75,11 +83,11 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
           email,
           profileImg,
           referredBy,
-          loginProvider: 'outlook',
+          loginProvider: provider,
           token: v4()
         },
         {
-          provider: 'outlook',
+          provider,
           email,
           keys
         }
@@ -99,62 +107,52 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error creating or updating user from Outlook ${id ||
-        'no userData id'}`
+      `user-service: error creating or updating user from ${provider} with ${id}`
     );
     logger.error(err);
     throw err;
   }
 }
 
-export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
-  const { id, email, referralCode, photos = [], displayName } = userData;
+export function connectUserOutlookAccount(userId, userData = {}, keys) {
+  return connectUserAccount(userId, userData, keys, 'outlook');
+}
+
+export function connectUserGoogleAccount(userId, userData = {}, keys) {
+  return connectUserAccount(userId, userData, keys, 'google');
+}
+
+async function connectUserAccount(userId, userData = {}, keys, provider) {
+  const { id, email, profileImg, displayName } = userData;
   try {
-    const profileImg = photos.length ? photos[0].value : null;
-    let user = await getUser(id);
-    if (!user) {
-      let referredBy = null;
-      if (referralCode) {
-        const { id: referralUserId } = await getUserByReferralCode(
-          referralCode
-        );
-        await addReferralToReferrer(referralUserId, { userId: id });
-        addReferralSignupToStats();
-        referredBy = referralUserId;
-      }
-      user = await createUser(
-        {
-          id,
-          name: displayName,
-          email,
-          profileImg,
-          referredBy,
-          loginProvider: 'google',
-          token: v4()
-        },
-        {
-          provider: 'google',
-          email,
-          keys
-        }
+    let user = await getUser(userId);
+    if (user.accounts.find(acc => acc.id === id)) {
+      logger.debug(
+        `user-service: ${provider} account already connected, updating...`
       );
-      addUserToStats();
-      addUpdateNewsletterSubscriber(email);
-    } else {
       user = await updateUser(
-        { id, 'accounts.email': email },
+        { userId, 'accounts.email': email },
         {
           'accounts.$.keys': keys,
           profileImg,
           name: displayName
         }
       );
+    } else {
+      logger.debug(
+        `user-service: ${provider} account not connected, adding...`
+      );
+      user = await addAccount(userId, {
+        id,
+        provider,
+        email,
+        keys
+      });
     }
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error creating or updating user from Google ${id ||
-        'no userData id'}`
+      `user-service: error connecting user ${provider} account ${id}`
     );
     logger.error(err);
     throw err;
@@ -402,7 +400,7 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
   }
 }
 
-export async function disconnectUserAccount(user, email) {
+export async function removeUserAccount(user, email) {
   const { id: userId, accounts } = user;
 
   try {
@@ -415,7 +413,7 @@ export async function disconnectUserAccount(user, email) {
     } else if (provider === 'outlook') {
       await revokeTokenFromOutlook(refreshToken);
     }
-    return disconnectAccount(userId, accountId);
+    return removeAccount(userId, accountId);
   } catch (err) {
     logger.error(
       `user-service: failed to disconnect user account for user ${userId}`
