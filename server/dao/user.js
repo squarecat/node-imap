@@ -1,10 +1,15 @@
+import {
+  checkPassword,
+  decryptUnsubscriptions,
+  encrypt,
+  hashPassword
+} from './encryption';
 import db, { isoDate } from './db';
-import { decrypt, encrypt } from './encryption';
 
 import logger from '../utils/logger';
 import shortid from 'shortid';
+import { v4 } from 'node-uuid';
 
-const COL_NAME = 'users';
 const encryptedUnsubCols = [
   'unsubscribeLink',
   'unsubscribeMailTo',
@@ -12,8 +17,38 @@ const encryptedUnsubCols = [
   'from'
 ];
 
-export async function createUser(data) {
-  const { keys } = data;
+const COL_NAME = 'users';
+
+export async function createUserFromPassword(data) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const id = v4();
+    await col.insertOne({
+      ...data,
+      id,
+      password: hashPassword(data.password),
+      createdAt: isoDate(),
+      lastUpdatedAt: isoDate(),
+      referralCode: shortid.generate(),
+      referrals: [],
+      accounts: [],
+      unsubscriptions: [],
+      scans: [],
+      paidScans: [],
+      preferences: {
+        hideUnsubscribedMails: false,
+        marketingConsent: true
+      }
+    });
+    return getUser(id);
+  } catch (err) {
+    logger.error('users-dao: error inserting user with password');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function createUser(data, provider) {
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
@@ -22,12 +57,16 @@ export async function createUser(data) {
       lastUpdatedAt: isoDate(),
       referralCode: shortid.generate(),
       referrals: [],
-      keys: {
-        refreshToken: encrypt(keys.refreshToken),
-        accessToken: encrypt(keys.accessToken),
-        expires: keys.expires,
-        expiresIn: keys.expiresIn
-      },
+      accounts: [
+        {
+          ...provider,
+          keys: {
+            ...provider.keys,
+            refreshToken: encrypt(provider.keys.refreshToken),
+            accessToken: encrypt(provider.keys.accessToken)
+          }
+        }
+      ],
       unsubscriptions: [],
       scans: [],
       paidScans: [],
@@ -40,38 +79,22 @@ export async function createUser(data) {
     return user;
   } catch (err) {
     logger.error('users-dao: error inserting user');
-    logger.error(JSON.stringify(data, null, 2));
     logger.error(err);
     throw err;
   }
 }
 
-export async function getUser(id) {
+export async function getUser(id, projection = {}) {
   try {
     const col = await db().collection(COL_NAME);
-    const user = await col.findOne({ id }, { fields: { _id: 0 } });
+    const user = await col.findOne({ id }, { _id: 0, ...projection });
     if (!user) return null;
     const decryptedUser = {
       ...user,
-      keys: {
-        ...user.keys,
-        refreshToken: decrypt(user.keys.refreshToken),
-        accessToken: decrypt(user.keys.accessToken)
-      },
-      unsubscriptions: user.unsubscriptions.map(unsub => {
-        return Object.keys(unsub).reduce((out, k) => {
-          if (encryptedUnsubCols.includes(k)) {
-            return {
-              ...out,
-              [k]: decrypt(unsub[k])
-            };
-          }
-          return {
-            ...out,
-            [k]: unsub[k]
-          };
-        }, {});
-      })
+      unsubscriptions: decryptUnsubscriptions(
+        user.unsubscriptions,
+        encryptedUnsubCols
+      )
     };
     return decryptedUser;
   } catch (err) {
@@ -81,10 +104,10 @@ export async function getUser(id) {
   }
 }
 
-export async function getUserByEmail(email) {
+export async function getUserByEmail(email, projection = {}) {
   try {
     const col = await db().collection(COL_NAME);
-    return col.findOne({ email });
+    return col.findOne({ email }, { _id: 0, ...projection });
   } catch (err) {
     logger.error(`users-dao: failed to get user by email`);
     logger.error(err);
@@ -93,21 +116,10 @@ export async function getUserByEmail(email) {
 }
 
 export async function updateUser(id, userData) {
-  const { keys } = userData;
   let updateObj = {
     ...userData,
     lastUpdatedAt: isoDate()
   };
-  if (keys) {
-    updateObj = {
-      ...updateObj,
-      keys: {
-        ...keys,
-        refreshToken: encrypt(keys.refreshToken),
-        accessToken: encrypt(keys.accessToken)
-      }
-    };
-  }
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -124,6 +136,8 @@ export async function updateUser(id, userData) {
     throw err;
   }
 }
+
+export async function addAccount() {}
 
 export async function addUnsubscription(id, mailData) {
   let data = Object.keys(mailData).reduce((out, k) => {
@@ -507,6 +521,38 @@ export async function updateUnsubStatus(
         }
       }
     );
+  } catch (err) {
+    logger.error('user-dao: failed to update unsub status');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function authenticate({ email, password }) {
+  try {
+    const user = await getUserByEmail(email, {
+      password: 1
+    });
+    if (!user) return null;
+    const { password: userPassword } = user;
+    const { salt, hash } = userPassword;
+    if (checkPassword(password, salt, hash)) {
+      return user;
+    }
+    return null;
+  } catch (err) {
+    logger.error('user-dao: failed to update unsub status');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function getLoginProvider(email) {
+  try {
+    const user = await getUserByEmail(email, {
+      loginProvider: 1
+    });
+    return user ? user.loginProvider : null;
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');
     logger.error(err);

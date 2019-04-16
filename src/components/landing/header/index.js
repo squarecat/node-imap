@@ -1,9 +1,9 @@
 import './header.module.scss';
 
-import cx from 'classnames';
 import React from 'react';
-import { TextLink } from '../components/text';
-import smallLogo from '../assets/envelope-logo.png';
+import { TextLink } from '../../text';
+import cx from 'classnames';
+import smallLogo from '../../../assets/envelope-logo.png';
 
 export default ({ setActive = () => {}, inverted = false }) => (
   <div styleName={cx('header', { 'header-inverted': inverted })}>

@@ -53,7 +53,8 @@
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
     "referral": "http://local.leavemealone.xyz/r/",
-    "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA"
+    "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA",
+    "base": "http://local.leavemealone.xyz"
   },
   "airtable": {
     "key": "key0cK6sejCiwx9p0",

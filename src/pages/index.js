@@ -5,10 +5,10 @@ import React, { useRef } from 'react';
 
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
-import Header from './header';
+import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import { TextImportant } from '../components/text';
-import WallOfLove from './wall-of-love';
+import WallOfLove from '../components/landing/wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';

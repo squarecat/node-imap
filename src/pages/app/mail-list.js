@@ -834,17 +834,22 @@ function getSocialContent(unsubCount = 0, referralCode) {
   );
 }
 
-function parseFrom(str) {
+function parseFrom(str = '') {
+  if (!str) {
+    return { fromName: '', fromEmail: '' };
+  }
   let fromName;
   let fromEmail;
   if (str.match(/^.*<.*>/)) {
     const [, name, email] = /^(.*)(<.*>)/.exec(str);
     fromName = name;
     fromEmail = email;
-  } else {
+  } else if (str.match(/<?.*@/)) {
     const [, name] = /<?(.*)@/.exec(str);
-
     fromName = name || str;
+    fromEmail = str;
+  } else {
+    fromName = str;
     fromEmail = str;
   }
   return { fromName, fromEmail };

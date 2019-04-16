@@ -1,10 +1,10 @@
 import {
-  addFreeScan,
   addToUserIgnoreList,
   addUserScanReminder,
   deactivateUserAccount,
   getReferralStats,
   getUserById,
+  getUserLoginProvider,
   getUserPayments,
   removeFromUserIgnoreList,
   removeUserScanReminder,
@@ -13,7 +13,9 @@ import {
 
 import _sortBy from 'lodash.sortby';
 import auth from './auth';
+import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
+import rateLimit from '../middleware/rate-limit';
 
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
@@ -199,4 +201,25 @@ export default app => {
       res.status(500).send(err);
     }
   });
+
+  // public route, locked down to our domains
+  app.get(
+    '/api/user/:username/provider',
+    rateLimit,
+    internalOnly,
+    async (req, res) => {
+      const { username } = req.params;
+      try {
+        const strat = await getUserLoginProvider({ email: username });
+        if (!strat) {
+          return res.status(404).send();
+        }
+        return res.send(strat);
+      } catch (err) {
+        logger.error(`user-rest: error getting user login strat ${username}`);
+        logger.error(err);
+        res.status(500).send(err);
+      }
+    }
+  );
 };

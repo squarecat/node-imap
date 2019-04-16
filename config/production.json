@@ -10,7 +10,8 @@
     "port": "$PORT"
   },
   "urls": {
-    "referral": "https://leavemealone.xyz/r/"
+    "referral": "https://leavemealone.xyz/r/",
+    "base": "https://leavemealone.xyz"
   },
   "auth": {
     "google": {

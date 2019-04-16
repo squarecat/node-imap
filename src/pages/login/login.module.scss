@@ -17,9 +17,20 @@ $active-bg-color: #ffc7c1;
   &.active {
     background-color: $active-bg-color;
   }
+  &.errored {
+    background-color: darken($active-bg-color, 10%);
+  }
 }
 
-.login-boxy-box {
+.login-boxy-box,
+.email-login-box,
+.password-login-box,
+.new-user-login-box,
+.existing-user-login-box,
+.existing-user-suggestion-box {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 500px;
   background-color: white;
@@ -27,6 +38,28 @@ $active-bg-color: #ffc7c1;
   border-radius: 7px;
   box-shadow: 0 7px 1em $color-input-border-focus;
   text-align: center;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: transform 500ms cubic-bezier(0.65, 0.05, 0.36, 1);
+  transform: rotateY(-180deg);
+
+  &[data-active='true'] {
+    transform: rotateY(0);
+  }
+}
+
+.card-flip {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  max-height: 700px;
+  max-width: 500px;
+  transition: max-height 400ms cubic-bezier(0.65, 0.05, 0.36, 1);
+  overflow: hidden;
+}
+
+.password-login .signup-buttons {
+  opacity: 1;
 }
 
 .beautiful-logo {
@@ -39,9 +72,18 @@ $active-bg-color: #ffc7c1;
   line-height: 1.1;
 }
 .buttons {
+  margin-top: auto;
+  a {
+    height: 62px;
+  }
 }
 
-.login-me-in-dammit {
+.sign-up-form {
+  text-align: left;
+}
+
+.login-me-in-dammit,
+.sign-me-up-dammit {
   @extend .btn;
   @extend .centered;
   background: white;
@@ -74,12 +116,13 @@ $active-bg-color: #ffc7c1;
   color: white;
   padding: 5px;
   font-weight: bold;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 14px;
   line-height: 18px;
   text-align: center;
   border: 1px solid $color-text-error;
-  margin-top: 40px;
+  width: 90%;
+  margin: 0 auto;
 
   p {
     margin: 0;
@@ -89,10 +132,67 @@ $active-bg-color: #ffc7c1;
     @extend .link;
     @extend .link-inverted;
   }
+
+  + .signup-buttons {
+    margin-top: 10px;
+  }
 }
 
-.notice {
+.notice,
+.no-account-notice {
   font-size: 11px;
   line-height: 16px;
-  margin: 0;
+  margin: auto;
+}
+
+.no-account-notice {
+  width: 90%;
+  font-size: 12px;
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.signup-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  margin: 20px auto 0 auto;
+  transition: opacity 0ms 200ms linear;
+  opacity: 0;
+  [data-active='true'] & {
+    opacity: 1;
+  }
+}
+
+.signup-btn {
+  @extend .btn;
+  width: 150px;
+}
+
+.back-btn {
+  @extend .muted;
+  @extend .outlined;
+}
+
+.email-label,
+.provider-label {
+  font-weight: bolder;
+  text-decoration: underline;
+}
+
+.provider-label {
+  text-transform: capitalize;
+}
+
+.existing-provider-btn a {
+  width: 90%;
+  margin: 10px 0 0 20px;
+}
+
+.forgot-password {
+  font-size: 14px;
+  margin-left: 26px;
 }
