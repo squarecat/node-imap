@@ -147,7 +147,7 @@ export async function addAccount(id, data) {
       { id },
       {
         $push: {
-          // hashedEmails: hashEmail(data.email),
+          hashedEmails: hashEmail(data.email),
           accounts: { ...data, addedAt: isoDate() }
         }
       }
@@ -155,9 +155,7 @@ export async function addAccount(id, data) {
     const user = await getUser(id);
     return user;
   } catch (err) {
-    logger.error(
-      `user-dao: failed to add user account for user ${userId} and account ${accountId}`
-    );
+    logger.error(`user-dao: failed to add user account for user ${id}`);
   }
 }
 
