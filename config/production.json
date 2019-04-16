@@ -11,14 +11,14 @@
   },
   "urls": {
     "referral": "https://leavemealone.xyz/r/",
-    "base": "https://leavemealone.xyz"
+    "base": "$BASE_URL"
   },
   "auth": {
     "google": {
-      "redirect": "https://leavemealone.xyz/auth/google/callback"
+      "loginRedirect": "https://leavemealone.xyz/login/google/redirect"
     },
     "outlook": {
-      "redirect": "https://leavemealone.xyz/auth/outlook/callback"
+      "loginRedirect": "https://leavemealone.xyz/login/outlook/redirect"
     }
   },
   "puppeteer": {

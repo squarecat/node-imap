@@ -10,6 +10,12 @@ export default globalReducer(
         unsubCount: user.unsubscriptions.length || 0
       };
     },
+    update: (state, user) => {
+      return {
+        ...state,
+        ...user
+      };
+    },
     incrementUnsubCount: (state, count = 1) => {
       return {
         ...state,

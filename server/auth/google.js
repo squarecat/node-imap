@@ -4,6 +4,7 @@ import {
 } from '../services/user';
 
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20-without-google-plus';
+import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
 import { isBetaUser } from './access';
@@ -18,7 +19,7 @@ export const Strategy = new GoogleStrategy(
   {
     clientID: google.clientId,
     clientSecret: google.clientSecret,
-    callbackURL: google.redirect,
+    callbackURL: google.loginRedirect,
     passReqToCallback: true,
     // This option tells the strategy to use the userinfo endpoint instead
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo'
@@ -95,14 +96,25 @@ export default app => {
     })
   );
 
-  app.get('/auth/google/callback', (req, res, next) => {
+  app.get('/auth/google/callback*', (req, res, next) => {
+    const params = new URLSearchParams(req.params[0]);
+    const query = {
+      code: params.get('code'),
+      scope: params.get('scope'),
+      session_state: params.get('session_state'),
+      prompt: params.get('prompt')
+    };
+    req.query = query;
+
     return passport.authenticate('google', (err, user) => {
       const baseUrl = `/login?error=true`;
       if (err) {
         let errUrl = baseUrl;
         const { type } = err;
-        if (type) errUrl += `&type=${type}`;
-        logger.error(`google-auth: passport authentication error ${type}`);
+        if (type) {
+          errUrl += `&type=${type}`;
+          logger.error(`google-auth: passport authentication error ${type}`);
+        }
         logger.error(err);
         return res.redirect(errUrl);
       }

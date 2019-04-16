@@ -11,13 +11,13 @@
   },
   "auth": {
     "google": {
-      "redirect": "http://local.leavemealone.xyz/auth/google/callback",
+      "loginRedirect": "https://dev.leavemealone.xyz/login/google/redirect",
       "clientId": "$GOOGLE_CLIENT_ID",
       "clientSecret": "$GOOGLE_CLIENT_SECRET",
       "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
     },
     "outlook": {
-      "redirect": "https://tolocalhost.com/auth/outlook/callback",
+      "loginRedirect": "https://dev.leavemealone.xyz/login/outlook/redirect",
       "clientId": "$OUTLOOK_CLIENT_ID",
       "clientSecret": "$OUTLOOK_CLIENT_SECRET",
       "scopes": [
@@ -49,12 +49,12 @@
     "vatKey": "$VAT_KEY"
   },
   "urls": {
+    "base": "$BASE_URL",
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
     "referral": "http://local.leavemealone.xyz/r/",
-    "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA",
-    "base": "http://local.leavemealone.xyz"
+    "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA"
   },
   "airtable": {
     "key": "key0cK6sejCiwx9p0",

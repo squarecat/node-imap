@@ -3,9 +3,11 @@ import './layout.module.scss';
 import {
   CreditCardIcon,
   HeartIcon,
+  LinkIcon,
+  LockIcon,
   MailIcon,
-  UserIcon,
-  SettingsIcon
+  SettingsIcon,
+  UserIcon
 } from '../../../components/icons';
 
 import { Link } from 'gatsby';
@@ -28,12 +30,32 @@ export default ({ pageName, children }) => (
                 activeClassName="profile-nav-link--active"
               >
                 <UserIcon />
-                Account
+                Profile
               </Link>
             </li>
             <li>
               <Link
-                to="/app/profile/history/billing"
+                to="/app/profile/accounts"
+                styleName="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <LinkIcon />
+                Accounts
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/app/profile/security"
+                styleName="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <LockIcon width="16" height="16" />
+                Security
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/app/profile/billing"
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
@@ -48,7 +70,7 @@ export default ({ pageName, children }) => (
                 activeClassName="profile-nav-link--active"
               >
                 <MailIcon />
-                Scan History
+                Scan history
               </Link>
             </li>
             <li>

@@ -1,0 +1,65 @@
+@import '../../../styles/common/colors.scss';
+@import './layout.module.scss';
+@import '../../../components/btn/btn.module.scss';
+@import '../../../components/text/text.module.scss';
+
+.accounts-section {
+  @extend .profile-section;
+}
+
+.connect {
+}
+
+.account-list {
+  margin: 0;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  border-bottom: 1px solid $color-border-red;
+  padding: 5px;
+
+  &:only-child {
+    border-bottom: none;
+  }
+}
+
+.email-container {
+  display: flex;
+  align-items: center;
+}
+
+.email {
+  margin-left: 10px;
+}
+
+.revoke-link {
+  @extend .link;
+}
+
+.connect-btn {
+  @extend .btn;
+  @extend .basic;
+  background: white;
+  border: 1px solid #8c8c8c;
+  color: $color-primary-font;
+  font-weight: 600;
+  width: 450px;
+
+  .text {
+    margin-left: 15px;
+    width: 300px;
+  }
+
+  &:hover {
+    background-color: rgba(255, 218, 214, 0.2);
+    color: $color-primary-font;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
+}

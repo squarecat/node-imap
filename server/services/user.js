@@ -14,6 +14,7 @@ import {
   authenticate,
   createUser,
   createUserFromPassword,
+  disconnectAccount,
   getLoginProvider,
   getUser,
   getUserByEmail,
@@ -37,7 +38,8 @@ import { addReferralToReferrer } from './referral';
 import addWeeks from 'date-fns/add_weeks';
 import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
-import { revokeToken } from '../utils/google';
+import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
+import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
 import { v4 } from 'node-uuid';
 
 export async function getUserById(id) {
@@ -369,12 +371,16 @@ export async function updateUserMarketingConsent(
 }
 
 export async function deactivateUserAccount(user) {
-  const { id, email, keys } = user;
+  const { id, email, provider, keys } = user;
   const { refreshToken } = keys;
   logger.info(`user-service: deactivating user account ${id}`);
 
   try {
-    await revokeToken(refreshToken);
+    if (provider === 'google') {
+      await revokeTokenFromGoogle(refreshToken);
+    } else if (provider === 'outlook') {
+      await revokeTokenFromOutlook(refreshToken);
+    }
     await removeUser(id);
     removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
@@ -393,6 +399,27 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
       `user-service: failed to update unsub status for user ${userId} and mail ${mailId}`
     );
     throw err;
+  }
+}
+
+export async function disconnectUserAccount(user, email) {
+  const { id: userId, accounts } = user;
+
+  try {
+    const account = accounts.find(e => e.email === email);
+    const { id: accountId, provider, keys } = account;
+    const { refreshToken } = keys;
+
+    if (provider === 'google') {
+      await revokeTokenFromGoogle(refreshToken);
+    } else if (provider === 'outlook') {
+      await revokeTokenFromOutlook(refreshToken);
+    }
+    return disconnectAccount(userId, accountId);
+  } catch (err) {
+    logger.error(
+      `user-service: failed to disconnect user account for user ${userId}`
+    );
   }
 }
 
