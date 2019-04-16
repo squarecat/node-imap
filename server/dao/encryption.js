@@ -1,3 +1,4 @@
+import Hashes from 'jshashes';
 import aes256 from 'aes256';
 import config from 'getconfig';
 import crypto from 'crypto';
@@ -89,4 +90,8 @@ export function decryptUnsubscriptions(unsubscriptions, columns) {
       };
     }, {});
   });
+}
+
+export function hashEmail(email) {
+  return new Hashes.SHA1().hex(email);
 }

@@ -34,6 +34,7 @@ export default app => {
   initGoogle(app);
   initOutlook(app);
   initPassword(app);
+
   app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');

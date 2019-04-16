@@ -6,44 +6,20 @@ import Hashes from 'jshashes';
 const baseUrl = 'https://api.pwnedpasswords.com/range';
 
 const compromisedPasswordText = `
-This password was found in a database of compromised passwords 😔Using a password that has been breached is seriously dangerous.
+This password was found in a database of compromised passwords. Using a password that has been breached is seriously dangerous.
 If you use this password for any other services then you should
 change it immediately.
 `;
-
-const passwordLengthText = 'Password must be at least 6 characters';
+const minLength = 6;
+const passwordLengthText = 'Password must be greater than 6 characters';
 
 export default ({ checkIfPwned = true, onChange = () => {} }) => {
   const [value, setValue] = useState('');
-  const { isValid, message } = useValidation(value, { checkIfPwned });
-  useEffect(
-    () => {
-      onChange(value, { isValid, message });
-    },
-    [value, isValid, message]
-  );
-  return (
-    <FormInput
-      onChange={({ currentTarget }) => setValue(currentTarget.value)}
-      noFocus
-      compact
-      id="password"
-      type="password"
-      name="password"
-      required
-      validation={() => (isValid ? '' : message)}
-    />
-  );
-};
-
-const minLength = 6;
-
-function useValidation(value, { checkIfPwned }) {
   const [state, setState] = useState({ isValid: false, message: '' });
-  const [timeoutId, setTimeoutId] = useState(0);
 
   const validate = async () => {
     if (value.length < minLength) {
+      console.log('password not long enough - ' + value);
       return setState({
         isValid: false,
         message: passwordLengthText
@@ -52,12 +28,14 @@ function useValidation(value, { checkIfPwned }) {
     if (checkIfPwned) {
       const isPwned = await fetchPwnedStatus(value);
       if (isPwned) {
+        console.log('password is pwned');
         return setState({
           isValid: false,
           message: compromisedPasswordText
         });
       }
     }
+    console.log('password is ok');
     return setState({
       isValid: true,
       message: ''
@@ -65,20 +43,33 @@ function useValidation(value, { checkIfPwned }) {
   };
   useEffect(
     () => {
-      if (window.requestIdleCallback) {
-        window.requestIdleCallback(() => validate());
-      } else {
-        clearTimeout(timeoutId);
-        setTimeoutId(setTimeout(validate, 500));
-      }
+      validate();
     },
     [value]
   );
-  return state;
-}
+  useEffect(
+    () => {
+      console.log(value);
+      onChange(value, { isValid: state.isValid, message: state.message });
+    },
+    [value, state.isValid, state.message]
+  );
+  return (
+    <FormInput
+      onInput={({ currentTarget }) => setValue(currentTarget.value)}
+      noFocus
+      value={value}
+      compact
+      id="password"
+      type="password"
+      name="password"
+      required
+      validation={() => (state.isValid ? '' : state.message)}
+    />
+  );
+};
 
 async function fetchPwnedStatus(password) {
-  console.log(password);
   const passwordDigest = new Hashes.SHA1().hex(password);
   const digestFive = passwordDigest.substring(0, 5).toUpperCase();
   const queryUrl = `${baseUrl}/${digestFive}`;
