@@ -49,6 +49,7 @@ function loginReducer(state, action) {
         return {
           ...state,
           step: action.data,
+          error: false,
           newUser: false,
           requirePassword: false
         };
@@ -101,7 +102,7 @@ const LoginPage = () => {
   } else {
     windowHeight = selectCardHeight;
   }
-  if (error) {
+  if (state.error) {
     windowHeight = windowHeight + 40;
   }
 

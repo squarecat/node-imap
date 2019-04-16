@@ -10,17 +10,24 @@ export default () => {
 
   async function submit(e) {
     e.preventDefault();
-    dispatch({ type: 'set-loading', data: true });
-    const userStrat = await getUserLoginStrategy(state.email);
-    if (userStrat === 'password') {
-      dispatch({ type: 'set-step', data: 'enter-password' });
-    } else if (!userStrat) {
-      dispatch({ type: 'set-step', data: 'signup' });
-    } else {
-      dispatch({ type: 'set-step', data: 'select-existing' });
-      dispatch({ type: 'set-existing-provider', data: userStrat });
+    try {
+      dispatch({ type: 'set-loading', data: true });
+      const userStrat = await getUserLoginStrategy(state.email);
+      if (userStrat === 'password') {
+        dispatch({ type: 'set-step', data: 'enter-password' });
+      } else if (!userStrat) {
+        dispatch({ type: 'set-step', data: 'signup' });
+      } else {
+        dispatch({ type: 'set-step', data: 'select-existing' });
+        dispatch({ type: 'set-existing-provider', data: userStrat });
+      }
+    } catch (err) {
+      dispatch({
+        type: 'set-error',
+        data:
+          'Something went wrong. Please try again or send us a message for help!'
+      });
     }
-    return false;
   }
   return (
     <form id="email-form" styleName="sign-up-form" onSubmit={submit}>
@@ -42,7 +49,7 @@ export default () => {
       </FormGroup>
       {state.error ? (
         <div styleName="error">
-          <p>{state.message}</p>
+          <p>{state.message || state.error}</p>
         </div>
       ) : null}
       <div styleName="signup-buttons">
@@ -75,6 +82,8 @@ async function getUserLoginStrategy(username) {
   const resp = await fetch(`/api/user/${username}/provider`);
   if (resp.status === 404) {
     return null;
+  } else if (resp.status === 200) {
+    return resp.text();
   }
-  return resp.text();
+  throw new Error('Request failed');
 }
