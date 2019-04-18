@@ -3,7 +3,7 @@ import 'isomorphic-fetch';
 import React, { useState } from 'react';
 
 import MailList from './mail-list';
-import Modal from '../../components/modal/price-modal';
+import OnboardingModal from '../../components/modal/onboarding';
 import Template from './template';
 import { Transition } from 'react-transition-group';
 import Welcome from './welcome';
@@ -24,11 +24,24 @@ export default function App({ location = {} } = {}) {
   const [timeframe, setTimeframe] = useState(doScan || rescan);
   const [user, { setLastPaidScanType }] = useUser();
   const { hasScanned, provider } = user;
-
+  const showOnboarding = !hasScanned && !timeframe;
   return (
     <Template>
-      <Transition
-        in={!hasScanned && !timeframe}
+      {showOnboarding ? (
+        <Modal
+          onPurchase={option => {
+            setTimeframe(option);
+            if (option !== '3d') {
+              setLastPaidScanType(option);
+            }
+            togglePriceModal(false);
+          }}
+          onClose={() => togglePriceModal(false)}
+        />
+      ) : null}
+
+      {/* <Transition
+        in={}
         classNames="welcome-content"
         timeout={250}
         unmountOnExit
@@ -41,7 +54,7 @@ export default function App({ location = {} } = {}) {
             />
           </div>
         )}
-      </Transition>
+      </Transition> */}
 
       <Transition
         in={!!(hasScanned || timeframe)}
@@ -61,7 +74,7 @@ export default function App({ location = {} } = {}) {
         )}
       </Transition>
 
-      {showPriceModal ? (
+      {/* {showPriceModal ? (
         <Modal
           onPurchase={option => {
             setTimeframe(option);
@@ -72,7 +85,7 @@ export default function App({ location = {} } = {}) {
           }}
           onClose={() => togglePriceModal(false)}
         />
-      ) : null}
+      ) : null} */}
     </Template>
   );
 }

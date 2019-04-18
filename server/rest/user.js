@@ -1,6 +1,7 @@
 import {
   addToUserIgnoreList,
   addUserScanReminder,
+  createUserTotpToken,
   deactivateUserAccount,
   getReferralStats,
   getUserById,
@@ -9,11 +10,13 @@ import {
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserScanReminder,
-  updateUserPreferences
+  updateUserPreferences,
+  verifyUserTotpToken
 } from '../services/user';
 
+import QRCode from 'qrcode';
 import _sortBy from 'lodash.sortby';
-import auth from './auth';
+import auth from '../middleware/route-auth';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
 import rateLimit from '../middleware/rate-limit';
@@ -209,22 +212,45 @@ export default app => {
 
   // public route, locked down to our domains
   app.get(
-    '/api/user/:username/provider',
+    '/api/user/:hashedEmail/provider',
     rateLimit,
     internalOnly,
     async (req, res) => {
-      const { username } = req.params;
+      const { hashedEmail } = req.params;
       try {
-        const strat = await getUserLoginProvider({ email: username });
+        const strat = await getUserLoginProvider({ email: hashedEmail });
         if (!strat) {
           return res.status(404).send();
         }
         return res.send(strat);
       } catch (err) {
-        logger.error(`user-rest: error getting user login strat ${username}`);
+        logger.error(
+          `user-rest: error getting user login strat ${hashedEmail}`
+        );
         logger.error(err);
         res.status(500).send(err);
       }
     }
   );
+
+  app.get('/api/user/me/2fa/setup', async (req, res) => {
+    const { user } = req;
+    try {
+      const otpauth_url = await createUserTotpToken(user);
+      QRCode.toDataURL(otpauth_url, (err, data_url) => {
+        res.send(data_url);
+      });
+    } catch (err) {
+      logger.error(`user-rest: failed to setup 2fa for user ${user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.put('/api/user/me/2fa/verify', async (req, res) => {
+    const { user, body } = req;
+    const { token } = body;
+    const verified = await verifyUserTotpToken(user, { token });
+    res.send(verified);
+  });
 };

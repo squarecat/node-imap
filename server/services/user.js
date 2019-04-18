@@ -3,11 +3,13 @@ import {
   addPaidScan,
   addScan,
   addScanReminder,
+  addTotpSecret,
   addUnsubscription,
   authenticate,
   createUser,
   createUserFromPassword,
   getLoginProvider,
+  getTotpSecret,
   getUser,
   getUserByEmail,
   getUserByReferralCode,
@@ -19,7 +21,8 @@ import {
   updateIgnoreList,
   updatePaidScan,
   updateUnsubStatus,
-  updateUser
+  updateUser,
+  verifyTotpSecret
 } from '../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -41,6 +44,7 @@ import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
+import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 
 export async function getUserById(id) {
@@ -437,4 +441,26 @@ export async function getUserLoginProvider({ email }) {
   } catch (err) {
     throw err;
   }
+}
+
+export async function createUserTotpToken(user) {
+  const { base32, otpauth_url } = speakeasy.generateSecret();
+  try {
+    await addTotpSecret(user.id, { secret: base32, unverified: true });
+    return otpauth_url;
+  } catch (err) {
+    throw err;
+  }
+}
+export async function verifyUserTotpToken(user, { token }) {
+  const { secret, unverified } = await getTotpSecret(user.id);
+  const verified = speakeasy.totp.verify({
+    secret,
+    encoding: 'base32',
+    token
+  });
+  if (unverified) {
+    verifyTotpSecret(user.id);
+  }
+  return verified;
 }

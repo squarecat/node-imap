@@ -1,7 +1,6 @@
-import auth from './auth';
-
 import * as PaymentService from '../services/payments';
 
+import auth from '../middleware/route-auth';
 import logger from '../utils/logger';
 
 export default app => {

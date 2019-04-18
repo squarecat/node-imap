@@ -590,12 +590,67 @@ export async function authenticate({ email, password }) {
   }
 }
 
+export async function getTotpSecret(userId) {
+  try {
+    const user = await getUser(userId, {
+      password: 1
+    });
+    if (!user) return null;
+    const { password: userPassword } = user;
+    const { totpSecret, unverified } = userPassword;
+    return { secret: totpSecret, unverified };
+  } catch (err) {
+    logger.error('user-dao: failed to get totp secret');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function setTotpSecret(userId, { secret, unverified = true }) {
+  try {
+    return updateUser(userId, {
+      'password.totpSecret': secret,
+      'password.unverified': unverified
+    });
+  } catch (err) {
+    logger.error('user-dao: failed to set totp secret');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function verifyTotpSecret(userId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id: userId },
+      {
+        $unset: {
+          'password.unverified': 1
+        }
+      }
+    );
+  } catch (err) {
+    logger.error('user-dao: failed to verify totp secret');
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function getLoginProvider(email) {
   try {
-    const user = await getUserByEmail(email, {
-      loginProvider: 1
-    });
-    return user ? user.loginProvider : null;
+    const col = await db().collection(COL_NAME);
+    const user = await col.findOne(
+      { hashedEmails: email },
+      {
+        loginProvider: 1,
+        email: 1,
+        accounts: 1
+      }
+    );
+    if (!user) return null;
+    const isLoginEmail = hashEmail(user.email) === email;
+    return isLoginEmail ? user.loginProvider : 'unknown';
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');
     logger.error(err);

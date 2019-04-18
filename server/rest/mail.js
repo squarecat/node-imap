@@ -4,7 +4,7 @@ import {
   getMailEstimates
 } from '../services/mail';
 
-import auth from './auth';
+import auth from '../middleware/route-auth';
 import { checkAuthToken } from '../services/user';
 import fs from 'fs';
 import { imageStoragePath } from 'getconfig';

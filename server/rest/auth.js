@@ -1,14 +1,25 @@
 import logger from '../utils/logger';
 
-export default (req, res, next) => {
-  // do any checks you want to in here
-  // CHECK THE USER STORED IN SESSION FOR A CUSTOM VARIABLE
-  // you can do this however you want with whatever variables you set up
-  if (req.isAuthenticated()) {
-    return next();
-  }
-
-  // IF A USER ISN'T LOGGED IN, THEN REDIRECT THEM SOMEWHERE
-  logger.info('auth: user NOT authenticated');
-  res.sendStatus(403);
+export default app => {
+  // check how many scans are currently running
+  app.post('/auth/reset/:code', async (req, res) => {
+    try {
+      // form data
+    } catch (err) {
+      logger.error(`checks-rest: error checking running scans`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+  // check how many unsubscribes are currently running
+  app.get('/auth/verify/:code', async (req, res) => {
+    try {
+      // verify
+      res.redirect('/app');
+    } catch (err) {
+      logger.error(`checks-rest: error checking`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
 };
