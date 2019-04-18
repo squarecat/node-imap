@@ -20,7 +20,6 @@ import {
   getStats
 } from '../dao/stats';
 
-import { getExpenses } from '../utils/airtable';
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
 
 export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
@@ -82,8 +81,4 @@ export function getAllStats() {
 
 export function getLeaderboardStats() {
   return getUnsubscriptionsLeaderboard();
-}
-
-export function getExpensesStats() {
-  return getExpenses();
 }
