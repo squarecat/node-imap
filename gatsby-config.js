@@ -50,7 +50,8 @@ module.exports = {
         },
         pluginConfig: {
           head: false,
-          respectDNT: true
+          respectDNT: true,
+          exclude: ['/login/*/redirect']
         }
       }
     },
