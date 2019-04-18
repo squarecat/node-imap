@@ -7,12 +7,18 @@ import { useAsync } from '../../utils/hooks';
 
 // Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?
 
-function getNews() {
-  return fetch('/api/news').then(resp => resp.json());
+async function getNews() {
+  const res = await fetch('/api/news', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
+  return res.json();
 }
 
 const InTheNewsPage = () => {
-  const { value: news = [], loadingNews } = useAsync(getNews);
+  const { value: news = [], loading: loadingNews } = useAsync(getNews);
 
   const [quotes, list] = news.reduce(
     (out, n) => {
@@ -28,7 +34,7 @@ const InTheNewsPage = () => {
     <SubPageLayout page="In The News">
       <h1 styleName="title">In The News</h1>
       {loadingNews ? (
-        <p>Loading...</p>
+        <p styleName="loading">Getting Leave Me Alone news...</p>
       ) : (
         <>
           <div styleName="news-list">
