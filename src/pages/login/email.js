@@ -10,7 +10,8 @@ import { LoginContext } from './index';
 export default () => {
   const { state, dispatch } = useContext(LoginContext);
 
-  async function submit() {
+  async function submit(e) {
+    e.preventDefault();
     try {
       dispatch({ type: 'set-loading', data: true });
       const userStrat = await getUserLoginStrategy(state.email);
@@ -38,11 +39,12 @@ export default () => {
         <FormInput
           noFocus
           compact
-          id="username"
           type="email"
-          name="username"
           placeholder=""
+          name="username"
+          id="username"
           required
+          autoComplete="username"
           onChange={({ currentTarget }) => {
             dispatch({ type: 'set-email', data: currentTarget.value });
           }}
@@ -73,12 +75,12 @@ export default () => {
 
         <Button
           as="button"
+          type="submit"
           onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
           loading={state.loading}
           style={{ width: 150 }}
-          onClick={() => submit()}
         >
           <span styleName="text">Next</span>
         </Button>

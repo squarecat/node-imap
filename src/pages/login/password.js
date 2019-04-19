@@ -1,7 +1,7 @@
 import './login.module.scss';
 
 import { FormGroup, FormInput, FormLabel } from '../../components/form';
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 
 import Button from '../../components/btn';
 import { LoginContext } from './index';
@@ -9,15 +9,13 @@ import PasswordInput from '../../components/form/password';
 import { navigate } from 'gatsby';
 
 export default ({
-  checkIfPwned = true,
+  doValidation = true,
   confirm = false,
   submitText = 'Login',
-  submitAction = '/auth/login'
+  submitAction = '/auth/login',
+  autoComplete
 }) => {
   const { state, dispatch } = useContext(LoginContext);
-
-  const matchPass = useRef(null);
-
   async function onSubmit(e) {
     e.preventDefault();
     const { password, email } = state;
@@ -50,11 +48,17 @@ export default ({
       onSubmit={onSubmit}
       method="post"
     >
-      <input type="hidden" name="username" value={state.email} />
+      <input
+        type="hidden"
+        name="username"
+        value={state.email}
+        autoComplete="username"
+      />
       <FormGroup fluid>
         <FormLabel htmlFor="password">Password</FormLabel>
         <PasswordInput
-          checkIfPwned={checkIfPwned}
+          autoComplete={autoComplete}
+          doValidation={doValidation}
           onChange={password =>
             dispatch({ type: 'set-password', data: password })
           }
@@ -64,10 +68,10 @@ export default ({
         <FormGroup fluid>
           <FormLabel htmlFor="password-confirm">Confirm password</FormLabel>
           <FormInput
-            ref={matchPass}
             id="password-confirm"
             type="password"
             name="password-confirm"
+            autoComplete={autoComplete}
             required
             compact
             validation={value =>
