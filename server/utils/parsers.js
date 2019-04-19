@@ -11,8 +11,12 @@ export function parseEmail(str = '') {
     const [, name, email] = /^(.*)(<.*>)/.exec(str);
     fromName = name;
     fromEmail = email;
+  } else if (str.match(/<?.*@/)) {
+    const [, name] = /<?(.*)@/.exec(str);
+    fromName = name || str;
+    fromEmail = str;
   } else {
-    fromName = '';
+    fromName = str;
     fromEmail = str;
   }
   return { fromName, fromEmail };

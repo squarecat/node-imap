@@ -23,11 +23,7 @@ export default visProps => (
         <TextLink href="/faq">FAQ</TextLink>
       </li>
       <li>
-        <TextLink
-          target="_blank"
-          rel="noopener noreferrer"
-          href="http://leavemealone.releasepage.co"
-        >
+        <TextLink target="_" href="http://leavemealone.releasepage.co">
           Releases
         </TextLink>
       </li>
@@ -38,9 +34,8 @@ export default visProps => (
       </li>
       <li>
         <TextLink
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://blog.squarecat.io"
+          target="_"
+          href="https://blog.squarecat.io/tag/leave-me-alone"
         >
           Blog
         </TextLink>

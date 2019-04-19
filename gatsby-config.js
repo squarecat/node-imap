@@ -3,6 +3,7 @@ module.exports = {
     title: 'Leave Me Alone - Take back control of your inbox',
     description: `See all of your subscription emails in one place and unsubscribe from them with a single click.`,
     baseUrl: 'https://leavemealone.xyz',
+    siteUrl: 'https://leavemealone.xyz',
     twitterHandle: '@LeaveMeAloneApp',
     siteName: 'Leave Me Alone'
   },
@@ -11,6 +12,21 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-sass`,
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: {
+        exclude: [
+          `/maintenance`,
+          `/goodbye`,
+          `/wall-of-love`,
+          `/header`,
+          `/gifts/gift-checkout`,
+          `/gifts/gifts-prices`,
+          `/app`,
+          `/app/**/*`
+        ]
+      }
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {

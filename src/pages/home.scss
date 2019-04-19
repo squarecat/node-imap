@@ -162,7 +162,8 @@ h1 {
   position: relative;
 }
 
-.love .home-container-inner {
+.love .home-container-inner,
+.news .home-container-inner {
   width: 90%;
   max-width: 1050px;
 }
@@ -194,7 +195,7 @@ h1 {
   margin: 0;
 }
 
-.how {
+.learn {
   background: linear-gradient(to bottom right, #ffefee, #fddbd7 60%);
   color: $color-primary-font;
   font-weight: bolder;
@@ -203,7 +204,7 @@ h1 {
   text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.15);
 }
 
-.how:before {
+.learn:before {
   content: '';
   position: absolute;
   top: 0;
@@ -249,7 +250,9 @@ h1 {
 }
 .makers,
 .love,
-.pricing {
+.pricing,
+.news,
+.how {
   padding-top: 180px;
   min-height: 80vh;
 }
@@ -460,7 +463,8 @@ h1 {
   width: 78%;
 }
 
-.feature-title {
+.feature-title,
+.step-title {
   font-size: 20px;
   width: 200px;
   margin-bottom: 10px;
@@ -515,7 +519,8 @@ h1 {
   height: 21px;
 }
 
-.feature-header {
+.feature-header,
+.how-header {
   margin-bottom: 50px;
 }
 
@@ -524,6 +529,33 @@ h1 {
 }
 .unsub-iphone-img {
   display: none;
+}
+
+.in-the-news {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.news-item {
+  flex-basis: 30%;
+  margin: 0 10px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  p {
+    margin-bottom: 25px;
+  }
+
+  @media (max-width: 768px) {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+.news-logo {
+  display: inline-block;
+  height: 44px;
 }
 
 @media (max-width: 800px) {
@@ -617,13 +649,10 @@ h1 {
   .catchy-tagline {
     font-size: 20px;
   }
-  .how {
+  .learn {
     padding: 150px 0 50px 0;
   }
-  .how-title {
-    margin-top: 150px;
-  }
-  .how > div,
+  .learn > div,
   .makers > div {
     padding: 20px;
   }

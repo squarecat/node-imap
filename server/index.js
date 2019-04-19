@@ -60,9 +60,9 @@ giftsApi(app);
 
 mailgunWebhooks(app);
 
-app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(path.join(__dirname, 'sitemap.xml'));
-});
+// app.get('/sitemap.xml', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'sitemap.xml'));
+// });
 app.get('/api', (req, res) => res.send('OK'));
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));

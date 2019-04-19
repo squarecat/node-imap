@@ -3,7 +3,7 @@ import config from 'getconfig';
 import logger from './logger';
 
 const airtableKey = config.airtable.key;
-const { expenses, beta } = config.airtable;
+const { expenses, beta, news } = config.airtable;
 
 const airtable = new Airtable({
   apiKey: airtableKey
@@ -11,6 +11,7 @@ const airtable = new Airtable({
 
 const expensesBase = airtable.base(expenses.baseId);
 const betaBase = airtable.base(beta.baseId);
+const newsBase = airtable.base(news.baseId);
 
 export function getExpenses() {
   return new Promise((resolve, reject) => {
@@ -31,6 +32,41 @@ export function getExpenses() {
           url: r.get('URL')
         }));
         return resolve(expenses);
+      });
+  });
+}
+
+export function getNews() {
+  return new Promise((resolve, reject) => {
+    newsBase(news.tableId)
+      .select({
+        view: 'Grid view'
+      })
+      .firstPage((err, records) => {
+        if (err) {
+          logger.error('airtable: failed to get news stats');
+          logger.error(err);
+          return reject(err);
+        }
+        const news = records.reduce(
+          (out, r) =>
+            r.get('hidden')
+              ? out
+              : [
+                  ...out,
+                  {
+                    name: r.get('Name'),
+                    quote: r.get('Quote'),
+                    shortQuote: r.get('Short Quote'),
+                    url: r.get('Article URL'),
+                    logoUrl: r.get('Logo URL'),
+                    featured: r.get('Featured'),
+                    simple: r.get('Listing')
+                  }
+                ],
+          []
+        );
+        return resolve(news);
       });
   });
 }
