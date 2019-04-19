@@ -6,26 +6,29 @@ import Hashes from 'jshashes';
 const baseUrl = 'https://api.pwnedpasswords.com/range';
 
 const compromisedPasswordText = `
-This password was found in a database of compromised passwords. Using a password that has been breached is seriously dangerous.
-If you use this password for any other services then you should
-change it immediately.
-`;
+This password was found in a database of compromised passwords. Using a password that
+has been breached is seriously dangerous.
+If you use this password for any other services then you should change it immediately.`;
 const minLength = 6;
 const passwordLengthText = 'Password must be greater than 6 characters';
 
-export default ({ checkIfPwned = true, onChange = () => {} }) => {
+export default ({
+  doValidation = true,
+  onChange = () => {},
+  autoComplete = 'current-password'
+}) => {
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
 
   const validate = async () => {
-    if (value.length < minLength) {
-      console.log('password not long enough - ' + value);
-      return setState({
-        isValid: false,
-        message: passwordLengthText
-      });
-    }
-    if (checkIfPwned) {
+    if (doValidation) {
+      if (value.length < minLength) {
+        console.log('password not long enough - ' + value);
+        return setState({
+          isValid: false,
+          message: passwordLengthText
+        });
+      }
       const isPwned = await fetchPwnedStatus(value);
       if (isPwned) {
         console.log('password is pwned');
@@ -43,7 +46,7 @@ export default ({ checkIfPwned = true, onChange = () => {} }) => {
   };
   useEffect(
     () => {
-      validate();
+      value && validate();
     },
     [value]
   );
@@ -54,17 +57,17 @@ export default ({ checkIfPwned = true, onChange = () => {} }) => {
     },
     [value, state.isValid, state.message]
   );
+  console.log('pw', value, state.isValid, state.message);
   return (
     <FormInput
       onInput={({ currentTarget }) => setValue(currentTarget.value)}
       noFocus
       value={value}
       compact
-      id="password"
       type="password"
-      name="password"
       required
       validation={() => (state.isValid ? '' : state.message)}
+      autoComplete={autoComplete}
     />
   );
 };

@@ -2,7 +2,23 @@ import './btn.module.scss';
 
 import { Link } from 'gatsby';
 import React from 'react';
+import _omit from 'lodash.omit';
 import cx from 'classnames';
+
+const styleProps = [
+  'loading',
+  'compact',
+  'centered',
+  'muted',
+  'icon',
+  'disabled',
+  'basic',
+  'smaller',
+  'stretch',
+  'outlined',
+  'fill',
+  'onDarkBg'
+];
 
 export default ({
   loading,
@@ -28,6 +44,8 @@ export default ({
     fill: props.fill,
     'on-dark-bg': props.onDarkBg
   });
+
+  const elProps = _omit(props, styleProps);
   if (as === 'link' || linkTo) {
     return (
       <Link styleName={classes} to={linkTo} state={linkArgs}>
@@ -37,14 +55,14 @@ export default ({
   }
   if (as === 'button') {
     return (
-      <button styleName={classes} onClick={onClick} type="button" {...props}>
+      <button styleName={classes} onClick={onClick} type="button" {...elProps}>
         <span styleName="btn-content">{label || children}</span>
         {loading ? <span styleName="btn-loader" /> : null}
       </button>
     );
   }
   return (
-    <a styleName={classes} onClick={onClick}>
+    <a styleName={classes} onClick={onClick} {...elProps}>
       <span styleName="btn-content">{label || children}</span>
       {loading ? <span styleName="btn-loader" /> : null}
     </a>

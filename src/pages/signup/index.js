@@ -29,7 +29,6 @@ const LoginPage = () => {
   const setActive = isActive => {
     activeRef.current.classList[isActive ? 'add' : 'remove'](styles.active);
   };
-  const matchPass = useRef(null);
   const classes = cx('hold-onto-your-butts-we-are-logging-in', {
     'password-login': isPassword,
     errored: !!formError
@@ -121,7 +120,6 @@ const LoginPage = () => {
             <FormGroup fluid>
               <FormLabel htmlFor="password-confirm">Confirm password</FormLabel>
               <FormInput
-                ref={matchPass}
                 id="password-confirm"
                 type="password"
                 name="password-confirm"

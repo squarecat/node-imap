@@ -70,7 +70,7 @@ const initialState = {
   loading: false,
   step: defaultStep,
   password: '',
-  email: username,
+  email: username || '',
   error,
   existingProvider: null
 };
@@ -110,95 +110,118 @@ const LoginPage = () => {
         <div ref={activeRef} styleName={classes}>
           <div styleName="card-flip" style={{ maxHeight: windowHeight }}>
             <div styleName="login-boxy-box" data-active={step === 'select'}>
-              <div styleName="beautiful-logo">
-                <img src={logo} alt="logo" />
-              </div>
-              <h1 styleName="title">Login to Leave Me Alone</h1>
-              <p>
-                Google and Outlook authorize Leave Me Alone without a password.
-              </p>
-              <div styleName="buttons">
-                <a
-                  onClick={() =>
-                    dispatch({ type: 'set-step', data: 'enter-email' })
-                  }
-                  onMouseEnter={() =>
-                    dispatch({ type: 'set-active', data: true })
-                  }
-                  onMouseLeave={() =>
-                    dispatch({ type: 'set-active', data: false })
-                  }
-                  styleName="login-me-in-dammit"
-                >
-                  <span styleName="text">Login with Password</span>
-                </a>
-                <AuthButton provider="google" />
-                <AuthButton provider="outlook" />
-              </div>
-              {getError(error)}
-              <p styleName="notice">
-                We will use your email to very occassionally send you product
-                updates. You can opt-out at any time. We will NEVER share it
-                with anyone, for any reason, EVER.
-              </p>
+              {step === 'select' ? (
+                <>
+                  <div styleName="beautiful-logo">
+                    <img src={logo} alt="logo" />
+                  </div>
+                  <h1 styleName="title">Login to Leave Me Alone</h1>
+                  <p>
+                    Google and Outlook authorize Leave Me Alone without a
+                    password.
+                  </p>
+                  <div styleName="buttons">
+                    <a
+                      onClick={() =>
+                        dispatch({ type: 'set-step', data: 'enter-email' })
+                      }
+                      onMouseEnter={() =>
+                        dispatch({ type: 'set-active', data: true })
+                      }
+                      onMouseLeave={() =>
+                        dispatch({ type: 'set-active', data: false })
+                      }
+                      styleName="login-me-in-dammit"
+                    >
+                      <span styleName="text">Login with Password</span>
+                    </a>
+                    <AuthButton provider="google" />
+                    <AuthButton provider="outlook" />
+                  </div>
+                  {getError(error)}
+                  <p styleName="notice">
+                    We will use your email to very occassionally send you
+                    product updates. You can opt-out at any time. We will NEVER
+                    share it with anyone, for any reason, EVER.
+                  </p>
+                </>
+              ) : null}
             </div>
             <div
               styleName="email-login-box"
               data-active={step === 'enter-email'}
             >
-              <div styleName="beautiful-logo">
-                <img src={logo} alt="logo" />
-              </div>
-              <h1 styleName="title">Login to Leave Me Alone</h1>
-              <p>You're one step away from a clean inbox!</p>
-              <EmailForm />
+              {step === 'enter-email' ? (
+                <>
+                  <div styleName="beautiful-logo">
+                    <img src={logo} alt="logo" />
+                  </div>
+                  <h1 styleName="title">Login to Leave Me Alone</h1>
+                  <p>You're one step away from a clean inbox!</p>
+                  <EmailForm />
+                </>
+              ) : null}
             </div>
             <div styleName="new-user-login-box" data-active={step === 'signup'}>
-              <div styleName="beautiful-logo">
-                <img src={logo} alt="logo" />
-              </div>
-              <h1 styleName="title">Welcome to Leave Me Alone!</h1>
-              <p>
-                Signing in with{' '}
-                <span styleName="email-label">{state.email}</span>
-              </p>
+              {step === 'signup' ? (
+                <>
+                  <div styleName="beautiful-logo">
+                    <img src={logo} alt="logo" />
+                  </div>
+                  <h1 styleName="title">Welcome to Leave Me Alone!</h1>
+                  <p>
+                    Signing in with{' '}
+                    <span styleName="email-label">{state.email}</span>
+                  </p>
 
-              <PasswordForm
-                confirm={true}
-                checkPwned={true}
-                submitAction="/auth/signup"
-              />
+                  <PasswordForm
+                    autoComplete="new-password"
+                    confirm={true}
+                    checkPwned={true}
+                    submitAction="/auth/signup"
+                  />
+                </>
+              ) : null}
             </div>
             <div
               styleName="existing-user-login-box"
               data-active={step === 'enter-password'}
             >
-              <div styleName="beautiful-logo">
-                <img src={logo} alt="logo" />
-              </div>
-              <h1 styleName="title">Login to Leave Me Alone</h1>
-              <p>Welcome back!</p>
-              <p>
-                Signing in with{' '}
-                <span styleName="email-label">{state.email}</span>
-              </p>
-              <PasswordForm
-                confirm={false}
-                submitAction="/auth/login"
-                checkIfPwned={false}
-              />
+              {step === 'enter-password' ? (
+                <>
+                  <div styleName="beautiful-logo">
+                    <img src={logo} alt="logo" />
+                  </div>
+                  <h1 styleName="title">Login to Leave Me Alone</h1>
+                  <p>Welcome back!</p>
+                  <p>
+                    Signing in with{' '}
+                    <span styleName="email-label">{state.email}</span>
+                  </p>
+                  <PasswordForm
+                    confirm={false}
+                    autoComplete="current-password"
+                    submitAction="/auth/login"
+                    doValidation={false}
+                  />
+                </>
+              ) : null}
             </div>
             <div styleName="two-factor-box" data-active={step === '2fa'}>
-              <h1 styleName="title">Two-factor Auth Required</h1>
-              <p>
-                Signing in with{' '}
-                <span styleName="email-label">{state.email}</span>
-              </p>
-              <p>
-                Open your authentication app and enter the code for Leave Me
-                Alone.
-              </p>
-              <TwoFactorForm />
+              {step === '2fa' ? (
+                <>
+                  <h1 styleName="title">Two-factor Auth Required</h1>
+                  <p>
+                    Signing in with{' '}
+                    <span styleName="email-label">{state.email}</span>
+                  </p>
+                  <p>
+                    Open your authentication app and enter the code for Leave Me
+                    Alone.
+                  </p>
+                  <TwoFactorForm />
+                </>
+              ) : null}
             </div>
             <div
               styleName="existing-user-suggestion-box"
