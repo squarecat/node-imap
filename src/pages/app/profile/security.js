@@ -129,6 +129,7 @@ export default () => {
       ) : null}
       {is2faVerify ? (
         <VerifyTwoFacorAuthModal
+          action={token => removeTwoFactorAuth(token)}
           onClose={({ verified }) => {
             show2faVerify(false);
             if (verified) {
@@ -140,3 +141,15 @@ export default () => {
     </ProfileLayout>
   );
 };
+
+function removeTwoFactorAuth(token) {
+  fetch('/api/user/me/2fa', {
+    method: 'DELETE',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ token })
+  });
+}

@@ -35,7 +35,7 @@ function isUserAuthenticated(req) {
 
   // check 2fa auth
   const requiresSecondFactor =
-    user.password.totpSecret && !user.password.unverified;
+    user.password && user.password.totpSecret && !user.password.unverified;
   if (!requiresSecondFactor) {
     return isRegularAuth;
   }

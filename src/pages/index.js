@@ -2,12 +2,13 @@ import 'isomorphic-fetch';
 import './home.scss';
 
 import React, { useRef } from 'react';
+import { TextImportant, TextLink } from '../components/text';
 
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
-import { TextImportant, TextLink } from '../components/text';
+import { Link } from 'gatsby';
 import WallOfLove from '../components/landing/wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
@@ -30,7 +31,7 @@ function getFeaturedNews() {
     .then(data => data.filter(d => d.featured));
 }
 
-const IndexPage = () => {
+const IndexPage = ({ transitionStatus }) => {
   const activeRef = useRef(null);
   const setActive = isActive => {
     activeRef.current.classList[isActive ? 'add' : 'remove']('active');
@@ -51,7 +52,7 @@ const IndexPage = () => {
   return (
     <Layout>
       <Colin />
-      <div id="main">
+      <div id="main" data-status={transitionStatus}>
         <Header setActive={setActive} />
         <div
           className={`friendly-neighbourhood-hero ${
@@ -81,14 +82,15 @@ const IndexPage = () => {
                 </p>
 
                 <div className="join-container">
-                  <a
-                    href="/login"
+                  <Link
+                    to="/signup"
                     onMouseEnter={() => setActive(true)}
                     onMouseLeave={() => setActive(false)}
                     className={`beam-me-up-cta`}
+                    state={{ register: true }}
                   >
                     Get Started For Free!
-                  </a>
+                  </Link>
                   {!statsError ? (
                     <p
                       className={`join-text ${

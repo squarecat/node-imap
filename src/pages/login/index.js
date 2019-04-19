@@ -5,6 +5,7 @@ import React, { createContext, useReducer, useRef } from 'react';
 import AuthButton from './auth-btn';
 import EmailForm from './email';
 import Layout from '../../layouts/layout';
+import { Link } from 'gatsby';
 import PasswordForm from './password';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
@@ -69,6 +70,7 @@ function loginReducer(state, action) {
 const initialState = {
   loading: false,
   step: defaultStep,
+  register: false,
   password: '',
   email: username || '',
   error,
@@ -77,11 +79,14 @@ const initialState = {
 
 export const LoginContext = createContext({ state: initialState });
 
-const LoginPage = () => {
+const LoginPage = ({ register, transitionStatus }) => {
   const activeRef = useRef(null);
-  const [state, dispatch] = useReducer(loginReducer, initialState);
+  const [state, dispatch] = useReducer(loginReducer, {
+    ...initialState,
+    register: !!register
+  });
+
   const { step } = state;
-  console.log(`loading:${state.loading}`);
   let windowHeight;
   if (step === 'signup') {
     windowHeight = loginNewUserHeight;
@@ -103,19 +108,24 @@ const LoginPage = () => {
   const classes = cx('hold-onto-your-butts-we-are-logging-in', {
     errored: !!state.error
   });
+  const action = register ? 'Sign up' : 'Login';
 
   return (
-    <Layout page="Login">
+    <Layout page={action}>
       <LoginContext.Provider value={{ state, dispatch }}>
-        <div ref={activeRef} styleName={classes}>
-          <div styleName="card-flip" style={{ maxHeight: windowHeight }}>
+        <div ref={activeRef} styleName={classes} data-status={transitionStatus}>
+          <div
+            styleName="card-flip"
+            style={{ maxHeight: windowHeight }}
+            data-status={transitionStatus}
+          >
             <div styleName="login-boxy-box" data-active={step === 'select'}>
               {step === 'select' ? (
                 <>
                   <div styleName="beautiful-logo">
                     <img src={logo} alt="logo" />
                   </div>
-                  <h1 styleName="title">Login to Leave Me Alone</h1>
+                  <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>
                     Google and Outlook authorize Leave Me Alone without a
                     password.
@@ -133,11 +143,24 @@ const LoginPage = () => {
                       }
                       styleName="login-me-in-dammit"
                     >
-                      <span styleName="text">Login with Password</span>
+                      <span
+                        style={{ marginLeft: 0, textAlign: 'center' }}
+                        styleName="text"
+                      >{`${action} with Password`}</span>
                     </a>
-                    <AuthButton provider="google" />
-                    <AuthButton provider="outlook" />
+                    <AuthButton action={action} provider="google" />
+                    <AuthButton action={action} provider="outlook" />
                   </div>
+                  {register ? (
+                    <p>
+                      Already have an account? <a href="/login">Sign in</a>.
+                    </p>
+                  ) : (
+                    <p>
+                      Don't have an account yet? <a href="/signup">Sign up</a>.
+                    </p>
+                  )}
+
                   {getError(error)}
                   <p styleName="notice">
                     We will use your email to very occassionally send you
@@ -156,7 +179,7 @@ const LoginPage = () => {
                   <div styleName="beautiful-logo">
                     <img src={logo} alt="logo" />
                   </div>
-                  <h1 styleName="title">Login to Leave Me Alone</h1>
+                  <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>You're one step away from a clean inbox!</p>
                   <EmailForm />
                 </>

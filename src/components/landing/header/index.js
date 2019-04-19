@@ -1,7 +1,9 @@
 import './header.module.scss';
 
+import { Link } from 'gatsby';
 import React from 'react';
 import { TextLink } from '../../text';
+import TransitionLink from 'gatsby-plugin-transition-link';
 import cx from 'classnames';
 import smallLogo from '../../../assets/envelope-logo.png';
 
@@ -28,14 +30,14 @@ export default ({ setActive = () => {}, inverted = false }) => (
           <TextLink href="#pricing">Pricing</TextLink>
         </li>
         <li styleName="nav-login">
-          <a
-            href="/app"
+          <Link
+            to="/login"
             onMouseEnter={() => setActive(true)}
             onMouseLeave={() => setActive(false)}
             styleName="login-btn"
           >
             Log in
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

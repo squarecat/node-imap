@@ -11,6 +11,7 @@ import {
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserScanReminder,
+  removeUserTotpToken,
   updateUserPreferences
 } from '../services/user';
 
@@ -20,6 +21,7 @@ import auth from '../middleware/route-auth';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
 import rateLimit from '../middleware/rate-limit';
+import totpAuth from '../middleware/totp-auth';
 
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
@@ -236,7 +238,7 @@ export default app => {
     }
   );
 
-  app.get('/api/user/me/2fa/setup', async (req, res) => {
+  app.get('/api/user/me/2fa/setup', auth, async (req, res) => {
     const { user } = req;
     try {
       const { otpauth_url, base32 } = await createUserTotpToken(user);
@@ -245,6 +247,17 @@ export default app => {
       });
     } catch (err) {
       logger.error(`user-rest: failed to setup 2fa for user ${user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+  app.delete('/api/user/me/2fa', totpAuth, async (req, res) => {
+    const { user } = req;
+    try {
+      await removeUserTotpToken(user);
+      res.status(204).send();
+    } catch (err) {
+      logger.error(`user-rest: failed to delete 2fa for user ${user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }

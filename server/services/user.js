@@ -16,12 +16,14 @@ import {
   incrementUserReferralBalance,
   removeAccount,
   removeScanReminder,
+  removeTotpSecret,
   removeUser,
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
   updateUnsubStatus,
   updateUser,
+  updateUserWithAccount,
   verifyTotpSecret
 } from '../dao/user';
 import {
@@ -99,8 +101,11 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
     } else {
-      user = await updateUser(
-        { id, 'accounts.email': email },
+      user = await updateUserWithAccount(
+        {
+          id,
+          'accounts.email': email
+        },
         {
           'accounts.$.keys': keys,
           profileImg,
@@ -108,6 +113,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         }
       );
     }
+
     return user;
   } catch (err) {
     logger.error(
@@ -471,4 +477,12 @@ export async function verifyUserTotpToken(user, { token }) {
     verifyTotpSecret(user.id);
   }
   return verified;
+}
+
+export async function removeUserTotpToken(user) {
+  try {
+    return removeTotpSecret(user.id);
+  } catch (err) {
+    throw err;
+  }
 }

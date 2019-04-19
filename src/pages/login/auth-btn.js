@@ -5,6 +5,7 @@ import React, { useContext, useEffect } from 'react';
 
 import { LoginContext } from './index';
 
+const BASE_URL = process.env.BASE_URL;
 let windowObjectReference = null;
 let previousUrl = null;
 const strWindowFeatures = [
@@ -30,15 +31,18 @@ const strWindowFeatures = [
 const receiveMessage = (event, provider) => {
   // Do we trust the sender of this message?  (might be
   // different from what we originally opened, for example).
-  if (event.origin !== process.env.BASE_URL) {
+  if (event.origin !== BASE_URL) {
     return;
   }
-  const params = event.data;
-  const redirectUrl = `/auth/${provider}/callback${params}`;
-  window.location.pathname = redirectUrl;
+  const { data } = event;
+  if (data.source === 'lma-login-redirect') {
+    const { payload } = data;
+    const redirectUrl = `/auth/${provider}/callback${payload}`;
+    window.location.pathname = redirectUrl;
+  }
 };
 
-export default ({ provider }) => {
+export default ({ provider, action }) => {
   const { dispatch } = useContext(LoginContext);
 
   useEffect(() => {
@@ -81,7 +85,7 @@ export default ({ provider }) => {
         styleName="login-me-in-dammit"
       >
         <GoogleIcon />
-        <span styleName="text">Login with Google</span>
+        <span styleName="text">{`${action} with Google`}</span>
       </a>
     );
   } else if (provider === 'outlook') {
@@ -98,7 +102,7 @@ export default ({ provider }) => {
         styleName="login-me-in-dammit"
       >
         <OutlookIcon />
-        <span styleName="text">Login with Outlook</span>
+        <span styleName="text">{`${action} with Outlook`}</span>
       </a>
     );
   } else {

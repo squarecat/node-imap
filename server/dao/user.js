@@ -140,6 +140,25 @@ export async function updateUser(id, userData) {
   }
 }
 
+export async function updateUserWithAccount(query, userData) {
+  let updateObj = {
+    ...userData,
+    lastUpdatedAt: isoDate()
+  };
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(query, {
+      $set: updateObj
+    });
+    const user = await getUser(query.id);
+    return user;
+  } catch (err) {
+    logger.error(`users-dao: error updating user ${query.id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function addAccount(id, data) {
   try {
     const col = await db().collection(COL_NAME);
@@ -622,11 +641,30 @@ export async function addTotpSecret(userId, { secret, unverified = true }) {
 export async function verifyTotpSecret(userId) {
   try {
     const col = await db().collection(COL_NAME);
-    await col.updateOne(
+    return col.updateOne(
       { id: userId },
       {
         $unset: {
           'password.unverified': 1
+        }
+      }
+    );
+  } catch (err) {
+    logger.error('user-dao: failed to verify totp secret');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function removeTotpSecret(userId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.updateOne(
+      { id: userId },
+      {
+        $unset: {
+          'password.unverified': 1,
+          'password.totpSecret': 1
         }
       }
     );

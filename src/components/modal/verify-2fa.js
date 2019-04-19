@@ -6,12 +6,19 @@ import Button from '../btn';
 import ModalClose from './modal-close';
 import TwoFactorInput from '../2fa';
 
-export default ({ onClose }) => {
+export default ({ onClose, action }) => {
   const [isShown, setShown] = useState(false);
-  const [isVerified, setVerified] = useState(null);
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(() => onClose({ verified: isVerified }), 300);
+  const [{ isVerified, token }, setVerified] = useState({});
+  const onClickClose = async () => {
+    try {
+      if (action && isVerified) {
+        await action(token);
+      }
+      setShown(false);
+      setTimeout(() => onClose({ verified: isVerified }), 300);
+    } catch (err) {
+      setVerified({ isVerified: false });
+    }
   };
   const [isLoading, setLoading] = useState(false);
 
@@ -39,7 +46,10 @@ export default ({ onClose }) => {
             Open your authentication app and enter the code for Leave Me Alone.
           </p>
           <TwoFactorInput
-            onComplete={isVer => setVerified(isVer)}
+            action={action}
+            onComplete={(isVer, { token }) =>
+              setVerified({ isVerified: isVer, token })
+            }
             onLoading={is2faLoading => setLoading(is2faLoading)}
           />
           {isVerified === false ? (

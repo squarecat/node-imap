@@ -11,7 +11,7 @@ export default ({ onComplete = () => {}, onLoading = () => {} }) => {
   useEffect(
     () => {
       if (verified !== 'pending') {
-        onComplete(verified);
+        onComplete(verified, { token: value });
       }
       onLoading(loading);
     },
