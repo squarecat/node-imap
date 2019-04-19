@@ -7,11 +7,11 @@ import { LoginContext } from './index';
 
 let windowObjectReference = null;
 let previousUrl = null;
-const strWindowFeatures = [
-  'height=700',
-  'width=600',
-  'top=100',
-  'left=100',
+const windowFeatures = [
+  // 'height=700',
+  // 'width=600',
+  // 'top=100',
+  // 'left=100',
   // A dependent window closes when its parent window closes.
   'dependent=yes',
   // hide menubars and toolbars for the simplest popup
@@ -25,7 +25,7 @@ const strWindowFeatures = [
   // chrome specific
   'chrome=yes',
   'centerscreen=yes'
-].join(',');
+];
 
 const receiveMessage = (event, provider) => {
   // Do we trust the sender of this message?  (might be
@@ -49,6 +49,18 @@ export default ({ provider }) => {
 
   const openSignInWindow = (url, name) => {
     window.removeEventListener('message', receiveMessage);
+
+    const width = 600;
+    const height = 700;
+
+    const { left, top } = centerPopupPosition(width, height);
+    const strWindowFeatures = [
+      ...windowFeatures,
+      `width=${width}`,
+      `height=${height}`,
+      `top=${top}`,
+      `left=${left}`
+    ].join(',');
 
     if (windowObjectReference === null || windowObjectReference.closed) {
       windowObjectReference = window.open(url, name, strWindowFeatures);
@@ -105,3 +117,24 @@ export default ({ provider }) => {
     return null;
   }
 };
+
+function centerPopupPosition(popupWidth, popupHeight) {
+  const windowWidth = window.innerWidth
+    ? window.innerWidth
+    : document.documentElement.clientWidth
+    ? document.documentElement.clientWidth
+    : screen.width;
+  const windowHeight = window.innerHeight
+    ? window.innerHeight
+    : document.documentElement.clientHeight
+    ? document.documentElement.clientHeight
+    : screen.height;
+
+  const left = (windowWidth - popupWidth) / 2;
+  const top = (windowHeight - popupHeight) / 2;
+
+  return {
+    left,
+    top
+  };
+}

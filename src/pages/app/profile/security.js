@@ -1,30 +1,74 @@
 import './security.module.scss';
 
+import {
+  FormError,
+  FormGroup,
+  FormInput,
+  FormLabel
+} from '../../../components/form';
 import React, { useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 
 import Button from '../../../components/btn';
-import { FormInput } from '../../../components/form';
+import PasswordInput from '../../../components/form/password';
 import ProfileLayout from './layout';
 import SetupTwoFacorAuthModal from '../../../components/modal/create-2fa';
 import { TextImportant } from '../../../components/text';
 import VerifyTwoFacorAuthModal from '../../../components/modal/verify-2fa';
 import useUser from '../../../utils/hooks/use-user';
 
-export default () => {
-  const [passwords, setPasswords] = useState({
-    password: '',
-    passwordConfirm: ''
+export async function updatePassword(oldPassword, newPassword) {
+  const resp = await fetch('/api/me/password', {
+    method: 'PATCH',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({
+      op: 'update',
+      value: { password: oldPassword, newPassword }
+    })
   });
+  return resp.json();
+}
+
+export default () => {
+  const [state, setState] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+    error: false,
+    loading: false
+  });
+
   const [is2faSetup, show2faSetup] = useState(false);
   const [is2faVerify, show2faVerify] = useState(false);
   const [requiresTwoFactorAuth, { setRequiresTwoFactorAuth }] = useUser(
     u => u.requiresTwoFactorAuth
   );
 
-  const onClickChangePassword = async () => {
-    console.warn('not yet implemented');
-  };
+  async function onSubmit() {
+    setState({ ...state, loading: true });
+    const { success, message } = await updatePassword(
+      state.oldPassword,
+      state.newPassword
+    );
+    if (success !== true) {
+      return setState({
+        error: message,
+        loading: false
+      });
+    } else {
+      return setState({
+        oldPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+        error: false,
+        loading: false
+      });
+    }
+  }
 
   return (
     <ProfileLayout pageName="Security">
@@ -74,48 +118,77 @@ export default () => {
       </div>
       <div styleName="security-section">
         <h2>Change password</h2>
-        <FormInput
-          value={passwords.oldPassword}
-          placeholder="Old password"
-          onChange={e => {
-            setPasswords({
-              ...passwords,
-              oldPassword: e.currentTarget.value
-            });
-          }}
-        />
-        <FormInput
-          value={passwords.newPassword}
-          placeholder="New password"
-          onChange={e => {
-            setPasswords({
-              ...passwords,
-              newPassword: e.currentTarget.value
-            });
-          }}
-        />
-        <FormInput
-          value={passwords.newPasswordConfirm}
-          placeholder="Confirm new password"
-          onChange={e => {
-            setPasswords({
-              ...passwords,
-              newPasswordConfirm: e.currentTarget.value
-            });
-          }}
-        />
-        <div styleName="password-btn">
-          <Button
-            basic
-            compact
-            disabled={!passwords.newPassword || !passwords.newPasswordConfirm}
-            onClick={() => {
-              onClickChangePassword();
-            }}
-          >
-            Update
-          </Button>
-        </div>
+        <form
+          id="change-password-form"
+          // styleName="sign-up-form"
+          onSubmit={onSubmit}
+          method="post"
+        >
+          <FormGroup fluid>
+            <FormLabel htmlFor="password">Old Password</FormLabel>
+            <FormInput
+              compact
+              value={state.oldPassword}
+              type="password"
+              name="oldPassword"
+              onChange={e => {
+                setState({
+                  ...state,
+                  oldPassword: e.currentTarget.value
+                });
+              }}
+            />
+          </FormGroup>
+          <FormGroup fluid>
+            <FormLabel htmlFor="password">New Password</FormLabel>
+            <PasswordInput
+              checkIfPwned={true}
+              value={state.newPassword}
+              onChange={value =>
+                setState({
+                  ...state,
+                  newPassword: value
+                })
+              }
+            />
+          </FormGroup>
+          <FormGroup fluid>
+            <FormLabel htmlFor="password-confirm">
+              Confirm new password
+            </FormLabel>
+            <FormInput
+              compact
+              value={state.confirmNewPassword}
+              type="password"
+              name="confirmNewPassword"
+              onChange={e => {
+                setState({
+                  ...state,
+                  confirmNewPassword: e.currentTarget.value
+                });
+              }}
+            />
+          </FormGroup>
+
+          {state.error ? (
+            <FormError>
+              <p>{state.error}</p>
+            </FormError>
+          ) : null}
+
+          <div styleName="password-btn">
+            <Button
+              basic
+              compact
+              loading={state.loading}
+              disabled={!state.oldPassword || !state.newPassword}
+              type="submit"
+              as="button"
+            >
+              Update
+            </Button>
+          </div>
+        </form>
       </div>
       {is2faSetup ? (
         <SetupTwoFacorAuthModal

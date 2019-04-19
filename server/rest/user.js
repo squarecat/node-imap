@@ -11,15 +11,27 @@ import {
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserScanReminder,
-  updateUserPreferences
+  updateUserPreferences,
+  updateUserPassword
 } from '../services/user';
-
+import Joi from 'joi';
 import QRCode from 'qrcode';
 import _sortBy from 'lodash.sortby';
 import auth from '../middleware/route-auth';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
 import rateLimit from '../middleware/rate-limit';
+import { validateBody } from '../middleware/validation';
+
+const patchPasswordParams = {
+  password: Joi.string()
+    .min(6)
+    .required()
+    .label('Password must be a minimum of 6 characters'),
+  ['password-confirm']: Joi.string()
+    .valid(Joi.ref('password'))
+    .label('Passwords must match')
+};
 
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
@@ -167,15 +179,62 @@ export default app => {
     }
   });
 
+  app.patch('/api/me/preferences', auth, async (req, res) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op, value: preferences } = body;
+    let updatedUser = user;
+    try {
+      if (op === 'update') {
+        updatedUser = await updateUserPreferences(id, preferences);
+      } else {
+        logger.error(`user-rest: preferences patch op not supported`);
+      }
+      res.send(updatedUser);
+    } catch (err) {
+      logger.error(
+        `user-rest: error patching user preferences ${id} with op ${op}`
+      );
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.patch(
+    '/api/me/password',
+    auth,
+    validateBody(patchPasswordParams, {
+      passthrough: true
+    }),
+    async (req, res) => {
+      const { user, body } = req;
+      const { id } = user;
+      const { op, value: password } = body;
+      let updatedUser = user;
+      try {
+        if (op === 'update') {
+          updatedUser = await updateUserPassword(id, password);
+        } else {
+          logger.error(`user-rest: password patch op not supported`);
+        }
+        res.send(updatedUser);
+      } catch (err) {
+        logger.error(
+          `user-rest: error patching user password ${id} with op ${op}`
+        );
+        logger.error(err);
+        res.status(500).send(err);
+      }
+    }
+  );
+
   app.patch('/api/me', auth, async (req, res) => {
     const { user, body } = req;
     const { id } = user;
     const { op, value } = body;
     let updatedUser = user;
     try {
-      if (op === 'preferences') {
-        updatedUser = await updateUserPreferences(id, value);
-      } else if (op === 'remove-account') {
+      if (op === 'remove-account') {
         updatedUser = await removeUserAccount(user, value);
       } else {
         logger.error(`user-rest: user patch op not supported`);

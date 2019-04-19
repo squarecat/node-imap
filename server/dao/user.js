@@ -657,3 +657,25 @@ export async function getLoginProvider(email) {
     throw err;
   }
 }
+
+export async function updatePassword(id, newPassword) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const password = hashPassword(newPassword);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          'password.salt': password.salt,
+          'password.hash': password.hash
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error('user-dao: failed to update password');
+    logger.error(err);
+    throw err;
+  }
+}
