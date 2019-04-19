@@ -21,6 +21,7 @@ import {
   resolveUnsubscription,
   updateIgnoreList,
   updatePaidScan,
+  updatePassword,
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
@@ -350,6 +351,18 @@ export async function updateUserPreferences(id, preferences) {
       }
     });
   } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateUserPassword({ id, email, password }, newPassword) {
+  try {
+    await authenticateUser({ email, password });
+    const updatedUser = await updatePassword(id, newPassword);
+    return updatedUser;
+  } catch (err) {
+    logger.error(`user-service: failed to update user password`);
+    logger.error(err);
     throw err;
   }
 }

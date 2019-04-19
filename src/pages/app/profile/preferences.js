@@ -6,14 +6,14 @@ import React from 'react';
 import useUser from '../../../utils/hooks/use-user';
 
 export async function savePreferences(data) {
-  const resp = await fetch('/api/me', {
+  const resp = await fetch('/api/me/preferences', {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     },
-    body: JSON.stringify({ op: 'preferences', value: data })
+    body: JSON.stringify({ op: 'update', value: data })
   });
   return resp.json();
 }
