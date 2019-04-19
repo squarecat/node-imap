@@ -1,6 +1,7 @@
 import {
   addToUserIgnoreList,
   addUserScanReminder,
+  authenticationRequiresTwoFactor,
   createUserTotpToken,
   deactivateUserAccount,
   getReferralStats,
@@ -10,8 +11,7 @@ import {
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserScanReminder,
-  updateUserPreferences,
-  verifyUserTotpToken
+  updateUserPreferences
 } from '../services/user';
 
 import QRCode from 'qrcode';
@@ -24,6 +24,7 @@ import rateLimit from '../middleware/rate-limit';
 export default app => {
   app.get('/api/me', auth, async (req, res) => {
     try {
+      const user = await getUserById(req.user.id);
       const {
         id,
         email,
@@ -41,7 +42,8 @@ export default app => {
         loginProvider,
         lastUpdatedAt,
         accounts
-      } = await getUserById(req.user.id);
+      } = user;
+      const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
         id,
         email,
@@ -52,6 +54,7 @@ export default app => {
         ignoredSenderList,
         referredBy,
         referralCode,
+        requiresTwoFactorAuth,
         hasScanned: scans ? !!scans.length : false,
         lastScan: scans.length ? scans[scans.length - 1] : null,
         lastPaidScanType: paidScans.length
@@ -236,21 +239,14 @@ export default app => {
   app.get('/api/user/me/2fa/setup', async (req, res) => {
     const { user } = req;
     try {
-      const otpauth_url = await createUserTotpToken(user);
+      const { otpauth_url, base32 } = await createUserTotpToken(user);
       QRCode.toDataURL(otpauth_url, (err, data_url) => {
-        res.send(data_url);
+        res.send({ qrData: data_url, base32 });
       });
     } catch (err) {
       logger.error(`user-rest: failed to setup 2fa for user ${user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }
-  });
-
-  app.put('/api/user/me/2fa/verify', async (req, res) => {
-    const { user, body } = req;
-    const { token } = body;
-    const verified = await verifyUserTotpToken(user, { token });
-    res.send(verified);
   });
 };

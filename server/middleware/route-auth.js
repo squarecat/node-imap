@@ -3,9 +3,8 @@ import logger from '../utils/logger';
 
 export default (req, res, next) => {
   const { user } = req;
-
   const isApiRequest = req.baseUrl.includes('/api');
-  const isAuthenticated = req.isAuthenticated();
+  const isAuthenticated = isUserAuthenticated(req);
   const isUnauthenticatedApiRequest = !isAuthenticated && isApiRequest;
 
   if (isUnauthenticatedApiRequest) {
@@ -26,3 +25,20 @@ export default (req, res, next) => {
   // continue the request chain
   return next();
 };
+
+function isUserAuthenticated(req) {
+  const { user } = req;
+  if (!user) return false;
+
+  // check regular auth
+  let isRegularAuth = req.isAuthenticated();
+
+  // check 2fa auth
+  const requiresSecondFactor =
+    user.password.totpSecret && !user.password.unverified;
+  if (!requiresSecondFactor) {
+    return isRegularAuth;
+  }
+  const isSecondFactorAuthed = !!req.session.secondFactor;
+  return isRegularAuth && isSecondFactorAuthed;
+}

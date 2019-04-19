@@ -606,7 +606,7 @@ export async function getTotpSecret(userId) {
   }
 }
 
-export async function setTotpSecret(userId, { secret, unverified = true }) {
+export async function addTotpSecret(userId, { secret, unverified = true }) {
   try {
     return updateUser(userId, {
       'password.totpSecret': secret,

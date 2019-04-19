@@ -20,28 +20,30 @@ if (doScan) {
 export default function App({ location = {} } = {}) {
   const { state } = location;
   const rescan = state && state.rescan;
-  const [showPriceModal, togglePriceModal] = useState(false);
+
   const [timeframe, setTimeframe] = useState(doScan || rescan);
   const [user, { setLastPaidScanType }] = useUser();
-  const { hasScanned, provider } = user;
-  const showOnboarding = !hasScanned && !timeframe;
+  const { hasScanned } = user;
+  const isNewUser = !hasScanned && !timeframe;
+  const [showOnboardingModal, toggleOnboardingModal] = useState(isNewUser);
+
   return (
-    <Template>
-      {showOnboarding ? (
-        <Modal
+    <Template onboarding={showOnboardingModal}>
+      {/* {showOnboardingModal ? (
+        <OnboardingModal
           onPurchase={option => {
             setTimeframe(option);
             if (option !== '3d') {
               setLastPaidScanType(option);
             }
-            togglePriceModal(false);
+            toggleOnboardingModal(false);
           }}
-          onClose={() => togglePriceModal(false)}
+          onClose={() => toggleOnboardingModal(false)}
         />
-      ) : null}
-
-      {/* <Transition
-        in={}
+      ) : null} */}
+      {/*
+      <Transition
+        in={showOnboardingModal}
         classNames="welcome-content"
         timeout={250}
         unmountOnExit
@@ -57,7 +59,7 @@ export default function App({ location = {} } = {}) {
       </Transition> */}
 
       <Transition
-        in={!!(hasScanned || timeframe)}
+        in={true}
         classNames="mail-list-content"
         timeout={250}
         mountOnEnter
@@ -68,24 +70,10 @@ export default function App({ location = {} } = {}) {
             <MailList
               timeframe={timeframe}
               setTimeframe={tf => setTimeframe(tf)}
-              showPriceModal={() => togglePriceModal(true)}
             />
           </div>
         )}
       </Transition>
-
-      {/* {showPriceModal ? (
-        <Modal
-          onPurchase={option => {
-            setTimeframe(option);
-            if (option !== '3d') {
-              setLastPaidScanType(option);
-            }
-            togglePriceModal(false);
-          }}
-          onClose={() => togglePriceModal(false)}
-        />
-      ) : null} */}
     </Template>
   );
 }

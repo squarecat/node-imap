@@ -3,8 +3,10 @@ import './login.module.scss';
 import { FormGroup, FormInput, FormLabel } from '../../components/form';
 import React, { useContext, useRef } from 'react';
 
+import Button from '../../components/btn';
 import { LoginContext } from './index';
 import PasswordInput from '../../components/form/password';
+import { navigate } from 'gatsby';
 
 export default ({
   checkIfPwned = true,
@@ -16,8 +18,28 @@ export default ({
 
   const matchPass = useRef(null);
 
-  async function submit() {
+  async function onSubmit(e) {
+    e.preventDefault();
+    const { password, email } = state;
     dispatch({ type: 'set-loading', data: true });
+    const resp = await fetch(submitAction, {
+      method: 'POST',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify({ username: email, password })
+    });
+    const { success, message, twoFactorRequired } = await resp.json();
+    if (success !== true) {
+      dispatch({ type: 'set-loading', data: false });
+      return dispatch({ type: 'set-error', data: message });
+    } else if (twoFactorRequired) {
+      return dispatch({ type: 'set-step', data: '2fa' });
+    } else {
+      return navigate('/app');
+    }
   }
 
   return (
@@ -25,6 +47,7 @@ export default ({
       id="signup-form"
       styleName="sign-up-form"
       action={submitAction}
+      onSubmit={onSubmit}
       method="post"
     >
       <input type="hidden" name="username" value={state.email} />
@@ -65,29 +88,35 @@ export default ({
 
       {state.error ? (
         <div styleName="error">
-          <p>{state.message}</p>
+          <p>{state.error}</p>
         </div>
       ) : null}
       <div styleName="signup-buttons">
-        <button
-          type="button"
+        <Button
           onClick={() => {
             dispatch({ type: 'set-step', data: 'enter-email' });
           }}
+          muted
+          outlined
+          as="button"
+          style={{ width: 150 }}
           onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
-          styleName="signup-btn back-btn"
+          disabled={state.loading}
         >
           <span styleName="text">Back</span>
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
+          as="button"
+          style={{ width: 150 }}
           onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
+          loading={state.loading}
         >
           <span styleName="text">{submitText}</span>
-        </button>
+        </Button>
       </div>
     </form>
   );

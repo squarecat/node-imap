@@ -27,7 +27,8 @@ $active-bg-color: #ffc7c1;
 .password-login-box,
 .new-user-login-box,
 .existing-user-login-box,
-.existing-user-suggestion-box {
+.existing-user-suggestion-box,
+.two-factor-box {
   position: absolute;
   display: flex;
   flex-direction: column;

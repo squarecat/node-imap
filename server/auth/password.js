@@ -1,5 +1,6 @@
 import {
   authenticateUser,
+  authenticationRequiresTwoFactor,
   createOrUpdateUserFromPassword
 } from '../services/user';
 
@@ -12,9 +13,11 @@ import { validateBody } from '../middleware/validation';
 const createUserParams = {
   username: Joi.string()
     .email()
-    .label('Username must be a valid email address'),
+    .label('Username must be a valid email address')
+    .required(),
   password: Joi.string()
     .min(6)
+    .required()
     .label('Password must be a minimum of 6 characters'),
   ['password-confirm']: Joi.string()
     .valid(Joi.ref('password'))
@@ -46,19 +49,18 @@ export default app => {
       passthrough: true
     }),
     (req, res, next) => {
-      const { body: userData } = res.locals;
       passport.authenticate('local', (err, user) => {
         if (err) return handleLoginError(res, err);
         if (!user) {
-          return res.redirect(
-            `/login?error=unknown&strategy=password&username=${
-              userData.username
-            }`
-          );
+          return res.send({
+            message: 'User not found or password incorrect',
+            success: false
+          });
         }
-        req.logIn(user, err => {
+        req.logIn(user, async err => {
+          const twoFactorRequired = await authenticationRequiresTwoFactor(user);
           if (err) return handleLoginError(res, err);
-          return res.redirect('/app');
+          return res.send({ success: true, twoFactorRequired });
         });
       })(req, res, next);
     }
@@ -76,11 +78,10 @@ export default app => {
 
       try {
         if (validationError) {
-          return res.redirect(
-            `/signup?error=validation&message=${
-              validationError.message
-            }&strategy=password&username=${userData.username}`
-          );
+          return res.status(400).send({
+            message: validationError.message,
+            success: false
+          });
         }
         const { username, password } = userData;
         const user = await createOrUpdateUserFromPassword({
@@ -90,7 +91,7 @@ export default app => {
         });
         req.logIn(user, err => {
           if (err) return handleLoginError(res, err);
-          return res.redirect('/app');
+          return res.send({ success: true });
         });
       } catch (err) {
         return handleSignupError(res, err);
@@ -100,25 +101,26 @@ export default app => {
 };
 
 function handleLoginError(res, err) {
-  let type = 'unknown';
   let message;
   message = `Something went wrong with the login process. Please contact support.`;
   if (err.message === 'user not found or password incorrect') {
-    type = 'not-found';
     message = `User not found or the password is incorrect`;
   }
 
   logger.warn('login error');
   logger.warn(err);
-  return res.redirect(
-    `/login?error=${type}&message=${message}&strategy=password`
-  );
+  return res.status(400).send({
+    message,
+    success: false
+  });
 }
 
 function handleSignupError(res) {
   let type = 'unknown';
   const message = `Something went wrong with the sign up process. Please contact support.`;
-  return res.redirect(
-    `/signup?error=${type}&message=${message}&strategy=password`
-  );
+  return res.status(500).send({
+    error: type,
+    message,
+    success: false
+  });
 }

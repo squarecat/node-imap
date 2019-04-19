@@ -3,14 +3,14 @@ import './login.module.scss';
 import { FormGroup, FormInput, FormLabel } from '../../components/form';
 import React, { useContext } from 'react';
 
+import Button from '../../components/btn';
 import Hashes from 'jshashes';
 import { LoginContext } from './index';
 
 export default () => {
   const { state, dispatch } = useContext(LoginContext);
 
-  async function submit(e) {
-    e.preventDefault();
+  async function submit() {
     try {
       dispatch({ type: 'set-loading', data: true });
       const userStrat = await getUserLoginStrategy(state.email);
@@ -23,6 +23,7 @@ export default () => {
         dispatch({ type: 'set-existing-provider', data: userStrat });
       }
     } catch (err) {
+      dispatch({ type: 'set-loading', data: false });
       dispatch({
         type: 'set-error',
         data:
@@ -54,26 +55,33 @@ export default () => {
         </div>
       ) : null}
       <div styleName="signup-buttons">
-        <button
-          type="button"
+        <Button
+          as="button"
           onClick={() => {
             dispatch({ type: 'set-step', data: 'select' });
           }}
           onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn back-btn"
+          style={{ width: 150 }}
+          muted
+          outlined
+          disabled={state.loading}
         >
           <span styleName="text">Back</span>
-        </button>
+        </Button>
 
-        <button
-          type="submit"
+        <Button
+          as="button"
           onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
+          loading={state.loading}
+          style={{ width: 150 }}
+          onClick={() => submit()}
         >
           <span styleName="text">Next</span>
-        </button>
+        </Button>
       </div>
     </form>
   );

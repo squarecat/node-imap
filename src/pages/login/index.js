@@ -6,12 +6,12 @@ import AuthButton from './auth-btn';
 import EmailForm from './email';
 import Layout from '../../layouts/layout';
 import PasswordForm from './password';
+import TwoFactorForm from './2fa';
 import cx from 'classnames';
 import logo from '../../assets/envelope-logo.png';
 
 let error;
 let strategy;
-let message;
 let username = '';
 let defaultStep = 'select';
 
@@ -19,7 +19,6 @@ if (typeof URLSearchParams !== 'undefined') {
   const urlParams = new URLSearchParams(window.location.search);
   error = urlParams.get('error');
   strategy = urlParams.get('strategy');
-  message = urlParams.get('message');
   username = urlParams.get('username');
 }
 
@@ -45,16 +44,12 @@ function loginReducer(state, action) {
     case 'set-loading':
       return { ...state, loading: data };
     case 'set-step': {
-      if (action.data === 'select') {
-        return {
-          ...state,
-          step: action.data,
-          error: false,
-          newUser: false,
-          requirePassword: false
-        };
-      }
-      return { ...state, step: action.data };
+      return {
+        ...state,
+        step: action.data,
+        loading: false,
+        error: false
+      };
     }
     case 'set-password':
       return { ...state, password: action.data };
@@ -77,9 +72,6 @@ const initialState = {
   password: '',
   email: username,
   error,
-  newUser: false,
-  requirePassword: false,
-  message,
   existingProvider: null
 };
 
@@ -89,7 +81,7 @@ const LoginPage = () => {
   const activeRef = useRef(null);
   const [state, dispatch] = useReducer(loginReducer, initialState);
   const { step } = state;
-
+  console.log(`loading:${state.loading}`);
   let windowHeight;
   if (step === 'signup') {
     windowHeight = loginNewUserHeight;
@@ -99,6 +91,8 @@ const LoginPage = () => {
     windowHeight = loginEmailCardHeight;
   } else if (step === 'select-existing') {
     windowHeight = existingStratHeight;
+  } else if (step === '2fa') {
+    windowHeight = 410;
   } else {
     windowHeight = selectCardHeight;
   }
@@ -123,11 +117,6 @@ const LoginPage = () => {
               <p>
                 Google and Outlook authorize Leave Me Alone without a password.
               </p>
-              {/* <p>
-            Although we inspect your mail in order to find your subscriptions,
-            unlike other services we <TextBold>NEVER</TextBold> store any of the
-            content of your mail or any other private information!
-          </p> */}
               <div styleName="buttons">
                 <a
                   onClick={() =>
@@ -198,6 +187,18 @@ const LoginPage = () => {
                 submitAction="/auth/login"
                 checkIfPwned={false}
               />
+            </div>
+            <div styleName="two-factor-box" data-active={step === '2fa'}>
+              <h1 styleName="title">Two-factor Auth Required</h1>
+              <p>
+                Signing in with{' '}
+                <span styleName="email-label">{state.email}</span>
+              </p>
+              <p>
+                Open your authentication app and enter the code for Leave Me
+                Alone.
+              </p>
+              <TwoFactorForm />
             </div>
             <div
               styleName="existing-user-suggestion-box"

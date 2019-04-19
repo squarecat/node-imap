@@ -1,0 +1,7 @@
+@import '../form/form.module.scss';
+
+.two-factor-input input {
+  @extend .form-input;
+  @extend .compact;
+  font-family: 'Courier New', Courier, monospace;
+}

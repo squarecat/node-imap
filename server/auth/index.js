@@ -9,6 +9,7 @@ import initOutlook, {
 import initPassword, { Strategy as PasswordStrategy } from './password';
 
 import { getUserById } from '../services/user';
+import initTotp from './totp';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
@@ -45,6 +46,7 @@ export default app => {
   initGoogle(app);
   initOutlook(app);
   initPassword(app);
+  initTotp(app);
   app.get('/auth/logout', (req, res) => {
     req.logout();
     res.redirect('/');

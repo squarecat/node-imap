@@ -443,11 +443,19 @@ export async function getUserLoginProvider({ email }) {
   }
 }
 
+export async function authenticationRequiresTwoFactor(user) {
+  return user.password.totpSecret && !user.password.unverified;
+}
+
 export async function createUserTotpToken(user) {
-  const { base32, otpauth_url } = speakeasy.generateSecret();
+  const { base32, ascii } = speakeasy.generateSecret();
+  const otpauth_url = speakeasy.otpauthURL({
+    secret: ascii,
+    label: `Leave Me Alone:${user.email}`
+  });
   try {
     await addTotpSecret(user.id, { secret: base32, unverified: true });
-    return otpauth_url;
+    return { otpauth_url, base32 };
   } catch (err) {
     throw err;
   }

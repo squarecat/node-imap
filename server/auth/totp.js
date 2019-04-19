@@ -1,27 +1,16 @@
-import {
-  authenticateUser,
-  createOrUpdateUserFromPassword
-} from '../services/user';
-
-import { Strategy as TotpStrategy } from 'passport-totp';
-import passport from 'passport';
-
-export const Strategy = new TotpStrategy(function(user, done) {
-  TotpKey.findOne({ userId: user.id }, function(err, key) {
-    if (err) {
-      return done(err);
-    }
-    return done(null, key.key, key.period);
-  });
-});
+import { verifyUserTotpToken } from '../services/user';
 
 export default app => {
-  app.post(
-    '/verify-2fa',
-    passport.authenticate('totp', { failureRedirect: '/verify-2fa' }),
-    function(req, res) {
+  app.post('/auth/totp', async (req, res) => {
+    const { user, body } = req;
+    const { token } = body;
+    const verified = await verifyUserTotpToken(user, { token });
+    if (verified) {
+      req.session.secondFactor = true;
       req.session.authFactors = ['totp'];
-      res.redirect('/');
     }
-  );
+    return res.send({
+      success: verified
+    });
+  });
 };

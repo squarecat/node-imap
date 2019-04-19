@@ -49,7 +49,7 @@
 
 .modal-content {
   overflow-y: scroll;
-  padding: 0 25px;
+  padding: 0 25px 10px 25px;
 }
 
 .modal h3 {
@@ -105,6 +105,7 @@
 
 .modal-buttons {
   display: flex;
+  justify-content: space-between;
 }
 
 .modal .modal-text--small {

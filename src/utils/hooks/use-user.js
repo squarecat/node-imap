@@ -41,6 +41,10 @@ export default globalReducer(
     setPreferences: (state, preferences) => ({
       ...state,
       preferences
+    }),
+    setRequiresTwoFactorAuth: (state, bool) => ({
+      ...state,
+      requiresTwoFactorAuth: bool
     })
   }
 );

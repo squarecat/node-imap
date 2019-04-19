@@ -10,28 +10,37 @@ export default ({
   children,
   label,
   linkTo,
+  as,
   linkArgs = {},
-  ...visProps
+  ...props
 }) => {
   const classes = cx('btn', {
     loading,
-    compact: visProps.compact,
-    centered: visProps.centered,
-    muted: visProps.muted,
-    icon: visProps.icon,
-    disabled: visProps.disabled,
-    basic: visProps.basic,
-    smaller: visProps.smaller,
-    stretch: visProps.stretch,
-    outlined: visProps.outlined,
-    fill: visProps.fill,
-    'on-dark-bg': visProps.onDarkBg
+    compact: props.compact,
+    centered: props.centered,
+    muted: props.muted,
+    icon: props.icon,
+    disabled: props.disabled,
+    basic: props.basic,
+    smaller: props.smaller,
+    stretch: props.stretch,
+    outlined: props.outlined,
+    fill: props.fill,
+    'on-dark-bg': props.onDarkBg
   });
-  if (linkTo) {
+  if (as === 'link' || linkTo) {
     return (
       <Link styleName={classes} to={linkTo} state={linkArgs}>
         <span styleName="btn-content">{label || children}</span>
       </Link>
+    );
+  }
+  if (as === 'button') {
+    return (
+      <button styleName={classes} onClick={onClick} type="button" {...props}>
+        <span styleName="btn-content">{label || children}</span>
+        {loading ? <span styleName="btn-loader" /> : null}
+      </button>
     );
   }
   return (
