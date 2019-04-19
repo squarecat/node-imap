@@ -1,6 +1,8 @@
 import Airtable from 'airtable';
 import config from 'getconfig';
+import isAfter from 'date-fns/is_after';
 import logger from './logger';
+import subHours from 'date-fns/sub_hours';
 
 const airtableKey = config.airtable.key;
 const { expenses, beta, news } = config.airtable;
@@ -13,7 +15,26 @@ const expensesBase = airtable.base(expenses.baseId);
 const betaBase = airtable.base(beta.baseId);
 const newsBase = airtable.base(news.baseId);
 
+let newsItems = {
+  results: [],
+  lastFetched: null
+};
+let expensesItems = {
+  results: [],
+  lastFetched: null
+};
+
 export function getExpenses() {
+  const oneHourAgo = subHours(new Date(), 1);
+  if (
+    expensesItems.lastFetched &&
+    isAfter(expensesItems.lastFetched, oneHourAgo)
+  ) {
+    logger.debug('airtable: returning expenses from cache');
+    return expensesItems.results;
+  }
+
+  logger.debug('airtable: fetching expenses');
   return new Promise((resolve, reject) => {
     expensesBase(expenses.tableId)
       .select({
@@ -37,6 +58,13 @@ export function getExpenses() {
 }
 
 export function getNews() {
+  const oneHourAgo = subHours(new Date(), 1);
+  if (newsItems.lastFetched && isAfter(newsItems.lastFetched, oneHourAgo)) {
+    logger.debug('airtable: returning news from cache');
+    return newsItems.results;
+  }
+  logger.debug('airtable: fetching news');
+
   return new Promise((resolve, reject) => {
     newsBase(news.tableId)
       .select({
@@ -66,6 +94,10 @@ export function getNews() {
                 ],
           []
         );
+        newsItems = {
+          results: news,
+          lastFetched: new Date()
+        };
         return resolve(news);
       });
   });
