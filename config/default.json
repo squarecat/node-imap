@@ -68,6 +68,10 @@
       "baseId": "appq5b5dkcmMPEbBA",
       "tableId": "Beta Users"
     },
+    "news": {
+      "baseId": "appmarx5L9y9Lb2o0",
+      "tableId": "News"
+    },
     "baseUrl": "https://api.airtable.com/v0"
   }
 }

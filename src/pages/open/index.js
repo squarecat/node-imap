@@ -8,7 +8,7 @@ import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 import addMonths from 'date-fns/add_months';
 import endOfMonth from 'date-fns/end_of_month';
-import { isAfter } from 'date-fns';
+import isAfter from 'date-fns/is_after';
 import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
 import startOfDay from 'date-fns/start_of_day';
@@ -29,58 +29,8 @@ function getExpenses() {
   return fetch('/api/stats/expenses').then(resp => resp.json());
 }
 
-function unsubscriptionsChart(ctx, stats) {
-  if (!stats) return null;
-  const { daily } = stats;
-  const { histogram } = daily;
-
-  new Chart(ctx, {
-    data: {
-      datasets: [
-        {
-          label: 'Unsubscriptions',
-          fill: false,
-          backgroundColor: lineColor,
-          borderColor: lineColor,
-          data: histogram.map(d => ({
-            x: startOfDay(d.timestamp),
-            y: d.unsubscriptions || 0
-          }))
-        }
-      ]
-    },
-    type: 'line',
-    options: {
-      legend: {
-        display: false
-      },
-      scales: {
-        xAxes: [
-          {
-            type: 'time',
-            time: {
-              unit: 'day'
-            }
-          }
-        ],
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-              precision: 0
-            }
-          }
-        ]
-      },
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  });
-}
 function dailyRevChart(ctx, stats) {
   if (!stats) return null;
-  const { daily } = stats;
-  const { histogram } = daily;
   new Chart(ctx, {
     data: {
       datasets: [
@@ -88,19 +38,13 @@ function dailyRevChart(ctx, stats) {
           fill: false,
           backgroundColor: lineColor,
           borderColor: lineColor,
-          data: histogram.map(d => ({
-            x: startOfDay(d.timestamp),
-            y: d.totalRevenue || 0
-          }))
+          data: getGraphStats(stats, 'totalRevenue')
         },
         {
           fill: false,
           backgroundColor: lineColor2,
           borderColor: lineColor2,
-          data: histogram.map(d => ({
-            x: startOfDay(d.timestamp),
-            y: d.giftRevenue || 0
-          }))
+          data: getGraphStats(stats, 'giftRevenue')
         }
       ]
     },
@@ -111,7 +55,7 @@ function dailyRevChart(ctx, stats) {
       },
       tooltips: {
         callbacks: {
-          label: function(items, data) {
+          label: function(items) {
             return currency(items.yLabel);
           }
         }
@@ -152,12 +96,12 @@ function referralChart(ctx, stats) {
 function usersChart(ctx, stats) {
   return simpleLineChart(ctx, stats, 'users');
 }
+function unsubscriptionsChart(ctx, stats) {
+  return simpleLineChart(ctx, stats, 'unsubscriptions');
+}
 
 function simpleLineChart(ctx, stats, stat) {
   if (!stats) return null;
-  const { daily } = stats;
-  const { histogram } = daily;
-
   new Chart(ctx, {
     data: {
       datasets: [
@@ -165,10 +109,7 @@ function simpleLineChart(ctx, stats, stat) {
           fill: false,
           backgroundColor: lineColor,
           borderColor: lineColor,
-          data: histogram.map(d => ({
-            x: startOfDay(d.timestamp),
-            y: d[stat] || 0
-          }))
+          data: getGraphStats(stats, stat)
         }
       ]
     },
@@ -469,7 +410,8 @@ export default function Terms() {
                     {usersStats.growthRate > 0 ? '+' : ''}
                     {percent(usersStats.growthRate)}
                   </span>
-                </div>`
+                </div>
+                `
                 <div styleName="big-stat box">
                   <span styleName="label">
                     This month's new signups to date
@@ -610,6 +552,31 @@ export default function Terms() {
       </div>
     </SubPageLayout>
   );
+}
+
+function getGraphStats(stats, stat) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram } = daily;
+
+  const today = new Date();
+  // get last day of month before. 28th Feb not 1st March
+  const lastDayToShow = endOfMonth(addMonths(today, -3));
+
+  // only show data from the last month and this month to date
+  return histogram.reduce((out, d) => {
+    const date = startOfDay(d.timestamp);
+    if (isAfter(date, lastDayToShow)) {
+      return [
+        ...out,
+        {
+          x: date,
+          y: d[stat] || 0
+        }
+      ];
+    }
+    return out;
+  }, []);
 }
 
 function getPreviousMonthValues(stats, stat, timeframe = 0) {
