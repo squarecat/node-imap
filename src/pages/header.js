@@ -1,8 +1,8 @@
 import './header.module.scss';
 
-import cx from 'classnames';
 import React from 'react';
 import { TextLink } from '../components/text';
+import cx from 'classnames';
 import smallLogo from '../assets/envelope-logo.png';
 
 export default ({ setActive = () => {}, inverted = false }) => (
@@ -22,10 +22,10 @@ export default ({ setActive = () => {}, inverted = false }) => (
       <div styleName="header-title">Leave Me Alone </div>
       <ul styleName="header-nav">
         <li styleName="nav-link nav-how">
-          <TextLink href="#how-it-works">How it works</TextLink>
+          <TextLink href="/#learn">How it works</TextLink>
         </li>
         <li styleName="nav-link">
-          <TextLink href="#pricing">Pricing</TextLink>
+          <TextLink href="/#pricing">Pricing</TextLink>
         </li>
         <li styleName="nav-login">
           <a
