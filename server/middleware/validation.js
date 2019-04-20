@@ -14,7 +14,7 @@ export const validateQuery = (type, mappings = {}) => (req, res, next) => {
   const { hasError, value, ...error } = validate(validationType, query);
 
   if (hasError) {
-    console.error('validation error');
+    console.error('validation-middleware: validation error');
     console.error(error);
     res.locals.err = error;
     return res.send(error);
@@ -36,7 +36,7 @@ export const validateBody = (type, { mappings = {}, passthrough = false }) => (
   const { body } = req;
   const { hasError, value, ...error } = validate(type, body);
   if (hasError) {
-    console.error('validation error');
+    console.error('validation-middleware: validation error');
     res.locals.err = error;
     res.locals.body = mapResponse(mappings, body);
     if (passthrough) {

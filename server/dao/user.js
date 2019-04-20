@@ -18,6 +18,26 @@ const encryptedUnsubCols = [
   'from'
 ];
 
+const defaultProjection = {
+  _id: 0,
+  id: 1,
+  email: 1,
+  token: 1,
+  beta: 1,
+  unsubscriptions: 1,
+  scans: 1,
+  paidScans: 1,
+  profileImg: 1,
+  ignoredSenderList: 1,
+  referredBy: 1,
+  referralCode: 1,
+  reminder: 1,
+  preferences: 1,
+  loginProvider: 1,
+  lastUpdatedAt: 1,
+  accounts: 1
+};
+
 const COL_NAME = 'users';
 
 export async function createUserFromPassword(data) {
@@ -90,7 +110,10 @@ export async function createUser(data, provider) {
 export async function getUser(id, projection = {}) {
   try {
     const col = await db().collection(COL_NAME);
-    const user = await col.findOne({ id }, { _id: 0, ...projection });
+    const user = await col.findOne(
+      { id },
+      { ...defaultProjection, ...projection }
+    );
     if (!user) return null;
     const decryptedUser = {
       ...user,
