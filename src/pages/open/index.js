@@ -334,7 +334,10 @@ export default function Terms() {
                 <div styleName="big-stat box">
                   <span styleName="label">Total Revenue</span>
                   <span styleName="value">
-                    {currency(stats.totalRevenue + stats.giftRevenue)}
+                    {currency(
+                      calculateWithRefunds(stats, 'totalRevenue') +
+                        stats.giftRevenue
+                    )}
                   </span>
                 </div>
               </div>
@@ -360,14 +363,18 @@ export default function Terms() {
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Total sales</span>
-                  <span styleName="value">{format(stats.totalSales)}</span>
+                  <span styleName="value">
+                    {format(calculateWithRefunds(stats, 'totalSales'))}
+                  </span>
                 </div>
               </div>
               <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue per user</span>
                   <span styleName="value">
-                    {currency(stats.totalRevenue / stats.users)}
+                    {currency(
+                      calculateWithRefunds(stats, 'totalRevenue') / stats.users
+                    )}
                   </span>
                 </div>
                 <div styleName="big-stat box">
@@ -375,7 +382,8 @@ export default function Terms() {
                   <span styleName="value">
                     {`${(
                       (stats.giftRevenue /
-                        (stats.totalRevenue + stats.giftRevenue)) *
+                        (calculateWithRefunds(stats, 'totalRevenue') +
+                          stats.giftRevenue)) *
                       100
                     ).toFixed(0)}%`}
                   </span>
@@ -571,12 +579,22 @@ function getGraphStats(stats, stat) {
         ...out,
         {
           x: date,
-          y: d[stat] || 0
+          y: getYValue(d, stat)
         }
       ];
     }
     return out;
   }, []);
+}
+
+function getYValue(data, stat) {
+  if (stat === 'totalRevenue') {
+    const revenue = data[stat] || 0;
+    const refunds = data['totalRevenueRefunded'] || 0;
+    const value = revenue - refunds;
+    return value;
+  }
+  return data[stat] || 0;
 }
 
 function getPreviousMonthValues(stats, stat, timeframe = 0) {
@@ -625,9 +643,22 @@ function getBoxStats(stats, stat) {
     const lastMonthGifts = getPreviousMonthValues(stats, 'giftRevenue', -1);
     const thisMonthGifts = getThisMonthToDate(stats, 'giftRevenue');
 
-    const totalTwoMonths = twoMonthsAgo + twoMonthsAgoGifts;
-    const totalLastMonth = lastMonth + lastMonthGifts;
-    const totalThisMonth = thisMonth + thisMonthGifts;
+    const twoMonthsAgoRefunds = getPreviousMonthValues(
+      stats,
+      'totalRevenueRefunded',
+      -2
+    );
+    const lastMonthRefunds = getPreviousMonthValues(
+      stats,
+      'totalRevenueRefunded',
+      -1
+    );
+    const thisMonthRefunds = getThisMonthToDate(stats, 'totalRevenueRefunded');
+
+    const totalTwoMonths =
+      twoMonthsAgo + twoMonthsAgoGifts - twoMonthsAgoRefunds;
+    const totalLastMonth = lastMonth + lastMonthGifts - lastMonthRefunds;
+    const totalThisMonth = thisMonth + thisMonthGifts - thisMonthRefunds;
 
     const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
 
@@ -638,6 +669,34 @@ function getBoxStats(stats, stat) {
       growthRate: totalGrowth
     };
   }
+
+  if (stat === 'totalSales') {
+    const twoMonthsAgoRefunds = getPreviousMonthValues(
+      stats,
+      'totalSalesRefunded',
+      -2
+    );
+    const lastMonthRefunds = getPreviousMonthValues(
+      stats,
+      'totalSalesRefunded',
+      -1
+    );
+    const thisMonthRefunds = getThisMonthToDate(stats, 'totalSalesRefunded');
+
+    const totalTwoMonths = twoMonthsAgo - twoMonthsAgoRefunds;
+    const totalLastMonth = lastMonth - lastMonthRefunds;
+    const totalThisMonth = thisMonth - thisMonthRefunds;
+
+    const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+
+    return {
+      twoMonthsAgo: totalTwoMonths,
+      lastMonth: totalLastMonth,
+      thisMonth: totalThisMonth,
+      growthRate: totalGrowth
+    };
+  }
+
   return {
     twoMonthsAgo,
     lastMonth,
@@ -659,4 +718,11 @@ function currency(num) {
 
 function percent(num) {
   return numeral(num).format('0%');
+}
+
+function calculateWithRefunds(stats, stat) {
+  if (stat === 'totalRevenue')
+    return stats.totalRevenue - stats.totalRevenueRefunded;
+  if (stat === 'totalSales') return stats.totalSales - stats.totalSalesRefunded;
+  return 0;
 }

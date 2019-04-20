@@ -9,6 +9,7 @@ import {
   addReferralCredit,
   addReferralPaidScan,
   addReferralSignup,
+  addRefund,
   addReminderRequest,
   addReminderSent,
   addScan,
@@ -41,6 +42,9 @@ export function addUserToStats(count) {
 }
 export function addPaymentToStats({ price }) {
   return addPayment({ price });
+}
+export function addRefundToStats({ price }) {
+  return addRefund({ price });
 }
 export function addGiftPaymentToStats({ price }, count) {
   return addGiftPayment({ price }, count);
