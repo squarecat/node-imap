@@ -419,7 +419,6 @@ export default function Terms() {
                     {percent(usersStats.growthRate)}
                   </span>
                 </div>
-                `
                 <div styleName="big-stat box">
                   <span styleName="label">
                     This month's new signups to date
@@ -635,73 +634,92 @@ function getBoxStats(stats, stat) {
   const twoMonthsAgo = getPreviousMonthValues(stats, stat, -2);
   const lastMonth = getPreviousMonthValues(stats, stat, -1);
   const thisMonth = getThisMonthToDate(stats, stat);
-  // Percent increase = ((new value - original value)/original value) * 100
-  const growthRate = (lastMonth - twoMonthsAgo) / twoMonthsAgo;
 
   if (stat === 'totalRevenue') {
-    const twoMonthsAgoGifts = getPreviousMonthValues(stats, 'giftRevenue', -2);
-    const lastMonthGifts = getPreviousMonthValues(stats, 'giftRevenue', -1);
-    const thisMonthGifts = getThisMonthToDate(stats, 'giftRevenue');
-
-    const twoMonthsAgoRefunds = getPreviousMonthValues(
-      stats,
-      'totalRevenueRefunded',
-      -2
-    );
-    const lastMonthRefunds = getPreviousMonthValues(
-      stats,
-      'totalRevenueRefunded',
-      -1
-    );
-    const thisMonthRefunds = getThisMonthToDate(stats, 'totalRevenueRefunded');
-
-    const totalTwoMonths =
-      twoMonthsAgo + twoMonthsAgoGifts - twoMonthsAgoRefunds;
-    const totalLastMonth = lastMonth + lastMonthGifts - lastMonthRefunds;
-    const totalThisMonth = thisMonth + thisMonthGifts - thisMonthRefunds;
-
-    const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
-
-    return {
-      twoMonthsAgo: totalTwoMonths,
-      lastMonth: totalLastMonth,
-      thisMonth: totalThisMonth,
-      growthRate: totalGrowth
-    };
+    return revenueBoxStats(stats, {
+      twoMonthsAgo,
+      lastMonth,
+      thisMonth
+    });
   }
 
   if (stat === 'totalSales') {
-    const twoMonthsAgoRefunds = getPreviousMonthValues(
-      stats,
-      'totalSalesRefunded',
-      -2
-    );
-    const lastMonthRefunds = getPreviousMonthValues(
-      stats,
-      'totalSalesRefunded',
-      -1
-    );
-    const thisMonthRefunds = getThisMonthToDate(stats, 'totalSalesRefunded');
-
-    const totalTwoMonths = twoMonthsAgo - twoMonthsAgoRefunds;
-    const totalLastMonth = lastMonth - lastMonthRefunds;
-    const totalThisMonth = thisMonth - thisMonthRefunds;
-
-    const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
-
-    return {
-      twoMonthsAgo: totalTwoMonths,
-      lastMonth: totalLastMonth,
-      thisMonth: totalThisMonth,
-      growthRate: totalGrowth
-    };
+    return salesBoxStats(stats, {
+      twoMonthsAgo,
+      lastMonth,
+      thisMonth
+    });
   }
+
+  // Percent increase = ((new value - original value)/original value) * 100
+  const growthRate = (lastMonth - twoMonthsAgo) / twoMonthsAgo;
 
   return {
     twoMonthsAgo,
     lastMonth,
     thisMonth,
     growthRate
+  };
+}
+
+function revenueBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
+  const twoMonthsAgoGifts = getPreviousMonthValues(stats, 'giftRevenue', -2);
+  const lastMonthGifts = getPreviousMonthValues(stats, 'giftRevenue', -1);
+  const thisMonthGifts = getThisMonthToDate(stats, 'giftRevenue');
+
+  const twoMonthsAgoRevenueRefunds = getPreviousMonthValues(
+    stats,
+    'totalRevenueRefunded',
+    -2
+  );
+  const lastMonthRevenueRefunds = getPreviousMonthValues(
+    stats,
+    'totalRevenueRefunded',
+    -1
+  );
+  const thisMonthRevenueRefunds = getThisMonthToDate(
+    stats,
+    'totalRevenueRefunded'
+  );
+
+  const totalTwoMonths =
+    twoMonthsAgo + twoMonthsAgoGifts - twoMonthsAgoRevenueRefunds;
+  const totalLastMonth = lastMonth + lastMonthGifts - lastMonthRevenueRefunds;
+  const totalThisMonth = thisMonth + thisMonthGifts - thisMonthRevenueRefunds;
+
+  const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+
+  return {
+    twoMonthsAgo: totalTwoMonths,
+    lastMonth: totalLastMonth,
+    thisMonth: totalThisMonth,
+    growthRate: totalGrowth
+  };
+}
+
+function salesBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
+  const twoMonthsAgoRefunds = getPreviousMonthValues(
+    stats,
+    'totalSalesRefunded',
+    -2
+  );
+  const lastMonthRefunds = getPreviousMonthValues(
+    stats,
+    'totalSalesRefunded',
+    -1
+  );
+  const thisMonthRefunds = getThisMonthToDate(stats, 'totalSalesRefunded');
+
+  const totalTwoMonths = twoMonthsAgo - twoMonthsAgoRefunds;
+  const totalLastMonth = lastMonth - lastMonthRefunds;
+  const totalThisMonth = thisMonth - thisMonthRefunds;
+  const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+
+  return {
+    twoMonthsAgo: totalTwoMonths,
+    lastMonth: totalLastMonth,
+    thisMonth: totalThisMonth,
+    growthRate: totalGrowth
   };
 }
 
