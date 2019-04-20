@@ -1,7 +1,7 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
 import Colin from '../components/squarecat';
@@ -9,21 +9,23 @@ import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import { Link } from 'gatsby';
+import RangeInput from '../components/form/range';
 import WallOfLove from '../components/landing/wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 import heartGif from '../assets/heart.gif';
 import iphoneUnsub from '../assets/iphone-unsub.png';
+import mailBoxImg from '../assets/mailbox.png';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
-import { PRICES as prices } from '../utils/prices';
+import packageImg from '../assets/package.png';
+import smallLogo from '../assets/envelope-logo.png';
+import spamMailImg from '../assets/spam-email.png';
+import stampImg from '../assets/stamp.png';
+import truckImg from '../assets/truck.png';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
-
-const PRICES = prices.map(p =>
-  p.price === 800 ? { ...p, recommended: true } : p
-);
 
 function getFeaturedNews() {
   return fetch('/api/news')
@@ -228,42 +230,8 @@ const IndexPage = ({ transitionStatus }) => {
               So that we can <TextImportant>keep your data safe</TextImportant>{' '}
               Leave Me Alone is a paid service.
             </p>
-            <p>
-              You <TextImportant>pay once</TextImportant> for how far back in
-              time you want search your inbox for subscription emails.
-            </p>
           </div>
-
-          <div className="pricing-list-of-boxes-that-say-how-much">
-            <p className="pricing-scan-text">
-              Search your inbox for subscriptions received in the last...
-            </p>
-            <div className="a-load-of-boxes-with-prices">
-              <a className="pricing-box" href="/login">
-                <h3 className="pricing-title">3 days</h3>
-                <p className="pricing-price">Free</p>
-                <span className="pricing-text">no credit card required</span>
-              </a>
-              {PRICES.map(p => (
-                <a
-                  key={p.value}
-                  className={`pricing-box ${
-                    p.recommended ? 'pricing-box-recommended' : ''
-                  }`}
-                  href="/login"
-                >
-                  <h3 className="pricing-title">{p.label}</h3>
-                  <p className="pricing-price">
-                    {p.price ? `$${p.price / 100}` : 'Free'}
-                  </p>
-                  <span className="pricing-text">one-time payment</span>
-                </a>
-              ))}
-            </div>
-            <a className="pricing-enterprise" href="/enterprise">
-              Looking for an enterprise plan?
-            </a>
-          </div>
+          <Pricing />
 
           <div className="home-container-inner">
             <div className="pricing-cta">
@@ -414,4 +382,229 @@ export default IndexPage;
 
 function formatNumber(n) {
   return n > 99999 ? numeral(n).format('0a') : numeral(n).format('0,0');
+}
+
+function Pricing() {
+  const [packageValue, setPackageValue] = useState('1');
+  const [mailPerDay, setMailPerDay] = useState('10');
+  let unsubscribes;
+  let basePrice = 10;
+  let discount;
+  let price;
+  switch (packageValue) {
+    case '1':
+      unsubscribes = 50;
+      discount = 0.1;
+      break;
+    case '2':
+      unsubscribes = 100;
+      discount = 0.15;
+      break;
+    case '3':
+      unsubscribes = 200;
+      discount = 0.2;
+      break;
+    case '4':
+      unsubscribes = 300;
+      discount = 0.4;
+      break;
+  }
+  price = (basePrice - basePrice * discount) * unsubscribes;
+  let mailPerDayLabel = '<10';
+  if (parseInt(mailPerDay, 10) <= 10) {
+    mailPerDayLabel = 'fewer than 10';
+  } else if (parseInt(mailPerDay, 10) < 300) {
+    mailPerDayLabel = mailPerDay;
+  } else if (parseInt(mailPerDay, 10) >= 300) {
+    mailPerDayLabel = '300+';
+  }
+  const mailPerMonth = mailPerDay === '0' ? 10 * 30 : mailPerDay * 30;
+  const spamPerMonth = mailPerMonth * 0.08;
+  const unsubsPerMonth = spamPerMonth * 0.36;
+  let recommendation;
+  let recommendationImage;
+  if (unsubsPerMonth < 45) {
+    recommendationImage = stampImg;
+    recommendation = (
+      <span>
+        We recommend you start on the{' '}
+        <TextImportant>Usage based plan</TextImportant>, if you receive more
+        than 85 unwanted subscription emails then it would be better to switch
+        to a package.
+      </span>
+    );
+  } else if (unsubsPerMonth < 200) {
+    recommendationImage = packageImg;
+    recommendation = (
+      <span>
+        The cheapest option would be to buy a{' '}
+        <TextImportant>Package</TextImportant> and get a bulk discount.
+      </span>
+    );
+  } else {
+    recommendationImage = truckImg;
+    recommendation = (
+      <span>
+        Wow, that's a lot of emails! We recommend you contact us for a{' '}
+        <TextImportant>special custom package</TextImportant> rate.
+      </span>
+    );
+  }
+  return (
+    <>
+      <div className="pricing-list-of-boxes-that-say-how-much">
+        <div className="a-load-of-boxes-with-prices">
+          <div className="pricing-box" href="/login">
+            <h3 className="pricing-title">Usage Based</h3>
+            <img className="pricing-image" src={stampImg} />
+            <span className="pricing-text">Starting at</span>
+            <p className="pricing-price">
+              <span className="currency">$</span>0.10
+            </p>
+            <span className="pricing-text">per unsubscribe</span>
+            <ul className="pricing-features">
+              <li>Gmail and Outlook support</li>
+              <li data-checked="no">Limited API access</li>
+              <li>Email forwarding</li>
+              <li>Email and chat support</li>
+            </ul>
+          </div>
+          <div className="pricing-box featured" href="/login">
+            <h3 className="pricing-title">Packages</h3>
+            <img className="pricing-image" src={packageImg} />
+            <span className="pricing-text">Starting at</span>
+            <p className="pricing-price">
+              <span className="currency">$</span>
+              <span>{(price / 100).toFixed(2)}</span>
+            </p>
+            <span className="pricing-text">
+              for <span>{unsubscribes}</span> unsubscribes
+            </span>
+            <span className="pricing-slider">
+              <RangeInput
+                min="1"
+                max="3"
+                value={packageValue}
+                onChange={val => setPackageValue(val)}
+              />
+            </span>
+            <ul className="pricing-features">
+              <li>
+                <span>{discount * 100}</span>% bulk discount
+              </li>
+              <li>Gmail and Outlook support</li>
+              <li>Limited API access</li>
+              <li>Email forwarding</li>
+              <li>Email and chat support</li>
+            </ul>
+          </div>
+          <div className="pricing-box" href="/login">
+            <h3 className="pricing-title">Enterprise</h3>
+            <img className="pricing-image" src={truckImg} />
+            <span className="pricing-text">Starting at</span>
+            <p className="pricing-price">
+              <span className="currency">$</span>80.00
+            </p>
+            <span className="pricing-text">per month</span>
+            <ul className="pricing-features">
+              <li>Up to 10 seats</li>
+              <li>Unlimited unsubscribes</li>
+              <li>Gmail and Outlook support</li>
+              <li>Limitless API access</li>
+              <li>Email forwarding</li>
+              <li>Email, chat and phone support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="pricing-estimates">
+        <div className="pricing-estimator">
+          <div className="pricing-estimate-text">
+            <h3 className="pricing-estimate-title">
+              How many unsubscribes do I need?
+            </h3>
+            <p>
+              Based on our usage data we can estimate how many unsubscribes you
+              might need based on the size of your inbox.
+            </p>
+            <p>
+              Approximately how much mail do you receive{' '}
+              <TextImportant>each day?</TextImportant>
+            </p>
+            <RangeInput
+              min="0"
+              max="300"
+              value={mailPerDay}
+              step="20"
+              onChange={setMailPerDay}
+            />
+            <div style={{ marginTop: 10 }}>{mailPerDayLabel}</div>
+          </div>
+          <div className="pricing-estimate-values">
+            <div className="count">
+              <div className="count-value">
+                <div className="count-number">
+                  {numeral(mailPerMonth).format('0,00')}
+                </div>
+                <div className="count-label">emails</div>
+              </div>
+              <div className="count-icon">
+                <img src={mailBoxImg} />
+              </div>
+              <div className="count-description">
+                You received approximately this many emails per month
+              </div>
+            </div>
+            <div className="count">
+              <div className="count-value">
+                <div className="count-number">
+                  {numeral(spamPerMonth).format('0,00')}
+                </div>
+                <div className="count-label">subscriptions</div>
+              </div>
+              <div className="count-icon">
+                <img src={spamMailImg} />
+              </div>
+              <div className="count-description">
+                Around 8% of all mail we scan is a subscription email
+              </div>
+            </div>
+            <div className="count">
+              <div className="count-value">
+                <div className="count-number">
+                  {numeral(unsubsPerMonth).format('0,00')}
+                </div>
+                <div className="count-label">unsubscribes</div>
+              </div>
+              <div className="count-icon">
+                <img className="envelope-image" src={smallLogo} />
+              </div>
+              <div className="count-description">
+                Users report around 36% of the subscriptions we find are
+                unwanted
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="recommendation">
+          <div className="recommendation-image">
+            <img src={recommendationImage} />
+          </div>
+          <div className="recommendation-description">
+            <p>
+              Based on your mail received, we estimate you'll have received
+              around{' '}
+              <TextImportant>
+                {`${numeral(unsubsPerMonth).format(
+                  '0,00'
+                )} unwanted subscription emails `}
+              </TextImportant>{' '}
+              each month.
+            </p>
+            <p>{recommendation}</p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
