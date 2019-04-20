@@ -34,7 +34,9 @@ export function getExpenses() {
     return expensesItems.results;
   }
 
-  logger.debug('airtable: fetching expenses');
+  logger.debug(
+    `airtable: fetching expenses - last fetched ${expensesItems.lastFetched}`
+  );
   return new Promise((resolve, reject) => {
     expensesBase(expenses.tableId)
       .select({
@@ -52,6 +54,10 @@ export function getExpenses() {
           cost: r.get('Monthly Cost'),
           url: r.get('URL')
         }));
+        expensesItems = {
+          results: expenses,
+          lastFetched: new Date()
+        };
         return resolve(expenses);
       });
   });
@@ -63,7 +69,9 @@ export function getNews() {
     logger.debug('airtable: returning news from cache');
     return newsItems.results;
   }
-  logger.debug('airtable: fetching news');
+  logger.debug(
+    `airtable: fetching news - last fetched ${newsItems.lastFetched}`
+  );
 
   return new Promise((resolve, reject) => {
     newsBase(news.tableId)
