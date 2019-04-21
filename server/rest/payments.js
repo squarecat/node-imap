@@ -60,12 +60,19 @@ export default app => {
     res.send('ok');
   });
   app.post('/api/payments/refund', async (req, res) => {
-    const { body } = req;
-    const { type, data } = body;
-    if (type === 'charge.refunded') {
-      const { amount_refunded } = data;
-      await addRefundToStats({ price: amount_refunded / 100 });
-    }
     res.sendStatus(200);
+
+    try {
+      logger.info('payments-rest: got refund webhook');
+      const { body } = req;
+      const { type, data } = body;
+      if (type === 'charge.refunded') {
+        const { amount_refunded } = data;
+        await addRefundToStats({ price: amount_refunded / 100 });
+      }
+    } catch (err) {
+      logger.error('payments-rest: error with refund webhook');
+      logger.error(err);
+    }
   });
 };
