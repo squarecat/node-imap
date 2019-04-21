@@ -740,7 +740,8 @@ function percent(num) {
 
 function calculateWithRefunds(stats, stat) {
   if (stat === 'totalRevenue')
-    return stats.totalRevenue - stats.totalRevenueRefunded;
-  if (stat === 'totalSales') return stats.totalSales - stats.totalSalesRefunded;
+    return stats.totalRevenue - (stats.totalRevenueRefunded || 0);
+  if (stat === 'totalSales')
+    return stats.totalSales - (stats.totalSalesRefunded || 0);
   return 0;
 }
