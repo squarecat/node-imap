@@ -108,7 +108,7 @@ export function hasPaidScanAvailable(user, scanType) {
  * output a occurance count for each mail and a deduped list
  */
 export function dedupeMailList(dupeCache = {}, mailList = []) {
-  const { deduped, dupes } = mailList.reduce(
+  const { deduped, dupes, dupeSenders } = mailList.reduce(
     (out, mail) => {
       const dupeKey = getDupeKey(mail.from, mail.to);
       const dupeOccurances = out.dupes[dupeKey] || 0;
@@ -118,7 +118,11 @@ export function dedupeMailList(dupeCache = {}, mailList = []) {
             ...out.dupes,
             [dupeKey]: 1
           },
-          deduped: [...out.deduped, mail]
+          deduped: [...out.deduped, mail],
+          dupeSenders: [
+            ...out.dupeSenders,
+            { sender: mail.from, occurences: 1 }
+          ]
         };
       }
       return {
@@ -126,11 +130,15 @@ export function dedupeMailList(dupeCache = {}, mailList = []) {
         dupes: {
           ...out.dupes,
           [dupeKey]: dupeOccurances + 1
-        }
+        },
+        dupeSenders: [
+          ...out.dupeSenders,
+          { sender: mail.from, occurences: dupeOccurances + 1 }
+        ]
       };
     },
-    { dupes: dupeCache, deduped: [] }
+    { dupes: dupeCache, deduped: [], dupeSenders: [] }
   );
 
-  return { deduped, dupes };
+  return { deduped, dupes, dupeSenders };
 }
