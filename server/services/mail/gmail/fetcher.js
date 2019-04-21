@@ -94,7 +94,7 @@ export async function* fetchMail(
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
       totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount,
-      occurances: dupeCache
+      occurrences: dupeCache
     };
   } catch (err) {
     logger.error('gmail-fetcher: failed to fetch mail');

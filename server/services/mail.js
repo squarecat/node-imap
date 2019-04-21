@@ -28,6 +28,7 @@ import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
+import { updateOccurances } from '../dao/occurrences';
 
 // todo convert to generator?
 export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
@@ -57,7 +58,7 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
       totalMail,
       totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail,
-      occurances
+      occurrences
     } = next.value;
 
     const scanData = {
@@ -79,7 +80,10 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
         updatePaidScanForUser(userId, timeframe);
       }
     }
-    return { ...scanData, occurances };
+    if (timeframe === '6m') {
+      updateOccurrences(occurrences.senderOccurrences);
+    }
+    return { ...scanData, occurrences };
   } catch (err) {
     console.error('mail-service: failed to fetch mail for user', user.id);
     console.error(err);
