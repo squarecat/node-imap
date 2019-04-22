@@ -13,6 +13,7 @@ import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
+import subDays from 'date-fns/sub_days';
 import { useAsync } from '../../utils/hooks';
 
 const lineColor = '#EB6C69';
@@ -572,7 +573,9 @@ function getGraphStats(stats, stat) {
 
   // only show data from the last month and this month to date
   return histogram.reduce((out, d) => {
-    const date = startOfDay(d.timestamp);
+    // stats are run at just past midnight so we actually want to show the day before
+
+    const date = subDays(startOfDay(d.timestamp), 1);
     if (isAfter(date, lastDayToShow)) {
       return [
         ...out,
