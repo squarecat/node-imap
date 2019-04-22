@@ -255,13 +255,18 @@ async function fetchMessagesBatch(accessToken, messageIds) {
     const respJson = httpMessageParser(response.data);
     const messages = respJson.multipart.map(({ body }) => {
       const messageRaw = body.toString();
-      const contentLen = messageRaw.match(/Content-Length: (.+)/)[1];
+      const match = messageRaw.match(/Content-Length: (.+)/);
+      if (!match) {
+        logger.warn('gmail-fetcher: message raw has no content length');
+        return null;
+      }
+      const contentLen = match[1];
       const content = messageRaw
         .substr(messageRaw.indexOf('{'), contentLen)
         .trim();
       return JSON.parse(content);
     });
-    return messages;
+    return messages.filter(m => m);
   } catch (err) {
     logger.error('gmail-fetcher: failed batch message request');
     logger.error(err);

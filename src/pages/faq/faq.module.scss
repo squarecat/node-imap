@@ -1,3 +1,5 @@
+@import '../../components/btn/btn.module.scss';
+
 .faqs {
   display: flex;
   flex-wrap: wrap;
@@ -8,6 +10,14 @@
   flex-basis: 50%;
   max-width: 50%;
   padding: 0 20px 20px 0;
+}
+
+.cta {
+  @extend .btn;
+  @extend .stretch;
+  width: auto;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {

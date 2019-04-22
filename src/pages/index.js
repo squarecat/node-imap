@@ -7,13 +7,13 @@ import Colin from '../components/squarecat';
 import Footer from '../components/footer';
 import Header from './header';
 import Layout from '../layouts/layout';
-import { TextImportant } from '../components/text';
+import { TextImportant, TextLink } from '../components/text';
 import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
 import girlLogo from '../assets/leavemealonegirl.png';
 import heartGif from '../assets/heart.gif';
-import iphoneUnsubGif from '../assets/iphone-unsub.png';
+import iphoneUnsub from '../assets/iphone-unsub.png';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
 import { PRICES as prices } from '../utils/prices';
@@ -23,6 +23,12 @@ import { useAsync } from '../utils/hooks';
 const PRICES = prices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
+
+function getFeaturedNews() {
+  return fetch('/api/news')
+    .then(resp => resp.json())
+    .then(data => data.filter(d => d.featured));
+}
 
 const IndexPage = () => {
   const activeRef = useRef(null);
@@ -37,6 +43,8 @@ const IndexPage = () => {
   if (!statsLoading) {
     statsData = value;
   }
+
+  const { value: featuredNews = [], loadingNews } = useAsync(getFeaturedNews);
 
   const bannerShown = false;
 
@@ -102,12 +110,12 @@ const IndexPage = () => {
               </div>
             </div>
           </div>
-          <a className="more-info" href="#how-it-works">
+          <a className="more-info" href="#learn">
             Read more 👇
           </a>
         </div>
-        <div className="how home-container">
-          <div className="home-container-inner" id="how-it-works">
+        <div className="learn home-container">
+          <div className="home-container-inner" id="learn">
             <h2 className="feature-header">
               See all of your spam, newsletters and subscription emails in one
               place.
@@ -119,7 +127,7 @@ const IndexPage = () => {
                 alt="unsubscribe list"
               />
               <img
-                src={iphoneUnsubGif}
+                src={iphoneUnsub}
                 className="unsub-iphone-img"
                 alt="unsubscribe list"
               />
@@ -142,8 +150,9 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
+
         <div className="privacy home-container">
-          <div className="home-container-inner" id="how-it-works">
+          <div className="home-container-inner" id="learn">
             {/* <p>
               Did you know that in 2018, spam messages account for 48.16% of all
               e-mail traffic worldwide?{' '}
@@ -208,15 +217,6 @@ const IndexPage = () => {
         <div className="love home-container">
           <div className="home-container-inner" id="wall-of-love">
             <WallOfLove />
-            {/* <TrackVisibility>
-              {({ isVisible }) => (
-                <Stats
-                  isLoading={statsLoading}
-                  data={statsData}
-                  isVisible={isVisible}
-                />
-              )}
-            </TrackVisibility> */}
           </div>
         </div>
         <div className="pricing home-container">
@@ -292,6 +292,24 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
+
+        <div className="news home-container">
+          <div className="home-container-inner" id="news">
+            <h2>In The News</h2>
+            <div className="in-the-news">
+              {featuredNews.map(({ quote, shortQuote, logoUrl, url }) => (
+                <div key={url} className="news-item">
+                  <p>"{shortQuote || quote}"</p>
+                  <a target="_" className="news-logo" href={url}>
+                    <img src={logoUrl} />
+                  </a>
+                </div>
+              ))}
+            </div>
+            <TextLink href="/news">Read more...</TextLink>
+          </div>
+        </div>
+
         <div className="makers home-container">
           <div className="home-container-inner" id="about">
             <h2>Created by Independent Makers</h2>

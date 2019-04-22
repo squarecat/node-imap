@@ -153,6 +153,27 @@ export async function addPayment({ price }, count = 1) {
     throw err;
   }
 }
+
+export async function addRefund({ price }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          totalRevenueRefunded: price,
+          totalSalesRefunded: count
+        }
+      },
+      { upsert: true }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting refund stat ${price}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function addGiftPayment({ price }, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
@@ -202,6 +223,8 @@ const recordedStats = [
   'unsubscriptionsByLinkStrategy',
   'totalRevenue',
   'totalSales',
+  'totalRevenueRefunded',
+  'totalSalesRefunded',
   'giftRevenue',
   'giftSales',
   'giftRedemptions',
