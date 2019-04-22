@@ -88,6 +88,30 @@ const FaqPage = () => (
           We'll let you know if an email was seen in your trash or spam folder.
         </p>
       </div>
+
+      <div styleName="faq-box">
+        <h3 styleName="faq-title">What information can you access about me?</h3>
+        <p>We NEVER store the content of your emails in any form.</p>
+        <p>
+          We require permission to{' '}
+          <TextImportant>view your email messages and settings</TextImportant>{' '}
+          so we can identify subscription emails and display them to you.
+        </p>
+      </div>
+      <div styleName="faq-box">
+        <h3 styleName="faq-title">Can I delete my account?</h3>
+        <p>Yes!</p>
+        <p>
+          You can deactivate your account in your{' '}
+          <TextLink href="/app/profile">account settings</TextLink>. This will
+          delete all of your data, revoke your API key, and sign you out.
+        </p>
+        <p>
+          You will still be able to create an account again to clean your inbox
+          in the future.
+        </p>
+      </div>
+
       <div styleName="faq-box">
         <h3 styleName="faq-title">Can I purchase a monthly subscription?</h3>
         <p>

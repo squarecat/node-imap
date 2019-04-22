@@ -43,8 +43,8 @@ export default function Terms() {
       <p>
         We are dedicated to upholding the privacy of your data and promise to
         never do anything with this data except provide you an excellent service
-        through this website. All Google information, including your keys and
-        metadata is encrypted at rest in our database.
+        through this website. All information, including your keys and metadata
+        is encrypted at rest in our database.
       </p>
       <p>
         We don’t share any personally identifying information publicly or with
