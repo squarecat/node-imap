@@ -9,10 +9,6 @@ const BASE_URL = process.env.BASE_URL;
 let windowObjectReference = null;
 let previousUrl = null;
 const windowFeatures = [
-  // 'height=700',
-  // 'width=600',
-  // 'top=100',
-  // 'left=100',
   // A dependent window closes when its parent window closes.
   'dependent=yes',
   // hide menubars and toolbars for the simplest popup
@@ -55,7 +51,7 @@ export default ({ provider, action }) => {
     window.removeEventListener('message', receiveMessage);
 
     const width = 600;
-    const height = 700;
+    const height = 600;
 
     const { left, top } = centerPopupPosition(width, height);
     const strWindowFeatures = [
@@ -123,19 +119,18 @@ export default ({ provider, action }) => {
 };
 
 function centerPopupPosition(popupWidth, popupHeight) {
-  const windowWidth = window.innerWidth
-    ? window.innerWidth
-    : document.documentElement.clientWidth
-    ? document.documentElement.clientWidth
-    : screen.width;
-  const windowHeight = window.innerHeight
-    ? window.innerHeight
-    : document.documentElement.clientHeight
-    ? document.documentElement.clientHeight
-    : screen.height;
+  if (!screen.width || !screen.height) {
+    return {
+      left: 'auto',
+      top: 'auto'
+    };
+  }
 
-  const left = (windowWidth - popupWidth) / 2;
-  const top = (windowHeight - popupHeight) / 2;
+  const windowWidth = screen.width;
+  const windowHeight = screen.height;
+
+  const left = windowWidth / 2 - popupWidth / 2;
+  const top = windowHeight / 2 - popupHeight / 2;
 
   return {
     left,
