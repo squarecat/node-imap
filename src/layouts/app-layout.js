@@ -4,8 +4,9 @@ import './layout.css';
 
 import Helmet from 'react-helmet';
 import React from 'react';
-import favicon from '../assets/meta/favicon.png';
 import { setConfig } from 'react-hot-loader';
+
+const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
 
 setConfig({ pureSFC: true });
 
@@ -25,7 +26,7 @@ const AppLayout = ({ pageName, children }) => {
             content: 'width=device-width, initial-scale=1.0'
           }
         ]}
-        link={[{ rel: 'icon', type: 'image/png', href: favicon }]}
+        link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
       />
       {children}
     </>
