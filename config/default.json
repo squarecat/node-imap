@@ -34,8 +34,8 @@
     "apiKey": "$MAILGUN_API_KEY",
     "domains": {
       "unsubscribe": "mail.leavemealone.app",
-      "transactional": "mail.leavemealone.xyz",
-      "newsletter": "mail.leavemealone.xyz"
+      "transactional": "info.leavemealone.app",
+      "newsletter": "news.leavemealone.app"
     }
   },
   "puppeteer": {

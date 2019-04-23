@@ -24,8 +24,8 @@
     "apiKey": "$MAILGUN_API_KEY",
     "domains": {
       "unsubscribe": "beta.mail.leavemealone.xyz",
-      "transactional": "beta.mail.leavemealone.xyz",
-      "newsletter": "beta.mail.leavemealone.xyz"
+      "transactional": "beta.info.leavemealone.xyz",
+      "newsletter": "beta.news.leavemealone.xyz"
     }
   },
   "puppeteer": {
