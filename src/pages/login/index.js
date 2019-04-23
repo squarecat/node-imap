@@ -9,7 +9,8 @@ import { Link } from 'gatsby';
 import PasswordForm from './password';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
-import logo from '../../assets/envelope-logo.png';
+
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 let error;
 let strategy;
@@ -123,7 +124,7 @@ const LoginPage = ({ register, transitionStatus }) => {
               {step === 'select' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logo} alt="logo" />
+                    <img src={logoUrl} alt="logo" />
                   </div>
                   <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>
@@ -177,7 +178,7 @@ const LoginPage = ({ register, transitionStatus }) => {
               {step === 'enter-email' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logo} alt="logo" />
+                    <img src={logoUrl} alt="logo" />
                   </div>
                   <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>You're one step away from a clean inbox!</p>
@@ -189,7 +190,7 @@ const LoginPage = ({ register, transitionStatus }) => {
               {step === 'signup' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logo} alt="logo" />
+                    <img src={logoUrl} alt="logo" />
                   </div>
                   <h1 styleName="title">Welcome to Leave Me Alone!</h1>
                   <p>
@@ -213,7 +214,7 @@ const LoginPage = ({ register, transitionStatus }) => {
               {step === 'enter-password' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logo} alt="logo" />
+                    <img src={logoUrl} alt="logo" />
                   </div>
                   <h1 styleName="title">Login to Leave Me Alone</h1>
                   <p>Welcome back!</p>
@@ -251,7 +252,7 @@ const LoginPage = ({ register, transitionStatus }) => {
               data-active={step === 'select-existing'}
             >
               <div styleName="beautiful-logo">
-                <img src={logo} alt="logo" />
+                <img src={logoUrl} alt="logo" />
               </div>
               <h1 styleName="title">Login to Leave Me Alone</h1>
               <p>

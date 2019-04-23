@@ -1,8 +1,8 @@
-import logo from '../assets/envelope-logo.png';
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export const PAYMENT_CONFIG_OPTS = {
   key: process.env.STRIPE_PK,
-  image: logo,
+  image: logoUrl,
   locale: 'auto'
 };
 

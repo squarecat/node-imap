@@ -1,10 +1,11 @@
 import './header.module.scss';
 
-import { Link } from 'gastby';
+import { Link } from 'gatsby';
 import React from 'react';
-import { TextLink } from '../components/text';
+import { TextLink } from '../../text';
 import cx from 'classnames';
-import smallLogo from '../assets/envelope-logo.png';
+
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ setActive = () => {}, inverted = false }) => (
   <div styleName={cx('header', { 'header-inverted': inverted })}>
@@ -18,7 +19,7 @@ export default ({ setActive = () => {}, inverted = false }) => (
     </div> */}
     <div styleName="header-inner">
       <a href="/" styleName="header-logo">
-        <img alt="logo" src={smallLogo} />
+        <img alt="logo" src={logoUrl} />
       </a>
       <div styleName="header-title">Leave Me Alone </div>
       <ul styleName="header-nav">

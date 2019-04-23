@@ -4,7 +4,8 @@ import Button from '../../components/btn';
 import React from 'react';
 import _capitalize from 'lodash.capitalize';
 import gif from '../../assets/toggle-unsubscribe-hd.gif';
-import logo from '../../assets/envelope-logo.png';
+
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 const betaTweetText = encodeURIComponent(
   `🙌 I've been beta testing @LeaveMeAloneApp and it's the best because... \n\nCheck it out at https://leavemealone.xyz`
@@ -41,7 +42,7 @@ export default ({ openPriceModal, isBeta = false, provider } = {}) => {
           find all the subscription emails that you are receiving.
         </p>
         <div styleName="welcome-logo">
-          <img src={logo} alt="logo" styleName="first-logon-image" />
+          <img src={logoUrl} alt="logo" styleName="first-logon-image" />
         </div>
         <p>
           We'll show you all the mail you are subscribed to, just hit the slider

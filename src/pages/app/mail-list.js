@@ -18,9 +18,6 @@ import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
 import _isArray from 'lodash.isarray';
-import favicon from '../../assets/meta/favicon.png';
-import faviconFinished from '../../assets/meta/favicon-done.png';
-import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
@@ -29,6 +26,14 @@ import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM YYYY HH:mm';
+
+const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
+const faviconScanningUrl = `${
+  process.env.CDN_URL
+}/images/meta/favicon-scanning.png`;
+const faviconFinishedUrl = `${
+  process.env.CDN_URL
+}/images/meta/favicon-done.png`;
 
 const mailReducer = (state = [], action) => {
   switch (action.type) {
@@ -876,16 +881,16 @@ if (typeof document !== 'undefined') {
 
 let checkFocusInterval;
 function changeFavicon(scanning = false, isSearchFinished = false) {
-  let src = favicon;
+  let src = faviconUrl;
   let title = 'Home | Leave Me Alone';
 
   if (scanning) {
     title = 'Scanning... | Leave Me Alone';
-    src = faviconScanning;
+    src = faviconScanningUrl;
   }
   if (isSearchFinished) {
     title = 'Finished! | Leave Me Alone';
-    src = faviconFinished;
+    src = faviconFinishedUrl;
     checkFocusInterval = setInterval(checkFocus, 1000);
   }
 
