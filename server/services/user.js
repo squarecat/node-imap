@@ -94,6 +94,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           token: v4()
         },
         {
+          id,
           provider,
           email,
           keys
@@ -103,15 +104,12 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       addUpdateNewsletterSubscriber(email);
     } else {
       user = await updateUserWithAccount(
+        { id, email },
         {
-          id,
-          'accounts.email': email
-        },
-        {
-          'accounts.$.keys': keys,
           profileImg,
           name: displayName
-        }
+        },
+        keys
       );
     }
 
@@ -463,7 +461,7 @@ export async function getUserLoginProvider({ email }) {
 }
 
 export async function authenticationRequiresTwoFactor(user) {
-  return user.password.totpSecret && !user.password.unverified;
+  return user.password && user.password.totpSecret && !user.password.unverified;
 }
 
 export async function createUserTotpToken(user) {

@@ -20,6 +20,8 @@ const newsletterTransport = mailgun({
 const list = newsletterTransport.lists(address);
 
 export async function addUpdateSubscriber(email, { subscribed = true } = {}) {
+  if (process.env.NODE_ENV === 'development') return true;
+
   const member = {
     address: email,
     subscribed,
@@ -38,6 +40,8 @@ export async function addUpdateSubscriber(email, { subscribed = true } = {}) {
 }
 
 export async function removeSubscriber(email) {
+  if (process.env.NODE_ENV === 'development') return true;
+
   return new Promise((resolve, reject) => {
     list.members(email).delete(err => {
       if (err) {

@@ -163,20 +163,26 @@ export async function updateUser(id, userData) {
   }
 }
 
-export async function updateUserWithAccount(query, userData) {
-  let updateObj = {
-    ...userData,
-    lastUpdatedAt: isoDate()
-  };
+export async function updateUserWithAccount({ id, email }, userData, keys) {
   try {
     const col = await db().collection(COL_NAME);
-    await col.updateOne(query, {
-      $set: updateObj
-    });
-    const user = await getUser(query.id);
+    await col.updateOne(
+      {
+        id,
+        'accounts.email': email
+      },
+      {
+        $set: {
+          'accounts.$.keys': keys,
+          ...userData,
+          lastUpdatedAt: isoDate()
+        }
+      }
+    );
+    const user = await getUser(id);
     return user;
   } catch (err) {
-    logger.error(`users-dao: error updating user ${query.id}`);
+    logger.error(`users-dao: error updating user ${id}`);
     logger.error(err);
     throw err;
   }

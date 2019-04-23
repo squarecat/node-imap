@@ -1,16 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import Redirect from '../../../components/login/redirect';
 
-export default () => {
-  useEffect(() => {
-    const params = window.location.search;
-    if (window.opener) {
-      window.opener.postMessage({
-        source: 'lma-login-redirect',
-        payload: params
-      });
-      window.close();
-    }
-  });
-
-  return <p>Please wait...</p>;
-};
+export default () => <Redirect />;
