@@ -1,5 +1,6 @@
 import db, { isoDate } from './db';
 
+import _groupBy from 'lodash.groupby';
 import { hash } from './encryption';
 import logger from '../utils/logger';
 import { parseEmail } from '../utils/parsers';
@@ -18,10 +19,7 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
     const col = await db().collection(COL_NAME);
     const frequencyLabel = timeframeToFrequency[timeframe];
     const parsedOccurrences = occurrences.reduce((out, oc) => {
-      const {
-        fromEmail: senderAddress,
-        fromName: friendlyName
-      } = parseSenderEmail(oc.sender);
+      const { senderAddress, friendlyName } = parseSenderEmail(oc.sender);
       if (!senderAddress.includes('@')) {
         return out;
       }
@@ -60,7 +58,7 @@ export async function addUnsubscribeOccrurence(userId, from) {
   const now = isoDate();
   try {
     const col = await db().collection(COL_NAME);
-    const { fromEmail: senderAddress } = parseSenderEmail(from);
+    const { senderAddress } = parseSenderEmail(from);
     if (!senderAddress.includes('@')) {
       return null;
     }
@@ -108,16 +106,62 @@ async function partitionOccurrences({ occurrences, col }) {
       }
     })
     .toArray();
-  const existingOccurences = occurrences.filter(oc => {
+  let existingOccurences = occurrences.filter(oc => {
     return existing.some(eo => eo.hashedSender === hash(oc.domain));
   });
-  const newOccurrences = occurrences.filter(oc => {
+  let newOccurrences = occurrences.filter(oc => {
     return existing.every(eo => eo.hashedSender !== hash(oc.domain));
   });
+  const grouped = _groupBy(newOccurrences, 'domain');
+
+  newOccurrences = newOccurrences.reduce((out, oc) => {
+    const { senderAddress, domain } = oc;
+    const dupes = grouped[domain];
+    // is this a duplicate where all that's
+    // different is the sender name? If so then
+    // merge it with the one we've already seen
+    if (dupes.indexOf(oc) > 0 && senderAddress === dupes[0].senderAddress) {
+      return out.map(o => {
+        if (o.domain === domain && o.senderAddress === senderAddress) {
+          return {
+            ...o,
+            occurrences: o.occurrences + oc.occurrences
+          };
+        }
+        return o;
+      });
+    }
+    // if there is the second known address for this domain in this
+    // groud then remove it from this array and add it to existing array
+    // as it will be appended to the new one in the next operation
+    if (dupes.findIndex(d => d.senderAddress === senderAddress) > 0) {
+      existingOccurences = [...existingOccurences, oc];
+      return out;
+    }
+    return [...out, oc];
+  }, []);
   return { existingOccurences, newOccurrences };
 }
 
 async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
+  // merge the new occurrences where the domain is the same
+  // const mergedOccurrences = occurrences.reduce((out, oc) => {
+  //   const isDupe = !!out[oc.domain];
+  //   if (isDupe) {
+  //     const existing = out[oc.domain];
+  //     return {
+  //       ...out,
+  //       [oc.domain]: {
+  //         ...existing,
+
+  //       }
+  //     }
+  //   }
+  //   return {
+  //     ...out,
+  //     [oc.domain]: oc
+  //   }
+  // }, {})
   const documents = occurrences.map(oc => {
     const hashedUser = hash(`${userId}-${oc.senderAddress}`);
     const hashedAddress = hash(oc.senderAddress);
@@ -134,6 +178,9 @@ async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
         [hashedAddress]: 0
       },
       seenBy: [hashedUser],
+      addressOccurrences: {
+        [hashedAddress]: 1
+      },
       unsubscribedBy: [],
       lastSeen: now,
       lastUnsubscribed: null
@@ -142,7 +189,7 @@ async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
   if (!documents.length) {
     return null;
   }
-  return col.insert(documents);
+  return col.insertMany(documents);
 }
 
 async function updateExisting({

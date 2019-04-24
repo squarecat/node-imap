@@ -1,4 +1,5 @@
 let App;
+
 if (process.env.NODE_ENV !== 'development') {
   console.info('starting production api');
   require('@babel/polyfill');
@@ -10,3 +11,13 @@ if (process.env.NODE_ENV !== 'development') {
   App = require('./server/index').default;
 }
 App.start();
+
+process.on('SIGINT', async () => {
+  console.info('SIGINT signal received.');
+  try {
+    await App.stop();
+    process.exit(0);
+  } catch (err) {
+    process.exit(1);
+  }
+});
