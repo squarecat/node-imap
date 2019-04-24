@@ -1,9 +1,11 @@
 import Airtable from 'airtable';
 import config from 'getconfig';
+import isAfter from 'date-fns/is_after';
 import logger from './logger';
+import subHours from 'date-fns/sub_hours';
 
 const airtableKey = config.airtable.key;
-const { expenses, beta } = config.airtable;
+const { expenses, beta, news } = config.airtable;
 
 const airtable = new Airtable({
   apiKey: airtableKey
@@ -11,8 +13,30 @@ const airtable = new Airtable({
 
 const expensesBase = airtable.base(expenses.baseId);
 const betaBase = airtable.base(beta.baseId);
+const newsBase = airtable.base(news.baseId);
+
+let newsItems = {
+  results: [],
+  lastFetched: null
+};
+let expensesItems = {
+  results: [],
+  lastFetched: null
+};
 
 export function getExpenses() {
+  const oneHourAgo = subHours(new Date(), 1);
+  if (
+    expensesItems.lastFetched &&
+    isAfter(expensesItems.lastFetched, oneHourAgo)
+  ) {
+    logger.debug('airtable: returning expenses from cache');
+    return expensesItems.results;
+  }
+
+  logger.debug(
+    `airtable: fetching expenses - last fetched ${expensesItems.lastFetched}`
+  );
   return new Promise((resolve, reject) => {
     expensesBase(expenses.tableId)
       .select({
@@ -30,7 +54,59 @@ export function getExpenses() {
           cost: r.get('Monthly Cost'),
           url: r.get('URL')
         }));
+        expensesItems = {
+          results: expenses,
+          lastFetched: new Date()
+        };
         return resolve(expenses);
+      });
+  });
+}
+
+export function getNews() {
+  const oneHourAgo = subHours(new Date(), 1);
+  if (newsItems.lastFetched && isAfter(newsItems.lastFetched, oneHourAgo)) {
+    logger.debug('airtable: returning news from cache');
+    return newsItems.results;
+  }
+  logger.debug(
+    `airtable: fetching news - last fetched ${newsItems.lastFetched}`
+  );
+
+  return new Promise((resolve, reject) => {
+    newsBase(news.tableId)
+      .select({
+        view: 'Grid view'
+      })
+      .firstPage((err, records) => {
+        if (err) {
+          logger.error('airtable: failed to get news stats');
+          logger.error(err);
+          return reject(err);
+        }
+        const news = records.reduce(
+          (out, r) =>
+            r.get('hidden')
+              ? out
+              : [
+                  ...out,
+                  {
+                    name: r.get('Name'),
+                    quote: r.get('Quote'),
+                    shortQuote: r.get('Short Quote'),
+                    url: r.get('Article URL'),
+                    logoUrl: r.get('Logo URL'),
+                    featured: r.get('Featured'),
+                    simple: r.get('Listing')
+                  }
+                ],
+          []
+        );
+        newsItems = {
+          results: news,
+          lastFetched: new Date()
+        };
+        return resolve(news);
       });
   });
 }

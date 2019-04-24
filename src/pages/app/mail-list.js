@@ -18,9 +18,6 @@ import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
 import _isArray from 'lodash.isarray';
-import favicon from '../../assets/meta/favicon.png';
-import faviconFinished from '../../assets/meta/favicon-done.png';
-import faviconScanning from '../../assets/meta/favicon-scanning.png';
 import format from 'date-fns/format';
 import { getSubsEstimate } from '../../utils/estimates';
 import io from 'socket.io-client';
@@ -29,6 +26,14 @@ import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM YYYY HH:mm';
+
+const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
+const faviconScanningUrl = `${
+  process.env.CDN_URL
+}/images/meta/favicon-scanning.png`;
+const faviconFinishedUrl = `${
+  process.env.CDN_URL
+}/images/meta/favicon-done.png`;
 
 const mailReducer = (state = [], action) => {
   switch (action.type) {
@@ -45,11 +50,11 @@ const mailReducer = (state = [], action) => {
           error: !action.data.estimatedSuccess
         }))
       ];
-    case 'set-occurances': {
+    case 'set-occurrences': {
       return state.map(mailItem => {
         const dupeKey = getDupeKey(mailItem.from, mailItem.to);
-        const occurances = action.data[dupeKey] || 0;
-        return { ...mailItem, occurances };
+        const occurrences = action.data[dupeKey] || 0;
+        return { ...mailItem, occurrences };
       });
     }
     case 'unsubscribe':
@@ -268,7 +273,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     setSearchFinished(true);
     if (scan) {
       setLastScan(scan);
-      dispatch({ type: 'set-occurances', data: scan.occurances || {} });
+      dispatch({ type: 'set-occurrences', data: scan.occurrences || {} });
     }
   });
   const [lastSearchTimeframe, setLastSearchTimeframe] = useLocalStorage(
@@ -703,7 +708,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, timeframe, style }) {
               </Tooltip>
               {fromName}
             </span>
-            {m.occurances > 1 ? (
+            {m.occurrences > 1 ? (
               <Tooltip
                 placement="top"
                 trigger={['hover']}
@@ -712,12 +717,12 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, timeframe, style }) {
                 destroyTooltipOnHide={true}
                 overlay={
                   <span>
-                    You received {m.occurances} emails from this sender in the
+                    You received {m.occurrences} emails from this sender in the
                     past {tfToStringShort[timeframe]}
                   </span>
                 }
               >
-                <span className="occurances">x{m.occurances}</span>
+                <span className="occurrences">x{m.occurrences}</span>
               </Tooltip>
             ) : null}
           </div>
@@ -834,17 +839,22 @@ function getSocialContent(unsubCount = 0, referralCode) {
   );
 }
 
-function parseFrom(str) {
+function parseFrom(str = '') {
+  if (!str) {
+    return { fromName: '', fromEmail: '' };
+  }
   let fromName;
   let fromEmail;
   if (str.match(/^.*<.*>/)) {
     const [, name, email] = /^(.*)(<.*>)/.exec(str);
     fromName = name;
     fromEmail = email;
-  } else {
+  } else if (str.match(/<?.*@/)) {
     const [, name] = /<?(.*)@/.exec(str);
-
     fromName = name || str;
+    fromEmail = str;
+  } else {
+    fromName = str;
     fromEmail = str;
   }
   return { fromName, fromEmail };
@@ -871,16 +881,16 @@ if (typeof document !== 'undefined') {
 
 let checkFocusInterval;
 function changeFavicon(scanning = false, isSearchFinished = false) {
-  let src = favicon;
+  let src = faviconUrl;
   let title = 'Home | Leave Me Alone';
 
   if (scanning) {
     title = 'Scanning... | Leave Me Alone';
-    src = faviconScanning;
+    src = faviconScanningUrl;
   }
   if (isSearchFinished) {
     title = 'Finished! | Leave Me Alone';
-    src = faviconFinished;
+    src = faviconFinishedUrl;
     checkFocusInterval = setInterval(checkFocus, 1000);
   }
 

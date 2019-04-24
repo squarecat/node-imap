@@ -1,10 +1,12 @@
 // import winston from 'winston';
 
-// const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === 'development';
 
 const logger = {
   debug: msg => {
-    return console.log(msg);
+    if (isDev) {
+      return console.log(msg);
+    }
   },
   info: msg => {
     return console.log(msg);

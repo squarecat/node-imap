@@ -9,6 +9,7 @@ import {
   addReferralCredit,
   addReferralPaidScan,
   addReferralSignup,
+  addRefund,
   addReminderRequest,
   addReminderSent,
   addScan,
@@ -20,7 +21,6 @@ import {
   getStats
 } from '../dao/stats';
 
-import { getExpenses } from '../utils/airtable';
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
 
 export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
@@ -42,6 +42,9 @@ export function addUserToStats(count) {
 }
 export function addPaymentToStats({ price }) {
   return addPayment({ price });
+}
+export function addRefundToStats({ price }) {
+  return addRefund({ price });
 }
 export function addGiftPaymentToStats({ price }, count) {
   return addGiftPayment({ price }, count);
@@ -82,8 +85,4 @@ export function getAllStats() {
 
 export function getLeaderboardStats() {
   return getUnsubscriptionsLeaderboard();
-}
-
-export function getExpensesStats() {
-  return getExpenses();
 }

@@ -1,6 +1,8 @@
-import React, { Component, Fragment } from 'react';
-import colin from '../../assets/colin.png';
 import './squarecat.module.scss';
+
+import React, { Component, Fragment } from 'react';
+
+const colinUrl = `${process.env.CDN_URL}/images/colin.png`;
 
 export default class SquarecatWidget extends Component {
   state = {
@@ -41,7 +43,7 @@ export default class SquarecatWidget extends Component {
           <span styleName="meow meow-right">Meow</span>
           <img
             alt="The creators"
-            src={colin}
+            src={colinUrl}
             styleName="squarecat-widget__colin"
           />
         </a>

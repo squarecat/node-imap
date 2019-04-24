@@ -4,8 +4,9 @@ import { ClockIcon } from '../../components/icons';
 import { Link } from 'gatsby';
 import React from 'react';
 import SettingsDropdown from './settings-dropdown';
-import logo from '../../assets/envelope-logo.png';
 import useUser from '../../utils/hooks/use-user';
+
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
   const [{ lastPaidScanType, reminder }] = useUser(
@@ -44,7 +45,7 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app/" styleName="header-logo">
-        <img alt="logo" src={logo} />
+        <img alt="logo" src={logoUrl} />
       </Link>
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">

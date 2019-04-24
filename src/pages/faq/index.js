@@ -28,7 +28,21 @@ const FaqPage = () => (
         </p>
       </div>
       <div styleName="faq-box">
-        <h3 styleName="faq-title">How do you unsubscribe from the lists?</h3>
+        <h3 styleName="faq-title">
+          How can you tell which emails are subscriptions?
+        </h3>
+        <p>
+          We never read the content of any of your emails but we do have access
+          to some metadata - information about an email which you don’t usually
+          see.
+        </p>
+        <p>
+          This metadata contains information on how to unsubscribe from the
+          mailing list which we can use.
+        </p>
+      </div>
+      <div styleName="faq-box">
+        <h3 styleName="faq-title">How do you unsubscribe me from the lists?</h3>
         <p>
           If there's an unsubscribe link provided we follow it and unsubscribe
           you.
@@ -44,6 +58,18 @@ const FaqPage = () => (
         </p>
       </div>
       <div styleName="faq-box">
+        <h3 styleName="faq-title">Why is Leave Me Alone not free?</h3>
+        <p>
+          Leave Me Alone is a paid service (so that you know we don't need to
+          sell your data to keep afloat), but we've tried to keep our pricing as
+          fair and affordable as possible.
+        </p>
+        <p>
+          We are two independent makers without funding or outside support.
+          We're real people who want to help, not a soulless corporation.
+        </p>
+      </div>
+      <div styleName="faq-box">
         <h3 styleName="faq-title">What mail providers do you support?</h3>
         <p>
           We currently support Gmail and Outlook. We have plans to support more
@@ -56,17 +82,41 @@ const FaqPage = () => (
         </p>
       </div>
       <div styleName="faq-box">
-        <h3 styleName="faq-title">Which mailboxes do you scan?</h3>
+        <h3 styleName="faq-title">Which mail folders do you scan?</h3>
+        <p>We scan all of your mail including the trash and spam!</p>
         <p>
-          We scan all of your mail including the trash. The only folder we
-          exclude is the spam folder.
+          We'll let you know if an email was seen in your trash or spam folder.
+        </p>
+      </div>
+
+      <div styleName="faq-box">
+        <h3 styleName="faq-title">What information can you access about me?</h3>
+        <p>We NEVER store the content of your emails in any form.</p>
+        <p>
+          We require permission to{' '}
+          <TextImportant>view your email messages and settings</TextImportant>{' '}
+          so we can identify subscription emails and display them to you.
         </p>
       </div>
       <div styleName="faq-box">
+        <h3 styleName="faq-title">Can I delete my account?</h3>
+        <p>Yes!</p>
+        <p>
+          You can deactivate your account in your{' '}
+          <TextLink href="/app/profile">account settings</TextLink>. This will
+          delete all of your data, revoke your API key, and sign you out.
+        </p>
+        <p>
+          You will still be able to create an account again to clean your inbox
+          in the future.
+        </p>
+      </div>
+
+      <div styleName="faq-box">
         <h3 styleName="faq-title">Can I purchase a monthly subscription?</h3>
         <p>
-          Not yet! Our pricing is tiered on how far back in time you want us to
-          include in a scan.
+          Our pricing is tired on how far back in time you want to search your
+          inbox for subscription emails.
         </p>
         <p>
           We’ll scan your inbox for any subscription emails received in the{' '}
@@ -91,6 +141,9 @@ const FaqPage = () => (
           from. You'd need to visit the website and subscribe again manually.
         </p>
       </div>
+      <a href="/login" styleName="cta">
+        Get Started For Free!
+      </a>
     </div>
   </SubPageLayout>
 );

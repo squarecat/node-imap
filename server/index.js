@@ -60,9 +60,9 @@ giftsApi(app);
 
 mailgunWebhooks(app);
 
-app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(path.join(__dirname, 'sitemap.xml'));
-});
+// app.get('/sitemap.xml', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'sitemap.xml'));
+// });
 app.get('/api', (req, res) => res.send('OK'));
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
@@ -107,12 +107,11 @@ const App = {
 export default App;
 
 if (process.env.NODE_ENV !== 'development') {
-  process.on('uncaughtException', function(error) {
+  process.on('uncaughtException', error => {
     Sentry.captureException(error);
-    process.exit(1);
   });
 
-  process.on('unhandledRejection', function(error) {
+  process.on('unhandledRejection', error => {
     Sentry.captureException(error);
   });
 }

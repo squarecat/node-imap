@@ -1,10 +1,8 @@
 import Agenda from 'agenda';
-
+import { checkUserReminders } from '../dao/reminders';
+import logger from '../utils/logger';
 import { url as mongoUrl } from '../dao/db';
 import { recordStats } from '../dao/stats';
-import { checkUserReminders } from '../dao/reminders';
-
-import logger from '../utils/logger';
 
 const agenda = new Agenda({ db: { address: mongoUrl } });
 

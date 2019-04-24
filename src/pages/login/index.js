@@ -3,8 +3,9 @@ import React, { useRef } from 'react';
 import Layout from '../../layouts/layout';
 import { TextBold } from '../../components/text';
 import { TextLink } from '../../components/text';
-import logo from '../../assets/envelope-logo.png';
 import styles from './login.module.scss';
+
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 let error;
 if (typeof URLSearchParams !== 'undefined') {
@@ -22,7 +23,7 @@ const LoginPage = () => {
       <div ref={activeRef} styleName="hold-onto-your-butts-we-are-logging-in">
         <div styleName="login-boxy-box">
           <div styleName="beautiful-logo">
-            <img src={logo} alt="logo" />
+            <img src={logoUrl} alt="logo" />
           </div>
           <h1 styleName="title">Login to Leave Me Alone</h1>
           <p>We need to connect to your email account.</p>

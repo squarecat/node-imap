@@ -1,9 +1,10 @@
 import './header.module.scss';
 
-import cx from 'classnames';
 import React from 'react';
 import { TextLink } from '../components/text';
-import smallLogo from '../assets/envelope-logo.png';
+import cx from 'classnames';
+
+const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ setActive = () => {}, inverted = false }) => (
   <div styleName={cx('header', { 'header-inverted': inverted })}>
@@ -17,15 +18,15 @@ export default ({ setActive = () => {}, inverted = false }) => (
     </div> */}
     <div styleName="header-inner">
       <a href="/" styleName="header-logo">
-        <img alt="logo" src={smallLogo} />
+        <img alt="logo" src={logoUrl} />
       </a>
       <div styleName="header-title">Leave Me Alone </div>
       <ul styleName="header-nav">
         <li styleName="nav-link nav-how">
-          <TextLink href="#how-it-works">How it works</TextLink>
+          <TextLink href="/#learn">How it works</TextLink>
         </li>
         <li styleName="nav-link">
-          <TextLink href="#pricing">Pricing</TextLink>
+          <TextLink href="/#pricing">Pricing</TextLink>
         </li>
         <li styleName="nav-login">
           <a

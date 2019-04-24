@@ -41,6 +41,7 @@ export async function* fetchMail(
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
     let dupeCache = {};
+    let dupeSenders = [];
     if (strategy === 'api') {
       for await (let mail of fetchMailApi(client, {
         accessToken,
@@ -60,12 +61,14 @@ export async function* fetchMail(
           totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
         if (unsubscribableMail.length) {
-          const { dupes: newDupeCache, deduped } = dedupeMailList(
-            dupeCache,
-            unsubscribableMail
-          );
+          const {
+            dupes: newDupeCache,
+            deduped,
+            dupeSenders: newDupeSenders
+          } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
           totalUnsubCount = totalUnsubCount + deduped.length;
           dupeCache = newDupeCache;
+          dupeSenders = newDupeSenders;
           yield { type: 'mail', data: deduped };
         }
         yield { type: 'progress', data: { progress, total: totalEstimate } };
@@ -94,7 +97,8 @@ export async function* fetchMail(
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
       totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount,
-      occurances: dupeCache
+      occurrences: dupeCache,
+      dupeSenders
     };
   } catch (err) {
     logger.error('gmail-fetcher: failed to fetch mail');
@@ -255,13 +259,18 @@ async function fetchMessagesBatch(accessToken, messageIds) {
     const respJson = httpMessageParser(response.data);
     const messages = respJson.multipart.map(({ body }) => {
       const messageRaw = body.toString();
-      const contentLen = messageRaw.match(/Content-Length: (.+)/)[1];
+      const match = messageRaw.match(/Content-Length: (.+)/);
+      if (!match) {
+        logger.warn('gmail-fetcher: message raw has no content length');
+        return null;
+      }
+      const contentLen = match[1];
       const content = messageRaw
         .substr(messageRaw.indexOf('{'), contentLen)
         .trim();
       return JSON.parse(content);
     });
-    return messages;
+    return messages.filter(m => m);
   } catch (err) {
     logger.error('gmail-fetcher: failed batch message request');
     logger.error(err);
