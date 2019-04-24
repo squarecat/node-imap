@@ -131,20 +131,36 @@
   line-height: 24px;
 }
 
-.form-error {
-  background: $color-red;
-  color: white;
+.form-notification {
+  background: white;
+  color: $color-primary-font;
   padding: 5px;
   font-weight: bold;
   border-radius: 4px;
   font-size: 14px;
   line-height: 18px;
   text-align: center;
-  border: 1px solid $color-text-error;
+  border: 1px solid $color-primary-font;
   width: 90%;
   margin: 0 auto;
 
   p {
     margin: 0;
+  }
+
+  &.error {
+    color: white;
+    background: $color-bg-error;
+    border: 1px solid $color-text-error;
+  }
+  &.warning {
+    color: white;
+    background: $color-bg-error;
+    border: 1px solid $color-text-error;
+  }
+  &.success {
+    color: white;
+    background: $color-bg-success;
+    border: 1px solid $color-text-success;
   }
 }

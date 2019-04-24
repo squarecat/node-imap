@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import Button from '../../../../components/btn';
-import { FormError } from '../../../../components/form';
+import { FormNotification } from '../../../../components/form';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
@@ -115,10 +115,10 @@ export default () => {
           onError={() => onConnectError()}
         />
         {error ? (
-          <FormError>
+          <FormNotification error>
             Something went wrong connecting your account. Please try again or
             send us a message.
-          </FormError>
+          </FormNotification>
         ) : null}
       </div>
       {showWarningModal ? (

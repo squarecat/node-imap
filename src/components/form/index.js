@@ -22,6 +22,7 @@ export const FormInput = ({
   validation = () => '',
   onChange = () => {},
   errorMessage = '',
+  value = '',
   ...props
 }) => {
   const ref = useRef(null);
@@ -32,6 +33,7 @@ export const FormInput = ({
   return (
     <input
       {...props}
+      value={value}
       ref={ref}
       id={id}
       type={type}
@@ -77,8 +79,14 @@ export const FormGroup = ({ children, fluid, column }) => {
   return <div styleName={cx('form-group', { fluid, column })}>{children}</div>;
 };
 
-export const FormError = ({ children }) => (
-  <div styleName="form-error">
+export const FormNotification = ({ children, error, warning, success }) => (
+  <div
+    styleName={cx('form-notification', {
+      error,
+      warning,
+      success
+    })}
+  >
     <p>{children}</p>
   </div>
 );

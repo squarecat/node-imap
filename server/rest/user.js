@@ -211,22 +211,24 @@ export default app => {
     }),
     async (req, res) => {
       const { user, body } = req;
-      const { id } = user;
-      const { op, value: password } = body;
+      const { id, email } = user;
+      const { op, value } = body;
+
       let updatedUser = user;
       try {
         if (op === 'update') {
-          updatedUser = await updateUserPassword(id, password);
+          const { oldPassword, password: newPassword } = value;
+          await updateUserPassword(
+            { id, email, password: oldPassword },
+            newPassword
+          );
+          return res.send({ success: true });
         } else {
           logger.error(`user-rest: password patch op not supported`);
         }
         res.send(updatedUser);
       } catch (err) {
-        logger.error(
-          `user-rest: error patching user password ${id} with op ${op}`
-        );
-        logger.error(err);
-        res.status(500).send(err);
+        return handleChangePasswordError(res, err);
       }
     }
   );
@@ -323,3 +325,19 @@ export default app => {
     }
   });
 };
+
+function handleChangePasswordError(res, err) {
+  let message = `Something went wrong. Please contact support.`;
+  if (err.message === 'user not found or password incorrect') {
+    message = `User not found or the password is incorrect`;
+    logger.warn('user-rest: change password warning');
+    logger.warn(err);
+    return res.status(400).send({
+      message,
+      success: false
+    });
+  }
+  logger.error(`user-rest: error patching user password`);
+  logger.error(err);
+  return res.status(500).send({ message, success: false });
+}
