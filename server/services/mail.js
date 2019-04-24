@@ -29,6 +29,7 @@ import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
+import { updateOccurances } from '../dao/occurrences';
 
 // todo convert to generator?
 export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {

@@ -3,12 +3,12 @@ import {
   createOrUpdateUserFromGoogle,
   updateUserToken
 } from '../services/user';
+import { isBetaUser, setRememberMeCookie } from './access';
 
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20-without-google-plus';
 import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
-import { isBetaUser } from './access';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
@@ -176,6 +176,10 @@ export default app => {
           logger.error(loginErr);
           return res.redirect(errUrl);
         }
+        setRememberMeCookie(res, {
+          username: user.email,
+          provider: 'google'
+        });
         return res.redirect('/app');
       });
     })(req, res, next);

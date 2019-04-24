@@ -136,6 +136,12 @@ $active-bg-color: #ffc7c1;
   }
 }
 
+.last-login + .login-me-in-dammit {
+  background-color: rgba(255, 218, 214, 0.2);
+  color: $color-primary-font;
+  margin-bottom: 35px;
+}
+
 .error {
   background: $color-red;
   color: white;

@@ -16,12 +16,19 @@ let error;
 let strategy;
 let username = '';
 let defaultStep = 'select';
+let previousProvider;
+let previousUsername;
 
-if (typeof URLSearchParams !== 'undefined') {
+if (typeof window !== 'undefined') {
   const urlParams = new URLSearchParams(window.location.search);
   error = urlParams.get('error');
   strategy = urlParams.get('strategy');
   username = urlParams.get('username');
+  previousProvider = getCookie('remember-me-provider');
+  previousUsername = getCookie('remember-me-username');
+  if (previousUsername) {
+    previousUsername = decodeURIComponent(previousUsername);
+  }
 }
 
 if (strategy === 'password') {
@@ -73,31 +80,31 @@ const initialState = {
   step: defaultStep,
   register: false,
   password: '',
-  email: username || '',
+  email: username || previousProvider === 'password' ? previousUsername : '',
   error,
   existingProvider: null
 };
 
 export const LoginContext = createContext({ state: initialState });
 
-const LoginPage = ({ register, transitionStatus }) => {
+const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
   const activeRef = useRef(null);
   const [state, dispatch] = useReducer(loginReducer, {
     ...initialState,
-    register: !!register
+    register: !!register,
+    step
   });
 
-  const { step } = state;
   let windowHeight;
-  if (step === 'signup') {
+  if (state.step === 'signup') {
     windowHeight = loginNewUserHeight;
-  } else if (step === 'enter-password') {
+  } else if (state.step === 'enter-password') {
     windowHeight = loginWithPasswordHeight;
-  } else if (step === 'enter-email') {
+  } else if (state.step === 'enter-email') {
     windowHeight = loginEmailCardHeight;
-  } else if (step === 'select-existing') {
+  } else if (state.step === 'select-existing') {
     windowHeight = existingStratHeight;
-  } else if (step === '2fa') {
+  } else if (state.step === '2fa') {
     windowHeight = 410;
   } else {
     windowHeight = selectCardHeight;
@@ -120,8 +127,11 @@ const LoginPage = ({ register, transitionStatus }) => {
             style={{ maxHeight: windowHeight }}
             data-status={transitionStatus}
           >
-            <div styleName="login-boxy-box" data-active={step === 'select'}>
-              {step === 'select' ? (
+            <div
+              styleName="login-boxy-box"
+              data-active={state.step === 'select'}
+            >
+              {state.step === 'select' ? (
                 <>
                   <div styleName="beautiful-logo">
                     <img src={logoUrl} alt="logo" />
@@ -132,33 +142,23 @@ const LoginPage = ({ register, transitionStatus }) => {
                     password.
                   </p>
                   <div styleName="buttons">
-                    <a
-                      onClick={() =>
-                        dispatch({ type: 'set-step', data: 'enter-email' })
-                      }
-                      onMouseEnter={() =>
-                        dispatch({ type: 'set-active', data: true })
-                      }
-                      onMouseLeave={() =>
-                        dispatch({ type: 'set-active', data: false })
-                      }
-                      styleName="login-me-in-dammit"
-                    >
-                      <span
-                        style={{ marginLeft: 0, textAlign: 'center' }}
-                        styleName="text"
-                      >{`${action} with Password`}</span>
-                    </a>
-                    <AuthButton action={action} provider="google" />
-                    <AuthButton action={action} provider="outlook" />
+                    {authButtons({ dispatch, action })}
                   </div>
                   {register ? (
                     <p>
-                      Already have an account? <a href="/login">Sign in</a>.
+                      Already have an account?{' '}
+                      <Link state={{ fromSignup: true }} to="/login">
+                        Sign in
+                      </Link>
+                      .
                     </p>
                   ) : (
                     <p>
-                      Don't have an account yet? <a href="/signup">Sign up</a>.
+                      Don't have an account yet?{' '}
+                      <Link state={{ fromLogin: true }} to="/signup">
+                        Sign up
+                      </Link>
+                      .
                     </p>
                   )}
 
@@ -173,9 +173,9 @@ const LoginPage = ({ register, transitionStatus }) => {
             </div>
             <div
               styleName="email-login-box"
-              data-active={step === 'enter-email'}
+              data-active={state.step === 'enter-email'}
             >
-              {step === 'enter-email' ? (
+              {state.step === 'enter-email' ? (
                 <>
                   <div styleName="beautiful-logo">
                     <img src={logoUrl} alt="logo" />
@@ -186,8 +186,11 @@ const LoginPage = ({ register, transitionStatus }) => {
                 </>
               ) : null}
             </div>
-            <div styleName="new-user-login-box" data-active={step === 'signup'}>
-              {step === 'signup' ? (
+            <div
+              styleName="new-user-login-box"
+              data-active={state.step === 'signup'}
+            >
+              {state.step === 'signup' ? (
                 <>
                   <div styleName="beautiful-logo">
                     <img src={logoUrl} alt="logo" />
@@ -209,9 +212,9 @@ const LoginPage = ({ register, transitionStatus }) => {
             </div>
             <div
               styleName="existing-user-login-box"
-              data-active={step === 'enter-password'}
+              data-active={state.step === 'enter-password'}
             >
-              {step === 'enter-password' ? (
+              {state.step === 'enter-password' ? (
                 <>
                   <div styleName="beautiful-logo">
                     <img src={logoUrl} alt="logo" />
@@ -231,8 +234,8 @@ const LoginPage = ({ register, transitionStatus }) => {
                 </>
               ) : null}
             </div>
-            <div styleName="two-factor-box" data-active={step === '2fa'}>
-              {step === '2fa' ? (
+            <div styleName="two-factor-box" data-active={state.step === '2fa'}>
+              {state.step === '2fa' ? (
                 <>
                   <h1 styleName="title">Two-factor Auth Required</h1>
                   <p>
@@ -249,7 +252,7 @@ const LoginPage = ({ register, transitionStatus }) => {
             </div>
             <div
               styleName="existing-user-suggestion-box"
-              data-active={step === 'select-existing'}
+              data-active={state.step === 'select-existing'}
             >
               <div styleName="beautiful-logo">
                 <img src={logoUrl} alt="logo" />
@@ -314,4 +317,55 @@ function getError(error) {
       </p>
     </div>
   );
+}
+
+function authButtons({ dispatch, action }) {
+  const btns = [
+    {
+      type: 'password',
+      el: (
+        <a
+          onClick={() => dispatch({ type: 'set-step', data: 'enter-email' })}
+          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
+          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
+          styleName="login-me-in-dammit"
+        >
+          <span
+            style={{ marginLeft: 0, textAlign: 'center' }}
+            styleName="text"
+          >{`${action} with Password`}</span>
+        </a>
+      )
+    },
+    {
+      type: 'google',
+      el: <AuthButton action={action} provider="google" />
+    },
+    {
+      type: 'outlook',
+      el: <AuthButton action={action} provider="outlook" />
+    }
+  ];
+  let content;
+  if (previousProvider) {
+    content = (
+      <span styleName="last-login">Last time you logged in with...</span>
+    );
+  }
+  return (
+    <>
+      {content}
+      {btns.sort(a => (a.type === previousProvider ? -1 : 1)).map(b => b.el)}
+    </>
+  );
+}
+
+function getCookie(name) {
+  var value = '; ' + document.cookie;
+  var parts = value.split('; ' + name + '=');
+  if (parts.length == 2)
+    return parts
+      .pop()
+      .split(';')
+      .shift();
 }
