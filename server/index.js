@@ -91,7 +91,7 @@ const App = {
     logger.info('server started');
     // tell pm2 that the server is ready
     // to start receiving requests
-    process.send('ready');
+    if (process.send) process.send('ready');
   },
   async stop() {
     logger.info('server stopping');
