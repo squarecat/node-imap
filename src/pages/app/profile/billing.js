@@ -54,7 +54,7 @@ const initialState = {
     exp_month: 12,
     exp_year: 2020
   },
-  previousPackageId: 1,
+  previousPackageId: null,
   settings: {
     autoBuy: false,
     usageFallback: true
