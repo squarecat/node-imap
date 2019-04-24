@@ -23,6 +23,7 @@ import {
   getEstimates as getMailEstimatesFromOutlook
 } from './mail/outlook';
 
+import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
 import fs from 'fs';
 import { getUserById } from './user';
@@ -57,7 +58,8 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
       totalMail,
       totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail,
-      occurances
+      occurrences,
+      dupeSenders
     } = next.value;
 
     const scanData = {
@@ -79,7 +81,9 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
         updatePaidScanForUser(userId, timeframe);
       }
     }
-    return { ...scanData, occurances };
+    addOrUpdateOccurrences(userId, dupeSenders, timeframe);
+
+    return { ...scanData, occurrences };
   } catch (err) {
     console.error('mail-service: failed to fetch mail for user', user.id);
     console.error(err);

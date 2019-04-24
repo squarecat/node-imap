@@ -237,17 +237,17 @@ function getSocketFunctions(userId) {
       }
       mailBuffer[userId].droppedEnd = true;
 
-      const { occurances } = stats;
-      const filteredOccurances = Object.keys(occurances).reduce((out, k) => {
-        if (occurances[k] > 1) {
+      const { occurrences } = stats;
+      const filteredoccurrences = Object.keys(occurrences).reduce((out, k) => {
+        if (occurrences[k] > 1) {
           return {
             ...out,
-            [k]: occurances[k]
+            [k]: occurrences[k]
           };
         }
         return out;
       }, {});
-      sock.emit('mail:end', { ...stats, occurances: filteredOccurances });
+      sock.emit('mail:end', { ...stats, occurrences: filteredoccurrences });
       return true;
     },
     onProgress: async progress => {

@@ -93,17 +93,29 @@ const App = {
     server.listen(2345);
     await startScheduler();
     logger.info('server started');
+    // tell pm2 that the server is ready
+    // to start receiving requests
+    if (process.send) process.send('ready');
+  },
+  async stop() {
+    logger.info('server stopping');
+    // const runningScans = await getRunningScans();
+    // if (runningScans > 0) {
+    //   logger.info(`waiting for ${runningScans} scans to finish`);
+    //   await runningScans();
+    //   logger.info('done');
+    // }
+    logger.info('server stopped');
   }
 };
 export default App;
 
 if (process.env.NODE_ENV !== 'development') {
-  process.on('uncaughtException', function(error) {
+  process.on('uncaughtException', error => {
     Sentry.captureException(error);
-    process.exit(1);
   });
 
-  process.on('unhandledRejection', function(error) {
+  process.on('unhandledRejection', error => {
     Sentry.captureException(error);
   });
 }

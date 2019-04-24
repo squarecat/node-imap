@@ -58,6 +58,7 @@ const Layout = ({ page, children }) => (
             />
 
             <meta property="og:locale" content="en_US" />
+
             <meta property="og:image" content={metaImgUrl} />
             <meta property="og:image:secure_url" content={metaImgUrl} />
             <meta property="og:image:width" content="2400" />

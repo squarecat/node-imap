@@ -381,21 +381,16 @@ export default function Terms() {
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue from gifts</span>
                   <span styleName="value">
-                    {`${(
-                      (stats.giftRevenue /
-                        (calculateWithRefunds(stats, 'totalRevenue') +
-                          stats.giftRevenue)) *
-                      100
-                    ).toFixed(0)}%`}
+                    {`${percentageRevenueFromGifts(stats)}%`}
                   </span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Total gift sales</span>
-                  <span styleName="value">{stats.giftSales}</span>
+                  <span styleName="value">{format(stats.giftSales)}</span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Gifts redeemed</span>
-                  <span styleName="value">{stats.giftRedemptions}</span>
+                  <span styleName="value">{format(stats.giftRedemptions)}</span>
                 </div>
               </div>
             </div>
@@ -655,7 +650,8 @@ function getBoxStats(stats, stat) {
   }
 
   // Percent increase = ((new value - original value)/original value) * 100
-  const growthRate = (lastMonth - twoMonthsAgo) / twoMonthsAgo;
+  const divideBy = twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
+  const growthRate = (lastMonth - twoMonthsAgo) / divideBy;
 
   return {
     twoMonthsAgo,
@@ -727,6 +723,8 @@ function salesBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
 }
 
 function format(num) {
+  if (!num) return 0;
+
   if (num < 1000) {
     return num;
   }
@@ -739,6 +737,16 @@ function currency(num) {
 
 function percent(num) {
   return numeral(num).format('0%');
+}
+
+function percentageRevenueFromGifts(stats) {
+  if (!stats.giftRevenue) return 0;
+
+  return (
+    (stats.giftRevenue /
+      (calculateWithRefunds(stats, 'totalRevenue') + stats.giftRevenue)) *
+    100
+  ).toFixed(0);
 }
 
 function calculateWithRefunds(stats, stat) {
