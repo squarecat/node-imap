@@ -650,8 +650,8 @@ function getBoxStats(stats, stat) {
   }
 
   // Percent increase = ((new value - original value)/original value) * 100
-  const growthRate =
-    (lastMonth - twoMonthsAgo) / twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
+  const divideBy = twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
+  const growthRate = (lastMonth - twoMonthsAgo) / divideBy;
 
   return {
     twoMonthsAgo,
