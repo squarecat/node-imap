@@ -6,10 +6,11 @@ import { StaticQuery, graphql } from 'gatsby';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import React from 'react';
-import envelopeLogo from '../assets/envelope-logo.png';
-import favicon from '../assets/meta/favicon.png';
-import metaImage from '../assets/meta/meta-img.png';
 import { setConfig } from 'react-hot-loader';
+
+const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
+const metaImgUrl = `${process.env.CDN_URL}/images/meta/meta-img.png`;
+const logoSquareUrl = `${process.env.CDN_URL}/images/meta/logo-square.png`;
 
 setConfig({ pureSFC: true });
 
@@ -48,34 +49,35 @@ const Layout = ({ page, children }) => (
             />
             <title>{pageTitle}</title>
             <meta name="description" content={description} />
-            <link rel="canonical" href={`${baseUrl}/index.html`} />
+            <link rel="canonical" href={baseUrl} />
             <link
               rel="shortcut icon"
               type="image/png"
-              href={favicon}
+              href={faviconUrl}
               id="dynamic-favicon"
             />
 
             <meta property="og:locale" content="en_US" />
-            <meta property="og:image" content={`${baseUrl}${metaImage}`} />
-            <meta property="og:logo" content={`${baseUrl}${envelopeLogo}`} />
-            <meta
-              property="og:image:secure_url"
-              content={`${baseUrl}${metaImage}`}
-            />
+
+            <meta property="og:image" content={metaImgUrl} />
+            <meta property="og:image:secure_url" content={metaImgUrl} />
+            <meta property="og:image:width" content="2400" />
+            <meta property="og:image:height" content="1200" />
             <meta property="og:type" content="website" />
             <meta property="og:url" content={baseUrl} />
             <meta property="og:title" content={pageTitle} />
             <meta property="og:description" content={description} />
             <meta property="og:site_name" content={siteName} />
+            <meta property="og:logo" content={logoSquareUrl} />
 
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:domain" value={baseUrl} />
             <meta name="twitter:title" value={pageTitle} />
             <meta name="twitter:description" value={description} />
-            <meta name="twitter:image" content={`${baseUrl}${metaImage}`} />
+            <meta name="twitter:image" content={metaImgUrl} />
             <meta name="twitter:url" value={baseUrl} />
             <meta name="twitter:site" value={twitterHandle} />
+            <meta name="twitter:creator" value="@dinkydani21" />
             <html lang="en" />
           </Helmet>
           {children}
