@@ -6,6 +6,7 @@ import { StaticQuery, graphql } from 'gatsby';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import React from 'react';
+import envelopeLogo from '../assets/envelope-logo.png';
 import favicon from '../assets/meta/favicon.png';
 import metaImage from '../assets/meta/meta-img.png';
 import { setConfig } from 'react-hot-loader';
@@ -57,6 +58,7 @@ const Layout = ({ page, children }) => (
 
             <meta property="og:locale" content="en_US" />
             <meta property="og:image" content={`${baseUrl}${metaImage}`} />
+            <meta property="og:logo" content={`${baseUrl}${envelopeLogo}`} />
             <meta
               property="og:image:secure_url"
               content={`${baseUrl}${metaImage}`}

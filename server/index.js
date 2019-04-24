@@ -94,12 +94,11 @@ const App = {
 export default App;
 
 if (process.env.NODE_ENV !== 'development') {
-  process.on('uncaughtException', function(error) {
+  process.on('uncaughtException', error => {
     Sentry.captureException(error);
-    process.exit(1);
   });
 
-  process.on('unhandledRejection', function(error) {
+  process.on('unhandledRejection', error => {
     Sentry.captureException(error);
   });
 }

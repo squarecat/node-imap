@@ -45,11 +45,11 @@ const mailReducer = (state = [], action) => {
           error: !action.data.estimatedSuccess
         }))
       ];
-    case 'set-occurances': {
+    case 'set-occurrences': {
       return state.map(mailItem => {
         const dupeKey = getDupeKey(mailItem.from, mailItem.to);
-        const occurances = action.data[dupeKey] || 0;
-        return { ...mailItem, occurances };
+        const occurrences = action.data[dupeKey] || 0;
+        return { ...mailItem, occurrences };
       });
     }
     case 'unsubscribe':
@@ -268,7 +268,7 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
     setSearchFinished(true);
     if (scan) {
       setLastScan(scan);
-      dispatch({ type: 'set-occurances', data: scan.occurances || {} });
+      dispatch({ type: 'set-occurrences', data: scan.occurrences || {} });
     }
   });
   const [lastSearchTimeframe, setLastSearchTimeframe] = useLocalStorage(
@@ -703,7 +703,7 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, timeframe, style }) {
               </Tooltip>
               {fromName}
             </span>
-            {m.occurances > 1 ? (
+            {m.occurrences > 1 ? (
               <Tooltip
                 placement="top"
                 trigger={['hover']}
@@ -712,12 +712,12 @@ function MailItem({ mail: m, onUnsubscribe, setUnsubModal, timeframe, style }) {
                 destroyTooltipOnHide={true}
                 overlay={
                   <span>
-                    You received {m.occurances} emails from this sender in the
+                    You received {m.occurrences} emails from this sender in the
                     past {tfToStringShort[timeframe]}
                   </span>
                 }
               >
-                <span className="occurances">x{m.occurances}</span>
+                <span className="occurrences">x{m.occurrences}</span>
               </Tooltip>
             ) : null}
           </div>

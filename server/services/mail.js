@@ -23,12 +23,12 @@ import {
   getEstimates as getMailEstimatesFromOutlook
 } from './mail/outlook';
 
+import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
 import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
-import { updateOccurances } from '../dao/occurrences';
 
 // todo convert to generator?
 export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
@@ -58,7 +58,8 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
       totalMail,
       totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail,
-      occurrences
+      occurrences,
+      dupeSenders
     } = next.value;
 
     const scanData = {
@@ -80,9 +81,8 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
         updatePaidScanForUser(userId, timeframe);
       }
     }
-    if (timeframe === '6m') {
-      updateOccurrences(occurrences.senderOccurrences);
-    }
+    addOrUpdateOccurrences(userId, dupeSenders, timeframe);
+
     return { ...scanData, occurrences };
   } catch (err) {
     console.error('mail-service: failed to fetch mail for user', user.id);

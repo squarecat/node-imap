@@ -635,7 +635,7 @@ As we continue to grow we needed to make some performance improvements.&nbsp;Sca
 You can now see exactly&nbsp;how many emails you have received from a sender for your scan period, and identify who the "spammiest" senders are.&nbsp;This is James' favourite new feature!<br>
 &nbsp;</p>
 
-<p style="text-align: center;"><img align="center" alt="number of emails received from a sender" data-file-id="929345" height="151" src="https://cdn.leavemealone.xyz/images/outlook-occurances.png" style="border: 0px  ; width: 400px; height: 151px; margin: 0px;" width="400"><br>
+<p style="text-align: center;"><img align="center" alt="number of emails received from a sender" data-file-id="929345" height="151" src="https://cdn.leavemealone.xyz/images/outlook-occurrences.png" style="border: 0px  ; width: 400px; height: 151px; margin: 0px;" width="400"><br>
 &nbsp;</p>
 
 <p><br>

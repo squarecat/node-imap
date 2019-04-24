@@ -1,3 +1,4 @@
+import { addNewUnsubscribeOccrurence } from '../occurrences';
 import { addUnsubscriptionToStats } from '../stats';
 import { addUnsubscriptionToUser } from '../user';
 import { unsubscribeWithLink as browserUnsub } from './browser';
@@ -40,6 +41,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       estimatedSuccess: output.estimatedSuccess
     });
     if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
+    addNewUnsubscribeOccrurence(userId, mail.from);
     return {
       id: output.id,
       estimatedSuccess: output.estimatedSuccess,

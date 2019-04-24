@@ -32,13 +32,11 @@ export function getUnsubValues(unsub) {
     let unsubscribeMailTo = null;
     let unsubscribeLink = null;
     if (/^<.+>,\s*<.+>$/.test(unsub)) {
-      const unsubTypes = unsub
-        .split(',')
-        .map(a => a.trim().match(/^<(.*)>$/)[1]);
+      const unsubTypes = unsub.trim().match(/^<(.+)>,\s*<(.+)>$/) || [];
       unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
       unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
     } else if (/^<.+>,\s*.+$/.test(unsub)) {
-      const unsubTypes = unsub.split(',').map(a => getUnsubValue(a));
+      const unsubTypes = unsub.trim().match(/^<(.+)>,\s*(.+)$/) || [];
       unsubscribeMailTo = unsubTypes.find(m => m.startsWith('mailto'));
       unsubscribeLink = unsubTypes.find(m => m.startsWith('http'));
     } else if (unsub.startsWith('<http')) {
@@ -107,37 +105,47 @@ export function hasPaidScanAvailable(user, scanType) {
  * Given a list of mail, dedupe it based on sender and reciever
  * output a occurance count for each mail and a deduped list
  */
-export function dedupeMailList(dupeCache = {}, mailList = []) {
+export function dedupeMailList(
+  dupeCache = {},
+  mailList = [],
+  dupeSenderCache = []
+) {
   const { deduped, dupes, dupeSenders } = mailList.reduce(
     (out, mail) => {
       const dupeKey = getDupeKey(mail.from, mail.to);
-      const dupeOccurances = out.dupes[dupeKey] || 0;
-      if (!dupeOccurances) {
+      const dupeoccurrences = out.dupes[dupeKey] || 0;
+      if (!dupeoccurrences) {
         return {
+          deduped: [...out.deduped, mail],
           dupes: {
             ...out.dupes,
             [dupeKey]: 1
           },
-          deduped: [...out.deduped, mail],
-          dupeSenders: [
+          dupeSenders: {
             ...out.dupeSenders,
-            { sender: mail.from, occurences: 1 }
-          ]
+            [mail.from.toLowerCase()]: {
+              sender: mail.from,
+              occurrences: 1
+            }
+          }
         };
       }
       return {
         ...out,
         dupes: {
           ...out.dupes,
-          [dupeKey]: dupeOccurances + 1
+          [dupeKey]: dupeoccurrences + 1
         },
-        dupeSenders: [
+        dupeSenders: {
           ...out.dupeSenders,
-          { sender: mail.from, occurences: dupeOccurances + 1 }
-        ]
+          [mail.from.toLowerCase()]: {
+            sender: mail.from,
+            occurrences: dupeoccurrences + 1
+          }
+        }
       };
     },
-    { dupes: dupeCache, deduped: [], dupeSenders: [] }
+    { dupes: dupeCache, deduped: [], dupeSenders: dupeSenderCache }
   );
 
   return { deduped, dupes, dupeSenders };

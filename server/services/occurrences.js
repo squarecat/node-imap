@@ -1,12 +1,16 @@
-import { updateOccurence } from '../dao/occurrences';
+import {
+  addUnsubscribeOccrurence,
+  updateOccurrences
+} from '../dao/occurrences';
 
-export default function addOrUpdateOccurence(dupeInfo) {
-  const occurrencies = Object.keys(dupeInfo).map(d => ({
-    sender,
-    sixMonthFrequency
+export function addOrUpdateOccurrences(userId, dupeInfo, timeframe) {
+  const occurrences = Object.keys(dupeInfo).map(d => ({
+    sender: dupeInfo[d].sender,
+    occurrences: dupeInfo[d].occurrences
   }));
-
-  return updateOccurence();
+  return updateOccurrences(userId, occurrences, timeframe);
 }
 
-// <learn@email1.asana.com>-james@squarecat.io: 2
+export function addNewUnsubscribeOccrurence(userId, from) {
+  return addUnsubscribeOccrurence(userId, from);
+}
