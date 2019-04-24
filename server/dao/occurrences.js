@@ -18,10 +18,7 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
     const col = await db().collection(COL_NAME);
     const frequencyLabel = timeframeToFrequency[timeframe];
     const parsedOccurrences = occurrences.reduce((out, oc) => {
-      const {
-        fromEmail: senderAddress,
-        fromName: friendlyName
-      } = parseSenderEmail(oc.sender);
+      const { senderAddress, friendlyName } = parseSenderEmail(oc.sender);
       if (!senderAddress.includes('@')) {
         return out;
       }
@@ -60,7 +57,7 @@ export async function addUnsubscribeOccrurence(userId, from) {
   const now = isoDate();
   try {
     const col = await db().collection(COL_NAME);
-    const { fromEmail: senderAddress } = parseSenderEmail(from);
+    const { senderAddress } = parseSenderEmail(from);
     if (!senderAddress.includes('@')) {
       return null;
     }
