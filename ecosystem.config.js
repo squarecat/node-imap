@@ -12,7 +12,12 @@ module.exports = {
       env_beta: {
         NODE_ENV: 'beta'
       },
-      log_date_format: 'YYYY-MM-DD HH:mm'
+      log_date_format: 'DD-MM-YYYY HH:mm',
+      wait_ready: true,
+      // wait 3 seconds for everything to connect on startup
+      listen_timeout: 3000,
+      // wait max 30 seconds for scans and stuff to finish
+      kill_timeout: 30000
     }
   ],
   deploy: {

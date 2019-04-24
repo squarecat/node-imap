@@ -71,7 +71,7 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
       totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount,
-      occurances: dupeCache
+      occurrences: dupeCache
     };
   } catch (err) {
     logger.error('outlook-fetcher: failed to fetch mail');
