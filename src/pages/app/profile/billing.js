@@ -1,52 +1,102 @@
 import './billing.module.scss';
 
+import React, { createContext, useReducer } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 
-import Button from '../../../components/btn';
 import ErrorBoundary from '../../../components/error-boundary';
+import { FormCheckbox } from '../../../components/form';
 import ProfileLayout from './layout';
-import React from 'react';
 import { TextImportant } from '../../../components/text';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import numeral from 'numeral';
 import { useAsync } from '../../../utils/hooks';
 
-async function fetchBillingHistory() {
-  const res = await fetch('/api/me/billing', {
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    }
-  });
-  return res.json();
+function billingReducer(state, action) {
+  const { type, data } = action;
+  switch (type) {
+    case 'set-billing':
+      return { ...state, ...data };
+    case 'set-setting':
+      return {
+        ...state,
+        settings: { ...state.settings, [data.key]: data.value }
+      };
+    default:
+      return state;
+  }
 }
 
+const initialState = {
+  customerId: null,
+  card: null,
+  package: null,
+  settings: {
+    autoBuy: false,
+    usageFallback: false
+  }
+};
+
+export const BillingContext = createContext({ state: initialState });
+
 export default function Billing() {
+  const [state, dispatch] = useReducer(billingReducer, initialState);
+
   return (
     <ProfileLayout pageName="Billing">
-      <div styleName="billing-section">
-        <h2>Package</h2>
-        <p>You have 5 unsubscribes remaining.</p>
-        <p>You can get more unsubscribes for free by... </p>
-        <Button compact basic smaller outlined muted onClick={() => {}}>
-          Tweet about us
-        </Button>
-        <Button compact basic smaller outlined muted onClick={() => {}}>
-          Connect another account
-        </Button>
-        <Button compact basic smaller outlined muted onClick={() => {}}>
-          Connect/use an integration
-        </Button>
-        <Button compact basic smaller outlined muted onClick={() => {}}>
-          Refer a friend signup
-        </Button>
-        <Button compact basic smaller outlined muted onClick={() => {}}>
-          Refer a friend purchase
-        </Button>
-      </div>
-      <BillingHistory />
+      <BillingContext.Provider value={{ state, dispatch }}>
+        <div styleName="billing-section">
+          <h2>Settings</h2>
+          <FormCheckbox
+            onChange={e =>
+              dispatch({
+                type: 'set-setting',
+                data: { key: 'autoBuy', value: e.currentTarget.checked }
+              })
+            }
+            checked={state.settings.autoBuy}
+            label="Re-buy last package when you run out of unsubscribes"
+          />
+          <FormCheckbox
+            onChange={() =>
+              dispatch({
+                type: 'set-setting',
+                data: { key: 'usageFallback', value: e.currentTarget.checked }
+              })
+            }
+            checked={state.settings.usageFallback}
+            label="Switch to usage based when you run out of unsubscribes"
+          />
+        </div>
+        <BuyPackage />
+        <BillingDetails />
+        <BillingHistory />
+      </BillingContext.Provider>
     </ProfileLayout>
+  );
+}
+
+function BuyPackage() {
+  return (
+    <div styleName="billing-section">
+      <h2>Buy Package</h2>
+      <p>Buy one of our packages:</p>
+      <ul>
+        <li>Usage Based</li>
+        <li>Packages</li>
+        <li>Enterprise</li>
+      </ul>
+    </div>
+  );
+}
+
+function BillingDetails() {
+  return (
+    <div styleName="billing-section">
+      <h2>Card</h2>
+      <p>Last 4: 4242</p>
+      <p>Expiry: 04/12</p>
+    </div>
   );
 }
 
@@ -103,6 +153,16 @@ function BillingHistory() {
       {has_more ? <p>For older invoices please contact support.</p> : null}
     </div>
   );
+}
+
+async function fetchBillingHistory() {
+  const res = await fetch('/api/me/billing', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
+  return res.json();
 }
 
 function getDate({ date }) {
