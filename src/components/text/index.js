@@ -22,3 +22,7 @@ export const TextImportant = ({ children }) => {
 export const TextBold = ({ children }) => {
   return <span styleName="bold">{children}</span>;
 };
+
+export const TextFootnote = ({ children }) => {
+  return <span styleName="footnote">{children}</span>;
+};

@@ -1,6 +1,7 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
+import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../utils/prices';
 import React, { useRef, useState } from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
@@ -386,30 +387,12 @@ function formatNumber(n) {
 
 function Pricing() {
   const [packageValue, setPackageValue] = useState('1');
-  const [mailPerDay, setMailPerDay] = useState('10');
-  let unsubscribes;
-  let basePrice = 10;
-  let discount;
-  let price;
-  switch (packageValue) {
-    case '1':
-      unsubscribes = 50;
-      discount = 0.1;
-      break;
-    case '2':
-      unsubscribes = 100;
-      discount = 0.15;
-      break;
-    case '3':
-      unsubscribes = 200;
-      discount = 0.2;
-      break;
-    case '4':
-      unsubscribes = 300;
-      discount = 0.4;
-      break;
-  }
-  price = (basePrice - basePrice * discount) * unsubscribes;
+  const [mailPerDay, setMailPerDay] = useState('20');
+
+  let { unsubscribes, discount, price } = PACKAGES.find(
+    p => p.id === packageValue
+  );
+
   let mailPerDayLabel = '<10';
   if (parseInt(mailPerDay, 10) <= 10) {
     mailPerDayLabel = 'fewer than 10';
@@ -459,7 +442,8 @@ function Pricing() {
             <img className="pricing-image" src={stampImg} />
             <span className="pricing-text">Starting at</span>
             <p className="pricing-price">
-              <span className="currency">$</span>0.10
+              <span className="currency">$</span>
+              {USAGE_BASED.price.toFixed(2)}
             </p>
             <span className="pricing-text">per unsubscribe</span>
             <ul className="pricing-features">
@@ -503,11 +487,12 @@ function Pricing() {
             <img className="pricing-image" src={truckImg} />
             <span className="pricing-text">Starting at</span>
             <p className="pricing-price">
-              <span className="currency">$</span>80.00
+              <span className="currency">$</span>
+              {ENTERPRISE.price.toFixed(2)}
             </p>
             <span className="pricing-text">per month</span>
             <ul className="pricing-features">
-              <li>Up to 10 seats</li>
+              <li>Up to {ENTERPRISE.seats} seats</li>
               <li>Unlimited unsubscribes</li>
               <li>Gmail and Outlook support</li>
               <li>Limitless API access</li>

@@ -1,26 +1,44 @@
 import './billing.module.scss';
 
-import React, { createContext, useReducer } from 'react';
+import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
+import {
+  TextFootnote,
+  TextImportant,
+  TextLink
+} from '../../../components/text';
 
+import { CreditCardIcon } from '../../../components/icons';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
+import PlanImage from '../../../components/pricing/plan-image';
 import ProfileLayout from './layout';
-import { TextImportant } from '../../../components/text';
+import Tooltip from 'rc-tooltip';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import numeral from 'numeral';
 import { useAsync } from '../../../utils/hooks';
+import useUser from '../../../utils/hooks/use-user';
 
 function billingReducer(state, action) {
   const { type, data } = action;
   switch (type) {
     case 'set-billing':
       return { ...state, ...data };
+    case 'set-loading':
+      return { ...state, loading: data };
+    case 'set-error':
+      return { ...state, error: data };
     case 'set-setting':
       return {
         ...state,
         settings: { ...state.settings, [data.key]: data.value }
+      };
+    case 'remove-card':
+      return {
+        ...state,
+        card: null
       };
     default:
       return state;
@@ -28,12 +46,18 @@ function billingReducer(state, action) {
 }
 
 const initialState = {
+  unsubscribesRemaining: 0,
+  unsubscribesUsed: 45,
   customerId: null,
-  card: null,
-  package: null,
+  card: {
+    last4: '4242',
+    exp_month: 12,
+    exp_year: 2020
+  },
+  previousPackageId: 1,
   settings: {
     autoBuy: false,
-    usageFallback: false
+    usageFallback: true
   }
 };
 
@@ -42,33 +66,46 @@ export const BillingContext = createContext({ state: initialState });
 export default function Billing() {
   const [state, dispatch] = useReducer(billingReducer, initialState);
 
+  const [{ billing }] = useUser(u => u.billing || {});
+
+  useEffect(
+    () => {
+      if (billing) {
+        dispatch({ type: 'set-billing', data: billing });
+      }
+    },
+    [billing]
+  );
+
+  const { unsubscribesRemaining, unsubscribesUsed } = state;
+
   return (
     <ProfileLayout pageName="Billing">
       <BillingContext.Provider value={{ state, dispatch }}>
-        <div styleName="billing-section">
-          <h2>Settings</h2>
-          <FormCheckbox
-            onChange={e =>
-              dispatch({
-                type: 'set-setting',
-                data: { key: 'autoBuy', value: e.currentTarget.checked }
-              })
-            }
-            checked={state.settings.autoBuy}
-            label="Re-buy last package when you run out of unsubscribes"
-          />
-          <FormCheckbox
-            onChange={() =>
-              dispatch({
-                type: 'set-setting',
-                data: { key: 'usageFallback', value: e.currentTarget.checked }
-              })
-            }
-            checked={state.settings.usageFallback}
-            label="Switch to usage based when you run out of unsubscribes"
-          />
+        <div styleName="billing-section information">
+          <h2>Information</h2>
+          <p>
+            You have <TextImportant>{unsubscribesRemaining}</TextImportant>{' '}
+            unsubscribes remaining{' '}
+            {unsubscribesRemaining === 0 ? (
+              <TextLink href="#packages">buy more</TextLink>
+            ) : null}
+            .
+          </p>
+          <p>
+            You have used a total of{' '}
+            <TextImportant>{unsubscribesUsed}</TextImportant> unsubscribes.
+          </p>
+          {unsubscribesRemaining > 0 ? (
+            <p>
+              These unsubscribes will last{' '}
+              <TextImportant>forever</TextImportant>.
+            </p>
+          ) : null}
         </div>
-        <BuyPackage />
+        <UsageBased />
+        <Packages />
+        <Enterprise />
         <BillingDetails />
         <BillingHistory />
       </BillingContext.Provider>
@@ -76,34 +113,182 @@ export default function Billing() {
   );
 }
 
-function BuyPackage() {
+function UsageBased() {
+  const { state, dispatch } = useContext(BillingContext);
+
+  const isUsageActive = state.settings.usageFallback;
+
   return (
     <div styleName="billing-section">
-      <h2>Buy Package</h2>
-      <p>Buy one of our packages:</p>
-      <ul>
-        <li>Usage Based</li>
-        <li>Packages</li>
-        <li>Enterprise</li>
-      </ul>
+      <h2>Usage Based</h2>
+      <FormCheckbox
+        onChange={() =>
+          dispatch({
+            type: 'set-setting',
+            data: {
+              key: 'usageFallback',
+              value: !state.settings.usageFallback
+            }
+          })
+        }
+        checked={state.settings.usageFallback}
+        label="Switch to usage based when you run out of unsubscribes"
+      />
+      <div styleName="plans-list">
+        <PlanImage smaller compact type="usage-based" />
+        <h3 styleName="plan-title">Per unsubscribe</h3>
+        <p styleName="price">
+          <span styleName="currency">$</span>
+          {USAGE_BASED.price.toFixed(2)}
+        </p>
+        <Tooltip
+          placement="top"
+          trigger={['hover']}
+          mouseLeaveDelay={0}
+          overlayClassName="tooltip"
+          destroyTooltipOnHide={true}
+          overlay={
+            <span>
+              {isUsageActive
+                ? 'Disable using the toggle above'
+                : 'Enable using the toggle above'}
+            </span>
+          }
+        >
+          <span
+            styleName={cx('payg-status', {
+              active: isUsageActive,
+              inactive: !isUsageActive
+            })}
+          >
+            {isUsageActive ? 'Active' : 'Inactive'}
+          </span>
+        </Tooltip>
+      </div>
+      <TextFootnote>
+        {isUsageActive
+          ? 'When you run out of unsubscribes you will be able to continue unsubscribing which we will charge $0.10 per unsubscribe.'
+          : 'When you run out of unsubscribes you will be unable to unsubscribe from any more emails and you will NOT be charged.'}
+      </TextFootnote>
+    </div>
+  );
+}
+
+function Packages() {
+  const { state, dispatch } = useContext(BillingContext);
+  const { previousPackageId, settings } = state;
+
+  return (
+    <div styleName="billing-section" id="packages">
+      <h2>Packages</h2>
+      <FormCheckbox
+        onChange={() =>
+          dispatch({
+            type: 'set-setting',
+            data: { key: 'autoBuy', value: !settings.autoBuy }
+          })
+        }
+        checked={settings.autoBuy}
+        label="Auto buy your last package when you run out of unsubscribes"
+      />
+
+      {PACKAGES.map(p => {
+        const isPreviousPackage = previousPackageId === p.id;
+        let discountText;
+        if (p.id > previousPackageId) {
+          discountText = `Save ${p.discount * 100}%`;
+        }
+        return (
+          <div styleName="plans-list" key={p.unsubscribes}>
+            <PlanImage smaller compact type="package" />
+            <h3 styleName="plan-title">{p.unsubscribes} unsubscribes</h3>
+            <p styleName="price">
+              <span styleName="currency">$</span>
+              {(p.price / 100).toFixed(2)}
+            </p>
+            <div>
+              <a styleName="billing-btn package-buy-btn">
+                {isPreviousPackage ? 'Re-buy' : 'Buy'}
+              </a>
+              <span styleName="package-discount">{discountText}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Enterprise() {
+  const { state } = useContext(BillingContext);
+  return (
+    <div styleName="billing-section">
+      <h2>Enterprise</h2>
+      <div styleName="plans-list">
+        <PlanImage smaller compact type="enterprise" />
+        <div>
+          <h3 styleName="plan-title">Unlimited unsubscribes</h3>
+          <span>Up to {ENTERPRISE.seats} seats</span>
+        </div>
+        <p styleName="price">
+          <span styleName="currency">$</span>
+          {ENTERPRISE.price.toFixed(2)}*
+        </p>
+        <a styleName="billing-btn">Contact</a>
+      </div>
+      <TextFootnote>
+        * prices start from ${ENTERPRISE.price.toFixed(2)} for up to 10 seats.
+      </TextFootnote>
     </div>
   );
 }
 
 function BillingDetails() {
+  const { state, dispatch } = useContext(BillingContext);
+  const { card } = state;
+
+  async function removeCard() {
+    dispatch({ type: 'set-loading', data: true });
+    try {
+      await removeUserBillingCard();
+      dispatch({ type: 'remove-card' });
+    } catch (err) {
+      dispatch({ type: 'set-error', data: err });
+    } finally {
+      dispatch({ type: 'set-loading', data: false });
+    }
+  }
+
   return (
     <div styleName="billing-section">
-      <h2>Card</h2>
-      <p>Last 4: 4242</p>
-      <p>Expiry: 04/12</p>
+      <h2>Billing Details</h2>
+      {card ? (
+        <>
+          <div styleName="card-last4">
+            <CreditCardIcon />
+            {`•••• •••• •••• ${card.last4}`}
+          </div>
+          <div styleName="card-expires">
+            <span>Expires: </span>
+            <span>
+              {card.exp_month}/{card.exp_year}
+            </span>
+          </div>
+          <a styleName="billing-btn" onClick={() => removeCard()}>
+            Remove
+          </a>
+        </>
+      ) : (
+        <p>No credit card added.</p>
+      )}
     </div>
   );
 }
 
 function BillingHistory() {
   const { value, loading } = useAsync(fetchBillingHistory);
-  const billingData = loading ? {} : value;
-  const { payments = [], has_more = false } = billingData;
+  const history = loading ? {} : value;
+  const { payments = [], has_more = false } = history;
 
   if (loading) return <span>Loading...</span>;
   return (
@@ -163,6 +348,19 @@ async function fetchBillingHistory() {
     }
   });
   return res.json();
+}
+
+async function removeUserBillingCard() {
+  const resp = await fetch('/api/me/billing', {
+    method: 'PATCH',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ op: 'remove-card' })
+  });
+  return resp.json();
 }
 
 function getDate({ date }) {

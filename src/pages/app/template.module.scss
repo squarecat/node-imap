@@ -3,12 +3,13 @@
   margin: 0 auto;
   height: calc(100% - 50px);
   position: relative;
+  font-size: 14px;
 
   @media (max-width: 500px) {
     padding: 10px 0;
   }
 }
 
-.app-content p {
-  font-size: 14px;
-}
+// .app-content p {
+//   font-size: 14px;
+// }
