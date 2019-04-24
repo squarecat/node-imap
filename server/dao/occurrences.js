@@ -1,7 +1,6 @@
 import db, { isoDate } from './db';
 
 import _groupBy from 'lodash.groupby';
-import _pickBy from 'lodash.groupby';
 import { hash } from './encryption';
 import logger from '../utils/logger';
 import { parseEmail } from '../utils/parsers';
