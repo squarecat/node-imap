@@ -3,6 +3,7 @@ import {
   authenticationRequiresTwoFactor,
   createOrUpdateUserFromPassword
 } from '../services/user';
+import { isBetaUser, setRememberMeCookie } from './access';
 
 import Joi from 'joi';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -31,6 +32,13 @@ export const Strategy = new LocalStrategy(
   },
   async (username, password, done) => {
     try {
+      if (process.env.NODE_ENV === 'beta') {
+        const allowed = await isBetaUser({ email: username });
+        if (!allowed) {
+          logger.debug('outlook-auth: user does not have access to the beta');
+          return done({ type: 'beta' }, null);
+        }
+      }
       const user = await authenticateUser({ email: username, password });
       if (!user) {
         return done(null, false);
@@ -60,6 +68,10 @@ export default app => {
         req.logIn(user, async err => {
           const twoFactorRequired = await authenticationRequiresTwoFactor(user);
           if (err) return handleLoginError(res, err);
+          setRememberMeCookie(res, {
+            username: user.email,
+            provider: 'password'
+          });
           return res.send({ success: true, twoFactorRequired });
         });
       })(req, res, next);
@@ -91,6 +103,10 @@ export default app => {
         });
         req.logIn(user, err => {
           if (err) return handleLoginError(res, err);
+          setRememberMeCookie(res, {
+            username: user.email,
+            provider: 'password'
+          });
           return res.send({ success: true });
         });
       } catch (err) {

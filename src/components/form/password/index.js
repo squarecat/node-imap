@@ -23,7 +23,6 @@ export default ({
   const validate = async () => {
     if (doValidation) {
       if (value.length < minLength) {
-        console.log('password not long enough - ' + value);
         return setState({
           isValid: false,
           message: passwordLengthText
@@ -38,7 +37,7 @@ export default ({
         });
       }
     }
-    console.log('password is ok');
+
     return setState({
       isValid: true,
       message: ''
@@ -52,15 +51,13 @@ export default ({
   );
   useEffect(
     () => {
-      console.log(value);
       onChange(value, { isValid: state.isValid, message: state.message });
     },
     [value, state.isValid, state.message]
   );
-  console.log('pw', value, state.isValid, state.message);
   return (
     <FormInput
-      onInput={({ currentTarget }) => setValue(currentTarget.value)}
+      onChange={({ currentTarget }) => setValue(currentTarget.value)}
       noFocus
       value={value}
       compact

@@ -3,12 +3,12 @@ import {
   createOrUpdateUserFromOutlook,
   updateUserToken
 } from '../services/user';
+import { isBetaUser, setRememberMeCookie } from './access';
 
 import { Strategy as OutlookStrategy } from 'passport-outlook';
 import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
-import { isBetaUser } from './access';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
@@ -163,6 +163,10 @@ export default app => {
           logger.error(loginErr);
           return res.redirect(baseUrl);
         }
+        setRememberMeCookie(res, {
+          username: user.email,
+          provider: 'outlook'
+        });
         return res.redirect('/app');
       });
     })(req, res, next);

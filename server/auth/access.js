@@ -17,5 +17,6 @@ export async function isBetaUser({ email }) {
 }
 
 export async function setRememberMeCookie(res, { username, provider }) {
-  res.cookie('rememberMe', { username, provider }, { maxAge: REMEMBER_ME_FOR });
+  res.cookie('remember-me-username', username, { maxAge: REMEMBER_ME_FOR });
+  res.cookie('remember-me-provider', provider, { maxAge: REMEMBER_ME_FOR });
 }
