@@ -10,6 +10,7 @@ import http from 'http';
 import logger from './utils/logger';
 import mailApi from './rest/mail';
 import mailgunWebhooks from './rest/webhooks/mailgun';
+import milestonesApi from './rest/milestones';
 import path from 'path';
 import paymentsApi from './rest/payments';
 import session from 'express-session';
@@ -52,18 +53,22 @@ app.use(
 
 auth(app);
 
+app.get('/api', (req, res) => res.send('OK'));
+
 userApi(app);
 mailApi(app, server);
 paymentsApi(app);
 statsApi(app);
 giftsApi(app);
-
+milestonesApi(app);
 mailgunWebhooks(app);
 
-// app.get('/sitemap.xml', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'sitemap.xml'));
-// });
-app.get('/api', (req, res) => res.send('OK'));
+app.get('/api/*', (req, res) => {
+  res.status(404).send({
+    erorr: 404,
+    message: 'That API route does not not exist'
+  });
+});
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
 app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
