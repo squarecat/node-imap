@@ -24,8 +24,7 @@ async function addUnsubscription(type, count = 1) {
           unsubscriptions: count,
           [type]: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting stat unsubscription type ${type}`);
@@ -97,8 +96,7 @@ export async function updateSingleStat(statName, count = 1) {
         $inc: {
           [statName]: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting stat ${statName}`);
@@ -122,8 +120,7 @@ export async function addNumberofEmails({
           unsubscribableEmails: totalUnsubscribableEmails,
           previouslyUnsubscribedEmails: totalPreviouslyUnsubscribedEmails
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(
@@ -144,8 +141,7 @@ export async function addPayment({ price }, count = 1) {
           totalRevenue: price,
           totalSales: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting payment stat ${price}`);
@@ -164,8 +160,7 @@ export async function addRefund({ price }, count = 1) {
           totalRevenueRefunded: price,
           totalSalesRefunded: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting refund stat ${price}`);
@@ -184,11 +179,28 @@ export async function addGiftPayment({ price }, count = 1) {
           giftRevenue: price,
           giftSales: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting payment stat ${price}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function addRewardGiven(rewardAmount) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          unsubscriptionsRewarded: rewardAmount
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting reward ${rewardAmount}`);
     logger.error(err);
     throw err;
   }
