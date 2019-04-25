@@ -55,6 +55,10 @@ export const PACKAGES = PACKAGE_DATA.map(p => ({
   price: (PACKAGE_BASE_PRICE - PACKAGE_BASE_PRICE * p.discount) * p.unsubscribes
 }));
 
+export function getPackage(id) {
+  return PACKAGES.find(p => p.id === id);
+}
+
 export const ENTERPRISE = {
   seats: 10,
   price: 80

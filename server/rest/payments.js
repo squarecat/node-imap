@@ -3,6 +3,7 @@ import * as PaymentService from '../services/payments';
 import { addRefundToStats } from '../services/stats';
 import auth from '../middleware/route-auth';
 import logger from '../utils/logger';
+import countries from '../utils/countries.json';
 
 export default app => {
   app.get('/api/checkout/:coupon', auth, async (req, res) => {
@@ -75,4 +76,6 @@ export default app => {
       logger.error(err);
     }
   });
+
+  app.get('/api/countries.json', (req, res) => res.send(countries));
 };

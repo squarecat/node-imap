@@ -59,6 +59,48 @@ function validateInput(e, ref, validationFn) {
   ref.current.setCustomValidity(message);
 }
 
+export const FormSelect = ({
+  id,
+  name,
+  required,
+  compact,
+  validation = () => '',
+  onChange = () => {},
+  errorMessage = '',
+  options = [],
+  value = '',
+  placeholder,
+  ...props
+}) => {
+  const ref = useRef(null);
+  const classes = cx('form-input form-select-dropdown', {
+    compact
+  });
+  return (
+    <select
+      {...props}
+      ref={ref}
+      id={id}
+      name={name}
+      value={value}
+      styleName={classes}
+      required={required}
+      spellCheck="false"
+      onChange={e => {
+        validateInput(e, ref, validation, errorMessage);
+        onChange(e);
+      }}
+    >
+      <option>{placeholder || 'Select...'}</option>
+      {options.map(opt => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+  );
+};
+
 export const FormCheckbox = ({ id, name, label, ...props }) => {
   return (
     <label styleName="form-checkbox">
