@@ -26,3 +26,10 @@ export const TextBold = ({ children }) => {
 export const TextFootnote = ({ children }) => {
   return <span styleName="footnote">{children}</span>;
 };
+
+export const TextLead = ({ prose, children }) => {
+  if (prose) {
+    return <p styleName="lead">{children}</p>;
+  }
+  return <span styleName="lead">{children}</span>;
+};

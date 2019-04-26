@@ -28,15 +28,17 @@ export default ({
   linkTo,
   as,
   linkArgs = {},
+  disabled = false,
   ...props
 }) => {
   const classes = cx('btn', {
     loading,
+    inline: props.inline,
     compact: props.compact,
     centered: props.centered,
     muted: props.muted,
     icon: props.icon,
-    disabled: props.disabled,
+    disabled,
     basic: props.basic,
     smaller: props.smaller,
     stretch: props.stretch,
@@ -45,7 +47,10 @@ export default ({
     'on-dark-bg': props.onDarkBg
   });
 
-  const elProps = _omit(props, styleProps);
+  let elProps = _omit(props, styleProps);
+  if (disabled) {
+    elProps = { ...elProps, disabled };
+  }
   if (as === 'link' || linkTo) {
     return (
       <Link styleName={classes} to={linkTo} state={linkArgs}>

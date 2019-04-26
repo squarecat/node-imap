@@ -8,6 +8,7 @@ const React = require('react');
 
 exports.onRenderBody = ({ setPostBodyComponents }, pluginOptions) => {
   setPostBodyComponents([
+    <div key="modal-root" id="modal-root" />,
     <script
       key="stripe-script"
       src="https://checkout.stripe.com/checkout.js"

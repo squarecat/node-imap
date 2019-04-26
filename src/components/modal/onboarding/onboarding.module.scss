@@ -1,0 +1,48 @@
+.animations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column-gap: 20px;
+  grid-row-gap: 10px;
+  justify-items: center;
+  align-items: center;
+  margin-bottom: 10px;
+
+  img {
+    max-width: 150px;
+  }
+}
+
+.onboarding-example-img {
+  max-width: 95%;
+  margin-bottom: 1.5em;
+}
+
+.wizard-content-wrapper {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.wizard-content-wrapper-entered {
+  opacity: 1;
+}
+
+.reward-icon {
+  font-family: 'Gotham-Rounded-Medium';
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  line-height: 22px;
+  width: 34px;
+  height: 34px;
+  color: white;
+  background-color: #e9443c;
+  font-weight: bold;
+  position: relative;
+  top: -2px;
+
+  a:hover & {
+    background-color: white;
+    color: #e9443c;
+  }
+}

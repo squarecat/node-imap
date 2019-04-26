@@ -18,6 +18,47 @@ export const HeartIcon = visProps => (
   </svg>
 );
 
+export function Gift({ width = 32, height = 32, ...visProps }) {
+  return (
+    <svg
+      {...visProps}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      width={width}
+      height={height}
+      fill="none"
+      stroke="currentcolor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+    >
+      <path d="M4 14 L4 30 28 30 28 14 M2 9 L2 14 30 14 30 9 2 9 Z M16 9 C 16 9 14 0 8 3 2 6 16 9 16 9 16 9 18 0 24 3 30 6 16 9 16 9" />
+    </svg>
+  );
+}
+
+export const Arrow = ({ direction, ...visProps }) => {
+  if (direction === 'right') {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        styleName={getClasses('icon arrows', visProps)}
+        viewBox="0 0 32 32"
+        width="15"
+        height="15"
+        fill="none"
+        stroke="currentcolor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="4"
+      >
+        <path d="M22 6 L30 16 22 26 M30 16 L2 16" />
+      </svg>
+    );
+  }
+  throw 'not implemented';
+};
+
 export const SettingsIcon = visProps => (
   <svg
     styleName={getClasses('icon settings', visProps)}

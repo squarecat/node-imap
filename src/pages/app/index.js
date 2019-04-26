@@ -6,7 +6,6 @@ import MailList from './mail-list';
 import OnboardingModal from '../../components/modal/onboarding';
 import Template from './template';
 import { Transition } from 'react-transition-group';
-import Welcome from './welcome';
 import useUser from '../../utils/hooks/use-user';
 
 let doScan = false;
@@ -29,18 +28,10 @@ export default function App({ location = {} } = {}) {
 
   return (
     <Template onboarding={showOnboardingModal}>
-      {/* {showOnboardingModal ? (
-        <OnboardingModal
-          onPurchase={option => {
-            setTimeframe(option);
-            if (option !== '3d') {
-              setLastPaidScanType(option);
-            }
-            toggleOnboardingModal(false);
-          }}
-          onClose={() => toggleOnboardingModal(false)}
-        />
-      ) : null} */}
+      <OnboardingModal
+        shown={showOnboardingModal}
+        onClose={() => toggleOnboardingModal(false)}
+      />
       {/*
       <Transition
         in={showOnboardingModal}

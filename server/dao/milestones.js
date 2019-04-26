@@ -16,7 +16,7 @@ export async function get(name) {
   }
   try {
     const col = await db().collection(COL_NAME);
-    return col.findOne({}, projection);
+    return col.findOne({}, { fields: projection });
   } catch (err) {
     logger.error(`milestone-dao: error getting milestones`);
     logger.error(err);

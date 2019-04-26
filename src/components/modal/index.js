@@ -1,24 +1,175 @@
-import React, { createContext, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import ModalClose from './modal-close';
+import Button from '../btn';
+import { CloseIcon } from '../icons';
+import ReactDOM from 'react-dom';
+import { Transition } from 'react-transition-group';
+import cx from 'classnames';
+import modalStyles from './modal-template.module.scss';
 
-export const ModalContext = createContext({ isShown: true });
+const modalRoot = document.getElementById('modal-root');
+const el = document.createElement('div');
 
-export default ({ onClose, children }) => {
-  const [isShown, setShown] = useState(true);
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(onClose, 300);
-  };
-  return (
-    <>
-      <ModalContext.Provider value={{ isShown, setShown }}>
-        <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-          <ModalClose onClose={onClickClose} />
-          {children}
-        </div>
-        <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
-      </ModalContext.Provider>
-    </>
+/**
+ * Modal component
+ * @param children React node contents
+ * @param shown is the modal shown or not
+ * @param onClose function called when the modal is closed manually
+ *
+ * eg.
+ * <Modal shown={isModalShown} onClose={() => toggleModal(false)}>
+ *    Modal Content
+ * </Button>
+ *
+ */
+export default ({
+  children,
+  shown = false,
+  fluid = false,
+  dismissable = true,
+  onClose = () => {},
+  wizardComponent = null,
+  style
+}) => {
+  const [isShown, setShown] = useState(false);
+  const ref = useRef(null);
+  function closeModalByEsc({ key }) {
+    if (dismissable && key === 'Escape') {
+      setShown(false);
+      setTimeout(onClose, 500);
+    }
+  }
+
+  useEffect(() => {
+    modalRoot.appendChild(el);
+    document.addEventListener('keyup', closeModalByEsc);
+    return () => {
+      if (!shown) {
+        document.removeEventListener('keyup', closeModalByEsc);
+      }
+    };
+  }, []);
+
+  useEffect(
+    () => {
+      setShown(shown);
+      if (shown) {
+        document.body.style.overflow = 'hidden';
+        document.body.style.padding = '0 15px 0 0';
+      } else {
+        document.body.style.overflow = 'auto';
+        document.body.style.padding = '0';
+      }
+    },
+    [shown]
   );
+
+  const btnHeight = ref.current
+    ? ref.current.offsetTop + ref.current.height
+    : 0;
+
+  return ReactDOM.createPortal(
+    <Transition appear timeout={200} mountOnEnter unmountOnExit in={isShown}>
+      {state => {
+        const hasStyle = !!modalStyles[`modalContainer-${state}`];
+        const classes = cx(modalStyles['modalContainer'], {
+          [modalStyles[`modalContainer-${state}`]]: hasStyle,
+          fluid
+        });
+        return (
+          <div className={classes} data-modal>
+            <div styleName="modal-wizard-wrapper">
+              {wizardComponent ? (
+                <span style={{ width: style.width, top: btnHeight }}>
+                  {wizardComponent}
+                </span>
+              ) : null}
+              <div style={style} styleName="modal" ref={ref}>
+                {children}
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </Transition>,
+    el
+  );
+};
+
+export const ModalFooter = ({ children }) => {
+  return <div styleName="modal-footer">{children}</div>;
+};
+
+export const ModalSaveAction = ({
+  isDisabled,
+  isLoading,
+  onSave,
+  onCancel
+}) => {
+  return (
+    <ModalFooter>
+      <div styleName="modal-actions">
+        <Button disabled={isLoading} secondary compacted onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button disabled={isDisabled || isLoading} onClick={onSave}>
+          Save
+        </Button>
+      </div>
+    </ModalFooter>
+  );
+};
+
+export const ModalWizardActions = ({
+  isLoading = false,
+  isNextDisabled = false,
+  showBack = true,
+  nextLabel = 'Next',
+  onNext = () => {},
+  onBack = () => {},
+  onCancel = () => {},
+  style
+}) => {
+  return (
+    <div styleName="modal-wizard-actions" style={style}>
+      {showBack ? (
+        <span styleName="prev">
+          <Button
+            disabled={isLoading}
+            secondary
+            compacted
+            onClick={() => {
+              if (showBack) onBack();
+              else onCancel();
+            }}
+          >
+            Back
+          </Button>
+        </span>
+      ) : null}
+      <span styleName="next">
+        <Button disabled={isNextDisabled || isLoading} onClick={onNext}>
+          {nextLabel}
+        </Button>
+      </span>
+    </div>
+  );
+};
+
+export const ModalCloseIcon = ({ onClose }) => (
+  <a styleName="close" onClick={() => onClose()}>
+    <CloseIcon width="24" height="24" />
+  </a>
+);
+
+export const ModalDismissAction = ({ onDismiss, btnText = 'Got it!' }) => {
+  return (
+    <div styleName="dismiss-footer">
+      <Button onClick={onDismiss}>{btnText}</Button>
+    </div>
+  );
+};
+
+export const ModalBody = ({ children }) => {
+  return <div styleName="modal-body">{children}</div>;
 };

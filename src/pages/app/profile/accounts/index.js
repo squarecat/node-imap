@@ -1,13 +1,10 @@
 import './accounts.module.scss';
 
-import {
-  ExternalIcon,
-  GoogleIcon,
-  OutlookIcon
-} from '../../../../components/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import Button from '../../../../components/btn';
+import ConnectButton from '../../../../components/connect-account/btn';
+import ConnectedAccountList from '../../../../components/connect-account/list';
+import { ExternalIcon } from '../../../../components/icons';
 import { FormNotification } from '../../../../components/form';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
@@ -73,33 +70,7 @@ export default () => {
             subscription spam.
           </p>
         ) : (
-          <ul styleName="account-list">
-            {accounts.map(account => {
-              const isPrimary = primaryEmail === account.email;
-              return (
-                <li styleName="account" key={account.id}>
-                  <span styleName="email-container">
-                    {getIcon(account.provider)}
-                    <span styleName="email">
-                      {account.email} {isPrimary ? '(primary)' : ''}
-                    </span>
-                  </span>
-                  {isPrimary ? null : (
-                    <Button
-                      compact
-                      muted
-                      basic
-                      fill
-                      onClick={() => onClickRemoveAccount(account.email)}
-                      loading={removingAccount[account.email]}
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+          <ConnectedAccountList accounts={accounts} />
         )}
       </div>
       <div styleName="accounts-section connect">
@@ -189,106 +160,3 @@ function modalContent({ email, provider }) {
     </>
   );
 }
-
-function getIcon(provider) {
-  if (provider === 'google') return <GoogleIcon width="16" height="16" />;
-  if (provider === 'outlook') return <OutlookIcon width="16" height="16" />;
-}
-
-let windowObjectReference = null;
-let previousUrl = null;
-const strWindowFeatures = [
-  'height=700',
-  'width=600',
-  'top=100',
-  'left=100',
-  // A dependent window closes when its parent window closes.
-  'dependent=yes',
-  // hide menubars and toolbars for the simplest popup
-  'menubar=no',
-  'toolbar=no',
-  'location=yes',
-  // enable for accessibility
-  'resizable=yes',
-  'scrollbars=yes',
-  'status=yes',
-  // chrome specific
-  'chrome=yes',
-  'centerscreen=yes'
-].join(',');
-
-const ConnectButton = ({ provider, onSuccess, onError }) => {
-  useEffect(() => {
-    return function cleanup() {
-      window.removeEventListener('message', receiveMessage);
-    };
-  });
-
-  const receiveMessage = event => {
-    // Do we trust the sender of this message?  (might be
-    // different from what we originally opened, for example).
-    if (event.origin !== process.env.BASE_URL) {
-      return;
-    }
-
-    if (event.data === 'error') {
-      return onError();
-    }
-
-    return onSuccess();
-  };
-
-  const openSignInWindow = (url, name) => {
-    window.removeEventListener('message', receiveMessage);
-
-    if (windowObjectReference === null || windowObjectReference.closed) {
-      windowObjectReference = window.open(url, name, strWindowFeatures);
-    } else if (previousUrl !== url) {
-      windowObjectReference = window.open(url, name, strWindowFeatures);
-      windowObjectReference.focus();
-    } else {
-      windowObjectReference.focus();
-    }
-
-    window.addEventListener(
-      'message',
-      event => receiveMessage(event, provider),
-      false
-    );
-    previousUrl = url;
-  };
-
-  if (provider === 'google') {
-    return (
-      <a
-        href="/auth/google/connect"
-        target="SignInWindow"
-        onClick={() => {
-          openSignInWindow('/auth/google/connect', 'SignInWindow');
-          return false;
-        }}
-        styleName="connect-btn"
-      >
-        <GoogleIcon />
-        <span styleName="text">Connect Google account</span>
-      </a>
-    );
-  } else if (provider === 'outlook') {
-    return (
-      <a
-        href="/auth/outlook/connect"
-        target="SignInWindow"
-        onClick={() => {
-          openSignInWindow('/auth/outlook/connect', 'SignInWindow');
-          return false;
-        }}
-        styleName="connect-btn"
-      >
-        <OutlookIcon />
-        <span styleName="text">Connect Outlook account</span>
-      </a>
-    );
-  } else {
-    return null;
-  }
-};
