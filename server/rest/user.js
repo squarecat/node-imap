@@ -13,7 +13,8 @@ import {
   removeUserScanReminder,
   removeUserTotpToken,
   updateUserPassword,
-  updateUserPreferences
+  updateUserPreferences,
+  removeUserBillingCard
 } from '../services/user';
 
 import Joi from 'joi';
@@ -56,7 +57,8 @@ export default app => {
         preferences,
         loginProvider,
         lastUpdatedAt,
-        accounts
+        accounts,
+        billing
       } = user;
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
@@ -79,7 +81,8 @@ export default app => {
         preferences,
         loginProvider,
         lastUpdatedAt,
-        accounts: accounts || []
+        accounts: accounts || [],
+        billing
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);
@@ -197,6 +200,27 @@ export default app => {
     } catch (err) {
       logger.error(
         `user-rest: error patching user preferences ${id} with op ${op}`
+      );
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.patch('/api/me/billing', auth, async (req, res) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op } = body;
+    let updatedUser = user;
+    try {
+      if (op === 'remove-card') {
+        updatedUser = await removeUserBillingCard(id);
+      } else {
+        logger.error(`user-rest: billing patch op not supported`);
+      }
+      res.send(updatedUser);
+    } catch (err) {
+      logger.error(
+        `user-rest: error patching user billing ${id} with op ${op}`
       );
       logger.error(err);
       res.status(500).send(err);

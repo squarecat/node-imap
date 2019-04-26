@@ -1,50 +1,64 @@
 import '../modal.module.scss';
 
-import {
-  Elements,
-  StripeProvider,
-  CardElement,
-  injectStripe
-} from 'react-stripe-elements';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { createContext, useEffect, useReducer, useState } from 'react';
 
+import CheckoutForm from './checkout-form';
+import ExistingBillingForm from './existing-billing-form';
 import ModalClose from '../modal-close';
-import { getPackage } from '../../../utils/prices';
-import { useAsync } from '../../../utils/hooks';
+import { fetchLoggedInUser } from '../../../utils/auth';
 import useUser from '../../../utils/hooks/use-user';
-import {
-  FormNotification,
-  FormInput,
-  FormGroup,
-  FormLabel,
-  FormSelect
-} from '../../form';
-import Button from '../../btn';
-import { LockIcon } from '../../icons';
+import { StarIcon } from '../../icons';
 
-const textFields = [
-  {
-    name: 'name',
-    label: 'Name'
-  },
-  {
-    name: 'line1',
-    label: 'Line 1'
-  },
-  {
-    name: 'line2',
-    label: 'Line 2'
-  },
-  {
-    name: 'city',
-    label: 'City'
+function billingModalReducer(state, action) {
+  const { type, data } = action;
+  switch (type) {
+    case 'set-step': {
+      return {
+        ...state,
+        step: data,
+        loading: false,
+        error: false
+      };
+    }
+    case 'set-billing-details':
+      return {
+        ...state,
+        [data.key]: data.value
+      };
+    case 'set-loading':
+      return { ...state, loading: data };
+    case 'set-error':
+      return { ...state, error: data };
+    default:
+      return state;
   }
-];
+}
 
-function BillingModal({ onClose, packageId = '1', onPurchase }) {
-  const [isShown, setShown] = useState(true);
+const initialState = {
+  name: '',
+  line1: '',
+  line2: '',
+  city: '',
+  country: '',
+  postal_code: '',
+  save_payment_method: true,
+  coupon: ''
+};
 
-  const packageDetails = getPackage(packageId);
+export const BillingModalContext = createContext({ state: initialState });
+
+export default ({
+  onClose,
+  selectedPackage,
+  step = 'enter-billing-details'
+}) => {
+  const [isShown, setShown] = useState(false);
+  const [state, dispatch] = useReducer(billingModalReducer, {
+    ...initialState,
+    step,
+    selectedPackage
+  });
+  const [user, { setBilling: setUserBilling }] = useUser();
 
   const handleKeydown = e => {
     if (e.keyCode === 27 || e.key === 'Escape') {
@@ -66,205 +80,73 @@ function BillingModal({ onClose, packageId = '1', onPurchase }) {
     setTimeout(onClose, 300);
   };
 
-  // const onClickRescan = async timeframe => {
-  //   setShown(false);
-  //   setTimeout(() => {
-  //     return onRescan(timeframe);
-  //   }, 300);
-  // };
-
-  // const onClickPurchase = async () => {
-  //   setShown(false);
-  //   setTimeout(() => {
-  //     return onPurchase();
-  //   }, 300);
-  // };
+  const onPurchaseSuccess = ({ billing }) => {
+    setUserBilling(billing);
+  };
 
   return (
-    <StripeProvider apiKey={process.env.STRIPE_PK}>
-      <Elements>
-        <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-          <ModalClose onClose={onClickClose} />
-          <h3>Buy Package</h3>
-          <CheckoutForm
-            packageDetails={packageDetails}
-            onClickClose={onClickClose}
-          />
+    <BillingModalContext.Provider value={{ state, dispatch }}>
+      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
+        <ModalClose onClose={onClickClose} />
+        <div
+          // styleName="enter-billing-details-box"
+          data-active={state.step === 'enter-billing-details'}
+        >
+          {state.step === 'enter-billing-details' ? (
+            <>
+              <h3>Buy Package</h3>
+              <CheckoutForm
+                onClickClose={onClickClose}
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
+            </>
+          ) : null}
         </div>
-        <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
-      </Elements>
-    </StripeProvider>
-  );
-}
-
-export default BillingModal;
-
-function BillingBox({ stripe, packageDetails, onClickClose }) {
-  const { value: countries, loading: countriesLoading } = useAsync(
-    fetchCountries
-  );
-  const cardElement = useRef(null);
-
-  const [{ email }] = useUser(u => u.email);
-
-  const [error, setError] = useState(null);
-  const [options, setOptions] = useState([]);
-  const [state, setState] = useState({
-    name: '',
-    email,
-    line1: '',
-    line2: '',
-    city: '',
-    country: '',
-    postal_code: ''
-  });
-
-  useEffect(
-    () => {
-      if (!countriesLoading) {
-        const options = countries.map(c => ({ value: c.code, label: c.name }));
-        setOptions(options);
-      }
-    },
-    [countriesLoading]
-  );
-
-  async function onSubmit() {
-    try {
-      console.log('on submit function');
-      const {
-        paymentMethod,
-        error: paymentError
-      } = await stripe.createPaymentMethod(
-        'card',
-        cardElement.current._element,
-        { billing_details: { name: 'Jenny Rosen' } }
-      );
-      if (paymentError) {
-        console.log('stripe error', paymentError);
-        setError(paymentError);
-      } else {
-        console.log('stripe intent success', paymentMethod);
-        // TODO do server stuff with { payment_method_id: paymentMethod.id }
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  return (
-    <form
-      id="payment-form"
-      onSubmit={e => {
-        e.preventDefault();
-        return onSubmit();
-      }}
-      method="post"
-    >
-      <div styleName="modal-content">
-        {/* <p>
-          Complete purchase of {packageDetails.unsubscriptions} unsubscriptions
-          for ${(packageDetails.price/100).toFixed(2)}
-        </p> */}
-        <FormGroup fluid>
-          <FormLabel htmlFor="email">Email</FormLabel>
-          <FormInput
-            compact
-            type="email"
-            value={state.email}
-            name="email"
-            onChange={e => {
-              setState({
-                ...state,
-                email: e.currentTarget.value
-              });
-            }}
-          />
-        </FormGroup>
-        {textFields.map(field => (
-          <FormGroup fluid key={field.name}>
-            <FormLabel htmlFor={field.name}>{field.label}</FormLabel>
-            <FormInput
-              compact
-              value={state[field.name]}
-              name={field.name}
-              onChange={e => {
-                setState({
-                  ...state,
-                  [field.name]: e.currentTarget.value
-                });
-              }}
-            />
-          </FormGroup>
-        ))}
-        <FormGroup fluid>
-          <FormLabel htmlFor="country">Country</FormLabel>
-          <FormSelect
-            compact
-            value={state.country}
-            options={options}
-            onChange={e => {
-              setState({
-                ...state,
-                country: e.currentTarget.value
-              });
-            }}
-          />
-        </FormGroup>
-        <FormGroup fluid>
-          <FormLabel htmlFor="postal_code">
-            {state.country === 'US' ? 'Zipcode' : 'Postal code'}
-          </FormLabel>
-          <FormInput
-            compact
-            value={state.postal_code}
-            name="postal_code"
-            onChange={e => {
-              setState({
-                ...state,
-                postal_code: e.currentTarget.value
-              });
-            }}
-          />
-        </FormGroup>
-        <CardElement ref={cardElement} />
-        {error ? (
-          <FormNotification error>{error.message}</FormNotification>
-        ) : null}
-      </div>
-      <div styleName="modal-actions">
-        <div styleName="modal-actions-info">
-          <p styleName="modal-text--small secured-by">
-            <LockIcon />
-            Payments Secured by{' '}
-            <a href="https://stripe.com/docs/security/stripe">Stripe</a>
-          </p>
+        <div
+          // styleName="enter-billing-details-box"
+          data-active={state.step === 'existing-billing-details'}
+        >
+          {state.step === 'existing-billing-details' ? (
+            <>
+              <h3>Buy Package</h3>
+              <ExistingBillingForm
+                card={user.billing.card}
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
+            </>
+          ) : null}
         </div>
-        <div styleName="modal-buttons">
-          <a
-            styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-            onClick={onClickClose}
-          >
-            Cancel
-          </a>
-          <Button
-            basic
-            compact
-            stretch
-            loading={state.loading}
-            type="submit"
-            as="button"
-          >
-            Buy package
-          </Button>
+        <div
+          // styleName="enter-billing-details-box"
+          data-active={state.step === 'success'}
+        >
+          {state.step === 'success' ? (
+            <>
+              <h3>Payment Successful</h3>
+              <div styleName="modal-content">
+                <div styleName="billing-success">
+                  <StarIcon width="50" height="50" />
+                  <p>
+                    You now have {state.selectedPackage.unsubscribes} more
+                    unsubscribe credits!
+                  </p>
+                </div>
+              </div>
+              <div styleName="modal-actions">
+                <a
+                  styleName="modal-btn modal-btn--cta"
+                  onClick={() => {
+                    onClickClose();
+                  }}
+                >
+                  Awesome!
+                </a>
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
-    </form>
+      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
+    </BillingModalContext.Provider>
   );
-}
-
-const CheckoutForm = injectStripe(BillingBox);
-
-function fetchCountries() {
-  return fetch('/api/countries.json').then(resp => resp.json());
-}
+};

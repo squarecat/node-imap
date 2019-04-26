@@ -35,7 +35,8 @@ const defaultProjection = {
   preferences: 1,
   loginProvider: 1,
   lastUpdatedAt: 1,
-  accounts: 1
+  accounts: 1,
+  billing: 1
 };
 
 const COL_NAME = 'users';
@@ -319,6 +320,31 @@ export async function addPaidScan(id, scanType) {
   } catch (err) {
     logger.error(
       `users-dao: error adding user ${id} paid scans with scan type ${scanType}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function addPackage(id, packageId, unsubscribes) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          'billing.previousPackageId': packageId
+        },
+        $inc: {
+          'billing.unsubscribesRemaining': unsubscribes
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(
+      `users-dao: error adding user ${id} package ${packageId} unsubs ${unsubscribes}`
     );
     logger.error(err);
     throw err;
@@ -698,7 +724,7 @@ export async function removeTotpSecret(userId) {
       }
     );
   } catch (err) {
-    logger.error('user-dao: failed to verify totp secret');
+    logger.error('user-dao: failed to remove totp secret');
     logger.error(err);
     throw err;
   }
@@ -742,6 +768,24 @@ export async function updatePassword(id, newPassword) {
     return user;
   } catch (err) {
     logger.error('user-dao: failed to update password');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function removeBillingCard(userId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.updateOne(
+      { id: userId },
+      {
+        $unset: {
+          'billing.card': 1
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`user-dao: failed to remove billing card for user ${userId}`);
     logger.error(err);
     throw err;
   }

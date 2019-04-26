@@ -108,11 +108,6 @@
   @extend .basic;
 }
 
-.card-last4 {
-}
-.card-expires {
-}
-
 .package-buy-btn {
 }
 .package-discount {
@@ -127,5 +122,5 @@
 
 :global(.StripeElement) {
   @extend .form-input;
-  @extend .input-compactt;
+  @extend .input-smaller;
 }

@@ -1,6 +1,7 @@
 import {
   addAccount,
   addPaidScan,
+  addPackage,
   addScan,
   addScanReminder,
   addTotpSecret,
@@ -25,7 +26,8 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret
+  verifyTotpSecret,
+  removeBillingCard
 } from '../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -39,6 +41,7 @@ import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../utils/emails/newsletter';
+import { detachPaymentMethod } from '../utils/stripe';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
@@ -267,6 +270,10 @@ export function addPaidScanToUser(userId, scanType) {
   return addPaidScan(userId, scanType);
 }
 
+export function addPackageToUser(userId, packageId, unsubscribes = 0) {
+  return addPackage(userId, packageId, unsubscribes);
+}
+
 export function updatePaidScanForUser(userId, scanType) {
   return updatePaidScan(userId, scanType);
 }
@@ -493,6 +500,18 @@ export async function verifyUserTotpToken(user, { token }) {
 export async function removeUserTotpToken(user) {
   try {
     return removeTotpSecret(user.id);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function removeUserBillingCard(id) {
+  try {
+    const { paymentMethodId } = await getUserById(id);
+    if (paymentMethodId) {
+      await detachPaymentMethod(paymentMethodId);
+    }
+    await removeBillingCard(id);
   } catch (err) {
     throw err;
   }

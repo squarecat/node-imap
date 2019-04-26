@@ -19,6 +19,7 @@ export const FormInput = ({
   required,
   noFocus,
   compact,
+  smaller,
   basic,
   validation = () => '',
   onChange = () => {},
@@ -30,6 +31,7 @@ export const FormInput = ({
   const classes = cx('form-input', {
     'no-focus': noFocus,
     'input-compactt': compact,
+    'input-smaller': smaller,
     'input-basic': basic
   });
   return (
@@ -66,6 +68,7 @@ export const FormSelect = ({
   name,
   required,
   compact,
+  smaller,
   basic,
   validation = () => '',
   onChange = () => {},
@@ -78,7 +81,8 @@ export const FormSelect = ({
   const ref = useRef(null);
   const classes = cx('form-input form-select-dropdown', {
     'input-compactt': compact,
-    'input-basic': basic
+    'input-basic': basic,
+    'input-smaller': smaller
   });
   return (
     <select
@@ -95,6 +99,7 @@ export const FormSelect = ({
         onChange(e);
       }}
     >
+      <option value="">{placeholder}</option>
       {options.map(opt => (
         <option key={opt.value} value={opt.value}>
           {opt.label}

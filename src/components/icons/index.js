@@ -196,6 +196,22 @@ export const LinkIcon = ({ width = '15', height = '15', ...visProps }) => (
   </svg>
 );
 
+export const StarIcon = ({ width = '32', height = '32', ...visProps }) => (
+  <svg
+    styleName={getClasses('icon star', visProps)}
+    viewBox="0 0 32 32"
+    width={width}
+    height={height}
+    fill="none"
+    stroke="currentcolor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z" />
+  </svg>
+);
+
 export function OutlookIcon({ width = '34', height = '34' }) {
   return (
     <svg width={width} height={height} viewBox="0 0 21 21">

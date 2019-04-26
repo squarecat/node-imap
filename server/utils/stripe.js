@@ -275,14 +275,14 @@ function getDescription({ quantity, productLabel, provider, gift }) {
 
 export async function createPaymentIntent(
   paymentMethodId,
-  { customerId, amount, description, coupon }
+  { customerId, amount, description, coupon, saveCard }
 ) {
   logger.debug('stripe: creating payment intent');
   try {
     // Create the PaymentIntent
     const intent = await stripe.paymentIntents.create({
       payment_method: paymentMethodId,
-      save_payment_method: true, // TODO pass in the future
+      save_payment_method: saveCard,
       customer: customerId,
       amount,
       metadata: {
@@ -315,7 +315,32 @@ export function getPaymentMethod(id) {
   return stripe.paymentMethods.retrieve(id);
 }
 
+export async function attachPaymentMethod(paymentMethodId, customerId) {
+  return stripe.paymentMethods.attach(paymentMethodId, {
+    customer: customerId
+  });
+}
+
+export async function detachPaymentMethod(paymentMethodId) {
+  try {
+    const paymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
+    return paymentMethod;
+  } catch (err) {
+    logger.error(`stripe: failed to detach payment method`);
+    return {};
+  }
+}
+
 export const generatePaymentResponse = intent => {
+  if (
+    intent.status === 'last_payment_error' ||
+    intent.status === 'requires_payment_method'
+  ) {
+    // previously saved card is incorrect and we need new info
+    return {
+      requires_payment_method: true
+    };
+  }
   // requires_source_action renamed https://stripe.com/docs/upgrades#2019-02-11
   if (
     (intent.status === 'requires_source_action' ||

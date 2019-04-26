@@ -89,7 +89,6 @@ module.exports = {
       options: {
         async: true
       }
-    },
-    `gatsby-plugin-stripe-elements`
+    }
   ]
 };

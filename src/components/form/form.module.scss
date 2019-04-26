@@ -25,9 +25,16 @@
   height: 58px;
 }
 
+.input-smaller {
+  padding: 0 20px;
+  line-height: 46px;
+  height: 48px;
+}
+
 .input-basic {
   border-color: transparent;
   border-radius: 0;
+  -webkit-appearance: none;
   border-bottom-color: $color-input-border;
 
   &:focus {
@@ -38,7 +45,7 @@
 .container {
   border: 1px solid $color-input-border;
   border-radius: 5px;
-  padding: 5px;
+  padding: 0 5px;
 
   .input-basic:last-child {
     border-bottom: none;
@@ -56,9 +63,6 @@
 }
 
 .form-select-dropdown {
-  height: 58px;
-  text-indent: 15px;
-
   &:invalid {
     color: $color-input-placeholder;
   }

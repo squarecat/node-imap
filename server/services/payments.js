@@ -1,6 +1,12 @@
 import { addGiftRedemptionToStats, addPaymentToStats } from '../services/stats';
-import { addPaidScanToUser, getUserById } from '../services/user';
 import {
+  addPaidScanToUser,
+  getUserById,
+  addPackageToUser
+} from '../services/user';
+import {
+  attachPaymentMethod,
+  detachPaymentMethod,
   confirmPaymentIntent,
   createCustomer,
   createPayment,
@@ -37,6 +43,8 @@ import { updateUser } from '../dao/user';
 //   }
 // ];
 
+// TODO this is duplicated from 'utils/prices'
+// TODO put package data in the database?
 const PACKAGE_DATA = [
   { id: '1', unsubscribes: 50, discount: 0.1 },
   { id: '2', unsubscribes: 100, discount: 0.15 },
@@ -222,30 +230,189 @@ export async function listPaymentsForUser(userId) {
   }
 }
 
-export async function createPaymentForUser(
+export async function createPaymentWithExistingCardForUser({
+  user,
+  productId,
+  coupon
+}) {
+  try {
+    let intent;
+
+    const { customerId, paymentMethodId } = await getUserById(user.id);
+    const { price: finalPrice, description } = await getPaymentDetails({
+      productId,
+      coupon
+    });
+
+    if (finalPrice < 50 || process.env.NODE_ENV === 'beta') {
+      intent = {
+        success: true
+      };
+    } else {
+      intent = await createPaymentIntent(paymentMethodId, {
+        amount: finalPrice,
+        customerId,
+        description,
+        coupon
+      });
+    }
+
+    const response = generatePaymentResponse(intent);
+    if (response.success) {
+      return handlePaymentSuccess(response, {
+        user,
+        productId,
+        finalPrice: intent.amount,
+        coupon: intent.metadata.coupon
+      });
+    }
+
+    return response;
+  } catch (err) {
+    logger.error(
+      `payments-service: failed to create payment for existing user card`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+async function getPaymentDetails({ productId, coupon }) {
+  try {
+    // get which product they are buying
+    const { price: productPrice, unsubscribes } = PACKAGES.find(
+      p => p.id === productId
+    );
+    const description = `Payment for ${unsubscribes} unsubscribes`;
+
+    // calcualte any coupon discount
+    let finalPrice = productPrice;
+    let couponObject;
+    if (coupon) {
+      couponObject = await getCoupon(coupon);
+      finalPrice = applyCoupon(productPrice, couponObject);
+    }
+    return { price: finalPrice, description };
+  } catch (err) {
+    logger.error(`payments-service: failed to get package payment details`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+async function getOrUpdateCustomerForUser(
+  { paymentMethodId },
+  { user, name, address, saveCard }
+) {
+  try {
+    let {
+      customerId,
+      paymentMethodId: currentPaymentMethodId,
+      email
+    } = await getUserById(user.id);
+    // create or update a stripe customer
+    if (customerId) {
+      await updateCustomer({
+        customerId: customerId,
+        name,
+        address
+      });
+    } else {
+      const { id } = await createCustomer({
+        email,
+        name,
+        address
+      });
+      customerId = id;
+    }
+
+    let updates = { customerId };
+
+    // remove the old card from stripe if there is one
+    if (currentPaymentMethodId) {
+      await detachPaymentMethod(currentPaymentMethodId);
+      updates = {
+        ...updates,
+        paymentMethodId: null
+      };
+    }
+
+    if (saveCard) {
+      logger.debug('payments-service: saving user card');
+      // add the new payment method and save to the user
+      const paymentMethod = await attachPaymentMethod(
+        paymentMethodId,
+        customerId
+      );
+      const { card } = paymentMethod;
+      const { last4, exp_month, exp_year } = card;
+      updates = {
+        ...updates,
+        paymentMethodId,
+        'billing.card': {
+          last4,
+          exp_month,
+          exp_year
+        }
+      };
+    }
+
+    await updateUser(user.id, updates);
+    return customerId;
+  } catch (err) {
+    logger.error(`payments-service: failed to get or update customer for user`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+async function handlePaymentSuccess(
+  response,
+  { user, productId, finalPrice, coupon }
+) {
+  try {
+    logger.info(`payments-service: payment success for user ${user.id}`);
+
+    const { unsubscribes } = PACKAGES.find(p => p.id === productId);
+    logger.debug(
+      `payments-service: adding package ${productId} to user - unsubs ${unsubscribes}`
+    );
+    const updatedUser = await addPackageToUser(
+      user.id,
+      productId,
+      unsubscribes
+    );
+
+    addPaymentToStats({ price: finalPrice / 100 });
+    // TODO add package purchase to stats
+
+    if (coupon) {
+      updateCoupon(coupon);
+    }
+
+    return {
+      ...response,
+      user: updatedUser
+    };
+  } catch (err) {
+    logger.error(`payments-service: failed to handle payment success`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function createNewPaymentForUser(
   { paymentMethodId, paymentIntentId },
-  { user, productId, coupon, name, address }
+  { user, productId, coupon, name, address, saveCard }
 ) {
   try {
     let intent;
 
     if (paymentMethodId) {
-      // get the user
-      let { customerId, email } = await getUserById(user.id);
-
-      // get which product they are buying
-      const { price: productPrice, unsubscribes } = PACKAGES.find(
-        p => p.id === productId
-      );
-      const description = `Payment for ${unsubscribes} unsubscribes`;
-
-      // calcualte any coupon discount
-      let finalPrice = productPrice;
-      let couponObject;
-      if (coupon) {
-        couponObject = await getCoupon(coupon);
-        finalPrice = applyCoupon(productPrice, couponObject);
-      }
+      const { price: finalPrice, description } = await getPaymentDetails({
+        productId,
+        coupon
+      });
 
       // return success for beta users or amounts under 0.50c
       if (finalPrice < 50 || process.env.NODE_ENV === 'beta') {
@@ -253,105 +420,36 @@ export async function createPaymentForUser(
           success: true
         };
       } else {
-        // create or update a stripe customer
-        if (customerId) {
-          await updateCustomer({
-            customerId: customerId,
-            name,
-            address
-          });
-        } else {
-          const { id } = await createCustomer({
-            email,
-            name,
-            address
-          });
-          customerId = id;
-          // we have to do this here as the next time this is called
-          // the user might have a customer record
-        }
+        const customerId = await getOrUpdateCustomerForUser(
+          { paymentMethodId },
+          { user, name, address, saveCard }
+        );
+
+        intent = await createPaymentIntent(paymentMethodId, {
+          amount: finalPrice,
+          customerId,
+          description,
+          coupon,
+          saveCard
+        });
       }
-
-      const { card } = getPaymentMethod(paymentMethodId);
-      const { last4, exp_month, exp_year } = card;
-
-      await updateUser(user.id, {
-        customerId,
-        'billing.card': {
-          last4,
-          exp_month,
-          exp_year
-        }
-      });
-
-      debugger;
-      intent = await createPaymentIntent(paymentMethodId, {
-        amount: finalPrice,
-        customerId,
-        description,
-        coupon
-      });
     } else if (paymentIntentId) {
-      debugger;
       intent = await confirmPaymentIntent(paymentIntentId);
     }
 
-    logger.debug(JSON.stringify(intent, null, 2));
-    debugger;
     const response = generatePaymentResponse(intent);
-    logger.debug(response);
-
     if (response.success) {
-      // this could be coming back after the 3D secure redirect
-      // so all the data above won't be available
-      logger.info('payments-service: payment success');
-
-      debugger;
-
-      // add the unsubscribes to the user
-      const { unsubscribes } = PACKAGES.find(p => p.id === productId);
-      const unsubscribesRemaining = _get(
+      return handlePaymentSuccess(response, {
         user,
-        'billing.unsubscribesRemaining',
-        0
-      );
-      await updateUser(user.id, {
-        'billing.unsubscribesRemaining': unsubscribesRemaining + unsubscribes,
-        'billing.previousPackageId': productId
+        productId,
+        finalPrice: intent.amount,
+        coupon: intent.metadata.coupon
       });
-
-      // addPaymentToStats({ price: finalPrice / 100 });
-      // TODO add package purchase to stats
-
-      if (coupon) {
-        updateCoupon(coupon);
-      }
     }
-
     return response;
   } catch (err) {
-    logger.error('payments-service: failed to create payment for user');
+    logger.error('payments-service: failed to create new payment for  user');
+    logger.error(err);
     throw err;
   }
 }
-
-// async function getOrUpdateCustomer(customerId, email, { name, address } = {}) {
-//   try {
-//     if (customerId) {
-//       return updateCustomer({
-//         customerId: customerId,
-//         name,
-//         address
-//       });
-//     } else {
-//       const { id } = await createCustomer({
-//         email,
-//         name,
-//         address
-//       });
-//       return id;
-//     }
-//   } catch (err) {
-//     throw err;
-//   }
-// }

@@ -21,20 +21,44 @@ export default app => {
     }
   });
 
-  app.post('/api/checkout/:productId?/:coupon?', auth, async (req, res) => {
+  app.post('/api/checkout/new/:productId?/:coupon?', auth, async (req, res) => {
     const { productId, coupon } = req.params;
-    const { payment_method_id, payment_intent_id, name, address } = req.body;
+    const {
+      payment_method_id,
+      payment_intent_id,
+      name,
+      address,
+      saveCard
+    } = req.body;
     try {
-      const response = await PaymentService.createPaymentForUser(
+      const response = await PaymentService.createNewPaymentForUser(
         {
           paymentMethodId: payment_method_id,
           paymentIntentId: payment_intent_id
         },
-        { user: req.user, productId, coupon, name, address }
+        { user: req.user, productId, coupon, name, address, saveCard }
       );
       return res.send(response);
     } catch (err) {
-      logger.error('payments-rest: error confirming payment');
+      logger.error('payments-rest: error creating new payment');
+      logger.error(err);
+      return res.status(500).send({
+        success: false,
+        err: err.toString(),
+        error: err.message
+      });
+    }
+  });
+
+  app.post('/api/checkout/:productId?/:coupon?', auth, async (req, res) => {
+    const { productId, coupon } = req.params;
+    try {
+      const response = await PaymentService.createPaymentWithExistingCardForUser(
+        { user: req.user, productId, coupon }
+      );
+      return res.send(response);
+    } catch (err) {
+      logger.error('payments-rest: error creating new payment');
       logger.error(err);
       return res.status(500).send({
         success: false,

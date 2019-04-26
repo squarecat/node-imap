@@ -46,25 +46,17 @@ export default globalReducer(
       ...state,
       requiresTwoFactorAuth: bool
     }),
-    setUnsubscribesRemaining: (state, unsubscribes) => ({
-      ...state,
-      billing: {
-        ...state.billing,
-        unsubscribesRemaining: unsubscribes
-      }
-    }),
-    setPackagePurchased: (state, { unsubscribes, packageId, card }) => {
-      const { billing = {} } = state;
-
+    // incrementUnsubscribesRemaining: (state, unsubscribes) => ({
+    //   ...state,
+    //   billing: {
+    //     ...state.billing,
+    //     unsubscribesRemaining: unsubscribes
+    //   }
+    // }),
+    setBilling: (state, billing) => {
       return {
         ...state,
-        billing: {
-          ...billing,
-          unsubscribesRemaining:
-            (billing.unsubscribesRemaining || 0) + unsubscribes,
-          previousPackageId: packageId,
-          card
-        }
+        billing
       };
     }
   }
