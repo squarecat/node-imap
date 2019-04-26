@@ -45,6 +45,27 @@ export default globalReducer(
     setRequiresTwoFactorAuth: (state, bool) => ({
       ...state,
       requiresTwoFactorAuth: bool
-    })
+    }),
+    setUnsubscribesRemaining: (state, unsubscribes) => ({
+      ...state,
+      billing: {
+        ...state.billing,
+        unsubscribesRemaining: unsubscribes
+      }
+    }),
+    setPackagePurchased: (state, { unsubscribes, packageId, card }) => {
+      const { billing = {} } = state;
+
+      return {
+        ...state,
+        billing: {
+          ...billing,
+          unsubscribesRemaining:
+            (billing.unsubscribesRemaining || 0) + unsubscribes,
+          previousPackageId: packageId,
+          card
+        }
+      };
+    }
   }
 );

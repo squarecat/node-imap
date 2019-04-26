@@ -19,6 +19,7 @@ export const FormInput = ({
   required,
   noFocus,
   compact,
+  basic,
   validation = () => '',
   onChange = () => {},
   errorMessage = '',
@@ -28,7 +29,8 @@ export const FormInput = ({
   const ref = useRef(null);
   const classes = cx('form-input', {
     'no-focus': noFocus,
-    compact
+    'input-compactt': compact,
+    'input-basic': basic
   });
   return (
     <input
@@ -64,6 +66,7 @@ export const FormSelect = ({
   name,
   required,
   compact,
+  basic,
   validation = () => '',
   onChange = () => {},
   errorMessage = '',
@@ -74,7 +77,8 @@ export const FormSelect = ({
 }) => {
   const ref = useRef(null);
   const classes = cx('form-input form-select-dropdown', {
-    compact
+    'input-compactt': compact,
+    'input-basic': basic
   });
   return (
     <select
@@ -91,7 +95,6 @@ export const FormSelect = ({
         onChange(e);
       }}
     >
-      <option>{placeholder || 'Select...'}</option>
       {options.map(opt => (
         <option key={opt.value} value={opt.value}>
           {opt.label}
@@ -117,8 +120,12 @@ export const FormCheckbox = ({ id, name, label, ...props }) => {
   );
 };
 
-export const FormGroup = ({ children, fluid, column }) => {
-  return <div styleName={cx('form-group', { fluid, column })}>{children}</div>;
+export const FormGroup = ({ children, fluid, column, container }) => {
+  return (
+    <div styleName={cx('form-group', { fluid, column, container })}>
+      {children}
+    </div>
+  );
 };
 
 export const FormNotification = ({ children, error, warning, success }) => (

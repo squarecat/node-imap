@@ -1,18 +1,12 @@
 import './billing.module.scss';
 
 import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
-import {
-  StripeProvider,
-  Elements,
-  CardElement,
-  injectStripe
-} from 'react-stripe-elements';
+import { StripeProvider, Elements } from 'react-stripe-elements';
 import React, {
   createContext,
   useContext,
   useEffect,
   useReducer,
-  useRef,
   useState
 } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
@@ -21,19 +15,13 @@ import {
   TextImportant,
   TextLink
 } from '../../../components/text';
-import Button from '../../../components/btn';
 
 // import BillingModal from '../../../components/modal/billing';
+import CheckoutForm from '../../../components/modal/billing/checkout-form';
+
 import { CreditCardIcon } from '../../../components/icons';
 import ErrorBoundary from '../../../components/error-boundary';
-import {
-  FormCheckbox,
-  FormNotification,
-  FormInput,
-  FormGroup,
-  FormLabel,
-  FormSelect
-} from '../../../components/form';
+import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
 import ProfileLayout from './layout';
 import Tooltip from 'rc-tooltip';
@@ -69,17 +57,12 @@ function billingReducer(state, action) {
 
 const initialState = {
   unsubscribesRemaining: 0,
-  unsubscribesUsed: 45,
-  customerId: null,
-  card: {
-    last4: '4242',
-    exp_month: 12,
-    exp_year: 2020
-  },
+  unsubscribesUsed: 0,
+  card: null,
   previousPackageId: null,
   settings: {
     autoBuy: false,
-    usageFallback: true
+    usageFallback: false
   }
 };
 
@@ -87,6 +70,8 @@ export const BillingContext = createContext({ state: initialState });
 
 export default function Billing() {
   const [state, dispatch] = useReducer(billingReducer, initialState);
+  const [showBillingModal, toggleBillingModal] = useState(true);
+  let selectedPackage = PACKAGES[0];
 
   const [{ billing }] = useUser(u => u.billing || {});
 
@@ -126,184 +111,30 @@ export default function Billing() {
           ) : null}
         </div>
         <UsageBased />
-        <Packages />
+        <Packages
+          onClickBuy={id => {
+            selectedPackage = PACKAGES.find(p => p.id === id);
+            toggleBillingModal(true);
+          }}
+        />
+        <StripeProvider apiKey={process.env.STRIPE_PK}>
+          <Elements>
+            <CheckoutForm selectedPackage={selectedPackage} />
+          </Elements>
+        </StripeProvider>
         <Enterprise />
         <BillingDetails />
         <BillingHistory />
-        <StripeProvider apiKey={process.env.STRIPE_PK}>
-          <Elements>
-            <CheckoutForm />
-          </Elements>
-        </StripeProvider>
+        {/* {showBillingModal ? (
+          <BillingModal
+            packageId={selectedPackage}
+            onClose={() => toggleBillingModal(false)}
+          />
+        ) : null} */}
       </BillingContext.Provider>
     </ProfileLayout>
   );
 }
-
-const textFields = [
-  {
-    name: 'name',
-    label: 'Name'
-  },
-  {
-    name: 'line1',
-    label: 'Line 1'
-  },
-  {
-    name: 'line2',
-    label: 'Line 2'
-  },
-  {
-    name: 'city',
-    label: 'City'
-  }
-];
-
-function BillingBox({ stripe }) {
-  const { value: countries, loading: countriesLoading } = useAsync(
-    fetchCountries
-  );
-  const cardElement = useRef(null);
-
-  const [{ email }] = useUser(u => u.email);
-
-  const [error, setError] = useState(null);
-  const [options, setOptions] = useState([]);
-  const [state, setState] = useState({
-    name: '',
-    email,
-    line1: '',
-    line2: '',
-    city: '',
-    country: '',
-    postal_code: ''
-  });
-
-  useEffect(
-    () => {
-      if (!countriesLoading) {
-        const options = countries.map(c => ({ value: c.code, label: c.name }));
-        setOptions(options);
-      }
-    },
-    [countriesLoading]
-  );
-
-  async function onSubmit() {
-    try {
-      console.log('on submit function');
-      const {
-        paymentMethod,
-        error: paymentError
-      } = await stripe.createPaymentMethod(
-        'card',
-        cardElement.current._element,
-        { billing_details: { name: 'Jenny Rosen' } }
-      );
-      if (paymentError) {
-        console.log('stripe error', paymentError);
-        setError(paymentError);
-      } else {
-        console.log('stripe intent success', paymentMethod);
-        // TODO do server stuff with { payment_method_id: paymentMethod.id }
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  return (
-    <div styleName="billing-section">
-      <p>Do the checkout</p>
-      <form
-        id="payment-form"
-        onSubmit={e => {
-          e.preventDefault();
-          return onSubmit();
-        }}
-        method="post"
-      >
-        <FormGroup fluid>
-          <FormLabel htmlFor="email">Email</FormLabel>
-          <FormInput
-            compact
-            type="email"
-            value={state.email}
-            name="email"
-            onChange={e => {
-              setState({
-                ...state,
-                email: e.currentTarget.value
-              });
-            }}
-          />
-        </FormGroup>
-        {textFields.map(field => (
-          <FormGroup fluid key={field.name}>
-            <FormLabel htmlFor={field.name}>{field.label}</FormLabel>
-            <FormInput
-              compact
-              value={state[field.name]}
-              name={field.name}
-              onChange={e => {
-                setState({
-                  ...state,
-                  [field.name]: e.currentTarget.value
-                });
-              }}
-            />
-          </FormGroup>
-        ))}
-        <FormGroup fluid>
-          <FormLabel htmlFor="country">Country</FormLabel>
-          <FormSelect
-            compact
-            value={state.country}
-            options={options}
-            onChange={e => {
-              setState({
-                ...state,
-                country: e.currentTarget.value
-              });
-            }}
-          />
-        </FormGroup>
-        <FormGroup fluid>
-          <FormLabel htmlFor="postal_code">
-            {state.country === 'US' ? 'Zipcode' : 'Postal code'}
-          </FormLabel>
-          <FormInput
-            compact
-            value={state.postal_code}
-            name="postal_code"
-            onChange={e => {
-              setState({
-                ...state,
-                postal_code: e.currentTarget.value
-              });
-            }}
-          />
-        </FormGroup>
-        <CardElement ref={cardElement} />
-        {error ? (
-          <FormNotification error>{error.message}</FormNotification>
-        ) : null}
-        <Button
-          basic
-          compact
-          stretch
-          loading={state.loading}
-          type="submit"
-          as="button"
-        >
-          Buy package
-        </Button>
-      </form>
-    </div>
-  );
-}
-
-const CheckoutForm = injectStripe(BillingBox);
 
 function UsageBased() {
   const { state, dispatch } = useContext(BillingContext);
@@ -366,7 +197,7 @@ function UsageBased() {
   );
 }
 
-function Packages() {
+function Packages({ onClickBuy }) {
   const { state, dispatch } = useContext(BillingContext);
   const { previousPackageId, settings } = state;
 
@@ -399,7 +230,10 @@ function Packages() {
               {(p.price / 100).toFixed(2)}
             </p>
             <div>
-              <a styleName="billing-btn package-buy-btn">
+              <a
+                styleName="billing-btn package-buy-btn"
+                onClick={() => onClickBuy(p.id)}
+              >
                 {isPreviousPackage ? 'Re-buy' : 'Buy'}
               </a>
               <span styleName="package-discount">{discountText}</span>
@@ -553,10 +387,6 @@ async function removeUserBillingCard() {
     body: JSON.stringify({ op: 'remove-card' })
   });
   return resp.json();
-}
-
-function fetchCountries() {
-  return fetch('/api/countries.json').then(resp => resp.json());
 }
 
 function getDate({ date }) {

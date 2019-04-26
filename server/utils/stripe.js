@@ -1,8 +1,8 @@
 import Stripe from 'stripe';
+import _capitalize from 'lodash.capitalize';
 import axios from 'axios';
 import countries from './countries.json';
 import logger from './logger';
-import _capitalize from 'lodash.capitalize';
 import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
@@ -173,15 +173,11 @@ function generateCoupon(length = 8) {
     .toUpperCase();
 }
 
-export async function createCustomer({ email, token, address, name }) {
+export async function createCustomer({ email, name, address }) {
   try {
     const customer = await stripe.customers.create({
-      source: token.id,
       email,
-      shipping: {
-        address,
-        name
-      }
+      shipping: { name, address }
     });
     const { id } = customer;
     logger.info(`stripe: created customer ${id}`);
@@ -193,14 +189,11 @@ export async function createCustomer({ email, token, address, name }) {
   }
 }
 
-export async function updateCustomer({ token, customerId, address, name }) {
+export async function updateCustomer({ customerId, name, address }) {
   try {
     const customer = await stripe.customers.update(customerId, {
-      source: token.id,
-      shipping: {
-        address,
-        name
-      }
+      address,
+      shipping: { name, address }
     });
     const { id } = customer;
     logger.info(`stripe: updated customer ${id}`);
@@ -279,3 +272,71 @@ function getDescription({ quantity, productLabel, provider, gift }) {
   }
   return `Payment for ${productLabel} scan for ${_capitalize(provider)}`;
 }
+
+export async function createPaymentIntent(
+  paymentMethodId,
+  { customerId, amount, description, coupon }
+) {
+  logger.debug('stripe: creating payment intent');
+  try {
+    // Create the PaymentIntent
+    const intent = await stripe.paymentIntents.create({
+      payment_method: paymentMethodId,
+      save_payment_method: true, // TODO pass in the future
+      customer: customerId,
+      amount,
+      metadata: {
+        coupon
+      },
+      description,
+      currency: 'usd',
+      confirmation_method: 'manual',
+      confirm: true // attempt to confirm this PaymentIntent immediately
+    });
+
+    return intent;
+  } catch (err) {
+    logger.error(`stripe: failed to create payment intent`);
+    logger.error(err);
+  }
+}
+
+export async function confirmPaymentIntent(paymentIntentId) {
+  try {
+    const intent = await stripe.paymentIntents.confirm(paymentIntentId);
+    return intent;
+  } catch (err) {
+    logger.error(`stripe: failed to confirm payment intent`);
+    logger.error(err);
+  }
+}
+
+export function getPaymentMethod(id) {
+  return stripe.paymentMethods.retrieve(id);
+}
+
+export const generatePaymentResponse = intent => {
+  // requires_source_action renamed https://stripe.com/docs/upgrades#2019-02-11
+  if (
+    (intent.status === 'requires_source_action' ||
+      intent.status === 'requires_action') &&
+    intent.next_action.type === 'use_stripe_sdk'
+  ) {
+    // Tell the client to handle the action
+    return {
+      requires_action: true,
+      payment_intent_client_secret: intent.client_secret
+    };
+  } else if (intent.status === 'succeeded') {
+    // The payment didn’t need any additional actions and completed!
+    // Handle post-payment fulfillment
+    return {
+      success: true
+    };
+  } else {
+    // Invalid status
+    return {
+      error: 'Invalid PaymentIntent status'
+    };
+  }
+};

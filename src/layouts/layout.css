@@ -191,14 +191,14 @@ textarea {
 [type='search']::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-::-webkit-input-placeholder {
+/* ::-webkit-input-placeholder {
   color: inherit;
-  opacity: 0.54;
+opacity: 0.54;
 }
 ::-webkit-file-upload-button {
   -webkit-appearance: button;
   font: inherit;
-}
+} */
 html {
   font: 112.5%/1.45em georgia, serif;
   box-sizing: border-box;
@@ -622,4 +622,33 @@ pre tt:after {
   html {
     font-size: 100%;
   }
+}
+
+::-webkit-input-placeholder {
+  color: #bfbfbf;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: none;
+  opacity: 1;
+}
+:-moz-placeholder {
+  color: #bfbfbf;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: none;
+  opacity: 1;
+}
+::-moz-placeholder {
+  color: #bfbfbf;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: none;
+  opacity: 1;
+}
+:-ms-input-placeholder {
+  color: #bfbfbf;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: none;
+  opacity: 1;
 }

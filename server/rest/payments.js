@@ -2,8 +2,8 @@ import * as PaymentService from '../services/payments';
 
 import { addRefundToStats } from '../services/stats';
 import auth from '../middleware/route-auth';
-import logger from '../utils/logger';
 import countries from '../utils/countries.json';
+import logger from '../utils/logger';
 
 export default app => {
   app.get('/api/checkout/:coupon', auth, async (req, res) => {
@@ -21,45 +21,57 @@ export default app => {
     }
   });
 
-  app.post('/api/checkout/:productId/:coupon?', auth, async (req, res) => {
-    const { user, cookies } = req;
+  app.post('/api/checkout/:productId?/:coupon?', auth, async (req, res) => {
     const { productId, coupon } = req.params;
-    const { token, address, name } = req.body;
-    const { referrer } = cookies;
+    const { payment_method_id, payment_intent_id, name, address } = req.body;
     try {
-      await PaymentService.createPaymentForUser({
-        user: user,
-        productId,
-        coupon,
-        token,
-        address,
-        name,
-        referrer
-      });
-      return res.send({
-        status: 'success'
-      });
+      const response = await PaymentService.createPaymentForUser(
+        {
+          paymentMethodId: payment_method_id,
+          paymentIntentId: payment_intent_id
+        },
+        { user: req.user, productId, coupon, name, address }
+      );
+      return res.send(response);
     } catch (err) {
-      logger.error('payments-rest: error with payment');
+      logger.error('payments-rest: error confirming payment');
       logger.error(err);
       return res.status(500).send({
-        status: 'failed',
-        err: err.toString()
+        success: false,
+        err: err.toString(),
+        error: err.message
       });
     }
   });
-  app.post('/api/payments/hook', async (req, res) => {
-    const { body } = req;
-    const { type, data } = body;
-    // if (type === 'invoice.finalized') {
-    //   const { invoice_pdf, metadata } = data;
-    //   const
 
-    // }
-    //invoice.payment_failed
-    // invoice.payment_succeeded
-    res.send('ok');
-  });
+  // app.post('/api/checkout/:productId/:coupon?', auth, async (req, res) => {
+  //   const { user, cookies } = req;
+  //   const { productId, coupon } = req.params;
+  //   const { token, address, name } = req.body;
+  //   const { referrer } = cookies;
+  //   try {
+  //     await PaymentService.createPaymentForUser({
+  //       user: user,
+  //       productId,
+  //       coupon,
+  //       token,
+  //       address,
+  //       name,
+  //       referrer
+  //     });
+  //     return res.send({
+  //       status: 'success'
+  //     });
+  //   } catch (err) {
+  //     logger.error('payments-rest: error with payment');
+  //     logger.error(err);
+  //     return res.status(500).send({
+  //       status: 'failed',
+  //       err: err.toString()
+  //     });
+  //   }
+  // });
+
   app.post('/api/payments/refund', async (req, res) => {
     res.sendStatus(200);
 

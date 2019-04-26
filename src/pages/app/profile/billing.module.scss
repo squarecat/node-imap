@@ -1,5 +1,6 @@
 @import './layout.module.scss';
 @import '../../../components/btn/btn.module.scss';
+@import '../../../components/form/form.module.scss';
 
 .billing-section {
   @extend .profile-section;
@@ -122,4 +123,9 @@
 
 .package-buy-btn:hover ~ .package-discount {
   opacity: 1;
+}
+
+:global(.StripeElement) {
+  @extend .form-input;
+  @extend .input-compactt;
 }
