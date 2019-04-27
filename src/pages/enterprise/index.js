@@ -9,7 +9,7 @@ import { TextImportant } from '../../components/text';
 
 const EnterprisePage = () => {
   return (
-    <SubPageLayout page="Enterprise pricing plan" centered>
+    <SubPageLayout title="Enterprise pricing plan" centered>
       <h1>Enterprise Pricing Plan</h1>
       <Emoji smaller>📈</Emoji>
       <h2>Coming soon!</h2>

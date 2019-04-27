@@ -8,7 +8,7 @@ import { TextImportant } from '../../components/text';
 
 const GiftsPage = () => {
   return (
-    <SubPageLayout page="Gift a scan" centered>
+    <SubPageLayout title="Gift a scan" centered>
       <h1>Gift a clean inbox</h1>
       <span styleName="emoji">🎁</span>
       <p>

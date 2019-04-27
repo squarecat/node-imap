@@ -168,7 +168,7 @@ function slide1(
           <p>{lead}</p>
           <div styleName="unsub-img-container">
             <img
-              alt="unsub image"
+              alt="Screenshot of the page response after unsubscribing"
               styleName={`unsub-img ${
                 imageLoading ? 'unsub-img--loading' : ''
               }`}

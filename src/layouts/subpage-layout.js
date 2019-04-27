@@ -7,12 +7,12 @@ import Header from '../pages/header';
 
 import './subpage-layout.module.scss';
 
-export default ({ page, children, ...visProps }) => {
+export default ({ title, description, children, ...visProps }) => {
   const classes = cx('subpage', {
     centered: visProps.centered
   });
   return (
-    <Layout page={page}>
+    <Layout title={title} description={description}>
       <Header inverted />
       <div styleName={classes}>
         <div styleName="subpage-content">{children}</div>

@@ -18,7 +18,11 @@ export default ({ setActive = () => {}, inverted = false }) => (
     </div> */}
     <div styleName="header-inner">
       <a href="/" styleName="header-logo">
-        <img alt="logo" src={logoUrl} />
+        <img
+          alt="Leave Me Alone logo"
+          title="Leave Me Alone logo"
+          src={logoUrl}
+        />
       </a>
       <div styleName="header-title">Leave Me Alone </div>
       <ul styleName="header-nav">

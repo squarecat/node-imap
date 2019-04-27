@@ -23,7 +23,7 @@ export default class SquarecatWidget extends Component {
           <div styleName="container">
             <p>
               Hey{' '}
-              <span role="img" aria-label="wave-emoji">
+              <span role="img" aria-label="Wave">
                 👋
               </span>
               . We're <a href="https://twitter.com/jamesivings">James</a> &{' '}

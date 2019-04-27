@@ -8,10 +8,14 @@ export default ({ loaded = false }) => {
   return (
     <div styleName={`dice ${loaded ? 'loaded' : ''}`}>
       <div styleName="loading-pane front">
-        <img src={girlLogo} alt="girl-logo" styleName="girl-logo" />
+        <img
+          src={girlLogo}
+          alt="Girl gesturing no logo"
+          styleName="girl-logo"
+        />
       </div>
       <div styleName="loading-pane back">
-        <img src={envelopeLogo} alt="envelope-logo" styleName="envelope-logo" />
+        <img src={envelopeLogo} alt="Envelope logo" styleName="envelope-logo" />
       </div>
     </div>
   );

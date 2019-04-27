@@ -42,13 +42,23 @@ export default ({ openPriceModal, isBeta = false, provider } = {}) => {
           find all the subscription emails that you are receiving.
         </p>
         <div styleName="welcome-logo">
-          <img src={logoUrl} alt="logo" styleName="first-logon-image" />
+          <img
+            src={logoUrl}
+            alt="Leave Me Alone logo"
+            title="Leave Me Alone logo"
+            styleName="first-logon-image"
+          />
         </div>
         <p>
           We'll show you all the mail you are subscribed to, just hit the slider
           to unsubscribe.
         </p>
-        <img src={gif} styleName="unsub-gif" alt="unsubscribe-gif" />
+        <img
+          src={gif}
+          styleName="unsub-gif"
+          alt="Demonstration of unsubscribing from spam emails with one click"
+          title="One click to unsubscribe from subscription emails"
+        />
         <Button
           centered
           onClick={() => {

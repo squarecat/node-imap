@@ -29,7 +29,7 @@ export default () => {
   return (
     <div>
       <div styleName="header">
-        <h2>💌 Wall of love 💌</h2>
+        <h2>Wall of love</h2>
         <p>
           Our users are awesome and they think we're awesome too. Take a look at
           all the nice things they've said about us!
@@ -42,7 +42,7 @@ export default () => {
         >
           <img
             src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=143797&theme=light"
-            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | Product Hunt Embed"
+            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | #1 Product of the Day Product Hunt Embed"
             style={{ width: 250, height: 54 }}
             width="250px"
             height="54px"
@@ -56,7 +56,7 @@ export default () => {
         >
           <img
             src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=143797&theme=light&period=weekly"
-            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | Product Hunt Embed"
+            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | #1 Product of the Week Product Hunt Embed"
             style={{ width: 250, height: 54 }}
             width="250px"
             height="54px"
@@ -99,7 +99,12 @@ const Col = ({ tweets }) => (
             rel="noopener noreferrer"
             href={`https://twitter.com/${handle}`}
           >
-            <Img key={`tweet-${index}`} sizes={node.childImageSharp.sizes} />
+            <Img
+              key={`tweet-${index}`}
+              sizes={node.childImageSharp.sizes}
+              alt={`Testimonial for Leave Me Alone from @${handle}`}
+              title={`Leave Me Alone testimonial on Twitter by @${handle}`}
+            />
           </a>
         )
       );

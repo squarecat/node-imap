@@ -283,7 +283,10 @@ export default function Terms() {
   const usersStats = getBoxStats(stats, 'users');
 
   return (
-    <SubPageLayout page="Open Stats">
+    <SubPageLayout
+      title="Open Stats"
+      description={`All of our metrics are public. We are proud share all of our stats as part of the Open Startup movement. See our sales, revenue, expenses, users, and more.`}
+    >
       <div styleName="open-page">
         <div styleName="open-title box box--centered">
           <h1>All of our metrics are public</h1>

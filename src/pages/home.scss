@@ -146,6 +146,13 @@ h1 {
   margin: 0 auto;
 }
 
+.beam-me-up-cta-invert {
+  // @extend .on-dark-bg;
+  // background-color: rgba(255, 251, 251, 0.65);
+  background-color: $color-red-darker;
+  color: white;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
@@ -214,6 +221,28 @@ h1 {
   border-top-color: white;
   border-left-width: 50vw;
   border-right-width: 50vw;
+}
+
+.learn-providers {
+  padding-top: 180px;
+}
+
+.provider-logo {
+  display: inline-block;
+  margin: 0 40px;
+}
+.provider-stats {
+  margin-top: 50px;
+
+  .provider-stats-num {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 10px;
+  }
+}
+
+.unsub-list-img {
+  margin: 50px 0;
 }
 
 .privacy {
@@ -520,7 +549,8 @@ h1 {
 }
 
 .feature-header,
-.how-header {
+.how-header,
+.providers-header {
   margin-bottom: 50px;
 }
 
@@ -664,6 +694,9 @@ h1 {
   }
   .stat {
     margin-top: 50px;
+  }
+  .unsub-list-img {
+    margin: 50px -20px;
   }
 }
 
