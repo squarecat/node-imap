@@ -4,10 +4,12 @@ import React, { useEffect, useReducer } from 'react';
 import { TextImportant, TextLead } from '../../text';
 
 import ConnectAccounts from './connect-accounts';
+import { Gift as GiftIcon } from '../../icons';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
 import heartGif from '../../../assets/heart.gif';
+import packageImg from '../../../assets/package.png';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
@@ -83,12 +85,28 @@ function Content({ step, accounts }) {
   }
   if (step === 'rewards') {
     content = (
-      <>
+      <div style={{ textAlign: 'center' }}>
+        <h2>Earn credits.</h2>
         <p>
-          Here are <TextImportant>10 free unsubscribes</TextImportant> to get
-          you started!
+          {/* You can purchase different sized packages of credits for
+          unsubscribing.
+          <br /> */}
+          <TextImportant>1 credit = 1 unsubscribe</TextImportant>.
         </p>
-      </>
+        <p>
+          <span style={{ paddingTop: '30px', height: 100 }}>
+            Spot this icon to <TextImportant>earn FREE credits</TextImportant>!
+          </span>
+        </p>
+        <p styleName="text-column">
+          <GiftIcon height={90} width={100} />
+        </p>
+
+        <p style={{ marginTop: -20 }}>
+          Here are <TextImportant>10 free credits</TextImportant> to get you
+          started!
+        </p>
+      </div>
     );
   }
   if (step === 'finish') {

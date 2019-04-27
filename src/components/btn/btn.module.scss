@@ -52,7 +52,10 @@ $color-btn-border-focus: $color-input-border-focus;
     box-shadow: 0 7px 1em $color-btn-border-focus;
     background-color: $color-red-darker;
     color: white;
-    // border-bottom: none;
+
+    path {
+      fill: #e9443c;
+    }
   }
 }
 

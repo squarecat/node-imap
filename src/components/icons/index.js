@@ -1,11 +1,10 @@
-import './icons.module.scss';
-
 import React from 'react';
 import cx from 'classnames';
+import styles from './icons.module.scss';
 
 export const HeartIcon = visProps => (
   <svg
-    styleName={getClasses('icon heart', visProps)}
+    className={getClasses('heart', visProps)}
     viewBox="0 0 32 32"
     width="15"
     height="15"
@@ -18,22 +17,28 @@ export const HeartIcon = visProps => (
   </svg>
 );
 
-export function Gift({ width = 32, height = 32, ...visProps }) {
+export function Gift({ width = 32, height = 32, amount, ...visProps }) {
   return (
-    <svg
-      {...visProps}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      width={width}
-      height={height}
-      fill="none"
-      stroke="currentcolor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
+    <span
+      className={styles['giftWrapper']}
+      style={{ lineHeight: `${height}px` }}
+      data-amount={amount}
     >
-      <path d="M4 14 L4 30 28 30 28 14 M2 9 L2 14 30 14 30 9 2 9 Z M16 9 C 16 9 14 0 8 3 2 6 16 9 16 9 16 9 18 0 24 3 30 6 16 9 16 9" />
-    </svg>
+      <svg
+        className={getClasses('gift', visProps)}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 32 32"
+        width={width}
+        height={height}
+        fill="none"
+        stroke="currentcolor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      >
+        <path d="M4 14 L4 30 28 30 28 14 M2 9 L2 14 30 14 30 9 2 9 Z M16 9 C 16 9 14 0 8 3 2 6 16 9 16 9 16 9 18 0 24 3 30 6 16 9 16 9" />
+      </svg>
+    </span>
   );
 }
 
@@ -42,7 +47,7 @@ export const Arrow = ({ direction, ...visProps }) => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        styleName={getClasses('icon arrows', visProps)}
+        className={getClasses('arrows', visProps)}
         viewBox="0 0 32 32"
         width="15"
         height="15"
@@ -61,7 +66,7 @@ export const Arrow = ({ direction, ...visProps }) => {
 
 export const SettingsIcon = visProps => (
   <svg
-    styleName={getClasses('icon settings', visProps)}
+    className={getClasses('settings', visProps)}
     viewBox="0 0 32 32"
     width="15"
     height="15"
@@ -78,7 +83,7 @@ export const SettingsIcon = visProps => (
 
 export const MailIcon = visProps => (
   <svg
-    styleName={getClasses('icon mail', visProps)}
+    className={getClasses('mail', visProps)}
     viewBox="0 0 32 32"
     width="15"
     height="15"
@@ -94,7 +99,7 @@ export const MailIcon = visProps => (
 
 export const CreditCardIcon = visProps => (
   <svg
-    styleName={getClasses('icon card', visProps)}
+    className={getClasses('card', visProps)}
     viewBox="0 0 32 32"
     width="15"
     height="15"
@@ -111,7 +116,7 @@ export const CreditCardIcon = visProps => (
 
 export const ExternalIcon = visProps => (
   <svg
-    styleName={getClasses('icon external', visProps)}
+    className={getClasses('external', visProps)}
     viewBox="0 0 32 32"
     width="14"
     height="14"
@@ -127,7 +132,7 @@ export const ExternalIcon = visProps => (
 
 export const TwitterIcon = ({ width = '20', height = '20', ...visProps }) => (
   <svg
-    styleName={getClasses('icon twitter', visProps)}
+    className={getClasses('twitter', visProps)}
     viewBox="0 0 64 64"
     width={width}
     height={height}
@@ -142,7 +147,7 @@ export const TwitterIcon = ({ width = '20', height = '20', ...visProps }) => (
 
 export const ClockIcon = visProps => (
   <svg
-    styleName={getClasses('icon clock', visProps)}
+    className={getClasses('clock', visProps)}
     viewBox="0 0 32 32"
     width="14"
     height="14"
@@ -159,7 +164,7 @@ export const ClockIcon = visProps => (
 
 export const ReloadIcon = visProps => (
   <svg
-    styleName={getClasses('icon reload', visProps)}
+    className={getClasses('reload', visProps)}
     viewBox="0 0 32 32"
     width="14"
     height="14"
@@ -175,7 +180,7 @@ export const ReloadIcon = visProps => (
 
 export const CloseIcon = visProps => (
   <svg
-    styleName={getClasses('icon close', visProps)}
+    className={getClasses('close', visProps)}
     viewBox="0 0 32 32"
     width="16"
     height="16"
@@ -190,7 +195,7 @@ export const CloseIcon = visProps => (
 
 export const LockIcon = ({ width = '12', height = '12', ...visProps }) => (
   <svg
-    styleName={getClasses('icon lock', visProps)}
+    className={getClasses('lock', visProps)}
     viewBox="0 0 32 32"
     width={width}
     height={height}
@@ -207,7 +212,7 @@ export const LockIcon = ({ width = '12', height = '12', ...visProps }) => (
 
 export const UserIcon = ({ width = '15', height = '15', ...visProps }) => (
   <svg
-    styleName={getClasses('icon user', visProps)}
+    className={getClasses('user', visProps)}
     viewBox="0 0 32 32"
     width={width}
     height={height}
@@ -223,7 +228,7 @@ export const UserIcon = ({ width = '15', height = '15', ...visProps }) => (
 
 export const LinkIcon = ({ width = '15', height = '15', ...visProps }) => (
   <svg
-    styleName={getClasses('icon link', visProps)}
+    className={getClasses('link', visProps)}
     viewBox="0 0 32 32"
     width={width}
     height={height}
@@ -272,8 +277,16 @@ export function GoogleIcon({ width = '34', height = '34' }) {
   );
 }
 
-function getClasses(classes, visProps = {}) {
-  return cx(classes, {
-    'pad-left': visProps.padleft
+function getClasses(className, visProps = {}) {
+  const classes = cx(styles['icon'], {
+    [styles[className]]: true,
+    ...Object.keys(visProps).reduce((out, p) => {
+      const hasStyle = !!styles[p];
+      if (hasStyle) {
+        return { ...out, [styles[p]]: visProps[p] };
+      }
+      return out;
+    }, {})
   });
+  return classes;
 }

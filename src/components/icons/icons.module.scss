@@ -40,3 +40,27 @@
 
 .arrows {
 }
+
+.gift {
+  margin-right: 0;
+}
+.filled path {
+  fill: #fde4e2;
+}
+
+.gift-wrapper {
+  position: relative;
+  top: 2px;
+}
+
+[data-amount]::after {
+  position: absolute;
+  content: attr(data-amount) ' ';
+  left: 50%;
+  z-index: 1;
+  top: 50%;
+  transform: translate(-50%, -50%) translateY(3px);
+  font-family: 'Gotham-Rounded-Medium';
+  font-size: 14px;
+  font-weight: bolder;
+}

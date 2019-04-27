@@ -1,6 +1,7 @@
 import './onboarding.module.scss';
 
 import { Arrow as ArrowIcon } from '../../icons';
+import { Gift as GiftIcon } from '../../icons';
 import React from 'react';
 
 const steps = [
@@ -25,10 +26,10 @@ const steps = [
   {
     value: 'rewards',
     nextLabel: (
-      <span>
+      <>
         <span style={{ marginRight: 10 }}>Claim reward</span>
-        <span styleName="reward-icon">10</span>
-      </span>
+        <GiftIcon height={35} width={35} amount={10} filled />
+      </>
     )
   },
   { value: 'finish', nextLabel: 'Start scan' }

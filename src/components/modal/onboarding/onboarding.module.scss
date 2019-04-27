@@ -40,9 +40,12 @@
   font-weight: bold;
   position: relative;
   top: -2px;
+}
 
-  a:hover & {
-    background-color: white;
-    color: #e9443c;
+.text-column {
+  display: flex;
+  justify-content: center;
+  span {
+    display: inline-block;
   }
 }
