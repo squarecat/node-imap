@@ -10,7 +10,8 @@ $color-red-lightest: rgba(255, 217, 214, 0.1);
 $color-grey: #f2edec;
 $color-grey-darker: #e9e1e1;
 
-$color-primary-font: hsla(0, 0%, 0%, 0.8);
+// $color-primary-font: hsla(0, 0%, 0%, 0.8);
+$color-primary-font: #333333;
 
 $color-text-important: $color-red;
 
@@ -20,6 +21,7 @@ $color-link-hover: $color-red-darker;
 $color-input-border: rgba(231, 57, 48, 0.4);
 $color-input-border-focus: hsla(18, 100%, 38%, 0.25);
 $color-input-label: #999;
+$color-input-placeholder: #bfbfbf;
 $color-input-bg: #fff;
 $color-input-disabled: #999;
 

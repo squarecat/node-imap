@@ -1,7 +1,7 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
-import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../utils/prices';
+import { ENTERPRISE, USAGE_BASED, getPackage } from '../utils/prices';
 import React, { useRef, useState } from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
@@ -389,9 +389,7 @@ function Pricing() {
   const [packageValue, setPackageValue] = useState('1');
   const [mailPerDay, setMailPerDay] = useState('20');
 
-  let { unsubscribes, discount, price } = PACKAGES.find(
-    p => p.id === packageValue
-  );
+  let { unsubscribes, discount, price } = getPackage(packageValue);
 
   let mailPerDayLabel = '<10';
   if (parseInt(mailPerDay, 10) <= 10) {

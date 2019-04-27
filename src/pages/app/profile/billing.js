@@ -1,15 +1,24 @@
 import './billing.module.scss';
 
 import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import { Elements, StripeProvider } from 'react-stripe-elements';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState
+} from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 import {
   TextFootnote,
   TextImportant,
   TextLink
 } from '../../../components/text';
+import Button from '../../../components/btn';
 
-import { CreditCardIcon } from '../../../components/icons';
+import BillingModal from '../../../components/modal/billing';
+import CardDetails from '../../../components/modal/billing/card-details';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
@@ -47,17 +56,12 @@ function billingReducer(state, action) {
 
 const initialState = {
   unsubscribesRemaining: 0,
-  unsubscribesUsed: 45,
-  customerId: null,
-  card: {
-    last4: '4242',
-    exp_month: 12,
-    exp_year: 2020
-  },
+  unsubscribesUsed: 0,
+  card: null,
   previousPackageId: null,
   settings: {
     autoBuy: false,
-    usageFallback: true
+    usageFallback: false
   }
 };
 
@@ -65,13 +69,22 @@ export const BillingContext = createContext({ state: initialState });
 
 export default function Billing() {
   const [state, dispatch] = useReducer(billingReducer, initialState);
+  const [showBillingModal, toggleBillingModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(PACKAGES[0]);
 
-  const [{ billing }] = useUser(u => u.billing || {});
+  const [{ billing }] = useUser(u => {
+    return {
+      billing: u.billing
+    };
+  });
 
   useEffect(
     () => {
       if (billing) {
-        dispatch({ type: 'set-billing', data: billing });
+        dispatch({
+          type: 'set-billing',
+          data: billing
+        });
       }
     },
     [billing]
@@ -104,10 +117,31 @@ export default function Billing() {
           ) : null}
         </div>
         <UsageBased />
-        <Packages />
+        <Packages
+          onClickBuy={id => {
+            const pkg = PACKAGES.find(p => p.id === id);
+            setSelectedPackage(pkg);
+            toggleBillingModal(true);
+          }}
+        />
         <Enterprise />
         <BillingDetails />
         <BillingHistory />
+        {showBillingModal ? (
+          <StripeProvider apiKey={process.env.STRIPE_PK}>
+            <Elements>
+              <BillingModal
+                selectedPackage={selectedPackage}
+                step={
+                  state.card
+                    ? 'existing-billing-details'
+                    : 'enter-billing-details'
+                }
+                onClose={() => toggleBillingModal(false)}
+              />
+            </Elements>
+          </StripeProvider>
+        ) : null}
       </BillingContext.Provider>
     </ProfileLayout>
   );
@@ -174,7 +208,7 @@ function UsageBased() {
   );
 }
 
-function Packages() {
+function Packages({ onClickBuy }) {
   const { state, dispatch } = useContext(BillingContext);
   const { previousPackageId, settings } = state;
 
@@ -207,7 +241,10 @@ function Packages() {
               {(p.price / 100).toFixed(2)}
             </p>
             <div>
-              <a styleName="billing-btn package-buy-btn">
+              <a
+                styleName="billing-btn package-buy-btn"
+                onClick={() => onClickBuy(p.id)}
+              >
                 {isPreviousPackage ? 'Re-buy' : 'Buy'}
               </a>
               <span styleName="package-discount">{discountText}</span>
@@ -264,22 +301,26 @@ function BillingDetails() {
       <h2>Billing Details</h2>
       {card ? (
         <>
-          <div styleName="card-last4">
-            <CreditCardIcon />
-            {`•••• •••• •••• ${card.last4}`}
-          </div>
-          <div styleName="card-expires">
-            <span>Expires: </span>
-            <span>
-              {card.exp_month}/{card.exp_year}
-            </span>
-          </div>
-          <a styleName="billing-btn" onClick={() => removeCard()}>
-            Remove
-          </a>
+          <CardDetails card={card} />
+          <Button
+            basic
+            compact
+            stretch
+            disabled={state.loading}
+            loading={state.loading}
+            onClick={() => removeCard()}
+          >
+            Remove Card
+          </Button>
         </>
       ) : (
-        <p>No credit card added.</p>
+        <>
+          <p>No credit card stored.</p>
+          <p>
+            You will have to enter your billing details each time you purchase a
+            package.
+          </p>
+        </>
       )}
     </div>
   );
@@ -368,14 +409,11 @@ function getDate({ date }) {
 }
 
 function getPrice({ price, refunded }) {
-  const display =
-    price % 2 > 0
-      ? numeral(price / 100).format('$0,0.00')
-      : numeral(price / 100).format('$0,0');
+  const display = (price / 100).toFixed(2);
   const classes = cx('invoice-price', {
     'invoice-price--refunded': refunded
   });
-  return <span styleName={classes}>{display}</span>;
+  return <span styleName={classes}>${display}</span>;
 }
 
 function getStatus({ attempted, paid, refunded }) {

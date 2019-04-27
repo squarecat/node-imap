@@ -19,6 +19,8 @@ export const FormInput = ({
   required,
   noFocus,
   compact,
+  smaller,
+  basic,
   validation = () => '',
   onChange = () => {},
   errorMessage = '',
@@ -28,7 +30,9 @@ export const FormInput = ({
   const ref = useRef(null);
   const classes = cx('form-input', {
     'no-focus': noFocus,
-    compact
+    'input-compactt': compact,
+    'input-smaller': smaller,
+    'input-basic': basic
   });
   return (
     <input
@@ -59,6 +63,52 @@ function validateInput(e, ref, validationFn) {
   ref.current.setCustomValidity(message);
 }
 
+export const FormSelect = ({
+  id,
+  name,
+  required,
+  compact,
+  smaller,
+  basic,
+  validation = () => '',
+  onChange = () => {},
+  errorMessage = '',
+  options = [],
+  value = '',
+  placeholder,
+  ...props
+}) => {
+  const ref = useRef(null);
+  const classes = cx('form-input form-select-dropdown', {
+    'input-compactt': compact,
+    'input-basic': basic,
+    'input-smaller': smaller
+  });
+  return (
+    <select
+      {...props}
+      ref={ref}
+      id={id}
+      name={name}
+      value={value}
+      styleName={classes}
+      required={required}
+      spellCheck="false"
+      onChange={e => {
+        validateInput(e, ref, validation, errorMessage);
+        onChange(e);
+      }}
+    >
+      <option value="">{placeholder}</option>
+      {options.map(opt => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+  );
+};
+
 export const FormCheckbox = ({ id, name, label, ...props }) => {
   return (
     <label styleName="form-checkbox">
@@ -75,8 +125,12 @@ export const FormCheckbox = ({ id, name, label, ...props }) => {
   );
 };
 
-export const FormGroup = ({ children, fluid, column }) => {
-  return <div styleName={cx('form-group', { fluid, column })}>{children}</div>;
+export const FormGroup = ({ children, fluid, column, container }) => {
+  return (
+    <div styleName={cx('form-group', { fluid, column, container })}>
+      {children}
+    </div>
+  );
 };
 
 export const FormNotification = ({ children, error, warning, success }) => (

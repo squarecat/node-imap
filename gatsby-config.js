@@ -84,6 +84,11 @@ module.exports = {
       }
     },
     'gatsby-plugin-twitter',
-    `gatsby-plugin-stripe-elements`
+    {
+      resolve: `gatsby-plugin-stripe`,
+      options: {
+        async: true
+      }
+    }
   ]
 };

@@ -1,22 +1,55 @@
 @import '../../styles/common/colors.scss';
+@import '../../styles/common/forms.scss';
 
 .form-input {
   border-radius: 5px;
-  padding: 20px 25px;
-  margin-bottom: 1rem;
+  padding: 0 25px;
+  line-height: 66px;
+  height: 68px;
+  margin-bottom: 0;
   width: 100%;
-  font-size: 16px;
+  font-size: $input-font-size;
   box-sizing: border-box;
   border: 1px solid $color-input-border;
+  background: white;
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 7px 1em $color-input-border-focus;
+  }
 }
 
-.compact {
-  padding: 15px 20px;
+.input-compactt {
+  padding: 0 20px;
+  line-height: 56px;
+  height: 58px;
 }
 
-.form-input:focus {
-  outline: 0;
-  box-shadow: 0 7px 1em $color-input-border-focus;
+.input-smaller {
+  padding: 0 20px;
+  line-height: 46px;
+  height: 48px;
+}
+
+.input-basic {
+  border-color: transparent;
+  border-radius: 0;
+  -webkit-appearance: none;
+  border-bottom-color: $color-input-border;
+
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.container {
+  border: 1px solid $color-input-border;
+  border-radius: 5px;
+  padding: 0 5px;
+
+  .input-basic:last-child {
+    border-bottom: none;
+  }
 }
 
 .no-focus:focus {
@@ -29,11 +62,17 @@
   font-size: 0.75em;
 }
 
+.form-select-dropdown {
+  &:invalid {
+    color: $color-input-placeholder;
+  }
+}
+
 .form-group {
   position: relative;
   flex: 1;
-  max-width: 300px;
   margin: 0 auto;
+  margin-bottom: 1rem;
 
   &.fluid {
     max-width: 90%;
@@ -127,7 +166,7 @@
   padding-left: 24px;
   position: relative;
   cursor: pointer;
-  font-size: 16px;
+  font-size: $input-font-size;
   line-height: 24px;
   user-select: none;
 }
