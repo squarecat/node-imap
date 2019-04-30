@@ -9,7 +9,6 @@ import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
 import heartGif from '../../../assets/heart.gif';
-import packageImg from '../../../assets/package.png';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
@@ -38,7 +37,12 @@ export default ({ shown, onClose }) => {
           isNextDisabled={!state.canProceed}
           showBack={false}
           nextLabel={state.nextLabel}
-          onNext={() => dispatch({ type: 'next-step' })}
+          onNext={() => {
+            if (state.step === 'finish') {
+              return false;
+            }
+            return dispatch({ type: 'next-step' });
+          }}
           onBack={() => dispatch({ type: 'prev-step' })}
           onCancel={() => {}}
         />

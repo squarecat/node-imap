@@ -790,3 +790,22 @@ export async function removeBillingCard(userId) {
     throw err;
   }
 }
+
+export async function setMilestoneCompleted(userId, milestoneData) {
+  const { name, unsubscriptions } = milestoneData;
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.updateOne(
+      { id: userId },
+      {
+        $set: {
+          `milestones.`: 1
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`user-dao: failed to remove billing card for user ${userId}`);
+    logger.error(err);
+    throw err;
+  }
+}

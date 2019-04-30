@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 import Button from '../btn';
 import { CloseIcon } from '../icons';
@@ -10,6 +16,7 @@ import modalStyles from './modal-template.module.scss';
 const modalRoot = document.getElementById('modal-root');
 const el = document.createElement('div');
 
+const ModalContext = createContext(null);
 /**
  * Modal component
  * @param children React node contents
@@ -33,10 +40,15 @@ export default ({
 }) => {
   const [isShown, setShown] = useState(false);
   const ref = useRef(null);
+
+  function closeModal() {
+    setShown(false);
+    onClose();
+    // setTimeout(onClose, 500);
+  }
   function closeModalByEsc({ key }) {
     if (dismissable && key === 'Escape') {
-      setShown(false);
-      setTimeout(onClose, 500);
+      closeModal();
     }
   }
 
@@ -53,13 +65,6 @@ export default ({
   useEffect(
     () => {
       setShown(shown);
-      if (shown) {
-        document.body.style.overflow = 'hidden';
-        document.body.style.padding = '0 15px 0 0';
-      } else {
-        document.body.style.overflow = 'auto';
-        document.body.style.padding = '0';
-      }
     },
     [shown]
   );
@@ -69,29 +74,31 @@ export default ({
     : 0;
 
   return ReactDOM.createPortal(
-    <Transition appear timeout={200} mountOnEnter unmountOnExit in={isShown}>
-      {state => {
-        const hasStyle = !!modalStyles[`modalContainer-${state}`];
-        const classes = cx(modalStyles['modalContainer'], {
-          [modalStyles[`modalContainer-${state}`]]: hasStyle,
-          fluid
-        });
-        return (
-          <div className={classes} data-modal>
-            <div styleName="modal-wizard-wrapper">
-              {wizardComponent ? (
-                <span style={{ width: style.width, top: btnHeight }}>
-                  {wizardComponent}
-                </span>
-              ) : null}
-              <div style={style} styleName="modal" ref={ref}>
-                {children}
+    <ModalContext.Provider value={{ closeModal }}>
+      <Transition appear timeout={200} mountOnEnter unmountOnExit in={isShown}>
+        {state => {
+          const hasStyle = !!modalStyles[`modalContainer-${state}`];
+          const classes = cx(modalStyles['modalContainer'], {
+            [modalStyles[`modalContainer-${state}`]]: hasStyle,
+            fluid
+          });
+          return (
+            <div className={classes} data-modal>
+              <div styleName="modal-wizard-wrapper">
+                {wizardComponent ? (
+                  <span style={{ width: style.width, top: btnHeight }}>
+                    {wizardComponent}
+                  </span>
+                ) : null}
+                <div style={style} styleName="modal" ref={ref}>
+                  {children}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      }}
-    </Transition>,
+          );
+        }}
+      </Transition>
+    </ModalContext.Provider>,
     el
   );
 };
@@ -130,6 +137,7 @@ export const ModalWizardActions = ({
   onCancel = () => {},
   style
 }) => {
+  const { closeModal } = useContext(ModalContext);
   return (
     <div styleName="modal-wizard-actions" style={style}>
       {showBack ? (
@@ -148,7 +156,15 @@ export const ModalWizardActions = ({
         </span>
       ) : null}
       <span styleName="next">
-        <Button disabled={isNextDisabled || isLoading} onClick={onNext}>
+        <Button
+          disabled={isNextDisabled || isLoading}
+          onClick={async () => {
+            const hasNextPage = await onNext();
+            if (hasNextPage === false) {
+              closeModal();
+            }
+          }}
+        >
           {nextLabel}
         </Button>
       </span>

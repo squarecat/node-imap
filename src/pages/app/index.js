@@ -25,30 +25,12 @@ export default function App({ location = {} } = {}) {
   const { hasScanned } = user;
   const isNewUser = !hasScanned && !timeframe;
   const [showOnboardingModal, toggleOnboardingModal] = useState(isNewUser);
-
   return (
     <Template onboarding={showOnboardingModal}>
       <OnboardingModal
         shown={showOnboardingModal}
         onClose={() => toggleOnboardingModal(false)}
       />
-      {/*
-      <Transition
-        in={showOnboardingModal}
-        classNames="welcome-content"
-        timeout={250}
-        unmountOnExit
-      >
-        {state => (
-          <div className={`welcome-content ${state}`}>
-            <Welcome
-              openPriceModal={() => togglePriceModal(true)}
-              provider={provider}
-            />
-          </div>
-        )}
-      </Transition> */}
-
       <Transition
         in={true}
         classNames="mail-list-content"

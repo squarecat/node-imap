@@ -1,7 +1,7 @@
 import {
   addAccount,
-  addPaidScan,
   addPackage,
+  addPaidScan,
   addScan,
   addScanReminder,
   addTotpSecret,
@@ -16,6 +16,7 @@ import {
   getUserByReferralCode,
   incrementUserReferralBalance,
   removeAccount,
+  removeBillingCard,
   removeScanReminder,
   removeTotpSecret,
   removeUser,
@@ -26,8 +27,7 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret,
-  removeBillingCard
+  verifyTotpSecret
 } from '../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -41,15 +41,16 @@ import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../utils/emails/newsletter';
-import { detachPaymentMethod } from '../utils/stripe';
 
 import addMonths from 'date-fns/add_months';
 import { addReferralToReferrer } from './referral';
 import addWeeks from 'date-fns/add_weeks';
+import { detachPaymentMethod } from '../utils/stripe';
 import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
+import { setMilestoneCompleted } from './milestones';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 
@@ -512,6 +513,14 @@ export async function removeUserBillingCard(id) {
       await detachPaymentMethod(paymentMethodId);
     }
     await removeBillingCard(id);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function setUserMilestoneCompleted(user, { milestoneName }) {
+  try {
+    return setMilestoneCompleted(user.id, { milestoneName });
   } catch (err) {
     throw err;
   }
