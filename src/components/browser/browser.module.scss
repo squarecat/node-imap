@@ -1,0 +1,42 @@
+.browser-container {
+  border: 2px solid rgb(236, 236, 236);
+  background: white;
+  width: 100%;
+  min-width: 330px;
+  border-radius: 4px;
+
+  &.shadowed {
+    box-shadow: 0 7px 1em rgba(194, 58, 0, 0.1);
+  }
+}
+
+.header {
+  background: rgb(236, 236, 236);
+  height: 20px;
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+}
+
+.header-dot {
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+  margin-top: 5px;
+  margin-left: 5px;
+  float: left;
+
+  &.red {
+    background: rgb(252, 98, 93);
+  }
+  &.green {
+    background: rgb(52, 200, 74);
+  }
+  &.yellow {
+    background: rgb(253, 190, 65);
+  }
+}
+
+.content {
+  height: calc(100% - 20px);
+  border-radius: 4px;
+}

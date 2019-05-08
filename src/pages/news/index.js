@@ -31,7 +31,7 @@ const InTheNewsPage = () => {
   );
 
   return (
-    <SubPageLayout page="In The News">
+    <SubPageLayout title="In The News">
       <h1 styleName="title">In The News</h1>
       {loadingNews ? (
         <p styleName="loading">Getting Leave Me Alone news...</p>

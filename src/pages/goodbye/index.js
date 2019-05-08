@@ -4,7 +4,7 @@ import { TextImportant } from '../../components/text';
 
 const GoodbyePage = () => {
   return (
-    <SubPageLayout page="Goodbye" centered>
+    <SubPageLayout title="Goodbye" centered>
       <h1>Goodbye 👋</h1>
       <p>Thank you for using Leave Me Alone!</p>
       <p>

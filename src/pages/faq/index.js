@@ -6,7 +6,7 @@ import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 
 const FaqPage = () => (
-  <SubPageLayout page="FAQ">
+  <SubPageLayout title="FAQ">
     <h1>FAQs</h1>
     <div styleName="faqs">
       <div styleName="faq-box">

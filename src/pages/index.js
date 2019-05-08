@@ -27,6 +27,9 @@ import stampImg from '../assets/stamp.png';
 import truckImg from '../assets/truck.png';
 import unsubGif from '../assets/unsub-btn.gif';
 import { useAsync } from '../utils/hooks';
+import { GoogleIcon, OutlookIcon } from '../components/icons';
+import Browser from '../components/browser';
+import unsubListGif from '../assets/unsubscribe-new.gif';
 
 function getFeaturedNews() {
   return fetch('/api/news')
@@ -48,7 +51,7 @@ const IndexPage = ({ transitionStatus }) => {
     statsData = value;
   }
 
-  const { value: featuredNews = [], loadingNews } = useAsync(getFeaturedNews);
+  const { value: featuredNews = [] } = useAsync(getFeaturedNews);
 
   const bannerShown = false;
 
@@ -65,11 +68,19 @@ const IndexPage = ({ transitionStatus }) => {
           <div className="hero-inner">
             <div className="hero-box hero-left">
               <div className="leave-me-alone-logo" ref={activeRef}>
-                <span className="logo-envelope">
-                  <img src={envelope} alt="gmail-logo" className="gmail-logo" />
+                <span className="logo-envelope" title="Leave Me Alone logo">
+                  <img
+                    src={envelope}
+                    alt="Envelope logo"
+                    className="gmail-logo"
+                  />
                 </span>
                 <span className="logo-emoji">
-                  <img src={girlLogo} alt="girl-logo" className="girl-logo" />
+                  <img
+                    src={girlLogo}
+                    alt="Girl gesturing no logo"
+                    className="girl-logo"
+                  />
                 </span>
               </div>
               <h1 className="title">Leave Me Alone</h1>
@@ -77,7 +88,7 @@ const IndexPage = ({ transitionStatus }) => {
             <div className="hero-box hero-right">
               <div className="hero-right-inner">
                 <p className="catchy-tagline">
-                  Take back control of your inbox
+                  Easily unsubscribe from spam emails
                 </p>
                 <p className="informative-description">
                   See all of your subscription emails in one place and
@@ -116,9 +127,13 @@ const IndexPage = ({ transitionStatus }) => {
             </div>
           </div>
           <a className="more-info" href="#learn">
-            Read more 👇
+            Read more{' '}
+            <span role="img" aria-label="Point down">
+              👇
+            </span>
           </a>
         </div>
+
         <div className="learn home-container">
           <div className="home-container-inner" id="learn">
             <h2 className="feature-header">
@@ -129,12 +144,14 @@ const IndexPage = ({ transitionStatus }) => {
               <img
                 src={onePlace}
                 className="unsub-desktop-img"
-                alt="unsubscribe list"
+                alt="List of spam and subscription emails in Leave Me Alone on desktop"
+                title="Subscriptions, spam, and newsletters listed in one place on desktop"
               />
               <img
                 src={iphoneUnsub}
                 className="unsub-iphone-img"
-                alt="unsubscribe list"
+                alt="List of spam and subscription emails in Leave Me Alone on mobile"
+                title="Subscriptions, spam, and newsletters listed in one place on mobile"
               />
             </div>
             <div className="features">
@@ -143,18 +160,99 @@ const IndexPage = ({ transitionStatus }) => {
                   Unsubscribe with a single click
                 </h3>
                 <div className="feature-img unsub">
-                  <img src={unsubGif} alt="unsub animation" />
+                  <img
+                    src={unsubGif}
+                    alt="Unsubscribing from a subscription list by clicking the toggle"
+                    title="Click the toggle to unsubscribe from unwanted emails"
+                  />
                 </div>
               </div>
               <div className="feature-b">
                 <h3 className="feature-title">Keep your favorite senders</h3>
                 <div className="feature-img favorite">
-                  <img src={heartGif} alt="heart animation" />
+                  <img
+                    src={heartGif}
+                    alt="Adding a sender to favorites by clicking the heart"
+                    title="Keep wanted subscriptions by adding them to favorites"
+                  />
                 </div>
               </div>
             </div>
+            <div className="learn-providers" id="providers">
+              <h2 className="providers-header">
+                Unsubscribe from unwanted emails in Gmail and Outlook
+              </h2>
+              <p>
+                We support Google and Microsoft email accounts including Gmail,
+                G Suite, Outlook, Live, and Hotmail.
+              </p>
+              <div className="provider-logos">
+                <span
+                  className="provider-logo"
+                  title="Unsubscribe from spam in Gmail and G Suite"
+                >
+                  <GoogleIcon width="60" height="60" />
+                </span>
+                <span
+                  className="provider-logo"
+                  title="Unsubscribe from spam in Outlook, Live, and Hotmail"
+                >
+                  <OutlookIcon width="60" height="60" />
+                </span>
+              </div>
+              <div className="provider-stats">
+                <p>
+                  <span className="provider-stats-num">
+                    {formatNumber(statsData.users)}
+                  </span>{' '}
+                  users worldwide
+                </p>
+                <p>
+                  <span className="provider-stats-num">
+                    {formatNumber(statsData.unsubscriptions)}
+                  </span>{' '}
+                  spam and subscription emails gone forever
+                </p>
+              </div>
+              <div className="unsub-list-img">
+                <Browser>
+                  <img
+                    src={unsubListGif}
+                    alt="Unsubscribing from a list of spam emails with one click"
+                    title="Clicking the toggle to unsubscribe from a mailing list in a single click"
+                  />
+                </Browser>
+              </div>
+              <a
+                href="/login"
+                onMouseEnter={() => setActive(true)}
+                onMouseLeave={() => setActive(false)}
+                className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+              >
+                Start unsubscribing
+              </a>
+            </div>
           </div>
         </div>
+
+        {/* <div className="providers home-container">
+          <div className="home-container-inner" id="providers">
+            <h2>Where it works</h2>
+            <div className="provider-logos">
+              <span title="Unsubscribe from spam in Gmail and G Suite">
+                <GoogleIcon />
+              </span>
+              <span title="Unsubscribe from spam in Outlook, Live, and Hotmail">
+                <OutlookIcon />
+              </span>
+            </div>
+            <p>{formatNumber(statsData.users)} users worldwide.</p>
+            <p>
+              {formatNumber(statsData.unsubscriptions)} spam and subscription
+              emails gone forever.
+            </p>
+          </div>
+        </div> */}
 
         <div className="privacy home-container">
           <div className="home-container-inner" id="learn">
@@ -258,7 +356,7 @@ const IndexPage = ({ transitionStatus }) => {
                 onMouseLeave={() => setActive(false)}
                 className={`beam-me-up-cta beam-me-up-cta-center`}
               >
-                Get Started For Free!
+                Try for Free
               </a>
             </div>
           </div>
@@ -285,18 +383,30 @@ const IndexPage = ({ transitionStatus }) => {
           <div className="home-container-inner" id="about">
             <h2>Created by Independent Makers</h2>
             <p className="maker-stuff">
-              Hey! 👋 We're Danielle and James. We work on products that help
-              people because it's rewarding and we love it, which we think is a
-              good reason to do just about anything! ❤️
+              Hey!{' '}
+              <span role="img" aria-label="Wave">
+                👋
+              </span>{' '}
+              We're Danielle and James. We work on products that help people
+              because it's rewarding and we love it, which we think is a good
+              reason to do just about anything!{' '}
+              <span role="img" aria-label="Heart">
+                ❤️
+              </span>
             </p>
             <div className="huskos">
-              <img alt="picture-of-us!" id="emoji-button" src={dogs} />
+              <img
+                alt="The two creators Danielle and James with two husky dogs"
+                title="Danielle and James with huskies"
+                id="emoji-button"
+                src={dogs}
+              />
             </div>
 
             <p className="maker-stuff">
               We're building <strong>Leave Me Alone</strong> on our own without
               funding or outside support. We're real people (not the huskies!),
-              we're not a soulless corporation out to steal your money! 🙅‍
+              we're not a soulless corporation out to steal your money!
             </p>
             <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
               Clean My Inbox!
@@ -382,7 +492,7 @@ function fetchStats() {
 export default IndexPage;
 
 function formatNumber(n) {
-  return n > 99999 ? numeral(n).format('0a') : numeral(n).format('0,0');
+  return n > 999999 ? numeral(n).format('0a') : numeral(n).format('0,0');
 }
 
 function Pricing() {

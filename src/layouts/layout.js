@@ -14,7 +14,11 @@ const logoSquareUrl = `${process.env.CDN_URL}/images/meta/logo-square.png`;
 
 setConfig({ pureSFC: true });
 
-const Layout = ({ page, children }) => (
+const Layout = ({
+  title: pageTitle,
+  description: pageDescription,
+  children
+}) => (
   <StaticQuery
     query={graphql`
       query SiteTitleQuery {
@@ -37,7 +41,8 @@ const Layout = ({ page, children }) => (
         twitterHandle,
         siteName
       } = data.site.siteMetadata;
-      const pageTitle = page ? `${page} | ${siteName}` : title;
+      const metaTitle = pageTitle ? `${pageTitle} - ${siteName}` : title;
+      const metaDescription = pageDescription || description;
       return (
         <>
           <Helmet>
@@ -47,8 +52,8 @@ const Layout = ({ page, children }) => (
               name="viewport"
               content="width=device-width, initial-scale=1.0"
             />
-            <title>{pageTitle}</title>
-            <meta name="description" content={description} />
+            <title>{metaTitle}</title>
+            <meta name="description" content={metaDescription} />
             <link rel="canonical" href={baseUrl} />
             <link
               rel="shortcut icon"
@@ -65,14 +70,14 @@ const Layout = ({ page, children }) => (
             <meta property="og:image:height" content="1200" />
             <meta property="og:type" content="website" />
             <meta property="og:url" content={baseUrl} />
-            <meta property="og:title" content={pageTitle} />
-            <meta property="og:description" content={description} />
+            <meta property="og:title" content={metaTitle} />
+            <meta property="og:description" content={metaDescription} />
             <meta property="og:site_name" content={siteName} />
             <meta property="og:logo" content={logoSquareUrl} />
 
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:domain" value={baseUrl} />
-            <meta name="twitter:title" value={pageTitle} />
+            <meta name="twitter:title" value={metaTitle} />
             <meta name="twitter:description" value={description} />
             <meta name="twitter:image" content={metaImgUrl} />
             <meta name="twitter:url" value={baseUrl} />
