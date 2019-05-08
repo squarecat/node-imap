@@ -144,24 +144,6 @@ async function partitionOccurrences({ occurrences, col }) {
 }
 
 async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
-  // merge the new occurrences where the domain is the same
-  // const mergedOccurrences = occurrences.reduce((out, oc) => {
-  //   const isDupe = !!out[oc.domain];
-  //   if (isDupe) {
-  //     const existing = out[oc.domain];
-  //     return {
-  //       ...out,
-  //       [oc.domain]: {
-  //         ...existing,
-
-  //       }
-  //     }
-  //   }
-  //   return {
-  //     ...out,
-  //     [oc.domain]: oc
-  //   }
-  // }, {})
   const documents = occurrences.map(oc => {
     const hashedUser = hash(`${userId}-${oc.senderAddress}`);
     const hashedAddress = hash(oc.senderAddress);
@@ -180,6 +162,12 @@ async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
       seenBy: [hashedUser],
       addressOccurrences: {
         [hashedAddress]: 1
+      },
+      addressIsSpam: {
+        [hashedAddress]: oc.isSpam ? 1 : 0
+      },
+      addressIsTrash: {
+        [hashedAddress]: oc.isTrash ? 1 : 0
       },
       unsubscribedBy: [],
       lastSeen: now,
@@ -200,6 +188,7 @@ async function updateExisting({
   col
 }) {
   const operations = occurrences.map(oc => {
+    const { isSpam, isTrash } = oc;
     // using sender not domain means that we increment
     // occurrences when address is different. eg news@facebook.com
     // and info@facebook.com will be two occurrences for the
@@ -228,7 +217,9 @@ async function updateExisting({
             lastSeen: now
           },
           $inc: {
-            [`addressOccurrences.${hashedAddress}`]: 1
+            [`addressOccurrences.${hashedAddress}`]: 1,
+            [`addressIsSpam.${hashedAddress}`]: isSpam ? 1 : 0,
+            [`addressIsTrash.${hashedAddress}`]: isTrash ? 1 : 0
           }
         },
         upsert: false
