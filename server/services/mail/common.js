@@ -115,6 +115,7 @@ export function dedupeMailList(
       const dupeKey = getDupeKey(mail.from, mail.to);
       const dupeoccurrences = out.dupes[dupeKey] || 0;
       if (!dupeoccurrences) {
+        const { isSpam, isTrash } = mail;
         return {
           deduped: [...out.deduped, mail],
           dupes: {
@@ -125,11 +126,15 @@ export function dedupeMailList(
             ...out.dupeSenders,
             [mail.from.toLowerCase()]: {
               sender: mail.from,
-              occurrences: 1
+              occurrences: 1,
+              isSpam,
+              isTrash
             }
           }
         };
       }
+      const { isSpam, isTrash } =
+        out.dupeSenders[mail.from.toLowerCase()] || {};
       return {
         ...out,
         dupes: {
@@ -140,7 +145,9 @@ export function dedupeMailList(
           ...out.dupeSenders,
           [mail.from.toLowerCase()]: {
             sender: mail.from,
-            occurrences: dupeoccurrences + 1
+            occurrences: dupeoccurrences + 1,
+            isSpam: !!isSpam, // sometimes these are undefined
+            isTrash: !!isTrash
           }
         }
       };
