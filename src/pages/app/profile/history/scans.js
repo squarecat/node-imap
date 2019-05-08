@@ -10,17 +10,17 @@ import React from 'react';
 import { TextImportant } from '../../../../components/text';
 import isAfter from 'date-fns/is_after';
 import relative from 'tiny-relative-date';
+import request from '../../../../utils/request';
 import subHours from 'date-fns/sub_hours';
 import { useAsync } from '../../../../utils/hooks';
 
 async function fetchScanHistory() {
-  const res = await fetch('/api/me/scans', {
+  return request('/api/me/scans', {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
-  return res.json();
 }
 
 const tfToString = {
