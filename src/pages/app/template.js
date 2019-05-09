@@ -2,12 +2,13 @@ import './template.module.scss';
 
 import React, { useState } from 'react';
 
-import Header from '../../components/header';
 import AppLayout from '../../layouts/app-layout';
 import Auth from '../../components/auth';
 import ErrorBoundary from '../../components/error-boundary';
+import Header from '../../components/header';
 import ReferralModal from '../../components/modal/referral-modal';
 import ReminderModal from '../../components/modal/reminder-modal';
+import request from '../../utils/request';
 import useUser from '../../utils/hooks/use-user';
 
 export default ({ pageName, children }) => {
@@ -53,7 +54,7 @@ export default ({ pageName, children }) => {
 
 async function toggleReminder(op, timeframe = '') {
   try {
-    const resp = await fetch('/api/me/reminder', {
+    return request('/api/me/reminder', {
       method: 'PATCH',
       cache: 'no-cache',
       credentials: 'same-origin',
@@ -62,7 +63,6 @@ async function toggleReminder(op, timeframe = '') {
       },
       body: JSON.stringify({ op, value: timeframe })
     });
-    return resp.json();
   } catch (err) {
     console.log('toggle reminder err');
     throw err;

@@ -13,6 +13,7 @@ import { PRICES } from '../../utils/prices';
 import { TextImportant } from '../text';
 import cx from 'classnames';
 import format from 'date-fns/format';
+import request from '../../utils/request';
 import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
@@ -304,8 +305,9 @@ function getPaymentButton({
   const sendFreePurchase = async () => {
     try {
       setLoading(true);
+      let payment;
       if (selected !== 'free') {
-        await sendPayment({
+        payment = await sendPayment({
           token: null,
           productId: selected,
           coupon: couponData.coupon,
@@ -313,6 +315,7 @@ function getPaymentButton({
           name: null
         });
       }
+      console.log(payment);
       onPurchaseSuccess(selected);
     } catch (err) {
       onPurchaseFailed(err);
@@ -358,8 +361,7 @@ function getDiscountedPrice(amount, { percent_off, amount_off } = {}) {
 
 async function getEstimates() {
   try {
-    const resp = await fetch('/api/mail/estimates');
-    const estimates = resp.json();
+    const estimates = await request('/api/mail/estimates');
     return estimates;
   } catch (err) {
     console.error(err);
@@ -418,7 +420,11 @@ const EstimatesScreen = ({ setScreen }) => {
           </>
         ) : null}
 
-        {error ? <div>{error.toString()}</div> : null}
+        {error ? (
+          <p styleName="model-error">
+            Something went wrong, please try again or contact support.
+          </p>
+        ) : null}
       </div>
       <div styleName="modal-actions">
         <a

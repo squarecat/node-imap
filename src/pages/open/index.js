@@ -15,6 +15,7 @@ import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
 import { useAsync } from '../../utils/hooks';
+import request from '../../utils/request';
 
 const lineColor = '#EB6C69';
 const lineColorLight = '#fedbd5';
@@ -23,11 +24,11 @@ const lineColor2 = '#9D5AAC';
 const lineColor2Light = '#CA9CD4';
 
 function getStats() {
-  return fetch('/api/stats').then(resp => resp.json());
+  return request('/api/stats');
 }
 
 function getExpenses() {
-  return fetch('/api/stats/expenses').then(resp => resp.json());
+  return request('/api/stats/expenses');
 }
 
 function dailyRevChart(ctx, stats) {
