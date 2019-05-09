@@ -5,6 +5,7 @@ import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
 import { ReloadIcon, TwitterIcon } from '../../components/icons';
 import { isRescanAvailable, tfToStringShort } from '../../utils/scans';
+import * as Sentry from '@sentry/browser';
 
 import AnimatedNumber from 'react-animated-number';
 import Button from '../../components/btn';
@@ -408,6 +409,10 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
 };
 
 function ErrorScreen({ error, retry }) {
+  if (!window.location.host.startsWith('local')) {
+    Sentry.captureException(error);
+  }
+
   if (error === 'Error: Invalid Credentials') {
     return (
       <div className="mail-error">
@@ -460,7 +465,7 @@ function ErrorScreen({ error, retry }) {
 
       <p>
         This is definitely our fault, so if it still doesn't work then please
-        bear with us and we'll try and get it sorted for you!
+        contact us and we'll try and get it sorted for you!
       </p>
       {process.env.NODE_ENV === 'development' ? (
         <pre className="error-details">{error}</pre>
