@@ -28,6 +28,7 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
     let dupeCache = {};
+    let dupeSenders = [];
     logger.info(
       `outlook-fetcher: started ${timeframe} scan (${
         user.id
@@ -52,11 +53,13 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
       totalPrevUnsubbedCount = totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
       if (unsubscribableMail.length) {
-        const { dupes: newDupeCache, deduped } = dedupeMailList(
-          dupeCache,
-          unsubscribableMail
-        );
+        const {
+          dupes: newDupeCache,
+          deduped,
+          dupeSenders: newDupeSenders
+        } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
         dupeCache = newDupeCache;
+        dupeSenders = newDupeSenders;
         totalUnsubCount = totalUnsubCount + deduped.length;
         yield { type: 'mail', data: deduped };
       }
@@ -71,7 +74,8 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
       totalPreviouslyUnsubscribedMail: totalPrevUnsubbedCount,
-      occurrences: dupeCache
+      occurrences: dupeCache,
+      dupeSenders
     };
   } catch (err) {
     logger.error('outlook-fetcher: failed to fetch mail');
