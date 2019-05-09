@@ -3,10 +3,11 @@ import './preferences.module.scss';
 import { FormCheckbox } from '../../../components/form';
 import ProfileLayout from './layout';
 import React from 'react';
+import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export async function savePreferences(data) {
-  const resp = await fetch('/api/me', {
+  return request('/api/me', {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -15,7 +16,6 @@ export async function savePreferences(data) {
     },
     body: JSON.stringify({ op: 'preferences', value: data })
   });
-  return resp.json();
 }
 
 const DEFAULTS = {

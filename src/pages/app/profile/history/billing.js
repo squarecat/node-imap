@@ -9,21 +9,20 @@ import { TextImportant } from '../../../../components/text';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import numeral from 'numeral';
+import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 
 async function fetchBillingHistory() {
-  const res = await fetch('/api/me/billing', {
+  return request('/api/me/billing', {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
-  return res.json();
 }
 
 export default function BillingHistory() {
-  const { value, loading } = useAsync(fetchBillingHistory);
-  const billingData = loading ? {} : value;
+  const { value: billingData = {}, loading } = useAsync(fetchBillingHistory);
   const { payments = [], has_more = false } = billingData;
 
   return (

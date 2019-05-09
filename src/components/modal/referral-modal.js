@@ -7,16 +7,16 @@ import React, { useEffect, useState } from 'react';
 import AnimatedNumber from 'react-animated-number';
 import ModalClose from './modal-close';
 import { TextImportant } from '../text';
+import request from '../../utils/request';
 import useAsync from '../../utils/hooks/use-async';
 
 async function fetchReferralStats() {
-  const response = await fetch('/api/me/referrals', {
+  return request('/api/me/referrals', {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
-  return response.json();
 }
 
 export default ({ onClose }) => {

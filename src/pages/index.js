@@ -1,13 +1,15 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
+import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useRef } from 'react';
+import { TextImportant, TextLink } from '../components/text';
 
+import Browser from '../components/browser';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
 import Header from './header';
 import Layout from '../layouts/layout';
-import { TextImportant, TextLink } from '../components/text';
 import WallOfLove from './wall-of-love';
 import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/envelope.png';
@@ -17,20 +19,17 @@ import iphoneUnsub from '../assets/iphone-unsub.png';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
 import { PRICES as prices } from '../utils/prices';
+import request from '../utils/request';
 import unsubGif from '../assets/unsub-btn.gif';
-import { useAsync } from '../utils/hooks';
-import { GoogleIcon, OutlookIcon } from '../components/icons';
-import Browser from '../components/browser';
 import unsubListGif from '../assets/unsubscribe-new.gif';
+import { useAsync } from '../utils/hooks';
 
 const PRICES = prices.map(p =>
   p.price === 800 ? { ...p, recommended: true } : p
 );
 
 function getFeaturedNews() {
-  return fetch('/api/news')
-    .then(resp => resp.json())
-    .then(data => data.filter(d => d.featured));
+  return request('/api/news').then(data => data.filter(d => d.featured));
 }
 
 const IndexPage = () => {
@@ -456,7 +455,7 @@ const IndexPage = () => {
 };
 
 function fetchStats() {
-  return fetch('/api/stats').then(r => r.json());
+  return request('/api/stats');
 }
 
 // function Stats({ isLoading, data, isVisible }) {

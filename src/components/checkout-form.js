@@ -2,6 +2,7 @@ import { PAYMENT_CHECKOUT_OPTS, PAYMENT_CONFIG_OPTS } from '../utils/payments';
 import React, { useEffect, useState } from 'react';
 
 import Button from '../components/btn';
+import request from '../utils/request';
 import useUser from '../utils/hooks/use-user';
 
 let callback;
@@ -59,9 +60,10 @@ const CheckoutForm = ({
             name: args.billing_name
           });
           onCheckoutComplete();
-          setLoading(false);
         } catch (err) {
           onCheckoutFailed(err);
+        } finally {
+          setLoading(false);
         }
       };
     },
@@ -96,7 +98,7 @@ export async function sendPayment({ token, productId, coupon, address, name }) {
     url = `/api/checkout/${productId}`;
   }
   try {
-    const resp = await fetch(url, {
+    const data = await request(url, {
       method: 'POST',
       cache: 'no-cache',
       credentials: 'same-origin',
@@ -105,7 +107,6 @@ export async function sendPayment({ token, productId, coupon, address, name }) {
       },
       body: JSON.stringify({ token, address, name })
     });
-    const data = resp.json();
     return data;
   } catch (err) {
     console.log('payment err');
@@ -115,8 +116,7 @@ export async function sendPayment({ token, productId, coupon, address, name }) {
 
 export async function getCoupon(coupon) {
   try {
-    const resp = await fetch(`/api/checkout/${coupon}`);
-    const data = resp.json();
+    const data = await request(`/api/checkout/${coupon}`);
     return data;
   } catch (err) {
     console.log('coupon err');
