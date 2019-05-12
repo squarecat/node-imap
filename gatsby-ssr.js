@@ -6,7 +6,7 @@ const React = require('react');
  * See: https://www.gatsbyjs.org/docs/ssr-apis/
  */
 
-exports.onRenderBody = ({ setPostBodyComponents }, pluginOptions) => {
+exports.onRenderBody = ({ setPostBodyComponents }) => {
   setPostBodyComponents([
     <script
       key="stripe-script"
@@ -19,22 +19,40 @@ exports.onRenderBody = ({ setPostBodyComponents }, pluginOptions) => {
       data-rewardful="15fc4f"
     />,
     <script
-      key="chat-widget"
-      dangerouslySetInnerHTML={{
-        __html: getChat(pluginOptions)
-      }}
-    />,
-    <script
       key="twitter-script"
       async
       src="https://platform.twitter.com/widgets.js"
       charSet="utf-8"
+    />,
+    <script
+      key="support-start"
+      dangerouslySetInnerHTML={{
+        __html: `window.intergramId = "-388078727";
+        window.intergramServer = "https://support.squarecat.io"
+        window.intergramCustomizations = {
+          titleClosed: 'Chat',
+          titleOpen: 'Chat',
+          closedStyle: 'button', // button or chat
+          closedChatAvatarUrl: '', // only used if closedStyle is set to 'chat'
+          cookieExpiration: 1, // in days. Once opened, closed chat title will be shown as button (when closedStyle is set to 'chat')
+          autoNoResponse:
+            'It seems that no one is available to answer right now. Please tell us how we can ' +
+            'contact you, and we will get back to you as soon as we can.',
+          placeholderText: 'Send a message...',
+          displayMessageTime: true,
+          mainColor: '#222',
+          alwaysUseFloatingButton: false,
+          desktopHeight: 550,
+          desktopWidth: 400
+        };
+        `
+      }}
+    />,
+    <script
+      id="intergram"
+      key="intergram"
+      type="text/javascript"
+      src="https://support.squarecat.io/js/widget.js"
     />
   ]);
 };
-
-function getChat() {
-  return `
-  window.$crisp=[];window.CRISP_WEBSITE_ID="75ceebe6-e79c-4cbf-96d2-00c8d3b8ddbf";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();
-  `;
-}
