@@ -8,7 +8,11 @@ import { TextImportant } from '../../components/text';
 
 const GiftsPage = () => {
   return (
-    <SubPageLayout title="Gift a scan" centered>
+    <SubPageLayout
+      title="Gift a scan"
+      description="Want increase your team's productivty or give your loved one a clean inbox? Buy gift scans today! Discounts for bulk purchases"
+      centered
+    >
       <h1>Gift a clean inbox</h1>
       <span styleName="emoji">🎁</span>
       <p>
