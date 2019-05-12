@@ -11,11 +11,11 @@ import endOfMonth from 'date-fns/end_of_month';
 import isAfter from 'date-fns/is_after';
 import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
+import request from '../../utils/request';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
 import { useAsync } from '../../utils/hooks';
-import request from '../../utils/request';
 
 const lineColor = '#EB6C69';
 const lineColorLight = '#fedbd5';
@@ -285,8 +285,8 @@ export default function Terms() {
 
   return (
     <SubPageLayout
-      title="Open Stats"
-      description={`All of our metrics are public. We are proud share all of our stats as part of the Open Startup movement. See our sales, revenue, expenses, users, and more.`}
+      title="Open Startup"
+      description="All of our metrics are public. See our sales, revenue, expenses, users, and more"
     >
       <div styleName="open-page">
         <div styleName="open-title box box--centered">
