@@ -1,10 +1,10 @@
+import { GoogleIcon, OutlookIcon } from '../../components/icons';
 import React, { useRef } from 'react';
 
 import Layout from '../../layouts/layout';
 import { TextBold } from '../../components/text';
 import { TextLink } from '../../components/text';
 import styles from './login.module.scss';
-import { GoogleIcon, OutlookIcon } from '../../components/icons';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
@@ -20,7 +20,10 @@ const LoginPage = () => {
   };
 
   return (
-    <Layout title="Login">
+    <Layout
+      title="Login"
+      description="Log in with Gmail or Outlook and start unsubscribing"
+    >
       <div ref={activeRef} styleName="hold-onto-your-butts-we-are-logging-in">
         <div styleName="login-boxy-box">
           <div styleName="beautiful-logo">

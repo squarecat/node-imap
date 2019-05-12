@@ -33,10 +33,7 @@ export default visProps => (
         </TextLink>
       </li>
       <li>
-        <TextLink
-          target="_"
-          href="https://blog.squarecat.io/tag/leave-me-alone"
-        >
+        <TextLink target="_" href="https://blog.leavemealone.xyz">
           Blog
         </TextLink>
       </li>
