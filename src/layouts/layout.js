@@ -46,7 +46,7 @@ const Layout = ({
       return (
         <>
           <Helmet>
-            {/* <meta charSet="utf-8" />
+            <meta charSet="utf-8" />
             <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
             <meta
               name="viewport"
@@ -83,7 +83,7 @@ const Layout = ({
             <meta name="twitter:url" value={baseUrl} />
             <meta name="twitter:site" value={twitterHandle} />
             <meta name="twitter:creator" value="@dinkydani21" />
-            <html lang="en" /> */}
+            <html lang="en" />
           </Helmet>
           {children}
         </>
