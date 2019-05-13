@@ -90,7 +90,9 @@ export default app => {
     '/auth/google',
     passport.authenticate('google', {
       scope: google.scopes,
-      prompt: 'consent',
+      // Prompt the user to select an account.
+      // https://developers.google.com/identity/protocols/OAuth2WebServer
+      prompt: 'select_account',
       accessType: 'offline'
     })
   );
