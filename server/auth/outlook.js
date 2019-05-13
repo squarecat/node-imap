@@ -93,7 +93,7 @@ export default app => {
       // The user mawy select an existing signed-in account, enter their credentials
       // for a remembered account, or choose to use a different account altogether.
       // https://docs.microsoft.com/en-gb/azure/active-directory/develop/v1-protocols-oauth-code#request-an-authorization-code
-      prompt: 'select_account'
+      prompt: 'login'
     })
   );
 
