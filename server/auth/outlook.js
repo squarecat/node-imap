@@ -88,12 +88,7 @@ export default app => {
   app.get(
     '/auth/outlook',
     passport.authenticate('windowslive', {
-      scope: outlook.scopes,
-      // The user is prompted to select an account, interrupting single sign on.
-      // The user mawy select an existing signed-in account, enter their credentials
-      // for a remembered account, or choose to use a different account altogether.
-      // https://docs.microsoft.com/en-gb/azure/active-directory/develop/v1-protocols-oauth-code#request-an-authorization-code
-      prompt: 'login'
+      scope: outlook.scopes
     })
   );
 
