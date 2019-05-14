@@ -25,10 +25,16 @@ export default () => {
   const deactivateUserAccount = async () => {
     toggleLoading(true);
     clearLocalStorage();
-    await deactivateAccount();
-    setTimeout(() => {
-      window.location.href = '/goodbye';
-    }, 300);
+    try {
+      await deactivateAccount();
+      setTimeout(() => {
+        window.location.href = '/goodbye';
+      }, 300);
+    } catch (err) {
+      toggleLoading(false);
+      console.error('failed to deactivate account');
+      console.error(err);
+    }
   };
 
   const onClickClear = () => {
@@ -148,6 +154,6 @@ async function deactivateAccount() {
     });
   } catch (err) {
     console.error(err);
-    return err;
+    throw err;
   }
 }

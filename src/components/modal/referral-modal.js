@@ -1,7 +1,5 @@
 import './modal.module.scss';
 
-import * as track from '../../utils/analytics';
-
 import React, { useEffect, useState } from 'react';
 
 import AnimatedNumber from 'react-animated-number';
@@ -31,7 +29,6 @@ export default ({ onClose }) => {
   // on mount
   useEffect(() => {
     setShown(true);
-    track.trackReferralModalOpen();
     document.addEventListener('keydown', handleKeydown, false);
     return function cleanup() {
       document.removeEventListener('keydown', handleKeydown);
