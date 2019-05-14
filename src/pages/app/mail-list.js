@@ -14,7 +14,7 @@ import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
 import MailListEmptyState from './mail-list/empty-state';
 import RescanModal from '../../components/modal/rescan-modal';
-import { TextLink } from '../../components/text';
+import { TextLink, TextImportant } from '../../components/text';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
@@ -444,13 +444,7 @@ function ErrorScreen({ error, retry }) {
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
-          <TextLink
-            onClick={() =>
-              openChat("Hi! I've paid for a scan but I can't perform it!")
-            }
-          >
-            Let us know!
-          </TextLink>
+          <TextImportant>Chat with us below.</TextImportant>
         </p>
       </div>
     );
@@ -869,13 +863,6 @@ function getDupeKey(from, to) {
   const { fromEmail } = parseFrom(from);
   const { fromEmail: toEmail } = parseFrom(to);
   return `${fromEmail}-${toEmail}`.toLowerCase();
-}
-
-function openChat(message = '') {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:open']);
-    window.$crisp.push(['set', 'message:text', [message]]);
-  }
 }
 
 let head;
