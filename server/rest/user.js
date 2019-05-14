@@ -293,7 +293,7 @@ export default app => {
     try {
       await deactivateUserAccount(user);
       req.logout();
-      res.status(200).send();
+      res.status(200).send({ success: true });
     } catch (err) {
       logger.error(`user-rest: error removing user ${user.id}`);
       logger.error(err);

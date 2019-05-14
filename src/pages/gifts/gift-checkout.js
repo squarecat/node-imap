@@ -7,6 +7,7 @@ import {
 import React, { useState } from 'react';
 
 import numeral from 'numeral';
+import request from '../../utils/request';
 
 let callback;
 let onClose;
@@ -134,7 +135,7 @@ async function sendGiftPayment({ token, productId, address, name, quantity }) {
   console.log('payment for', productId);
   const url = `/api/gift/${productId}`;
   try {
-    const resp = await fetch(url, {
+    return request(url, {
       method: 'POST',
       cache: 'no-cache',
       credentials: 'same-origin',
@@ -143,8 +144,6 @@ async function sendGiftPayment({ token, productId, address, name, quantity }) {
       },
       body: JSON.stringify({ token, address, name, quantity })
     });
-    const data = resp.json();
-    return data;
   } catch (err) {
     console.log('payment err');
     throw err;

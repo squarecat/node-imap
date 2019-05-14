@@ -86,7 +86,7 @@ export function getNews() {
         }
         const news = records.reduce(
           (out, r) =>
-            r.get('hidden')
+            r.get('Hidden')
               ? out
               : [
                   ...out,

@@ -15,9 +15,9 @@ import {
   TextImportant,
   TextLink
 } from '../../../components/text';
-import Button from '../../../components/btn';
 
 import BillingModal from '../../../components/modal/billing';
+import Button from '../../../components/btn';
 import CardDetails from '../../../components/modal/billing/card-details';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
@@ -27,6 +27,7 @@ import Tooltip from 'rc-tooltip';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import numeral from 'numeral';
+import request from '../../../utils/request';
 import { useAsync } from '../../../utils/hooks';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -382,17 +383,16 @@ function BillingHistory() {
 }
 
 async function fetchBillingHistory() {
-  const res = await fetch('/api/me/billing', {
+  return request('/api/me/billing', {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
-  return res.json();
 }
 
 async function removeUserBillingCard() {
-  const resp = await fetch('/api/me/billing', {
+  return request('/api/me/billing', {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -401,7 +401,6 @@ async function removeUserBillingCard() {
     },
     body: JSON.stringify({ op: 'remove-card' })
   });
-  return resp.json();
 }
 
 function getDate({ date }) {

@@ -2,7 +2,8 @@
 
 .error {
   text-align: center;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   margin: 25px auto 0 auto;
   background-color: $color-red-lightest;
   padding: 25px;

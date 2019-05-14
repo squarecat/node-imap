@@ -3,7 +3,10 @@ import SubPageLayout from '../../layouts/subpage-layout';
 
 export default function Terms() {
   return (
-    <SubPageLayout title="Privacy">
+    <SubPageLayout
+      title="Privacy Policy"
+      description="Our privacy policy explains what information we collect and why. We do not store the content of any of your emails in any form. We do store metadata of your emails in order to identify if you have unsubscribed from a subscription in a previous scan."
+    >
       <h1>Privacy Policy</h1>
       <p>
         Your privacy is important to us. It is Squarecat's policy to respect

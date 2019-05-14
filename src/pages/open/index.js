@@ -11,6 +11,7 @@ import endOfMonth from 'date-fns/end_of_month';
 import isAfter from 'date-fns/is_after';
 import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
+import request from '../../utils/request';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
@@ -23,11 +24,11 @@ const lineColor2 = '#9D5AAC';
 const lineColor2Light = '#CA9CD4';
 
 function getStats() {
-  return fetch('/api/stats').then(resp => resp.json());
+  return request('/api/stats');
 }
 
 function getExpenses() {
-  return fetch('/api/stats/expenses').then(resp => resp.json());
+  return request('/api/stats/expenses');
 }
 
 function dailyRevChart(ctx, stats) {
@@ -284,8 +285,8 @@ export default function Terms() {
 
   return (
     <SubPageLayout
-      title="Open Stats"
-      description={`All of our metrics are public. We are proud share all of our stats as part of the Open Startup movement. See our sales, revenue, expenses, users, and more.`}
+      title="Open Startup"
+      description="All of our metrics are public. See our sales, revenue, expenses, users, and more"
     >
       <div styleName="open-page">
         <div styleName="open-title box box--centered">
