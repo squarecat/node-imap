@@ -1,16 +1,16 @@
 import { addGiftRedemptionToStats, addPaymentToStats } from '../services/stats';
 import {
+  addPackageToUser,
   addPaidScanToUser,
-  getUserById,
-  addPackageToUser
+  getUserById
 } from '../services/user';
 import {
   attachPaymentMethod,
-  detachPaymentMethod,
   confirmPaymentIntent,
   createCustomer,
   createPayment,
   createPaymentIntent,
+  detachPaymentMethod,
   generatePaymentResponse,
   getPaymentCoupon,
   getPaymentMethod,
@@ -59,9 +59,9 @@ export const PACKAGES = PACKAGE_DATA.map(p => ({
   price: (PACKAGE_BASE_PRICE - PACKAGE_BASE_PRICE * p.discount) * p.unsubscribes
 }));
 
-export function getProduct(id) {
-  return products.find(p => p.value === id);
-}
+// export function getProduct(id) {
+//   return products.find(p => p.value === id);
+// }
 
 export async function getCoupon(coupon) {
   return getPaymentCoupon(coupon);

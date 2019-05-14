@@ -137,7 +137,7 @@ const deleteModalContent = (
       referral data.
     </p>
     <p>
-      You are not tied to our service in any way. Any spam email lists you
+      You are not tied to our service in any way. Any mailing lists you
       unsubscribed from are gone forever.
     </p>
   </>

@@ -10,11 +10,11 @@ import {
   getUserPayments,
   removeFromUserIgnoreList,
   removeUserAccount,
+  removeUserBillingCard,
   removeUserScanReminder,
   removeUserTotpToken,
   updateUserPassword,
-  updateUserPreferences,
-  removeUserBillingCard
+  updateUserPreferences
 } from '../services/user';
 
 import Joi from 'joi';
@@ -58,7 +58,8 @@ export default app => {
         loginProvider,
         lastUpdatedAt,
         accounts,
-        billing
+        billing,
+        activity = []
       } = user;
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
@@ -82,7 +83,8 @@ export default app => {
         loginProvider,
         lastUpdatedAt,
         accounts: accounts || [],
-        billing
+        billing,
+        activity
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);

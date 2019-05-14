@@ -245,7 +245,7 @@ export const LinkIcon = ({ width = '15', height = '15', ...visProps }) => (
 
 export const StarIcon = ({ width = '32', height = '32', ...visProps }) => (
   <svg
-    styleName={getClasses('icon star', visProps)}
+    styleName={getClasses('star', visProps)}
     viewBox="0 0 32 32"
     width={width}
     height={height}

@@ -65,7 +65,7 @@ mailgunWebhooks(app);
 
 app.get('/api/*', (req, res) => {
   res.status(404).send({
-    erorr: 404,
+    error: 404,
     message: 'That API route does not not exist'
   });
 });
