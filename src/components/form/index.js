@@ -1,6 +1,6 @@
 import './form.module.scss';
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import cx from 'classnames';
 
@@ -28,6 +28,13 @@ export const FormInput = ({
   ...props
 }) => {
   const ref = useRef(null);
+  const [inputValue, setInputValue] = useState(value);
+  useEffect(
+    () => {
+      setInputValue(value);
+    },
+    [value]
+  );
   const classes = cx('form-input', {
     'no-focus': noFocus,
     'input-compactt': compact,
@@ -37,7 +44,7 @@ export const FormInput = ({
   return (
     <input
       {...props}
-      value={value}
+      value={inputValue}
       ref={ref}
       id={id}
       type={type}
@@ -46,6 +53,7 @@ export const FormInput = ({
       required={required}
       spellCheck="false"
       onChange={e => {
+        setInputValue(e.currentTarget.value);
         validateInput(e, ref, validation, errorMessage);
         onChange(e);
       }}

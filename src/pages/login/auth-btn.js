@@ -82,6 +82,7 @@ export default ({ provider, action }) => {
   if (provider === 'google') {
     return (
       <a
+        key="google-auth-btn"
         href="/auth/google"
         target="SignInWindow"
         onClick={() => {
@@ -99,6 +100,7 @@ export default ({ provider, action }) => {
   } else if (provider === 'outlook') {
     return (
       <a
+        key="outlook-auth-btn"
         href="/auth/outlook"
         target="SignInWindow"
         onClick={() => {

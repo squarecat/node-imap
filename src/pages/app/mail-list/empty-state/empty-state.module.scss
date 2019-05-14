@@ -1,5 +1,5 @@
-@import '../../../styles/common/colors.scss';
-@import '../../../components/btn/btn.module.scss';
+@import '../../../../styles/common/colors.scss';
+@import '../../../../components/btn/btn.module.scss';
 
 .mail-empty-state {
   width: 100%;
@@ -24,6 +24,7 @@
 .scan-history-link {
   // display: block;
 }
+
 .scan-dates {
   background: white;
   border: 1px solid $color-input-border;

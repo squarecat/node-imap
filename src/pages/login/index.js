@@ -5,17 +5,10 @@ import React, { createContext, useReducer, useRef } from 'react';
 import AuthButton from './auth-btn';
 import EmailForm from './email';
 import Layout from '../../layouts/layout';
-<<<<<<< HEAD
 import { Link } from 'gatsby';
 import PasswordForm from './password';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
-=======
-import { TextBold } from '../../components/text';
-import { TextLink } from '../../components/text';
-import styles from './login.module.scss';
-import { GoogleIcon, OutlookIcon } from '../../components/icons';
->>>>>>> master
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
@@ -126,7 +119,6 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
   const action = register ? 'Sign up' : 'Login';
 
   return (
-<<<<<<< HEAD
     <Layout page={action}>
       <LoginContext.Provider value={{ state, dispatch }}>
         <div ref={activeRef} styleName={classes} data-status={transitionStatus}>
@@ -138,31 +130,6 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
             <div
               styleName="login-boxy-box"
               data-active={state.step === 'select'}
-=======
-    <Layout title="Login">
-      <div ref={activeRef} styleName="hold-onto-your-butts-we-are-logging-in">
-        <div styleName="login-boxy-box">
-          <div styleName="beautiful-logo">
-            <img
-              src={logoUrl}
-              alt="Leave Me Alone logo"
-              title="Leave Me Alone logo"
-            />
-          </div>
-          <h1 styleName="title">Login to Leave Me Alone</h1>
-          <p>We need to connect to your email account.</p>
-          <p>
-            Although we inspect your mail in order to find your subscriptions,
-            unlike other services we <TextBold>NEVER</TextBold> store any of the
-            content of your mail or any other private information!
-          </p>
-          <div styleName="buttons">
-            <a
-              href="/auth/google"
-              onMouseEnter={() => setActive(true)}
-              onMouseLeave={() => setActive(false)}
-              styleName="login-me-in-dammit"
->>>>>>> master
             >
               {state.step === 'select' ? (
                 <>
@@ -351,7 +318,6 @@ function getError(error) {
     </div>
   );
 }
-<<<<<<< HEAD
 
 function authButtons({ dispatch, action }) {
   const btns = [
@@ -359,6 +325,7 @@ function authButtons({ dispatch, action }) {
       type: 'password',
       el: (
         <a
+          key="pw"
           onClick={() => dispatch({ type: 'set-step', data: 'enter-email' })}
           onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
@@ -389,7 +356,11 @@ function authButtons({ dispatch, action }) {
   return (
     <>
       {content}
-      {btns.sort(a => (a.type === previousProvider ? -1 : 1)).map(b => b.el)}
+      {btns
+        .sort(a => (a.type === previousProvider ? -1 : 1))
+        .map(b => (
+          <span key={b.type}>{b.el}</span>
+        ))}
     </>
   );
 }
@@ -403,5 +374,3 @@ function getCookie(name) {
       .split(';')
       .shift();
 }
-=======
->>>>>>> master

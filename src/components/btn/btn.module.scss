@@ -53,7 +53,7 @@ $color-btn-border-focus: $color-input-border-focus;
     background-color: $color-red-darker;
     color: white;
 
-    path {
+    [data-icon='gift'] {
       fill: #e9443c;
     }
   }

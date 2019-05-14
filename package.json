@@ -19,6 +19,7 @@
     "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "date-fns": "^1.29.0",
+    "dexie": "^2.0.4",
     "email-addresses": "^3.0.3",
     "emailjs-imap-client": "^3.0.7",
     "express": "^4.16.4",

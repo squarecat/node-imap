@@ -25,6 +25,7 @@ export function Gift({ width = 32, height = 32, amount, ...visProps }) {
       data-amount={amount}
     >
       <svg
+        data-icon="gift"
         className={getClasses('gift', visProps)}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 32 32"

@@ -1,12 +1,12 @@
 import './empty-state.module.scss';
 
-import { TextImportant, TextLink } from '../../../components/text';
+import { TextImportant, TextLink } from '../../../../components/text';
 
 import { Link } from 'gatsby';
 import React from 'react';
 import distanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import format from 'date-fns/format';
-import { isRescanAvailable } from '../../../utils/scans';
+import { isRescanAvailable } from '../../../../utils/scans';
 import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
