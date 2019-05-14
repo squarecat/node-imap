@@ -6,7 +6,7 @@ import Button from '../../components/btn';
 import { Link } from 'gatsby';
 import useUser from '../../utils/hooks/use-user';
 
-export default ({ onClickSupport }) => {
+export default () => {
   const [showSettings, setShowSettings] = useState(false);
   const [{ profileImg, email }] = useUser(({ profileImg, email }) => ({
     profileImg,
@@ -59,11 +59,6 @@ export default ({ onClickSupport }) => {
         </li>
         <li>
           <a href="/login">Switch account</a>
-        </li>
-        <li styleName="support">
-          <a href="#" onClick={() => onClickSupport()}>
-            Get help
-          </a>
         </li>
         <li styleName="logout">
           <a href="/auth/logout">Logout</a>
