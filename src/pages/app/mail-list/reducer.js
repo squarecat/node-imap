@@ -1,96 +1,21 @@
-function getDupeKey(from, to) {
-  const { fromEmail } = parseFrom(from);
-  const { fromEmail: toEmail } = parseFrom(to);
-  return `${fromEmail}-${toEmail}`.toLowerCase();
-}
+export const initialState = {
+  mail: []
+};
 
-const mailReducer = (state = [], action) => {
+// mail reducer syncs everything with indexdb
+const mailReducer = (state = initialState, action) => {
+  let newState;
   switch (action.type) {
-    case 'add':
-      return [
-        ...state,
-        { ...action.data, error: !action.data.estimatedSuccess }
-      ];
-    case 'add-all':
-      return [
-        ...state,
-        ...action.data.map(m => ({
-          ...m,
-          error: !action.data.estimatedSuccess
-        }))
-      ];
-    case 'set-occurrences': {
-      return state.map(mailItem => {
-        const dupeKey = getDupeKey(mailItem.from, mailItem.to);
-        const occurrences = action.data[dupeKey] || 0;
-        return { ...mailItem, occurrences };
-      });
-    }
-    case 'unsubscribe':
-      return state.map(email =>
-        email.id === action.data ? { ...email, subscribed: null } : email
-      );
-    case 'unsubscribe-success':
-      return state.map(email =>
-        email.id === action.data.id
-          ? {
-              ...email,
-              subscribed: false,
-              error: false,
-              estimatedSuccess: action.data.estimatedSuccess,
-              unsubStrategy: action.data.unsubStrategy,
-              hasImage: action.data.hasImage
-            }
-          : email
-      );
-    case 'unsubscribe-error':
-      return state.map(email =>
-        email.id === action.data.id
-          ? {
-              ...email,
-              error: true,
-              subscribed: null,
-              estimatedSuccess: action.data.estimatedSuccess,
-              unsubStrategy: action.data.unsubStrategy,
-              hasImage: action.data.hasImage
-            }
-          : email
-      );
-    case 'unsubscribe-error-resolved':
-      return state.map(email =>
-        email.id === action.data.id
-          ? {
-              ...email,
-              error: false,
-              subscribed: false,
-              estimatedSuccess: action.data.success,
-              resolved: true
-            }
-          : email
-      );
-    case 'clear': {
-      return [];
-    }
-    case 'set-loading': {
-      return state.map(email =>
-        email.id === action.data.id
-          ? { ...email, isLoading: action.data.isLoading }
-          : email
-      );
-    }
-    case 'add-ignore': {
-      return state.map(email =>
-        email.id === action.data.id ? { ...email, ignored: true } : email
-      );
-    }
-    case 'remove-ignore': {
-      return state.map(email =>
-        email.id === action.data.id ? { ...email, ignored: false } : email
-      );
+    case 'intial-load': {
+      newState = {
+        mail: action.data
+      };
+      break;
     }
     default:
-      return state;
+      newState = state;
   }
+  return newState;
 };
 
 function parseFrom(str = '') {
@@ -112,6 +37,12 @@ function parseFrom(str = '') {
     fromEmail = str;
   }
   return { fromName, fromEmail };
+}
+
+function getDupeKey(from, to) {
+  const { fromEmail } = parseFrom(from);
+  const { fromEmail: toEmail } = parseFrom(to);
+  return `${fromEmail}-${toEmail}`.toLowerCase();
 }
 
 export default mailReducer;
