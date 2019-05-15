@@ -61,7 +61,7 @@ function parseMail(mail) {
   return {
     id,
     snippet,
-    googleDate: internalDate,
+    date: internalDate,
     from: getHeaderValue(payload.headers, 'From'),
     to: getHeaderValue(payload.headers, 'To'),
     subject: getHeaderValue(payload.headers, 'Subject'),

@@ -13,6 +13,7 @@
     "aes256": "^1.0.4",
     "agenda": "^2.0.2",
     "airtable": "^0.5.9",
+    "array-iterator": "^0.0.1",
     "axios": "^0.18.0",
     "bcrypt": "^3.0.5",
     "chalk": "^2.4.2",

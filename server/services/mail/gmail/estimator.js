@@ -7,12 +7,12 @@ const estimateTimeframes = ['3d', '1w'];
 const SPAM_REGULARITY = 0.48;
 
 export async function getMailEstimates(
-  userOrUserId,
+  account,
   { includeTrash = true, timeframe } = {}
 ) {
   // addEstimateToStats();
   if (timeframe) {
-    const estimate = await getEstimateForTimeframe(userOrUserId, {
+    const estimate = await getEstimateForTimeframe(account, {
       includeTrash,
       timeframe
     });
@@ -23,7 +23,7 @@ export async function getMailEstimates(
   } else {
     let estimates = await Promise.all(
       estimateTimeframes.map(async tf => {
-        const total = await getEstimateForTimeframe(userOrUserId, {
+        const total = await getEstimateForTimeframe(account, {
           includeTrash,
           timeframe: tf
         });
@@ -47,7 +47,7 @@ export async function getMailEstimates(
 // an estimate for 1m or 6m, we have to
 // estimate the estimate by multiplying it
 export async function getEstimateForTimeframe(
-  userOrUserId,
+  account,
   { includeTrash, timeframe }
 ) {
   let tf = timeframe;
@@ -61,17 +61,13 @@ export async function getEstimateForTimeframe(
     then,
     now
   });
-  let total = await getEstimatedEmails(searchStr, includeTrash, userOrUserId);
+  let total = await getEstimatedEmails(searchStr, includeTrash, account);
   return total * multiplier;
 }
 
-export async function getEstimatedEmails(
-  query,
-  includeTrash = true,
-  userOrUserId
-) {
+export async function getEstimatedEmails(query, includeTrash = true, account) {
   try {
-    const client = await getMailClient(userOrUserId);
+    const client = await getMailClient(account);
     const { data } = await client.users.messages.list({
       userId: 'me',
       q: query,
@@ -84,8 +80,7 @@ export async function getEstimatedEmails(
     return data.resultSizeEstimate;
   } catch (err) {
     logger.error(
-      `esimator: failed to estimate messages for user ${userOrUserId.id ||
-        userOrUserId}`
+      `esimator: failed to estimate messages for user ${account.id || account}`
     );
     logger.error(err);
   }

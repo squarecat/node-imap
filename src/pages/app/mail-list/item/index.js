@@ -3,7 +3,6 @@ import React from 'react';
 import Toggle from '../../../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import format from 'date-fns/format';
-import { tfToStringShort } from '../../../../utils/scans';
 import { toggleFromIgnoreList } from '../../profile/ignore';
 import useUser from '../../../../utils/hooks/use-user';
 
@@ -11,10 +10,9 @@ const mailDateFormat = 'Do MMM YYYY HH:mm';
 
 export default ({
   mail: m,
-  onUnsubscribe,
-  setUnsubModal,
-  timeframe,
-  style
+  onUnsubscribe = () => {},
+  setUnsubModal = () => {},
+  style = {}
 }) => {
   const [user, { setIgnoredSenderList }] = useUser();
   const ignoredSenderList = user.ignoredSenderList || [];
@@ -73,7 +71,7 @@ export default ({
                 overlay={
                   <span>
                     You received {m.occurrences} emails from this sender in the
-                    past {tfToStringShort[timeframe]}
+                    past 6 months
                   </span>
                 }
               >

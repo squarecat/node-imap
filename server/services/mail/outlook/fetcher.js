@@ -1,27 +1,21 @@
 import { doRequest, getAccessToken } from './access';
-import { getSearchString, getTimeRange, hasPaidScanAvailable } from './utils';
+import { getSearchString, getTimeRange } from './utils';
 
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
-export async function* fetchMail({ user, timeframe = '3d' }) {
+export async function* fetchMail({ user, account, timeframe = '3d' }) {
   const start = Date.now();
   try {
-    if (!hasPaidScanAvailable(user, timeframe)) {
-      logger.warn(
-        'mail-service: User attempted search that has not been paid for'
-      );
-      return { type: 'error', message: 'Not paid' };
-    }
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, accessToken] = await Promise.all([
-      getEstimateForTimeframe(user, {
+      getEstimateForTimeframe(account, {
         timeframe,
         includeTrash: true
       }),
-      getAccessToken(user)
+      getAccessToken(account)
     ]);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;

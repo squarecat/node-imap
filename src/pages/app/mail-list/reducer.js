@@ -2,15 +2,22 @@ export const initialState = {
   mail: []
 };
 
-// mail reducer syncs everything with indexdb
+// mail reducer that represents the internal state
+// of indexdb database
 const mailReducer = (state = initialState, action) => {
   let newState;
   switch (action.type) {
-    case 'intial-load': {
-      newState = {
-        mail: action.data
+    case 'add': {
+      return {
+        ...state,
+        mail: [...state.mail, action.data]
       };
-      break;
+    }
+    case 'update': {
+      return {
+        ...state,
+        mail: [...state.mail.filter(m => m.id !== action.data.id), action.data]
+      };
     }
     default:
       newState = state;

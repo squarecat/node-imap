@@ -132,6 +132,7 @@ export default function(app, server) {
         onEnd(next.value);
       } catch (err) {
         logger.error('mail-rest: error scanning mail');
+        logger.error(err);
         Sentry.captureException(err);
         onError(err);
       }

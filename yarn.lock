@@ -1368,6 +1368,11 @@ array-includes@^3.0.3:
     define-properties "^1.1.2"
     es-abstract "^1.7.0"
 
+array-iterator@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/array-iterator/-/array-iterator-0.0.1.tgz#92996dd8d2fe5da0de612d93ad86cb094ad65be2"
+  integrity sha1-kplt2NL+XaDeYS2TrYbLCUrWW+I=
+
 array-map@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/array-map/-/array-map-0.0.0.tgz#88a2bab73d1cf7bcd5c1b118a003f66f665fa662"

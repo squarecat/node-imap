@@ -7,10 +7,10 @@ const estimateTimeframes = ['3d', '1w'];
 
 const SPAM_REGULARITY = 0.48;
 
-export async function getMailEstimates(user, { timeframe } = {}) {
+export async function getMailEstimates(account, { timeframe } = {}) {
   // addEstimateToStats();
   if (timeframe) {
-    const estimate = await getEstimateForTimeframe(user, {
+    const estimate = await getEstimateForTimeframe(account, {
       timeframe
     });
     return {
@@ -20,7 +20,7 @@ export async function getMailEstimates(user, { timeframe } = {}) {
   } else {
     let estimates = await Promise.all(
       estimateTimeframes.map(async tf => {
-        const total = await getEstimateForTimeframe(user, {
+        const total = await getEstimateForTimeframe(account, {
           timeframe: tf
         });
         return {
@@ -39,23 +39,23 @@ export async function getMailEstimates(user, { timeframe } = {}) {
   }
 }
 
-export async function getEstimateForTimeframe(user, { timeframe }) {
+export async function getEstimateForTimeframe(account, { timeframe }) {
   try {
     const { then, now } = getTimeRange(timeframe);
     const query = getSearchString({
       then,
       now
     });
-    return requestCount(user, { filter: query });
+    return requestCount(account, { filter: query });
   } catch (err) {
     logger.error(err);
     throw err;
   }
 }
 
-async function requestCount(user, { filter, folder = 'AllItems' } = {}) {
+async function requestCount(account, { filter, folder = 'AllItems' } = {}) {
   try {
-    const accessToken = await getAccessToken(user);
+    const accessToken = await getAccessToken(account);
     return doRequest(getCountUrl({ filter, folder }), accessToken);
   } catch (err) {
     logger.error('outlook-access: failed to send request to api');

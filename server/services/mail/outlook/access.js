@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getUserById } from '../../user';
 import isBefore from 'date-fns/is_before';
 import logger from '../../../utils/logger';
 import { refreshAccessToken } from '../../../auth/outlook';
@@ -7,17 +6,12 @@ import subMinutes from 'date-fns/sub_minutes';
 
 export const apiRootUrl = 'https://outlook.office.com/api/v2.0/me/MailFolders';
 
-export async function getAccessToken(userOrUserId) {
-  let user = userOrUserId;
-  if (typeof userOrUserId === 'string') {
-    user = await getUserById(userOrUserId);
-  }
-
-  const { keys } = user;
+export async function getAccessToken(account) {
+  const { keys } = account;
   const { accessToken, refreshToken, expires, expiresIn } = keys;
 
   if (isBefore(subMinutes(expires, 5), new Date())) {
-    return refreshAccessToken(user.id, { refreshToken, expiresIn });
+    return refreshAccessToken(account.id, { refreshToken, expiresIn });
   }
   return accessToken;
 }
