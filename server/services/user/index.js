@@ -479,11 +479,15 @@ export async function removeUserAccount(user, email) {
     }
     await removeAccount(userId, accountId);
     // do not wait for this one as won't be a notification
-    addActivityForUser(userId, 'removeAdditionalAccount', {
-      id: accountId,
-      provider
-    });
-    return user;
+    const updatedUser = await addActivityForUser(
+      userId,
+      'removeAdditionalAccount',
+      {
+        id: accountId,
+        provider
+      }
+    );
+    return updatedUser;
   } catch (err) {
     logger.error(
       `user-service: failed to disconnect user account for user ${userId}`
