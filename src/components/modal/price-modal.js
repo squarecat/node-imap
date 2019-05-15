@@ -1,7 +1,5 @@
 import './modal.module.scss';
 
-import * as track from '../../utils/analytics';
-
 import CheckoutForm, { getCoupon, sendPayment } from '../checkout-form';
 import React, { useEffect, useState } from 'react';
 
@@ -13,6 +11,7 @@ import { PRICES } from '../../utils/prices';
 import { TextImportant } from '../text';
 import cx from 'classnames';
 import format from 'date-fns/format';
+import request from '../../utils/request';
 import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
@@ -32,7 +31,6 @@ export default ({ onClose, onPurchase }) => {
   // on mount
   useEffect(() => {
     setShown(true);
-    track.trackPriceModalOpen();
     document.addEventListener('keydown', handleKeydown, false);
     return function cleanup() {
       document.removeEventListener('keydown', handleKeydown);
@@ -47,10 +45,8 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(() => {
       if (selected === 'free') {
-        track.trackFreeScan();
         return onPurchase('3d');
       }
-      track.trackPurchase({ timeframe: selected });
       return onPurchase(selected);
     }, 300);
   };
@@ -244,18 +240,6 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
       </div>
       <div styleName="modal-actions">
         <div styleName="modal-actions-info">
-          <p styleName="modal-text--small">
-            Looking for a monthly subscription?{' '}
-            <a
-              onClick={() =>
-                openChat(
-                  "Hi! I'm looking for a monthly subscription to Leave Me Alone."
-                )
-              }
-            >
-              Contact us!
-            </a>
-          </p>
           <p styleName="modal-text--small secured-by">
             <LockIcon />
             Payments Secured by{' '}
@@ -304,8 +288,9 @@ function getPaymentButton({
   const sendFreePurchase = async () => {
     try {
       setLoading(true);
+      let payment;
       if (selected !== 'free') {
-        await sendPayment({
+        payment = await sendPayment({
           token: null,
           productId: selected,
           coupon: couponData.coupon,
@@ -313,6 +298,7 @@ function getPaymentButton({
           name: null
         });
       }
+      console.log(payment);
       onPurchaseSuccess(selected);
     } catch (err) {
       onPurchaseFailed(err);
@@ -358,8 +344,7 @@ function getDiscountedPrice(amount, { percent_off, amount_off } = {}) {
 
 async function getEstimates() {
   try {
-    const resp = await fetch('/api/mail/estimates');
-    const estimates = resp.json();
+    const estimates = await request('/api/mail/estimates');
     return estimates;
   } catch (err) {
     console.error(err);
@@ -418,7 +403,11 @@ const EstimatesScreen = ({ setScreen }) => {
           </>
         ) : null}
 
-        {error ? <div>{error.toString()}</div> : null}
+        {error ? (
+          <p styleName="model-error">
+            Something went wrong, please try again or contact support.
+          </p>
+        ) : null}
       </div>
       <div styleName="modal-actions">
         <a
@@ -431,13 +420,6 @@ const EstimatesScreen = ({ setScreen }) => {
     </>
   );
 };
-
-function openChat(message = '') {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:open']);
-    window.$crisp.push(['set', 'message:text', [message]]);
-  }
-}
 
 const dateFormat = 'Do MMM YYYY';
 function getScanDate(selected) {

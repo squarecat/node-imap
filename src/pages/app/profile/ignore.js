@@ -7,10 +7,11 @@ import ErrorBoundary from '../../../components/error-boundary';
 import ProfileLayout from './layout';
 import React from 'react';
 import { TextImportant } from '../../../components/text';
+import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export async function toggleFromIgnoreList(email, op) {
-  const resp = await fetch('/api/me/ignore', {
+  return request('/api/me/ignore', {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -19,7 +20,6 @@ export async function toggleFromIgnoreList(email, op) {
     },
     body: JSON.stringify({ op, value: email })
   });
-  return resp.json();
 }
 
 export default () => {

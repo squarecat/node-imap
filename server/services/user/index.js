@@ -28,7 +28,7 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyTotpSecret
-} from '../dao/user';
+} from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
   addReferralSignupToStats,
@@ -36,21 +36,22 @@ import {
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
   addUserToStats
-} from './stats';
+} from '../stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
-} from '../utils/emails/newsletter';
+} from '../../utils/emails/newsletter';
 
+import { addActivityForUser } from './activity';
 import addMonths from 'date-fns/add_months';
-import { addReferralToReferrer } from './referral';
+import { addReferralToReferrer } from '../referral';
 import addWeeks from 'date-fns/add_weeks';
-import { detachPaymentMethod } from '../utils/stripe';
-import { listPaymentsForUser } from './payments';
-import logger from '../utils/logger';
-import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
-import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
-import { setMilestoneCompleted } from './milestones';
+import { detachPaymentMethod } from '../../utils/stripe';
+import { listPaymentsForUser } from '../payments';
+import logger from '../../utils/logger';
+import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
+import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { setMilestoneCompleted } from '../milestones';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 
@@ -106,6 +107,12 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       );
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
+      // signing in with a provider counts as connecting the first account
+      // TODO combine this with create user?
+      user = await addActivityForUser(id, 'connectedFirstAccount', {
+        id,
+        provider
+      });
     } else {
       user = await updateUserWithAccount(
         { id, email },
@@ -139,7 +146,9 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
   const { id, email, profileImg, displayName } = userData;
   try {
     let user = await getUser(userId);
-    if (user.accounts.find(acc => acc.id === id)) {
+    const isAccountAlreadyConnected = user.accounts.find(acc => acc.id === id);
+
+    if (isAccountAlreadyConnected) {
       logger.debug(
         `user-service: ${provider} account already connected, updating...`
       );
@@ -160,6 +169,22 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
         provider,
         email,
         keys
+      });
+
+      let activityName;
+      if (user.loginProvider === 'password') {
+        // if logged in with password the first account will be 0 in the accounts array
+        activityName = user.accounts.length
+          ? 'connectedAdditionalAccount'
+          : 'connectedFirstAccount';
+      } else {
+        // otherwise we already know this is a new account being connected
+        activityName = 'connectedAdditionalAccount';
+      }
+
+      user = await addActivityForUser(userId, activityName, {
+        id,
+        provider
       });
     }
     return user;
@@ -254,6 +279,7 @@ export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
   });
 }
 
+// TODO will be legacy
 export function addScanToUser(userId, scanData) {
   return addScan(userId, scanData);
 }
@@ -266,12 +292,21 @@ export async function updateCustomerId(userId, customerId) {
   return updateUser(userId, { customerId });
 }
 
+// TODO will be legacy
 export function addPaidScanToUser(userId, scanType) {
   return addPaidScan(userId, scanType);
 }
 
-export function addPackageToUser(userId, packageId, unsubscribes = 0) {
-  return addPackage(userId, packageId, unsubscribes);
+export async function addPackageToUser(userId, packageId, unsubscribes = 0) {
+  try {
+    await addPackage(userId, packageId, unsubscribes);
+    return addActivityForUser(userId, 'packagePurchase', {
+      id: packageId,
+      unsubscribes
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export function updatePaidScanForUser(userId, scanType) {
@@ -441,7 +476,13 @@ export async function removeUserAccount(user, email) {
     } else if (provider === 'outlook') {
       await revokeTokenFromOutlook(refreshToken);
     }
-    return removeAccount(userId, accountId);
+    await removeAccount(userId, accountId);
+    // do not wait for this one as won't be a notification
+    addActivityForUser(userId, 'removeAdditionalAccount', {
+      id: accountId,
+      provider
+    });
+    return user;
   } catch (err) {
     logger.error(
       `user-service: failed to disconnect user account for user ${userId}`
@@ -511,7 +552,10 @@ export async function removeUserBillingCard(id) {
     if (paymentMethodId) {
       await detachPaymentMethod(paymentMethodId);
     }
-    await removeBillingCard(id);
+    const user = await removeBillingCard(id);
+    // do not wait for this one as won't be a notification
+    addActivityForUser(id, 'removeBillingCard');
+    return user;
   } catch (err) {
     throw err;
   }

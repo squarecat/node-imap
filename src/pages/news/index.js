@@ -3,18 +3,18 @@ import './news.module.scss';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
+import request from '../../utils/request';
 import { useAsync } from '../../utils/hooks';
 
 // Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?
 
 async function getNews() {
-  const res = await fetch('/api/news', {
+  return request('/api/news', {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
-  return res.json();
 }
 
 const InTheNewsPage = () => {
@@ -31,7 +31,10 @@ const InTheNewsPage = () => {
   );
 
   return (
-    <SubPageLayout title="In The News">
+    <SubPageLayout
+      title="In The News"
+      description="Read about Leave Me Alone featured in news articles around the world"
+    >
       <h1 styleName="title">In The News</h1>
       {loadingNews ? (
         <p styleName="loading">Getting Leave Me Alone news...</p>

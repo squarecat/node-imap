@@ -1,7 +1,5 @@
 import './modal.module.scss';
 
-import * as track from '../../utils/analytics';
-
 import React, { useEffect, useState } from 'react';
 
 import Button from '../btn';
@@ -36,7 +34,6 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
   // on mount
   useEffect(() => {
     setShown(true);
-    track.trackReminderModalOpen();
     document.addEventListener('keydown', handleKeydown, false);
     return function cleanup() {
       document.removeEventListener('keydown', handleKeydown);

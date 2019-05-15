@@ -133,7 +133,9 @@ export default app => {
     '/auth/google',
     passport.authenticate('google-login', {
       scope: google.scopes,
-      prompt: 'consent',
+      // Prompt the user to select an account.
+      // https://developers.google.com/identity/protocols/OAuth2WebServer
+      prompt: 'consent', // TODO CHANGE BACK TO select_account before phase-2 deploy
       accessType: 'offline'
     })
   );
@@ -142,7 +144,9 @@ export default app => {
     '/auth/google/connect',
     passport.authenticate('connect-account-google', {
       scope: google.scopes,
-      prompt: 'consent',
+      // Prompt the user to select an account.
+      // https://developers.google.com/identity/protocols/OAuth2WebServer
+      prompt: 'consent', // TODO CHANGE BACK TO select_account before phase-2 deploy
       accessType: 'offline'
     })
   );

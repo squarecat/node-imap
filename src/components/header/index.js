@@ -9,10 +9,11 @@ import useUser from '../../utils/hooks/use-user';
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
-  const [{ lastPaidScanType, reminder }] = useUser(
-    ({ lastPaidScanType, reminder }) => ({
+  const [{ lastPaidScanType, reminder, unsubscribesRemaining }] = useUser(
+    ({ lastPaidScanType, reminder, billing }) => ({
       lastPaidScanType,
-      reminder
+      reminder,
+      unsubscribesRemaining: billing ? billing.unsubscribesRemaining : 0
     })
   );
 
@@ -54,29 +55,15 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
         {reminderButton}
+        <span>{unsubscribesRemaining} unsubscribes remaining</span>
         <button styleName="header-btn" onClick={() => onClickReferral()}>
           <span styleName="header-btn-text header-btn-text--short">Refer</span>
           <span styleName="header-btn-text header-btn-text--long">
             Refer a friend
           </span>
         </button>
-        <SettingsDropdown onClickSupport={() => openChat()} />
+        <SettingsDropdown />
       </div>
     </div>
   );
 };
-
-function openChat(message = '') {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:show']);
-    window.$crisp.push(['do', 'chat:open']);
-    window.$crisp.push(['set', 'message:text', [message]]);
-    window.$crisp.push(['on', 'chat:closed', closeChat]);
-  }
-}
-
-function closeChat() {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:hide']);
-  }
-}

@@ -5,6 +5,7 @@ import { AutoSizer, List as VirtualList } from 'react-virtualized';
 import React, { useEffect, useReducer, useState } from 'react';
 import { ReloadIcon, TwitterIcon } from '../../components/icons';
 import { isRescanAvailable, tfToStringShort } from '../../utils/scans';
+import * as Sentry from '@sentry/browser';
 
 import AnimatedNumber from 'react-animated-number';
 import Button from '../../components/btn';
@@ -13,7 +14,7 @@ import ErrorBoundary from '../../components/error-boundary';
 import IgnoreIcon from '../../components/ignore-icon';
 import MailListEmptyState from './mail-list/empty-state';
 import RescanModal from '../../components/modal/rescan-modal';
-import { TextLink } from '../../components/text';
+import { TextLink, TextImportant } from '../../components/text';
 import Toggle from '../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
@@ -408,6 +409,10 @@ export default ({ timeframe, setTimeframe, showPriceModal }) => {
 };
 
 function ErrorScreen({ error, retry }) {
+  if (!window.location.host.startsWith('local')) {
+    Sentry.captureException(error);
+  }
+
   if (error === 'Error: Invalid Credentials') {
     return (
       <div className="mail-error">
@@ -439,13 +444,7 @@ function ErrorScreen({ error, retry }) {
         </p>
         <p>
           Think you're seeing this screen in error?{' '}
-          <TextLink
-            onClick={() =>
-              openChat("Hi! I've paid for a scan but I can't perform it!")
-            }
-          >
-            Let us know!
-          </TextLink>
+          <TextImportant>Chat with us below.</TextImportant>
         </p>
       </div>
     );
@@ -460,7 +459,7 @@ function ErrorScreen({ error, retry }) {
 
       <p>
         This is definitely our fault, so if it still doesn't work then please
-        bear with us and we'll try and get it sorted for you!
+        contact us and we'll try and get it sorted for you!
       </p>
       {process.env.NODE_ENV === 'development' ? (
         <pre className="error-details">{error}</pre>
@@ -864,13 +863,6 @@ function getDupeKey(from, to) {
   const { fromEmail } = parseFrom(from);
   const { fromEmail: toEmail } = parseFrom(to);
   return `${fromEmail}-${toEmail}`.toLowerCase();
-}
-
-function openChat(message = '') {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:open']);
-    window.$crisp.push(['set', 'message:text', [message]]);
-  }
 }
 
 let head;

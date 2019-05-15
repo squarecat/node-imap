@@ -75,6 +75,16 @@ export default ({ pageName, children }) => (
             </li>
             <li>
               <Link
+                to="/app/profile/history/activity"
+                styleName="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <MailIcon />
+                Activity history (debug)
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/app/profile/ignore"
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"

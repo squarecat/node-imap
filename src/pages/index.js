@@ -2,9 +2,11 @@ import 'isomorphic-fetch';
 import './home.scss';
 
 import { ENTERPRISE, USAGE_BASED, getPackage } from '../utils/prices';
+import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useRef, useState } from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
+import Browser from '../components/browser';
 import Colin from '../components/squarecat';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
@@ -21,20 +23,17 @@ import mailBoxImg from '../assets/mailbox.png';
 import numeral from 'numeral';
 import onePlace from '../assets/in-one-place.png';
 import packageImg from '../assets/package.png';
+import request from '../utils/request';
 import smallLogo from '../assets/envelope-logo.png';
 import spamMailImg from '../assets/spam-email.png';
 import stampImg from '../assets/stamp.png';
 import truckImg from '../assets/truck.png';
 import unsubGif from '../assets/unsub-btn.gif';
-import { useAsync } from '../utils/hooks';
-import { GoogleIcon, OutlookIcon } from '../components/icons';
-import Browser from '../components/browser';
 import unsubListGif from '../assets/unsubscribe-new.gif';
+import { useAsync } from '../utils/hooks';
 
 function getFeaturedNews() {
-  return fetch('/api/news')
-    .then(resp => resp.json())
-    .then(data => data.filter(d => d.featured));
+  return request('/api/news').then(data => data.filter(d => d.featured));
 }
 
 const IndexPage = ({ transitionStatus }) => {
@@ -427,7 +426,7 @@ const IndexPage = ({ transitionStatus }) => {
 };
 
 function fetchStats() {
-  return fetch('/api/stats').then(r => r.json());
+  return request('/api/stats');
 }
 
 // function Stats({ isLoading, data, isVisible }) {

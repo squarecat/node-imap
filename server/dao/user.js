@@ -41,6 +41,24 @@ const defaultProjection = {
 
 const COL_NAME = 'users';
 
+function getUserDefaults({ email }) {
+  return {
+    createdAt: isoDate(),
+    lastUpdatedAt: isoDate(),
+    hashedEmails: [hashEmail(email)],
+    referralCode: shortid.generate(),
+    referrals: [],
+    unsubscriptions: [],
+    scans: [],
+    paidScans: [],
+    activity: [],
+    preferences: {
+      hideUnsubscribedMails: false,
+      marketingConsent: true
+    }
+  };
+}
+
 export async function createUserFromPassword(data) {
   try {
     const col = await db().collection(COL_NAME);
@@ -48,20 +66,9 @@ export async function createUserFromPassword(data) {
     await col.insertOne({
       ...data,
       id,
-      hashedEmails: [hashEmail(data.email)],
-      password: hashPassword(data.password),
-      createdAt: isoDate(),
-      lastUpdatedAt: isoDate(),
-      referralCode: shortid.generate(),
-      referrals: [],
+      ...getUserDefaults({ email: data.email }),
       accounts: [],
-      unsubscriptions: [],
-      scans: [],
-      paidScans: [],
-      preferences: {
-        hideUnsubscribedMails: false,
-        marketingConsent: true
-      }
+      password: hashPassword(data.password)
     });
     return getUser(id);
   } catch (err) {
@@ -76,11 +83,7 @@ export async function createUser(data, provider) {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
       ...data,
-      createdAt: isoDate(),
-      lastUpdatedAt: isoDate(),
-      referralCode: shortid.generate(),
-      hashedEmails: [hashEmail(data.email)],
-      referrals: [],
+      ...getUserDefaults({ email: data.email }),
       accounts: [
         {
           ...provider,
@@ -90,14 +93,7 @@ export async function createUser(data, provider) {
             accessToken: encrypt(provider.keys.accessToken)
           }
         }
-      ],
-      unsubscriptions: [],
-      scans: [],
-      paidScans: [],
-      preferences: {
-        hideUnsubscribedMails: false,
-        marketingConsent: true
-      }
+      ]
     });
     const user = await getUser(data.id);
     return user;
@@ -345,6 +341,31 @@ export async function addPackage(id, packageId, unsubscribes) {
   } catch (err) {
     logger.error(
       `users-dao: error adding user ${id} package ${packageId} unsubs ${unsubscribes}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function incrementUnsubscribesRemaining(id, unsubscribes) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          lastUpdatedAt: isoDate()
+        },
+        $inc: {
+          'billing.unsubscribesRemaining': unsubscribes
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(
+      `users-dao: error incrementing user ${id} unsubscribes remaining by ${unsubscribes}`
     );
     logger.error(err);
     throw err;
@@ -806,6 +827,26 @@ export async function setMilestoneCompleted(userId, milestoneData) {
     // );
   } catch (err) {
     logger.error(`user-dao: failed to remove billing card for user ${userId}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function addActivity(id, activityData) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $push: {
+          activity: { ...activityData, timestamp: isoDate() }
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(`user-dao: failed to add activity for user ${id}`);
     logger.error(err);
     throw err;
   }

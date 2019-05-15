@@ -18,11 +18,12 @@ const revokeUrlForOutlook = 'https://account.live.com/consent/Manage';
 
 export default () => {
   const [
-    { primaryEmail, accounts = [] },
+    { accounts = [], primaryEmail, loginProvider },
     { update: updateUser, load: loadUser }
   ] = useUser(({ accounts, email, loginProvider }) => ({
     accounts,
-    primaryEmail: loginProvider === 'password' ? null : email
+    primaryEmail: email,
+    loginProvider
   }));
 
   const [showWarningModal, toggleWarningModal] = useState(false);
@@ -70,7 +71,12 @@ export default () => {
             subscription spam.
           </p>
         ) : (
-          <ConnectedAccountList accounts={accounts} />
+          <ConnectedAccountList
+            accounts={accounts}
+            primaryEmail={primaryEmail}
+            loginProvider={loginProvider}
+            onClickRemove={email => onClickRemoveAccount(email)}
+          />
         )}
       </div>
       <div styleName="accounts-section connect">
