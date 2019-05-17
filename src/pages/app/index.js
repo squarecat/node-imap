@@ -16,17 +16,23 @@ if (doScan) {
   history.replaceState({}, '', window.location.pathname);
 }
 
-export default function App({ location = {} } = {}) {
-  const { state } = location;
-  const rescan = state && state.rescan;
-
-  const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user] = useUser();
-  const { hasScanned } = user;
-  const isNewUser = !hasScanned && !timeframe;
-  const [showOnboardingModal, toggleOnboardingModal] = useState(isNewUser);
+export default function App() {
   return (
-    <Template onboarding={showOnboardingModal}>
+    <Template>
+      <Content />
+    </Template>
+  );
+}
+
+function Content() {
+  const [user] = useUser();
+  const { hasCompletedOnboarding } = user;
+
+  const [showOnboardingModal, toggleOnboardingModal] = useState(
+    !hasCompletedOnboarding
+  );
+  return (
+    <>
       <OnboardingModal
         shown={showOnboardingModal}
         onClose={() => toggleOnboardingModal(false)}
@@ -40,13 +46,10 @@ export default function App({ location = {} } = {}) {
       >
         {state => (
           <div className={`mail-list-content ${state}`}>
-            <MailList
-              timeframe={timeframe}
-              setTimeframe={tf => setTimeframe(tf)}
-            />
+            <MailList />
           </div>
         )}
       </Transition>
-    </Template>
+    </>
   );
 }
