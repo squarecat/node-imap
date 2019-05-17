@@ -14,7 +14,8 @@ import {
   removeUserScanReminder,
   removeUserTotpToken,
   updateUserPassword,
-  updateUserPreferences
+  updateUserPreferences,
+  setUserMilestoneCompleted
 } from '../services/user';
 
 import Joi from 'joi';
@@ -59,7 +60,8 @@ export default app => {
         lastUpdatedAt,
         accounts,
         billing,
-        activity = []
+        activity = [],
+        milestones = {}
       } = user;
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
@@ -82,9 +84,10 @@ export default app => {
         preferences,
         loginProvider,
         lastUpdatedAt,
-        accounts: accounts || [],
+        accounts,
         billing,
-        activity
+        activity,
+        milestones
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);
@@ -202,6 +205,27 @@ export default app => {
     } catch (err) {
       logger.error(
         `user-rest: error patching user preferences ${id} with op ${op}`
+      );
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.patch('/api/me/milestones', auth, async (req, res) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op, value: milestone } = body;
+    let updatedUser = user;
+    try {
+      if (op === 'update') {
+        updatedUser = await setUserMilestoneCompleted(id, milestone);
+      } else {
+        logger.error(`user-rest: milestones patch op not supported`);
+      }
+      res.send(updatedUser);
+    } catch (err) {
+      logger.error(
+        `user-rest: error patching user milestones ${id} with op ${op}`
       );
       logger.error(err);
       res.status(500).send(err);

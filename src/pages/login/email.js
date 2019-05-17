@@ -91,6 +91,7 @@ export default () => {
 
 async function getUserLoginStrategy(username) {
   const userDigest = new Hashes.SHA1().hex(username);
+  // TODO use utils/request instead
   const resp = await fetch(`/api/user/${userDigest}/provider`);
   if (resp.status === 404) {
     return null;

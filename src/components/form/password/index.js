@@ -74,6 +74,7 @@ async function fetchPwnedStatus(password) {
   const digestFive = passwordDigest.substring(0, 5).toUpperCase();
   const queryUrl = `${baseUrl}/${digestFive}`;
   const checkDigest = passwordDigest.substring(5, 41).toUpperCase();
+  // TODO replace with request or check HTTP response code
   const res = await fetch(queryUrl);
   const response = await res.text();
   const isPwned = response.search(checkDigest) > -1;

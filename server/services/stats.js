@@ -18,7 +18,8 @@ import {
   addUnsubscriptionByLink,
   addUser,
   addUserAccountDeactivated,
-  getStats
+  getStats,
+  addRewardGiven
 } from '../dao/stats';
 
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
@@ -77,8 +78,12 @@ export function addNewsletterUnsubscriptionToStats(count) {
   return addNewsletterUnsubscription(count);
 }
 export function addUnsubStatusToStats(status) {
-  addUnsubStatus(status);
+  return addUnsubStatus(status);
 }
+export function addRewardGivenToStats(unsubscriptions) {
+  return addRewardGiven(unsubscriptions);
+}
+
 export function getAllStats() {
   return getStats();
 }

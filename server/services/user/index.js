@@ -27,7 +27,8 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret
+  verifyTotpSecret,
+  setMilestoneCompleted
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -48,10 +49,10 @@ import { addReferralToReferrer } from '../referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
+import { updateMilestoneCompletions } from '../milestones';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
-import { setMilestoneCompleted } from '../milestones';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 
@@ -478,11 +479,15 @@ export async function removeUserAccount(user, email) {
     }
     await removeAccount(userId, accountId);
     // do not wait for this one as won't be a notification
-    addActivityForUser(userId, 'removeAdditionalAccount', {
-      id: accountId,
-      provider
-    });
-    return user;
+    const updatedUser = await addActivityForUser(
+      userId,
+      'removeAdditionalAccount',
+      {
+        id: accountId,
+        provider
+      }
+    );
+    return updatedUser;
   } catch (err) {
     logger.error(
       `user-service: failed to disconnect user account for user ${userId}`
@@ -561,9 +566,10 @@ export async function removeUserBillingCard(id) {
   }
 }
 
-export async function setUserMilestoneCompleted(user, { milestoneName }) {
+export async function setUserMilestoneCompleted(userId, milestoneName) {
   try {
-    return setMilestoneCompleted(user.id, { milestoneName });
+    await updateMilestoneCompletions(milestoneName);
+    return setMilestoneCompleted(userId, milestoneName);
   } catch (err) {
     throw err;
   }

@@ -13,6 +13,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { BillingModalContext } from './index';
 import Button from '../../btn';
 import { LockIcon } from '../../icons';
+import request from '../../../utils/request';
 import { useAsync } from '../../../utils/hooks';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -312,7 +313,7 @@ function CheckoutForm({ stripe, onClickClose, onPurchaseSuccess }) {
 export default injectStripe(CheckoutForm);
 
 function fetchCountries() {
-  return fetch('/api/countries.json').then(resp => resp.json());
+  return request('/api/countries.json');
 }
 
 async function confirmPayment({
@@ -330,7 +331,7 @@ async function confirmPayment({
   } else {
     url = `/api/checkout/new/${productId}`;
   }
-  const resp = await fetch(url, {
+  return request(url, {
     method: 'POST',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -339,7 +340,6 @@ async function confirmPayment({
     },
     body: JSON.stringify({ payment_method_id: id, name, address, saveCard })
   });
-  return resp.json();
 }
 
 async function confirmIntent({ paymentIntent, productId, coupon }) {
@@ -349,7 +349,7 @@ async function confirmIntent({ paymentIntent, productId, coupon }) {
   } else {
     url = `/api/checkout/new/${productId}`;
   }
-  const resp = await fetch(url, {
+  return request(url, {
     method: 'POST',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -358,5 +358,4 @@ async function confirmIntent({ paymentIntent, productId, coupon }) {
     },
     body: JSON.stringify({ payment_intent_id: paymentIntent.id })
   });
-  return resp.json();
 }

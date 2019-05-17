@@ -1,11 +1,14 @@
 import '../modal.module.scss';
+
 import React, { useContext } from 'react';
-import CardDetails from './card-details';
+
 import { BillingModalContext } from './index';
-import { injectStripe } from 'react-stripe-elements';
-import { LockIcon } from '../../icons';
-import { FormNotification } from '../../form';
 import Button from '../../btn';
+import CardDetails from './card-details';
+import { FormNotification } from '../../form';
+import { LockIcon } from '../../icons';
+import { injectStripe } from 'react-stripe-elements';
+import request from '../../../utils/request';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
@@ -133,7 +136,7 @@ async function confirmPaymentExistingCard({ productId, coupon }) {
   } else {
     url = `/api/checkout/${productId}`;
   }
-  const resp = await fetch(url, {
+  return request(url, {
     method: 'POST',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -141,7 +144,6 @@ async function confirmPaymentExistingCard({ productId, coupon }) {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
-  return resp.json();
 }
 // TODO is duplicate of checkout form
 async function confirmIntent({ paymentIntent, productId, coupon }) {
@@ -151,7 +153,7 @@ async function confirmIntent({ paymentIntent, productId, coupon }) {
   } else {
     url = `/api/checkout/new/${productId}`;
   }
-  const resp = await fetch(url, {
+  return request(url, {
     method: 'POST',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -160,5 +162,4 @@ async function confirmIntent({ paymentIntent, productId, coupon }) {
     },
     body: JSON.stringify({ payment_intent_id: paymentIntent.id })
   });
-  return resp.json();
 }

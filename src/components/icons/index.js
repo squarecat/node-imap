@@ -20,12 +20,13 @@ export function Refresh({ width = 32, height = 32, ...visProps }) {
     </svg>
   );
 }
-export const HeartIcon = visProps => (
+
+export const HeartIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('heart', visProps)}
     viewBox="0 0 32 32"
-    width="15"
-    height="15"
+    width={width}
+    height={height}
     stroke="currentcolor"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -61,15 +62,15 @@ export function Gift({ width = 32, height = 32, amount, ...visProps }) {
   );
 }
 
-export const Arrow = ({ direction, ...visProps }) => {
+export const Arrow = ({ width = 15, height = 15, direction, ...visProps }) => {
   if (direction === 'right') {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className={getClasses('arrows', visProps)}
         viewBox="0 0 32 32"
-        width="15"
-        height="15"
+        width={width}
+        height={height}
         fill="none"
         stroke="currentcolor"
         strokeLinecap="round"
@@ -83,12 +84,12 @@ export const Arrow = ({ direction, ...visProps }) => {
   throw 'not implemented';
 };
 
-export const SettingsIcon = visProps => (
+export const SettingsIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('settings', visProps)}
     viewBox="0 0 32 32"
-    width="15"
-    height="15"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -100,12 +101,12 @@ export const SettingsIcon = visProps => (
   </svg>
 );
 
-export const MailIcon = visProps => (
+export const MailIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('mail', visProps)}
     viewBox="0 0 32 32"
-    width="15"
-    height="15"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -116,12 +117,12 @@ export const MailIcon = visProps => (
   </svg>
 );
 
-export const CreditCardIcon = visProps => (
+export const CreditCardIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('card', visProps)}
     viewBox="0 0 32 32"
-    width="15"
-    height="15"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -133,12 +134,12 @@ export const CreditCardIcon = visProps => (
   </svg>
 );
 
-export const ExternalIcon = visProps => (
+export const ExternalIcon = ({ width = 14, height = 14, ...visProps }) => (
   <svg
     className={getClasses('external', visProps)}
     viewBox="0 0 32 32"
-    width="14"
-    height="14"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -149,7 +150,7 @@ export const ExternalIcon = visProps => (
   </svg>
 );
 
-export const TwitterIcon = ({ width = '20', height = '20', ...visProps }) => (
+export const TwitterIcon = ({ width = 20, height = 20, ...visProps }) => (
   <svg
     className={getClasses('twitter', visProps)}
     viewBox="0 0 64 64"
@@ -164,12 +165,12 @@ export const TwitterIcon = ({ width = '20', height = '20', ...visProps }) => (
   </svg>
 );
 
-export const ClockIcon = visProps => (
+export const ClockIcon = ({ width = 14, height = 14, ...visProps }) => (
   <svg
     className={getClasses('clock', visProps)}
     viewBox="0 0 32 32"
-    width="14"
-    height="14"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -181,12 +182,12 @@ export const ClockIcon = visProps => (
   </svg>
 );
 
-export const ReloadIcon = visProps => (
+export const ReloadIcon = ({ width = 14, height = 14, ...visProps }) => (
   <svg
     className={getClasses('reload', visProps)}
     viewBox="0 0 32 32"
-    width="14"
-    height="14"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -197,12 +198,12 @@ export const ReloadIcon = visProps => (
   </svg>
 );
 
-export const CloseIcon = visProps => (
+export const CloseIcon = ({ width = 16, height = 16, ...visProps }) => (
   <svg
     className={getClasses('close', visProps)}
     viewBox="0 0 32 32"
-    width="16"
-    height="16"
+    width={width}
+    height={height}
     fill="none"
     stroke="currentcolor"
     strokeLinecap="round"
@@ -212,7 +213,7 @@ export const CloseIcon = visProps => (
   </svg>
 );
 
-export const LockIcon = ({ width = '12', height = '12', ...visProps }) => (
+export const LockIcon = ({ width = 12, height = 12, ...visProps }) => (
   <svg
     className={getClasses('lock', visProps)}
     viewBox="0 0 32 32"
@@ -229,7 +230,7 @@ export const LockIcon = ({ width = '12', height = '12', ...visProps }) => (
   </svg>
 );
 
-export const UserIcon = ({ width = '15', height = '15', ...visProps }) => (
+export const UserIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('user', visProps)}
     viewBox="0 0 32 32"
@@ -245,7 +246,7 @@ export const UserIcon = ({ width = '15', height = '15', ...visProps }) => (
   </svg>
 );
 
-export const LinkIcon = ({ width = '15', height = '15', ...visProps }) => (
+export const LinkIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('link', visProps)}
     viewBox="0 0 32 32"
@@ -261,7 +262,7 @@ export const LinkIcon = ({ width = '15', height = '15', ...visProps }) => (
   </svg>
 );
 
-export const StarIcon = ({ width = '32', height = '32', ...visProps }) => (
+export const StarIcon = ({ width = 32, height = 32, ...visProps }) => (
   <svg
     styleName={getClasses('star', visProps)}
     viewBox="0 0 32 32"
@@ -313,15 +314,16 @@ export function GoogleIcon({ width = '34', height = '34' }) {
 }
 
 function getClasses(className, visProps = {}) {
+  const additional = Object.keys(visProps).reduce((out, p) => {
+    const hasStyle = !!styles[p];
+    if (hasStyle) {
+      return { ...out, [styles[p]]: visProps[p] };
+    }
+    return out;
+  }, {});
   const classes = cx(styles['icon'], {
     [styles[className]]: true,
-    ...Object.keys(visProps).reduce((out, p) => {
-      const hasStyle = !!styles[p];
-      if (hasStyle) {
-        return { ...out, [styles[p]]: visProps[p] };
-      }
-      return out;
-    }, {})
+    ...additional
   });
   return classes;
 }

@@ -23,6 +23,7 @@ export default ({
     e.preventDefault();
     const { password, email } = state;
     dispatch({ type: 'set-loading', data: true });
+    // TODO use request instead
     const resp = await fetch(submitAction, {
       method: 'POST',
       cache: 'no-cache',

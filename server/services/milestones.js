@@ -1,18 +1,22 @@
 import { get, setCompleted } from '../dao/milestones';
 
-import { addRewardGiven } from '../dao/stats';
-import { setUserMilestoneCompleted } from './user';
-
 export function getMilestones(name) {
   return get(name);
 }
 
-export async function setMilestoneCompleted(name, user) {
+export async function getMilestone(name) {
   try {
-    const { unsubscriptions } = await get(name);
-    await setCompleted(name);
-    await setUserMilestoneCompleted(user, { milestoneName: name });
-    return addRewardGiven(unsubscriptions);
+    const milestone = await get(name);
+    if (!milestone) return null;
+    return milestone[name];
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateMilestoneCompletions(name) {
+  try {
+    return setCompleted(name);
   } catch (err) {
     throw err;
   }

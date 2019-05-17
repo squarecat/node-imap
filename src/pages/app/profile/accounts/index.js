@@ -10,6 +10,7 @@ import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
 import { fetchLoggedInUser } from '../../../../utils/auth';
+import request from '../../../../utils/request';
 import useUser from '../../../../utils/hooks/use-user';
 
 const revokeUrlForGoogle =
@@ -42,12 +43,19 @@ export default () => {
       ...removingAccount,
       [email]: true
     });
-    const updatedUser = await removeAccount(email);
-    updateUser(updatedUser);
-    toggleRemovingAccount({
-      ...removingAccount,
-      [email]: false
-    });
+    try {
+      const updatedUser = await removeAccount(email);
+      updateUser(updatedUser);
+    } catch (err) {
+      setError(
+        `Something went wrong removing your account. Please try again or send us a message.`
+      );
+    } finally {
+      toggleRemovingAccount({
+        ...removingAccount,
+        [email]: false
+      });
+    }
   };
 
   const onConnectSuccess = async () => {
@@ -57,7 +65,9 @@ export default () => {
   };
 
   const onConnectError = () => {
-    setError(true);
+    setError(
+      `Something went wrong connecting your account. Please try again or send us a message.`
+    );
   };
 
   return (
@@ -91,12 +101,7 @@ export default () => {
           onSuccess={() => onConnectSuccess()}
           onError={() => onConnectError()}
         />
-        {error ? (
-          <FormNotification error>
-            Something went wrong connecting your account. Please try again or
-            send us a message.
-          </FormNotification>
-        ) : null}
+        {error ? <FormNotification error>{error}</FormNotification> : null}
       </div>
       {showWarningModal ? (
         <WarningModal
@@ -114,7 +119,7 @@ export default () => {
 };
 
 async function removeAccount(email) {
-  const resp = await fetch('/api/me', {
+  return request('/api/me', {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -123,7 +128,6 @@ async function removeAccount(email) {
     },
     body: JSON.stringify({ op: 'remove-account', value: email })
   });
-  return resp.json();
 }
 
 function modalContent({ email, provider }) {

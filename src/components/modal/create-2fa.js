@@ -6,6 +6,7 @@ import Button from '../btn';
 import ModalClose from './modal-close';
 import TwoFactorInput from '../2fa';
 import { useAsync } from 'react-use';
+import request from '../../utils/request';
 
 export default ({ onClose }) => {
   const [isShown, setShown] = useState(false);
@@ -93,6 +94,5 @@ export default ({ onClose }) => {
 };
 
 async function fetchTotpData() {
-  const res = await fetch('/api/user/me/2fa/setup');
-  return res.json();
+  return request('/api/user/me/2fa/setup');
 }
