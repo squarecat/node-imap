@@ -31,7 +31,7 @@ import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 import { updateOccurances } from '../dao/occurrences';
 
-export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
+export async function* fetchMail({ userId, ignore = false }) {
   const user = await getUserById(userId);
   const { accounts } = user;
   try {
@@ -61,7 +61,7 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
 export async function* fetchMailByAccount({
   user,
   account,
-  timeframe = '3d',
+  timeframe = '1m',
   ignore = false
 }) {
   const { provider } = account;

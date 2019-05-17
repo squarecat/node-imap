@@ -77,6 +77,7 @@ export const FormSelect = ({
   required,
   compact,
   smaller,
+  pill,
   basic,
   validation = () => '',
   onChange = () => {},
@@ -90,7 +91,8 @@ export const FormSelect = ({
   const classes = cx('form-input form-select-dropdown', {
     'input-compactt': compact,
     'input-basic': basic,
-    'input-smaller': smaller
+    'input-smaller': smaller,
+    pill: pill
   });
   return (
     <select

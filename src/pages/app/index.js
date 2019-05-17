@@ -21,7 +21,7 @@ export default function App({ location = {} } = {}) {
   const rescan = state && state.rescan;
 
   const [timeframe, setTimeframe] = useState(doScan || rescan);
-  const [user, { setLastPaidScanType }] = useUser();
+  const [user] = useUser();
   const { hasScanned } = user;
   const isNewUser = !hasScanned && !timeframe;
   const [showOnboardingModal, toggleOnboardingModal] = useState(isNewUser);
