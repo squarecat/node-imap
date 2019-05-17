@@ -36,7 +36,8 @@ const defaultProjection = {
   loginProvider: 1,
   lastUpdatedAt: 1,
   accounts: 1,
-  billing: 1
+  billing: 1,
+  milestones: 1
 };
 
 const COL_NAME = 'users';
@@ -55,7 +56,8 @@ function getUserDefaults({ email }) {
     preferences: {
       hideUnsubscribedMails: false,
       marketingConsent: true
-    }
+    },
+    milestones: {}
   };
 }
 
@@ -797,7 +799,7 @@ export async function updatePassword(id, newPassword) {
 export async function removeBillingCard(userId) {
   try {
     const col = await db().collection(COL_NAME);
-    return col.updateOne(
+    await col.updateOne(
       { id: userId },
       {
         $unset: {
@@ -805,6 +807,8 @@ export async function removeBillingCard(userId) {
         }
       }
     );
+    const user = await getUser(userId);
+    return user;
   } catch (err) {
     logger.error(`user-dao: failed to remove billing card for user ${userId}`);
     logger.error(err);
@@ -812,19 +816,19 @@ export async function removeBillingCard(userId) {
   }
 }
 
-export async function setMilestoneCompleted(userId, milestoneData) {
-  const { name, unsubscriptions } = milestoneData;
+export async function setMilestoneCompleted(userId, milestoneName) {
   try {
     const col = await db().collection(COL_NAME);
-    logger.error('not yet implemented');
-    // return col.updateOne(
-    //   { id: userId },
-    //   {
-    //     $set: {
-    //       `milestones.`: 1
-    //     }
-    //   }
-    // );
+    await col.updateOne(
+      { id: userId },
+      {
+        $set: {
+          [`milestones.${milestoneName}`]: 1
+        }
+      }
+    );
+    const user = await getUser(userId);
+    return user;
   } catch (err) {
     logger.error(`user-dao: failed to remove billing card for user ${userId}`);
     logger.error(err);

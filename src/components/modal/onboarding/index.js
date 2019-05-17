@@ -13,10 +13,11 @@ import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
 import useUser from '../../../utils/hooks/use-user';
+import request from '../../../utils/request';
 
 export default ({ shown, onClose }) => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);
-  const [accounts] = useUser(u => u.accounts);
+  const [accounts, { setMilestoneCompleted }] = useUser(u => u.accounts);
   useEffect(
     () => {
       if (state.step === 'accounts') {
@@ -25,6 +26,17 @@ export default ({ shown, onClose }) => {
     },
     [state.step, accounts.length]
   );
+
+  const onComplete = async () => {
+    try {
+      setMilestoneCompleted('completedOnboarding');
+      updateMilestone('completedOnboarding');
+      return false;
+    } catch (err) {
+      console.error('failed to complete onboarding');
+    }
+  };
+
   return (
     <Modal
       shown={shown}
@@ -39,7 +51,7 @@ export default ({ shown, onClose }) => {
           nextLabel={state.nextLabel}
           onNext={() => {
             if (state.step === 'finish') {
-              return false;
+              return onComplete();
             }
             return dispatch({ type: 'next-step' });
           }}
@@ -61,7 +73,7 @@ function Content({ step, accounts }) {
     content = (
       <>
         <h2>Welcome to Leave Me Alone!</h2>
-        <TextLead prose> Let's get started!</TextLead>
+        <TextLead prose> Let's get started</TextLead>
         <p>
           <strong>Leave Me Alone</strong> connects to your email inboxes and
           scans for all your subscription mail. We'll show you which mail is the
@@ -144,4 +156,16 @@ function Content({ step, accounts }) {
       }}
     </Transition>
   );
+}
+
+export async function updateMilestone(milestone) {
+  return request('/api/me/milestones', {
+    method: 'PATCH',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ op: 'update', value: milestone })
+  });
 }

@@ -1,9 +1,9 @@
 import { addActivity, incrementUnsubscribesRemaining } from '../../dao/user';
 
-import _get from 'lodash.get';
-import { getMilestones } from '../milestones';
-import { getUserById } from './index';
+import { getMilestone } from '../milestones';
+import { getUserById, setUserMilestoneCompleted } from './index';
 import logger from '../../utils/logger';
+import { addRewardGivenToStats } from '../../services/stats';
 
 export async function addActivityForUser(userId, name, data = {}) {
   try {
@@ -14,8 +14,7 @@ export async function addActivityForUser(userId, name, data = {}) {
       data
     };
 
-    const milestones = await getMilestones(name);
-    const milestone = _get(milestones, name, {});
+    const milestone = await getMilestone(name);
 
     // TODO improve nested IF statements
     if (milestone && milestone.hasReward) {
@@ -44,7 +43,10 @@ export async function addActivityForUser(userId, name, data = {}) {
 
         // give the user the unsubs
         await incrementUnsubscribesRemaining(userId, unsubscriptions);
+        addRewardGivenToStats(unsubscriptions);
       }
+
+      await setUserMilestoneCompleted(userId, name);
     }
 
     // add the activity to the array
