@@ -55,7 +55,6 @@ function mapMail(mail) {
       id,
       snippet,
       date: +internalDate,
-      googleDate: +internalDate,
       from: getHeader(payload, 'from') || '',
       to: getHeader(payload, 'to') || '',
       subject: getHeader(payload, 'subject'),

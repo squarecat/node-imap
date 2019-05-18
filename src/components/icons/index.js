@@ -2,6 +2,25 @@ import React from 'react';
 import cx from 'classnames';
 import styles from './icons.module.scss';
 
+export function Refresh({ width = 32, height = 32, ...visProps }) {
+  return (
+    <svg
+      className={getClasses('refresh', visProps)}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      width={width}
+      height={height}
+      fill="none"
+      stroke="currentcolor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="3"
+    >
+      <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
+    </svg>
+  );
+}
+
 export const HeartIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('heart', visProps)}

@@ -280,14 +280,13 @@ export async function checkAuthToken(userId, token) {
   }
 }
 
-// google date is the legacy version of the date object
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, date, googleDate } = mail;
+  const { to, from, id, date } = mail;
   return addUnsubscription(userId, {
     to,
     from,
     id,
-    date: date || googleDate,
+    date,
     ...rest
   });
 }

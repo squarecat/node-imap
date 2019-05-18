@@ -41,6 +41,18 @@
     box-shadow: none;
   }
 }
+.pill {
+  line-height: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 0;
+  background: $color-red-light;
+  width: auto;
+  max-width: 160px;
+  font-size: 12px;
+  font-weight: bolder;
+  padding: 0 10px;
+}
 
 .container {
   border: 1px solid $color-input-border;

@@ -27,7 +27,7 @@ export default ({ pageName, children }) => {
           onClickReferral={() => toggleReferrerModal(true)}
         />
         <ErrorBoundary>
-          <div styleName="app-content">{children}</div>
+          <div styleName="app-content">{loaded ? children : null}</div>
         </ErrorBoundary>
         {showReferrerModal ? (
           <ReferralModal onClose={() => toggleReferrerModal(false)} />

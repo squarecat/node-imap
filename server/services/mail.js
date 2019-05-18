@@ -31,20 +31,49 @@ import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 import { updateOccurances } from '../dao/occurrences';
 
-// todo convert to generator?
-export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
+export async function* fetchMail({ userId, ignore = false }) {
   const user = await getUserById(userId);
-  const scannedAt = Date.now();
-  const { provider } = user;
+  const { accounts } = user;
+  try {
+    const iterators = await Promise.all(
+      accounts.map(account => fetchMailByAccount({ account, user }))
+    );
+    for (let iter of iterators) {
+      let next = await iter.next();
+      while (!next.done) {
+        const { value } = next;
+        yield value;
+        next = await iter.next();
+      }
+      const { scanData, occurrences, dupeSenders } = next.value;
+    }
+    // addOrUpdateOccurrences(userId, dupeSenders, timeframe);
+    // addScanToUser(user.id, scanData);
+    return {
+      occurrences: []
+    };
+  } catch (err) {
+    console.error('mail-service: failed to fetch mail for user', user.id);
+    throw err;
+  }
+}
+
+export async function* fetchMailByAccount({
+  user,
+  account,
+  timeframe = '1m',
+  ignore = false
+}) {
+  const { provider } = account;
   let it;
   try {
     if (provider === 'google') {
       it = await fetchMailFromGmail(
-        { user, timeframe },
+        { user, account, timeframe },
         { strategy: 'api', batch: true }
       );
     } else if (provider === 'outlook') {
-      it = await fetchMailFromOutlook({ user, timeframe });
+      it = await fetchMailFromOutlook({ user, account, timeframe });
     } else {
       throw new Error('mail-service unknown provider');
     }
@@ -64,29 +93,21 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
     } = next.value;
 
     const scanData = {
-      scannedAt,
       timeframe,
       totalEmails: totalMail,
       totalUnsubscribableEmails: totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail
     };
     if (!ignore) {
-      addScanToStats();
       addNumberofEmailsToStats({
         totalEmails: totalMail,
         totalUnsubscribableEmails: totalUnsubscribableMail,
         totalPreviouslyUnsubscribedEmails: totalPreviouslyUnsubscribedMail
       });
-      addScanToUser(user.id, scanData);
-      if (timeframe !== '3d') {
-        updatePaidScanForUser(userId, timeframe);
-      }
     }
-    addOrUpdateOccurrences(userId, dupeSenders, timeframe);
 
-    return { ...scanData, occurrences };
+    return { scanData, occurrences, dupeSenders };
   } catch (err) {
-    console.error('mail-service: failed to fetch mail for user', user.id);
     console.error(err);
     throw err;
   }

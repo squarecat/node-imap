@@ -1,21 +1,19 @@
+import './item.module.scss';
+
+import { MailItemContext, MailItemProvider } from './provider';
+import React, { useContext } from 'react';
+
 import IgnoreIcon from '../../../../components/ignore-icon';
-import React from 'react';
 import Toggle from '../../../../components/toggle';
 import Tooltip from 'rc-tooltip';
 import format from 'date-fns/format';
-import { tfToStringShort } from '../../../../utils/scans';
 import { toggleFromIgnoreList } from '../../profile/ignore';
 import useUser from '../../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM YYYY HH:mm';
 
-export default ({
-  mail: m,
-  onUnsubscribe,
-  setUnsubModal,
-  timeframe,
-  style
-}) => {
+function MailItem({ onUnsubscribe = () => {}, setUnsubModal = () => {} }) {
+  const m = useContext(MailItemContext);
   const [user, { setIgnoredSenderList }] = useUser();
   const ignoredSenderList = user.ignoredSenderList || [];
   const isSubscribed = !!m.subscribed;
@@ -34,15 +32,12 @@ export default ({
   };
 
   return (
-    <div
-      style={style}
-      className={`mail-list-item ${m.isLoading ? 'loading' : ''}`}
-    >
-      <div className="mail-item">
-        <div className="avatar" />
-        <div className="from">
-          <div className="from-name-container">
-            <span className="from-name">
+    <div styleName="mail-item">
+      <div styleName="mail-content">
+        <div styleName="avatar" />
+        <div styleName="from">
+          <div styleName="from-name-container">
+            <span styleName="from-name">
               <Tooltip
                 placement="top"
                 trigger={['hover']}
@@ -73,16 +68,16 @@ export default ({
                 overlay={
                   <span>
                     You received {m.occurrences} emails from this sender in the
-                    past {tfToStringShort[timeframe]}
+                    past 6 months
                   </span>
                 }
               >
-                <span className="occurrences">x{m.occurrences}</span>
+                <span styleName="occurrences">x{m.occurrences}</span>
               </Tooltip>
             ) : null}
           </div>
-          <span className="from-email">{fromEmail}</span>
-          <span className="from-date">
+          <span styleName="from-email">{fromEmail}</span>
+          <span styleName="from-date">
             {format(new Date(m.date), mailDateFormat)}
           </span>
           {m.isTrash ? (
@@ -94,7 +89,7 @@ export default ({
               destroyTooltipOnHide={true}
               overlay={<span>This email was in your trash folder</span>}
             >
-              <span className="trash">trash</span>
+              <span styleName="trash">trash</span>
             </Tooltip>
           ) : null}
           {m.isSpam ? (
@@ -106,12 +101,12 @@ export default ({
               destroyTooltipOnHide={true}
               overlay={<span>This email was in your spam folder</span>}
             >
-              <span className="trash">spam</span>
+              <span styleName="trash">spam</span>
             </Tooltip>
           ) : null}
         </div>
-        <div className="subject">{m.subject}</div>
-        <div className="actions">
+        <div styleName="subject">{m.subject}</div>
+        <div styleName="actions">
           {m.estimatedSuccess !== false || m.resolved ? (
             <Toggle
               status={isSubscribed}
@@ -122,7 +117,7 @@ export default ({
           ) : (
             <svg
               onClick={() => setUnsubModal(m, true)}
-              className="failed-to-unsub-icon"
+              styleName="failed-to-unsub-icon"
               viewBox="0 0 32 32"
               width="20"
               height="20"
@@ -136,17 +131,17 @@ export default ({
             </svg>
           )}
           {!isSubscribed ? (
-            <a className="status" onClick={() => setUnsubModal(m)}>
+            <a styleName="status" onClick={() => setUnsubModal(m)}>
               See details
             </a>
           ) : (
-            <span className="status subscribed">Subscribed</span>
+            <span styleName="status subscribed">Subscribed</span>
           )}
         </div>
       </div>
     </div>
   );
-};
+}
 
 function parseFrom(str = '') {
   if (!str) {
@@ -168,3 +163,11 @@ function parseFrom(str = '') {
   }
   return { fromName, fromEmail };
 }
+
+export default ({ id, ...props }) => {
+  return (
+    <MailItemProvider id={id}>
+      <MailItem {...props} />
+    </MailItemProvider>
+  );
+};

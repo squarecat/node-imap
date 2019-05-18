@@ -7,7 +7,8 @@ export default globalReducer(
       return {
         ...user,
         loaded: true,
-        unsubCount: user.unsubscriptions.length || 0
+        unsubCount: user.unsubscriptions.length || 0,
+        hasCompletedOnboarding: user.milestones.completedOnboarding
       };
     },
     update: (state, user) => {

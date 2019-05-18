@@ -1,43 +1,82 @@
 export const initialState = {
-  mail: []
+  mail: [],
+  page: 0,
+  count: 0,
+  orderBy: 'date',
+  perPage: 20,
+  filterValues: {
+    recipients: []
+  },
+  activeFilters: []
 };
 
-// mail reducer syncs everything with indexdb
+// mail reducer that represents the internal state
+// of indexdb database
 const mailReducer = (state = initialState, action) => {
   let newState;
   switch (action.type) {
-    case 'intial-load': {
-      newState = {
-        mail: action.data
+    case 'remove-active-filters': {
+      return {
+        ...state,
+        activeFilters: []
       };
-      break;
+    }
+    case 'remove-active-filter': {
+      return {
+        ...state,
+        activeFilters: state.activeFilters.filter(
+          f => f.field !== action.data.field
+        )
+      };
+    }
+    case 'set-active-filter': {
+      return {
+        ...state,
+        activeFilters: [
+          ...state.activeFilters.filter(f => f.field !== action.data.field),
+          action.data
+        ]
+      };
+    }
+    case 'set-filter-values': {
+      const { name, value } = action.data;
+      return {
+        ...state,
+        filterValues: {
+          ...state.filterValues,
+          [name]: value
+        }
+      };
+    }
+    case 'set-count': {
+      return {
+        ...state,
+        count: action.data
+      };
+    }
+    case 'set-page': {
+      return {
+        ...state,
+        page: action.data
+      };
+    }
+    case 'next-page': {
+      return {
+        ...state,
+        page: state.page + 1
+      };
+    }
+    case 'prev-page': {
+      return {
+        ...state,
+        page: state.page - 1
+      };
     }
     default:
       newState = state;
   }
   return newState;
 };
-
-function parseFrom(str = '') {
-  if (!str) {
-    return { fromName: '', fromEmail: '' };
-  }
-  let fromName;
-  let fromEmail;
-  if (str.match(/^.*<.*>/)) {
-    const [, name, email] = /^(.*)(<.*>)/.exec(str);
-    fromName = name;
-    fromEmail = email;
-  } else if (str.match(/<?.*@/)) {
-    const [, name] = /<?(.*)@/.exec(str);
-    fromName = name || str;
-    fromEmail = str;
-  } else {
-    fromName = str;
-    fromEmail = str;
-  }
-  return { fromName, fromEmail };
-}
 
 function getDupeKey(from, to) {
   const { fromEmail } = parseFrom(from);
