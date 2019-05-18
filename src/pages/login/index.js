@@ -263,7 +263,7 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
                 <span styleName="provider-label">{state.existingProvider}</span>
               </p>
               <div styleName="existing-provider-btn">
-                <AuthButton provider={state.existingProvider} />
+                <AuthButton provider={state.existingProvider} action={action} />
               </div>
               <div styleName="signup-buttons">
                 <button

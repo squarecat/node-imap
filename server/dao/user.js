@@ -645,7 +645,7 @@ export async function updateUnsubStatus(
   }
 }
 
-export async function removeAccount(userId, accountId) {
+export async function removeAccount(userId, { accountId, email }) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -655,7 +655,8 @@ export async function removeAccount(userId, accountId) {
           lastUpdatedAt: isoDate()
         },
         $pull: {
-          accounts: { id: accountId }
+          accounts: { id: accountId },
+          hashedEmails: hashEmail(email)
         }
       }
     );
@@ -753,11 +754,11 @@ export async function removeTotpSecret(userId) {
   }
 }
 
-export async function getLoginProvider(email) {
+export async function getLoginProvider(hashedEmail) {
   try {
     const col = await db().collection(COL_NAME);
     const user = await col.findOne(
-      { hashedEmails: email },
+      { hashedEmails: hashedEmail },
       {
         loginProvider: 1,
         email: 1,
@@ -765,7 +766,7 @@ export async function getLoginProvider(email) {
       }
     );
     if (!user) return null;
-    const isLoginEmail = hashEmail(user.email) === email;
+    const isLoginEmail = hashEmail(user.email) === hashedEmail;
     return isLoginEmail ? user.loginProvider : 'unknown';
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');

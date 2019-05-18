@@ -26,20 +26,16 @@ const activityEnum = {
     `You purchased your first package using a referral link! You have both earned ${
       reward.unsubscriptions
     } unsubscribes`,
-  connectedFirstAccount: ({ reward, data }) => {
-    const text = `You connected your first account (${_capitalize(
-      data.provider
-    )}).`;
+  connectedFirstAccount: ({ reward, data }, user) => {
+    const text = accountConnection({ reward, data }, user);
     return reward ? rewardText(text, reward) : text;
   },
-  connectedAdditionalAccount: ({ reward, data }) => {
-    const text = `You connected another account (${_capitalize(
-      data.provider
-    )}).`;
+  connectedAdditionalAccount: ({ reward, data }, user) => {
+    const text = accountConnection({ reward, data }, user);
     return reward ? rewardText(text, reward) : text;
   },
   addedTwoFactorAuth: ({ reward }) => {
-    const text = `You made your account more secure with 2-factor auth`;
+    const text = `You made your account more secure with two-factor authentication.`;
     return reward ? rewardText(text, reward) : text;
   },
 
@@ -50,16 +46,28 @@ const activityEnum = {
     `You removed a connected account (${_capitalize(data.provider)}).`
 };
 
-function rewardText(text, { unsubscriptions }) {
-  return `${text} You have earned ${unsubscriptions} unsubscribes`;
-}
-
-export function parseActivity(activity) {
+export function parseActivity(activity, user) {
   const { type } = activity;
   const activityFn = activityEnum[type];
   if (!activityFn) {
     console.error(`No matching activity for type ${type}`, { type });
     return _capitalize(_startCase(type));
   }
-  return activityFn(activity);
+  return activityFn(activity, user);
+}
+
+function rewardText(text, { unsubscriptions }) {
+  return `${text} You have earned ${unsubscriptions} unsubscribes.`;
+}
+
+function accountConnection({ reward, data }, user) {
+  const provider = _capitalize(data.provider);
+  const typeText =
+    reward.type === 'connectedFirstAccount' ? 'your first' : 'another';
+  let text = `You connected ${typeText} account`;
+  if (!user && !user.accounts) {
+    return `${text} (${provider}).`;
+  }
+  const email = user.accounts.find(a => a.id === data.id).email;
+  return `${text} (${provider} - ${email}).`;
 }

@@ -28,6 +28,8 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyTotpSecret,
+  addActivity,
+  incrementUnsubscribesRemaining,
   setMilestoneCompleted
 } from '../../dao/user';
 import {
@@ -36,20 +38,20 @@ import {
   addReminderRequestToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
-  addUserToStats
+  addUserToStats,
+  addRewardGivenToStats
 } from '../stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
 
-import { addActivityForUser } from './activity';
 import addMonths from 'date-fns/add_months';
-import { addReferralToReferrer } from '../referral';
+// import { addReferralToReferrer } from '../referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
-import { updateMilestoneCompletions } from '../milestones';
+import { getMilestone, updateMilestoneCompletions } from '../milestones';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
@@ -80,15 +82,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
   try {
     let user = await getUser(id);
     if (!user) {
-      let referredBy = null;
-      if (referralCode) {
-        const { id: referralUserId } = await getUserByReferralCode(
-          referralCode
-        );
-        await addReferralToReferrer(referralUserId, { userId: id });
-        addReferralSignupToStats();
-        referredBy = referralUserId;
-      }
+      const referredBy = await getReferrer(referralCode);
       user = await createUser(
         {
           id,
@@ -106,6 +100,9 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           keys
         }
       );
+      if (referredBy) {
+        await addReferralActivity({ userId: id, referralUserId: referredBy });
+      }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
       // signing in with a provider counts as connecting the first account
@@ -174,15 +171,15 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
 
       let activityName;
       if (user.loginProvider === 'password') {
-        // if logged in with password the first account will be 0 in the accounts array
-        activityName = user.accounts.length
-          ? 'connectedAdditionalAccount'
-          : 'connectedFirstAccount';
+        // if logged in with password the first account will be 1 in the accounts array
+        activityName =
+          user.accounts.length === 1
+            ? 'connectedFirstAccount'
+            : 'connectedAdditionalAccount';
       } else {
         // otherwise we already know this is a new account being connected
         activityName = 'connectedAdditionalAccount';
       }
-
       user = await addActivityForUser(userId, activityName, {
         id,
         provider
@@ -203,15 +200,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
   let user;
   try {
     if (!id) {
-      let referredBy = null;
-      if (referralCode) {
-        const { id: referralUserId } = await getUserByReferralCode(
-          referralCode
-        );
-        await addReferralToReferrer(referralUserId, { userId: id });
-        addReferralSignupToStats();
-        referredBy = referralUserId;
-      }
+      const referredBy = await getReferrer(referralCode);
       user = await createUserFromPassword({
         id,
         name: displayName,
@@ -222,6 +211,9 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         token: v4(),
         accounts: []
       });
+      if (referredBy) {
+        await addReferralActivity({ userId: id, referralUserId: referredBy });
+      }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
     } else {
@@ -237,6 +229,25 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     logger.error(err);
     throw err;
   }
+}
+
+async function getReferrer(referralCode) {
+  if (!referralCode) return null;
+  const { id: referralUserId } = await getUserByReferralCode(referralCode);
+  return referralUserId;
+}
+
+async function addReferralActivity({ userId, referralUserId }) {
+  // add sign up reward for this user
+  await addActivityForUser(userId, 'signedUpFromReferral', {
+    id: userId
+  });
+  // add sign up rewards for other user
+  // don't wait for this one
+  addActivityForUser(referralUserId, 'referralSignUp', {
+    id: referralUserId
+  });
+  addReferralSignupToStats();
 }
 
 export async function updateUserToken(id, keys) {
@@ -478,7 +489,7 @@ export async function removeUserAccount(user, email) {
     } else if (provider === 'outlook') {
       await revokeTokenFromOutlook(refreshToken);
     }
-    await removeAccount(userId, accountId);
+    await removeAccount(userId, { accountId, email });
     // do not wait for this one as won't be a notification
     const updatedUser = await addActivityForUser(
       userId,
@@ -539,6 +550,7 @@ export async function verifyUserTotpToken(user, { token }) {
     token
   });
   if (unverified) {
+    await addActivityForUser(user.id, 'addedTwoFactorAuth');
     verifyTotpSecret(user.id);
   }
   return verified;
@@ -573,5 +585,152 @@ export async function setUserMilestoneCompleted(userId, milestoneName) {
     return setMilestoneCompleted(userId, milestoneName);
   } catch (err) {
     throw err;
+  }
+}
+
+export async function addActivityForUser(userId, name, data = {}) {
+  try {
+    logger.debug(`user-activity-service: adding activity ${name}`);
+
+    let activityData = {
+      type: name,
+      data
+    };
+
+    const milestone = await getMilestone(name);
+
+    // TODO improve nested IF statements
+    if (milestone && milestone.hasReward) {
+      logger.debug(
+        `user-activity-service: activity ${name} has reward, checking if user is eligible`
+      );
+
+      // check if they are eligible for the reward
+      const { activity = [] } = await getUserById(userId);
+      const reward = getReward({
+        userActivity: activity,
+        name,
+        milestone,
+        activityData
+      });
+
+      if (reward) {
+        const { unsubscriptions } = milestone;
+        logger.debug(
+          `user-activity-service: adding reward of ${unsubscriptions} to user ${userId}`
+        );
+        activityData = {
+          ...activityData,
+          ...reward
+        };
+
+        // give the user the unsubs
+        await incrementUnsubscribesRemaining(userId, unsubscriptions);
+        addRewardGivenToStats(unsubscriptions);
+      }
+
+      await setUserMilestoneCompleted(userId, name);
+    }
+
+    // add the activity to the array
+    return addActivity(userId, activityData);
+  } catch (err) {
+    throw err;
+  }
+}
+
+function getReward({ userActivity, name, milestone, activityData }) {
+  const { maxRedemptions, unsubscriptions } = milestone;
+
+  // conditions for reward
+  // 1. user has not yet completed reward
+  // 2. reward redemptions has not been reached and not been rewarded for the same data before
+  // 3. reward has no max redemptions but has not been rewarded with the same data before
+  let giveReward = false;
+
+  const userActivityCompletionCount = userActivity.filter(a => a.type === name)
+    .length;
+  if (!userActivityCompletionCount) {
+    // if the user has not yet completed the activity reward them
+    giveReward = true;
+  } else if (
+    (maxRedemptions && userActivityCompletionCount < maxRedemptions) ||
+    !maxRedemptions
+  ) {
+    // if the users redemptions are under the max or there are no max check the reward is not being gamed
+    giveReward = checkReward({
+      userActivity,
+      activityData
+    });
+  }
+
+  if (!giveReward) return null;
+
+  logger.debug(
+    `user-activity-service: conditions for reward met for activity ${name}`
+  );
+  return {
+    reward: {
+      unsubscriptions
+    },
+    // if it's a reward we add a notification
+    // TODO what other use cases do we need to do this for?
+    notification: {
+      seen: false
+    }
+  };
+}
+
+function checkReward({ userActivity, activityData }) {
+  const { type, data } = activityData;
+
+  switch (type) {
+    // connectedAdditionalAccount can only be done once per additional email
+    case 'connectedAdditionalAccount': {
+      const alreadyConnected = userActivity.find(
+        a => a.type === type && a.data.id === data.id
+      );
+      if (alreadyConnected) {
+        logger.debug(
+          `user-activity-service: user already redeemed reward for connecting this account`
+        );
+        return false;
+      }
+      return true;
+    }
+    // referralSignUp will only be rewarded once for each user that signed up
+    case 'referralSignUp': {
+      // TODO implement properly
+      const alreadyReferred = userActivity.find(
+        a => a.type === type && a.data.id === data.id
+      );
+      if (alreadyReferred) {
+        logger.debug(
+          `user-activity-service: user already redeemed reward for referring this person`
+        );
+        return false;
+      }
+      return true;
+    }
+    // referralPurchase will only be rewarded once for each user that purchases
+    case 'referralPurchase': {
+      // TODO implement properly
+      const alreadyPurchased = userActivity.find(
+        a => a.type === type && a.data.id === data.id
+      );
+      if (alreadyPurchased) {
+        logger.debug(
+          `user-activity-service: user already redeemed reward for their referee purchasing a package`
+        );
+        return false;
+      }
+      return true;
+    }
+    default: {
+      logger.debug(
+        `user-activity-service: cannot check reward, reward not found ${type}`
+      );
+      return false;
+    }
   }
 }

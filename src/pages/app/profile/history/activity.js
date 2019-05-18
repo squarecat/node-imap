@@ -12,9 +12,10 @@ import relative from 'tiny-relative-date';
 import useUser from '../../../../utils/hooks/use-user';
 
 export default function ActivityHistory() {
-  const [{ activity = [] }] = useUser(u => {
+  const [{ activity = [], accounts }] = useUser(u => {
     return {
-      activity: u.activity
+      activity: u.activity,
+      accounts: u.accounts
     };
   });
 
@@ -37,7 +38,7 @@ export default function ActivityHistory() {
               return (
                 <TableRow key={activity.timestamp}>
                   <TableCell>{relative(activity.timestamp)}</TableCell>
-                  <TableCell>{parseActivity(activity)}</TableCell>
+                  <TableCell>{parseActivity(activity, { accounts })}</TableCell>
                 </TableRow>
               );
             })}
