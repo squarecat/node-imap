@@ -106,8 +106,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
       // signing in with a provider counts as connecting the first account
-      // TODO combine this with create user?
-      user = await addActivityForUser(id, 'connectedFirstAccount', {
+      addActivityForUser(id, 'connectedFirstAccount', {
         id,
         provider
       });
@@ -141,10 +140,12 @@ export function connectUserGoogleAccount(userId, userData = {}, keys) {
 }
 
 async function connectUserAccount(userId, userData = {}, keys, provider) {
-  const { id, email, profileImg, displayName } = userData;
+  const { id: accountId, email, profileImg, displayName } = userData;
   try {
     let user = await getUser(userId);
-    const isAccountAlreadyConnected = user.accounts.find(acc => acc.id === id);
+    const isAccountAlreadyConnected = user.accounts.find(
+      acc => acc.id === accountId
+    );
 
     if (isAccountAlreadyConnected) {
       logger.debug(
@@ -163,32 +164,18 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
         `user-service: ${provider} account not connected, adding...`
       );
       user = await addAccount(userId, {
-        id,
+        id: accountId,
         provider,
         email,
         keys
       });
 
-      let activityName;
-      if (user.loginProvider === 'password') {
-        // if logged in with password the first account will be 1 in the accounts array
-        activityName =
-          user.accounts.length === 1
-            ? 'connectedFirstAccount'
-            : 'connectedAdditionalAccount';
-      } else {
-        // otherwise we already know this is a new account being connected
-        activityName = 'connectedAdditionalAccount';
-      }
-      user = await addActivityForUser(userId, activityName, {
-        id,
-        provider
-      });
+      addConnectAccountActivity(accountId, provider, user);
     }
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error connecting user ${provider} account ${id}`
+      `user-service: error connecting user ${provider} account ${accountId}`
     );
     logger.error(err);
     throw err;
@@ -238,16 +225,44 @@ async function getReferrer(referralCode) {
 }
 
 async function addReferralActivity({ userId, referralUserId }) {
-  // add sign up reward for this user
-  await addActivityForUser(userId, 'signedUpFromReferral', {
-    id: userId
+  try {
+    // add sign up reward for this user
+    addActivityForUser(userId, 'signedUpFromReferral', {
+      id: userId
+    });
+    // add sign up rewards for other user
+    addActivityForUser(referralUserId, 'referralSignUp', {
+      id: referralUserId
+    });
+    addReferralSignupToStats();
+  } catch (err) {
+    logger.error(
+      `user-service: error adding referral activity for user ${userId}, referral user ${referralUserId}`
+    );
+    throw err;
+  }
+}
+
+function addConnectAccountActivity(
+  accountId,
+  provider,
+  { id: userId, loginProvider, accounts }
+) {
+  let activityName;
+  if (loginProvider === 'password') {
+    // if logged in with password the first account will be 1 in the accounts array
+    activityName =
+      accounts.length === 1
+        ? 'connectedFirstAccount'
+        : 'connectedAdditionalAccount';
+  } else {
+    // otherwise we already know this is a new account being connected
+    activityName = 'connectedAdditionalAccount';
+  }
+  addActivityForUser(userId, activityName, {
+    id: accountId,
+    provider
   });
-  // add sign up rewards for other user
-  // don't wait for this one
-  addActivityForUser(referralUserId, 'referralSignUp', {
-    id: referralUserId
-  });
-  addReferralSignupToStats();
 }
 
 export async function updateUserToken(id, keys) {
@@ -311,11 +326,12 @@ export function addPaidScanToUser(userId, scanType) {
 
 export async function addPackageToUser(userId, packageId, unsubscribes = 0) {
   try {
-    await addPackage(userId, packageId, unsubscribes);
-    return addActivityForUser(userId, 'packagePurchase', {
+    const user = await addPackage(userId, packageId, unsubscribes);
+    addActivityForUser(userId, 'packagePurchase', {
       id: packageId,
       unsubscribes
     });
+    return user;
   } catch (err) {
     throw err;
   }
@@ -488,16 +504,11 @@ export async function removeUserAccount(user, email) {
     } else if (provider === 'outlook') {
       await revokeTokenFromOutlook(refreshToken);
     }
-    await removeAccount(userId, { accountId, email });
-    // do not wait for this one as won't be a notification
-    const updatedUser = await addActivityForUser(
-      userId,
-      'removeAdditionalAccount',
-      {
-        id: accountId,
-        provider
-      }
-    );
+    const updatedUser = await removeAccount(userId, { accountId, email });
+    addActivityForUser(userId, 'removeAdditionalAccount', {
+      id: accountId,
+      provider
+    });
     return updatedUser;
   } catch (err) {
     logger.error(
@@ -549,8 +560,8 @@ export async function verifyUserTotpToken(user, { token }) {
     token
   });
   if (unverified) {
-    await addActivityForUser(user.id, 'addedTwoFactorAuth');
     verifyTotpSecret(user.id);
+    addActivityForUser(user.id, 'addedTwoFactorAuth');
   }
   return verified;
 }
@@ -589,7 +600,7 @@ export async function setUserMilestoneCompleted(userId, milestoneName) {
 
 export async function addActivityForUser(userId, name, data = {}) {
   try {
-    logger.debug(`user-activity-service: adding activity ${name}`);
+    logger.debug(`user-service: adding activity ${name}`);
 
     let activityData = {
       type: name,
@@ -601,7 +612,7 @@ export async function addActivityForUser(userId, name, data = {}) {
     // TODO improve nested IF statements
     if (milestone && milestone.hasReward) {
       logger.debug(
-        `user-activity-service: activity ${name} has reward, checking if user is eligible`
+        `user-service: activity ${name} has reward, checking if user is eligible`
       );
 
       // check if they are eligible for the reward
@@ -616,7 +627,7 @@ export async function addActivityForUser(userId, name, data = {}) {
       if (reward) {
         const { unsubscriptions } = milestone;
         logger.debug(
-          `user-activity-service: adding reward of ${unsubscriptions} to user ${userId}`
+          `user-service: adding reward of ${unsubscriptions} to user ${userId}`
         );
         activityData = {
           ...activityData,
@@ -665,9 +676,7 @@ function getReward({ userActivity, name, milestone, activityData }) {
 
   if (!giveReward) return null;
 
-  logger.debug(
-    `user-activity-service: conditions for reward met for activity ${name}`
-  );
+  logger.debug(`user-service: conditions for reward met for activity ${name}`);
   return {
     reward: {
       unsubscriptions
@@ -691,7 +700,7 @@ function checkReward({ userActivity, activityData }) {
       );
       if (alreadyConnected) {
         logger.debug(
-          `user-activity-service: user already redeemed reward for connecting this account`
+          `user-service: user already redeemed reward for connecting this account`
         );
         return false;
       }
@@ -705,7 +714,7 @@ function checkReward({ userActivity, activityData }) {
       );
       if (alreadyReferred) {
         logger.debug(
-          `user-activity-service: user already redeemed reward for referring this person`
+          `user-service: user already redeemed reward for referring this person`
         );
         return false;
       }
@@ -719,7 +728,7 @@ function checkReward({ userActivity, activityData }) {
       );
       if (alreadyPurchased) {
         logger.debug(
-          `user-activity-service: user already redeemed reward for their referee purchasing a package`
+          `user-service: user already redeemed reward for their referee purchasing a package`
         );
         return false;
       }
@@ -727,7 +736,7 @@ function checkReward({ userActivity, activityData }) {
     }
     default: {
       logger.debug(
-        `user-activity-service: cannot check reward, reward not found ${type}`
+        `user-service: cannot check reward, reward not found ${type}`
       );
       return false;
     }
