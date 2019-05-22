@@ -49,7 +49,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
 
   const [stripeLoading, setStripeLoading] = useState(true);
 
-  const { value: countries, loading: countriesLoading } = useAsync(
+  const { value: countries = [], loading: countriesLoading } = useAsync(
     fetchCountries
   );
   const [options, setOptions] = useState([]);
