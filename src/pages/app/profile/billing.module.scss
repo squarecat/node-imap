@@ -83,25 +83,6 @@
   margin: 0;
 }
 
-.price {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 15px 0;
-  font-size: 24px;
-  color: rgba(231, 57, 48, 0.749);
-  line-height: 40px;
-  font-variant-numeric: tabular-nums;
-  font-family: 'Gotham-Rounded-Medium', 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.currency {
-  font-size: 20px;
-  line-height: 20px;
-  margin: 0 5px 0 0;
-}
-
 .billing-btn {
   @extend .btn;
   @extend .compact;
@@ -109,14 +90,21 @@
 }
 
 .package-buy-btn {
+  position: relative;
 }
 .package-discount {
-  display: block;
+  position: absolute;
+  pointer-events: none;
   opacity: 0;
+  top: 50px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  white-space: nowrap;
   transition: opacity 200ms ease-in-out;
 }
 
-.package-buy-btn:hover ~ .package-discount {
+.package-buy-btn:hover .package-discount {
   opacity: 1;
 }
 

@@ -12,9 +12,10 @@ import relative from 'tiny-relative-date';
 import useUser from '../../../../utils/hooks/use-user';
 
 export default function ActivityHistory() {
-  const [{ activity = [] }] = useUser(u => {
+  const [{ activity = [], accounts }] = useUser(u => {
     return {
-      activity: u.activity
+      activity: u.activity,
+      accounts: u.accounts
     };
   });
 
@@ -24,26 +25,24 @@ export default function ActivityHistory() {
       <div styleName="scan-section">
         <p>
           Showing <TextImportant>{activity.length}</TextImportant> previous
-          activity.
+          actions.
         </p>
-        {activity.map(activity => (
-          <pre key={activity.timestamp}>
-            {JSON.stringify(activity, null, 2)}
-          </pre>
-        ))}
         <ErrorBoundary>
           <Table>
             {sorted.map(activity => {
               return (
                 <TableRow key={activity.timestamp}>
                   <TableCell>{relative(activity.timestamp)}</TableCell>
-                  <TableCell>{parseActivity(activity)}</TableCell>
+                  <TableCell>{parseActivity(activity, { accounts })}</TableCell>
                 </TableRow>
               );
             })}
           </Table>
         </ErrorBoundary>
       </div>
+      {sorted.map(activity => (
+        <pre key={activity.timestamp}>{JSON.stringify(activity, null, 2)}</pre>
+      ))}
     </ProfileLayout>
   );
 }

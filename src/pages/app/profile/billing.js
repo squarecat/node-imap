@@ -22,11 +22,11 @@ import CardDetails from '../../../components/modal/billing/card-details';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
+import Price from '../../../components/pricing/price';
 import ProfileLayout from './layout';
 import Tooltip from 'rc-tooltip';
 import cx from 'classnames';
 import format from 'date-fns/format';
-import numeral from 'numeral';
 import request from '../../../utils/request';
 import { useAsync } from '../../../utils/hooks';
 import useUser from '../../../utils/hooks/use-user';
@@ -100,11 +100,14 @@ export default function Billing() {
           <h2>Information</h2>
           <p>
             You have <TextImportant>{unsubscribesRemaining}</TextImportant>{' '}
-            unsubscribes remaining{' '}
-            {unsubscribesRemaining === 0 ? (
-              <TextLink href="#packages">buy more</TextLink>
-            ) : null}
-            .
+            unsubscribes remaining
+            {unsubscribesRemaining < 5 ? (
+              <>
+                <TextLink href="#packages"> buy more</TextLink>.
+              </>
+            ) : (
+              '.'
+            )}
           </p>
           <p>
             You have used a total of{' '}
@@ -133,11 +136,7 @@ export default function Billing() {
             <Elements>
               <BillingModal
                 selectedPackage={selectedPackage}
-                step={
-                  state.card
-                    ? 'existing-billing-details'
-                    : 'enter-billing-details'
-                }
+                hasBillingCard={!!state.card}
                 onClose={() => toggleBillingModal(false)}
               />
             </Elements>
@@ -172,10 +171,7 @@ function UsageBased() {
       <div styleName="plans-list">
         <PlanImage smaller compact type="usage-based" />
         <h3 styleName="plan-title">Per unsubscribe</h3>
-        <p styleName="price">
-          <span styleName="currency">$</span>
-          {USAGE_BASED.price.toFixed(2)}
-        </p>
+        <Price price={USAGE_BASED.price} />
         <Tooltip
           placement="top"
           trigger={['hover']}
@@ -229,24 +225,16 @@ function Packages({ onClickBuy }) {
 
       {PACKAGES.map(p => {
         const isPreviousPackage = previousPackageId === p.id;
-        let discountText;
-        if (p.id > previousPackageId) {
-          discountText = `Save ${p.discount * 100}%`;
-        }
+        const showReBuy = isPreviousPackage && !!state.card;
+        const discountText = `Save ${p.discount * 100}%`;
         return (
           <div styleName="plans-list" key={p.unsubscribes}>
             <PlanImage smaller compact type="package" />
             <h3 styleName="plan-title">{p.unsubscribes} unsubscribes</h3>
-            <p styleName="price">
-              <span styleName="currency">$</span>
-              {(p.price / 100).toFixed(2)}
-            </p>
-            <div>
-              <a
-                styleName="billing-btn package-buy-btn"
-                onClick={() => onClickBuy(p.id)}
-              >
-                {isPreviousPackage ? 'Re-buy' : 'Buy'}
+            <Price price={p.price} />
+            <div styleName="package-buy-btn">
+              <a styleName="billing-btn" onClick={() => onClickBuy(p.id)}>
+                {showReBuy ? 'Re-buy' : 'Buy'}
               </a>
               <span styleName="package-discount">{discountText}</span>
             </div>
@@ -268,14 +256,12 @@ function Enterprise() {
           <h3 styleName="plan-title">Unlimited unsubscribes</h3>
           <span>Up to {ENTERPRISE.seats} seats</span>
         </div>
-        <p styleName="price">
-          <span styleName="currency">$</span>
-          {ENTERPRISE.price.toFixed(2)}*
-        </p>
+        <Price price={ENTERPRISE.price} asterisk />
         <a styleName="billing-btn">Contact</a>
       </div>
       <TextFootnote>
-        * prices start from ${ENTERPRISE.price.toFixed(2)} for up to 10 seats.
+        * prices start from ${(ENTERPRISE.price / 100).toFixed(2)} for up to 10
+        seats.
       </TextFootnote>
     </div>
   );

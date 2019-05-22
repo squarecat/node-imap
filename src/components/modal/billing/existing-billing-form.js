@@ -1,11 +1,12 @@
 import '../modal.module.scss';
 
+import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
+import { FormGroup, FormLabel, FormNotification } from '../../form';
 import React, { useContext } from 'react';
+import { TextImportant, TextLink } from '../../text';
 
-import { BillingModalContext } from './index';
 import Button from '../../btn';
 import CardDetails from './card-details';
-import { FormNotification } from '../../form';
 import { LockIcon } from '../../icons';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
@@ -83,33 +84,56 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
     >
       <div styleName="modal-content">
         <p>
-          Confirm purchase a package of {state.selectedPackage.unsubscribes}{' '}
-          unsubscribes for ${(state.selectedPackage.price / 100).toFixed(2)}.
+          Purchasing a package of{' '}
+          <TextImportant>
+            {state.selectedPackage.unsubscribes} unsubscribes
+          </TextImportant>
+          .
         </p>
-        <CardDetails card={card} />
+
+        <FormLabel inline>Payment method</FormLabel>
+        <FormGroup container>
+          <CardDetails card={card} />
+        </FormGroup>
+
         {state.error ? (
           <FormNotification error>
             {state.error.message || DEFAULT_ERROR}
           </FormNotification>
         ) : null}
+
+        <TextLink
+          onClick={() =>
+            dispatch({ type: 'set-step', data: 'enter-billing-details' })
+          }
+        >
+          Use a different card
+        </TextLink>
       </div>
       <div styleName="modal-actions">
         <div styleName="modal-actions-info">
           <p styleName="modal-text--small secured-by">
             <LockIcon />
-            Payments Secured by{' '}
-            <a href="https://stripe.com/docs/security/stripe">Stripe</a>
+            Payments Secured by <a href="https://stripe.com/">Stripe</a>
           </p>
         </div>
         <div styleName="modal-buttons">
           <a
             styleName="modal-btn modal-btn--secondary modal-btn--cancel"
             onClick={() =>
+              dispatch({ type: 'set-step', data: 'start-purchase' })
+            }
+          >
+            Back
+          </a>
+          {/* <a
+            styleName="modal-btn modal-btn--secondary modal-btn--cancel"
+            onClick={() =>
               dispatch({ type: 'set-step', data: 'enter-billing-details' })
             }
           >
             Use a different card
-          </a>
+          </a> */}
           <Button
             basic
             compact
@@ -119,7 +143,7 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
             type="submit"
             as="button"
           >
-            Pay ${(state.selectedPackage.price / 100).toFixed(2)} with this card
+            Pay {getDisplayPrice(state.selectedPackage)}
           </Button>
         </div>
       </div>
@@ -143,23 +167,5 @@ async function confirmPaymentExistingCard({ productId, coupon }) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
-  });
-}
-// TODO is duplicate of checkout form
-async function confirmIntent({ paymentIntent, productId, coupon }) {
-  let url;
-  if (coupon) {
-    url = `/api/checkout/new/${productId}/${coupon}`;
-  } else {
-    url = `/api/checkout/new/${productId}`;
-  }
-  return request(url, {
-    method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
-    body: JSON.stringify({ payment_intent_id: paymentIntent.id })
   });
 }

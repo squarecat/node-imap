@@ -39,7 +39,7 @@ export async function createPayment({
     return payment;
   } catch (err) {
     logger.error('stripe: failed to create charge');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -92,7 +92,7 @@ export async function createInvoice({
     return payment;
   } catch (err) {
     logger.error('stripe: failed to create invoice');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -112,8 +112,8 @@ export async function getPaymentCoupon(name) {
     }
     return { percent_off: 0, amount_off: 0, valid: false };
   } catch (err) {
-    logger.error('stripe: failed to get coupon');
-    logger.error(err);
+    logger.error(`stripe: failed to get coupon: ${name}`);
+    logError(err);
     return { percent_off: 0, amount_off: 0, valid: false };
   }
 }
@@ -129,8 +129,8 @@ export async function updateCouponUses(coupon) {
     });
     return updated;
   } catch (err) {
-    logger.error('stripe: failed to update coupon uses');
-    logger.error(err);
+    logger.error(`stripe: failed to update coupon uses ${coupon}`);
+    logError(err);
     throw err;
   }
 }
@@ -161,7 +161,7 @@ export async function createCoupon({
     return coupon;
   } catch (err) {
     logger.error('stripe: failed to create coupon');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -184,7 +184,7 @@ export async function createCustomer({ email, name, address }) {
     return { id };
   } catch (err) {
     logger.error('stripe: failed to create customer');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -200,7 +200,7 @@ export async function updateCustomer({ customerId, name, address }) {
     return { id };
   } catch (err) {
     logger.error('stripe: failed to update customer');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -211,7 +211,7 @@ export async function listInvoices(customerId) {
     return invoices;
   } catch (err) {
     logger.error('stripe: failed to list invoices');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -221,7 +221,7 @@ export async function listCharges(customerId) {
     return stripe.charges.list({ customer: customerId });
   } catch (err) {
     logger.error('stripe: failed to list charges');
-    logger.error(err);
+    logError(err);
     throw err;
   }
 }
@@ -256,7 +256,7 @@ async function getTaxInfo({ amount, country }) {
     };
   } catch (err) {
     logger.error(`stripe: failed to get tax info`);
-    logger.error(err);
+    logError(err);
     return {
       vatRate: 0,
       vatAmount: 0
@@ -297,7 +297,8 @@ export async function createPaymentIntent(
     return intent;
   } catch (err) {
     logger.error(`stripe: failed to create payment intent`);
-    logger.error(err);
+    logError(err);
+    throw err;
   }
 }
 
@@ -307,7 +308,8 @@ export async function confirmPaymentIntent(paymentIntentId) {
     return intent;
   } catch (err) {
     logger.error(`stripe: failed to confirm payment intent`);
-    logger.error(err);
+    logError(err);
+    throw err;
   }
 }
 
@@ -327,6 +329,7 @@ export async function detachPaymentMethod(paymentMethodId) {
     return paymentMethod;
   } catch (err) {
     logger.error(`stripe: failed to detach payment method`);
+    logError(err);
     return {};
   }
 }
@@ -365,3 +368,12 @@ export const generatePaymentResponse = intent => {
     };
   }
 };
+
+function logError(err) {
+  const { type, message } = err;
+  if (type) logger.error(`stripe: ${err.type}`);
+  if (message) logger.error(`stripe: ${err.message}`);
+  if (!type && !message) {
+    logger.error(err);
+  }
+}

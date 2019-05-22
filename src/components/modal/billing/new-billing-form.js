@@ -1,5 +1,6 @@
 import '../modal.module.scss';
 
+import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import {
   FormCheckbox,
@@ -8,11 +9,12 @@ import {
   FormNotification,
   FormSelect
 } from '../../form';
+import { LockIcon, PoweredByStripe } from '../../icons';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { BillingModalContext } from './index';
 import Button from '../../btn';
-import { LockIcon } from '../../icons';
+// import CouponInput from './coupon';
+import { TextImportant } from '../../text';
 import request from '../../../utils/request';
 import { useAsync } from '../../../utils/hooks';
 import useUser from '../../../utils/hooks/use-user';
@@ -39,7 +41,7 @@ const cardElementOptions = {
   }
 };
 
-function CheckoutForm({ stripe, onClickClose, onPurchaseSuccess }) {
+function CheckoutForm({ stripe, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
   const cardElement = useRef(null);
 
@@ -54,9 +56,9 @@ function CheckoutForm({ stripe, onClickClose, onPurchaseSuccess }) {
 
   useEffect(
     () => {
-      if (!countriesLoading) {
-        const options = countries.map(c => ({ value: c.code, label: c.name }));
-        setOptions(options);
+      if (!countriesLoading && !options.length) {
+        const map = countries.map(c => ({ value: c.code, label: c.name }));
+        setOptions(map);
       }
     },
     [countriesLoading]
@@ -150,147 +152,159 @@ function CheckoutForm({ stripe, onClickClose, onPurchaseSuccess }) {
   }
 
   return (
-    <form
-      id="payment-form"
-      onSubmit={e => {
-        e.preventDefault();
-        return onSubmit();
-      }}
-      method="post"
-    >
+    <>
       <div styleName="modal-content">
-        <p>
-          Enter your card details to purchase a package of{' '}
-          {state.selectedPackage.unsubscribes} unsubscribes for $
-          {(state.selectedPackage.price / 100).toFixed(2)}.
-        </p>
-        <FormGroup>
-          <FormInput
-            smaller
-            disabled={state.loading}
-            required
-            placeholder="Name"
-            value={state.name}
-            name="name"
-            onChange={e => {
-              dispatch({
-                type: 'set-billing-details',
-                data: { key: 'name', value: e.currentTarget.value }
-              });
-            }}
-          />
-        </FormGroup>
+        <form
+          id="payment-form"
+          onSubmit={e => {
+            e.preventDefault();
+            return onSubmit();
+          }}
+          method="post"
+        >
+          <p>
+            Purchasing a package of{' '}
+            <TextImportant>
+              {state.selectedPackage.unsubscribes} unsubscribes
+            </TextImportant>
+            .
+          </p>
+          <FormGroup>
+            <FormInput
+              smaller
+              disabled={state.loading}
+              required
+              placeholder="Name"
+              value={state.name}
+              name="name"
+              onChange={e => {
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: { key: 'name', value: e.currentTarget.value }
+                });
+              }}
+            />
+          </FormGroup>
 
-        <FormGroup container>
-          <FormInput
-            smaller
-            disabled={state.loading}
-            required
-            basic
-            placeholder="Address"
-            value={state.line1}
-            name="Address"
-            onChange={e => {
-              dispatch({
-                type: 'set-billing-details',
-                data: { key: 'line1', value: e.currentTarget.value }
-              });
-            }}
-          />
-          <FormInput
-            smaller
-            disabled={state.loading}
-            required
-            basic
-            placeholder="City"
-            value={state.city}
-            name="City"
-            onChange={e => {
-              dispatch({
-                type: 'set-billing-details',
-                data: { key: 'city', value: e.currentTarget.value }
-              });
-            }}
-          />
-          <FormSelect
-            smaller
-            disabled={state.loading}
-            required
-            basic
-            value={state.country}
-            placeholder="Country"
-            options={options}
-            onChange={e => {
-              dispatch({
-                type: 'set-billing-details',
-                data: { key: 'country', value: e.currentTarget.value }
-              });
-            }}
-          />
-          <FormInput
-            smaller
-            disabled={state.loading}
-            required
-            basic
-            placeholder={state.country === 'US' ? 'Zipcode' : 'Postal code'}
-            value={state.postal_code}
-            name="postal_code"
-            onChange={e => {
-              dispatch({
-                type: 'set-billing-details',
-                data: { key: 'postal_code', value: e.currentTarget.value }
-              });
-            }}
-          />
-        </FormGroup>
+          <FormGroup container>
+            <FormInput
+              smaller
+              disabled={state.loading}
+              required
+              basic
+              placeholder="Address"
+              value={state.line1}
+              name="Address"
+              onChange={e => {
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: { key: 'line1', value: e.currentTarget.value }
+                });
+              }}
+            />
+            <FormInput
+              smaller
+              disabled={state.loading}
+              required
+              basic
+              placeholder="City"
+              value={state.city}
+              name="City"
+              onChange={e => {
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: { key: 'city', value: e.currentTarget.value }
+                });
+              }}
+            />
+            <FormSelect
+              smaller
+              disabled={state.loading}
+              required
+              basic
+              value={state.country}
+              placeholder="Country"
+              options={options}
+              onChange={e => {
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: { key: 'country', value: e.currentTarget.value }
+                });
+              }}
+            />
+            <FormInput
+              smaller
+              disabled={state.loading}
+              required
+              basic
+              placeholder={state.country === 'US' ? 'Zipcode' : 'Postal code'}
+              value={state.postal_code}
+              name="postal_code"
+              onChange={e => {
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: { key: 'postal_code', value: e.currentTarget.value }
+                });
+              }}
+            />
+          </FormGroup>
 
-        <FormGroup>
-          <CardElement
-            ref={cardElement}
-            {...cardElementOptions}
-            onReady={() => setStripeLoading(false)}
-          />
-        </FormGroup>
+          <FormGroup>
+            <CardElement
+              ref={cardElement}
+              {...cardElementOptions}
+              onReady={() => setStripeLoading(false)}
+            />
+          </FormGroup>
 
-        {state.error ? (
-          <FormNotification error>
-            {state.error.message || DEFAULT_ERROR}
-          </FormNotification>
-        ) : null}
+          <FormGroup>
+            <FormCheckbox
+              onChange={() =>
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: {
+                    key: 'save_payment_method',
+                    value: !state.save_payment_method
+                  }
+                })
+              }
+              checked={state.save_payment_method}
+              label="Save payment method"
+            />
+          </FormGroup>
 
-        <FormGroup>
-          <FormCheckbox
-            onChange={() =>
-              dispatch({
-                type: 'set-billing-details',
-                data: {
-                  key: 'save_payment_method',
-                  value: !state.save_payment_method
-                }
-              })
-            }
-            checked={state.save_payment_method}
-            label="Save payment method"
-          />
-        </FormGroup>
+          {state.error ? (
+            <FormGroup>
+              <FormNotification error>
+                {state.error.message || DEFAULT_ERROR}
+              </FormNotification>
+            </FormGroup>
+          ) : null}
+        </form>
+
+        {/* <CouponInput /> */}
 
         {stripeLoading ? <div styleName="loading-overlay" /> : null}
       </div>
 
       <div styleName="modal-actions">
         <div styleName="modal-actions-info">
+          {/* <a href="https://stripe.com">
+            <PoweredByStripe />
+          </a> */}
           <p styleName="modal-text--small secured-by">
             <LockIcon />
-            Payments Secured by{' '}
-            <a href="https://stripe.com/docs/security/stripe">Stripe</a>
+            Payments Secured by <a href="https://stripe.com/">Stripe</a>
           </p>
         </div>
         <div styleName="modal-buttons">
           <a
             styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-            onClick={onClickClose}
+            onClick={() =>
+              dispatch({ type: 'set-step', data: 'start-purchase' })
+            }
           >
-            Cancel
+            Back
           </a>
 
           <Button
@@ -301,12 +315,13 @@ function CheckoutForm({ stripe, onClickClose, onPurchaseSuccess }) {
             loading={state.loading}
             type="submit"
             as="button"
+            form="payment-form"
           >
-            Pay ${(state.selectedPackage.price / 100).toFixed(2)}
+            Pay {getDisplayPrice(state.selectedPackage)}
           </Button>
         </div>
       </div>
-    </form>
+    </>
   );
 }
 
@@ -339,23 +354,5 @@ async function confirmPayment({
       'Content-Type': 'application/json; charset=utf-8'
     },
     body: JSON.stringify({ payment_method_id: id, name, address, saveCard })
-  });
-}
-
-async function confirmIntent({ paymentIntent, productId, coupon }) {
-  let url;
-  if (coupon) {
-    url = `/api/checkout/new/${productId}/${coupon}`;
-  } else {
-    url = `/api/checkout/new/${productId}`;
-  }
-  return request(url, {
-    method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
-    body: JSON.stringify({ payment_intent_id: paymentIntent.id })
   });
 }

@@ -2,12 +2,14 @@ import '../modal.module.scss';
 
 import React, { createContext, useEffect, useReducer, useState } from 'react';
 
-import CheckoutForm from './checkout-form';
 import ExistingBillingForm from './existing-billing-form';
 import ModalClose from '../modal-close';
-import { fetchLoggedInUser } from '../../../utils/auth';
-import useUser from '../../../utils/hooks/use-user';
+import NewBillingForm from './new-billing-form';
 import { StarIcon } from '../../icons';
+import StartPurchaseForm from './start-purchase';
+// import { fetchLoggedInUser } from '../../../utils/auth';
+import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 function billingModalReducer(state, action) {
   const { type, data } = action;
@@ -20,11 +22,27 @@ function billingModalReducer(state, action) {
         error: false
       };
     }
-    case 'set-billing-details':
+    case 'set-billing-detail':
       return {
         ...state,
         [data.key]: data.value
       };
+    case 'set-coupon':
+      return {
+        ...state,
+        coupon: data
+      };
+    case 'set-package-discount-amount': {
+      const { price } = state.selectedPackage;
+      return {
+        ...state,
+        selectedPackage: {
+          ...state.selectedPackage,
+          discountAmount: data,
+          discountPrice: price - data
+        }
+      };
+    }
     case 'set-loading':
       return { ...state, loading: data };
     case 'set-error':
@@ -42,20 +60,24 @@ const initialState = {
   country: '',
   postal_code: '',
   save_payment_method: true,
-  coupon: ''
+  coupon: '',
+  step: 'start-purchase',
+  selectedPackage: {}
 };
+
+// Steps
+// start-purchase
+// enter-billing-details - new billing details/checkout
+// existing-billing-details - use existing billing details
+// success - done screen
 
 export const BillingModalContext = createContext({ state: initialState });
 
-export default ({
-  onClose,
-  selectedPackage,
-  step = 'enter-billing-details'
-}) => {
+export default ({ onClose, selectedPackage, hasBillingCard }) => {
   const [isShown, setShown] = useState(false);
   const [state, dispatch] = useReducer(billingModalReducer, {
     ...initialState,
-    step,
+    hasBillingCard,
     selectedPackage
   });
   const [user, { setBilling: setUserBilling }] = useUser();
@@ -90,12 +112,23 @@ export default ({
         <ModalClose onClose={onClickClose} />
         <div
           // styleName="enter-billing-details-box"
+          data-active={state.step === 'start-purchase'}
+        >
+          {state.step === 'start-purchase' ? (
+            <>
+              <h3>Buy Package</h3>
+              <StartPurchaseForm />
+            </>
+          ) : null}
+        </div>
+        <div
+          // styleName="enter-billing-details-box"
           data-active={state.step === 'enter-billing-details'}
         >
           {state.step === 'enter-billing-details' ? (
             <>
               <h3>Buy Package</h3>
-              <CheckoutForm
+              <NewBillingForm
                 onClickClose={onClickClose}
                 onPurchaseSuccess={user => onPurchaseSuccess(user)}
               />
@@ -150,3 +183,36 @@ export default ({
     </BillingModalContext.Provider>
   );
 };
+
+export function getDisplayPrice({ price, discountAmount, discountPrice }) {
+  const viewPrice = (price / 100).toFixed(2);
+  if (discountAmount) {
+    const viewDiscountPrice = (discountPrice / 100).toFixed(2);
+    return (
+      <span styleName="price">
+        <span styleName="price-discounted">${viewPrice}</span> $
+        {viewDiscountPrice}
+      </span>
+    );
+  }
+
+  return <span styleName="price">${viewPrice}</span>;
+}
+
+export async function confirmIntent({ paymentIntent, productId, coupon }) {
+  let url;
+  if (coupon) {
+    url = `/api/checkout/new/${productId}/${coupon}`;
+  } else {
+    url = `/api/checkout/new/${productId}`;
+  }
+  return request(url, {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ payment_intent_id: paymentIntent.id })
+  });
+}
