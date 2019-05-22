@@ -42,7 +42,7 @@ function MailView() {
     [perPage, totalCount, page]
   );
 
-  const recipientValue = activeFilters.find(v => v.type === 'to');
+  const recipientValue = activeFilters.find(v => v.field === 'to');
   return (
     <div styleName="mail-list">
       <div styleName="filters">
@@ -67,12 +67,12 @@ function MailView() {
             value: v,
             label: v
           }))}
-          value={recipientValue ? recipientValue.value : null}
+          value={recipientValue ? recipientValue.value : ''}
           basic
           placeholder="All addresses"
         />
         <span styleName="refresh">
-          <Button muted compact basic outlined square onClick={refresh}>
+          <Button muted compact basic outlined onClick={refresh}>
             Refresh <RefreshIcon width="12" height="12" />
           </Button>
         </span>

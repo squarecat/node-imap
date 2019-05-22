@@ -6,25 +6,10 @@ const React = require('react');
  * See: https://www.gatsbyjs.org/docs/ssr-apis/
  */
 
-exports.onRenderBody = ({ setPostBodyComponents }) => {
-  setPostBodyComponents([
+exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
+  console.log('pre-rendering body for', pathname);
+  let components = [
     <div key="modal-root" id="modal-root" />,
-    <script
-      key="stripe-script"
-      src="https://checkout.stripe.com/checkout.js"
-    />,
-    <script
-      key="rewardful-script"
-      async
-      src="https://r.wdfl.co/rw.js"
-      data-rewardful="15fc4f"
-    />,
-    <script
-      key="twitter-script"
-      async
-      src="https://platform.twitter.com/widgets.js"
-      charSet="utf-8"
-    />,
     <script
       key="support-start"
       dangerouslySetInnerHTML={{
@@ -55,5 +40,12 @@ exports.onRenderBody = ({ setPostBodyComponents }) => {
       type="text/javascript"
       src="https://support.squarecat.io/js/widget.js"
     />
-  ]);
+  ];
+  // if (pathname.startsWith('/app')) {
+  components = [
+    ...components,
+    <script key="stripe-script" src="https://checkout.stripe.com/checkout.js" />
+  ];
+  // }
+  setPostBodyComponents(components);
 };

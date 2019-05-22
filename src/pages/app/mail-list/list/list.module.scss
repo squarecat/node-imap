@@ -4,8 +4,12 @@
 }
 
 .list {
-  padding-bottom: 49px;
+  margin-bottom: 49px;
+  table-layout: fixed;
 }
 
 .item {
+  td {
+    padding: 10px 10px;
+  }
 }

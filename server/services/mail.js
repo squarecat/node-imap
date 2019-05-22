@@ -5,6 +5,7 @@ import {
   addScanToStats,
   addUnsubscriptionToStats
 } from './stats';
+import { addOrUpdateOccurrences, getOccurrenceScores } from './occurrences';
 import {
   addResolvedUnsubscription,
   addUnresolvedUnsubscription
@@ -23,7 +24,6 @@ import {
   getEstimates as getMailEstimatesFromOutlook
 } from './mail/outlook';
 
-import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
 import fs from 'fs';
 import { getUserById } from './user';
@@ -31,9 +31,12 @@ import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 import { updateOccurances } from '../dao/occurrences';
 
-export async function* fetchMail({ userId, ignore = false }) {
+export async function* fetchMail({ userId }) {
   const user = await getUserById(userId);
   const { accounts } = user;
+  let accountScanData = [];
+  let accountOccurrences = [];
+  console.log(accounts);
   try {
     const iterators = await Promise.all(
       accounts.map(account => fetchMailByAccount({ account, user }))
@@ -46,11 +49,13 @@ export async function* fetchMail({ userId, ignore = false }) {
         next = await iter.next();
       }
       const { scanData, occurrences, dupeSenders } = next.value;
+      accountScanData = [...accountScanData, scanData];
+      accountOccurrences = [...accountOccurrences, { email: occurrences }];
     }
     // addOrUpdateOccurrences(userId, dupeSenders, timeframe);
     // addScanToUser(user.id, scanData);
     return {
-      occurrences: []
+      occurrences: accountOccurrences
     };
   } catch (err) {
     console.error('mail-service: failed to fetch mail for user', user.id);
@@ -96,7 +101,9 @@ export async function* fetchMailByAccount({
       timeframe,
       totalEmails: totalMail,
       totalUnsubscribableEmails: totalUnsubscribableMail,
-      totalPreviouslyUnsubscribedMail
+      totalPreviouslyUnsubscribedMail,
+      email: account.email,
+      provider: account.provider
     };
     if (!ignore) {
       addNumberofEmailsToStats({

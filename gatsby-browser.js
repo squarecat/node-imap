@@ -7,7 +7,7 @@ const Sentry = require('@sentry/browser');
 const env = process.env.NODE_ENV;
 // You can delete this file if you're not using it
 exports.onClientEntry = () => {
-  require('babel-polyfill');
+  require('@babel/polyfill');
   console.log(`We've started in ${env}`);
   if (env === 'production') {
     Sentry.init({

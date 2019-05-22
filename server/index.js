@@ -13,7 +13,10 @@ import mailgunWebhooks from './rest/webhooks/mailgun';
 import milestonesApi from './rest/milestones';
 import path from 'path';
 import paymentsApi from './rest/payments';
+import { refreshScores } from './dao/occurrences';
+import scoresApi from './rest/scores';
 import session from 'express-session';
+import socketApi from './rest/socket';
 import { startScheduler } from './utils/scheduler';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
@@ -55,8 +58,10 @@ auth(app);
 
 app.get('/api', (req, res) => res.send('OK'));
 
+const socket = socketApi(server);
 userApi(app);
-mailApi(app, server);
+mailApi(app, socket);
+scoresApi(app, socket);
 paymentsApi(app);
 statsApi(app);
 giftsApi(app);
@@ -101,6 +106,7 @@ const App = {
     // tell pm2 that the server is ready
     // to start receiving requests
     if (process.send) process.send('ready');
+    refreshScores();
   },
   async stop() {
     logger.info('server stopping');

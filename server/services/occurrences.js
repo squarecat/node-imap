@@ -1,5 +1,7 @@
 import {
   addUnsubscribeOccrurence,
+  getScores,
+  refreshScores,
   updateOccurrences
 } from '../dao/occurrences';
 
@@ -15,4 +17,12 @@ export function addOrUpdateOccurrences(userId, dupeInfo, timeframe) {
 
 export function addNewUnsubscribeOccrurence(userId, from) {
   return addUnsubscribeOccrurence(userId, from);
+}
+
+export function getOccurrenceScores({ senders }) {
+  return getScores(senders);
+}
+
+export function calculateOccurrenceScores() {
+  return refreshScores();
 }
