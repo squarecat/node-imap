@@ -9,11 +9,11 @@ import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
 import heartGif from '../../../assets/heart.gif';
+import request from '../../../utils/request';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
 import useUser from '../../../utils/hooks/use-user';
-import request from '../../../utils/request';
 
 export default ({ shown, onClose }) => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);

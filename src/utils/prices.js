@@ -38,7 +38,7 @@
 // ];
 
 export const USAGE_BASED = {
-  price: 0.1
+  price: 10
 };
 
 const PACKAGE_DATA = [
@@ -61,5 +61,5 @@ export function getPackage(id) {
 
 export const ENTERPRISE = {
   seats: 10,
-  price: 80
+  price: 8000
 };

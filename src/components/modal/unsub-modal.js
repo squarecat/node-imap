@@ -169,7 +169,7 @@ function slide1(
           <div styleName="unsub-img-container">
             <img
               alt="Screenshot of the page response after unsubscribing"
-              styleName={`unsub-img ${
+              styleName={`unsub-img modal-img-bordered ${
                 imageLoading ? 'unsub-img--loading' : ''
               }`}
               src={`/api/mail/image/${mailId}`}

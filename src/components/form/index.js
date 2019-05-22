@@ -4,9 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import cx from 'classnames';
 
-export const FormLabel = ({ animated, children, ...props }) => {
+export const FormLabel = ({ animated, inline, children, ...props }) => {
   return (
-    <label styleName={cx('form-label', { animated })} {...props}>
+    <label styleName={cx('form-label', { animated, inline })} {...props}>
       {children}
     </label>
   );

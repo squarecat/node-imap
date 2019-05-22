@@ -550,7 +550,7 @@ function Pricing() {
             <span className="pricing-text">Starting at</span>
             <p className="pricing-price">
               <span className="currency">$</span>
-              {USAGE_BASED.price.toFixed(2)}
+              {(USAGE_BASED.price / 100).toFixed(2)}
             </p>
             <span className="pricing-text">per unsubscribe</span>
             <ul className="pricing-features">
@@ -595,7 +595,7 @@ function Pricing() {
             <span className="pricing-text">Starting at</span>
             <p className="pricing-price">
               <span className="currency">$</span>
-              {ENTERPRISE.price.toFixed(2)}
+              {(ENTERPRISE.price / 100).toFixed(2)}
             </p>
             <span className="pricing-text">per month</span>
             <ul className="pricing-features">

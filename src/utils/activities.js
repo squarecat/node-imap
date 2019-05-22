@@ -41,7 +41,7 @@ const activityEnum = {
 
   // non reward
   packagePurchase: ({ data }) =>
-    `You purchased a package of ${data.unsubscriptions} unsubscribes.`,
+    `You purchased a package of ${data.unsubscribes} unsubscribes.`,
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account (${_capitalize(data.provider)}).`
 };

@@ -19,11 +19,16 @@ $color-link: $color-red;
 $color-link-hover: $color-red-darker;
 
 $color-input-border: rgba(231, 57, 48, 0.4);
-$color-input-border-focus: hsla(18, 100%, 38%, 0.25);
+$color-input-border-focus: rgba(231, 57, 48, 0.8);
+
+// $color-input-border: $color-grey-darker;
+// $color-input-border-focus: $color-primary-font;
+
 $color-input-label: #999;
 $color-input-placeholder: #bfbfbf;
 $color-input-bg: #fff;
-$color-input-disabled: #999;
+$color-input-disabled: #9a9393;
+$color-input-disabled-bg: $color-grey;
 
 $color-border-red: #ffc9c5;
 

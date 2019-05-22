@@ -25,13 +25,8 @@ export default function ActivityHistory() {
       <div styleName="scan-section">
         <p>
           Showing <TextImportant>{activity.length}</TextImportant> previous
-          activity.
+          actions.
         </p>
-        {activity.map(activity => (
-          <pre key={activity.timestamp}>
-            {JSON.stringify(activity, null, 2)}
-          </pre>
-        ))}
         <ErrorBoundary>
           <Table>
             {sorted.map(activity => {
@@ -45,6 +40,9 @@ export default function ActivityHistory() {
           </Table>
         </ErrorBoundary>
       </div>
+      {sorted.map(activity => (
+        <pre key={activity.timestamp}>{JSON.stringify(activity, null, 2)}</pre>
+      ))}
     </ProfileLayout>
   );
 }
