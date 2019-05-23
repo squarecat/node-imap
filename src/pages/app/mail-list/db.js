@@ -7,7 +7,7 @@ import useUser from '../../../utils/hooks/use-user';
 const db = new Dexie('leavemealone');
 
 db.version(1).stores({
-  mail: `&id, date, *labels, to`,
+  mail: `&id, fromEmail, date, *labels, score, to`,
   scores: `&address, score`,
   occurrences: `key, count`
 });
@@ -51,7 +51,6 @@ export function useMailSync() {
         });
         socket.on('scores', async data => {
           try {
-            console.log(data);
             await db.scores.bulkPut(
               data.map(d => ({
                 address: d.address,
@@ -61,6 +60,13 @@ export function useMailSync() {
                 senderScore: d.senderScore
               }))
             );
+            await data.reduce(async (p, d) => {
+              await p;
+              return db.mail
+                .where('fromEmail')
+                .equals(d.address)
+                .modify({ score: d.score });
+            }, Promise.resolve());
           } catch (err) {
             console.error(err);
           }

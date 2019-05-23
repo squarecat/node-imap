@@ -7,7 +7,9 @@ export const initialState = {
   filterValues: {
     recipients: []
   },
-  activeFilters: []
+  activeFilters: [],
+  sortByValue: 'date',
+  sortByDirection: 'asc'
 };
 
 // mail reducer that represents the internal state
@@ -48,6 +50,18 @@ const mailReducer = (state = initialState, action) => {
         }
       };
     }
+    case 'set-sort-by': {
+      return {
+        ...state,
+        sortByValue: action.data
+      };
+    }
+    case 'set-sort-direction': {
+      return {
+        ...state,
+        sortByDirection: action.data
+      };
+    }
     case 'set-count': {
       return {
         ...state,
@@ -77,11 +91,5 @@ const mailReducer = (state = initialState, action) => {
   }
   return newState;
 };
-
-function getDupeKey(from, to) {
-  const { fromEmail } = parseFrom(from);
-  const { fromEmail: toEmail } = parseFrom(to);
-  return `${fromEmail}-${toEmail}`.toLowerCase();
-}
 
 export default mailReducer;
