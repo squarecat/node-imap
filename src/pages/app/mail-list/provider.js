@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import db, { useMailSync } from './db';
 import mailReducer, { initialState } from './reducer';
 
+const sortByValues = ['date', 'score'];
 export const MailContext = createContext({});
 
 export function MailProvider({ children }) {
@@ -44,6 +45,7 @@ export function MailProvider({ children }) {
     fetchScores(filteredCollection.map(m => m.fromEmail));
     return filtedMailIds;
   }
+
   async function setFilterValues() {
     db.mail.orderBy('to').uniqueKeys(function(recipients) {
       return dispatch({
@@ -52,6 +54,7 @@ export function MailProvider({ children }) {
       });
     });
   }
+
   async function setMailCount(c) {
     let count = c;
     if (!count) {
@@ -59,6 +62,7 @@ export function MailProvider({ children }) {
     }
     return dispatch({ type: 'set-count', data: count });
   }
+
   function onCreate(key, obj) {
     // TODO does this change the results of the current active filter?
     setMailCount(state.count + 1);
@@ -93,16 +97,17 @@ export function MailProvider({ children }) {
   useEffect(
     () => {
       filterMail({
-        orderBy: state.orderBy,
+        orderBy: state.sortByValue,
         page: state.page,
         perPage: state.perPage
       });
     },
     [
       JSON.stringify(state.activeFilters),
-      state.orderBy,
+      state.sortByValue,
       state.page,
-      state.perPage
+      state.perPage,
+      state.count
     ]
   );
 
@@ -110,12 +115,14 @@ export function MailProvider({ children }) {
     isLoading: ready,
     page: state.page,
     perPage: state.perPage,
-    orderBy: state.orderBy,
     refresh: fetch,
     filterValues: state.filterValues,
     activeFilters: state.activeFilters,
     mail: filteredMail.mail,
-    totalCount: filteredMail.count
+    totalCount: filteredMail.count,
+    sortValues: sortByValues,
+    sortByValue: state.sortByValue,
+    sortByDirection: state.sortByDirection
   };
 
   return (

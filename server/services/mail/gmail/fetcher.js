@@ -64,6 +64,7 @@ export async function* fetchMail(
         dupeSenders = newDupeSenders;
         yield { type: 'mail', data: deduped };
       }
+      logger.info('yield progress');
       yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
 

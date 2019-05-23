@@ -15,6 +15,9 @@ function MailView() {
     totalCount,
     isLoading,
     filterValues,
+    sortValues,
+    sortByValue,
+    sortByDirection,
     mail,
     perPage,
     page,
@@ -46,34 +49,64 @@ function MailView() {
   return (
     <div styleName="mail-list">
       <div styleName="filters">
-        <FormSelect
-          pill
-          onChange={({ currentTarget }) => {
-            const { value } = currentTarget;
-            if (!value) {
-              return dispatch({
-                type: 'remove-active-filter',
-                data: { field: 'to' }
+        Show mail for
+        <span style={{ marginLeft: 7 }}>
+          <FormSelect
+            pill
+            onChange={({ currentTarget }) => {
+              const { value } = currentTarget;
+              if (!value) {
+                return dispatch({
+                  type: 'remove-active-filter',
+                  data: { field: 'to' }
+                });
+              }
+              dispatch({
+                type: 'set-active-filter',
+                data: { field: 'to', type: 'equals', value }
               });
-            }
-            dispatch({
-              type: 'set-active-filter',
-              data: { field: 'to', type: 'equals', value }
-            });
-          }}
-          name="filter-recipient"
-          compact
-          options={filterValues['recipients'].map(v => ({
-            value: v,
-            label: v
-          }))}
-          value={recipientValue ? recipientValue.value : ''}
-          basic
-          placeholder="All addresses"
-        />
+            }}
+            name="filter-recipient"
+            compact
+            options={filterValues['recipients'].map(v => ({
+              value: v,
+              label: v
+            }))}
+            value={recipientValue ? recipientValue.value : ''}
+            basic
+            placeholder="All addresses"
+          />
+        </span>
+        <span>Sort by</span>
+        <span style={{ marginLeft: 7 }}>
+          <FormSelect
+            pill
+            onChange={({ currentTarget }) => {
+              const { value } = currentTarget;
+              if (!value) {
+                return dispatch({
+                  type: 'set-sort-by',
+                  data: 'date'
+                });
+              }
+              dispatch({
+                type: 'set-sort-by',
+                data: value
+              });
+            }}
+            name="sort-by"
+            compact
+            options={sortValues.map(v => ({
+              value: v,
+              label: v
+            }))}
+            value={sortByValue ? sortByValue : 'date'}
+            basic
+          />
+        </span>
         <span styleName="refresh">
           <Button muted compact basic outlined onClick={refresh}>
-            Refresh <RefreshIcon width="12" height="12" />
+            Update <RefreshIcon width="12" height="12" />
           </Button>
         </span>
       </div>

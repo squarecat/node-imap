@@ -1,19 +1,19 @@
 import './item.module.scss';
 
 import React, { useContext } from 'react';
-import { useMailItem, useScore } from '../db';
+import { useMailItem, useOccurrence, useScore } from '../db';
 
 import IgnoreIcon from '../../../../components/ignore-icon';
 import { MailContext } from '../provider';
 import Score from '../../../../components/score';
 import Toggle from '../../../../components/toggle';
-import Tooltip from 'rc-tooltip';
+import Tooltip from '../../../../components/tooltip';
 import format from 'date-fns/format';
 import { toggleFromIgnoreList } from '../../profile/ignore';
 import useUser from '../../../../utils/hooks/use-user';
 
-const mailDateFormat = 'Do MMM YYYY';
-const mailTimeFormat = 'HH:mm';
+const mailDateFormat = 'Do MMM';
+const mailTimeFormat = 'HH:mm YYYY';
 
 export default function MailItem({ id, setUnsubModal = () => {} }) {
   const m = useMailItem(id);
@@ -49,11 +49,6 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
         <div styleName="from-name-container">
           <span styleName="from-name">
             <Tooltip
-              placement="top"
-              trigger={['hover']}
-              mouseLeaveDelay={0}
-              overlayClassName="tooltip"
-              destroyTooltipOnHide={true}
               overlay={
                 <span>
                   {isIgnored
@@ -68,22 +63,8 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
             </Tooltip>
             {m.fromName}
           </span>
-          {m.occurrences > 1 ? (
-            <Tooltip
-              placement="top"
-              trigger={['hover']}
-              mouseLeaveDelay={0}
-              overlayClassName="tooltip"
-              destroyTooltipOnHide={true}
-              overlay={
-                <span>
-                  You received {m.occurrences} emails from this sender in the
-                  past 6 months
-                </span>
-              }
-            >
-              <span styleName="occurrences">x{m.occurrences}</span>
-            </Tooltip>
+          {m.fromEmail ? (
+            <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
         <span styleName="from-email">{`<${m.fromEmail}>`}</span>
@@ -160,7 +141,33 @@ function ItemScore({ sender }) {
   if (!sender) {
     return null;
   }
-  const { rank } = useScore(sender);
+  const { rank, score, unsubscribePercentage } = useScore(sender);
 
-  return <Score rank={rank} />;
+  return (
+    <Score
+      rank={rank}
+      address={sender}
+      score={score}
+      unsubscribePercentage={unsubscribePercentage}
+    />
+  );
+}
+
+function Occurrences({ fromEmail, toEmail }) {
+  const occurrences = useOccurrence({ fromEmail, toEmail });
+  if (occurrences < 2) {
+    return null;
+  }
+  return (
+    <Tooltip
+      overlay={
+        <span>
+          You received {occurrences} emails from this sender in the past 6
+          months
+        </span>
+      }
+    >
+      <span styleName="occurrences">x{occurrences}</span>
+    </Tooltip>
+  );
 }

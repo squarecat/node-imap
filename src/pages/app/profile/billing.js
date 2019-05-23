@@ -24,7 +24,7 @@ import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import ProfileLayout from './layout';
-import Tooltip from 'rc-tooltip';
+import Tooltip from '../../../components/tooltip';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import request from '../../../utils/request';
@@ -172,11 +172,6 @@ function UsageBased() {
         <h3 styleName="plan-title">Per unsubscribe</h3>
         <Price price={USAGE_BASED.price} />
         <Tooltip
-          placement="top"
-          trigger={['hover']}
-          mouseLeaveDelay={0}
-          overlayClassName="tooltip"
-          destroyTooltipOnHide={true}
           overlay={
             <span>
               {isUsageActive

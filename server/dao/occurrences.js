@@ -247,6 +247,8 @@ export async function getScores(senderAddresses) {
       },
       {
         projection: {
+          addressOccurrences: 1,
+          addressUnsubscribes: 1,
           addresses: 1,
           addressScores: 1,
           score: 1
@@ -256,18 +258,24 @@ export async function getScores(senderAddresses) {
     .toArray();
   return senderAddresses.reduce((out, address) => {
     const sender = senderData.find(sd => sd.addresses.includes(address));
-    if (sender) {
-      const senderScore = sender.score || null;
+    const hashedAddress = hash(address, 'colinlovesencryption');
+    if (sender && sender.addressScores && sender.addressScores[hashedAddress]) {
+      const addressScore = sender.addressScores[hashedAddress];
+      const occurrences = sender.addressOccurrences[hashedAddress];
+      const unsubscribes = sender.addressUnsubscribes[hashedAddress] || 0;
+      const unsubscribePercentage = unsubscribes > 0 ? unsubscribes / occurrences : 0;
       return [
         ...out,
         {
           address,
-          score: senderScore || null,
+          senderScore: sender.score || null,
+          score: addressScore,
+          unsubscribePercentage,
           rank:
-            senderScore === null
+            addressScore === null
               ? null
               : percentileRanks.reduce((r, { rank, score }) => {
-                  if (senderScore > score) {
+                  if (addressScore > score) {
                     return rank;
                   }
                   return r;
