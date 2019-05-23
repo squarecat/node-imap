@@ -55,7 +55,7 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
         {reminderButton}
-        <span>{unsubscribesRemaining} unsubscribes remaining</span>
+        <span>{unsubscribesRemaining} credits</span>
         <button styleName="header-btn" onClick={() => onClickReferral()}>
           <span styleName="header-btn-text header-btn-text--short">Refer</span>
           <span styleName="header-btn-text header-btn-text--long">

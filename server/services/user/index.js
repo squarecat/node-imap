@@ -1,5 +1,6 @@
 import {
   addAccount,
+  addActivity,
   addPackage,
   addPaidScan,
   addScan,
@@ -14,6 +15,7 @@ import {
   getUser,
   getUserByEmail,
   getUserByReferralCode,
+  incrementUnsubscribesRemaining,
   incrementUserReferralBalance,
   removeAccount,
   removeBillingCard,
@@ -21,37 +23,35 @@ import {
   removeTotpSecret,
   removeUser,
   resolveUnsubscription,
+  setMilestoneCompleted,
   updateIgnoreList,
   updatePaidScan,
   updatePassword,
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret,
-  addActivity,
-  incrementUnsubscribesRemaining,
-  setMilestoneCompleted
+  verifyTotpSecret
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
   addReferralSignupToStats,
   addReminderRequestToStats,
+  addRewardGivenToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
-  addUserToStats,
-  addRewardGivenToStats
+  addUserToStats
 } from '../stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
+import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
 import addMonths from 'date-fns/add_months';
 // import { addReferralToReferrer } from '../referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
-import { getMilestone, updateMilestoneCompletions } from '../milestones';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
@@ -740,5 +740,25 @@ function checkReward({ userActivity, activityData }) {
       );
       return false;
     }
+  }
+}
+
+export async function getUserActivity(userId) {
+  try {
+    const user = await getUserById(userId);
+    if (!user) return null;
+    return user.activity;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getUserNotifications(userId) {
+  try {
+    const user = await getUserById(userId);
+    if (!user) return null;
+    return user.activity.filter(a => a.notification);
+  } catch (err) {
+    throw err;
   }
 }

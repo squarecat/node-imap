@@ -9,17 +9,23 @@ import { TextImportant } from '../../../../components/text';
 import _sortBy from 'lodash.sortby';
 import { parseActivity } from '../../../../utils/activities';
 import relative from 'tiny-relative-date';
+import request from '../../../../utils/request';
+import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
 
 export default function ActivityHistory() {
-  const [{ activity = [], accounts }] = useUser(u => {
+  const { value, loading } = useAsync(fetchActivity);
+  const activity = loading ? [] : value;
+
+  const [{ accounts }] = useUser(u => {
     return {
-      activity: u.activity,
       accounts: u.accounts
     };
   });
 
   const sorted = _sortBy(activity, 'timestamp').reverse();
+
+  if (loading) return <span>Loading...</span>;
   return (
     <ProfileLayout pageName="Activity History">
       <div styleName="scan-section">
@@ -45,4 +51,13 @@ export default function ActivityHistory() {
       ))}
     </ProfileLayout>
   );
+}
+
+function fetchActivity() {
+  return request('/api/me/activity', {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  });
 }

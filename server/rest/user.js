@@ -5,17 +5,19 @@ import {
   createUserTotpToken,
   deactivateUserAccount,
   getReferralStats,
+  getUserActivity,
   getUserById,
   getUserLoginProvider,
+  getUserNotifications,
   getUserPayments,
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserBillingCard,
   removeUserScanReminder,
   removeUserTotpToken,
+  setUserMilestoneCompleted,
   updateUserPassword,
-  updateUserPreferences,
-  setUserMilestoneCompleted
+  updateUserPreferences
 } from '../services/user';
 
 import Joi from 'joi';
@@ -60,7 +62,6 @@ export default app => {
         lastUpdatedAt,
         accounts,
         billing,
-        activity = [],
         milestones = {}
       } = user;
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
@@ -86,7 +87,6 @@ export default app => {
         lastUpdatedAt,
         accounts,
         billing,
-        activity,
         milestones
       });
     } catch (err) {
@@ -139,6 +139,30 @@ export default app => {
     try {
       const payments = await getUserPayments(user.id);
       res.send(payments);
+    } catch (err) {
+      logger.error(`user-rest: error getting user payments ${req.user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.get('/api/me/activity', auth, async (req, res) => {
+    const { user } = req;
+    try {
+      const activity = await getUserActivity(user.id);
+      res.send(activity);
+    } catch (err) {
+      logger.error(`user-rest: error getting user payments ${req.user.id}`);
+      logger.error(err);
+      res.status(500).send(err);
+    }
+  });
+
+  app.get('/api/me/notifications', auth, async (req, res) => {
+    const { user } = req;
+    try {
+      const notifications = await getUserNotifications(user.id);
+      res.send(notifications);
     } catch (err) {
       logger.error(`user-rest: error getting user payments ${req.user.id}`);
       logger.error(err);

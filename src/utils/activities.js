@@ -10,14 +10,12 @@ const activityEnum = {
   referralSignup: ({ reward }) => {
     const text = `Someone just signed up through your referral link!`;
     if (!reward) return text;
-    return `${text} You have both earned ${
-      reward.unsubscriptions
-    } unsubscribes`;
+    return `${text} You have both earned ${reward.unsubscriptions} credits`;
   },
   signedUpFromReferral: ({ reward }) =>
     `You signed up using a referral link! You have both earned ${
       reward.unsubscriptions
-    } unsubscribes`,
+    } credits`,
   referralPurchase: ({ reward }) => {
     const text = `Someone you referred just purchased their first package!`;
     return reward ? rewardText(text, reward) : text;
@@ -25,7 +23,7 @@ const activityEnum = {
   purchaseFromReferral: ({ reward }) =>
     `You purchased your first package using a referral link! You have both earned ${
       reward.unsubscriptions
-    } unsubscribes`,
+    } credits`,
   connectedFirstAccount: ({ reward, data }, user) => {
     const text = accountConnection({ reward, data }, user);
     return reward ? rewardText(text, reward) : text;
@@ -41,7 +39,7 @@ const activityEnum = {
 
   // non reward
   packagePurchase: ({ data }) =>
-    `You purchased a package of ${data.unsubscribes} unsubscribes.`,
+    `You purchased a package of ${data.unsubscribes} credits.`,
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account (${_capitalize(data.provider)}).`
 };
@@ -57,7 +55,7 @@ export function parseActivity(activity, user) {
 }
 
 function rewardText(text, { unsubscriptions }) {
-  return `${text} You have earned ${unsubscriptions} unsubscribes.`;
+  return `${text} You have earned ${unsubscriptions} credits.`;
 }
 
 function accountConnection({ reward, data }, user) {
@@ -65,7 +63,7 @@ function accountConnection({ reward, data }, user) {
   const typeText =
     reward.type === 'connectedFirstAccount' ? 'your first' : 'another';
   let text = `You connected ${typeText} account`;
-  if (!user && !user.accounts) {
+  if (!user || !user.accounts) {
     return `${text} (${provider}).`;
   }
   const email = user.accounts.find(a => a.id === data.id).email;

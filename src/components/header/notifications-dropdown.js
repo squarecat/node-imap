@@ -1,17 +1,19 @@
-import './settings-dropdown.module.scss';
+import './notifications-dropdown.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
+import { BellIcon } from '../../components/icons';
 import Button from '../../components/btn';
 import { Link } from 'gatsby';
-import useUser from '../../utils/hooks/use-user';
+
+// import useUser from '../../utils/hooks/use-user';
 
 export default () => {
   const [showSettings, setShowSettings] = useState(false);
-  const [{ profileImg, email }] = useUser(({ profileImg, email }) => ({
-    profileImg,
-    email
-  }));
+  // const [{ profileImg, email }] = useUser(({ profileImg, email }) => ({
+  //   profileImg,
+  //   email
+  // }));
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -45,15 +47,10 @@ export default () => {
         styleName={`settings-dropdown-toggle ${showSettings ? 'shown' : ''}`}
         onClick={() => setShowSettings(!showSettings)}
       >
-        <div styleName="profile">
-          {profileImg ? (
-            <img styleName="profile-img" src={profileImg} />
-          ) : (
-            <span styleName="profile-text">{accountLetter}</span>
-          )}
+        <div styleName="notification-icon">
+          <BellIcon />
         </div>
       </Button>
-
       <ul styleName={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}>
         <li>
           <Link to="/app/profile">Settings</Link>
