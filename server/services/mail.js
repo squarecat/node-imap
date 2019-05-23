@@ -35,7 +35,7 @@ export async function* fetchMail({ userId }) {
   const user = await getUserById(userId);
   const { accounts } = user;
   let accountScanData = [];
-  let accountOccurrences = [];
+  let accountOccurrences = {};
   console.log(accounts);
   try {
     const iterators = await Promise.all(
@@ -45,14 +45,12 @@ export async function* fetchMail({ userId }) {
       let next = await iter.next();
       while (!next.done) {
         const { value } = next;
-        console.log('yield account mail');
         yield value;
-        console.log('yielded account mail');
         next = await iter.next();
       }
       const { scanData, occurrences, dupeSenders } = next.value;
       accountScanData = [...accountScanData, scanData];
-      accountOccurrences = [...accountOccurrences, { email: occurrences }];
+      accountOccurrences = { ...accountOccurrences, ...occurrences };
     }
     // addOrUpdateOccurrences(userId, dupeSenders, timeframe);
     // addScanToUser(user.id, scanData);

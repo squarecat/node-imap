@@ -8,7 +8,8 @@ const db = new Dexie('leavemealone');
 
 db.version(1).stores({
   mail: `&id, date, *labels, to`,
-  scores: `&address`
+  scores: `&address, score`,
+  occurrences: `key, count`
 });
 db.open();
 
@@ -64,8 +65,18 @@ export function useMailSync() {
             console.error(err);
           }
         });
-        socket.on('mail:end', scan => {
-          console.log(scan);
+        socket.on('mail:end', async scan => {
+          try {
+            const { occurrences } = scan;
+            await db.occurrences.bulkPut(
+              Object.keys(occurrences).map(d => ({
+                key: d,
+                count: occurrences[d]
+              }))
+            );
+          } catch (err) {
+            console.error(err);
+          }
         });
         socket.on('mail:err', err => {
           console.error(err);
@@ -159,6 +170,37 @@ function parseAddress(str = '') {
   return { name, email: email.toLowerCase() };
 }
 
+export function useOccurrence({ fromEmail, toEmail }) {
+  const [count, setCount] = useState(0);
+  const dupeKey = `<${fromEmail}>-${toEmail}`;
+  function onCreate(key, obj) {
+    if (dupeKey === key) {
+      setCount(obj.count);
+    }
+  }
+  function onUpdate(modifications, key) {
+    if (dupeKey === key) {
+      setCount(modifications.count);
+    }
+  }
+  async function get() {
+    const value = await db.occurrences.get(dupeKey);
+    if (value) {
+      setCount(value.count);
+    }
+  }
+  useEffect(() => {
+    db.occurrences.hook('updating', onUpdate);
+    db.occurrences.hook('creating', onCreate);
+    get();
+    return () => {
+      db.occurrences.hook('updating').unsubscribe(onUpdate);
+      db.occurrences.hook('creating').unsubscribe(onCreate);
+    };
+  }, []);
+  return count;
+}
+
 export function useScore(address) {
   const [score, setScore] = useState('unknown');
   function onUpdate(modifications, key, obj) {
@@ -191,12 +233,12 @@ export function useScore(address) {
     }
   }
   useEffect(() => {
-    db.mail.hook('updating', onUpdate);
-    db.mail.hook('creating', onCreate);
+    db.scores.hook('updating', onUpdate);
+    db.scores.hook('creating', onCreate);
     get();
     return () => {
-      db.mail.hook('updating').unsubscribe(onUpdate);
-      db.mail.hook('creating').unsubscribe(onCreate);
+      db.scores.hook('updating').unsubscribe(onUpdate);
+      db.scores.hook('creating').unsubscribe(onCreate);
     };
   }, []);
   return score;

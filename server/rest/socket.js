@@ -42,7 +42,6 @@ const sentEventsMeter = io.meter({
  * }
  *
  */
-
 export default function(server) {
   const io = socketio(server).of('mail');
   let handlers = [];
