@@ -100,7 +100,7 @@ export default function Billing() {
           <h2>Information</h2>
           <p>
             You have <TextImportant>{unsubscribesRemaining}</TextImportant>{' '}
-            unsubscribes remaining
+            credits
             {unsubscribesRemaining < 5 ? (
               <>
                 <TextLink href="#packages"> buy more</TextLink>.
@@ -111,12 +111,11 @@ export default function Billing() {
           </p>
           <p>
             You have used a total of{' '}
-            <TextImportant>{unsubscribesUsed}</TextImportant> unsubscribes.
+            <TextImportant>{unsubscribesUsed}</TextImportant> credits.
           </p>
           {unsubscribesRemaining > 0 ? (
             <p>
-              These unsubscribes will last{' '}
-              <TextImportant>forever</TextImportant>.
+              These credits will last <TextImportant>forever</TextImportant>.
             </p>
           ) : null}
         </div>

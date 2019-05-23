@@ -30,7 +30,8 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret
+  verifyTotpSecret,
+  setNotificationsRead
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -57,6 +58,7 @@ import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
+import { sendToUser } from '../../rest/socket';
 
 export async function getUserById(id) {
   try {
@@ -643,7 +645,13 @@ export async function addActivityForUser(userId, name, data = {}) {
     }
 
     // add the activity to the array
-    return addActivity(userId, activityData);
+    const activity = await addActivity(userId, activityData);
+    if (activity.notification) {
+      sendToUser(userId, 'notifications', [activity]);
+    }
+    if (activity.reward) {
+      sendToUser(userId, 'credits', activity.reward.unsubscriptions);
+    }
   } catch (err) {
     throw err;
   }
@@ -753,12 +761,22 @@ export async function getUserActivity(userId) {
   }
 }
 
-export async function getUserNotifications(userId) {
+export async function getUserNotifications(userId, { seen } = {}) {
   try {
     const user = await getUserById(userId);
     if (!user) return null;
-    return user.activity.filter(a => a.notification);
+    return user.activity.filter(a => {
+      if (seen === true || seen === false) {
+        return a.notification && a.notification.seen === seen;
+      }
+      return a.notification;
+    });
   } catch (err) {
     throw err;
   }
+}
+
+export function setNotificationsReadForUser(userId, activityIds = []) {
+  logger.debug(`user-service: setting notifications read for user ${userId}`);
+  return setNotificationsRead(userId, activityIds);
 }

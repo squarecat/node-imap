@@ -1,19 +1,68 @@
-import './notifications-dropdown.module.scss';
+import './settings-dropdown.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
 import { BellIcon } from '../../components/icons';
 import Button from '../../components/btn';
 import { Link } from 'gatsby';
-
-// import useUser from '../../utils/hooks/use-user';
+import cx from 'classnames';
+import { parseActivity } from '../../utils/activities';
+import useSocket from '../../pages/app/mail-list/socket';
+import useUser from '../../utils/hooks/use-user';
 
 export default () => {
   const [showSettings, setShowSettings] = useState(false);
-  // const [{ profileImg, email }] = useUser(({ profileImg, email }) => ({
-  //   profileImg,
-  //   email
-  // }));
+  const [notifications, setNotifications] = useState([]);
+
+  const [{ token, id }] = useUser(u => ({
+    id: u.id,
+    token: u.token,
+    unreadNotifications: u.unreadNotifications
+  }));
+  const { isConnected, socket, error, socketReady } = useSocket({
+    token,
+    userId: id
+  });
+
+  // socket setup when connected
+  useEffect(
+    () => {
+      if (isConnected) {
+        socket.emit('notifications:fetch-unread');
+        socket.on('notifications', async data => {
+          try {
+            console.log('notifications', data);
+            onNotifications(data);
+          } catch (err) {
+            console.error(err);
+          }
+        });
+      }
+    },
+    [isConnected, error]
+  );
+
+  function onNotifications(data) {
+    const updated = [
+      ...notifications.filter(n => !data.find(d => d.id === n.id)),
+      ...data
+    ];
+    setNotifications(updated);
+  }
+
+  const onDropdownOpen = () => {
+    setShowSettings(!showSettings);
+  };
+
+  const onDropdownClose = () => {
+    setShowSettings(false);
+    if (notifications.length) {
+      socket.emit('notifications:set-read');
+    }
+    setNotifications([]);
+  };
+
+  const hasUnread = notifications.some(n => !n.notification.seen);
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -24,7 +73,7 @@ export default () => {
       }
       parentElement = parentElement.parentElement;
     }
-    setShowSettings(false);
+    onDropdownClose();
   };
 
   useEffect(
@@ -39,37 +88,42 @@ export default () => {
     [showSettings]
   );
 
-  const accountLetter = email.length ? email[0] : '';
   return (
     <div styleName="settings-dropdown">
       <Button
         compact
         styleName={`settings-dropdown-toggle ${showSettings ? 'shown' : ''}`}
-        onClick={() => setShowSettings(!showSettings)}
+        onClick={() => onDropdownOpen()}
       >
-        <div styleName="notification-icon">
+        <div
+          styleName={cx('notification-icon', {
+            unread: hasUnread
+          })}
+        >
           <BellIcon />
         </div>
       </Button>
-      <ul styleName={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}>
-        <li>
-          <Link to="/app/profile">Settings</Link>
-        </li>
-        <li>
-          <Link to="/app/profile/accounts">Connect account</Link>
-        </li>
-        <li>
-          <Link to="/app/profile/billing">Billing</Link>
-        </li>
-        <li>
-          <Link to="/app/profile/security">Security</Link>
-        </li>
-        <li>
-          <Link to="/app/profile/notifications">Notifications</Link>
-        </li>
-
-        <li styleName="logout">
-          <a href="/auth/logout">Logout</a>
+      <ul styleName={`notifications-list ${showSettings ? 'shown' : ''}`}>
+        {notifications.map(n => (
+          <li key={n.id} styleName="notification-item">
+            <span
+              styleName={cx('notification', {
+                unread: !n.notification.seen
+              })}
+            >
+              {parseActivity(n)}
+            </span>
+          </li>
+        ))}
+        {notifications.length ? null : (
+          <li styleName="notification-item">
+            You have no unread notifications
+          </li>
+        )}
+        <li styleName="view-all-link">
+          <Link to="/app/profile/history/notifications">
+            View all notifications
+          </Link>
         </li>
       </ul>
     </div>

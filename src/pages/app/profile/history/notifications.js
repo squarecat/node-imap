@@ -35,9 +35,6 @@ export default function Notifications() {
                   <TableRow key={activity.timestamp}>
                     <TableCell>{relative(activity.timestamp)}</TableCell>
                     <TableCell>{parseActivity(activity)}</TableCell>
-                    <TableCell>
-                      {activity.notification.seen ? 'read' : 'unread'}
-                    </TableCell>
                   </TableRow>
                 );
               })}
