@@ -7,7 +7,7 @@ import IgnoreIcon from '../../../../components/ignore-icon';
 import { MailContext } from '../provider';
 import Score from '../../../../components/score';
 import Toggle from '../../../../components/toggle';
-import Tooltip from 'rc-tooltip';
+import Tooltip from '../../../../components/tooltip';
 import format from 'date-fns/format';
 import { toggleFromIgnoreList } from '../../profile/ignore';
 import useUser from '../../../../utils/hooks/use-user';
@@ -49,11 +49,6 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
         <div styleName="from-name-container">
           <span styleName="from-name">
             <Tooltip
-              placement="top"
-              trigger={['hover']}
-              mouseLeaveDelay={0}
-              overlayClassName="tooltip"
-              destroyTooltipOnHide={true}
               overlay={
                 <span>
                   {isIgnored
@@ -160,7 +155,14 @@ function ItemScore({ sender }) {
   if (!sender) {
     return null;
   }
-  const { rank } = useScore(sender);
+  const { rank, score, unsubscribePercentage } = useScore(sender);
 
-  return <Score rank={rank} />;
+  return (
+    <Score
+      rank={rank}
+      address={sender}
+      score={score}
+      unsubscribePercentage={unsubscribePercentage}
+    />
+  );
 }

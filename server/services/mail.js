@@ -45,7 +45,9 @@ export async function* fetchMail({ userId }) {
       let next = await iter.next();
       while (!next.done) {
         const { value } = next;
+        console.log('yield account mail');
         yield value;
+        console.log('yielded account mail');
         next = await iter.next();
       }
       const { scanData, occurrences, dupeSenders } = next.value;

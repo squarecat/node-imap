@@ -319,37 +319,6 @@ pre {
   display: none;
 }
 
-.rc-tooltip-inner {
-  background-color: #ffd9d6 !important;
-  border: 0 !important;
-  box-shadow: 1px 1px 2px hsla(18, 100%, 38%, 0.1) !important;
-  min-height: 30px;
-  padding: 5px 10px;
-}
-
-.rc-tooltip-placement-top .rc-tooltip-arrow,
-.rc-tooltip-placement-topLeft .rc-tooltip-arrow,
-.rc-tooltip-placement-topRight .rc-tooltip-arrow {
-  border-top-color: #ffd9d6 !important;
-}
-
-.rc-tooltip {
-  background: transparent !important;
-  opacity: 1 !important;
-}
-
-.rc-tooltip-content {
-  transform: translateY(-7px);
-}
-
-.ReactVirtualized__Grid.ReactVirtualized__List {
-  outline: none;
-  position: absolute !important;
-  top: 0;
-  padding-top: 122px;
-  z-index: 1;
-}
-
 .scan-more-text {
   font-size: 12px;
   text-align: right;

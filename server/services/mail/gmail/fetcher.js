@@ -62,9 +62,13 @@ export async function* fetchMail(
         totalUnsubCount = totalUnsubCount + deduped.length;
         dupeCache = newDupeCache;
         dupeSenders = newDupeSenders;
+        logger.info('yield mail');
         yield { type: 'mail', data: deduped };
+        logger.info('yielded mail');
       }
+      logger.info('yield progress');
       yield { type: 'progress', data: { progress, total: totalEstimate } };
+      debugger;
     }
 
     logger.info(

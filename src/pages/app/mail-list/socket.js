@@ -28,8 +28,8 @@ function useSocket({ token, userId }) {
       new Promise((resolve, reject) => {
         socket.on('connect', () => {
           setSocket(socket);
-          resolve();
         });
+        resolve(socket);
         socket.on('error', err => {
           setError(err);
           reject('failed to connect');

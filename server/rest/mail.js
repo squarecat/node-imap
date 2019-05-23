@@ -131,7 +131,7 @@ function getSocketFunctions(userId, socket) {
       return new Promise(ack => {
         socket.emit(userId, 'mail', m, {
           buffer: true,
-          success: () => {
+          onSuccess: () => {
             ack();
           }
         });
@@ -170,7 +170,7 @@ function getSocketFunctions(userId, socket) {
       return new Promise(ack => {
         socket.emit(userId, 'mail:progress', progress, {
           buffer: true,
-          success: () => {
+          onSuccess: () => {
             ack();
           }
         });

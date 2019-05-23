@@ -48,20 +48,21 @@ export function useMailSync() {
           }
           ack();
         });
-        socket.on('scores', async (data, ack) => {
+        socket.on('scores', async data => {
           try {
             console.log(data);
             await db.scores.bulkPut(
               data.map(d => ({
                 address: d.address,
                 score: d.score,
-                rank: d.rank
+                rank: d.rank,
+                unsubscribePercentage: d.unsubscribePercentage,
+                senderScore: d.senderScore
               }))
             );
           } catch (err) {
             console.error(err);
           }
-          ack();
         });
         socket.on('mail:end', scan => {
           console.log(scan);
@@ -110,19 +111,19 @@ export function useMailSync() {
     ready: isConnected,
     fetchScores: async senders => {
       console.log('fetching mail scores');
-      await socketReady;
-      socket.emit('fetch-scores', { senders });
+      const sock = await socketReady;
+      sock.emit('fetch-scores', { senders });
     },
     fetch: async () => {
       await db.mail.clear();
       console.log('refreshing mail');
-      await socketReady;
-      socket.emit('fetch');
+      const sock = await socketReady;
+      sock.emit('fetch');
     },
     unsubscribe: async mailItem => {
       await db.mail.update(mailItem.id, { isLoading: true, subscribed: false });
-      await socketReady;
-      socket.emit('unsubscribe', mailItem);
+      const sock = await socketReady;
+      sock.emit('unsubscribe', mailItem);
     },
     resolveUnsubscribeError: async data => {
       await db.mail.update(data.mailId, {
@@ -163,18 +164,30 @@ export function useScore(address) {
   function onUpdate(modifications, key, obj) {
     if (key === address) {
       const newItem = { ...obj, ...modifications };
-      setScore({ score: newItem.score, rank: newItem.rank });
+      setScore({
+        score: newItem.score,
+        rank: newItem.rank,
+        unsubscribePercentage: newItem.unsubscribePercentage
+      });
     }
   }
   function onCreate(key, obj) {
     if (key === address) {
-      setScore({ score: obj.score, rank: obj.rank });
+      setScore({
+        score: obj.score,
+        rank: obj.rank,
+        unsubscribePercentage: obj.unsubscribePercentage
+      });
     }
   }
   async function get() {
     const value = await db.scores.get(address);
     if (value) {
-      setScore({ score: value.score, rank: value.rank });
+      setScore({
+        score: value.score,
+        rank: value.rank,
+        unsubscribePercentage: value.unsubscribePercentage
+      });
     }
   }
   useEffect(() => {

@@ -16,6 +16,7 @@ export function MailProvider({ children }) {
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
   async function filterMail(options) {
+    console.log('filtering mail');
     const { activeFilters } = state;
     let filteredCollection = db.mail;
     if (activeFilters.length) {
@@ -44,6 +45,7 @@ export function MailProvider({ children }) {
     fetchScores(filteredCollection.map(m => m.fromEmail));
     return filtedMailIds;
   }
+
   async function setFilterValues() {
     db.mail.orderBy('to').uniqueKeys(function(recipients) {
       return dispatch({
@@ -52,6 +54,7 @@ export function MailProvider({ children }) {
       });
     });
   }
+
   async function setMailCount(c) {
     let count = c;
     if (!count) {
@@ -59,6 +62,7 @@ export function MailProvider({ children }) {
     }
     return dispatch({ type: 'set-count', data: count });
   }
+
   function onCreate(key, obj) {
     // TODO does this change the results of the current active filter?
     setMailCount(state.count + 1);
@@ -102,7 +106,8 @@ export function MailProvider({ children }) {
       JSON.stringify(state.activeFilters),
       state.orderBy,
       state.page,
-      state.perPage
+      state.perPage,
+      state.count
     ]
   );
 

@@ -1,0 +1,73 @@
+@import '../../styles/common/colors.scss';
+.tooltip {
+  position: absolute;
+  background: transparent !important;
+  opacity: 1 !important;
+
+  :global(.rc-tooltip-inner) {
+    background-color: #ffd9d6 !important;
+    border: 0 !important;
+    box-shadow: 1px 1px 2px hsla(18, 100%, 38%, 0.1) !important;
+    min-height: 30px;
+    padding: 5px 10px;
+  }
+
+  &:global(.rc-tooltip-placement-top .rc-tooltip-arrow) {
+    border-top-color: #ffd9d6 !important;
+  }
+  &:global(.rc-tooltip-placement-left .rc-tooltip-arrow) {
+    border-left-color: #ffd9d6 !important;
+  }
+  &:global(.rc-tooltip-placement-right .rc-tooltip-arrow) {
+    border-right-color: #ffd9d6 !important;
+  }
+  &:global(.rc-tooltip-placement-bottom .rc-tooltip-arrow) {
+    border-bottom-color: #ffd9d6 !important;
+  }
+
+  &:global(.rc-tooltip-placement-top .rc-tooltip-content) {
+    transform: translateY(-7px);
+  }
+  &:global(.rc-tooltip-placement-left .rc-tooltip-content) {
+    transform: translateX(-7px);
+  }
+  &:global(.rc-tooltip-placement-right .rc-tooltip-content) {
+    transform: translateX(7px);
+  }
+  &:global(.rc-tooltip-placement-bottom .rc-tooltip-content) {
+    transform: translateY(7px);
+  }
+}
+
+.white {
+  :global(.rc-tooltip-arrow:before) {
+    content: '';
+    position: absolute;
+    border: 5px solid transparent;
+    left: -4px;
+    top: -6px;
+    border-left-color: #ffd9d6;
+    border-width: 6px 0 6px 6px;
+    z-index: -1;
+  }
+  :global(.rc-tooltip-content) {
+    border: 1px solid $color-weak-border;
+    border-radius: 4px;
+  }
+  :global(.rc-tooltip-inner) {
+    background-color: white !important;
+    box-shadow: 2px 2px 4px hsla(18, 100%, 38%, 0.1) !important;
+  }
+  &:global(.rc-tooltip-placement-top .rc-tooltip-arrow) {
+    border-top-color: white !important;
+  }
+  &:global(.rc-tooltip-placement-left .rc-tooltip-arrow) {
+    border-left-color: white !important;
+  }
+  &:global(.rc-tooltip-placement-right .rc-tooltip-arrow) {
+    border-right-color: white !important;
+  }
+  &:global(.rc-tooltip-placement-bottom .rc-tooltip-arrow) {
+    border-bottom-color: white !important;
+  }
+}

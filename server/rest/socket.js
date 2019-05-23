@@ -90,24 +90,25 @@ export default function(server) {
       // }
       handlers.push({ path, cb });
     },
-    emit: (userId, event, data, options, cb) =>
-      sendToUser(userId, event, data, options, cb)
+    emit: (userId, event, data, options) =>
+      sendToUser(userId, event, data, options)
   };
 }
 
 function checkBuffer(socket, userId) {
   if (buffer[userId]) {
+    console.log(`sending ${buffer[userId].length} buffered events`);
     buffer[userId].forEach(({ event, data }) => {
       socket.emit(event, data);
     });
   }
 }
 
-function sendToUser(userId, event, data, options = {}, cb = () => {}) {
+function sendToUser(userId, event, data, options = {}) {
   const socket = connectedClients[userId];
   if (socket) {
     sentEventsMeter.mark();
-    return socket.emit(event, data, cb);
+    return socket.emit(event, data, options.onSuccess);
   }
   if (options.buffer) {
     if (!buffer[userId]) {

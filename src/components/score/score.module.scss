@@ -67,3 +67,27 @@ $normal-scale: (
     content: '-';
   }
 }
+
+.numeric {
+  width: auto;
+  height: 40px;
+  padding: 0 10px;
+  font-size: 16px;
+}
+
+.score-tooltip {
+  width: 300px;
+  font-size: 14px;
+  padding: 10px 5px;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.scores {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

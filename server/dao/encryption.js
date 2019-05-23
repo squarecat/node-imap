@@ -28,11 +28,11 @@ export function decrypt(text) {
   }
 }
 
-export function hash(value) {
+export function hash(value, k = key) {
   try {
     if (!value) return value;
     return crypto
-      .createHmac('sha256', key)
+      .createHmac('sha256', k)
       .update(value)
       .digest('hex');
   } catch (err) {
