@@ -1,5 +1,6 @@
 @import '../../../components/btn/btn.module.scss';
 @import '../../../components/text/text.module.scss';
+@import '../../../styles/common/layers.scss';
 
 .mail-list {
   display: flex;
@@ -8,15 +9,19 @@
   background-color: $color-red-lightest;
 }
 
+.footer,
 .filters {
   position: fixed;
+  @extend .banner-layer;
+}
+
+.filters {
   display: flex;
   height: 50px;
   top: 50px;
   left: 0;
   right: 0;
   background-color: white;
-  z-index: 9;
   flex-direction: row;
   border-bottom: 1px solid rgba(231, 58, 48, 0.1);
   align-items: center;
@@ -28,7 +33,6 @@
 }
 
 .footer {
-  position: fixed;
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -7,14 +7,33 @@
   height: 100%;
 }
 
-// .mail-list ul {
-//   list-style: none;
-//   background-color: $color-red-lightest;
-//   margin: 15px 0 0 0;
-// }
+.tags-column {
+  width: 70px;
+}
+.timestamp-column {
+  width: 100px;
+}
+.from-column {
+  white-space: nowrap;
+  width: 240px;
+}
+.subject-column {
+  width: 50%;
+}
+.score-column {
+  width: 55px;
+}
+
+.actions-column {
+  font-size: 12px;
+  margin-left: auto;
+  width: 110px;
+  text-align: center;
+  position: relative;
+  padding: 10px;
+}
 
 .mail-item {
-  display: flex;
   align-items: center;
   margin: 0 auto;
   min-height: 100px;
@@ -35,7 +54,6 @@
 .from {
   font-size: 14px;
   font-weight: bolder;
-  margin-right: 20px;
   overflow: hidden;
   flex: 1;
 }
@@ -91,24 +109,25 @@
   font-size: 11px;
 }
 
-.from-date {
+.from-datetime {
+  display: block;
+  text-align: center;
   opacity: 0.5;
   font-size: 11px;
   line-height: 14px;
 }
 
-.subject {
-  font-size: 14px;
-  margin-right: 20px;
-  flex: 2;
+.from-date,
+.from-time {
+  display: block;
+  padding: 2px 0;
 }
 
-.actions {
-  font-size: 12px;
-  margin-left: auto;
-  width: 110px;
-  text-align: center;
-  position: relative;
+.subject {
+  font-size: 14px;
+  display: block;
+  overflow: hidden;
+  height: 50px;
 }
 
 .action {
@@ -261,7 +280,7 @@ pre {
 
 .status {
   position: absolute;
-  bottom: -20px;
+  bottom: 0;
   width: auto;
   left: 0;
   right: 0;

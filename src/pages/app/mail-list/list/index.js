@@ -5,15 +5,17 @@ import React from 'react';
 
 function MailList({ mail }) {
   return (
-    <ul styleName="list">
-      {mail.map(id => {
-        return (
-          <li styleName="item" key={id}>
-            <MailItem id={id} />
-          </li>
-        );
-      })}
-    </ul>
+    <table styleName="list">
+      <tbody>
+        {mail.map(id => {
+          return (
+            <tr styleName="item" key={id}>
+              <MailItem id={id} />
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }
 

@@ -23,7 +23,6 @@ module.exports = {
           `/header`,
           `/gifts/gift-checkout`,
           `/gifts/gifts-prices`,
-          `/app`,
           `/app/**/*`
         ]
       }
@@ -56,38 +55,6 @@ module.exports = {
         // Exclude global styles from the plugin using a RegExp:
         exclude: `\/global\/`
         // For all the options check babel-plugin-react-css-modules README link provided above
-      }
-    },
-    {
-      resolve: `gatsby-plugin-google-gtag`,
-      options: {
-        trackingIds: ['UA-129815670-1'],
-        gtagConfig: {
-          anonymize_ip: true
-        },
-        pluginConfig: {
-          head: false,
-          respectDNT: true,
-          exclude: ['/login/*/redirect']
-        }
-      }
-    },
-    {
-      resolve: `gatsby-plugin-countly`,
-      options: {
-        respectDNT: false,
-        app_key: '5db45d43896e6ab2da8e5f50f39dd9a07b35e953',
-        url: 'https://analytics.squarecat.io',
-        script_url: 'https://analytics.squarecat.io/sdk/web/countly.min.js',
-        track_sessions: true,
-        exclude: ['/app', '/app/*']
-      }
-    },
-    'gatsby-plugin-twitter',
-    {
-      resolve: `gatsby-plugin-stripe`,
-      options: {
-        async: true
       }
     }
   ]

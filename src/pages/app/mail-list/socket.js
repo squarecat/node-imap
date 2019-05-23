@@ -2,12 +2,21 @@ import { useEffect, useState } from 'react';
 
 import io from 'socket.io-client';
 
+// socket singleton
+let SOCKET_INSTANCE;
+
 // socket should sync with the db
 function useSocket({ token, userId }) {
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(null);
+  const [connectionPromise, setConnectionPromise] = useState(
+    new Promise(() => {})
+  );
   // only once
   useEffect(() => {
+    if (SOCKET_INSTANCE) {
+      return setSocket(SOCKET_INSTANCE);
+    }
     let socket = io(process.env.WEBSOCKET_URL, {
       query: {
         token,
@@ -15,20 +24,29 @@ function useSocket({ token, userId }) {
       }
     });
     console.log('setting up socket');
-    socket.on('connect', () => {
-      setSocket(socket);
-    });
-    socket.on('error', err => {
-      setError(err);
-    });
-    socket.on('disconnect', () => {
-      setSocket(null);
-    });
+    setConnectionPromise(
+      new Promise((resolve, reject) => {
+        socket.on('connect', () => {
+          setSocket(socket);
+          resolve();
+        });
+        socket.on('error', err => {
+          setError(err);
+          reject('failed to connect');
+        });
+        socket.on('disconnect', () => {
+          setSocket(null);
+          SOCKET_INSTANCE = null;
+        });
+      })
+    );
+    SOCKET_INSTANCE = socket;
   }, []);
 
   return {
     socket,
     isConnected: !!socket,
+    socketReady: connectionPromise,
     error
   };
 }

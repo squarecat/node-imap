@@ -6,7 +6,13 @@ export const MailContext = createContext({});
 
 export function MailProvider({ children }) {
   const [state, dispatch] = useReducer(mailReducer, initialState);
-  const { ready, fetch } = useMailSync();
+  const {
+    ready,
+    fetch,
+    unsubscribe,
+    resolveUnsubscribeError,
+    fetchScores
+  } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
   async function filterMail(options) {
@@ -29,10 +35,14 @@ export function MailProvider({ children }) {
       .reverse()
       .sortBy(options.orderBy);
 
-    return setFilteredMail({
-      mail: filteredCollection.map(m => m.id),
+    const filtedMailIds = filteredCollection.map(m => m.id);
+    setFilteredMail({
+      mail: filtedMailIds,
       count
     });
+
+    fetchScores(filteredCollection.map(m => m.fromEmail));
+    return filtedMailIds;
   }
   async function setFilterValues() {
     db.mail.orderBy('to').uniqueKeys(function(recipients) {
@@ -109,7 +119,13 @@ export function MailProvider({ children }) {
   };
 
   return (
-    <MailContext.Provider value={{ state: value, dispatch }}>
+    <MailContext.Provider
+      value={{
+        state: value,
+        dispatch,
+        actions: { onUnsubscribe: unsubscribe, resolveUnsubscribeError }
+      }}
+    >
       {children}
     </MailContext.Provider>
   );
