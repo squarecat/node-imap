@@ -5,12 +5,12 @@ import React, { useEffect, useState } from 'react';
 import Button from '../btn';
 import { ClockIcon } from '../icons';
 import ModalClose from './modal-close';
-import { PRICES } from '../../utils/prices';
 import { TextImportant } from '../text';
 import format from 'date-fns/format';
 import useLocalStorage from '../../utils/hooks/use-localstorage';
 import useUser from '../../utils/hooks/use-user';
 
+const PRICES = [];
 const reminderDateFormat = 'Do MMMM YYYY';
 
 export default ({ onClose, onSetReminder, onClearReminder }) => {
@@ -84,7 +84,6 @@ export default ({ onClose, onSetReminder, onClearReminder }) => {
       </>
     );
   } else {
-    console.log(PRICES);
     const scanPerformed = PRICES.find(p => p.value === lastPaidScanType);
     nextReminder = {
       label: scanPerformed.label,

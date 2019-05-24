@@ -1,0 +1,91 @@
+@import '../../components/btn/btn.module.scss';
+@import '../../components/text/text.module.scss';
+@import '../../styles/common/layers.scss';
+
+.mail-list {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 100px);
+  background-color: $color-red-lightest;
+}
+
+.footer,
+.filters {
+  position: fixed;
+  @extend .banner-layer;
+}
+
+.filters {
+  display: flex;
+  height: 50px;
+  top: 50px;
+  left: 0;
+  right: 0;
+  background-color: white;
+  flex-direction: row;
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
+  align-items: center;
+  padding: 0 20px;
+}
+
+.content {
+  padding-top: 50px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: white;
+  border-top: 1px solid rgba(231, 58, 48, 0.1);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+
+  li {
+    @extend .btn;
+    @extend .compact;
+    @extend .muted;
+    @extend .basic;
+    margin: 0;
+  }
+}
+.pagination-pages {
+}
+.pagination-active {
+}
+
+.count {
+  padding: 0 15px;
+  @extend .smaller;
+  height: auto;
+}
+
+.page-count {
+  @extend .important;
+}
+.total-count {
+  @extend .important;
+}
+
+.refresh {
+  margin-left: auto;
+
+  a {
+    font-size: 12px;
+  }
+
+  svg {
+    position: relative;
+    top: -1px;
+    margin: 0 0 0 4px;
+  }
+}

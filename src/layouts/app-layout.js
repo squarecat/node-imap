@@ -27,6 +27,7 @@ const AppLayout = ({ pageName, children }) => {
           }
         ]}
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
+        script={[{ src: 'https://checkout.stripe.com/checkout.js' }]}
       />
       {children}
     </>

@@ -2,9 +2,9 @@ import 'isomorphic-fetch';
 
 import React, { useState } from 'react';
 
-import MailList from './mail-list';
+import MailList from '../../app/mail-list';
 import OnboardingModal from '../../components/modal/onboarding';
-import Template from './template';
+import Template from '../../app/template';
 import { Transition } from 'react-transition-group';
 import useUser from '../../utils/hooks/use-user';
 

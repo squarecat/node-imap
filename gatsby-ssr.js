@@ -1,11 +1,10 @@
 const React = require('react');
-
+const Terser = require('terser');
 /**
  * Implement Gatsby's SSR (Server Side Rendering) APIs in this file.
  *
  * See: https://www.gatsbyjs.org/docs/ssr-apis/
  */
-
 exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
   console.log('pre-rendering body for', pathname);
   let components = [
@@ -13,7 +12,7 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
     <script
       key="support-start"
       dangerouslySetInnerHTML={{
-        __html: `window.intergramId = "-388078727";
+        __html: Terser.minify(`window.intergramId = "-388078727";
         window.intergramServer = "https://support.squarecat.io"
         window.intergramCustomizations = {
           titleClosed: 'Chat',
@@ -31,7 +30,7 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
           desktopHeight: 550,
           desktopWidth: 400
         };
-        `
+        `).code
       }}
     />,
     <script
@@ -41,11 +40,6 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
       src="https://support.squarecat.io/js/widget.js"
     />
   ];
-  // if (pathname.startsWith('/app')) {
-  components = [
-    ...components,
-    <script key="stripe-script" src="https://checkout.stripe.com/checkout.js" />
-  ];
-  // }
+
   setPostBodyComponents(components);
 };

@@ -1,0 +1,24 @@
+@import '../../../styles/common/colors.scss';
+@import '../../../components/text/text.module.scss';
+@import '../../../components/btn/btn.module.scss';
+@import '../layout.module.scss';
+
+.scan-section {
+  @extend .profile-section;
+  @extend .profile-section--unpadded;
+}
+
+.scan-link {
+  @extend .link;
+}
+
+.scan-btn {
+  @extend .btn;
+  @extend .compact;
+  @extend .basic;
+
+  @media (max-width: 400px) {
+    padding: 2px 5px;
+    font-size: 12px;
+  }
+}
