@@ -53,15 +53,40 @@ export default () => {
           )}
         </div>
       </Button>
+
       <ul styleName={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}>
-        <li>
-          <Link to="/app/profile">Account settings</Link>
+        <li styleName="setting-item">
+          <Link styleName="setting-item-link" to="/app/profile">
+            Settings
+          </Link>
         </li>
-        <li>
-          <a href="/login">Switch account</a>
+        <li styleName="setting-item">
+          <Link styleName="setting-item-link" to="/app/profile/accounts">
+            Connect account
+          </Link>
         </li>
-        <li styleName="logout">
-          <a href="/auth/logout">Logout</a>
+        <li styleName="setting-item">
+          <Link styleName="setting-item-link" to="/app/profile/billing">
+            Billing
+          </Link>
+        </li>
+        <li styleName="setting-item">
+          <Link styleName="setting-item-link" to="/app/profile/security">
+            Security
+          </Link>
+        </li>
+        <li styleName="setting-item">
+          <Link
+            styleName="setting-item-link"
+            to="/app/profile/history/notifications"
+          >
+            Notifications
+          </Link>
+        </li>
+        <li styleName="setting-item logout">
+          <a styleName="setting-item-link" href="/logout">
+            Logout
+          </a>
         </li>
       </ul>
     </div>

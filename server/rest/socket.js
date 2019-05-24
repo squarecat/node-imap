@@ -103,7 +103,7 @@ function checkBuffer(socket, userId) {
   }
 }
 
-function sendToUser(userId, event, data, options = {}) {
+export function sendToUser(userId, event, data, options = {}) {
   const socket = connectedClients[userId];
   if (socket) {
     sentEventsMeter.mark();

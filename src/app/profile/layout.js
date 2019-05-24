@@ -1,6 +1,7 @@
 import './layout.module.scss';
 
 import {
+  BellIcon,
   CreditCardIcon,
   HeartIcon,
   LinkIcon,
@@ -29,8 +30,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <UserIcon />
-                Profile
+                <UserIcon width="16" height="16" /> Profile
               </Link>
             </li>
             <li>
@@ -39,8 +39,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <LinkIcon />
-                Accounts
+                <LinkIcon width="16" height="16" /> Accounts
               </Link>
             </li>
             <li>
@@ -59,8 +58,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <CreditCardIcon />
-                Billing
+                <CreditCardIcon width="16" height="16" /> Billing
               </Link>
             </li>
             <li>
@@ -69,8 +67,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <MailIcon />
-                Scan history
+                <MailIcon width="16" height="16" /> Scan history
               </Link>
             </li>
             <li>
@@ -79,8 +76,16 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <MailIcon />
-                Activity history (debug)
+                <MailIcon width="16" height="16" /> Activity history
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/app/profile/history/notifications"
+                styleName="profile-nav-link"
+                activeClassName="profile-nav-link--active"
+              >
+                <BellIcon width="16" height="16" /> Notifications
               </Link>
             </li>
             <li>
@@ -89,8 +94,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <HeartIcon />
-                Favorite senders
+                <HeartIcon width="16" height="16" /> Favorite senders
               </Link>
             </li>
             <li>
@@ -99,8 +103,7 @@ export default ({ pageName, children }) => (
                 styleName="profile-nav-link"
                 activeClassName="profile-nav-link--active"
               >
-                <SettingsIcon />
-                Preferences
+                <SettingsIcon width="16" height="16" /> Preferences
               </Link>
             </li>
           </ul>

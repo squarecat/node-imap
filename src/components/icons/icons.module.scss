@@ -4,11 +4,15 @@
   margin-right: 7px;
   top: 1px;
 }
-
+// styling options
 .padleft {
   margin: 0 0 0 7px;
 }
+.filled path {
+  fill: #fde4e2;
+}
 
+// icon specific
 .heart {
   color: #ff5955;
   fill: #ffb9b6;
@@ -37,20 +41,21 @@
 .link {
   top: 1px;
 }
-
 .arrows {
 }
-
 .gift {
   margin-right: 0;
 }
-.filled path {
-  fill: #fde4e2;
-}
-
 .gift-wrapper {
   position: relative;
   top: 2px;
+}
+.star {
+}
+.bell {
+}
+.refresh {
+  margin-right: 0 4px;
 }
 
 [data-amount]::after {
@@ -63,10 +68,4 @@
   font-family: 'Gotham-Rounded-Medium';
   font-size: 14px;
   font-weight: bolder;
-}
-.star {
-}
-
-.refresh {
-  margin-right: 0 4px;
 }

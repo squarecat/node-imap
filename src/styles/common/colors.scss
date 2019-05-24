@@ -18,11 +18,10 @@ $color-text-important: $color-red;
 $color-link: $color-red;
 $color-link-hover: $color-red-darker;
 
-$color-input-border: rgba(231, 57, 48, 0.4);
-$color-input-border-focus: rgba(231, 57, 48, 0.8);
+$color-input-border: $color-grey-darker;
+$color-input-border-focus: $color-primary-font;
+$color-input-border-success: $color-red-darker;
 $color-weak-border: $color-secondary-bg;
-// $color-input-border: $color-grey-darker;
-// $color-input-border-focus: $color-primary-font;
 
 $color-input-label: #999;
 $color-input-placeholder: #bfbfbf;

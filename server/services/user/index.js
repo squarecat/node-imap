@@ -1,5 +1,6 @@
 import {
   addAccount,
+  addActivity,
   addPackage,
   addPaidScan,
   addScan,
@@ -14,6 +15,7 @@ import {
   getUser,
   getUserByEmail,
   getUserByReferralCode,
+  incrementUnsubscribesRemaining,
   incrementUserReferralBalance,
   removeAccount,
   removeBillingCard,
@@ -21,6 +23,7 @@ import {
   removeTotpSecret,
   removeUser,
   resolveUnsubscription,
+  setMilestoneCompleted,
   updateIgnoreList,
   updatePaidScan,
   updatePassword,
@@ -28,35 +31,34 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyTotpSecret,
-  addActivity,
-  incrementUnsubscribesRemaining,
-  setMilestoneCompleted
+  setNotificationsRead
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
   addReferralSignupToStats,
   addReminderRequestToStats,
+  addRewardGivenToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
-  addUserToStats,
-  addRewardGivenToStats
+  addUserToStats
 } from '../stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
+import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
 import addMonths from 'date-fns/add_months';
 // import { addReferralToReferrer } from '../referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
-import { getMilestone, updateMilestoneCompletions } from '../milestones';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
+import { sendToUser } from '../../rest/socket';
 
 export async function getUserById(id) {
   try {
@@ -643,7 +645,13 @@ export async function addActivityForUser(userId, name, data = {}) {
     }
 
     // add the activity to the array
-    return addActivity(userId, activityData);
+    const activity = await addActivity(userId, activityData);
+    if (activity.notification) {
+      sendToUser(userId, 'notifications', [activity]);
+    }
+    if (activity.reward) {
+      sendToUser(userId, 'credits', activity.reward.unsubscriptions);
+    }
   } catch (err) {
     throw err;
   }
@@ -741,4 +749,34 @@ function checkReward({ userActivity, activityData }) {
       return false;
     }
   }
+}
+
+export async function getUserActivity(userId) {
+  try {
+    const user = await getUserById(userId);
+    if (!user) return null;
+    return user.activity;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getUserNotifications(userId, { seen } = {}) {
+  try {
+    const user = await getUserById(userId);
+    if (!user) return null;
+    return user.activity.filter(a => {
+      if (seen === true || seen === false) {
+        return a.notification && a.notification.seen === seen;
+      }
+      return a.notification;
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export function setNotificationsReadForUser(userId, activityIds = []) {
+  logger.debug(`user-service: setting notifications read for user ${userId}`);
+  return setNotificationsRead(userId, activityIds);
 }

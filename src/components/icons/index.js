@@ -278,6 +278,22 @@ export const StarIcon = ({ width = 32, height = 32, ...visProps }) => (
   </svg>
 );
 
+export const BellIcon = ({ width = 32, height = 32, ...visProps }) => (
+  <svg
+    className={getClasses('bell', visProps)}
+    viewBox="0 0 32 32"
+    width={width}
+    height={height}
+    fill="none"
+    stroke="currentcolor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path d="M8 17 C8 12 9 6 16 6 23 6 24 12 24 17 24 22 27 25 27 25 L5 25 C5 25 8 22 8 17 Z M20 25 C20 25 20 29 16 29 12 29 12 25 12 25 M16 3 L16 6" />
+  </svg>
+);
+
 export function OutlookIcon({ width = '34', height = '34' }) {
   return (
     <svg width={width} height={height} viewBox="0 0 21 21">

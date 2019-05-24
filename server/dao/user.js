@@ -840,12 +840,52 @@ export async function setMilestoneCompleted(userId, milestoneName) {
 export async function addActivity(id, activityData) {
   try {
     const col = await db().collection(COL_NAME);
+    const activityId = v4();
+    const activity = {
+      ...activityData,
+      id: activityId,
+      timestamp: isoDate()
+    };
     await col.updateOne(
       { id },
       {
         $push: {
-          activity: { ...activityData, timestamp: isoDate() }
+          activity
         }
+      }
+    );
+    return activity;
+  } catch (err) {
+    logger.error(`user-dao: failed to add activity for user ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function setNotificationsRead(id, activityIds = []) {
+  try {
+    const col = await db().collection(COL_NAME);
+    let query = {
+      id
+      // 'activity.notification.seen': false
+    };
+    // specify which ones to set
+    if (activityIds.length) {
+      query = {
+        ...query,
+        activity: { $in: activityIds }
+      };
+    }
+    await col.updateOne(
+      query,
+      {
+        $set: {
+          'activity.$[elem].notification.seen': true
+        }
+      },
+      {
+        multi: true,
+        arrayFilters: [{ 'elem.notification.seen': false }]
       }
     );
     const user = await getUser(id);

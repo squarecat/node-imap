@@ -2,18 +2,19 @@ import './header.module.scss';
 
 import { ClockIcon } from '../../components/icons';
 import { Link } from 'gatsby';
+import NotificationsDropdown from './notifications-dropdown';
 import React from 'react';
 import SettingsDropdown from './settings-dropdown';
 import useUser from '../../utils/hooks/use-user';
+import Credits from './credits';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
-  const [{ lastPaidScanType, reminder, unsubscribesRemaining }] = useUser(
-    ({ lastPaidScanType, reminder, billing }) => ({
+  const [{ lastPaidScanType, reminder }] = useUser(
+    ({ lastPaidScanType, reminder }) => ({
       lastPaidScanType,
-      reminder,
-      unsubscribesRemaining: billing ? billing.unsubscribesRemaining : 0
+      reminder
     })
   );
 
@@ -55,13 +56,14 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
         {reminderButton}
-        <span>{unsubscribesRemaining} unsubscribes remaining</span>
+        <Credits />
         <button styleName="header-btn" onClick={() => onClickReferral()}>
           <span styleName="header-btn-text header-btn-text--short">Refer</span>
           <span styleName="header-btn-text header-btn-text--long">
             Refer a friend
           </span>
         </button>
+        <NotificationsDropdown />
         <SettingsDropdown />
       </div>
     </div>

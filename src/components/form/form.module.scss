@@ -13,6 +13,7 @@
   border: 1px solid $color-input-border;
   background: white;
   outline: 0;
+  transition: border-color 200ms ease-in-out;
 
   &:focus {
     border-color: $color-input-border-focus;
@@ -24,6 +25,16 @@
     background-color: $color-input-disabled-bg;
   }
 }
+
+// .form-input:not(:placeholder-shown) {
+//   &:valid {
+//     border-color: $color-input-border-success;
+//   }
+
+//   &:invalid {
+//     border-color: $color-input-border-error;
+//   }
+// }
 
 .input-compactt {
   padding: 0 20px;
@@ -45,7 +56,7 @@
 
   &:focus {
     border-color: transparent;
-    border-bottom-color: $color-input-border;
+    border-bottom-color: $color-input-border-focus;
   }
 }
 
@@ -226,4 +237,12 @@
     background: $color-bg-success;
     border: 1px solid $color-text-success;
   }
+}
+
+:global(.StripeElement) {
+  @extend .form-input;
+  @extend .input-smaller;
+}
+:global(.StripeElement--focus) {
+  border-color: $color-input-border-focus;
 }
