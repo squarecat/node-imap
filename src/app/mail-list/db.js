@@ -51,22 +51,24 @@ export function useMailSync() {
         });
         socket.on('scores', async data => {
           try {
-            await db.scores.bulkPut(
-              data.map(d => ({
-                address: d.address,
-                score: d.score,
-                rank: d.rank,
-                unsubscribePercentage: d.unsubscribePercentage,
-                senderScore: d.senderScore
-              }))
-            );
-            await data.reduce(async (p, d) => {
-              await p;
-              return db.mail
-                .where('fromEmail')
-                .equals(d.address)
-                .modify({ score: d.score });
-            }, Promise.resolve());
+            db.transaction('rw', db.scores, db.mail, async () => {
+              await db.scores.bulkPut(
+                data.map(d => ({
+                  address: d.address,
+                  score: d.score,
+                  rank: d.rank,
+                  unsubscribePercentage: d.unsubscribePercentage,
+                  senderScore: d.senderScore
+                }))
+              );
+              await data.reduce(async (p, d) => {
+                await p;
+                return db.mail
+                  .where('fromEmail')
+                  .equals(d.address)
+                  .modify({ score: d.score });
+              }, Promise.resolve());
+            });
           } catch (err) {
             console.error(err);
           }

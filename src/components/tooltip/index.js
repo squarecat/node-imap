@@ -1,3 +1,5 @@
+import 'rc-tooltip/assets/bootstrap_white.css';
+
 import React from 'react';
 import Tooltip from 'rc-tooltip';
 import cx from 'classnames';

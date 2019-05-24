@@ -2,7 +2,6 @@ import './scans.module.scss';
 
 import Table, { TableCell, TableRow } from '../../../components/table';
 
-import Button from '../../../components/btn';
 import ErrorBoundary from '../../../components/error-boundary';
 import { Link } from 'gatsby';
 import ProfileLayout from '../layout';
