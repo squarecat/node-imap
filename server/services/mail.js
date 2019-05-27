@@ -36,7 +36,6 @@ export async function* fetchMail({ userId }) {
   const { accounts } = user;
   let accountScanData = [];
   let accountOccurrences = {};
-  console.log(accounts);
   try {
     const iterators = await Promise.all(
       accounts.map(account => fetchMailByAccount({ account, user }))

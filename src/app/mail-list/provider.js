@@ -19,6 +19,7 @@ export function MailProvider({ children }) {
   async function filterMail(options) {
     const { activeFilters } = state;
     let filteredCollection = db.mail;
+    // apply filters
     if (activeFilters.length) {
       filteredCollection = activeFilters.reduce((col, filter, i) => {
         const { field, value, type } = filter;
@@ -27,22 +28,28 @@ export function MailProvider({ children }) {
         }
         return col.or(field)[type](value);
       }, db.mail);
+    } else {
+      filteredCollection = filteredCollection.toCollection();
     }
-
+    // get total count of all filtered items
     const count = await filteredCollection.count();
-    filteredCollection = await filteredCollection
-      .offset(options.page * options.perPage)
-      .limit(options.perPage)
-      .reverse()
-      .sortBy(options.orderBy);
+    // sort all items
+    filteredCollection = await filteredCollection.sortBy(options.orderBy);
+    if (options.sortDirection === 'desc') {
+      filteredCollection = await filteredCollection.reverse();
+    }
+    // filter by pagination
+    const startIndex = options.page * options.perPage;
+    filteredCollection = await filteredCollection.slice(
+      startIndex,
+      options.perPage + startIndex
+    );
 
     const filtedMailIds = filteredCollection.map(m => m.id);
     setFilteredMail({
       mail: filtedMailIds,
       count
     });
-
-    fetchScores(filteredCollection.map(m => m.fromEmail));
     return filtedMailIds;
   }
 
@@ -52,6 +59,9 @@ export function MailProvider({ children }) {
         type: 'set-filter-values',
         data: { name: 'recipients', value: recipients }
       });
+    });
+    db.mail.orderBy('fromEmail').uniqueKeys(emails => {
+      fetchScores(emails);
     });
   }
 
@@ -63,18 +73,19 @@ export function MailProvider({ children }) {
     return dispatch({ type: 'set-count', data: count });
   }
 
-  function onCreate(key, obj) {
+  function onCreate() {
+    debugger;
     // TODO does this change the results of the current active filter?
     setMailCount(state.count + 1);
     setFilterValues();
     // dispatch({ type: 'add', data: obj });
   }
-  function onUpdate(modifications, key, obj) {
-    setFilterValues();
+  function onUpdate() {
+    // setFilterValues();
     // TODO does this change the details of a currently shown mail item
     // dispatch({ type: 'update', data: obj });
   }
-  function onDelete(modifications, key, obj) {
+  function onDelete() {
     setMailCount(state.count - 1);
     setFilterValues();
     // TODO does this change the details of a currently shown mail item
@@ -98,6 +109,7 @@ export function MailProvider({ children }) {
     () => {
       filterMail({
         orderBy: state.sortByValue,
+        sortDirection: state.sortByDirection,
         page: state.page,
         perPage: state.perPage
       });
@@ -107,7 +119,8 @@ export function MailProvider({ children }) {
       state.sortByValue,
       state.page,
       state.perPage,
-      state.count
+      state.count,
+      state.sortByDirection
     ]
   );
 

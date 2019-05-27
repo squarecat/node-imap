@@ -3,51 +3,67 @@ import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
 // socket singleton
-let SOCKET_INSTANCE;
-
+let SOCKET_INSTANCE = null;
+let socketConnecting = null;
 // socket should sync with the db
 function useSocket({ token, userId }) {
   const [error, setError] = useState(null);
-  const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState(SOCKET_INSTANCE);
   const [connectionPromise, setConnectionPromise] = useState(
     new Promise(() => {})
   );
   // only once
   useEffect(() => {
-    if (SOCKET_INSTANCE) {
-      return setSocket(SOCKET_INSTANCE);
-    }
-    let socket = io(process.env.WEBSOCKET_URL, {
-      query: {
-        token,
-        userId
-      }
-    });
-    console.log('setting up socket');
-    setConnectionPromise(
-      new Promise((resolve, reject) => {
-        socket.on('connect', () => {
-          setSocket(socket);
+    if (socketConnecting) {
+      socketConnecting.then(() => {
+        return setSocket(SOCKET_INSTANCE);
+      });
+    } else {
+      socketConnecting = new Promise((resolve, reject) => {
+        let socket = io(process.env.WEBSOCKET_URL, {
+          query: {
+            token,
+            userId
+          }
         });
-        resolve(socket);
+        console.log('setting up socket');
+
+        socket.on('connect', () => {
+          console.log('socket connected');
+          setSocket(socket);
+          resolve();
+        });
         socket.on('error', err => {
+          console.log('socket errored');
           setError(err);
-          reject('failed to connect');
+          reject(err);
         });
         socket.on('disconnect', () => {
+          console.log('socket disconnected');
           setSocket(null);
           SOCKET_INSTANCE = null;
         });
-      })
-    );
-    SOCKET_INSTANCE = socket;
+        SOCKET_INSTANCE = socket;
+      });
+    }
   }, []);
+
+  function emit(event, data, cb) {
+    if (!SOCKET_INSTANCE) {
+      console.warn(
+        `no socket to emit event "${event}", waiting for socket to open`
+      );
+      return setTimeout(emit.bind(this, event, data, cb), 1000);
+    }
+    return SOCKET_INSTANCE.emit(event, data, cb);
+  }
 
   return {
     socket,
     isConnected: !!socket,
     socketReady: connectionPromise,
-    error
+    error,
+    emit
   };
 }
 

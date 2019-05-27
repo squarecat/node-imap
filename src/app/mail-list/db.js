@@ -18,7 +18,7 @@ export function useMailSync() {
     id: u.id,
     token: u.token
   }));
-  const { isConnected, socket, error, socketReady } = useSocket({
+  const { isConnected, socket, error, emit } = useSocket({
     token,
     userId: id
   });
@@ -36,6 +36,7 @@ export function useMailSync() {
                 );
                 return {
                   ...d,
+                  score: -1,
                   to: parseAddress(d.to).email,
                   fromEmail,
                   fromName,
@@ -51,24 +52,22 @@ export function useMailSync() {
         });
         socket.on('scores', async data => {
           try {
-            db.transaction('rw', db.scores, db.mail, async () => {
-              await db.scores.bulkPut(
-                data.map(d => ({
-                  address: d.address,
-                  score: d.score,
-                  rank: d.rank,
-                  unsubscribePercentage: d.unsubscribePercentage,
-                  senderScore: d.senderScore
-                }))
-              );
-              await data.reduce(async (p, d) => {
-                await p;
-                return db.mail
-                  .where('fromEmail')
-                  .equals(d.address)
-                  .modify({ score: d.score });
-              }, Promise.resolve());
-            });
+            await db.scores.bulkPut(
+              data.map(d => ({
+                address: d.address,
+                score: d.score,
+                rank: d.rank,
+                unsubscribePercentage: d.unsubscribePercentage,
+                senderScore: d.senderScore
+              }))
+            );
+            await data.reduce(async (p, d) => {
+              await p;
+              return db.mail
+                .where('fromEmail')
+                .equals(d.address)
+                .modify({ score: d.score });
+            }, Promise.resolve());
           } catch (err) {
             console.error(err);
           }
@@ -130,19 +129,16 @@ export function useMailSync() {
     ready: isConnected,
     fetchScores: async senders => {
       console.log('fetching mail scores');
-      const sock = await socketReady;
-      sock.emit('fetch-scores', { senders });
+      emit('fetch-scores', { senders });
     },
     fetch: async () => {
       await db.mail.clear();
       console.log('refreshing mail');
-      const sock = await socketReady;
-      sock.emit('fetch');
+      emit('fetch');
     },
     unsubscribe: async mailItem => {
       await db.mail.update(mailItem.id, { isLoading: true, subscribed: false });
-      const sock = await socketReady;
-      sock.emit('unsubscribe', mailItem);
+      emit('unsubscribe', mailItem);
     },
     resolveUnsubscribeError: async data => {
       await db.mail.update(data.mailId, {
@@ -151,8 +147,7 @@ export function useMailSync() {
         estimatedSuccess: data.success,
         resolved: true
       });
-      await socketReady;
-      socket.emit('unsubscribe-error-response', data);
+      emit('unsubscribe-error-response', data);
     }
   };
 }
@@ -192,10 +187,12 @@ export function useOccurrence({ fromEmail, toEmail }) {
     }
   }
   async function get() {
-    const value = await db.occurrences.get(dupeKey);
-    if (value) {
-      setCount(value.count);
-    }
+    setTimeout(async () => {
+      const value = await db.occurrences.get(dupeKey);
+      if (value) {
+        setCount(value.count);
+      }
+    }, 0);
   }
   useEffect(() => {
     db.occurrences.hook('updating', onUpdate);
@@ -231,14 +228,16 @@ export function useScore(address) {
     }
   }
   async function get() {
-    const value = await db.scores.get(address);
-    if (value) {
-      setScore({
-        score: value.score,
-        rank: value.rank,
-        unsubscribePercentage: value.unsubscribePercentage
-      });
-    }
+    setTimeout(async () => {
+      const value = await db.scores.get(address);
+      if (value) {
+        setScore({
+          score: value.score,
+          rank: value.rank,
+          unsubscribePercentage: value.unsubscribePercentage
+        });
+      }
+    }, 0);
   }
   useEffect(() => {
     db.scores.hook('updating', onUpdate);

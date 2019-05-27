@@ -50,7 +50,7 @@ function MailView() {
     <div styleName="mail-list">
       <div styleName="filters">
         Show mail for
-        <span style={{ marginLeft: 7 }}>
+        <span styleName="filter-field">
           <FormSelect
             pill
             onChange={({ currentTarget }) => {
@@ -77,8 +77,8 @@ function MailView() {
             placeholder="All addresses"
           />
         </span>
-        <span>Sort by</span>
-        <span style={{ marginLeft: 7 }}>
+        <span>and sort by</span>
+        <span styleName="filter-field">
           <FormSelect
             pill
             onChange={({ currentTarget }) => {
@@ -101,6 +101,46 @@ function MailView() {
               label: v
             }))}
             value={sortByValue ? sortByValue : 'date'}
+            basic
+          />
+        </span>
+        ordered by
+        <span styleName="filter-field">
+          <FormSelect
+            pill
+            onChange={({ currentTarget }) => {
+              const { value } = currentTarget;
+              dispatch({
+                type: 'set-sort-direction',
+                data: value
+              });
+            }}
+            name="sort-by-direction"
+            compact
+            options={
+              sortByValue === 'date'
+                ? [
+                    {
+                      value: 'asc',
+                      label: 'oldest first'
+                    },
+                    {
+                      value: 'desc',
+                      label: 'newest first'
+                    }
+                  ]
+                : [
+                    {
+                      value: 'asc',
+                      label: 'low to high'
+                    },
+                    {
+                      value: 'desc',
+                      label: 'high to low'
+                    }
+                  ]
+            }
+            value={sortByDirection}
             basic
           />
         </span>

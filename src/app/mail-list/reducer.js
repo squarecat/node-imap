@@ -9,7 +9,7 @@ export const initialState = {
   },
   activeFilters: [],
   sortByValue: 'date',
-  sortByDirection: 'asc'
+  sortByDirection: 'desc'
 };
 
 // mail reducer that represents the internal state
