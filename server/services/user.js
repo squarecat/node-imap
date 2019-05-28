@@ -56,12 +56,13 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
     if (!user) {
       let referredBy = null;
       if (referralCode) {
-        const { id: referralUserId } = await getUserByReferralCode(
-          referralCode
-        );
-        await addReferralToReferrer(referralUserId, { userId: id });
-        addReferralSignupToStats();
-        referredBy = referralUserId;
+        const referralUser = await getUserByReferralCode(referralCode);
+        if (referralUser) {
+          const { id: referralUserId } = referralUser;
+          await addReferralToReferrer(referralUserId, { userId: id });
+          addReferralSignupToStats();
+          referredBy = referralUserId;
+        }
       }
       user = await createUser({
         id,
@@ -85,7 +86,7 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error creating or updating user from Google ${id ||
+      `user-service: error creating or updating user from Outlook ${id ||
         'no userData id'}`
     );
     logger.error(err);
@@ -101,12 +102,15 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
     if (!user) {
       let referredBy = null;
       if (referralCode) {
-        const { id: referralUserId } = await getUserByReferralCode(
-          referralCode
-        );
-        await addReferralToReferrer(referralUserId, { userId: id });
-        addReferralSignupToStats();
-        referredBy = referralUserId;
+        const referralUser = await getUserByReferralCode(referralCode);
+        if (referralUser) {
+          if (referralUser) {
+            const { id: referralUserId } = referralUser;
+            await addReferralToReferrer(referralUserId, { userId: id });
+            addReferralSignupToStats();
+            referredBy = referralUserId;
+          }
+        }
       }
       user = await createUser({
         id,

@@ -17,7 +17,7 @@
       "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
     },
     "outlook": {
-      "redirect": "https://tolocalhost.com/auth/outlook/callback",
+      "redirect": "https://dev.leavemealone.xyz/auth/outlook/callback",
       "clientId": "$OUTLOOK_CLIENT_ID",
       "clientSecret": "$OUTLOOK_CLIENT_SECRET",
       "scopes": [

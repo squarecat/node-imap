@@ -1,7 +1,5 @@
 import './modal.module.scss';
 
-import * as track from '../../utils/analytics';
-
 import CheckoutForm, { getCoupon, sendPayment } from '../checkout-form';
 import React, { useEffect, useState } from 'react';
 
@@ -33,7 +31,6 @@ export default ({ onClose, onPurchase }) => {
   // on mount
   useEffect(() => {
     setShown(true);
-    track.trackPriceModalOpen();
     document.addEventListener('keydown', handleKeydown, false);
     return function cleanup() {
       document.removeEventListener('keydown', handleKeydown);
@@ -48,10 +45,8 @@ export default ({ onClose, onPurchase }) => {
     setShown(false);
     setTimeout(() => {
       if (selected === 'free') {
-        track.trackFreeScan();
         return onPurchase('3d');
       }
-      track.trackPurchase({ timeframe: selected });
       return onPurchase(selected);
     }, 300);
   };
@@ -245,18 +240,6 @@ const PricingScreen = ({ onClickPurchase, onClickClose, setScreen }) => {
       </div>
       <div styleName="modal-actions">
         <div styleName="modal-actions-info">
-          <p styleName="modal-text--small">
-            Looking for a monthly subscription?{' '}
-            <a
-              onClick={() =>
-                openChat(
-                  "Hi! I'm looking for a monthly subscription to Leave Me Alone."
-                )
-              }
-            >
-              Contact us!
-            </a>
-          </p>
           <p styleName="modal-text--small secured-by">
             <LockIcon />
             Payments Secured by{' '}
@@ -437,13 +420,6 @@ const EstimatesScreen = ({ setScreen }) => {
     </>
   );
 };
-
-function openChat(message = '') {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:open']);
-    window.$crisp.push(['set', 'message:text', [message]]);
-  }
-}
 
 const dateFormat = 'Do MMM YYYY';
 function getScanDate(selected) {

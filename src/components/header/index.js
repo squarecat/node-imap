@@ -60,23 +60,8 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
             Refer a friend
           </span>
         </button>
-        <SettingsDropdown onClickSupport={() => openChat()} />
+        <SettingsDropdown />
       </div>
     </div>
   );
 };
-
-function openChat(message = '') {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:show']);
-    window.$crisp.push(['do', 'chat:open']);
-    window.$crisp.push(['set', 'message:text', [message]]);
-    window.$crisp.push(['on', 'chat:closed', closeChat]);
-  }
-}
-
-function closeChat() {
-  if (window.$crisp) {
-    window.$crisp.push(['do', 'chat:hide']);
-  }
-}

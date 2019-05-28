@@ -40,6 +40,19 @@ export async function fetchLoggedInUser() {
     });
     localStorage.setItem('fetched-user', true);
     localStorage.setItem('user', JSON.stringify(user));
+    window.intergramOnOpen = {
+      userData: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        provider: user.provider
+      },
+      userId: user.id,
+      private: true
+    };
+    // if there is an active chat id then we want to replace it with
+    // the real user id now, but make it clear that the chat is the same
+    localStorage.setItem('userId', user.id);
     return user;
   } catch (err) {
     return null;
