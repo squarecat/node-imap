@@ -29,7 +29,12 @@
     }
   },
   "imageStoragePath": "$IMAGE_STORAGE_PATH",
-  "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
+  "unsubscribeKeywords": [
+    "Success",
+    "Successfully",
+    "Unsubscribed",
+    "has been removed"
+  ],
   "mailgun": {
     "apiKey": "$MAILGUN_API_KEY",
     "domains": {
