@@ -24,14 +24,15 @@ import {
   removeUser,
   resolveUnsubscription,
   setMilestoneCompleted,
+  setNotificationsRead,
   updateIgnoreList,
   updatePaidScan,
   updatePassword,
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret,
-  setNotificationsRead
+  updateUserWithOrganisation,
+  verifyTotpSecret
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -56,9 +57,9 @@ import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { sendToUser } from '../../rest/socket';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
-import { sendToUser } from '../../rest/socket';
 
 export async function getUserById(id) {
   try {
@@ -191,7 +192,6 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     if (!id) {
       const referredBy = await getReferrer(referralCode);
       user = await createUserFromPassword({
-        id,
         name: displayName,
         email,
         password,
