@@ -1,17 +1,15 @@
 import { MailContext, MailProvider } from './provider';
 import React, { useContext, useEffect, useState } from 'react';
 
-import Button from '../../components/btn';
 import { FormSelect } from '../../components/form';
 import MailList from './list';
 import Pagination from 'react-paginate';
-import { Refresh as RefreshIcon } from '../../components/icons';
 import styles from './mail-list.module.scss';
 
 function MailView() {
   const { state, dispatch } = useContext(MailContext);
   const {
-    refresh,
+    fetch,
     totalCount,
     isLoading,
     filterValues,
@@ -30,6 +28,12 @@ function MailView() {
     totalOnPage: 0
   });
 
+  // fetch new messages on load and
+  // check for new messages each 30 seconds
+  useEffect(() => {
+    fetch();
+  }, []);
+
   useEffect(
     () => {
       const pageCount = Math.ceil(totalCount / perPage);
@@ -44,7 +48,6 @@ function MailView() {
     },
     [perPage, totalCount, page]
   );
-
   const recipientValue = activeFilters.find(v => v.field === 'to');
   return (
     <div styleName="mail-list">
@@ -143,11 +146,6 @@ function MailView() {
             value={sortByDirection}
             basic
           />
-        </span>
-        <span styleName="refresh">
-          <Button muted compact basic outlined onClick={refresh}>
-            Update <RefreshIcon width="12" height="12" />
-          </Button>
         </span>
       </div>
       <div styleName="content">

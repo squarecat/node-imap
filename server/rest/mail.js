@@ -64,15 +64,17 @@ export default function(app, socket) {
     res.send(estimates);
   });
 
-  socket.on('fetch', async userId => {
+  socket.on('fetch', async (userId, data = {}) => {
     const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
       userId,
       socket
     );
     try {
+      const from = data ? data.from : null;
       // get mail data for user
       const it = await fetchMail({
-        userId
+        userId,
+        from
       });
       let next = await it.next();
       while (!next.done) {

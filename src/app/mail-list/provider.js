@@ -7,13 +7,7 @@ export const MailContext = createContext({});
 
 export function MailProvider({ children }) {
   const [state, dispatch] = useReducer(mailReducer, initialState);
-  const {
-    ready,
-    fetch,
-    unsubscribe,
-    resolveUnsubscribeError,
-    fetchScores
-  } = useMailSync();
+  const { ready, fetch, unsubscribe, resolveUnsubscribeError } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
   async function filterMail(options) {
@@ -38,6 +32,21 @@ export function MailProvider({ children }) {
     if (options.sortDirection === 'desc') {
       filteredCollection = await filteredCollection.reverse();
     }
+    // if sorting by score then move all those
+    // without score to the end
+    if (options.orderBy === 'score') {
+      const { scored, unscored } = filteredCollection.reduce(
+        (out, item) => {
+          if (item.score === -1) {
+            return { ...out, unscored: [...out.unscored, item] };
+          }
+          return { ...out, scored: [...out.scored, item] };
+        },
+        { scored: [], unscored: [] }
+      );
+      filteredCollection = [...scored, ...unscored];
+    }
+
     // filter by pagination
     const startIndex = options.page * options.perPage;
     filteredCollection = await filteredCollection.slice(
@@ -53,6 +62,8 @@ export function MailProvider({ children }) {
     return filtedMailIds;
   }
 
+  // when we get new data we check all the filter values
+  // and set them again for the filter drop downs
   async function setFilterValues() {
     db.mail.orderBy('to').uniqueKeys(function(recipients) {
       return dispatch({
@@ -60,11 +71,10 @@ export function MailProvider({ children }) {
         data: { name: 'recipients', value: recipients }
       });
     });
-    db.mail.orderBy('fromEmail').uniqueKeys(emails => {
-      fetchScores(emails);
-    });
   }
 
+  // setting the mail count will cause the mail list to
+  // re-render once
   async function setMailCount(c) {
     let count = c;
     if (!count) {
@@ -73,35 +83,23 @@ export function MailProvider({ children }) {
     return dispatch({ type: 'set-count', data: count });
   }
 
-  function onCreate() {
-    debugger;
-    // TODO does this change the results of the current active filter?
-    setMailCount(state.count + 1);
-    setFilterValues();
-    // dispatch({ type: 'add', data: obj });
-  }
-  function onUpdate() {
-    // setFilterValues();
-    // TODO does this change the details of a currently shown mail item
-    // dispatch({ type: 'update', data: obj });
-  }
-  function onDelete() {
-    setMailCount(state.count - 1);
-    setFilterValues();
-    // TODO does this change the details of a currently shown mail item
-    // dispatch({ type: 'update', data: obj });
+  // called whenever we get a chunk of emails from the server
+  // this is whta triggers a refresh of all the other stuff
+  function onCountUpdate(modifications, key) {
+    const { value } = modifications;
+    if (key === 'totalMail' && value) {
+      setTimeout(() => {
+        setMailCount(value);
+        setFilterValues();
+      }, 0);
+    }
   }
 
   useEffect(() => {
-    setMailCount();
     setFilterValues();
-    db.mail.hook('creating', onCreate);
-    db.mail.hook('updating', onUpdate);
-    db.mail.hook('deleting', onDelete);
+    db.counts.hook('updating', onCountUpdate);
     return () => {
-      db.mail.hook('creating').unsubscribe(onCreate);
-      db.mail.hook('updating').unsubscribe(onUpdate);
-      db.mail.hook('deleting').unsubscribe(onDelete);
+      db.counts.hook('updating').unsubscribe(onCountUpdate);
     };
   }, []);
 
@@ -128,7 +126,7 @@ export function MailProvider({ children }) {
     isLoading: ready,
     page: state.page,
     perPage: state.perPage,
-    refresh: fetch,
+    fetch,
     filterValues: state.filterValues,
     activeFilters: state.activeFilters,
     mail: filteredMail.mail,

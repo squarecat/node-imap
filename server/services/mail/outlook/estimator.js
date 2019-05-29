@@ -3,48 +3,23 @@ import { getSearchString, getTimeRange } from './utils';
 
 import logger from '../../../utils/logger';
 
-const estimateTimeframes = ['3d', '1w'];
-
 const SPAM_REGULARITY = 0.48;
 
-export async function getMailEstimates(account, { timeframe } = {}) {
+export async function getMailEstimates(account, { from } = {}) {
   // addEstimateToStats();
-  if (timeframe) {
-    const estimate = await getEstimateForTimeframe(account, {
-      timeframe
-    });
-    return {
-      ...estimate,
-      totalSpam: (estimate.total * SPAM_REGULARITY).toFixed()
-    };
-  } else {
-    let estimates = await Promise.all(
-      estimateTimeframes.map(async tf => {
-        const total = await getEstimateForTimeframe(account, {
-          timeframe: tf
-        });
-        return {
-          timeframe: tf,
-          total
-        };
-      })
-    );
-    estimates = [
-      ...estimates,
-      { timeframe: '1m', total: estimates[1].total * 4 },
-      { timeframe: '6m', total: estimates[1].total * 4 * 6 }
-    ].map(e => ({ ...e, totalSpam: (e.total * SPAM_REGULARITY).toFixed() }));
-
-    return estimates;
-  }
+  const estimate = await getEstimateForTimeframe(account, {
+    from
+  });
+  return {
+    ...estimate,
+    totalSpam: (estimate.total * SPAM_REGULARITY).toFixed()
+  };
 }
 
-export async function getEstimateForTimeframe(account, { timeframe }) {
+export async function getEstimateForTimeframe(account, { from }) {
   try {
-    const { then, now } = getTimeRange(timeframe);
     const query = getSearchString({
-      then,
-      now
+      from
     });
     return requestCount(account, { filter: query });
   } catch (err) {

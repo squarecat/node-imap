@@ -1,17 +1,17 @@
 import { getGmailAccessToken, getMailClient } from './access';
-import { getSearchString, getTimeRange } from './utils';
 
 import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
+import { getSearchString } from './utils';
 import httpMessageParser from 'http-message-parser';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
 // todo convert to generator?
 export async function* fetchMail(
-  { user, account, timeframe },
+  { user, account, from },
   { strategy = 'api', batch = false } = {}
 ) {
   const start = Date.now();
@@ -19,14 +19,14 @@ export async function* fetchMail(
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, client, accessToken] = await Promise.all([
       getEstimateForTimeframe(account, {
-        timeframe,
+        from,
         includeTrash: true
       }),
       getMailClient(account, strategy),
       getGmailAccessToken(account)
     ]);
     logger.info(
-      `gmail-fetcher: started ${timeframe} scan (${
+      `gmail-fetcher: checking for new mail after ${new Date(from)} (${
         user.id
       }) [estimated ${totalEstimate} mail]`
     );
@@ -39,7 +39,7 @@ export async function* fetchMail(
 
     for await (let mail of fetchMailApi(client, {
       accessToken,
-      timeframe,
+      from,
       batch
     })) {
       totalEmailsCount = totalEmailsCount + mail.length;
@@ -69,9 +69,8 @@ export async function* fetchMail(
     }
 
     logger.info(
-      `gmail-fetcher: finished ${timeframe} scan (${
-        user.id
-      }) [took ${(Date.now() - start) / 1000}s, ${totalEmailsCount} results]`
+      `gmail-fetcher: finished scan (${user.id}) [took ${(Date.now() - start) /
+        1000}s, ${totalEmailsCount} results]`
     );
     return {
       totalMail: totalEmailsCount,
@@ -87,9 +86,8 @@ export async function* fetchMail(
   }
 }
 
-export async function* fetchMailImap(client, { timeframe }) {
+export async function* fetchMailImap(client, { from }) {
   try {
-    const { then } = getTimeRange(timeframe);
     client.onerror = err => console.error(err);
     console.log('authenticating with imap');
     await client.connect();
@@ -99,7 +97,7 @@ export async function* fetchMailImap(client, { timeframe }) {
       'BODY.PEEK[HEADER.FIELDS (From To Subject List-Unsubscribe)]'
     ];
     const resultUUIDs = await client.search('INBOX', {
-      since: then
+      since: from
     });
     let results = await client.listMessages(
       'INBOX',
@@ -127,14 +125,12 @@ export async function* fetchMailImap(client, { timeframe }) {
 
 async function* fetchMailApi(
   client,
-  { accessToken, timeframe, batch = true, perPage = 100 }
+  { accessToken, from, batch = true, perPage = 100 }
 ) {
   let pageToken;
   try {
-    const { then, now } = getTimeRange(timeframe);
     const query = getSearchString({
-      then,
-      now
+      from
     });
     const fields = 'nextPageToken';
     do {
@@ -150,7 +146,7 @@ async function* fetchMailApi(
       let populatedMessages;
       // sometimes the last page or the first page
       // wont have any messages
-      if (!messages.length) {
+      if (!messages || !messages.length) {
         continue;
       }
       if (batch) {

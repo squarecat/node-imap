@@ -7,7 +7,7 @@ import Button from '../../components/btn';
 import { Link } from 'gatsby';
 import cx from 'classnames';
 import { parseActivity } from '../../utils/activities';
-import useSocket from '../../app/mail-list/socket';
+import useSocket from '../../utils/hooks/use-socket';
 import useUser from '../../utils/hooks/use-user';
 
 export default () => {

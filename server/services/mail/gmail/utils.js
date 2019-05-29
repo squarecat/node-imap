@@ -1,13 +1,9 @@
 import * as CommonUtils from '../common';
 
-import format from 'date-fns/format';
 import logger from '../../../utils/logger';
 
-const googleDateFormat = 'YYYY/MM/DD';
-
-export function getSearchString({ then, query = '' }) {
-  const thenStr = format(then, googleDateFormat);
-  return `after:${thenStr} ${query}`;
+export function getSearchString({ from, query = '' }) {
+  return `after:${Math.floor(from / 1000)} ${query}`;
 }
 
 export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {

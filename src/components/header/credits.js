@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import useSocket from '../../app/mail-list/socket';
+import useSocket from '../../utils/hooks/use-socket';
 import useUser from '../../utils/hooks/use-user';
 
 export default () => {

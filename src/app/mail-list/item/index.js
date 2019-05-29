@@ -1,7 +1,7 @@
 import './item.module.scss';
 
 import React, { useContext } from 'react';
-import { useMailItem, useOccurrence, useScore } from '../db';
+import { useMailItem, useOccurrence, useScore } from '../db/hooks';
 
 import IgnoreIcon from '../../../components/ignore-icon';
 import { MailContext } from '../provider';
