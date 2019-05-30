@@ -633,27 +633,6 @@ function List({
               }
             }}
           />
-          {/* </TransitionGroup> */}
-
-          {unsubData ? (
-            <UnsubModal
-              onClose={() => {
-                setUnsubData(null);
-              }}
-              onSubmit={({ success, useImage, failReason = null }) => {
-                setUnsubData(null);
-                addUnsubscribeErrorResponse({
-                  success,
-                  mailId: unsubData.id,
-                  useImage,
-                  from: unsubData.from,
-                  reason: failReason,
-                  unsubStrategy: unsubData.unsubStrategy
-                });
-              }}
-              mail={unsubData}
-            />
-          ) : null}
         </div>
       )}
     </AutoSizer>
