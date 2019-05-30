@@ -1,0 +1,20 @@
+@import '../../../styles/common/layers.scss';
+
+.filters {
+  position: fixed;
+  @extend .banner-layer;
+  display: flex;
+  height: 50px;
+  top: 50px;
+  left: 0;
+  right: 0;
+  background-color: white;
+  flex-direction: row;
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
+  align-items: center;
+  padding: 0 20px;
+}
+
+.filter-field {
+  margin: 0 7px;
+}

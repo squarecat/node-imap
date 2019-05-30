@@ -1,7 +1,7 @@
 import { MailContext, MailProvider } from './provider';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { FormSelect } from '../../components/form';
+import Filters from './filters';
 import MailList from './list';
 import Pagination from 'react-paginate';
 import styles from './mail-list.module.scss';
@@ -12,13 +12,13 @@ function MailView() {
     fetch,
     totalCount,
     isLoading,
+    mail,
+    perPage,
+    page,
     filterValues,
     sortValues,
     sortByValue,
     sortByDirection,
-    mail,
-    perPage,
-    page,
     activeFilters
   } = state;
 
@@ -29,7 +29,7 @@ function MailView() {
   });
 
   // fetch new messages on load and
-  // check for new messages each 30 seconds
+  // check for new messages each 30 seconds?
   useEffect(() => {
     fetch();
   }, []);
@@ -48,121 +48,38 @@ function MailView() {
     },
     [perPage, totalCount, page]
   );
-  const recipientValue = activeFilters.find(v => v.field === 'to');
+
+  useEffect(
+    () => {
+      window.scrollTo(0, 0);
+    },
+    [page]
+  );
+
   return (
     <div styleName="mail-list">
-      <div styleName="filters">
-        Show mail for
-        <span styleName="filter-field">
-          <FormSelect
-            pill
-            onChange={({ currentTarget }) => {
-              const { value } = currentTarget;
-              if (!value) {
-                return dispatch({
-                  type: 'remove-active-filter',
-                  data: { field: 'to' }
-                });
-              }
-              dispatch({
-                type: 'set-active-filter',
-                data: { field: 'to', type: 'equals', value }
-              });
-            }}
-            name="filter-recipient"
-            compact
-            options={filterValues['recipients'].map(v => ({
-              value: v,
-              label: v
-            }))}
-            value={recipientValue ? recipientValue.value : ''}
-            basic
-            placeholder="All addresses"
-          />
-        </span>
-        <span>and sort by</span>
-        <span styleName="filter-field">
-          <FormSelect
-            pill
-            onChange={({ currentTarget }) => {
-              const { value } = currentTarget;
-              if (!value) {
-                return dispatch({
-                  type: 'set-sort-by',
-                  data: 'date'
-                });
-              }
-              dispatch({
-                type: 'set-sort-by',
-                data: value
-              });
-            }}
-            name="sort-by"
-            compact
-            options={sortValues.map(v => ({
-              value: v,
-              label: v
-            }))}
-            value={sortByValue ? sortByValue : 'date'}
-            basic
-          />
-        </span>
-        ordered by
-        <span styleName="filter-field">
-          <FormSelect
-            pill
-            onChange={({ currentTarget }) => {
-              const { value } = currentTarget;
-              dispatch({
-                type: 'set-sort-direction',
-                data: value
-              });
-            }}
-            name="sort-by-direction"
-            compact
-            options={
-              sortByValue === 'date'
-                ? [
-                    {
-                      value: 'asc',
-                      label: 'oldest first'
-                    },
-                    {
-                      value: 'desc',
-                      label: 'newest first'
-                    }
-                  ]
-                : [
-                    {
-                      value: 'asc',
-                      label: 'low to high'
-                    },
-                    {
-                      value: 'desc',
-                      label: 'high to low'
-                    }
-                  ]
-            }
-            value={sortByDirection}
-            basic
-          />
-        </span>
-      </div>
+      <Filters
+        filterValues={filterValues}
+        sortValues={sortValues}
+        sortByValue={sortByValue}
+        sortByDirection={sortByDirection}
+        activeFilters={activeFilters}
+      />
       <div styleName="content">
         {isLoading ? <MailList mail={mail} /> : null}
       </div>
       <div styleName="footer">
         <Pagination
-          previousLabel={'previous'}
+          previousLabel={'prev'}
           nextLabel={'next'}
           breakLabel={'...'}
           breakClassName={'break-me'}
           pageCount={options.pageCount}
           marginPagesDisplayed={2}
-          pageRangeDisplayed={10}
-          onPageChange={({ selected }) =>
-            dispatch({ type: 'set-page', data: selected })
-          }
+          pageRangeDisplayed={5}
+          onPageChange={({ selected }) => {
+            dispatch({ type: 'set-page', data: selected });
+          }}
           containerClassName={styles.pagination}
           subContainerClassName={styles.paginationPages}
           activeClassName={styles.paginationActive}
