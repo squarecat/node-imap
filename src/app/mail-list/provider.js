@@ -2,12 +2,20 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import db, { useMailSync } from './db';
 import mailReducer, { initialState } from './reducer';
 
+import _sortBy from 'lodash.sortby';
+
 const sortByValues = ['date', 'score'];
 export const MailContext = createContext({});
 
 export function MailProvider({ children }) {
   const [state, dispatch] = useReducer(mailReducer, initialState);
-  const { ready, fetch, unsubscribe, resolveUnsubscribeError } = useMailSync();
+  const {
+    ready,
+    fetch,
+    unsubscribe,
+    resolveUnsubscribeError,
+    isFetching
+  } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
   async function filterMail(options) {
@@ -15,13 +23,19 @@ export function MailProvider({ children }) {
     let filteredCollection = db.mail;
     // apply filters
     if (activeFilters.length) {
-      filteredCollection = activeFilters.reduce((col, filter, i) => {
-        const { field, value, type } = filter;
-        if (i === 0) {
-          return col.where(field)[type](value);
-        }
-        return col.or(field)[type](value);
-      }, db.mail);
+      const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
+        (out, filter) => {
+          const { value, field } = filter;
+          return {
+            indexes: [...out.indexes, field],
+            values: [...out.values, value]
+          };
+        },
+        { values: [], indexes: [] }
+      );
+      const index = indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
+      const value = values.length > 1 ? values : values[0];
+      filteredCollection = filteredCollection.where(index).equals(value);
     } else {
       filteredCollection = filteredCollection.toCollection();
     }
@@ -95,22 +109,36 @@ export function MailProvider({ children }) {
     }
   }
 
+  // load previous values
+  async function loadPreferences() {
+    const filters = await db.prefs.get('filters');
+    let value = null;
+    if (filters) {
+      value = filters.value;
+    }
+    return dispatch({ type: 'init', data: value });
+  }
+
+  // run once on mount
   useEffect(() => {
-    setFilterValues();
-    db.counts.hook('updating', onCountUpdate);
+    loadPreferences();
+    db.prefs.hook('updating', onCountUpdate);
     return () => {
-      db.counts.hook('updating').unsubscribe(onCountUpdate);
+      db.prefs.hook('updating').unsubscribe(onCountUpdate);
     };
   }, []);
 
+  // when things change, filter the mail list
   useEffect(
     () => {
-      filterMail({
-        orderBy: state.sortByValue,
-        sortDirection: state.sortByDirection,
-        page: state.page,
-        perPage: state.perPage
-      });
+      if (state.initialized) {
+        filterMail({
+          orderBy: state.sortByValue,
+          sortDirection: state.sortByDirection,
+          page: state.page,
+          perPage: state.perPage
+        });
+      }
     },
     [
       JSON.stringify(state.activeFilters),
@@ -122,11 +150,23 @@ export function MailProvider({ children }) {
     ]
   );
 
+  // save filter state to db to use as initial
+  // state upon refresh
+  useEffect(
+    () => {
+      if (state.initialized) {
+        db.prefs.put({ key: 'filters', value: state });
+      }
+    },
+    [state]
+  );
+
   const value = {
-    isLoading: ready,
+    isLoading: ready && state.initialized,
     page: state.page,
     perPage: state.perPage,
     fetch,
+    isFetching,
     filterValues: state.filterValues,
     activeFilters: state.activeFilters,
     mail: filteredMail.mail,

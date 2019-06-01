@@ -1,15 +1,16 @@
+import { useEffect, useState } from 'react';
+
 import Dexie from 'dexie';
-import { useEffect } from 'react';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
 const db = new Dexie('leavemealone');
 
 db.version(1).stores({
-  mail: `&id, fromEmail, date, *labels, score, to`,
+  mail: `&id, fromEmail, date, *labels, score, to, status, [status+to]`,
   scores: `&address, score`,
   occurrences: `key, count`,
-  counts: `key`
+  prefs: `key`
 });
 db.open();
 
@@ -22,6 +23,7 @@ export function useMailSync() {
     token,
     userId: id
   });
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(
     () => {
@@ -31,6 +33,10 @@ export function useMailSync() {
           try {
             const mailData = data.map(d => {
               const { email: fromEmail, name: fromName } = parseAddress(d.from);
+              let status = d.subscribed ? 'subscribed' : 'unsubscribed';
+              if (d.estimatedSuccess === false && !d.resolved) {
+                status = 'failed';
+              }
               return {
                 ...d,
                 score: -1,
@@ -38,12 +44,13 @@ export function useMailSync() {
                 fromEmail,
                 fromName,
                 isLoading: false,
-                error: false
+                error: false,
+                status
               };
             });
             await db.mail.bulkPut(mailData);
             const count = await db.mail.count();
-            await db.counts.put({ key: 'totalMail', value: count });
+            await db.prefs.put({ key: 'totalMail', value: count });
             console.debug('[db]: fetching mail scores');
             const senders = mailData.map(md => md.fromEmail);
             emit('fetch-scores', { senders });
@@ -51,7 +58,7 @@ export function useMailSync() {
             console.error(`[db]: failed setting new mail items`);
             console.error(err);
           }
-          ack();
+          ack && ack();
         });
         socket.on('scores', async data => {
           console.debug(`[db]: received ${data.length} new mail scores`);
@@ -79,6 +86,7 @@ export function useMailSync() {
         });
         socket.on('mail:end', async scan => {
           console.debug(`[db]: finished scan`);
+          setIsFetching(false);
           try {
             const { occurrences } = scan;
             await db.occurrences.bulkPut(
@@ -100,7 +108,7 @@ export function useMailSync() {
           // const percentage = (progress / total) * 100;
           // setProgress((+percentage).toFixed());
           // console.log(progress, total);
-          ack();
+          ack && ack();
         });
 
         socket.on('unsubscribe:success', async ({ id, data }) => {
@@ -111,7 +119,8 @@ export function useMailSync() {
               isLoading: false,
               estimatedSuccess: estimatedSuccess,
               unsubStrategy: unsubStrategy,
-              hasImage: hasImage
+              hasImage: hasImage,
+              status: 'unsubscribed'
             });
             incrementUnsubCount();
           } catch (err) {
@@ -130,7 +139,8 @@ export function useMailSync() {
               subscribed: null,
               estimatedSuccess: estimatedSuccess,
               unsubStrategy: unsubStrategy,
-              hasImage: hasImage
+              hasImage: hasImage,
+              status: 'failed'
             });
           } catch (err) {
             console.error(`[db]: failed to set failed unsubscribe`);
@@ -143,8 +153,10 @@ export function useMailSync() {
   );
   return {
     ready: isConnected,
+    isFetching,
     fetch: async () => {
       try {
+        setIsFetching(true);
         const latestItem = await db.mail.orderBy('date').last();
         // get latest items
         if (latestItem) {

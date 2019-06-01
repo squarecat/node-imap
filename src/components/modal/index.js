@@ -172,11 +172,19 @@ export const ModalWizardActions = ({
   );
 };
 
-export const ModalCloseIcon = ({ onClose }) => (
-  <a styleName="close" onClick={() => onClose()}>
-    <CloseIcon width="24" height="24" />
-  </a>
-);
+export const ModalCloseIcon = ({ onClose }) => {
+  const { closeModal } = useContext(ModalContext);
+  return (
+    <a
+      styleName="close"
+      onClick={() => {
+        onClose ? onClose() : closeModal();
+      }}
+    >
+      <CloseIcon width="18" height="18" />
+    </a>
+  );
+};
 
 export const ModalDismissAction = ({ onDismiss, btnText = 'Got it!' }) => {
   return (
@@ -186,6 +194,8 @@ export const ModalDismissAction = ({ onDismiss, btnText = 'Got it!' }) => {
   );
 };
 
-export const ModalBody = ({ children }) => {
-  return <div styleName="modal-body">{children}</div>;
+export const ModalBody = ({ children, compact }) => {
+  return (
+    <div styleName={`modal-body ${compact ? 'compact' : ''}`}>{children}</div>
+  );
 };

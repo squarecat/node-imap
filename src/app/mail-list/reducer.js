@@ -17,6 +17,13 @@ export const initialState = {
 const mailReducer = (state = initialState, action) => {
   let newState;
   switch (action.type) {
+    case 'init': {
+      const data = action.data || initialState;
+      return {
+        initialized: true,
+        ...data
+      };
+    }
     case 'remove-active-filters': {
       return {
         ...state,

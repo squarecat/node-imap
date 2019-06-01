@@ -1,10 +1,10 @@
-import './modal.module.scss';
+import '../modal.module.scss';
 
-import Modal, { ModalBody } from '..';
+import Modal, { ModalBody, ModalCloseIcon } from '..';
 import React, { useState } from 'react';
 
-import { ExternalIcon } from '../icons';
-import { TextImportant } from '../text';
+import { ExternalIcon } from '../../icons';
+import { TextImportant } from '../../text';
 
 export default ({ shown, onClose, onSubmit, mail }) => {
   const {
@@ -28,7 +28,7 @@ export default ({ shown, onClose, onSubmit, mail }) => {
     }
     onClose();
   };
-  const pickSlide = () => {
+  const pickSlide = title => {
     if (slide === 'first') {
       return slide1(
         mailId,
@@ -39,7 +39,8 @@ export default ({ shown, onClose, onSubmit, mail }) => {
         unsubStrategy,
         resolved,
         imageLoading,
-        setImageLoading
+        setImageLoading,
+        title
       );
     } else if (slide === 'negative') {
       return slide2({
@@ -50,10 +51,11 @@ export default ({ shown, onClose, onSubmit, mail }) => {
         onClickBack: () => changeSlide('first'),
         selected,
         setSelected,
-        hasImage
+        hasImage,
+        title
       });
     } else if (slide === 'positive') {
-      return slide3(onSubmit);
+      return slide3(onSubmit, title);
     }
   };
   const title = error ? 'Something went wrong...' : 'Successfully unsubscribed';
@@ -62,12 +64,10 @@ export default ({ shown, onClose, onSubmit, mail }) => {
       shown={shown}
       onClose={onClose}
       dismissable={false}
-      style={{ width: 650 }}
+      style={{ width: 580 }}
     >
-      <ModalBody>
-        <h3>{title}</h3>
-        {pickSlide()}
-      </ModalBody>
+      <ModalCloseIcon />
+      {pickSlide(title)}
     </Modal>
   );
 };
@@ -81,7 +81,8 @@ function slide1(
   unsubStrategy,
   resolved,
   imageLoading,
-  setImageLoading
+  setImageLoading,
+  title
 ) {
   let lead;
   let timeout = false;
@@ -101,16 +102,15 @@ function slide1(
   let content;
   if (timeout) {
     content = (
-      <>
-        <div styleName="modal-content">
-          <p>{lead}</p>
-        </div>
+      <ModalBody compact>
+        <h3>{title}</h3>
+        <p>{lead}</p>
         <div styleName="modal-actions">
           <a styleName="modal-btn" onClick={onClickNegative}>
             Unsubscribe manually
           </a>
         </div>
-      </>
+      </ModalBody>
     );
   } else if (unsubStrategy === 'link') {
     let actions = null;
@@ -144,7 +144,8 @@ function slide1(
     }
     content = (
       <>
-        <div styleName="modal-content">
+        <ModalBody compact>
+          <h3>{title}</h3>
           <p>{lead}</p>
           <div styleName="unsub-img-container">
             <img
@@ -168,28 +169,31 @@ function slide1(
           ) : (
             <p>How does it look?</p>
           )}
-        </div>
+        </ModalBody>
         <div styleName="modal-actions">{actions}</div>
       </>
     );
   } else {
     content = (
       <>
-        <div styleName="modal-content">
-          <p>{lead}</p>
-          <p>
-            If the provider is behaving themselves, then you shouldn't get any
-            more subscription emails from them!
-          </p>
-        </div>
-        <div styleName="modal-actions">
-          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
-            Awesome!{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs up emoji">
-              ️👍
-            </span>
-          </a>
-        </div>
+        <ModalBody compact>
+          <div styleName="modal-content">
+            <h3>{title}</h3>
+            <p>{lead}</p>
+            <p>
+              If the provider is behaving themselves, then you shouldn't get any
+              more subscription emails from them!
+            </p>
+          </div>
+          <div styleName="modal-actions">
+            <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
+              Awesome!{' '}
+              <span styleName="emoji" role="img" aria-label="thumbs up emoji">
+                ️👍
+              </span>
+            </a>
+          </div>
+        </ModalBody>
       </>
     );
   }

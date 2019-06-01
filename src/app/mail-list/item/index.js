@@ -14,6 +14,8 @@ import useUser from '../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
+const mailDayStamp = 'Do MMM';
+const mailYearStamp = 'YYYY';
 
 export default function MailItem({ id, setUnsubModal = () => {} }) {
   const m = useMailItem(id);
@@ -21,7 +23,6 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
 
   const [user, { setIgnoredSenderList }] = useUser();
   const ignoredSenderList = user.ignoredSenderList || [];
-  const isSubscribed = !!m.subscribed;
 
   const isIgnored = ignoredSenderList.includes(m.fromEmail);
   const clickIgnore = () => {
@@ -35,17 +36,12 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
 
   return (
     <>
-      <td styleName="timestamp-column">
+      <td styleName="cell timestamp-column">
         <span styleName="from-datetime">
-          <span styleName="from-date">
-            {format(new Date(m.date), mailDateFormat)}
-          </span>
-          <span styleName="from-time">
-            {format(new Date(m.date), mailTimeFormat)}
-          </span>
+          <DateCell date={m.date} />
         </span>
       </td>
-      <td styleName="from-column">
+      <td styleName="cell from-column">
         <div styleName="from-name-container">
           <span styleName="from-name">
             <Tooltip
@@ -69,7 +65,7 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
         </div>
         <span styleName="from-email">{`<${m.fromEmail}>`}</span>
       </td>
-      <td styleName="tags-column">
+      <td styleName="cell tags-column">
         {m.isTrash ? (
           <Tooltip
             placement="top"
@@ -95,43 +91,19 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
           </Tooltip>
         ) : null}
       </td>
-      <td styleName="subject-column">
+      <td styleName="cell subject-column">
         <span styleName="subject"> {m.subject}</span>
       </td>
-      <td styleName="score-column">
+      <td styleName="cell score-column">
         <ItemScore sender={m.fromEmail} />
       </td>
-      <td styleName="actions-column">
-        {m.estimatedSuccess !== false || m.resolved ? (
-          <Toggle
-            status={isSubscribed}
-            loading={m.isLoading}
-            disabled={isIgnored}
-            onChange={() => actions.onUnsubscribe(m)}
-          />
-        ) : (
-          <svg
-            onClick={() => setUnsubModal(m, true)}
-            styleName="failed-to-unsub-icon"
-            viewBox="0 0 32 32"
-            width="20"
-            height="20"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="3"
-          >
-            <path d="M16 14 L16 23 M16 8 L16 10" />
-            <circle cx="16" cy="16" r="14" />
-          </svg>
-        )}
-        {!isSubscribed ? (
-          <a styleName="status" onClick={() => setUnsubModal(m)}>
-            See details
-          </a>
-        ) : (
-          <span styleName="status subscribed">Subscribed</span>
-        )}
+      <td styleName="cell actions-column">
+        <UnsubToggle
+          mail={m}
+          isIgnored={isIgnored}
+          onUnsubscribe={actions.onUnsubscribe}
+          setUnsubModal={setUnsubModal}
+        />
       </td>
     </>
   );
@@ -169,5 +141,64 @@ function Occurrences({ fromEmail, toEmail }) {
     >
       <span styleName="occurrences">x{occurrences}</span>
     </Tooltip>
+  );
+}
+
+function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
+  const isSubscribed = !!mail.subscribed;
+  let content;
+  if (mail.estimatedSuccess !== false || mail.resolved) {
+    content = (
+      <Toggle
+        status={isSubscribed}
+        loading={mail.isLoading}
+        disabled={isIgnored}
+        onChange={() => onUnsubscribe(mail)}
+      />
+    );
+  } else {
+    content = (
+      <svg
+        onClick={() => setUnsubModal(mail, true)}
+        styleName="failed-to-unsub-icon"
+        viewBox="0 0 32 32"
+        width="20"
+        height="20"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="3"
+      >
+        <path d="M16 14 L16 23 M16 8 L16 10" />
+        <circle cx="16" cy="16" r="14" />
+      </svg>
+    );
+  }
+  return (
+    <>
+      {content}
+      {!isSubscribed ? (
+        <a styleName="status" onClick={() => setUnsubModal(mail)}>
+          See details
+        </a>
+      ) : (
+        <span styleName="status subscribed">Subscribed</span>
+      )}
+    </>
+  );
+}
+
+function DateCell({ date } = {}) {
+  if (!date) return null;
+  const mailDate = new Date(date);
+  return (
+    <>
+      <span styleName="from-date">{format(mailDate, mailDateFormat)}</span>
+      <span styleName="from-time">{format(mailDate, mailTimeFormat)}</span>
+      <span styleName="from-timestamp">
+        <span styleName="from-day">{format(mailDate, mailDayStamp)}</span>
+        <span styleName="from-year">{format(mailDate, mailYearStamp)}</span>
+      </span>
+    </>
   );
 }

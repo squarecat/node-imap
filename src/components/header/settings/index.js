@@ -1,10 +1,10 @@
-import './settings-dropdown.module.scss';
+import './settings.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
-import Button from '../../components/btn';
+import Button from '../../../components/btn';
 import { Link } from 'gatsby';
-import useUser from '../../utils/hooks/use-user';
+import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [showSettings, setShowSettings] = useState(false);

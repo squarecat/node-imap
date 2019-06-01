@@ -1,14 +1,13 @@
-import './settings-dropdown.module.scss';
+import './notifications.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
-import { BellIcon } from '../../components/icons';
-import Button from '../../components/btn';
+import { BellIcon } from '../../../components/icons';
 import { Link } from 'gatsby';
 import cx from 'classnames';
-import { parseActivity } from '../../utils/activities';
-import useSocket from '../../utils/hooks/use-socket';
-import useUser from '../../utils/hooks/use-user';
+import { parseActivity } from '../../../utils/activities';
+import useSocket from '../../../utils/hooks/use-socket';
+import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -19,7 +18,7 @@ export default () => {
     token: u.token,
     unreadNotifications: u.unreadNotifications
   }));
-  const { isConnected, socket, error, socketReady } = useSocket({
+  const { isConnected, socket, error } = useSocket({
     token,
     userId: id
   });
@@ -28,7 +27,6 @@ export default () => {
   useEffect(
     () => {
       if (isConnected) {
-        socket.emit('notifications:fetch-unread');
         socket.on('notifications', async data => {
           try {
             console.log('notifications', data);
@@ -37,6 +35,7 @@ export default () => {
             console.error(err);
           }
         });
+        socket.emit('notifications:fetch-unread');
       }
     },
     [isConnected, error]
@@ -89,20 +88,16 @@ export default () => {
   );
 
   return (
-    <div styleName="settings-dropdown">
-      <Button
-        compact
-        styleName={`settings-dropdown-toggle ${showSettings ? 'shown' : ''}`}
-        onClick={() => onDropdownOpen()}
-      >
+    <div styleName="notifications">
+      <button styleName="btn" onClick={() => onDropdownOpen()}>
         <div
           styleName={cx('notification-icon', {
             unread: hasUnread
           })}
         >
-          <BellIcon />
+          <BellIcon width="20" height="20" />
         </div>
-      </Button>
+      </button>
       <ul styleName={`notifications-list ${showSettings ? 'shown' : ''}`}>
         {notifications.map(n => (
           <li key={n.id} styleName="notification-item">

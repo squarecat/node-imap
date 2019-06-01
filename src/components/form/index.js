@@ -94,29 +94,34 @@ export const FormSelect = ({
     'input-smaller': smaller,
     pill: pill
   });
+  const selected = options.find(o => o.value === value);
+  const selectedLabel = selected ? selected.label : placeholder;
   return (
-    <select
-      {...props}
-      ref={ref}
-      id={id}
-      name={name}
-      value={value}
-      styleName={classes}
-      required={required}
-      spellCheck="false"
-      onChange={e => {
-        validateInput(e, ref, validation, errorMessage);
-        onChange(e);
-      }}
-    >
-      {placeholder ? <option value="">{placeholder}</option> : null}
+    <span styleName="select-wrapper">
+      <span styleName={classes}>{selectedLabel}</span>
+      <select
+        {...props}
+        ref={ref}
+        id={id}
+        name={name}
+        value={value}
+        styleName="select"
+        required={required}
+        spellCheck="false"
+        onChange={e => {
+          validateInput(e, ref, validation, errorMessage);
+          onChange(e);
+        }}
+      >
+        {placeholder ? <option value="">{placeholder}</option> : null}
 
-      {options.map(opt => (
-        <option key={opt.value} value={opt.value}>
-          {opt.label}
-        </option>
-      ))}
-    </select>
+        {options.map(opt => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </span>
   );
 };
 

@@ -24,7 +24,7 @@ function MailList({ mail }) {
       </table>
       {unsubData ? (
         <UnsubModal
-          shown={unsubData}
+          shown={!!unsubData}
           onClose={() => {
             setUnsubData(null);
           }}

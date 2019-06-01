@@ -19,7 +19,8 @@ function MailView() {
     sortValues,
     sortByValue,
     sortByDirection,
-    activeFilters
+    activeFilters,
+    isFetching
   } = state;
 
   const [options, setOptions] = useState({
@@ -64,6 +65,7 @@ function MailView() {
         sortByValue={sortByValue}
         sortByDirection={sortByDirection}
         activeFilters={activeFilters}
+        showLoading={isFetching}
       />
       <div styleName="content">
         {isLoading ? <MailList mail={mail} /> : null}
@@ -73,7 +75,6 @@ function MailView() {
           previousLabel={'prev'}
           nextLabel={'next'}
           breakLabel={'...'}
-          breakClassName={'break-me'}
           pageCount={options.pageCount}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
@@ -81,8 +82,11 @@ function MailView() {
             dispatch({ type: 'set-page', data: selected });
           }}
           containerClassName={styles.pagination}
-          subContainerClassName={styles.paginationPages}
           activeClassName={styles.paginationActive}
+          pageClassName={styles.paginationPages}
+          previousClassName={styles.prev}
+          nextClassName={styles.next}
+          breakClassName={styles.paginationBreak}
         />
         <div styleName="count">
           <span>
