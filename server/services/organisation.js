@@ -1,15 +1,18 @@
-import { removeUserAccount, removeUserBillingCard, updateUser } from './user';
+import {
+  addInvitedUser,
+  create,
+  get,
+  getFromInvites
+} from '../dao/organisation';
+import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
 
-import { create } from './dao/organisation';
-import { getUserByEmail } from '../dao/user';
+import { addActivityForUser } from './user';
 import logger from '../utils/logger';
+import { sendInviteMail } from '../utils/emails/transactional';
 
-export async function createOrganisation(
-  email,
-  { name, domain, allowAnyUserWithCompanyEmail }
-) {
+export async function createOrganisation(email, data) {
+  logger.info(`organisation-service: creating an organisation ${email}`);
   try {
-    logger.info(`organisation-service: creating an organisation`);
     const user = await getUserByEmail(email);
     if (!user) {
       logger.error(
@@ -18,30 +21,68 @@ export async function createOrganisation(
       throw new Error('cannot create organisation, admin user does not exist');
     }
 
-    const { id: userId, email, accounts, billing } = user;
-
     const organisation = await create({
-      adminUserId: userId,
-      adminUserEmail: email,
-      name,
-      domain,
-      allowAnyUserWithCompanyEmail
+      adminUserId: user.id,
+      adminUserEmail: user.email,
+      ...data
     });
 
-    // set the user as part of the organsiation and
-    // - remove accounts as organisation users can only use their company accounts
-    // - remove customer's own billing as they won't need to add payment methods
-    await updateUser(userId, {
-      organsiationId: organisation.id
+    // set the user as part of the organsiation
+    await updateUser(user.id, {
+      organisationId: organisation.id,
+      organisationAdmin: true
     });
-    accounts.forEach(async account => {
-      logger.debug(`organisation-service: removing user account ${account.id}`);
-      await removeUserAccount(user, account.email);
+    await addActivityForUser(user.id, 'addedToOrganisation', {
+      id: organisation.id,
+      name: organisation.name
     });
-    if (billing) {
-      await removeUserBillingCard(userId);
-    }
+
     return organisation;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export function getOrganisation(id) {
+  return get(id);
+}
+
+export async function inviteUserToOrganisation(id, email) {
+  try {
+    const invitedUser = await getFromInvites(id, email);
+    if (!invitedUser) {
+      const organisation = await addInvitedUser(id, email);
+      sendInviteMail({
+        toAddress: email,
+        organisationName: organisation.name
+      });
+    }
+    return true;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getOrganisationUserStats(id) {
+  try {
+    const organisation = await getOrganisation(id);
+    if (!organisation) return [];
+
+    const users = await bulkGetUsersByEmail(organisation.currentUsers);
+    if (!users) return [];
+
+    const stats = users.map(u => {
+      const joinActivity = organisation.activity.find(
+        a => a.type === 'addedUser' && a.data.email === u.email
+      );
+      return {
+        id: u.id,
+        email: u.email,
+        numberOfUnsubscribes: u.unsubscriptions.length,
+        dateJoined: joinActivity.timestamp
+      };
+    });
+    return stats;
   } catch (err) {
     throw err;
   }

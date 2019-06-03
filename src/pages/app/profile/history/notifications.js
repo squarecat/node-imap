@@ -1,16 +1,16 @@
 import './scans.module.scss';
 
-import Table, { TableCell, TableRow } from '../../../components/table';
+import Table, { TableCell, TableRow } from '../../../../components/table';
 
-import ErrorBoundary from '../../../components/error-boundary';
+import ErrorBoundary from '../../../../components/error-boundary';
 import ProfileLayout from '../layout';
 import React from 'react';
-import { TextImportant } from '../../../components/text';
+import { TextImportant } from '../../../../components/text';
 import _sortBy from 'lodash.sortby';
-import { parseActivity } from '../../../utils/activities';
+import { parseActivity } from '../../../../utils/activities';
 import relative from 'tiny-relative-date';
-import request from '../../../utils/request';
-import { useAsync } from '../../../utils/hooks';
+import request from '../../../../utils/request';
+import { useAsync } from '../../../../utils/hooks';
 
 export default function Notifications() {
   const { value, loading } = useAsync(fetchNotifications);

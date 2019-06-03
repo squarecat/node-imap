@@ -1,20 +1,21 @@
 import './header.module.scss';
 
 import { ClockIcon } from '../../components/icons';
+import Credits from './credits';
 import { Link } from 'gatsby';
 import NotificationsDropdown from './notifications-dropdown';
 import React from 'react';
 import SettingsDropdown from './settings-dropdown';
 import useUser from '../../utils/hooks/use-user';
-import Credits from './credits';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ loaded, onClickReminder, onClickReferral }) => {
-  const [{ lastPaidScanType, reminder }] = useUser(
-    ({ lastPaidScanType, reminder }) => ({
+  const [{ lastPaidScanType, reminder, organisationId }] = useUser(
+    ({ lastPaidScanType, reminder, organisationId }) => ({
       lastPaidScanType,
-      reminder
+      reminder,
+      organisationId
     })
   );
 
@@ -55,8 +56,9 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
       </Link>
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
-        {reminderButton}
+        {organisationId ? <span>Org: {organisationId}</span> : null}
         <Credits />
+        {reminderButton}
         <button styleName="header-btn" onClick={() => onClickReferral()}>
           <span styleName="header-btn-text header-btn-text--short">Refer</span>
           <span styleName="header-btn-text header-btn-text--long">

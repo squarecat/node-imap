@@ -12,6 +12,7 @@ import mailApi from './rest/mail';
 import mailgunWebhooks from './rest/webhooks/mailgun';
 import milestonesApi from './rest/milestones';
 import notificationsApi from './rest/notifications';
+import orgApi from './rest/organisation';
 import path from 'path';
 import paymentsApi from './rest/payments';
 import { refreshScores } from './dao/occurrences';
@@ -68,6 +69,7 @@ paymentsApi(app);
 statsApi(app);
 giftsApi(app);
 milestonesApi(app);
+orgApi(app);
 mailgunWebhooks(app);
 
 app.get('/api/*', (req, res) => {

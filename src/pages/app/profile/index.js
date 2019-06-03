@@ -2,12 +2,12 @@ import './profile.module.scss';
 
 import React, { useState } from 'react';
 
-import Button from '../../components/btn';
+import Button from '../../../components/btn';
 import ProfileLayout from './layout';
-import { TextImportant } from '../../components/text';
-import WarningModal from '../../components/modal/warning-modal';
-import request from '../../utils/request';
-import useUser from '../../utils/hooks/use-user';
+import { TextImportant } from '../../../components/text';
+import WarningModal from '../../../components/modal/warning-modal';
+import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [{ email }] = useUser(u => ({

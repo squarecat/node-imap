@@ -63,7 +63,8 @@ export default app => {
         accounts,
         billing,
         milestones = {},
-        unreadNotifications = []
+        unreadNotifications = [],
+        organisationId,organisationAdmin
       } = user;
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
@@ -89,7 +90,8 @@ export default app => {
         accounts,
         billing,
         milestones,
-        unreadNotifications
+        unreadNotifications,
+        organisationId,organisationAdmin
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);
