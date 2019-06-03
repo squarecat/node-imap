@@ -20,11 +20,14 @@ let newsItems = {
   lastFetched: null
 };
 let expensesItems = {
-  results: [],
+  results: {
+    itemised: [],
+    monthly: []
+  },
   lastFetched: null
 };
 
-export function getExpenses() {
+export async function getExpenses() {
   const oneHourAgo = subHours(new Date(), 1);
   if (
     expensesItems.lastFetched &&
@@ -37,6 +40,47 @@ export function getExpenses() {
   logger.debug(
     `airtable: fetching expenses - last fetched ${expensesItems.lastFetched}`
   );
+  try {
+    const itemised = await getItemisedExpenses();
+    const monthly = await getMonthlyExpenses();
+    expensesItems = {
+      results: {
+        itemised,
+        monthly
+      },
+      lastFetched: new Date()
+    };
+    return expensesItems.results;
+  } catch (err) {
+    logger.error(
+      'airtable: error fetching expenses, returning previous values'
+    );
+    return expensesItems.results;
+  }
+}
+
+function getMonthlyExpenses() {
+  return new Promise((resolve, reject) => {
+    expensesBase(expenses.tableIdMonthly)
+      .select({
+        view: 'Grid view'
+      })
+      .firstPage((err, records) => {
+        if (err) {
+          logger.error('airtable: failed to get monthly expenses stats');
+          logger.error(err);
+          return reject(err);
+        }
+        const expenses = records.map(r => ({
+          date: r.get('Date'),
+          total: r.get('Total')
+        }));
+        return resolve(expenses.filter(e => e.date));
+      });
+  });
+}
+
+function getItemisedExpenses() {
   return new Promise((resolve, reject) => {
     expensesBase(expenses.tableId)
       .select({
@@ -44,7 +88,7 @@ export function getExpenses() {
       })
       .firstPage((err, records) => {
         if (err) {
-          logger.error('airtable: failed to get expenses stats');
+          logger.error('airtable: failed to get itemised expenses stats');
           logger.error(err);
           return reject(err);
         }
@@ -54,10 +98,6 @@ export function getExpenses() {
           cost: r.get('Monthly Cost'),
           url: r.get('URL')
         }));
-        expensesItems = {
-          results: expenses,
-          lastFetched: new Date()
-        };
         return resolve(expenses);
       });
   });
