@@ -5,8 +5,10 @@ $color-dropdown-border: $color-border-red;
 .settings-dropdown {
   position: relative;
 
-  a {
+  > a {
     margin: 0;
+    padding: 0px 3px 0 0;
+
     &:hover {
       box-shadow: none;
       background-color: transparent;
