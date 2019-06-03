@@ -170,7 +170,7 @@ async function* fetchMailApi(
       let populatedMessages;
       // sometimes the last page or the first page
       // wont have any messages
-      if (!messages.length) {
+      if (!messages || !messages.length) {
         continue;
       }
       if (batch) {
