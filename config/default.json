@@ -65,7 +65,8 @@
     "key": "key0cK6sejCiwx9p0",
     "expenses": {
       "baseId": "app0FrYsnDlnZvGHc",
-      "tableId": "Leave Me Alone"
+      "tableId": "Leave Me Alone",
+      "tableIdMonthly": "Leave Me Alone Monthly"
     },
     "beta": {
       "baseId": "appq5b5dkcmMPEbBA",
