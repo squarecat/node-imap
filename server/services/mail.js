@@ -29,16 +29,17 @@ import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
+import subMonths from 'date-fns/sub_months';
 import { updateOccurances } from '../dao/occurrences';
 
-export async function* fetchMail({ userId }) {
+export async function* fetchMail({ userId, from }) {
   const user = await getUserById(userId);
   const { accounts } = user;
   let accountScanData = [];
   let accountOccurrences = {};
   try {
     const iterators = await Promise.all(
-      accounts.map(account => fetchMailByAccount({ account, user }))
+      accounts.map(account => fetchMailByAccount({ account, user, from }))
     );
     for (let iter of iterators) {
       let next = await iter.next();
@@ -65,19 +66,25 @@ export async function* fetchMail({ userId }) {
 export async function* fetchMailByAccount({
   user,
   account,
-  timeframe = '1m',
+  from = subMonths(Date.now(), 6),
   ignore = false
 }) {
   const { provider } = account;
   let it;
+  let fromDate = from;
+  // from should be max 6 months
+  const sixMonthsAgo = subMonths(Date.now(), 6);
+  if (!fromDate || sixMonthsAgo > fromDate) {
+    fromDate = sixMonthsAgo;
+  }
   try {
     if (provider === 'google') {
       it = await fetchMailFromGmail(
-        { user, account, timeframe },
+        { user, account, from: fromDate },
         { strategy: 'api', batch: true }
       );
     } else if (provider === 'outlook') {
-      it = await fetchMailFromOutlook({ user, account, timeframe });
+      it = await fetchMailFromOutlook({ user, account, from: fromDate });
     } else {
       throw new Error('mail-service unknown provider');
     }
@@ -97,7 +104,7 @@ export async function* fetchMailByAccount({
     } = next.value;
 
     const scanData = {
-      timeframe,
+      from: fromDate,
       totalEmails: totalMail,
       totalUnsubscribableEmails: totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail,

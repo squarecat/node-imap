@@ -2,6 +2,8 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import db, { useMailSync } from './db';
 import mailReducer, { initialState } from './reducer';
 
+import _sortBy from 'lodash.sortby';
+
 const sortByValues = ['date', 'score'];
 export const MailContext = createContext({});
 
@@ -12,7 +14,7 @@ export function MailProvider({ children }) {
     fetch,
     unsubscribe,
     resolveUnsubscribeError,
-    fetchScores
+    isFetching
   } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
@@ -21,13 +23,19 @@ export function MailProvider({ children }) {
     let filteredCollection = db.mail;
     // apply filters
     if (activeFilters.length) {
-      filteredCollection = activeFilters.reduce((col, filter, i) => {
-        const { field, value, type } = filter;
-        if (i === 0) {
-          return col.where(field)[type](value);
-        }
-        return col.or(field)[type](value);
-      }, db.mail);
+      const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
+        (out, filter) => {
+          const { value, field } = filter;
+          return {
+            indexes: [...out.indexes, field],
+            values: [...out.values, value]
+          };
+        },
+        { values: [], indexes: [] }
+      );
+      const index = indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
+      const value = values.length > 1 ? values : values[0];
+      filteredCollection = filteredCollection.where(index).equals(value);
     } else {
       filteredCollection = filteredCollection.toCollection();
     }
@@ -38,6 +46,21 @@ export function MailProvider({ children }) {
     if (options.sortDirection === 'desc') {
       filteredCollection = await filteredCollection.reverse();
     }
+    // if sorting by score then move all those
+    // without score to the end
+    if (options.orderBy === 'score') {
+      const { scored, unscored } = filteredCollection.reduce(
+        (out, item) => {
+          if (item.score === -1) {
+            return { ...out, unscored: [...out.unscored, item] };
+          }
+          return { ...out, scored: [...out.scored, item] };
+        },
+        { scored: [], unscored: [] }
+      );
+      filteredCollection = [...scored, ...unscored];
+    }
+
     // filter by pagination
     const startIndex = options.page * options.perPage;
     filteredCollection = await filteredCollection.slice(
@@ -53,6 +76,8 @@ export function MailProvider({ children }) {
     return filtedMailIds;
   }
 
+  // when we get new data we check all the filter values
+  // and set them again for the filter drop downs
   async function setFilterValues() {
     db.mail.orderBy('to').uniqueKeys(function(recipients) {
       return dispatch({
@@ -60,11 +85,10 @@ export function MailProvider({ children }) {
         data: { name: 'recipients', value: recipients }
       });
     });
-    db.mail.orderBy('fromEmail').uniqueKeys(emails => {
-      fetchScores(emails);
-    });
   }
 
+  // setting the mail count will cause the mail list to
+  // re-render once
   async function setMailCount(c) {
     let count = c;
     if (!count) {
@@ -73,46 +97,48 @@ export function MailProvider({ children }) {
     return dispatch({ type: 'set-count', data: count });
   }
 
-  function onCreate() {
-    debugger;
-    // TODO does this change the results of the current active filter?
-    setMailCount(state.count + 1);
-    setFilterValues();
-    // dispatch({ type: 'add', data: obj });
-  }
-  function onUpdate() {
-    // setFilterValues();
-    // TODO does this change the details of a currently shown mail item
-    // dispatch({ type: 'update', data: obj });
-  }
-  function onDelete() {
-    setMailCount(state.count - 1);
-    setFilterValues();
-    // TODO does this change the details of a currently shown mail item
-    // dispatch({ type: 'update', data: obj });
+  // called whenever we get a chunk of emails from the server
+  // this is whta triggers a refresh of all the other stuff
+  function onCountUpdate(modifications, key) {
+    const { value } = modifications;
+    if (key === 'totalMail' && value) {
+      setTimeout(() => {
+        setMailCount(value);
+        setFilterValues();
+      }, 0);
+    }
   }
 
+  // load previous values
+  async function loadPreferences() {
+    const filters = await db.prefs.get('filters');
+    let value = null;
+    if (filters) {
+      value = filters.value;
+    }
+    return dispatch({ type: 'init', data: value });
+  }
+
+  // run once on mount
   useEffect(() => {
-    setMailCount();
-    setFilterValues();
-    db.mail.hook('creating', onCreate);
-    db.mail.hook('updating', onUpdate);
-    db.mail.hook('deleting', onDelete);
+    loadPreferences();
+    db.prefs.hook('updating', onCountUpdate);
     return () => {
-      db.mail.hook('creating').unsubscribe(onCreate);
-      db.mail.hook('updating').unsubscribe(onUpdate);
-      db.mail.hook('deleting').unsubscribe(onDelete);
+      db.prefs.hook('updating').unsubscribe(onCountUpdate);
     };
   }, []);
 
+  // when things change, filter the mail list
   useEffect(
     () => {
-      filterMail({
-        orderBy: state.sortByValue,
-        sortDirection: state.sortByDirection,
-        page: state.page,
-        perPage: state.perPage
-      });
+      if (state.initialized) {
+        filterMail({
+          orderBy: state.sortByValue,
+          sortDirection: state.sortByDirection,
+          page: state.page,
+          perPage: state.perPage
+        });
+      }
     },
     [
       JSON.stringify(state.activeFilters),
@@ -124,11 +150,23 @@ export function MailProvider({ children }) {
     ]
   );
 
+  // save filter state to db to use as initial
+  // state upon refresh
+  useEffect(
+    () => {
+      if (state.initialized) {
+        db.prefs.put({ key: 'filters', value: state });
+      }
+    },
+    [state]
+  );
+
   const value = {
-    isLoading: ready,
+    isLoading: ready && state.initialized,
     page: state.page,
     perPage: state.perPage,
-    refresh: fetch,
+    fetch,
+    isFetching,
     filterValues: state.filterValues,
     activeFilters: state.activeFilters,
     mail: filteredMail.mail,

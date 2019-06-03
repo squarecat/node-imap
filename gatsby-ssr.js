@@ -10,7 +10,33 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
   let components = [
     <div key="modal-root" id="modal-root" />,
     <script
+      key="metomic"
+      dangerouslySetInnerHTML={{
+        __html: `!(function(p, r, i, v, a, c, y) {
+      p.Metomic = { apiKey: i };
+      p[i] ||
+        (p[i] = function() {
+          (p[i].q = p[i].q || []).push(arguments);
+        });
+      p[i].l = +new Date();
+      c = r.createElement(v);
+      y = r.getElementsByTagName(v)[0];
+      p.Metomic.script = c;
+      c.src = a;
+      y.parentNode.insertBefore(c, y);
+    })(
+      window,
+      document,
+      'prj:464f67cd-4c3b-4c54-bac2-d0513284a9a4',
+      'script',
+      'https://consent-manager.metomic.io/embed.js'
+    );`
+      }}
+    />,
+    <script
       key="support-start"
+      type="text/x-metomic"
+      data-micropolicy="live-chat"
       dangerouslySetInnerHTML={{
         __html: Terser.minify(`window.intergramId = "-388078727";
         window.intergramServer = "https://support.squarecat.io"
@@ -35,8 +61,9 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
     />,
     <script
       id="intergram"
+      type="text/x-metomic"
+      data-micropolicy="live-chat"
       key="intergram"
-      type="text/javascript"
       src="https://support.squarecat.io/js/widget.js"
     />
   ];

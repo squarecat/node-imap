@@ -1,12 +1,12 @@
-import './modal.module.scss';
+import '../modal.module.scss';
 
-import React, { useEffect, useState } from 'react';
+import Modal, { ModalBody, ModalCloseIcon } from '..';
+import React, { useState } from 'react';
 
-import { ExternalIcon } from '../icons';
-import ModalClose from './modal-close';
-import { TextImportant } from '../text';
+import { ExternalIcon } from '../../icons';
+import { TextImportant } from '../../text';
 
-export default ({ onClose, onSubmit, mail }) => {
+export default ({ shown, onClose, onSubmit, mail }) => {
   const {
     id: mailId,
     estimatedSuccess,
@@ -16,10 +16,8 @@ export default ({ onClose, onSubmit, mail }) => {
     unsubStrategy,
     resolved
   } = mail;
-
   const error = !estimatedSuccess;
   const [slide, changeSlide] = useState('first');
-  const [isShown, setShown] = useState(false);
   const [selected, setSelected] = useState(null);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -28,30 +26,9 @@ export default ({ onClose, onSubmit, mail }) => {
     if (error && !resolved) {
       return changeSlide('positive');
     }
-    onClickClose();
+    onClose();
   };
-  const handleKeydown = e => {
-    if (e.keyCode === 27 || e.key === 'Escape') {
-      onClickClose();
-    }
-  };
-  // on mount
-  useEffect(() => {
-    setShown(true);
-    document.addEventListener('keydown', handleKeydown, false);
-    return function cleanup() {
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  }, []);
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(onClose, 300);
-  };
-  const onClickSubmit = data => {
-    setShown(false);
-    setTimeout(() => onSubmit(data), 300);
-  };
-  const pickSlide = () => {
+  const pickSlide = title => {
     if (slide === 'first') {
       return slide1(
         mailId,
@@ -62,33 +39,36 @@ export default ({ onClose, onSubmit, mail }) => {
         unsubStrategy,
         resolved,
         imageLoading,
-        setImageLoading
+        setImageLoading,
+        title
       );
     } else if (slide === 'negative') {
       return slide2({
         type: unsubStrategy,
         link: unsubscribeLink,
         mailTo: unsubscribeMailTo,
-        onClickSubmit,
+        onSubmit,
         onClickBack: () => changeSlide('first'),
         selected,
         setSelected,
-        hasImage
+        hasImage,
+        title
       });
     } else if (slide === 'positive') {
-      return slide3(onClickSubmit);
+      return slide3(onSubmit, title);
     }
   };
   const title = error ? 'Something went wrong...' : 'Successfully unsubscribed';
   return (
-    <>
-      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-        <ModalClose onClose={onClickClose} />
-        <h3>{title}</h3>
-        {pickSlide()}
-      </div>
-      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
-    </>
+    <Modal
+      shown={shown}
+      onClose={onClose}
+      dismissable={false}
+      style={{ width: 580 }}
+    >
+      <ModalCloseIcon />
+      {pickSlide(title)}
+    </Modal>
   );
 };
 
@@ -101,7 +81,8 @@ function slide1(
   unsubStrategy,
   resolved,
   imageLoading,
-  setImageLoading
+  setImageLoading,
+  title
 ) {
   let lead;
   let timeout = false;
@@ -121,16 +102,15 @@ function slide1(
   let content;
   if (timeout) {
     content = (
-      <>
-        <div styleName="modal-content">
-          <p>{lead}</p>
-        </div>
+      <ModalBody compact>
+        <h3>{title}</h3>
+        <p>{lead}</p>
         <div styleName="modal-actions">
           <a styleName="modal-btn" onClick={onClickNegative}>
             Unsubscribe manually
           </a>
         </div>
-      </>
+      </ModalBody>
     );
   } else if (unsubStrategy === 'link') {
     let actions = null;
@@ -164,7 +144,8 @@ function slide1(
     }
     content = (
       <>
-        <div styleName="modal-content">
+        <ModalBody compact>
+          <h3>{title}</h3>
           <p>{lead}</p>
           <div styleName="unsub-img-container">
             <img
@@ -188,28 +169,31 @@ function slide1(
           ) : (
             <p>How does it look?</p>
           )}
-        </div>
+        </ModalBody>
         <div styleName="modal-actions">{actions}</div>
       </>
     );
   } else {
     content = (
       <>
-        <div styleName="modal-content">
-          <p>{lead}</p>
-          <p>
-            If the provider is behaving themselves, then you shouldn't get any
-            more subscription emails from them!
-          </p>
-        </div>
-        <div styleName="modal-actions">
-          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
-            Awesome!{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs up emoji">
-              ️👍
-            </span>
-          </a>
-        </div>
+        <ModalBody compact>
+          <div styleName="modal-content">
+            <h3>{title}</h3>
+            <p>{lead}</p>
+            <p>
+              If the provider is behaving themselves, then you shouldn't get any
+              more subscription emails from them!
+            </p>
+          </div>
+          <div styleName="modal-actions">
+            <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
+              Awesome!{' '}
+              <span styleName="emoji" role="img" aria-label="thumbs up emoji">
+                ️👍
+              </span>
+            </a>
+          </div>
+        </ModalBody>
       </>
     );
   }
@@ -224,7 +208,7 @@ function slide2({
   type,
   link,
   mailTo,
-  onClickSubmit: onSubmit,
+  onSubmit,
   onClickBack,
   selected,
   setSelected,

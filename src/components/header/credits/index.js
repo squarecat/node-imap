@@ -1,7 +1,9 @@
+import '../header-btn.module.scss';
+
 import React, { useEffect, useState } from 'react';
 
-import useSocket from '../../app/mail-list/socket';
-import useUser from '../../utils/hooks/use-user';
+import useSocket from '../../../utils/hooks/use-socket';
+import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [{ id, token, unsubscribesRemaining }] = useUser(
@@ -22,7 +24,6 @@ export default () => {
   useEffect(
     () => {
       if (isConnected) {
-        socket.emit('fetch-credits');
         socket.on('credits', async data => {
           try {
             console.log('credits', data);
@@ -31,10 +32,17 @@ export default () => {
             console.error(err);
           }
         });
+        socket.emit('fetch-credits');
       }
     },
     [isConnected, error]
   );
 
-  return <span>{credits} credits</span>;
+  return (
+    <button styleName="header-btn" onClick={() => {}}>
+      <span styleName="header-btn-text header-btn-text--long">
+        {credits} credits
+      </span>
+    </button>
+  );
 };

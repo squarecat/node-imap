@@ -1,0 +1,22 @@
+.pulse {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+  transform: scale(1);
+  position: absolute;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+    background-color: #ff726d;
+  }
+  100% {
+    transform: scale(1);
+  }
+}

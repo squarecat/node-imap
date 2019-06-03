@@ -61,6 +61,7 @@
 }
 
 .pill {
+  display: inline-block;
   line-height: 30px;
   height: 30px;
   border-radius: 8px;
@@ -94,6 +95,11 @@
 }
 
 .form-select-dropdown {
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
   &:invalid {
     color: $color-input-placeholder;
   }
@@ -237,6 +243,19 @@
     background: $color-bg-success;
     border: 1px solid $color-text-success;
   }
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 30px;
 }
 
 :global(.StripeElement) {

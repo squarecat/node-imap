@@ -1,68 +1,36 @@
-import { getSearchString, getTimeRange } from './utils';
-
 import { getMailClient } from './access';
+import { getSearchString } from './utils';
 import logger from '../../../utils/logger';
 
-const estimateTimeframes = ['3d', '1w'];
 const SPAM_REGULARITY = 0.48;
 
 export async function getMailEstimates(
   account,
-  { includeTrash = true, timeframe } = {}
+  { includeTrash = true, from } = {}
 ) {
   // addEstimateToStats();
-  if (timeframe) {
-    const estimate = await getEstimateForTimeframe(account, {
-      includeTrash,
-      timeframe
-    });
-    return {
-      ...estimate,
-      totalSpam: (estimate.total * SPAM_REGULARITY).toFixed()
-    };
-  } else {
-    let estimates = await Promise.all(
-      estimateTimeframes.map(async tf => {
-        const total = await getEstimateForTimeframe(account, {
-          includeTrash,
-          timeframe: tf
-        });
-        return {
-          timeframe: tf,
-          total
-        };
-      })
-    );
-    estimates = [
-      ...estimates,
-      { timeframe: '1m', total: estimates[1].total * 4 },
-      { timeframe: '6m', total: estimates[1].total * 4 * 6 }
-    ].map(e => ({ ...e, totalSpam: (e.total * SPAM_REGULARITY).toFixed() }));
-
-    return estimates;
-  }
+  const estimate = await getEstimateForTimeframe(account, {
+    includeTrash,
+    from
+  });
+  return {
+    ...estimate,
+    totalSpam: (estimate.total * SPAM_REGULARITY).toFixed()
+  };
 }
 
+// FIXME, not using timeframe data anymore so estimates suffer
+// from the gmail api bug below
+//
 // due to issues with the Gmail API, to do
 // an estimate for 1m or 6m, we have to
 // estimate the estimate by multiplying it
-export async function getEstimateForTimeframe(
-  account,
-  { includeTrash, timeframe }
-) {
-  let tf = timeframe;
-  let multiplier = 1;
-  if (timeframe === '1m' || timeframe === '6m') {
-    tf = '1w';
-    multiplier = timeframe === '1m' ? 4 : 24;
-  }
-  const { then, now } = getTimeRange(tf);
+export async function getEstimateForTimeframe(account, { includeTrash, from }) {
   const searchStr = getSearchString({
-    then,
-    now
+    from
   });
   let total = await getEstimatedEmails(searchStr, includeTrash, account);
-  return total * multiplier;
+  return total;
 }
 
 export async function getEstimatedEmails(query, includeTrash = true, account) {

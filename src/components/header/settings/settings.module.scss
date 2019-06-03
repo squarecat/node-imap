@@ -1,18 +1,20 @@
-@import '../../styles/common/colors.scss';
+@import '../../../styles/common/colors.scss';
 
 $color-dropdown-border: $color-border-red;
 
 .settings-dropdown {
   position: relative;
 
-  a {
+  > a {
     margin: 0;
+    padding: 0px 3px 0 0;
+
     &:hover {
       box-shadow: none;
       background-color: transparent;
-
+      transform: translate(0, 0);
       .profile {
-        box-shadow: 0 1px 15px hsla(18, 100%, 38%, 0.25);
+        box-shadow: 0 1px 10px hsla(18, 100%, 38%, 0.25);
       }
     }
   }
@@ -36,17 +38,16 @@ $color-dropdown-border: $color-border-red;
 
   transition: opacity 200ms cubic-bezier(0.65, 0.05, 0.36, 1),
     transform 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+}
 
-  &.shown {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: all;
-  }
+.shown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
 }
 
 // arrow
-.settings-dropdown-list,
-.notification-dropdown-list {
+.settings-dropdown-list {
   &:after,
   &:before {
     bottom: 100%;
@@ -129,79 +130,5 @@ $color-dropdown-border: $color-border-red;
   color: $color-link;
   &:hover {
     color: $color-link-hover;
-  }
-}
-
-.notifications-list {
-  @extend .settings-dropdown-list;
-  width: 400px;
-  text-align: left;
-  top: 58px;
-
-  &:before {
-    right: 27px;
-  }
-  &:after {
-    right: 28px;
-  }
-
-  @media (max-width: 400px) {
-    width: 100%;
-  }
-}
-
-.notification-item,
-.view-all-link a {
-  margin: 0;
-  font-size: 14px;
-  color: $color-red;
-  padding: 6px 10px;
-  display: block;
-  border-bottom: 1px solid $color-dropdown-border;
-
-  &:hover {
-    background-color: rgba(255, 229, 229, 0.35);
-  }
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.view-all-link {
-  margin: 0;
-  text-align: center;
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.notification-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.unread:after {
-  content: '';
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-  border-radius: 50%;
-  background: $color-red-darker;
-}
-
-.notification {
-  position: relative;
-  display: block;
-  padding-right: 10px;
-
-  &.unread:after {
-    width: 9px;
-    height: 9px;
-    top: 50%;
-    transform: translateY(-50%);
-    right: -2px;
   }
 }

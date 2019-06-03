@@ -7,21 +7,50 @@
   height: 100%;
 }
 
+.cell {
+  padding: 10px;
+}
+
 .tags-column {
   width: 70px;
+  text-align: center;
+  @media (max-width: 800px) {
+    width: 55px;
+  }
+  @media (max-width: 600px) {
+    width: 0;
+    display: none;
+  }
 }
 .timestamp-column {
   width: 100px;
+  @media (max-width: 800px) {
+    width: 66px;
+    padding: 10px 5px;
+  }
 }
 .from-column {
   white-space: nowrap;
   width: 240px;
+
+  @media (max-width: 800px) {
+    width: 40%;
+  }
 }
 .subject-column {
   width: 50%;
+
+  @media (max-width: 650px) {
+    width: 30%;
+  }
+  @media (max-width: 500px) {
+    width: 0;
+  }
 }
 .score-column {
-  width: 55px;
+  width: 40px;
+  text-align: center;
+  padding: 0;
 }
 
 .actions-column {
@@ -30,7 +59,10 @@
   width: 110px;
   text-align: center;
   position: relative;
-  padding: 10px;
+
+  @media (max-width: 650px) {
+    width: 90px;
+  }
 }
 
 .mail-item {
@@ -66,6 +98,17 @@
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+  .from-name {
+    font-size: 14px;
+  }
+}
+@media (max-width: 400px) {
+  .from-name {
+    font-size: 12px;
+  }
 }
 
 .from-name-container {
@@ -118,9 +161,28 @@
 }
 
 .from-date,
-.from-time {
+.from-time,
+.from-day,
+.from-year {
   display: block;
   padding: 2px 0;
+}
+
+.from-date,
+.from-time {
+  display: block;
+
+  @media (max-width: 500px) {
+    display: none;
+  }
+}
+
+.from-timestamp {
+  display: none;
+
+  @media (max-width: 500px) {
+    display: block;
+  }
 }
 
 .subject {
@@ -128,6 +190,10 @@
   display: block;
   overflow: hidden;
   height: 50px;
+
+  @media (max-width: 800px) {
+    font-size: 12px;
+  }
 }
 
 .action {
@@ -286,7 +352,6 @@ pre {
   right: 0;
   margin: 0 auto;
   opacity: 0.5;
-  width: 100px;
   cursor: pointer;
 }
 
