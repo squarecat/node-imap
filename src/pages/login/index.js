@@ -27,11 +27,7 @@ const LoginPage = () => {
       <div ref={activeRef} styleName="hold-onto-your-butts-we-are-logging-in">
         <div styleName="login-boxy-box">
           <div styleName="beautiful-logo">
-            <img
-              src={logoUrl}
-              alt="Leave Me Alone logo"
-              title="Leave Me Alone logo"
-            />
+            <img src={logoUrl} alt="Leave Me Alone logo" />
           </div>
           <h1 styleName="title">Login to Leave Me Alone</h1>
           <p>We need to connect to your email account.</p>

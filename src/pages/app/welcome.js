@@ -45,7 +45,6 @@ export default ({ openPriceModal, isBeta = false, provider } = {}) => {
           <img
             src={logoUrl}
             alt="Leave Me Alone logo"
-            title="Leave Me Alone logo"
             styleName="first-logon-image"
           />
         </div>
@@ -57,7 +56,6 @@ export default ({ openPriceModal, isBeta = false, provider } = {}) => {
           src={gif}
           styleName="unsub-gif"
           alt="Demonstration of unsubscribing from spam emails with one click"
-          title="One click to unsubscribe from subscription emails"
         />
         <Button
           centered

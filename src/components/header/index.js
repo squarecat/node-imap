@@ -45,11 +45,7 @@ export default ({ loaded, onClickReminder, onClickReferral }) => {
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app/" styleName="header-logo">
-        <img
-          alt="Leave Me Alone logo"
-          title="Leave Me Alone logo"
-          src={logoUrl}
-        />
+        <img alt="Leave Me Alone logo" src={logoUrl} />
       </Link>
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
