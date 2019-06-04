@@ -5,6 +5,8 @@ import {
   addGiftRedemption,
   addNewsletterUnsubscription,
   addNumberofEmails,
+  addOrganisation,
+  addOrganisationUser,
   addPayment,
   addReferralCredit,
   addReferralPaidScan,
@@ -12,14 +14,14 @@ import {
   addRefund,
   addReminderRequest,
   addReminderSent,
+  addRewardGiven,
   addScan,
   addUnsubStatus,
   addUnsubscriptionByEmail,
   addUnsubscriptionByLink,
   addUser,
   addUserAccountDeactivated,
-  getStats,
-  addRewardGiven
+  getStats
 } from '../dao/stats';
 
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
@@ -82,6 +84,12 @@ export function addUnsubStatusToStats(status) {
 }
 export function addRewardGivenToStats(unsubscriptions) {
   return addRewardGiven(unsubscriptions);
+}
+export function addOrganisationToStats(count = 1) {
+  return addOrganisation(count);
+}
+export function addOrganisationUserToStats(count = 1) {
+  return addOrganisationUser(count);
 }
 
 export function getAllStats() {

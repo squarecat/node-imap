@@ -1,5 +1,5 @@
 import {
-  getOrganisation,
+  getOrganisationById,
   getOrganisationUserStats,
   inviteUserToOrganisation
 } from '../services/organisation';
@@ -12,7 +12,7 @@ export default app => {
     const { id } = req.params;
 
     try {
-      const org = await getOrganisation(id);
+      const org = await getOrganisationById(id);
       return res.send(org);
     } catch (err) {
       logger.error('organisations-rest: error getting organisation');

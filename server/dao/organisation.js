@@ -1,6 +1,7 @@
 import db, { isoDate } from './db';
 
 import logger from '../utils/logger';
+import shortid from 'shortid';
 import { v4 } from 'node-uuid';
 
 const COL_NAME = 'organisations';
@@ -55,26 +56,18 @@ export async function create(data) {
       id,
       createdAt: isoDate(),
       lastUpdatedAt: isoDate(),
+      inviteCode: shortid.generate(),
       name,
       adminUserId,
       adminUserEmail,
       domain,
       allowAnyUserWithCompanyEmail,
-      currentUsers: [adminUserEmail],
       invitedUsers: [],
-      activity: [
-        {
-          id: v4(),
-          type: 'addedUser',
-          timestamp: isoDate(),
-          data: {
-            email: adminUserEmail
-          }
-        }
-      ],
+      currentUsers: [],
+      activity: [],
       active: false
     });
-    return get(id);
+    return getById(id);
   } catch (err) {
     logger.error('organisation-dao: error inserting organisation');
     logger.error(err);
@@ -82,12 +75,25 @@ export async function create(data) {
   }
 }
 
-export async function get(id) {
+export async function getById(id) {
   try {
     const col = await db().collection(COL_NAME);
     return col.findOne({ id });
   } catch (err) {
-    logger.error(`organisation-dao: error getting organisation ${id}`);
+    logger.error(`organisation-dao: error getting organisation by id ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function getByInviteCode(inviteCode) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.findOne({ inviteCode });
+  } catch (err) {
+    logger.error(
+      `organisation-dao: error getting organisation by invite code ${inviteCode}`
+    );
     logger.error(err);
     throw err;
   }
@@ -128,7 +134,7 @@ export async function addInvitedUser(id, email) {
         }
       }
     );
-    return get(id);
+    return getById(id);
   } catch (err) {
     logger.error(`organisation-dao: error adding user to organisation ${id}`);
     logger.error(err);
@@ -136,7 +142,7 @@ export async function addInvitedUser(id, email) {
   }
 }
 
-export async function addUser(id, email) {
+export async function addOrganisationUser(id, email) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -158,7 +164,7 @@ export async function addUser(id, email) {
         }
       }
     );
-    return get(id);
+    return getById(id);
   } catch (err) {
     logger.error(`organisation-dao: error adding user to organisation ${id}`);
     logger.error(err);
@@ -187,7 +193,7 @@ export async function removeUser(id, email) {
         }
       }
     );
-    return get(id);
+    return getById(id);
   } catch (err) {
     logger.error(
       `organisation-dao: error removing user from organisation ${id}`

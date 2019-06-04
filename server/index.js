@@ -94,6 +94,13 @@ app.get('/r/:code', (req, res) => {
   }
   res.redirect('/');
 });
+
+app.get('/i/:code', (req, res) => {
+  // make sure the latest invite is used
+  res.cookie('invite', req.params.code, { maxAge: 900000 });
+  res.redirect('/login');
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {

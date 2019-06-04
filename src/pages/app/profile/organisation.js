@@ -99,11 +99,17 @@ function Organisation() {
       <div styleName="organisation-section">
         <h2>Settings</h2>
         {allowAnyUserWithCompanyEmail ? (
-          <p>
-            Any user with the <TextImportant>{domain}</TextImportant> domain can
-            join. This means they can sign-in and connect accounts with a{' '}
-            {domain} email address.
-          </p>
+          <>
+            <p>
+              Any user with the <TextImportant>{domain}</TextImportant> domain
+              can join. This means they can sign-in and connect accounts with a{' '}
+              {domain} email address.
+            </p>
+            <p>
+              You can also invite users outside of your organisation using the
+              form below.
+            </p>
+          </>
         ) : (
           <p>
             Only users you invite with the form below can join. This means{' '}

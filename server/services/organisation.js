@@ -1,14 +1,25 @@
+import { addActivityForUser, getUserById, removeUserAccount } from './user';
 import {
   addInvitedUser,
+  addUser,
   create,
-  get,
+  getById,
+  getByInviteCode,
   getFromInvites
 } from '../dao/organisation';
+import { addOrganisationToStats, addOrganisationUserToStats } from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
 
-import { addActivityForUser } from './user';
 import logger from '../utils/logger';
 import { sendInviteMail } from '../utils/emails/transactional';
+
+export function getOrganisationById(id) {
+  return getById(id);
+}
+
+export function getOrganisationByInviteCode(code) {
+  return getByInviteCode(code);
+}
 
 export async function createOrganisation(email, data) {
   logger.info(`organisation-service: creating an organisation ${email}`);
@@ -27,14 +38,16 @@ export async function createOrganisation(email, data) {
       ...data
     });
 
-    // set the user as part of the organsiation
+    addOrganisationToStats();
+
     await updateUser(user.id, {
       organisationId: organisation.id,
       organisationAdmin: true
     });
-    await addActivityForUser(user.id, 'addedToOrganisation', {
-      id: organisation.id,
-      name: organisation.name
+
+    await addUserToOrganisation(organisation, {
+      userId: user.id,
+      email: user.email
     });
 
     return organisation;
@@ -43,18 +56,17 @@ export async function createOrganisation(email, data) {
   }
 }
 
-export function getOrganisation(id) {
-  return get(id);
-}
-
 export async function inviteUserToOrganisation(id, email) {
   try {
     const invitedUser = await getFromInvites(id, email);
     if (!invitedUser) {
+      logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
       const organisation = await addInvitedUser(id, email);
+
       sendInviteMail({
         toAddress: email,
-        organisationName: organisation.name
+        organisationName: organisation.name,
+        inviteCode: organisation.inviteCode
       });
     }
     return true;
@@ -63,9 +75,37 @@ export async function inviteUserToOrganisation(id, email) {
   }
 }
 
+export async function addUserToOrganisation(organisationId, { userId, email }) {
+  try {
+    logger.debug(
+      `organisation-service: adding user ${userId} to org ${organisationId}`
+    );
+    // add the account to the organisation and remove from the invites
+    const organisation = await addUser(organisationId, email);
+
+    logger.debug(
+      `organisation-service: removing user ${userId} connected accounts`
+    );
+    // TODO remove connected accounts
+    const user = await getUserById(userId);
+    await Promise.all(
+      user.accounts.map(async a => removeUserAccount(user, a.email))
+    );
+
+    addActivityForUser(userId, 'addedToOrganisation', {
+      id: organisationId,
+      name: organisation.name
+    });
+    addOrganisationUserToStats();
+    return organisation;
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function getOrganisationUserStats(id) {
   try {
-    const organisation = await getOrganisation(id);
+    const organisation = await getOrganisationById(id);
     if (!organisation) return [];
 
     const users = await bulkGetUsersByEmail(organisation.currentUsers);
