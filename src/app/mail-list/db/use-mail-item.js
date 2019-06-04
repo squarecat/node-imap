@@ -4,12 +4,14 @@ import db from './';
 
 export default function useMailItem(id, reducer = v => v) {
   const [item, setItem] = useState({});
+
   function onUpdate(modifications, key, obj) {
     if (key === id) {
       const newItem = { ...obj, ...modifications };
-      setItem(reducer(newItem));
+      setTimeout(() => setItem(reducer(newItem)), 0);
     }
   }
+
   async function get() {
     const value = await db.mail.get(id);
     setItem(reducer(value));

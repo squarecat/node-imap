@@ -1,9 +1,10 @@
 import { MailContext, MailProvider } from './provider';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import Filters from './filters';
 import MailList from './list';
 import Pagination from 'react-paginate';
+import loadingImg from '../../assets/envelope-logo.png';
 import styles from './mail-list.module.scss';
 
 function MailView() {
@@ -57,6 +58,8 @@ function MailView() {
     [page]
   );
 
+  const showLoading = (isLoading || isFetching) && !mail.length;
+
   return (
     <div styleName="mail-list">
       <Filters
@@ -68,7 +71,7 @@ function MailView() {
         showLoading={isFetching}
       />
       <div styleName="content">
-        {isLoading ? <MailList mail={mail} /> : null}
+        {showLoading ? <Loading /> : <MailList mail={mail} />}
       </div>
       <div styleName="footer">
         <Pagination
@@ -109,3 +112,14 @@ export default () => {
     </MailProvider>
   );
 };
+
+function Loading() {
+  return (
+    <div styleName="loading-wrapper">
+      <div styleName="loading">
+        <img styleName="loading-img" src={loadingImg} alt="loading image" />
+        <div styleName="loading-text">Loading subscriptions...</div>
+      </div>
+    </div>
+  );
+}

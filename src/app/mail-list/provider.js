@@ -141,6 +141,7 @@ export function MailProvider({ children }) {
       }
     },
     [
+      state.initialized,
       JSON.stringify(state.activeFilters),
       state.sortByValue,
       state.page,
