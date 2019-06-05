@@ -5,19 +5,19 @@ import {
   FormInput,
   FormLabel,
   FormNotification
-} from '../../components/form';
+} from '../../../components/form';
 import React, { useState } from 'react';
-import Table, { TableCell, TableRow } from '../../components/table';
+import Table, { TableCell, TableRow } from '../../../components/table';
 
-import Button from '../../components/btn';
-import PasswordInput from '../../components/form/password';
+import Button from '../../../components/btn';
+import PasswordInput from '../../../components/form/password';
 import ProfileLayout from './layout';
-import SetupTwoFactorAuthModal from '../../components/modal/create-2fa';
-import { TextImportant } from '../../components/text';
-import VerifyTwoFacorAuthModal from '../../components/modal/verify-2fa';
+import SetupTwoFactorAuthModal from '../../../components/modal/create-2fa';
+import { TextImportant } from '../../../components/text';
+import VerifyTwoFacorAuthModal from '../../../components/modal/verify-2fa';
 import _capitalize from 'lodash.capitalize';
-import request from '../../utils/request';
-import useUser from '../../utils/hooks/use-user';
+import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 export async function updatePassword(oldPassword, password) {
   return request('/api/me/password', {

@@ -8,10 +8,13 @@ import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [showSettings, setShowSettings] = useState(false);
-  const [{ profileImg, email }] = useUser(({ profileImg, email }) => ({
-    profileImg,
-    email
-  }));
+  const [{ profileImg, email, organisationId }] = useUser(
+    ({ profileImg, email, organisationId }) => ({
+      profileImg,
+      email,
+      organisationId
+    })
+  );
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -60,11 +63,13 @@ export default () => {
             Settings
           </Link>
         </li>
-        <li styleName="setting-item">
-          <Link styleName="setting-item-link" to="/app/profile/accounts">
-            Connect account
-          </Link>
-        </li>
+        {organisationId ? null : (
+          <li styleName="setting-item">
+            <Link styleName="setting-item-link" to="/app/profile/accounts">
+              Connect account
+            </Link>
+          </li>
+        )}
         <li styleName="setting-item">
           <Link styleName="setting-item-link" to="/app/profile/billing">
             Billing

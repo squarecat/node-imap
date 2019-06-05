@@ -10,7 +10,7 @@ import Score from '../../../components/score';
 import Toggle from '../../../components/toggle';
 import Tooltip from '../../../components/tooltip';
 import format from 'date-fns/format';
-import { toggleFromIgnoreList } from '../../profile/ignore';
+import { toggleFromIgnoreList } from '../../../utils/ignore';
 import useUser from '../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM';

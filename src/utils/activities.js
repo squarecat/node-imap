@@ -41,7 +41,9 @@ const activityEnum = {
   packagePurchase: ({ data }) =>
     `You purchased a package of ${data.unsubscribes} credits.`,
   removeAdditionalAccount: ({ data }) =>
-    `You removed a connected account (${_capitalize(data.provider)}).`
+    `You removed a connected account (${_capitalize(data.provider)}).`,
+  addedToOrganisation: ({ data }) =>
+    `You were added to the organistion ${data.name}.`
 };
 
 export function parseActivity(activity, user) {

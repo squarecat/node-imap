@@ -1,10 +1,10 @@
 import './preferences.module.scss';
 
-import { FormCheckbox } from '../../components/form';
+import { FormCheckbox } from '../../../components/form';
 import ProfileLayout from './layout';
 import React from 'react';
-import request from '../../utils/request';
-import useUser from '../../utils/hooks/use-user';
+import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 export async function savePreferences(data) {
   return request('/api/me/preferences', {

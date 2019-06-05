@@ -1,17 +1,17 @@
 import './scans.module.scss';
 
-import Table, { TableCell, TableRow } from '../../../components/table';
+import Table, { TableCell, TableRow } from '../../../../components/table';
 
-import ErrorBoundary from '../../../components/error-boundary';
+import ErrorBoundary from '../../../../components/error-boundary';
 import { Link } from 'gatsby';
 import ProfileLayout from '../layout';
 import React from 'react';
-import { TextImportant } from '../../../components/text';
+import { TextImportant } from '../../../../components/text';
 import isAfter from 'date-fns/is_after';
 import relative from 'tiny-relative-date';
-import request from '../../../utils/request';
+import request from '../../../../utils/request';
 import subHours from 'date-fns/sub_hours';
-import { useAsync } from '../../../utils/hooks';
+import { useAsync } from '../../../../utils/hooks';
 
 async function fetchScanHistory() {
   return request('/api/me/scans', {

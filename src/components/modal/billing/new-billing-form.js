@@ -9,11 +9,11 @@ import {
   FormNotification,
   FormSelect
 } from '../../form';
-import { LockIcon, PoweredByStripe } from '../../icons';
+import { LockIcon } from '../../icons';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import Button from '../../btn';
-// import CouponInput from './coupon';
+import CouponInput from './coupon';
 import { TextImportant } from '../../text';
 import request from '../../../utils/request';
 import { useAsync } from '../../../utils/hooks';
@@ -154,6 +154,13 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
   return (
     <>
       <div styleName="modal-content">
+        <p>
+          Purchasing a package of{' '}
+          <TextImportant>
+            {state.selectedPackage.unsubscribes} unsubscribes
+          </TextImportant>
+          .
+        </p>
         <form
           id="payment-form"
           onSubmit={e => {
@@ -162,13 +169,6 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
           }}
           method="post"
         >
-          <p>
-            Purchasing a package of{' '}
-            <TextImportant>
-              {state.selectedPackage.unsubscribes} unsubscribes
-            </TextImportant>
-            .
-          </p>
           <FormGroup>
             <FormInput
               smaller
@@ -282,7 +282,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
           ) : null}
         </form>
 
-        {/* <CouponInput /> */}
+        <CouponInput />
 
         {stripeLoading ? <div styleName="loading-overlay" /> : null}
       </div>

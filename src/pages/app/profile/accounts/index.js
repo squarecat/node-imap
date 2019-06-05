@@ -2,16 +2,16 @@ import './accounts.module.scss';
 
 import React, { useState } from 'react';
 
-import ConnectButton from '../../../components/connect-account/btn';
-import ConnectedAccountList from '../../../components/connect-account/list';
-import { ExternalIcon } from '../../../components/icons';
-import { FormNotification } from '../../../components/form';
+import ConnectButton from '../../../../components/connect-account/btn';
+import ConnectedAccountList from '../../../../components/connect-account/list';
+import { ExternalIcon } from '../../../../components/icons';
+import { FormNotification } from '../../../../components/form';
 import ProfileLayout from '../layout';
-import { TextImportant } from '../../../components/text';
-import WarningModal from '../../../components/modal/warning-modal';
-import { fetchLoggedInUser } from '../../../utils/auth';
-import request from '../../../utils/request';
-import useUser from '../../../utils/hooks/use-user';
+import { TextImportant } from '../../../../components/text';
+import WarningModal from '../../../../components/modal/warning-modal';
+import { fetchLoggedInUser } from '../../../../utils/auth';
+import request from '../../../../utils/request';
+import useUser from '../../../../utils/hooks/use-user';
 
 const revokeUrlForGoogle =
   'https://security.google.com/settings/security/permissions';
@@ -70,25 +70,33 @@ export default () => {
     );
   };
 
+  let connectedAccountsContent;
+
+  if (!accounts.length) {
+    connectedAccountsContent = (
+      <p>
+        You haven't connected any accounts yet. Connect your Google or Outlook
+        accounts below to start scanning your inboxes for subscription spam.
+      </p>
+    );
+  } else {
+    connectedAccountsContent = (
+      <ConnectedAccountList
+        accounts={accounts}
+        primaryEmail={primaryEmail}
+        loginProvider={loginProvider}
+        onClickRemove={email => onClickRemoveAccount(email)}
+      />
+    );
+  }
+
   return (
     <ProfileLayout pageName="Accounts">
       <div styleName="accounts-section">
         <h2>Connected accounts</h2>
-        {!accounts.length ? (
-          <p>
-            You haven't connected any accounts yet. Connect your Google or
-            Outlook accounts below to start scanning your inboxes for
-            subscription spam.
-          </p>
-        ) : (
-          <ConnectedAccountList
-            accounts={accounts}
-            primaryEmail={primaryEmail}
-            loginProvider={loginProvider}
-            onClickRemove={email => onClickRemoveAccount(email)}
-          />
-        )}
+        {connectedAccountsContent}
       </div>
+
       <div styleName="accounts-section connect">
         <h2>Connect more accounts</h2>
         <ConnectButton

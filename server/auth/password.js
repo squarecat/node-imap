@@ -86,7 +86,7 @@ export default app => {
     async (req, res) => {
       const { cookies } = req;
       const { body: userData, err: validationError } = res.locals;
-      const { referrer } = cookies;
+      const { referrer, invite } = cookies;
 
       try {
         if (validationError) {
@@ -99,7 +99,8 @@ export default app => {
         const user = await createOrUpdateUserFromPassword({
           email: username,
           password,
-          referralCode: referrer
+          referralCode: referrer,
+          inviteCode: invite
         });
         req.logIn(user, err => {
           if (err) return handleLoginError(res, err);
