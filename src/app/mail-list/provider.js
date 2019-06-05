@@ -22,7 +22,9 @@ export function MailProvider({ children }) {
     fetch,
     unsubscribe,
     resolveUnsubscribeError,
-    isFetching
+    isFetching,
+    unsubData,
+    setUnsubData
   } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
@@ -182,7 +184,8 @@ export function MailProvider({ children }) {
     totalCount: filteredMail.count,
     sortValues: sortByValues,
     sortByValue: state.sortByValue,
-    sortByDirection: state.sortByDirection
+    sortByDirection: state.sortByDirection,
+    unsubData
   };
 
   return (
@@ -190,7 +193,11 @@ export function MailProvider({ children }) {
       value={{
         state: value,
         dispatch,
-        actions: { onUnsubscribe: unsubscribe, resolveUnsubscribeError }
+        actions: {
+          onUnsubscribe: unsubscribe,
+          resolveUnsubscribeError,
+          setUnsubData
+        }
       }}
     >
       {children}

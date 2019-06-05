@@ -1,11 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 
+import { AlertContext } from '../../alert-provider';
 import { DatabaseContext } from '../../db-provider';
+import React from 'react';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
 export function useMailSync() {
   const db = useContext(DatabaseContext);
+  const { actions } = useContext(AlertContext);
   const [{ token, id }, { incrementUnsubCount }] = useUser(u => ({
     id: u.id,
     token: u.token
@@ -14,6 +17,7 @@ export function useMailSync() {
     token,
     userId: id
   });
+  const [unsubData, setUnsubData] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(
@@ -113,6 +117,24 @@ export function useMailSync() {
               hasImage: hasImage,
               status: 'unsubscribed'
             });
+            const mail = await db.mail.get(id);
+            actions.queueAlert({
+              message: (
+                <span>
+                  {`Unsubscribe to ${mail.fromEmail} failed`}
+                  {/* <span styleName="from-email-message">{mail.fromEmail}</span>{' '} */}
+                  {/* failed. */}
+                </span>
+              ),
+              actions: [
+                {
+                  label: 'See details',
+                  onClick: () => setUnsubData(mail)
+                }
+              ],
+              isDismissable: true,
+              level: 'warning'
+            });
             incrementUnsubCount();
           } catch (err) {
             console.error(`[db]: failed to set successful unsubscribe`);
@@ -133,6 +155,24 @@ export function useMailSync() {
               hasImage: hasImage,
               status: 'failed'
             });
+            const mail = await db.mail.get(id);
+            actions.queueAlert({
+              message: (
+                <span>
+                  {`Unsubscribe to ${mail.fromEmail} failed`}
+                  {/* <span styleName="from-email-message">{mail.fromEmail}</span>{' '} */}
+                  {/* failed. */}
+                </span>
+              ),
+              actions: [
+                {
+                  label: 'See details'
+                  // onClick: () => setUnsubModal(mail, true)
+                }
+              ],
+              isDismissable: true,
+              level: 'warning'
+            });
           } catch (err) {
             console.error(`[db]: failed to set failed unsubscribe`);
             console.error(err);
@@ -145,6 +185,8 @@ export function useMailSync() {
   return {
     ready: isConnected,
     isFetching,
+    unsubData,
+    setUnsubData,
     fetch: async () => {
       try {
         setIsFetching(true);

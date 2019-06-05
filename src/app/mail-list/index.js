@@ -1,14 +1,15 @@
 import { MailContext, MailProvider } from './provider';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import Filters from './filters';
 import MailList from './list';
 import Pagination from 'react-paginate';
+import UnsubModal from '../../components/modal/unsub-modal';
 import loadingImg from '../../assets/envelope-logo.png';
 import styles from './mail-list.module.scss';
 
 function MailView() {
-  const { state, dispatch } = useContext(MailContext);
+  const { state, dispatch, actions } = useContext(MailContext);
   const {
     fetch,
     totalCount,
@@ -21,7 +22,8 @@ function MailView() {
     sortByValue,
     sortByDirection,
     activeFilters,
-    isFetching
+    isFetching,
+    unsubData
   } = state;
 
   const [options, setOptions] = useState({
@@ -101,6 +103,26 @@ function MailView() {
           </span>
         </div>
       </div>
+      {unsubData ? (
+        <UnsubModal
+          shown={!!unsubData}
+          onClose={() => {
+            actions.setUnsubData(null);
+          }}
+          onSubmit={({ success, useImage, failReason = null }) => {
+            actions.setUnsubData(null);
+            actions.resolveUnsubscribeError({
+              success,
+              mailId: unsubData.id,
+              useImage,
+              from: unsubData.from,
+              reason: failReason,
+              unsubStrategy: unsubData.unsubStrategy
+            });
+          }}
+          mail={unsubData}
+        />
+      ) : null}
     </div>
   );
 }

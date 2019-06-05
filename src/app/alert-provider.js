@@ -9,6 +9,15 @@ const initialState = {
   next: null,
   queue: []
 };
+const defaultAlert = () => ({
+  message: '',
+  isShown: true,
+  isDismissable: false,
+  level: 'error',
+  autoDismiss: true,
+  dismissAfter: 5000,
+  actions: []
+});
 // mail reducer that represents the internal state
 // of indexdb database
 const AlertReducer = (state, action) => {
@@ -20,17 +29,8 @@ const AlertReducer = (state, action) => {
       };
     }
     case 'set-alert': {
-      const defaults = {
-        message: '',
-        isShown: true,
-        isDismissable: false,
-        level: 'error',
-        autoDismiss: true,
-        dismissAfter: 5000,
-        actions: []
-      };
       const alert = {
-        ...defaults,
+        ...defaultAlert(),
         ...action.data
       };
       return {
@@ -44,20 +44,28 @@ const AlertReducer = (state, action) => {
       };
     }
     case 'dismiss-alert': {
-      const isNext = state.queue.length;
       if (!state.current || (action.data && action.data !== state.current.id)) {
         return state;
       }
+      return {
+        ...state,
+        current: null
+      };
+    }
+    case 'set-next': {
       let next = null;
+      const isNext = state.queue.length;
       let newQueue = [];
       if (isNext) {
-        next = state.queue[0];
+        next = {
+          ...defaultAlert(),
+          ...state.queue[0]
+        };
         newQueue = state.queue.slice(1);
       }
       return {
         ...state,
-        current: null,
-        next,
+        current: next,
         queue: newQueue
       };
     }
@@ -69,7 +77,7 @@ const AlertReducer = (state, action) => {
 
 export function AlertProvider({ children }) {
   const [state, dispatch] = useReducer(AlertReducer, initialState);
-  const { current } = state;
+  const { current, queue } = state;
   // if there's a new alert, then dismiss it
   // after a timeout
   useEffect(
@@ -79,22 +87,28 @@ export function AlertProvider({ children }) {
           dispatch({ type: 'dismiss-alert' });
         }, current.dismissAfter);
       }
-    },
-    [current]
-  );
-
-  // after an alert has been dismissed, pop another
-  // from the queue after a brief timeout
-  useEffect(
-    () => {
-      if (state.queued) {
+      if (!current && queue.length) {
         setTimeout(() => {
-          dispatch({ type: 'set-alert', data: state.queued });
-        }, 1000);
+          dispatch({ type: 'set-next' });
+        }, 500);
       }
     },
-    [state.queued]
+    [current, queue]
   );
+
+  // // after an alert has been dismissed, pop another
+  // // from the queue after a brief timeout
+  // useEffect(
+  //   () => {
+  //     if (state.queue) {
+  //       setTimeout(() => {
+  //         dispatch();
+  //         // dispatch({ type: 'set-alert', data: state.queued });
+  //       }, 1000);
+  //     }
+  //   },
+  //   [state.queue]
+  // );
 
   function onDismiss(id) {
     dispatch({ type: 'dismiss-alert', data: id });
@@ -107,7 +121,7 @@ export function AlertProvider({ children }) {
         actions: {
           setAlert: data => dispatch({ type: 'set-alert', data }),
           dismiss: id => onDismiss(id),
-          queueAlert: data => dispatch({ type: 'add-alert-to-queue', data })
+          queueAlert: data => dispatch({ type: 'queue-alert', data })
         }
       }}
     >
