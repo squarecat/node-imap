@@ -6,6 +6,7 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "admins": ["james@squarecat.io", "danielle@squarecat.io"],
   "http": {
     "port": "$PORT"
   },

@@ -58,7 +58,6 @@ export async function* fetchMail({ userId, from }) {
       occurrences: accountOccurrences
     };
   } catch (err) {
-    console.error('mail-service: failed to fetch mail for user', user.id);
     throw err;
   }
 }
@@ -121,7 +120,6 @@ export async function* fetchMailByAccount({
 
     return { scanData, occurrences, dupeSenders };
   } catch (err) {
-    console.error(err);
     throw err;
   }
 }

@@ -1,6 +1,5 @@
 import { getMailClient } from './access';
 import { getSearchString } from './utils';
-import logger from '../../../utils/logger';
 
 const SPAM_REGULARITY = 0.48;
 
@@ -47,9 +46,6 @@ export async function getEstimatedEmails(query, includeTrash = true, account) {
     });
     return data.resultSizeEstimate;
   } catch (err) {
-    logger.error(
-      `esimator: failed to estimate messages for user ${account.id || account}`
-    );
-    logger.error(err);
+    throw err;
   }
 }

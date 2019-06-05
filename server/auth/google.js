@@ -5,6 +5,7 @@ import {
 } from '../services/user';
 import { isBetaUser, setRememberMeCookie } from './access';
 
+import { AuthError } from '../utils/errors';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20-without-google-plus';
 import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
@@ -56,9 +57,11 @@ export const Strategy = new GoogleStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error('google-auth: failed to create or update user from Google');
-      logger.error(err);
-      done(err);
+      done(
+        new AuthError('failed to create or update user from Google', {
+          cause: err
+        })
+      );
     }
   }
 );
@@ -92,9 +95,11 @@ export const ConnectAccountStrategy = new GoogleStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error('google-auth: failed to connect account from Google');
-      logger.error(err);
-      done(err);
+      done(
+        new AuthError('failed to connect account from Google', {
+          cause: err
+        })
+      );
     }
   }
 );
@@ -106,9 +111,11 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
       refreshToken,
       async (err, accessToken) => {
         if (err) {
-          logger.error('google-auth: error requesting new access token');
-          logger.error(err);
-          return reject(err);
+          return reject(
+            new AuthError('failed to fetch new Google access token', {
+              cause: err
+            })
+          );
         }
         try {
           await updateUserToken(userId, {
@@ -119,9 +126,11 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           });
           resolve(accessToken);
         } catch (err) {
-          logger.error('google-auth: error updating user refresh token');
-          logger.error(err);
-          reject(err);
+          reject(
+            new AuthError('failed to update Google access token', {
+              cause: err
+            })
+          );
         }
       }
     );

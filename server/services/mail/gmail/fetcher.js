@@ -1,5 +1,6 @@
 import { getGmailAccessToken, getMailClient } from './access';
 
+import { MailError } from '../../../utils/errors';
 import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { dedupeMailList } from '../common';
@@ -64,7 +65,6 @@ export async function* fetchMail(
         dupeSenders = newDupeSenders;
         yield { type: 'mail', data: deduped };
       }
-      logger.info('yield progress');
       yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
 
@@ -80,9 +80,10 @@ export async function* fetchMail(
       dupeSenders
     };
   } catch (err) {
-    logger.error('gmail-fetcher: failed to fetch mail');
-    logger.error(err);
-    throw err;
+    throw new MailError('failed to fetch mail', {
+      provider: 'gmail',
+      cause: err
+    });
   }
 }
 

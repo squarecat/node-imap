@@ -4,7 +4,7 @@
   position: absolute;
   background: transparent !important;
   opacity: 1 !important;
-  z-index: 8;
+  z-index: 99;
 
   :global(.rc-tooltip-inner) {
     background-color: #ffd9d6 !important;

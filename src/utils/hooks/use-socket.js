@@ -1,83 +1,78 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
+import { AlertContext } from '../../app/alert-provider';
 import io from 'socket.io-client';
 
 // socket singleton
 let SOCKET_INSTANCE = null;
-let socketConnecting = null;
-let socketDisconnected = false;
+let attempts = 0;
 
 function useSocket({ token, userId }) {
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(SOCKET_INSTANCE);
 
-  function connectSocket() {
-    socketConnecting = new Promise((resolve, reject) => {
-      let socket = io(process.env.WEBSOCKET_URL, {
-        query: {
-          token,
-          userId
-        }
-      });
-      console.debug('[socket]: connecting...');
+  const { actions } = useContext(AlertContext);
+  const { dismiss, setAlert } = actions;
 
-      socket.on('connect', () => {
-        console.debug('[socket]: connected');
-        socketDisconnected = false;
-        setSocket(socket);
-        resolve();
-      });
-      socket.on('error', err => {
-        console.error('[socket]: errored');
-        setError(err);
-        reject(err);
-      });
-      socket.on('disconnect', () => {
-        console.debug('[socket]: disconnected');
-        socketDisconnected = true;
-        setSocket(null);
-        SOCKET_INSTANCE = null;
-      });
-      SOCKET_INSTANCE = socket;
+  function connectSocket() {
+    SOCKET_INSTANCE = io(process.env.WEBSOCKET_URL, {
+      query: {
+        token,
+        userId
+      }
+    });
+    console.debug('[socket]: connecting...');
+    SOCKET_INSTANCE.on('connect', () => {
+      console.debug('[socket]: connected');
+      setSocket(socket);
+    });
+    SOCKET_INSTANCE.on('error', err => {
+      console.error('[socket]: errored');
+      setError(err);
+    });
+    SOCKET_INSTANCE.on('disconnect', () => {
+      console.debug('[socket]: disconnected');
+      setSocket(null);
     });
   }
   // set up socket on mount
   useEffect(() => {
-    if (socketConnecting) {
-      socketConnecting.then(() => {
-        return setSocket(SOCKET_INSTANCE);
-      });
+    if (SOCKET_INSTANCE) {
+      return setSocket(SOCKET_INSTANCE);
     } else {
       connectSocket();
     }
   }, []);
 
-  // if socket dies for some reason then
-  // reinitialize it
-  useEffect(
-    () => {
-      if (socket === null && socketDisconnected) {
-        connectSocket();
-      }
-    },
-    [socket]
-  );
-
   function emit(event, data, cb) {
-    if (!SOCKET_INSTANCE) {
+    if (!SOCKET_INSTANCE || SOCKET_INSTANCE.disconnected) {
       console.warn(
         `no socket to emit event "${event}", waiting for socket to open`
       );
-      return setTimeout(emit.bind(this, event, data, cb), 1000);
+      if (attempts > 1) {
+        setAlert({
+          id: 'connection-warning',
+          level: 'warning',
+          message: 'Connection lost. Trying to reconnect...',
+          isDismissable: false,
+          autoDismiss: false
+        });
+      }
+      attempts = attempts + 1;
+      // save event to queue for later
+
+      return setTimeout(emit.bind(null, event, data, cb), 2000);
     }
+    attempts = 0;
+    dismiss('connection-warning');
     return SOCKET_INSTANCE.emit(event, data, cb);
   }
 
   return {
-    socket,
     isConnected: !!socket,
     error,
-    emit
+    emit,
+    socket
   };
 }
 

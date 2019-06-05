@@ -23,6 +23,7 @@
     "dexie": "^2.0.4",
     "email-addresses": "^3.0.3",
     "emailjs-imap-client": "^3.0.7",
+    "eslint-plugin-react-hooks": "^1.6.0",
     "express": "^4.16.4",
     "express-rate-limit": "^3.4.0",
     "express-session": "^1.15.6",
@@ -92,7 +93,7 @@
   "scripts": {
     "build": "yarn run build:client && yarn run build:server",
     "build:client": "gatsby build",
-    "build:server": "babel -d ./build ./server && cp server/utils/countries.json build/utils/countries.json",
+    "build:server": "babel -d ./build ./server --source-maps && cp server/utils/countries.json build/utils/countries.json",
     "develop": "gatsby develop",
     "start": "node index",
     "start:dev": "NODE_ENV=development node --inspect index",

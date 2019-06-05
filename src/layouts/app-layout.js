@@ -2,6 +2,8 @@ import '@babel/polyfill';
 import '../common.scss';
 import './layout.css';
 
+import { AlertProvider } from '../app/alert-provider';
+import { DatabaseProvider } from '../app/db-provider';
 import Helmet from 'react-helmet';
 import React from 'react';
 import { setConfig } from 'react-hot-loader';
@@ -29,7 +31,9 @@ const AppLayout = ({ pageName, children }) => {
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
         script={[{ src: 'https://checkout.stripe.com/checkout.js' }]}
       />
-      {children}
+      <DatabaseProvider>
+        <AlertProvider>{children}</AlertProvider>
+      </DatabaseProvider>
     </>
   );
 };

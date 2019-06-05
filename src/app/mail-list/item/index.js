@@ -1,8 +1,9 @@
 import './item.module.scss';
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useMailItem, useOccurrence, useScore } from '../db/hooks';
 
+import { AlertContext } from '../../alert-provider';
 import IgnoreIcon from '../../../components/ignore-icon';
 import { MailContext } from '../provider';
 import Score from '../../../components/score';
@@ -145,9 +146,35 @@ function Occurrences({ fromEmail, toEmail }) {
 }
 
 function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
+  const { actions } = useContext(AlertContext);
   const isSubscribed = !!mail.subscribed;
   let content;
-  if (mail.estimatedSuccess !== false || mail.resolved) {
+  const everythingOk = mail.estimatedSuccess !== false || mail.resolved;
+  useEffect(
+    () => {
+      if (!everythingOk) {
+        actions.queueAlert({
+          message: (
+            <span>
+              Unsubscribe to{' '}
+              <span styleName="from-email-message">{mail.fromEmail}</span>{' '}
+              failed.
+            </span>
+          ),
+          actions: [
+            {
+              label: 'See details',
+              onClick: () => setUnsubModal(mail, true)
+            }
+          ],
+          isDismissable: true,
+          level: 'warning'
+        });
+      }
+    },
+    [everythingOk]
+  );
+  if (everythingOk) {
     content = (
       <Toggle
         status={isSubscribed}
