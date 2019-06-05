@@ -11,7 +11,7 @@ db.version(1).stores({
   scores: `&address, score`,
   occurrences: `key, count`,
   prefs: `key`,
-  queue: 'key'
+  queue: '++id'
 });
 db.open();
 
