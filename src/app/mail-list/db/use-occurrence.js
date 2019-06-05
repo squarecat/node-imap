@@ -1,19 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import db from './';
+import { DatabaseContext } from '../../db-provider';
 
 export default function useOccurrence({ fromEmail, toEmail }) {
+  const db = useContext(DatabaseContext);
   const [count, setCount] = useState(0);
   const dupeKey = `<${fromEmail}>-${toEmail}`;
   function onCreate(key, obj) {
-    if (dupeKey === key) {
-      setCount(obj.count);
-    }
+    setTimeout(() => {
+      if (dupeKey === key) {
+        setCount(obj.count);
+      }
+    }, 0);
   }
   function onUpdate(modifications, key) {
-    if (dupeKey === key) {
-      setCount(modifications.count);
-    }
+    setTimeout(() => {
+      if (dupeKey === key) {
+        setCount(modifications.count);
+      }
+    }, 0);
   }
   async function get() {
     setTimeout(async () => {

@@ -4,6 +4,7 @@ import auth from './auth';
 import config from 'getconfig';
 import connectMongo from 'connect-mongo';
 import cookieParser from 'cookie-parser';
+import errorsApi from './rest/errors';
 import express from 'express';
 import giftsApi from './rest/gifts';
 import http from 'http';
@@ -69,6 +70,7 @@ statsApi(app);
 giftsApi(app);
 milestonesApi(app);
 mailgunWebhooks(app);
+errorsApi(app);
 
 app.get('/api/*', (req, res) => {
   res.status(404).send({

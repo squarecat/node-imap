@@ -1,13 +1,21 @@
-import React, { createContext, useEffect, useReducer, useState } from 'react';
-import db, { useMailSync } from './db';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState
+} from 'react';
 import mailReducer, { initialState } from './reducer';
 
+import { DatabaseContext } from '../db-provider';
 import _sortBy from 'lodash.sortby';
+import { useMailSync } from './db';
 
 const sortByValues = ['date', 'score'];
 export const MailContext = createContext({});
 
 export function MailProvider({ children }) {
+  const db = useContext(DatabaseContext);
   const [state, dispatch] = useReducer(mailReducer, initialState);
   const {
     ready,

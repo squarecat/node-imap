@@ -1,5 +1,5 @@
+import { RestError } from '../utils/errors';
 import { createGift } from '../services/gifts';
-
 import logger from '../utils/logger';
 
 export default app => {
@@ -20,11 +20,11 @@ export default app => {
         couponData
       });
     } catch (err) {
-      logger.error('gifts-rest: error with payment');
-      logger.error(err);
       return res.status(500).send({
         status: 'failed',
-        err: err.toString()
+        err: new RestError('payment failed', {
+          cause: err
+        }).toJSON()
       });
     }
   });

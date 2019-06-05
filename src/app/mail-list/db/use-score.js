@@ -1,39 +1,44 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import db from './';
+import { DatabaseContext } from '../../db-provider';
 
 export default function useScore(address) {
+  const db = useContext(DatabaseContext);
   const [score, setScore] = useState('unknown');
   function onUpdate(modifications, key, obj) {
     if (key === address) {
       const newItem = { ...obj, ...modifications };
-      setScore({
-        score: newItem.score,
-        rank: newItem.rank,
-        unsubscribePercentage: newItem.unsubscribePercentage
-      });
+      setTimeout(() => {
+        setScore({
+          score: newItem.score,
+          rank: newItem.rank,
+          unsubscribePercentage: newItem.unsubscribePercentage
+        });
+      }, 0);
     }
   }
   function onCreate(key, obj) {
     if (key === address) {
-      setScore({
-        score: obj.score,
-        rank: obj.rank,
-        unsubscribePercentage: obj.unsubscribePercentage
-      });
+      setTimeout(() => {
+        setScore({
+          score: obj.score,
+          rank: obj.rank,
+          unsubscribePercentage: obj.unsubscribePercentage
+        });
+      }, 0);
     }
   }
   async function get() {
-    setTimeout(async () => {
-      const value = await db.scores.get(address);
-      if (value) {
+    const value = await db.scores.get(address);
+    if (value) {
+      setTimeout(async () => {
         setScore({
           score: value.score,
           rank: value.rank,
           unsubscribePercentage: value.unsubscribePercentage
         });
-      }
-    }, 0);
+      }, 0);
+    }
   }
   useEffect(() => {
     db.scores.hook('updating', onUpdate);

@@ -1,20 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import Dexie from 'dexie';
+import { DatabaseContext } from '../../db-provider';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
-const db = new Dexie('leavemealone');
-
-db.version(1).stores({
-  mail: `&id, fromEmail, date, *labels, score, to, status, [status+to]`,
-  scores: `&address, score`,
-  occurrences: `key, count`,
-  prefs: `key`
-});
-db.open();
-
 export function useMailSync() {
+  const db = useContext(DatabaseContext);
   const [{ token, id }, { incrementUnsubCount }] = useUser(u => ({
     id: u.id,
     token: u.token
@@ -222,5 +213,3 @@ function parseAddress(str = '') {
   }
   return { name, email: email.toLowerCase() };
 }
-
-export default db;

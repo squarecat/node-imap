@@ -22,6 +22,7 @@ import {
 
 import Joi from 'joi';
 import QRCode from 'qrcode';
+import { RestError } from '../utils/errors';
 import _sortBy from 'lodash.sortby';
 import auth from '../middleware/route-auth';
 import { internalOnly } from '../middleware/host-validation';
@@ -41,9 +42,10 @@ const patchPasswordParams = {
 };
 
 export default app => {
-  app.get('/api/me', auth, async (req, res) => {
+  app.get('/api/me', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const user = await getUserById(req.user.id);
+      const user = await getUserById(userId);
       const {
         id,
         email,
@@ -92,28 +94,34 @@ export default app => {
         unreadNotifications
       });
     } catch (err) {
-      logger.error(`user-rest: error getting user ${req.user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to get user', {
+          userId,
+          cause: err
+        })
+      );
     }
   });
 
-  app.get('/api/me/unsubscriptions', auth, async (req, res) => {
+  app.get('/api/me/unsubscriptions', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const { unsubscriptions } = await getUserById(req.user.id);
+      const { unsubscriptions } = await getUserById(userId);
       res.send(unsubscriptions);
     } catch (err) {
-      logger.error(
-        `user-rest: error getting user unsubscriptions ${req.user.id}`
+      next(
+        new RestError('failed to get user unsubscriptions', {
+          userId,
+          cause: err
+        })
       );
-      logger.error(err);
-      res.status(500).send(err);
     }
   });
 
-  app.get('/api/me/scans', auth, async (req, res) => {
+  app.get('/api/me/scans', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const { scans, paidScans } = await getUserById(req.user.id);
+      const { scans, paidScans } = await getUserById(userId);
       const paidbyNotPerformed = paidScans
         .filter(s => !s.performed)
         .map(s => ({
@@ -130,49 +138,61 @@ export default app => {
       ).reverse();
       res.send(totalScans);
     } catch (err) {
-      logger.error(`user-rest: error getting user scans ${req.user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to get user scans', {
+          userId,
+          cause: err
+        })
+      );
     }
   });
 
-  app.get('/api/me/billing', auth, async (req, res) => {
-    const { user } = req;
+  app.get('/api/me/billing', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const payments = await getUserPayments(user.id);
+      const payments = await getUserPayments(userId);
       res.send(payments);
     } catch (err) {
-      logger.error(`user-rest: error getting user payments ${req.user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to get user payments', {
+          userId,
+          cause: err
+        })
+      );
     }
   });
 
-  app.get('/api/me/activity', auth, async (req, res) => {
-    const { user } = req;
+  app.get('/api/me/activity', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const activity = await getUserActivity(user.id);
+      const activity = await getUserActivity(userId);
       res.send(activity);
     } catch (err) {
-      logger.error(`user-rest: error getting user payments ${req.user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to get user activity', {
+          userId,
+          cause: err
+        })
+      );
     }
   });
 
-  app.get('/api/me/notifications', auth, async (req, res) => {
-    const { user } = req;
+  app.get('/api/me/notifications', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const notifications = await getUserNotifications(user.id);
+      const notifications = await getUserNotifications(userId);
       res.send(notifications);
     } catch (err) {
-      logger.error(`user-rest: error getting user payments ${req.user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to get user notifications', {
+          userId,
+          cause: err
+        })
+      );
     }
   });
 
-  app.patch('/api/me/ignore', auth, async (req, res) => {
+  app.patch('/api/me/ignore', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
     const { op, value } = body;
@@ -187,13 +207,17 @@ export default app => {
       }
       res.send(newUser);
     } catch (err) {
-      logger.error(`user-rest: error patching user ignore ${id} with op ${op}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to patch user ignore list', {
+          userId: id,
+          op,
+          cause: err
+        })
+      );
     }
   });
 
-  app.patch('/api/me/reminder', auth, async (req, res) => {
+  app.patch('/api/me/reminder', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
     const { op, value: timeframe } = body;
@@ -208,15 +232,17 @@ export default app => {
       }
       res.send(newUser);
     } catch (err) {
-      logger.error(
-        `user-rest: error patching user reminder ${id} with op ${op}`
+      next(
+        new RestError('failed to patch user reminder list', {
+          userId: id,
+          op,
+          cause: err
+        })
       );
-      logger.error(err);
-      res.status(500).send(err);
     }
   });
 
-  app.patch('/api/me/preferences', auth, async (req, res) => {
+  app.patch('/api/me/preferences', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
     const { op, value: preferences } = body;
@@ -229,15 +255,17 @@ export default app => {
       }
       res.send(updatedUser);
     } catch (err) {
-      logger.error(
-        `user-rest: error patching user preferences ${id} with op ${op}`
+      next(
+        new RestError('failed to patch user preferences', {
+          userId: id,
+          op,
+          cause: err
+        })
       );
-      logger.error(err);
-      res.status(500).send(err);
     }
   });
 
-  app.patch('/api/me/milestones', auth, async (req, res) => {
+  app.patch('/api/me/milestones', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
     const { op, value: milestone } = body;
@@ -250,15 +278,17 @@ export default app => {
       }
       res.send(updatedUser);
     } catch (err) {
-      logger.error(
-        `user-rest: error patching user milestones ${id} with op ${op}`
+      next(
+        new RestError('failed to patch user milestones', {
+          userId: id,
+          op,
+          cause: err
+        })
       );
-      logger.error(err);
-      res.status(500).send(err);
     }
   });
 
-  app.patch('/api/me/billing', auth, async (req, res) => {
+  app.patch('/api/me/billing', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
     const { op } = body;
@@ -271,11 +301,13 @@ export default app => {
       }
       res.send(updatedUser);
     } catch (err) {
-      logger.error(
-        `user-rest: error patching user billing ${id} with op ${op}`
+      next(
+        new RestError('failed to patch user billing', {
+          userId: id,
+          op,
+          cause: err
+        })
       );
-      logger.error(err);
-      res.status(500).send(err);
     }
   });
 
@@ -309,7 +341,7 @@ export default app => {
     }
   );
 
-  app.patch('/api/me', auth, async (req, res) => {
+  app.patch('/api/me', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
     const { op, value } = body;
@@ -322,34 +354,44 @@ export default app => {
       }
       res.send(updatedUser);
     } catch (err) {
-      logger.error(`user-rest: error patching user ${id} with op ${op}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to patch user', {
+          userId: id,
+          op,
+          cause: err
+        })
+      );
     }
   });
 
-  app.get('/api/me/referrals', auth, async (req, res) => {
-    const { user } = req;
+  app.get('/api/me/referrals', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
     try {
-      const stats = await getReferralStats(user.id);
+      const stats = await getReferralStats(userId);
       res.send(stats);
     } catch (err) {
-      logger.error(`user-rest: error getting user referral info ${user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to get user referral info', {
+          userId,
+          cause: err
+        })
+      );
     }
   });
 
-  app.delete('/api/user/me', auth, async (req, res) => {
+  app.delete('/api/user/me', auth, async (req, res, next) => {
     const { user } = req;
     try {
       await deactivateUserAccount(user);
       req.logout();
       res.status(200).send({ success: true });
     } catch (err) {
-      logger.error(`user-rest: error removing user ${user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to delete user', {
+          userId: user.id,
+          cause: err
+        })
+      );
     }
   });
 
@@ -358,7 +400,7 @@ export default app => {
     '/api/user/:hashedEmail/provider',
     rateLimit,
     internalOnly,
-    async (req, res) => {
+    async (req, res, next) => {
       const { hashedEmail } = req.params;
       try {
         const strat = await getUserLoginProvider({ email: hashedEmail });
@@ -367,16 +409,17 @@ export default app => {
         }
         return res.send(strat);
       } catch (err) {
-        logger.error(
-          `user-rest: error getting user login strat ${hashedEmail}`
+        next(
+          new RestError('failed to get user login strategy', {
+            hashedEmail,
+            cause: err
+          })
         );
-        logger.error(err);
-        res.status(500).send(err);
       }
     }
   );
 
-  app.get('/api/user/me/2fa/setup', auth, async (req, res) => {
+  app.get('/api/user/me/2fa/setup', auth, async (req, res, next) => {
     const { user } = req;
     try {
       const { otpauth_url, base32 } = await createUserTotpToken(user);
@@ -384,20 +427,27 @@ export default app => {
         res.send({ qrData: data_url, base32 });
       });
     } catch (err) {
-      logger.error(`user-rest: failed to setup 2fa for user ${user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to setup 2fa for user', {
+          userId: user.id,
+          cause: err
+        })
+      );
     }
   });
-  app.delete('/api/user/me/2fa', totpAuth, async (req, res) => {
+
+  app.delete('/api/user/me/2fa', totpAuth, async (req, res, next) => {
     const { user } = req;
     try {
       await removeUserTotpToken(user);
       res.status(204).send();
     } catch (err) {
-      logger.error(`user-rest: failed to delete 2fa for user ${user.id}`);
-      logger.error(err);
-      res.status(500).send(err);
+      next(
+        new RestError('failed to remove 2fa for user', {
+          userId: user.id,
+          cause: err
+        })
+      );
     }
   });
 };

@@ -4,6 +4,7 @@ import {
   getMailEstimates
 } from '../services/mail';
 
+import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
 import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
@@ -13,49 +14,23 @@ import { unsubscribeFromMail } from '../services/unsubscriber';
 const Sentry = require('@sentry/node');
 
 export default function(app, socket) {
-  app.get('/api/mail/test/:strategy', auth, async (req, res) => {
-    const { strategy } = req.params;
-    const { user } = req;
-    let mail = [];
-    let err;
-    const start = Date.now();
-    try {
-      fetchMail(
-        { userId: user.id, timeframe: '1m', ignore: true },
-        {
-          onMail: m => {
-            mail = [...mail, ...m];
-          },
-          onError: e => {
-            console.error('onerror', e);
-            console.error(e);
-            err = e;
-          },
-          onEnd: () => {
-            const took = Date.now() - start;
-            res.send(err || { mail, took });
-          },
-          onProgress: () => {}
-        },
-        { strategy }
-      );
-    } catch (err) {
-      logger.error('mail-rest: test err', err.message);
-      res.send(err.message);
-    }
-  });
-
-  app.get('/api/mail/image/:mailId', auth, async (req, res) => {
+  app.get('/api/mail/image/:mailId', auth, async (req, res, next) => {
     const { user, params } = req;
     const { mailId } = params;
+    const path = `${imageStoragePath}/${user.id}/${mailId}.png`;
     try {
-      const path = `${imageStoragePath}/${user.id}/${mailId}.png`;
       if (fs.existsSync(path)) {
         return res.sendFile(path);
       }
       return res.sendStatus(404);
     } catch (err) {
-      res.status(500).send(err);
+      next(
+        new RestError('Failed to get mail image', {
+          userId: user.id,
+          path,
+          cause: err
+        })
+      );
     }
   });
 
@@ -69,8 +44,8 @@ export default function(app, socket) {
       userId,
       socket
     );
+    const from = data ? data.from : null;
     try {
-      const from = data ? data.from : null;
       // get mail data for user
       const it = await fetchMail({
         userId,
@@ -89,10 +64,13 @@ export default function(app, socket) {
       }
       onEnd(next.value);
     } catch (err) {
-      logger.error('mail-rest: error scanning mail');
-      logger.error(err);
       Sentry.captureException(err);
-      onError(err);
+      onError(
+        new RestError('Failed to fetch new mail', {
+          userId: userId,
+          cause: err
+        }).toJSON()
+      );
     }
   });
 
@@ -101,10 +79,16 @@ export default function(app, socket) {
       const data = await unsubscribeFromMail(userId, mail);
       socket.emit(userId, 'unsubscribe:success', { id: mail.id, data });
     } catch (err) {
-      logger.error('mail-rest: error unsubscribing from mail');
-      logger.error(err);
-      Sentry.captureException(err);
-      socket.emit(userId, 'unsubscribe:err', { id: mail.id, err });
+      const error = new RestError('Failed to unsubscribe from mail', {
+        userId: userId,
+        mailId: mail.id,
+        cause: err
+      });
+      Sentry.captureException(error);
+      socket.emit(userId, 'unsubscribe:err', {
+        id: mail.id,
+        err: error.toJSON()
+      });
     }
   });
 
@@ -116,12 +100,15 @@ export default function(app, socket) {
         data: response
       });
     } catch (err) {
-      logger.error('mail-rest: error adding unsubscribe response');
-      logger.error(err);
-      Sentry.captureException(err);
+      const error = new RestError('Failed to add unsubscribe response', {
+        userId: userId,
+        mailId: data.mailId,
+        cause: err
+      });
+      Sentry.captureException(error);
       socket.emit(userId, 'unsubscribe-error-response:err', {
         id: data.mailId,
-        err
+        err: error.toJSON()
       });
     }
   });
@@ -140,13 +127,7 @@ function getSocketFunctions(userId, socket) {
       });
     },
     onError: err => {
-      // if in production, just return a regular
-      // error message
-      if (process.NODE_ENV !== 'production') {
-        socket.emit(userId, 'mail:err', err.stack, { buffer: true });
-      } else {
-        socket.emit(userId, 'mail:err', err.toString(), { buffer: true });
-      }
+      socket.emit(userId, 'mail:err', err, { buffer: true });
       return true;
     },
     onEnd: stats => {

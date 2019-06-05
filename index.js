@@ -1,3 +1,6 @@
+require('source-map-support').install({
+  hookRequire: true
+});
 let App;
 
 if (process.env.NODE_ENV !== 'development') {

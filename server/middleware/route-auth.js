@@ -1,7 +1,9 @@
 import config from 'getconfig';
 import logger from '../utils/logger';
 
-export default (req, res, next) => {
+const adminUsers = config.admins;
+
+const middleware = (req, res, next) => {
   const { user } = req;
   const isApiRequest = req.baseUrl.includes('/api');
   const isAuthenticated = isUserAuthenticated(req);
@@ -42,3 +44,16 @@ function isUserAuthenticated(req) {
   const isSecondFactorAuthed = !!req.session.secondFactor;
   return isRegularAuth && isSecondFactorAuthed;
 }
+
+export function adminOnly(req, res, next) {
+  const { user } = req;
+  const { email } = user;
+  const isAdmin = adminUsers.includes(email);
+  if (!isAdmin) {
+    return res.status(403).send({
+      message: 'Not authorized'
+    });
+  }
+  return next();
+}
+export default middleware;
