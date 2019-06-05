@@ -140,6 +140,23 @@ export async function getUserByEmail(email, projection = {}) {
   }
 }
 
+export async function bulkGetUsersByEmail(emails) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col
+      .find({
+        email: {
+          $in: emails
+        }
+      })
+      .toArray();
+  } catch (err) {
+    logger.error(`users-dao: failed to get user by email`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function updateUser(id, userData) {
   let updateObj = {
     ...userData,

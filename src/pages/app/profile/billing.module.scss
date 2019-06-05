@@ -1,6 +1,6 @@
 @import './layout.module.scss';
-@import '../../components/btn/btn.module.scss';
-@import '../../components/form/form.module.scss';
+@import '../../../components/btn/btn.module.scss';
+@import '../../../components/form/form.module.scss';
 
 .billing-section {
   @extend .profile-section;

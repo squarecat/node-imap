@@ -1,68 +1,27 @@
 import '../modal.module.scss';
 
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
-import { CardElement, injectStripe } from 'react-stripe-elements';
-import {
-  FormCheckbox,
-  FormGroup,
-  FormInput,
-  FormNotification,
-  FormSelect
-} from '../../form';
-import { LockIcon, PoweredByStripe } from '../../icons';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { StripeStateContext } from '../../../providers/stripe-provider';
+import { injectStripe } from 'react-stripe-elements';
+import { FormCheckbox, FormGroup, FormNotification } from '../../form';
+import { LockIcon } from '../../icons';
+import React, { useContext } from 'react';
 
 import Button from '../../btn';
-// import CouponInput from './coupon';
+import CouponInput from './coupon';
 import { TextImportant } from '../../text';
 import request from '../../../utils/request';
-import { useAsync } from '../../../utils/hooks';
 import useUser from '../../../utils/hooks/use-user';
+import PaymentCardDetails from '../../payments/card-details';
+import PaymentAddressDetails from '../../payments/address-details';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
-const cardElementOptions = {
-  hidePostalCode: true,
-  style: {
-    base: {
-      iconColor: '#bfbfbf',
-      color: '#333333',
-      lineHeight: '46px',
-      fontWeight: 300,
-      fontFamily: 'Gotham-Rounded, Helvetica Neue',
-      fontSize: '16px',
-      '::placeholder': {
-        color: '#bfbfbf'
-      }
-    },
-    invalid: {
-      color: '#f1645f'
-    }
-  }
-};
-
 function CheckoutForm({ stripe, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
-  const cardElement = useRef(null);
+  const { state: stripeState } = useContext(StripeStateContext);
 
   const [{ email }] = useUser(u => u.email);
-
-  const [stripeLoading, setStripeLoading] = useState(true);
-
-  const { value: countries = [], loading: countriesLoading } = useAsync(
-    fetchCountries
-  );
-  const [options, setOptions] = useState([]);
-
-  useEffect(
-    () => {
-      if (!countriesLoading && !options.length) {
-        const map = countries.map(c => ({ value: c.code, label: c.name }));
-        setOptions(map);
-      }
-    },
-    [countriesLoading]
-  );
 
   async function onSubmit() {
     try {
@@ -86,10 +45,16 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
         error: paymentError
       } = await stripe.createPaymentMethod(
         'card',
-        cardElement.current._element,
-        { billing_details: billingDetails }
+        // TODO get the element a better way
+        // this does not accept a ref, or .current or findDOMNode...
+        stripeState.cardRef.current._element,
+        {
+          billing_details: billingDetails
+        }
       );
+
       if (paymentError) {
+        console.error(paymentError);
         dispatch({ type: 'set-error', data: paymentError });
       } else {
         const response = await confirmPayment({
@@ -132,7 +97,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
     // Use Stripe.js to handle the required card action
     const { error: errorAction, paymentIntent } = await stripe.handleCardAction(
       response.payment_intent_client_secret,
-      cardElement,
+      stripeState.cardRef,
       { save_payment_method: state.save_payment_method }
     );
 
@@ -154,6 +119,13 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
   return (
     <>
       <div styleName="modal-content">
+        <p>
+          Purchasing a package of{' '}
+          <TextImportant>
+            {state.selectedPackage.unsubscribes} unsubscribes
+          </TextImportant>
+          .
+        </p>
         <form
           id="payment-form"
           onSubmit={e => {
@@ -162,100 +134,18 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
           }}
           method="post"
         >
-          <p>
-            Purchasing a package of{' '}
-            <TextImportant>
-              {state.selectedPackage.unsubscribes} unsubscribes
-            </TextImportant>
-            .
-          </p>
-          <FormGroup>
-            <FormInput
-              smaller
-              disabled={state.loading}
-              required
-              placeholder="Name"
-              value={state.name}
-              name="name"
-              onChange={e => {
-                dispatch({
-                  type: 'set-billing-detail',
-                  data: { key: 'name', value: e.currentTarget.value }
-                });
-              }}
-            />
-          </FormGroup>
+          <PaymentAddressDetails
+            addressDetails={state}
+            loading={state.loading}
+            onChange={(key, value) =>
+              dispatch({
+                type: 'set-billing-detail',
+                data: { key, value }
+              })
+            }
+          />
 
-          <FormGroup container>
-            <FormInput
-              smaller
-              disabled={state.loading}
-              required
-              basic
-              placeholder="Address"
-              value={state.line1}
-              name="Address"
-              onChange={e => {
-                dispatch({
-                  type: 'set-billing-detail',
-                  data: { key: 'line1', value: e.currentTarget.value }
-                });
-              }}
-            />
-            <FormInput
-              smaller
-              disabled={state.loading}
-              required
-              basic
-              placeholder="City"
-              value={state.city}
-              name="City"
-              onChange={e => {
-                dispatch({
-                  type: 'set-billing-detail',
-                  data: { key: 'city', value: e.currentTarget.value }
-                });
-              }}
-            />
-            <FormSelect
-              smaller
-              disabled={state.loading}
-              required
-              basic
-              value={state.country}
-              placeholder="Country"
-              options={options}
-              onChange={e => {
-                dispatch({
-                  type: 'set-billing-detail',
-                  data: { key: 'country', value: e.currentTarget.value }
-                });
-              }}
-            />
-            <FormInput
-              smaller
-              disabled={state.loading}
-              required
-              basic
-              placeholder={state.country === 'US' ? 'Zipcode' : 'Postal code'}
-              value={state.postal_code}
-              name="postal_code"
-              onChange={e => {
-                dispatch({
-                  type: 'set-billing-detail',
-                  data: { key: 'postal_code', value: e.currentTarget.value }
-                });
-              }}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <CardElement
-              ref={cardElement}
-              {...cardElementOptions}
-              onReady={() => setStripeLoading(false)}
-            />
-          </FormGroup>
+          <PaymentCardDetails />
 
           <FormGroup>
             <FormCheckbox
@@ -282,9 +172,9 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
           ) : null}
         </form>
 
-        {/* <CouponInput /> */}
+        <CouponInput />
 
-        {stripeLoading ? <div styleName="loading-overlay" /> : null}
+        {stripeState.isReady ? null : <div styleName="loading-overlay" />}
       </div>
 
       <div styleName="modal-actions">
@@ -311,7 +201,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
             basic
             compact
             stretch
-            disabled={state.loading || stripeLoading}
+            disabled={state.loading || !stripeState.isReady}
             loading={state.loading}
             type="submit"
             as="button"
@@ -326,10 +216,6 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
 }
 
 export default injectStripe(CheckoutForm);
-
-function fetchCountries() {
-  return request('/api/countries.json');
-}
 
 async function confirmPayment({
   paymentMethod,

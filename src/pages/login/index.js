@@ -134,7 +134,7 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
               {state.step === 'select' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logoUrl} alt="logo" />
+                    <img src={logoUrl} alt="Leave Me Alone logo" />
                   </div>
                   <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>

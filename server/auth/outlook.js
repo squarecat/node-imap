@@ -26,7 +26,7 @@ export const Strategy = new OutlookStrategy(
   async (req, accessToken, refreshToken, profile, done) => {
     try {
       const { cookies } = req;
-      const { referrer } = cookies;
+      const { referrer, invite } = cookies;
       const email = getEmail(profile);
 
       if (process.env.NODE_ENV === 'beta') {
@@ -42,7 +42,8 @@ export const Strategy = new OutlookStrategy(
           ...profile,
           email,
           profileImg: getProfileImg(profile),
-          referralCode: referrer
+          referralCode: referrer,
+          inviteCode: invite
         },
         {
           refreshToken,

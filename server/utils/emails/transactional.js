@@ -24,6 +24,10 @@ const referralMailOptions = {
   from: `Leave Me Alone <referrals@${domains.transactional}>`
 };
 
+const inviteOptions = {
+  from: `Leave Me Alone <invites@${domains.transactional}>`
+};
+
 export function sendGiftCouponMultiMail({
   toAddress,
   scanPeriod,
@@ -104,6 +108,16 @@ export function sendReferralRewardMail({
     to: toAddress,
     subject,
     text
+  });
+}
+
+export function sendInviteMail({ toAddress, organisationName, inviteCode }) {
+  logger.info('email-utils: sending invite mail');
+  return sendTransactionalMail({
+    ...inviteOptions,
+    subject: `${organisationName} has invited you to use Leave Me Alone`,
+    to: toAddress,
+    text: `You have been invited to use Leave Me Alone by ${organisationName}.\n\nLeave Me Alone is a service to easily unsubscribe from spam emails. As a member of the ${organisationName} organisation can unsubscribe from as many unwanted subscription emails as you like. Simply sign-up using the following invite link and this email address to start unsubscribing now.\n\nAccept this invite and sign-in:\n\n https://leavemealone.app/i/${inviteCode}\n\nJames & Danielle\n\nLeave Me Alone`
   });
 }
 

@@ -4,6 +4,8 @@ import './layout.css';
 
 import { AlertProvider } from '../app/alert-provider';
 import { DatabaseProvider } from '../app/db-provider';
+import { StripeProvider } from '../providers/stripe-provider';
+
 import Helmet from 'react-helmet';
 import React from 'react';
 import { setConfig } from 'react-hot-loader';
@@ -29,10 +31,18 @@ const AppLayout = ({ pageName, children }) => {
           }
         ]}
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
-        script={[{ src: 'https://checkout.stripe.com/checkout.js' }]}
+        script={[
+          {
+            src: 'https://js.stripe.com/v3/',
+            type: 'text/javascript',
+            async: true
+          }
+        ]}
       />
       <DatabaseProvider>
-        <AlertProvider>{children}</AlertProvider>
+        <AlertProvider>
+          <StripeProvider>{children}</StripeProvider>
+        </AlertProvider>
       </DatabaseProvider>
     </>
   );

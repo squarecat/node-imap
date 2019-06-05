@@ -104,8 +104,14 @@ export default app => {
       const { body } = req;
       const { type, data } = body;
       if (type === 'charge.refunded') {
-        const { amount_refunded } = data;
-        await addRefundToStats({ price: amount_refunded / 100 });
+        let price = 0;
+        const { object } = data;
+        const { amount_refunded } = object;
+        if (amount_refunded) {
+          price = amount_refunded / 100;
+        }
+        logger.debug(`payments-rest: refund amount - ${price}`);
+        return addRefundToStats({ price });
       }
     } catch (err) {
       logger.error('payments-rest: error with refund webhook');

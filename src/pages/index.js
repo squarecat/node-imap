@@ -67,7 +67,7 @@ const IndexPage = ({ transitionStatus }) => {
           <div className="hero-inner">
             <div className="hero-box hero-left">
               <div className="leave-me-alone-logo" ref={activeRef}>
-                <span className="logo-envelope" title="Leave Me Alone logo">
+                <span className="logo-envelope">
                   <img
                     src={envelope}
                     alt="Envelope logo"
@@ -144,13 +144,11 @@ const IndexPage = ({ transitionStatus }) => {
                 src={onePlace}
                 className="unsub-desktop-img"
                 alt="List of spam and subscription emails in Leave Me Alone on desktop"
-                title="Subscriptions, spam, and newsletters listed in one place on desktop"
               />
               <img
                 src={iphoneUnsub}
                 className="unsub-iphone-img"
                 alt="List of spam and subscription emails in Leave Me Alone on mobile"
-                title="Subscriptions, spam, and newsletters listed in one place on mobile"
               />
             </div>
             <div className="features">
@@ -162,7 +160,6 @@ const IndexPage = ({ transitionStatus }) => {
                   <img
                     src={unsubGif}
                     alt="Unsubscribing from a subscription list by clicking the toggle"
-                    title="Click the toggle to unsubscribe from unwanted emails"
                   />
                 </div>
               </div>
@@ -172,7 +169,6 @@ const IndexPage = ({ transitionStatus }) => {
                   <img
                     src={heartGif}
                     alt="Adding a sender to favorites by clicking the heart"
-                    title="Keep wanted subscriptions by adding them to favorites"
                   />
                 </div>
               </div>
@@ -186,16 +182,10 @@ const IndexPage = ({ transitionStatus }) => {
                 G Suite, Outlook, Live, and Hotmail.
               </p>
               <div className="provider-logos">
-                <span
-                  className="provider-logo"
-                  title="Unsubscribe from spam in Gmail and G Suite"
-                >
+                <span className="provider-logo">
                   <GoogleIcon width="60" height="60" />
                 </span>
-                <span
-                  className="provider-logo"
-                  title="Unsubscribe from spam in Outlook, Live, and Hotmail"
-                >
+                <span className="provider-logo">
                   <OutlookIcon width="60" height="60" />
                 </span>
               </div>
@@ -217,8 +207,7 @@ const IndexPage = ({ transitionStatus }) => {
                 <Browser>
                   <img
                     src={unsubListGif}
-                    alt="Unsubscribing from a list of spam emails with one click"
-                    title="Clicking the toggle to unsubscribe from a mailing list in a single click"
+                    alt="Clicking the toggle to unsubscribe from a mailing list"
                   />
                 </Browser>
               </div>
@@ -238,10 +227,10 @@ const IndexPage = ({ transitionStatus }) => {
           <div className="home-container-inner" id="providers">
             <h2>Where it works</h2>
             <div className="provider-logos">
-              <span title="Unsubscribe from spam in Gmail and G Suite">
+              <span>
                 <GoogleIcon />
               </span>
-              <span title="Unsubscribe from spam in Outlook, Live, and Hotmail">
+              <span>
                 <OutlookIcon />
               </span>
             </div>
@@ -396,7 +385,6 @@ const IndexPage = ({ transitionStatus }) => {
             <div className="huskos">
               <img
                 alt="The two creators Danielle and James with two husky dogs"
-                title="Danielle and James with huskies"
                 id="emoji-button"
                 src={dogs}
               />

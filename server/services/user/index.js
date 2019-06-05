@@ -24,14 +24,14 @@ import {
   removeUser,
   resolveUnsubscription,
   setMilestoneCompleted,
+  setNotificationsRead,
   updateIgnoreList,
   updatePaidScan,
   updatePassword,
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret,
-  setNotificationsRead
+  verifyTotpSecret
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -46,6 +46,10 @@ import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
+import {
+  addUserToOrganisation,
+  getOrganisationByInviteCode
+} from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
 import addMonths from 'date-fns/add_months';
@@ -56,9 +60,9 @@ import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { sendToUser } from '../../rest/socket';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
-import { sendToUser } from '../../rest/socket';
 
 export async function getUserById(id) {
   try {
@@ -80,9 +84,17 @@ export function createOrUpdateUserFromGoogle(userData = {}, keys) {
 }
 
 async function createOrUpdateUser(userData = {}, keys, provider) {
-  const { id, email, referralCode, profileImg, displayName } = userData;
+  const {
+    id,
+    email,
+    referralCode,
+    inviteCode,
+    profileImg,
+    displayName
+  } = userData;
   try {
     let user = await getUser(id);
+    const organisation = await getOrganisation(inviteCode, email);
     if (!user) {
       const referredBy = await getReferrer(referralCode);
       user = await createUser(
@@ -92,6 +104,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           email,
           profileImg,
           referredBy,
+          organisationId: organisation ? organisation.id : null,
           loginProvider: provider,
           token: v4()
         },
@@ -103,11 +116,11 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         }
       );
       if (referredBy) {
-        await addReferralActivity({ userId: id, referralUserId: referredBy });
+        addReferralActivity({ userId: id, referralUserId: referredBy });
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
-      // signing in with a provider counts as connecting the first account
+      // signing up with a provider counts as connecting the first account
       addActivityForUser(id, 'connectedFirstAccount', {
         id,
         provider
@@ -117,10 +130,25 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         { id, email },
         {
           profileImg,
-          name: displayName
+          name: displayName,
+          organisationId: organisation ? organisation.id : null
         },
         keys
       );
+    }
+
+    // signing up or logging in with a provider counts as connecting
+    // an account so we check the org stuff here
+    if (organisation) {
+      logger.debug(
+        `user-service: adding user ${user.id} to organisation ${
+          organisation.id
+        }`
+      );
+      await addUserToOrganisation(organisation.id, {
+        userId: user.id,
+        email: user.email
+      });
     }
 
     return user;
@@ -129,6 +157,21 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       `user-service: error creating or updating user from ${provider} with ${id}`
     );
     logger.error(err);
+    throw err;
+  }
+}
+
+export async function updateUserOrganisation(
+  userId,
+  { organisationId, admin = false }
+) {
+  try {
+    const user = await updateUser(userId, {
+      organisationId: organisationId,
+      organisationAdmin: admin
+    });
+    return user;
+  } catch (err) {
     throw err;
   }
 }
@@ -171,8 +214,19 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
         email,
         keys
       });
-
       addConnectAccountActivity(accountId, provider, user);
+
+      logger.debug(
+        `user-service: user ${user.id} belongs to an organisation ${
+          user.organisationId
+        }, adding account...`
+      );
+      if (!user.organisationId) {
+        await addUserToOrganisation(user.organisationId, {
+          userId: user.id,
+          email: user.email
+        });
+      }
     }
     return user;
   } catch (err) {
@@ -185,17 +239,25 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
 }
 
 export async function createOrUpdateUserFromPassword(userData = {}) {
-  const { id, email, referralCode, displayName, password } = userData;
+  const {
+    id,
+    email,
+    referralCode,
+    inviteCode,
+    displayName,
+    password
+  } = userData;
   let user;
   try {
+    const organisation = await getOrganisation(inviteCode, email);
     if (!id) {
       const referredBy = await getReferrer(referralCode);
       user = await createUserFromPassword({
-        id,
         name: displayName,
         email,
         password,
         referredBy,
+        organisationId: organisation ? organisation.id : null,
         loginProvider: 'password',
         token: v4(),
         accounts: []
@@ -207,7 +269,8 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
       addUpdateNewsletterSubscriber(email);
     } else {
       user = await updateUser(id, {
-        name: displayName
+        name: displayName,
+        organisationId: organisation ? organisation.id : null
       });
     }
     return user;
@@ -224,6 +287,46 @@ async function getReferrer(referralCode) {
   if (!referralCode) return null;
   const { id: referralUserId } = await getUserByReferralCode(referralCode);
   return referralUserId;
+}
+
+async function getOrganisation(inviteCode, email) {
+  if (!inviteCode) return null;
+
+  const organisation = await getOrganisationByInviteCode(inviteCode);
+  if (!organisation) return null;
+
+  const { allowAnyUserWithCompanyEmail, invitedUsers, domain } = organisation;
+
+  const invited = invitedUsers.includes(email);
+
+  // we always allow invited users
+  if (invited) {
+    logger.info(
+      `user-service: user is invited to organisation ${organisation.id}`
+    );
+    return organisation;
+  }
+
+  // if not invited and allowed company domains
+  if (allowAnyUserWithCompanyEmail) {
+    const userEmailDomain = email.split('@')[1];
+    if (userEmailDomain === domain) {
+      logger.info(
+        `user-service: user email belongs to organisation with allow user with company email ${
+          organisation.id
+        }`
+      );
+      return organisation;
+    }
+  }
+
+  // user is not invited and their domain does not match the company
+  logger.info(
+    `user-service: user is not allowed to join the organisation ${
+      organisation.id
+    }`
+  );
+  return null;
 }
 
 async function addReferralActivity({ userId, referralUserId }) {

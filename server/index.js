@@ -13,6 +13,7 @@ import mailApi from './rest/mail';
 import mailgunWebhooks from './rest/webhooks/mailgun';
 import milestonesApi from './rest/milestones';
 import notificationsApi from './rest/notifications';
+import orgApi from './rest/organisation';
 import path from 'path';
 import paymentsApi from './rest/payments';
 import { refreshScores } from './dao/occurrences';
@@ -69,6 +70,7 @@ paymentsApi(app);
 statsApi(app);
 giftsApi(app);
 milestonesApi(app);
+orgApi(app);
 mailgunWebhooks(app);
 errorsApi(app);
 
@@ -94,6 +96,13 @@ app.get('/r/:code', (req, res) => {
   }
   res.redirect('/');
 });
+
+app.get('/i/:code', (req, res) => {
+  // make sure the latest invite is used
+  res.cookie('invite', req.params.code, { maxAge: 900000 });
+  res.redirect('/login');
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {

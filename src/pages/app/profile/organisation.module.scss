@@ -1,0 +1,27 @@
+@import '../../../styles/common/colors.scss';
+@import './layout.module.scss';
+
+.organisation-section {
+  @extend .profile-section;
+}
+
+.tabled {
+  @extend .profile-section--unpadded;
+}
+
+.table-text-content {
+  @extend .unpadded-content;
+}
+
+.org-status {
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #f1645f;
+
+  &.active {
+    background-color: #37d288;
+  }
+}

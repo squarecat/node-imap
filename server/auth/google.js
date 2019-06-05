@@ -29,7 +29,7 @@ export const Strategy = new GoogleStrategy(
   async function(req, accessToken, refreshToken, params, profile, done) {
     try {
       const { cookies } = req;
-      const { referrer } = cookies;
+      const { referrer, invite } = cookies;
       const { expires_in } = params;
       const email = getEmail(profile);
 
@@ -46,7 +46,8 @@ export const Strategy = new GoogleStrategy(
           ...profile,
           email,
           profileImg: getProfileImg(profile),
-          referralCode: referrer
+          referralCode: referrer,
+          inviteCode: invite
         },
         {
           refreshToken,

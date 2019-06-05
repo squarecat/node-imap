@@ -6,7 +6,7 @@ import React, { useContext } from 'react';
 import { TextImportant, TextLink } from '../../text';
 
 import Button from '../../btn';
-import CardDetails from './card-details';
+import CardDetails from '../../card-details';
 import { LockIcon } from '../../icons';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
