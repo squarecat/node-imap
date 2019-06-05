@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 
 import Button from '../../../components/btn';
-import CardDetails from '../../../components/modal/billing/card-details';
+import CardDetails from '../../../components/card-details';
 import ErrorBoundary from '../../../components/error-boundary';
 import ProfileLayout from './layout';
 import { TextImportant } from '../../../components/text';

@@ -1,6 +1,6 @@
 import './card-details.module.scss';
 
-import { CreditCardIcon } from '../../icons';
+import { CreditCardIcon } from '../icons';
 import React from 'react';
 
 export default ({ card }) => (

@@ -1,7 +1,7 @@
 import './billing.module.scss';
 
 import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
-import { Elements, StripeProvider } from 'react-stripe-elements';
+import { Elements } from 'react-stripe-elements';
 import React, {
   createContext,
   useContext,
@@ -18,7 +18,7 @@ import {
 
 import BillingModal from '../../../components/modal/billing';
 import Button from '../../../components/btn';
-import CardDetails from '../../../components/modal/billing/card-details';
+import CardDetails from '../../../components/card-details';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
