@@ -251,7 +251,6 @@ function Packages({ onClickBuy }) {
 }
 
 function Enterprise() {
-  const { state } = useContext(BillingContext);
   return (
     <div styleName="billing-section">
       <h2>Enterprise</h2>
@@ -307,9 +306,9 @@ function BillingDetails() {
         </>
       ) : (
         <>
-          <p>No credit card stored.</p>
+          <p>No payment method stored.</p>
           <p>
-            You will have to enter your billing details each time you purchase a
+            You will have to enter your card details each time you purchase a
             package.
           </p>
         </>
@@ -319,8 +318,8 @@ function BillingDetails() {
 }
 
 function BillingHistory() {
-  const { value, loading } = useAsync(fetchBillingHistory);
-  const history = loading ? {} : value;
+  const { value, loading, error } = useAsync(fetchBillingHistory);
+  const history = loading || error ? {} : value;
   const { payments = [], has_more = false } = history;
 
   if (loading) return <span>Loading...</span>;

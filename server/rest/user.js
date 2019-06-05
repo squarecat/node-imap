@@ -64,7 +64,8 @@ export default app => {
         billing,
         milestones = {},
         unreadNotifications = [],
-        organisationId,organisationAdmin
+        organisationId,
+        organisationAdmin
       } = user;
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
@@ -91,7 +92,8 @@ export default app => {
         billing,
         milestones,
         unreadNotifications,
-        organisationId,organisationAdmin
+        organisationId,
+        organisationAdmin
       });
     } catch (err) {
       logger.error(`user-rest: error getting user ${req.user.id}`);
@@ -156,7 +158,7 @@ export default app => {
       const activity = await getUserActivity(user.id);
       res.send(activity);
     } catch (err) {
-      logger.error(`user-rest: error getting user payments ${req.user.id}`);
+      logger.error(`user-rest: error getting user activity ${req.user.id}`);
       logger.error(err);
       res.status(500).send(err);
     }
@@ -168,7 +170,9 @@ export default app => {
       const notifications = await getUserNotifications(user.id);
       res.send(notifications);
     } catch (err) {
-      logger.error(`user-rest: error getting user payments ${req.user.id}`);
+      logger.error(
+        `user-rest: error getting user notifications ${req.user.id}`
+      );
       logger.error(err);
       res.status(500).send(err);
     }

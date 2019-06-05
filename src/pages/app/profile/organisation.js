@@ -1,10 +1,16 @@
 import './organisation.module.scss';
 
-import { FormCheckbox, FormGroup, FormInput } from '../../../components/form';
+import {
+  FormCheckbox,
+  FormGroup,
+  FormInput,
+  FormNotification
+} from '../../../components/form';
 import React, { useEffect, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 
 import Button from '../../../components/btn';
+import CardDetails from '../../../components/modal/billing/card-details';
 import ErrorBoundary from '../../../components/error-boundary';
 import ProfileLayout from './layout';
 import { TextImportant } from '../../../components/text';
@@ -36,7 +42,8 @@ function Organisation() {
     currentUsers = [],
     invitedUsers = [],
     allowAnyUserWithCompanyEmail,
-    domain
+    domain,
+    billing
   } = organisation;
 
   useEffect(
@@ -83,12 +90,12 @@ function Organisation() {
         {active ? (
           <p>
             Your account is <TextImportant>active</TextImportant>. Organisation
-            members can get unsubscribing!
+            members can start unsubscribing!
           </p>
         ) : (
           <p>
             Your account is <TextImportant>inactive</TextImportant> because you
-            have disabled it or you have not added any billing information.
+            have disabled it or you have not added a payment method.
           </p>
         )}
         <p>
@@ -96,6 +103,53 @@ function Organisation() {
         </p>
         <p>{invitedUsers.length} invites pending</p>
       </div>
+
+      <div styleName="organisation-section">
+        <h2>Billing Details</h2>
+        {billing && billing.card ? (
+          <>
+            <CardDetails card={billing.card} />
+            <Button
+              basic
+              compact
+              stretch
+              disabled={state.loading}
+              loading={state.loading}
+              onClick={() => updateCard()}
+            >
+              Update Card
+            </Button>
+            <Button
+              basic
+              compact
+              stretch
+              disabled={state.loading}
+              loading={state.loading}
+              onClick={() => removeCard()}
+            >
+              Remove Card
+            </Button>
+          </>
+        ) : (
+          <>
+            <p>No payment method stored.</p>
+            <p>
+              You need to add a payment method to activate your organisation.
+            </p>
+            <Button
+              basic
+              compact
+              stretch
+              disabled={state.loading}
+              loading={state.loading}
+              onClick={() => addCard()}
+            >
+              Add Payment Method
+            </Button>
+          </>
+        )}
+      </div>
+
       <div styleName="organisation-section">
         <h2>Settings</h2>
         {allowAnyUserWithCompanyEmail ? (
