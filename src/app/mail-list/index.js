@@ -1,5 +1,5 @@
 import { MailContext, MailProvider } from './provider';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 
 import Filters from './filters';
 import MailList from './list';
@@ -26,29 +26,20 @@ function MailView() {
     unsubData
   } = state;
 
-  const [options, setOptions] = useState({
-    pageCount: 1,
-    offset: 0,
-    totalOnPage: 0
-  });
-
   // fetch new messages on load and
   // check for new messages each 30 seconds?
   useEffect(() => {
     fetch();
   }, []);
 
-  useEffect(
+  const { offset, totalOnPage, pageCount } = useMemo(
     () => {
-      const pageCount = Math.ceil(totalCount / perPage);
-      const offset = page * perPage;
-      const totalOnPage = Math.min(offset + perPage, totalCount);
-      setOptions({
-        ...options,
-        pageCount,
-        offset,
-        totalOnPage
-      });
+      const os = page * perPage;
+      return {
+        pageCount: Math.ceil(totalCount / perPage),
+        totalOnPage: Math.min(os + perPage, totalCount),
+        offset: os
+      };
     },
     [perPage, totalCount, page]
   );
@@ -80,7 +71,7 @@ function MailView() {
           previousLabel={'prev'}
           nextLabel={'next'}
           breakLabel={'...'}
-          pageCount={options.pageCount}
+          pageCount={pageCount}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           onPageChange={({ selected }) => {
@@ -92,13 +83,13 @@ function MailView() {
           previousClassName={styles.prev}
           nextClassName={styles.next}
           breakClassName={styles.paginationBreak}
+          forcePage={page}
         />
         <div styleName="count">
           <span>
             Showing{' '}
-            <span styleName="page-count">{`${options.offset || 1}-${
-              options.totalOnPage
-            }`}</span>{' '}
+            <span styleName="page-count">{`${offset ||
+              1}-${totalOnPage}`}</span>{' '}
             of <span styleName="total-count">{totalCount}</span>
           </span>
         </div>

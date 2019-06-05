@@ -28,64 +28,6 @@ export function MailProvider({ children }) {
   } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
-  async function filterMail(options) {
-    const { activeFilters } = state;
-    let filteredCollection = db.mail;
-    // apply filters
-    if (activeFilters.length) {
-      const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
-        (out, filter) => {
-          const { value, field } = filter;
-          return {
-            indexes: [...out.indexes, field],
-            values: [...out.values, value]
-          };
-        },
-        { values: [], indexes: [] }
-      );
-      const index = indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
-      const value = values.length > 1 ? values : values[0];
-      filteredCollection = filteredCollection.where(index).equals(value);
-    } else {
-      filteredCollection = filteredCollection.toCollection();
-    }
-    // get total count of all filtered items
-    const count = await filteredCollection.count();
-    // sort all items
-    filteredCollection = await filteredCollection.sortBy(options.orderBy);
-    if (options.sortDirection === 'desc') {
-      filteredCollection = await filteredCollection.reverse();
-    }
-    // if sorting by score then move all those
-    // without score to the end
-    if (options.orderBy === 'score') {
-      const { scored, unscored } = filteredCollection.reduce(
-        (out, item) => {
-          if (item.score === -1) {
-            return { ...out, unscored: [...out.unscored, item] };
-          }
-          return { ...out, scored: [...out.scored, item] };
-        },
-        { scored: [], unscored: [] }
-      );
-      filteredCollection = [...scored, ...unscored];
-    }
-
-    // filter by pagination
-    const startIndex = options.page * options.perPage;
-    filteredCollection = await filteredCollection.slice(
-      startIndex,
-      options.perPage + startIndex
-    );
-
-    const filtedMailIds = filteredCollection.map(m => m.id);
-    setFilteredMail({
-      mail: filtedMailIds,
-      count
-    });
-    return filtedMailIds;
-  }
-
   // when we get new data we check all the filter values
   // and set them again for the filter drop downs
   async function setFilterValues() {
@@ -141,23 +83,28 @@ export function MailProvider({ children }) {
   // when things change, filter the mail list
   useEffect(
     () => {
-      if (state.initialized) {
-        filterMail({
+      const filter = async () => {
+        const { mail, count } = await filterMail(state.activeFilters, db, {
           orderBy: state.sortByValue,
           sortDirection: state.sortByDirection,
           page: state.page,
           perPage: state.perPage
         });
+        setFilteredMail({ count, mail });
+      };
+      if (state.initialized) {
+        filter();
       }
     },
     [
       state.initialized,
-      JSON.stringify(state.activeFilters),
+      state.activeFilters,
       state.sortByValue,
       state.page,
       state.perPage,
       state.count,
-      state.sortByDirection
+      state.sortByDirection,
+      db
     ]
   );
 
@@ -203,4 +150,60 @@ export function MailProvider({ children }) {
       {children}
     </MailContext.Provider>
   );
+}
+
+async function filterMail(activeFilters, db, options) {
+  let filteredCollection = db.mail;
+  // apply filters
+  if (activeFilters.length) {
+    const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
+      (out, filter) => {
+        const { value, field } = filter;
+        return {
+          indexes: [...out.indexes, field],
+          values: [...out.values, value]
+        };
+      },
+      { values: [], indexes: [] }
+    );
+    const index = indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
+    const value = values.length > 1 ? values : values[0];
+    filteredCollection = filteredCollection.where(index).equals(value);
+  } else {
+    filteredCollection = filteredCollection.toCollection();
+  }
+  // get total count of all filtered items
+  const count = await filteredCollection.count();
+  // sort all items
+  filteredCollection = await filteredCollection.sortBy(options.orderBy);
+  if (options.sortDirection === 'desc') {
+    filteredCollection = await filteredCollection.reverse();
+  }
+  // if sorting by score then move all those
+  // without score to the end
+  if (options.orderBy === 'score') {
+    const { scored, unscored } = filteredCollection.reduce(
+      (out, item) => {
+        if (item.score === -1) {
+          return { ...out, unscored: [...out.unscored, item] };
+        }
+        return { ...out, scored: [...out.scored, item] };
+      },
+      { scored: [], unscored: [] }
+    );
+    filteredCollection = [...scored, ...unscored];
+  }
+
+  // filter by pagination
+  const startIndex = options.page * options.perPage;
+  filteredCollection = await filteredCollection.slice(
+    startIndex,
+    options.perPage + startIndex
+  );
+
+  const filtedMailIds = filteredCollection.map(m => m.id);
+  return {
+    mail: filtedMailIds,
+    count
+  };
 }
