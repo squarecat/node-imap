@@ -75,6 +75,26 @@ export async function create(data) {
   }
 }
 
+export async function update(id, data) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          ...data,
+          lastUpdatedAt: isoDate()
+        }
+      }
+    );
+    return getById(id);
+  } catch (err) {
+    logger.error(`organisation-dao: error updating organisation ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function getById(id) {
   try {
     const col = await db().collection(COL_NAME);

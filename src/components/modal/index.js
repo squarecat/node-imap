@@ -1,3 +1,4 @@
+import { CloseIcon, LockIcon } from '../icons';
 import React, {
   createContext,
   useContext,
@@ -7,7 +8,7 @@ import React, {
 } from 'react';
 
 import Button from '../btn';
-import { CloseIcon } from '../icons';
+import LoadingOverlay from '../loading/overlay';
 import ReactDOM from 'react-dom';
 import { Transition } from 'react-transition-group';
 import cx from 'classnames';
@@ -124,10 +125,52 @@ export const ModalSaveAction = ({
   return (
     <ModalFooter>
       <div styleName="modal-actions">
-        <Button disabled={isLoading} secondary compacted onClick={onCancel}>
+        <Button disabled={isLoading} secondary compact onClick={onCancel}>
           Cancel
         </Button>
-        <Button disabled={isDisabled || isLoading} onClick={onSave}>
+        <Button
+          basic
+          compact
+          type="submit"
+          as="button"
+          disabled={isDisabled || isLoading}
+          onClick={onSave}
+        >
+          Save
+        </Button>
+      </div>
+    </ModalFooter>
+  );
+};
+
+export const ModalPaymentSaveAction = ({
+  isDisabled,
+  isLoading,
+  onSave,
+  onCancel,
+  formToSubmit
+}) => {
+  return (
+    <ModalFooter>
+      <div styleName="footer-info">
+        <p styleName="secured-by">
+          <LockIcon />
+          Payments Secured by <a href="https://stripe.com/">Stripe</a>
+        </p>
+      </div>
+      <div styleName="modal-actions">
+        <Button disabled={isLoading} secondary compact onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          basic
+          compact
+          type="submit"
+          as="button"
+          disabled={isDisabled || isLoading}
+          onClick={onSave}
+          form={formToSubmit}
+        >
           Save
         </Button>
       </div>
@@ -153,7 +196,7 @@ export const ModalWizardActions = ({
           <Button
             disabled={isLoading}
             secondary
-            compacted
+            compact
             onClick={() => {
               if (showBack) onBack();
               else onCancel();
@@ -202,8 +245,13 @@ export const ModalDismissAction = ({ onDismiss, btnText = 'Got it!' }) => {
   );
 };
 
-export const ModalBody = ({ children, compact }) => {
+export const ModalBody = ({ children, compact, loading = false }) => {
   return (
-    <div styleName={`modal-body ${compact ? 'compact' : ''}`}>{children}</div>
+    <div styleName={`modal-body ${compact ? 'compact' : ''}`}>
+      <>
+        {children}
+        {loading ? <LoadingOverlay /> : null}
+      </>
+    </div>
   );
 };
