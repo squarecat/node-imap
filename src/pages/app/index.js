@@ -8,6 +8,11 @@ import Template from '../../app/template';
 import { Transition } from 'react-transition-group';
 import useUser from '../../utils/hooks/use-user';
 
+if (process.env.NODE_ENV !== 'production') {
+  const whyDidYouRender = require('@welldone-software/why-did-you-render');
+  whyDidYouRender(React);
+}
+
 function Content() {
   const [user] = useUser();
   const { hasCompletedOnboarding } = user;

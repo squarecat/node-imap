@@ -18,7 +18,7 @@ const mailTimeFormat = 'HH:mm YYYY';
 const mailDayStamp = 'Do MMM';
 const mailYearStamp = 'YYYY';
 
-export default function MailItem({ id, setUnsubModal = () => {} }) {
+export default function MailItem({ id }) {
   const m = useMailItem(id);
   const { actions } = useContext(MailContext);
 
@@ -103,7 +103,7 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
           mail={m}
           isIgnored={isIgnored}
           onUnsubscribe={actions.onUnsubscribe}
-          setUnsubModal={setUnsubModal}
+          setUnsubModal={() => actions.setUnsubData(m)}
         />
       </td>
     </>
@@ -111,9 +111,6 @@ export default function MailItem({ id, setUnsubModal = () => {} }) {
 }
 
 function ItemScore({ sender }) {
-  if (!sender) {
-    return null;
-  }
   const { rank, score, unsubscribePercentage } = useScore(sender);
 
   return (
@@ -146,34 +143,9 @@ function Occurrences({ fromEmail, toEmail }) {
 }
 
 function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
-  const { actions } = useContext(AlertContext);
   const isSubscribed = !!mail.subscribed;
   let content;
   const everythingOk = mail.estimatedSuccess !== false || mail.resolved;
-  useEffect(
-    () => {
-      if (!everythingOk) {
-        actions.queueAlert({
-          message: (
-            <span>
-              Unsubscribe to{' '}
-              <span styleName="from-email-message">{mail.fromEmail}</span>{' '}
-              failed.
-            </span>
-          ),
-          actions: [
-            {
-              label: 'See details',
-              onClick: () => setUnsubModal(mail, true)
-            }
-          ],
-          isDismissable: true,
-          level: 'warning'
-        });
-      }
-    },
-    [everythingOk]
-  );
   if (everythingOk) {
     content = (
       <Toggle
@@ -186,7 +158,7 @@ function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
   } else {
     content = (
       <svg
-        onClick={() => setUnsubModal(mail, true)}
+        onClick={() => setUnsubModal()}
         styleName="failed-to-unsub-icon"
         viewBox="0 0 32 32"
         width="20"
