@@ -1,6 +1,6 @@
 import './credits.module.scss';
 
-import Modal, { ModalBody, ModalCloseIcon } from '..';
+import Modal, { ModalBody, ModalCloseIcon, ModalHeader } from '..';
 
 import Button from '../../btn';
 import React from 'react';
@@ -15,7 +15,7 @@ export default ({ shown = true, onClose, credits }) => {
     >
       <ModalCloseIcon />
       <ModalBody>
-        <h3>Credit Balance</h3>
+        <ModalHeader>Credit Balance</ModalHeader>
         <p>
           Your current credit balance is{' '}
           <span styleName="credit-balance">{credits}</span>
