@@ -107,6 +107,10 @@ export const ModalFooter = ({ children }) => {
   return <div styleName="modal-footer">{children}</div>;
 };
 
+export const ModalHeader = ({ children }) => {
+  return <h3 styleName="modal-header">{children}</h3>;
+};
+
 export const ModalSaveAction = ({
   isDisabled,
   isLoading,

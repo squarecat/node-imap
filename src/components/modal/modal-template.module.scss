@@ -51,11 +51,15 @@
 }
 
 .modal-body {
-  padding: 70px 60px;
+  padding: 20px 30px;
 
   &.compact {
     padding: 30px 40px 0;
   }
+}
+
+.modal-header {
+  font-size: 20px;
 }
 
 .fluid {
