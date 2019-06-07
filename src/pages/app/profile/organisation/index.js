@@ -6,7 +6,7 @@ import {
   FormInput,
   FormNotification
 } from '../../../../components/form';
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';

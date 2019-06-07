@@ -1,12 +1,11 @@
-import '../modal.module.scss';
+import './organisation-billing.module.scss';
 
 import { FormGroup, FormNotification } from '../../form';
+import Modal, { ModalBody, ModalCloseIcon, ModalPaymentSaveAction } from '..';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import reducer, { initialState } from './reducer';
 
 import Button from '../../btn';
-import { LockIcon } from '../../icons';
-import ModalClose from '../modal-close';
 import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 import PaymentCompanyDetails from '../../payments/company-details';
@@ -15,30 +14,9 @@ import { injectStripe } from 'react-stripe-elements';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
-function OrganisationBillingModal({ onClose }) {
-  const [isShown, setShown] = useState(false);
+function OrganisationBillingModal({ shown = true, onClose }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { state: stripeState } = useContext(StripeStateContext);
-
-  const handleKeydown = e => {
-    if (e.keyCode === 27 || e.key === 'Escape') {
-      onClickClose();
-    }
-  };
-
-  // on mount
-  useEffect(() => {
-    setShown(true);
-    document.addEventListener('keydown', handleKeydown, false);
-    return function cleanup() {
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  }, []);
-
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(onClose, 300);
-  };
 
   async function onSubmit() {
     try {
@@ -87,21 +65,24 @@ function OrganisationBillingModal({ onClose }) {
   }
 
   return (
-    // <OrganisationBillingModalContext.Provider value={{ state, dispatch }}>
     <>
-      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-        <ModalClose onClose={onClickClose} />
-        <h3>Add Organisation Payment Method</h3>
-        <div styleName="modal-content">
-          <p>Provide your company details for invoicing.</p>
-          <form
-            id="org-payment-form"
-            onSubmit={e => {
-              e.preventDefault();
-              return onSubmit();
-            }}
-            method="post"
-          >
+      <Modal
+        shown={shown}
+        onClose={onClose}
+        dismissable={false}
+        // style={{ width: 580 }}
+      >
+        <ModalCloseIcon />
+        <form
+          id="org-payment-form"
+          // onSubmit={e => {
+          //   e.preventDefault();
+          //   return onSubmit();
+          // }}
+        >
+          {/* <ModalHeader>Add Organisation Payment Method</ModalHeader> */}
+          <ModalBody loading={!stripeState.isReady}>
+            <p>Provide your company details for invoicing.</p>
             <PaymentAddressDetails
               addressDetails={state.addressDetails}
               loading={state.loading}
@@ -133,43 +114,15 @@ function OrganisationBillingModal({ onClose }) {
                 </FormNotification>
               </FormGroup>
             ) : null}
-          </form>
-          {stripeState.isReady ? null : <div styleName="loading-overlay" />}
-        </div>
-
-        <div styleName="modal-actions">
-          <div styleName="modal-actions-info">
-            <p styleName="modal-text--small secured-by">
-              <LockIcon />
-              Payments Secured by <a href="https://stripe.com/">Stripe</a>
-            </p>
-          </div>
-
-          <div styleName="modal-buttons">
-            <a
-              styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-              onClick={() => onClickClose()}
-            >
-              Cancel
-            </a>
-
-            <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading || !stripeState.isReady}
-              loading={state.loading}
-              type="submit"
-              as="button"
-              form="org-payment-form"
-            >
-              Confirm
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
-      {/* </OrganisationBillingModalContext.Provider> */}
+          </ModalBody>
+          <ModalPaymentSaveAction
+            isDisabled={state.loading || !stripeState.isReady}
+            isLoading={state.loading}
+            onSave={() => onSubmit()}
+            onCancel={onClose}
+          />
+        </form>
+      </Modal>
     </>
   );
 }
