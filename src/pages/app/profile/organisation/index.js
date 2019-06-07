@@ -5,20 +5,23 @@ import {
   FormGroup,
   FormInput,
   FormNotification
-} from '../../../components/form';
+} from '../../../../components/form';
 import React, { useEffect, useState } from 'react';
-import Table, { TableCell, TableRow } from '../../../components/table';
+import Table, { TableCell, TableRow } from '../../../../components/table';
 
-import Button from '../../../components/btn';
-import CardDetails from '../../../components/card-details';
-import ErrorBoundary from '../../../components/error-boundary';
-import ProfileLayout from './layout';
-import { TextImportant } from '../../../components/text';
+import { Elements } from 'react-stripe-elements';
+
+import Button from '../../../../components/btn';
+import CardDetails from '../../../../components/card-details';
+import ErrorBoundary from '../../../../components/error-boundary';
+import ProfileLayout from '../layout';
+import { TextImportant } from '../../../../components/text';
 import cx from 'classnames';
 import relative from 'tiny-relative-date';
-import request from '../../../utils/request';
-import { useAsync } from '../../../utils/hooks';
-import useUser from '../../../utils/hooks/use-user';
+import request from '../../../../utils/request';
+import { useAsync } from '../../../../utils/hooks';
+import useUser from '../../../../utils/hooks/use-user';
+import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 
 function Organisation() {
   const [{ organisationId, organisationAdmin }] = useUser(u => {
@@ -27,7 +30,6 @@ function Organisation() {
       organisationAdmin: u.organisationAdmin
     };
   });
-  console.log('organisationId', organisationId);
 
   const { value: organisation = {}, loading } = useAsync(fetchOrganisation, [
     organisationId
@@ -104,51 +106,12 @@ function Organisation() {
         <p>{invitedUsers.length} invites pending</p>
       </div>
 
-      <div styleName="organisation-section">
-        <h2>Billing Details</h2>
-        {billing && billing.card ? (
-          <>
-            <CardDetails card={billing.card} />
-            <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading}
-              loading={state.loading}
-              onClick={() => updateCard()}
-            >
-              Update Card
-            </Button>
-            <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading}
-              loading={state.loading}
-              onClick={() => removeCard()}
-            >
-              Remove Card
-            </Button>
-          </>
-        ) : (
-          <>
-            <p>No payment method stored.</p>
-            <p>
-              You need to add a payment method to activate your organisation.
-            </p>
-            <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading}
-              loading={state.loading}
-              onClick={() => addCard()}
-            >
-              Add Payment Method
-            </Button>
-          </>
-        )}
-      </div>
+      <Billing
+        organisationAdmin={organisationAdmin}
+        billing={billing}
+        onUpdateCard={() => {}}
+        onRemoveCard={() => {}}
+      />
 
       <div styleName="organisation-section">
         <h2>Settings</h2>
@@ -224,6 +187,82 @@ function Organisation() {
             )}
           </div>
         </>
+      ) : null}
+    </>
+  );
+}
+
+function Billing({
+  organisationAdmin,
+  billing = {},
+  onUpdateCard,
+  onRemoveCard
+}) {
+  const [showBillingModal, toggleBillingModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  if (!organisationAdmin) return null;
+
+  const { card, company } = billing;
+
+  return (
+    <>
+      <div styleName="organisation-section">
+        <h2>Billing Details</h2>
+        {card ? (
+          <>
+            <CardDetails card={billing.card} />
+            <Button
+              basic
+              compact
+              stretch
+              disabled={loading}
+              loading={loading}
+              onClick={() => onUpdateCard()}
+            >
+              Update Card
+            </Button>
+            <Button
+              basic
+              compact
+              stretch
+              disabled={loading}
+              loading={loading}
+              onClick={() => onRemoveCard()}
+            >
+              Remove Card
+            </Button>
+          </>
+        ) : (
+          <>
+            <p>No payment method stored.</p>
+            <p>
+              You need to add a payment method to activate your organisation.
+            </p>
+            <Button
+              basic
+              compact
+              stretch
+              disabled={loading}
+              loading={loading}
+              onClick={() => toggleBillingModal(true)}
+            >
+              Add Payment Method
+            </Button>
+          </>
+        )}
+        {company ? (
+          <>
+            <h2>Company Details</h2>
+            <p>Name: {company.name}</p>
+            <p>VAT Number: {company.vatNumber}</p>
+          </>
+        ) : null}
+      </div>
+      {showBillingModal ? (
+        <Elements>
+          <OrganisationBillingModal onClose={() => toggleBillingModal(false)} />
+        </Elements>
       ) : null}
     </>
   );

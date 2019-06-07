@@ -9,11 +9,15 @@ export function StripeProvider({ children }) {
   // pass stripe instance which will load when initialised
   // for async script loads
   // https://github.com/stripe/react-stripe-elements#advanced-integrations
-  useEffect(() => {
-    if (window.Stripe) {
-      setStripe(window.Stripe(process.env.STRIPE_PK));
-    }
-  }, []);
+  useEffect(
+    () => {
+      if (window.Stripe) {
+        console.log('initialising Stripe');
+        setStripe(window.Stripe(process.env.STRIPE_PK));
+      }
+    },
+    [window.Stripe]
+  );
 
   return (
     <ReactStripeProvider stripe={stripe}>

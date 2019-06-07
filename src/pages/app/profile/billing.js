@@ -76,8 +76,7 @@ export default function Billing() {
   const [{ billing, organisationId }] = useUser(u => {
     return {
       billing: u.billing,
-      // organisationId: u.organisationId
-      organisationId: null
+      organisationId: u.organisationId
     };
   });
 
@@ -142,7 +141,6 @@ export default function Billing() {
           <BillingDetails />
           <BillingHistory />
           {showBillingModal ? (
-            // <StripeProvider apiKey={process.env.STRIPE_PK}>
             <Elements>
               <BillingModal
                 selectedPackage={selectedPackage}
@@ -150,8 +148,7 @@ export default function Billing() {
                 onClose={() => toggleBillingModal(false)}
               />
             </Elements>
-          ) : // </StripeProvider>
-          null}
+          ) : null}
         </BillingContext.Provider>
       )}
     </ProfileLayout>

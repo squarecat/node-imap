@@ -21,8 +21,6 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
   const { state: stripeState } = useContext(StripeStateContext);
 
-  const [{ email }] = useUser(u => u.email);
-
   async function onSubmit() {
     try {
       dispatch({ type: 'set-loading', data: true });
@@ -30,7 +28,6 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
 
       const billingDetails = {
         name: state.name,
-        email,
         address: {
           line1: state.line1,
           line2: state.line2,
