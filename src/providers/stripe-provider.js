@@ -11,9 +11,16 @@ export function StripeProvider({ children }) {
   // for async script loads
   // https://github.com/stripe/react-stripe-elements#advanced-integrations
   useEffect(() => {
-    if (window.Stripe && !stripe) {
-      console.log('initialising Stripe');
+    if (window.Stripe) {
+      console.log('stripe-provider: initialising Stripe from window');
       setStripe(window.Stripe(process.env.STRIPE_PK));
+    } else {
+      console.log('stripe-provider: doing query selector');
+      const stripEl = document.querySelector('#stripe-js');
+      stripEl.addEventListener('load', () => {
+        // Create Stripe instance once Stripe.js loads
+        setStripe(window.Stripe(process.env.STRIPE_PK));
+      });
     }
   }, []);
 

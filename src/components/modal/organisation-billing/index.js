@@ -1,11 +1,15 @@
 import './organisation-billing.module.scss';
 
 import { FormGroup, FormNotification } from '../../form';
-import Modal, { ModalBody, ModalCloseIcon, ModalPaymentSaveAction } from '..';
+import Modal, {
+  ModalBody,
+  ModalCloseIcon,
+  ModalHeader,
+  ModalPaymentSaveAction
+} from '..';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import reducer, { initialState } from './reducer';
 
-import Button from '../../btn';
 import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 import PaymentCompanyDetails from '../../payments/company-details';
@@ -14,7 +18,7 @@ import { injectStripe } from 'react-stripe-elements';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
-function OrganisationBillingModal({ shown = true, onClose }) {
+function OrganisationBillingModal({ shown, onClose }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { state: stripeState } = useContext(StripeStateContext);
 
@@ -80,8 +84,8 @@ function OrganisationBillingModal({ shown = true, onClose }) {
           //   return onSubmit();
           // }}
         >
-          {/* <ModalHeader>Add Organisation Payment Method</ModalHeader> */}
           <ModalBody loading={!stripeState.isReady}>
+            <ModalHeader>Add Organisation Payment Method</ModalHeader>
             <p>Provide your company details for invoicing.</p>
             <PaymentAddressDetails
               addressDetails={state.addressDetails}
