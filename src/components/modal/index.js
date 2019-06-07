@@ -111,6 +111,10 @@ export const ModalHeader = ({ children }) => {
   return <h3 styleName="modal-header">{children}</h3>;
 };
 
+export const ModalSubHeader = ({ children }) => {
+  return <h4 styleName="modal-subheader">{children}</h4>;
+};
+
 export const ModalSaveAction = ({
   isDisabled,
   isLoading,

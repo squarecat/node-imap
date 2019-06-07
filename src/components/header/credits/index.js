@@ -53,5 +53,5 @@ const Credits = () => {
   );
 };
 
-Credits.whyDidYouRender = true;
+// Credits.whyDidYouRender = true;
 export default Credits;

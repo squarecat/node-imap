@@ -4,10 +4,9 @@ import './layout.css';
 
 import { AlertProvider } from '../app/alert-provider';
 import { DatabaseProvider } from '../app/db-provider';
-import { StripeProvider } from '../providers/stripe-provider';
-
 import Helmet from 'react-helmet';
 import React from 'react';
+import { StripeProvider } from '../providers/stripe-provider';
 import { setConfig } from 'react-hot-loader';
 
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
@@ -31,13 +30,6 @@ const AppLayout = ({ pageName, children }) => {
           }
         ]}
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
-        script={[
-          {
-            src: 'https://js.stripe.com/v3/',
-            type: 'text/javascript',
-            async: true
-          }
-        ]}
       />
       <DatabaseProvider>
         <AlertProvider>

@@ -52,7 +52,7 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
     box-shadow: 0 7px 1em $color-btn-border-focus;
     background-color: $color-red-darker;
     color: white;
-
+    border-bottom: 0;
     [data-icon='gift'] path {
       fill: #e9443c;
     }
@@ -67,6 +67,7 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
 
 .inline {
   display: inline-block;
+  margin: 0;
 }
 
 .compact {
@@ -79,6 +80,8 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
   font-size: 14px;
   height: 30px;
   padding: 0 15px;
+  line-height: 30px;
+
   @media (max-width: 400px) {
     padding: 0 8px;
     .btn-content {
@@ -90,6 +93,7 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
 .fill {
   margin: 0;
   height: 100%;
+  display: flex;
 }
 
 .on-dark-bg {
@@ -106,6 +110,9 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
 
 .outlined {
   border: 1px solid $color-red-light;
+  &:hover {
+    border-bottom: 1px solid $color-red-light;
+  }
 }
 
 .stretch {

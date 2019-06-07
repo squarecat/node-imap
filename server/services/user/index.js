@@ -488,8 +488,8 @@ export function removeUserScanReminder(id) {
 
 export async function getReferralStats(id) {
   try {
-    const { referralCode, referrals, referralBalance } = await getUserById(id);
-    return { referralCode, referrals, referralBalance };
+    const { referralCode, referrals, referredBy } = await getUserById(id);
+    return { referralCode, referrals, referredBy };
   } catch (err) {
     throw err;
   }

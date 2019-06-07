@@ -61,6 +61,15 @@ export const FormInput = ({
   );
 };
 
+export const InlineFormInput = ({ children, ...props }) => {
+  return (
+    <span styleName="inline-input">
+      <FormInput {...props} />
+      {children}
+    </span>
+  );
+};
+
 function validateInput(e, ref, validationFn) {
   if (!ref) return;
   const { value } = e.currentTarget;
