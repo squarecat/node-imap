@@ -1,11 +1,12 @@
-import '../header-btn.module.scss';
+import './credits.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
+import CreditModal from '../../modal/credits';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
-export default () => {
+const Credits = () => {
   const [{ id, token, unsubscribesRemaining }] = useUser(
     ({ id, token, billing }) => ({
       id,
@@ -14,7 +15,7 @@ export default () => {
     })
   );
 
-  const { isConnected, socket, error } = useSocket({
+  const { isConnected, socket, emit } = useSocket({
     token,
     userId: id
   });
@@ -32,17 +33,25 @@ export default () => {
             console.error(err);
           }
         });
-        socket.emit('fetch-credits');
+        emit('fetch-credits');
       }
     },
-    [isConnected, error]
+    [isConnected, emit]
   );
 
   return (
-    <button styleName="header-btn" onClick={() => {}}>
-      <span styleName="header-btn-text header-btn-text--long">
-        {credits} credits
-      </span>
-    </button>
+    <>
+      <CreditModal credits={unsubscribesRemaining} />
+      <button
+        styleName="btn"
+        data-count={unsubscribesRemaining}
+        onClick={() => {}}
+      >
+        <span styleName="btn-text">{credits} credits</span>
+      </button>
+    </>
   );
 };
+
+Credits.whyDidYouRender = true;
+export default Credits;

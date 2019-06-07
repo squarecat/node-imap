@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AlertContext } from '../../app/alert-provider';
 import { DatabaseContext } from '../../app/db-provider';
@@ -15,34 +15,37 @@ function useSocket({ token, userId }) {
   const { actions } = useContext(AlertContext);
   const { dismiss, setAlert } = actions;
 
-  function emit(event, data, cb) {
-    if (!SOCKET_INSTANCE || SOCKET_INSTANCE.disconnected) {
-      console.warn(
-        `no socket to emit event "${event}", waiting for socket to open`
-      );
-      if (attempts > 1) {
-        setAlert({
-          id: 'connection-warning',
-          level: 'warning',
-          message: 'Connection lost. Trying to reconnect...',
-          isDismissable: false,
-          autoDismiss: false
-        });
+  const emit = useCallback(
+    (event, data, cb) => {
+      if (!SOCKET_INSTANCE || SOCKET_INSTANCE.disconnected) {
+        console.warn(
+          `no socket to emit event "${event}", waiting for socket to open`
+        );
+        if (attempts > 1) {
+          setAlert({
+            id: 'connection-warning',
+            level: 'warning',
+            message: 'Connection lost. Trying to reconnect...',
+            isDismissable: false,
+            autoDismiss: false
+          });
+        }
+        attempts = attempts + 1;
+        if (attempts > 2) {
+          // save event to queue for later
+          return db.queue.put({
+            event,
+            data
+          });
+        }
+        return setTimeout(emit.bind(null, event, data, cb), 2000);
       }
-      attempts = attempts + 1;
-      if (attempts > 2) {
-        // save event to queue for later
-        return db.queue.put({
-          event,
-          data
-        });
-      }
-      return setTimeout(emit.bind(null, event, data, cb), 2000);
-    }
-    attempts = 0;
-    dismiss('connection-warning');
-    return SOCKET_INSTANCE.emit(event, data, cb);
-  }
+      attempts = 0;
+      dismiss('connection-warning');
+      return SOCKET_INSTANCE.emit(event, data, cb);
+    },
+    [socket]
+  );
   // set up socket on mount
   useEffect(
     () => {

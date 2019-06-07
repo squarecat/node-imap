@@ -96,22 +96,11 @@ export function AlertProvider({ children }) {
     [current, queue]
   );
 
-  // // after an alert has been dismissed, pop another
-  // // from the queue after a brief timeout
-  // useEffect(
-  //   () => {
-  //     if (state.queue) {
-  //       setTimeout(() => {
-  //         dispatch();
-  //         // dispatch({ type: 'set-alert', data: state.queued });
-  //       }, 1000);
-  //     }
-  //   },
-  //   [state.queue]
-  // );
-
   function onDismiss(id) {
-    dispatch({ type: 'dismiss-alert', data: id });
+    if (id && (current && current.id === id)) {
+      dispatch({ type: 'dismiss-alert', data: id });
+    }
+    return dispatch({ type: 'dismiss-alert' });
   }
 
   return (

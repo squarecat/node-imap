@@ -1,0 +1,16 @@
+@import '../header-btn.module.scss';
+
+.btn {
+  @extend .header-btn;
+  &[data-count='0'] {
+    background-color: lighten($color-red-darker, 5%);
+    color: white;
+  }
+  &:hover {
+    background-color: $color-red-darker;
+  }
+}
+
+.btn-text {
+  @extend .header-btn-text;
+}
