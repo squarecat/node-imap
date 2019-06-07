@@ -9,11 +9,11 @@ import {
 import React, { useEffect, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
-import { Elements } from 'react-stripe-elements';
-
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
+import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../../components/error-boundary';
+import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
 import cx from 'classnames';
@@ -21,7 +21,6 @@ import relative from 'tiny-relative-date';
 import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
-import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 
 function Organisation() {
   const [{ organisationId, organisationAdmin }] = useUser(u => {
@@ -43,33 +42,9 @@ function Organisation() {
     active,
     currentUsers = [],
     invitedUsers = [],
-    allowAnyUserWithCompanyEmail,
     domain,
     billing
   } = organisation;
-
-  useEffect(
-    () => {
-      if (!loading && organisation) {
-        setState({
-          ...state,
-          allowAnyUserWithCompanyEmail:
-            organisation.allowAnyUserWithCompanyEmail
-        });
-      }
-    },
-    [loading]
-  );
-
-  const [state, setState] = useState({});
-  const [toggling, setToggling] = useState(false);
-
-  const onToggleSetting = async toggled => {
-    setToggling(true);
-    setState({ ...state, allowAnyUserWithCompanyEmail: toggled });
-    await toggleOrganisationType(toggled);
-    setToggling(false);
-  };
 
   if (loading) return <span>Loading...</span>;
 
@@ -113,41 +88,12 @@ function Organisation() {
         onRemoveCard={() => {}}
       />
 
-      <div styleName="organisation-section">
-        <h2>Settings</h2>
-        {allowAnyUserWithCompanyEmail ? (
-          <>
-            <p>
-              Any user with the <TextImportant>{domain}</TextImportant> domain
-              can join. This means they can sign-in and connect accounts with a{' '}
-              {domain} email address.
-            </p>
-            <p>
-              You can also invite users outside of your organisation using the
-              form below.
-            </p>
-          </>
-        ) : (
-          <p>
-            Only users you invite with the form below can join. This means{' '}
-            <TextImportant>
-              only email addresses on the invite list
-            </TextImportant>{' '}
-            can sign-in and be connected.
-          </p>
-        )}
-        <FormCheckbox
-          disabled={toggling}
-          onChange={() => onToggleSetting(!state.allowAnyUserWithCompanyEmail)}
-          checked={state.allowAnyUserWithCompanyEmail}
-          label={`Allow any user with the ${domain} domain to join`}
-        />
-        {toggling ? <span>Saving...</span> : null}
-      </div>
-      <InviteForm
-        organisationAdmin={organisationAdmin}
-        onSendInvite={email => sendInvite(organisation.id, email)}
-      />
+      <Settings loading={loading} organisation={organisation} />
+
+      {organisationAdmin ? (
+        <InviteForm organisationId={organisation.id}/>
+      ) : null}
+
       {organisationAdmin ? (
         <>
           <div styleName="organisation-section tabled">
@@ -189,6 +135,82 @@ function Organisation() {
         </>
       ) : null}
     </>
+  );
+}
+
+function Settings({ loading, organisation }) {
+  const [state, setState] = useState({
+    toggling: false,
+    error: false,
+    allowAnyUserWithCompanyEmail: organisation.allowAnyUserWithCompanyEmail
+  });
+
+  const onToggleSetting = async () => {
+    try {
+      setState({
+        ...state,
+        toggling: true,
+        allowAnyUserWithCompanyEmail: !state.allowAnyUserWithCompanyEmail
+      });
+
+      await toggleOrganisationType(
+        organisation.id,
+        !state.allowAnyUserWithCompanyEmail
+      );
+      setTimeout(() => {
+        setState({ ...state, toggling: false, error: false });
+      }, 300);
+    } catch (err) {
+      // revert if error
+      setTimeout(() => {
+        setState({
+          ...state,
+          allowAnyUserWithCompanyEmail: state.allowAnyUserWithCompanyEmail,
+          toggling: false,
+          error: true
+        });
+      }, 300);
+    }
+  };
+
+  if (loading) return null;
+
+  return (
+    <div styleName="organisation-section">
+      <h2>Settings</h2>
+      {state.allowAnyUserWithCompanyEmail ? (
+        <>
+          <p>
+            Any user with the{' '}
+            <TextImportant>{organisation.domain}</TextImportant> domain can
+            join. This means they can sign-in and connect accounts with a{' '}
+            {organisation.domain} email address.
+          </p>
+          <p>
+            You can also invite users outside of your organisation using the
+            form below.
+          </p>
+        </>
+      ) : (
+        <p>
+          Only users you invite with the form below can join. This means{' '}
+          <TextImportant>only email addresses on the invite list</TextImportant>{' '}
+          can sign-in and be connected.
+        </p>
+      )}
+      <FormCheckbox
+        disabled={state.toggling}
+        onChange={() => onToggleSetting()}
+        checked={state.allowAnyUserWithCompanyEmail}
+        label={`Allow any user with the ${organisation.domain} domain to join`}
+      />
+      {state.toggling ? <span>Saving...</span> : null}
+      {state.error ? (
+        <FormNotification error>
+          Something went wrong, your settings have not been saved.
+        </FormNotification>
+      ) : null}
+    </div>
   );
 }
 
@@ -259,34 +281,54 @@ function Billing({
           </>
         ) : null}
       </div>
-      {showBillingModal ? (
-        <Elements>
-          <OrganisationBillingModal onClose={() => toggleBillingModal(false)} />
-        </Elements>
-      ) : null}
+      <Elements>
+        <OrganisationBillingModal
+          shown={showBillingModal}
+          onClose={() => toggleBillingModal(false)}
+        />
+      </Elements>
     </>
   );
 }
 
-function InviteForm({ organisationAdmin, onSendInvite }) {
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
+function InviteForm({ organisationId }) {
+  const [state, setState] = useState({
+    email: '',
+    loading: false,
+    error: false,
+    sent: false
+  });
 
-  const onSubmit = () => {
-    setLoading(true);
-    onSendInvite(email);
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-      setEmail('');
+  const onSubmit = async () => {
+    try {
+      setState({
+        ...state,
+        loading: true,
+        error: false,
+        sent: false
+      });
+
+      await sendInvite(organisationId, state.email);
       setTimeout(() => {
-        setSent(false);
-      }, 500);
-    }, 300);
+        setState({
+          ...state,
+          loading: false,
+          error: false,
+          sent: true
+        });
+      }, 300);
+    } catch (err) {
+      console.error(err);
+      setTimeout(() => {
+        setState({
+          ...state,
+          loading: false,
+          error: true,
+          sent: false
+        });
+      }, 300);
+    }
   };
-
-  if (!organisationAdmin) return null;
 
   return (
     <div styleName="organisation-section">
@@ -308,10 +350,10 @@ function InviteForm({ organisationAdmin, onSendInvite }) {
             smaller
             required
             placeholder="Email address to invite"
-            value={email}
+            value={state.email}
             name="name"
             onChange={e => {
-              setEmail(e.currentTarget.value);
+              setState({ ...state, email: e.currentTarget.value });
             }}
           />
         </FormGroup>
@@ -319,14 +361,19 @@ function InviteForm({ organisationAdmin, onSendInvite }) {
           basic
           compact
           stretch
-          loading={loading}
-          disabled={loading}
+          loading={state.loading}
+          disabled={state.loading || !state.email}
           type="submit"
           as="button"
         >
           Send Invite
         </Button>
-        {sent ? <FormNotification success>Sent!</FormNotification> : null}
+        {state.sent ? <FormNotification success>Sent!</FormNotification> : null}
+        {state.error ? (
+        <FormNotification error>
+          Something went wrong, your invite has not sent.
+        </FormNotification>
+      ) : null}
       </form>
     </div>
   );
@@ -361,7 +408,7 @@ function fetchStats(id) {
 }
 
 function sendInvite(id, email) {
-  return request(`/api/organisation/${id}`, {
+  return request(`/api/organisation/${id}/invite`, {
     method: 'POST',
     cache: 'no-cache',
     credentials: 'same-origin',
@@ -372,8 +419,8 @@ function sendInvite(id, email) {
   });
 }
 
-function toggleOrganisationType(allowAnyUserWithCompanyEmail) {
-  return request('/api/organisation', {
+function toggleOrganisationType(id, allowAnyUserWithCompanyEmail) {
+  return request(`/api/organisation/${id}`, {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',

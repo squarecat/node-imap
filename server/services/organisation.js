@@ -5,7 +5,8 @@ import {
   create,
   getById,
   getByInviteCode,
-  getFromInvites
+  getFromInvites,
+  update
 } from '../dao/organisation';
 import { addOrganisationToStats, addOrganisationUserToStats } from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
@@ -126,4 +127,8 @@ export async function getOrganisationUserStats(id) {
   } catch (err) {
     throw err;
   }
+}
+
+export function updateOrganisation(id, data) {
+  return update(id, data);
 }

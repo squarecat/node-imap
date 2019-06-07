@@ -196,8 +196,8 @@
       color: $color-input-disabled;
     }
     + .checkbox-label:before {
-      border-color: $color-input-disabled;
-      background-color: $color-input-disabled;
+      border-color: $color-input-disabled-bg;
+      background-color: $color-input-disabled-bg;
     }
   }
 }
