@@ -1,24 +1,22 @@
 import './billing.module.scss';
 
 import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
-import { Elements } from 'react-stripe-elements';
 import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState
 } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
-import {
-  TextFootnote,
-  TextImportant,
-  TextLink
-} from '../../../components/text';
+import { TextFootnote, TextImportant } from '../../../components/text';
 
 import BillingModal from '../../../components/modal/billing';
 import Button from '../../../components/btn';
 import CardDetails from '../../../components/card-details';
+import { DatabaseContext } from '../../../app/db-provider';
+import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
@@ -110,14 +108,7 @@ export default function Billing() {
             <h2>Information</h2>
             <p>
               You have <TextImportant>{unsubscribesRemaining}</TextImportant>{' '}
-              credits
-              {unsubscribesRemaining < 5 ? (
-                <>
-                  <TextLink href="#packages"> buy more</TextLink>.
-                </>
-              ) : (
-                '.'
-              )}
+              credits.
             </p>
             <p>
               You have used a total of{' '}
@@ -129,7 +120,7 @@ export default function Billing() {
               </p>
             ) : null}
           </div>
-          <UsageBased />
+          {/* <UsageBased /> */}
           <Packages
             onClickBuy={id => {
               const pkg = PACKAGES.find(p => p.id === id);
@@ -209,9 +200,22 @@ function UsageBased() {
 }
 
 function Packages({ onClickBuy }) {
+  const db = useContext(DatabaseContext);
   const { state, dispatch } = useContext(BillingContext);
   const { previousPackageId, settings } = state;
-
+  const [count, setCount] = useState('-');
+  useEffect(
+    () => {
+      db.mail
+        .where('status')
+        .equals('subscribed')
+        .count()
+        .then(c => {
+          setCount(c);
+        });
+    },
+    [db]
+  );
   return (
     <div styleName="billing-section" id="packages">
       <h2>Packages</h2>
@@ -223,7 +227,7 @@ function Packages({ onClickBuy }) {
           })
         }
         checked={settings.autoBuy}
-        label="Auto buy your last package when you run out of unsubscribes"
+        label="Auto buy your previous package when you run out of credits"
       />
 
       {PACKAGES.map(p => {
@@ -233,7 +237,7 @@ function Packages({ onClickBuy }) {
         return (
           <div styleName="plans-list" key={p.unsubscribes}>
             <PlanImage smaller compact type="package" />
-            <h3 styleName="plan-title">{p.unsubscribes} unsubscribes</h3>
+            <h3 styleName="plan-title">{p.unsubscribes} credits</h3>
             <Price price={p.price} />
             <div styleName="package-buy-btn">
               <a styleName="billing-btn" onClick={() => onClickBuy(p.id)}>
@@ -244,6 +248,11 @@ function Packages({ onClickBuy }) {
           </div>
         );
       })}
+      <p>
+        Pssst - Currently your inbox contains approximately{' '}
+        <TextImportant>{count} subscription emails</TextImportant> that you
+        haven't unsubscribed from yet! Bear that in mind when buying a package!
+      </p>
     </div>
   );
 }
@@ -255,7 +264,7 @@ function Enterprise() {
       <div styleName="plans-list">
         <PlanImage smaller compact type="enterprise" />
         <div>
-          <h3 styleName="plan-title">Unlimited unsubscribes</h3>
+          <h3 styleName="plan-title">Unlimited credits</h3>
           <span>Up to {ENTERPRISE.seats} seats</span>
         </div>
         <Price price={ENTERPRISE.price} asterisk />
