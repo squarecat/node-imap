@@ -28,15 +28,22 @@ export default ({ credits }) => {
     getReferrals
   );
 
-  const socialContent = useMemo(
+  const referralCode = useMemo(
     () => {
       let referralCode = '';
       if (referralValue) {
         referralCode = referralValue.referralCode;
       }
+      return referralCode;
+    },
+    [referralValue]
+  );
+
+  const socialContent = useMemo(
+    () => {
       return getSocialContent(unsubCount, referralCode);
     },
-    [unsubCount, referralValue]
+    [unsubCount, referralCode]
   );
 
   const { referredCredits, referralCredits, rewards } = useMemo(
@@ -138,7 +145,16 @@ export default ({ credits }) => {
             <TwitterIcon />
             Tweet
           </Button>
-          <Button muted outlined stretch fill basic smaller inline>
+          <Button
+            onClick={copyToClipboard(`${location.host}/r/${referralCode}`)}
+            muted
+            outlined
+            stretch
+            fill
+            basic
+            smaller
+            inline
+          >
             Copy link
           </Button>
         </div>
@@ -282,3 +298,12 @@ function rewardList(rewardItems, socialContent) {
     </ul>
   );
 }
+
+const copyToClipboard = str => {
+  const el = document.createElement('textarea');
+  el.value = str;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+};
