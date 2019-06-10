@@ -14,6 +14,11 @@
   flex: 1;
 }
 
+.credits-modal {
+  width: 100%;
+  max-width: 680px;
+}
+
 .invite-actions {
   display: grid;
   grid-template-columns: 2.4fr 0.8fr 0.8fr;
@@ -26,7 +31,7 @@
     top: -1px;
   }
 
-  @media (max-width: 550px) {
+  @media (max-width: 660px) {
     grid-template-rows: 38px 38px;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
@@ -50,6 +55,10 @@
     border-bottom: 1px solid rgba($color-border-red, 0.35);
     align-items: center;
     justify-content: space-between;
+
+    &:last-child {
+      border-bottom: 0;
+    }
   }
 }
 
@@ -116,6 +125,5 @@
 
   a {
     @extend .link;
-    border: 0;
   }
 }

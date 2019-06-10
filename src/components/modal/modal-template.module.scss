@@ -48,17 +48,22 @@
     width cubic-bezier(0.65, 0.05, 0.36, 1) 500ms;
   overflow: hidden;
   max-width: 100%;
+  width: auto;
   .modal-container-entering &,
   .modal-container-exiting & {
     transform: scale(0.9);
     opacity: 0;
+  }
+
+  @media (max-width: 600px) {
+    border-radius: 0;
   }
 }
 
 .modal-body {
   padding: 25px 50px;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   p,
   li {
@@ -68,6 +73,10 @@
   @media (max-width: 600px) {
     padding: 25px 25px;
   }
+}
+
+.modal-body-compact {
+  padding: 25px;
 }
 
 .modal-header {
@@ -105,6 +114,10 @@
   align-items: center;
   justify-content: flex-end;
   padding: 0 20px;
+
+  > a {
+    margin-left: 7px;
+  }
 }
 
 .modal-actions {

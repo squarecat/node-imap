@@ -6,11 +6,11 @@ import Modal, {
   ModalHeader,
   ModalSubHeader
 } from '..';
+import React, { useMemo } from 'react';
 
 import Button from '../../btn';
 import { InlineFormInput } from '../../form';
 import { Link } from 'gatsby';
-import React from 'react';
 import { TextImportant } from '../../text';
 import { TwitterIcon } from '../../icons';
 import request from '../../../utils/request';
@@ -24,34 +24,50 @@ async function getReferrals() {
   return request('/api/me/referrals');
 }
 
-export default ({ shown = true, onClose, credits }) => {
+export default ({ credits }) => {
   const { loading, value } = useAsync(getRewards);
   const { loading: referralsLoading, value: referralValue } = useAsync(
     getReferrals
   );
 
-  const { rewards } = (value || []).reduce(
-    (out, ms) => {
-      if (referralLabels[ms.name]) {
+  const { referredCredits, referralCredits, rewards } = useMemo(
+    () => {
+      if (loading) {
         return {
-          referrals: [...out.referrals, ms],
-          rewards: out.rewards
+          referralCredits: '-',
+          referredCredits: '-',
+          rewards: []
         };
       }
+      const { referrals, rewardValues } = value.reduce(
+        (out, ms) => {
+          if (referralLabels[ms.name]) {
+            return {
+              referrals: [...out.referrals, ms],
+              rewardValues: out.rewardValues
+            };
+          }
+          return {
+            referrals: out.referrals,
+            rewardValues: [...out.rewardValues, ms]
+          };
+        },
+        { referrals: [], rewardValues: [] }
+      );
+
       return {
-        referrals: out.referrals,
-        rewards: [...out.rewards, ms]
+        referralCredits: referrals.find(r => r.name === 'referralSignUp')
+          .unsubscriptions,
+        referredCredits: referrals.find(r => r.name === 'signedUpFromReferral')
+          .unsubscriptions,
+        rewards: rewardValues
       };
     },
-    { referrals: [], rewards: [] }
+    [loading, value]
   );
+
   return (
-    <Modal
-      shown={shown}
-      onClose={onClose}
-      dismissable={false}
-      style={{ width: 680 }}
-    >
+    <div styleName="credits-modal">
       <ModalBody>
         <ModalHeader>
           Credit Balance
@@ -71,9 +87,12 @@ export default ({ shown = true, onClose, credits }) => {
         <ModalSubHeader>Invite friends and Earn Credit</ModalSubHeader>
         <p>
           You’ll receive{' '}
-          <TextImportant>20 free unsubscribe credits</TextImportant> when the
-          person you invite signs up for an account, and they’ll also get{' '}
-          <TextImportant>10 extra credits</TextImportant> to get started.
+          <TextImportant>
+            {referralCredits} free unsubscribe credits
+          </TextImportant>{' '}
+          when the person you invite signs up for an account, and they’ll also
+          get <TextImportant>{referredCredits} extra credits</TextImportant> to
+          get started.
         </p>
 
         <div styleName="invite-actions">
@@ -99,7 +118,7 @@ export default ({ shown = true, onClose, credits }) => {
         <ModalSubHeader>Other ways to Earn Credit</ModalSubHeader>
         {loading ? null : getRewardList(rewards)}
       </ModalBody>
-    </Modal>
+    </div>
   );
 };
 

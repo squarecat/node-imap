@@ -1,8 +1,9 @@
 import { MailContext, MailProvider } from './provider';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import Filters from './filters';
 import MailList from './list';
+import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
 import UnsubModal from '../../components/modal/unsub-modal';
 import loadingImg from '../../assets/envelope-logo.png';
@@ -10,6 +11,7 @@ import styles from './mail-list.module.scss';
 
 function MailView() {
   const { state, dispatch, actions } = useContext(MailContext);
+  const { open: openModal } = useContext(ModalContext);
   const {
     fetch,
     totalCount,
@@ -49,6 +51,33 @@ function MailView() {
       window.scrollTo(0, 0);
     },
     [page]
+  );
+
+  const onSubmit = useCallback(
+    ({ success, useImage, failReason = null }) => {
+      const { id, from, unsubStrategy } = unsubData;
+      actions.setUnsubData(null);
+      actions.resolveUnsubscribeError({
+        success,
+        mailId: id,
+        useImage,
+        from: from,
+        reason: failReason,
+        unsubStrategy: unsubStrategy
+      });
+    },
+    [actions, unsubData]
+  );
+
+  useEffect(
+    () => {
+      if (unsubData) {
+        openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
+          onClose: () => actions.setUnsubData(null)
+        });
+      }
+    },
+    [unsubData, actions, openModal, onSubmit]
   );
 
   const showLoading = (isLoading || isFetching) && !mail.length;
@@ -94,26 +123,6 @@ function MailView() {
           </span>
         </div>
       </div>
-      {unsubData ? (
-        <UnsubModal
-          shown={!!unsubData}
-          onClose={() => {
-            actions.setUnsubData(null);
-          }}
-          onSubmit={({ success, useImage, failReason = null }) => {
-            actions.setUnsubData(null);
-            actions.resolveUnsubscribeError({
-              success,
-              mailId: unsubData.id,
-              useImage,
-              from: unsubData.from,
-              reason: failReason,
-              unsubStrategy: unsubData.unsubStrategy
-            });
-          }}
-          mail={unsubData}
-        />
-      ) : null}
     </div>
   );
 }

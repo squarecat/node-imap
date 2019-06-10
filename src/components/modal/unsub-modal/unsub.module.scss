@@ -1,0 +1,132 @@
+@import '../../btn/btn.module.scss';
+
+.unsub-modal {
+  max-width: 540px;
+  width: 100%;
+}
+
+.emoji {
+  margin-left: 10px;
+}
+
+.unsub-img-container {
+  position: relative;
+  height: 375px;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  max-width: 100%;
+}
+.unsub-img {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+.unsub-img--loading {
+  opacity: 0;
+}
+
+.image-loading {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+  transform: scale(1);
+  position: absolute;
+}
+
+.loading-overlay {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 250ms cubic-bezier(0.65, 0.05, 0.36, 1),
+    transform 250ms cubic-bezier(0.65, 0.05, 0.36, 1);
+  &:after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    animation: pulse 1s ease-in-out infinite;
+    transform: scale(1) translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+}
+
+.manual-unsubscribe-btn {
+  @extend .btn;
+  @extend .compact;
+
+  width: fit-content;
+  max-width: 250px;
+  margin: 0 auto 20px auto;
+}
+
+p.unsubscribe-link-alt {
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+
+  span {
+    display: block;
+  }
+}
+
+.unsubscribe-link {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: normal;
+  max-width: 100%;
+}
+
+.feedback-options {
+  font-size: 16px;
+}
+
+.feedback-options li {
+  position: relative;
+  padding: 0 0 0 35px;
+  cursor: pointer;
+}
+
+.feedback-options li:before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: $color-red;
+  border: 8px solid $color-red-light;
+  transform: translateY(-50%);
+  transition: border-width 200ms cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+.feedback-options li:hover:before {
+  border-width: 4px;
+  background-color: rgba(231, 57, 48, 0.5);
+}
+
+.feedback-options li[data-selected='true']:before {
+  border-width: 2px;
+  background-color: $color-red;
+}
+
+.modal-img-bordered {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+  visibility: hidden;
+}
