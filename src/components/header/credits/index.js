@@ -9,18 +9,20 @@ import useUser from '../../../utils/hooks/use-user';
 
 const Credits = () => {
   const { open: openModal } = useContext(ModalContext);
-  const [{ id, token, credits }] = useUser(({ id, token, billing }) => ({
-    id,
-    token,
-    credits: billing ? billing.credits : 0
-  }));
+  const [{ id, token, credits: initialCredits }] = useUser(
+    ({ id, token, billing }) => ({
+      id,
+      token,
+      credits: billing ? billing.credits : 0
+    })
+  );
 
   const { isConnected, socket, emit } = useSocket({
     token,
     userId: id
   });
 
-  const [credits, setCredits] = useState(credits);
+  const [credits, setCredits] = useState(initialCredits);
 
   useEffect(
     () => {

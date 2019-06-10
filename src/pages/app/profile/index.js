@@ -99,18 +99,22 @@ export default () => {
           Deactivate Account
         </Button>
       </div>
-      <WarningModal
-        shown={showWarningModal}
-        onClose={() => toggleWarningModal(false)}
-        onConfirm={() => {
-          toggleWarningModal(false);
-          onClickWarningConfirm();
-        }}
-        content={warningModalContent}
-        confirmText={
-          warningModalAction === 'delete' ? 'Yes delete everything' : 'Confirm'
-        }
-      />
+      {showWarningModal ? (
+        <WarningModal
+          shown={true}
+          onClose={() => toggleWarningModal(false)}
+          onConfirm={() => {
+            toggleWarningModal(false);
+            onClickWarningConfirm();
+          }}
+          content={warningModalContent}
+          confirmText={
+            warningModalAction === 'delete'
+              ? 'Yes delete everything'
+              : 'Confirm'
+          }
+        />
+      ) : null}
     </ProfileLayout>
   );
 };
