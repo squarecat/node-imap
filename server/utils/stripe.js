@@ -394,20 +394,19 @@ export async function createSubscription({ customerId, planId, quantity = 1 }) {
   }
 }
 
-// export async function updateSubscription({ subscriptionId, quantity }) {
-//   try {
-//     const subscription = await stripe.subscriptions.update(subscriptionId, {
-//       quantity
-//     });
-//     const { id } = subscription;
-//     logger.info(`stripe: updated subscription ${id}`);
-//     return { id };
-//   } catch (err) {
-//     logger.error(`stripe: failed to update subscription`);
-//     logError(err);
-//     throw err;
-//   }
-// }
+export async function updateSubscription({ subscriptionId, quantity }) {
+  try {
+    const subscription = await stripe.subscriptions.update(subscriptionId, {
+      quantity
+    });
+    logger.info(`stripe: updated subscription ${subscription.id}`);
+    return subscription;
+  } catch (err) {
+    logger.error(`stripe: failed to update subscription`);
+    logError(err);
+    throw err;
+  }
+}
 
 export async function payUpcomingInvoice({ customerId, subscriptionId }) {
   try {

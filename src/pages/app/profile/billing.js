@@ -1,7 +1,6 @@
 import './billing.module.scss';
 
 import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
-import { Elements } from 'react-stripe-elements';
 import React, {
   createContext,
   useContext,
@@ -19,6 +18,7 @@ import {
 import BillingModal from '../../../components/modal/billing';
 import Button from '../../../components/btn';
 import CardDetails from '../../../components/card-details';
+import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
 import PlanImage from '../../../components/pricing/plan-image';
@@ -56,7 +56,7 @@ function billingReducer(state, action) {
 }
 
 const initialState = {
-  unsubscribesRemaining: 0,
+  credits: 0,
   unsubscribesUsed: 0,
   card: null,
   previousPackageId: null,
@@ -92,7 +92,7 @@ export default function Billing() {
     [billing]
   );
 
-  const { unsubscribesRemaining, unsubscribesUsed } = state;
+  const { credits, unsubscribesUsed } = state;
 
   return (
     <ProfileLayout pageName="Billing">
@@ -109,9 +109,8 @@ export default function Billing() {
           <div styleName="billing-section information">
             <h2>Information</h2>
             <p>
-              You have <TextImportant>{unsubscribesRemaining}</TextImportant>{' '}
-              credits
-              {unsubscribesRemaining < 5 ? (
+              You have <TextImportant>{credits}</TextImportant> credits
+              {credits < 5 ? (
                 <>
                   <TextLink href="#packages"> buy more</TextLink>.
                 </>
@@ -123,7 +122,7 @@ export default function Billing() {
               You have used a total of{' '}
               <TextImportant>{unsubscribesUsed}</TextImportant> credits.
             </p>
-            {unsubscribesRemaining > 0 ? (
+            {credits > 0 ? (
               <p>
                 These credits will last <TextImportant>forever</TextImportant>.
               </p>

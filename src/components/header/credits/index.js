@@ -9,20 +9,18 @@ import useUser from '../../../utils/hooks/use-user';
 
 const Credits = () => {
   const { open: openModal } = useContext(ModalContext);
-  const [{ id, token, unsubscribesRemaining }] = useUser(
-    ({ id, token, billing }) => ({
-      id,
-      token,
-      unsubscribesRemaining: billing ? billing.unsubscribesRemaining : 0
-    })
-  );
+  const [{ id, token, credits }] = useUser(({ id, token, billing }) => ({
+    id,
+    token,
+    credits: billing ? billing.credits : 0
+  }));
 
   const { isConnected, socket, emit } = useSocket({
     token,
     userId: id
   });
 
-  const [credits, setCredits] = useState(unsubscribesRemaining);
+  const [credits, setCredits] = useState(credits);
 
   useEffect(
     () => {
@@ -45,10 +43,8 @@ const Credits = () => {
     <>
       <button
         styleName="btn"
-        data-count={unsubscribesRemaining}
-        onClick={() =>
-          openModal(<CreditModal credits={unsubscribesRemaining} />)
-        }
+        data-count={credits}
+        onClick={() => openModal(<CreditModal credits={credits} />)}
       >
         <span styleName="btn-text">{credits} credits</span>
       </button>

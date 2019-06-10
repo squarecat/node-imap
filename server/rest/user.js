@@ -67,8 +67,11 @@ export default app => {
         milestones = {},
         unreadNotifications = [],
         organisationId,
-        organisationAdmin
+        organisationAdmin,
+        organisationName,
+        organisationActive
       } = user;
+
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
       res.send({
         id,
@@ -95,7 +98,9 @@ export default app => {
         milestones,
         unreadNotifications,
         organisationId,
-        organisationAdmin
+        organisationAdmin,
+        organisationName,
+        organisationActive
       });
     } catch (err) {
       next(
