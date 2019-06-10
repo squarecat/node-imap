@@ -79,7 +79,14 @@ export default ({ credits }) => {
             <span styleName="credit-balance">{credits}</span>
           </span>
           <span styleName="action">
-            <Button compact inline smaller basic>
+            <Button
+              as="link"
+              linkTo="/app/profile/billing"
+              compact
+              inline
+              smaller
+              basic
+            >
               Buy more
             </Button>
           </span>
