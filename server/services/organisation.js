@@ -11,8 +11,8 @@ import {
 } from '../dao/organisation';
 import { addOrganisationToStats, addOrganisationUserToStats } from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
+import { getSubscription, updateSubscription } from '../utils/stripe';
 
-import { getSubscription } from '../utils/stripe';
 import logger from '../utils/logger';
 import { sendInviteMail } from '../utils/emails/transactional';
 
@@ -89,11 +89,29 @@ export async function addUserToOrganisation(organisationId, { userId, email }) {
     );
     // add the account to the organisation and remove from the invites
     const organisation = await addUser(organisationId, email);
+    const { active, billing = {}, currentUsers } = organisation;
+
+    logger.debug(
+      `organisation-service: organisation ${organisationId} has ${
+        currentUsers.length
+      } users`
+    );
+
+    if (active && billing.subscriptionId) {
+      const seats = currentUsers.length;
+      // update the subscription to add a user
+      logger.debug(
+        `organisation-service: org is active & has subscription ${organisationId}. Updating seats to ${seats}`
+      );
+      await updateSubscription({
+        subscriptionId: organisation.subscriptionId,
+        quantity: seats
+      });
+    }
 
     logger.debug(
       `organisation-service: removing user ${userId} connected accounts`
     );
-    // TODO remove connected accounts
     const user = await getUserById(userId);
     await Promise.all(
       user.accounts.map(async a => removeUserAccount(user, a.email))

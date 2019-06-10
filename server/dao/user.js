@@ -351,7 +351,7 @@ export async function addPackage(id, packageId, unsubscribes) {
           'billing.previousPackageId': packageId
         },
         $inc: {
-          'billing.unsubscribesRemaining': unsubscribes
+          'billing.credits': unsubscribes
         }
       }
     );
@@ -366,7 +366,7 @@ export async function addPackage(id, packageId, unsubscribes) {
   }
 }
 
-export async function incrementUnsubscribesRemaining(id, unsubscribes) {
+export async function incrementCredits(id, unsubscribes) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -376,7 +376,7 @@ export async function incrementUnsubscribesRemaining(id, unsubscribes) {
           lastUpdatedAt: isoDate()
         },
         $inc: {
-          'billing.unsubscribesRemaining': unsubscribes
+          'billing.credits': unsubscribes
         }
       }
     );

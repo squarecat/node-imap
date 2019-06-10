@@ -53,7 +53,7 @@ function billingReducer(state, action) {
 }
 
 const initialState = {
-  unsubscribesRemaining: 0,
+  credits: 0,
   unsubscribesUsed: 0,
   card: null,
   previousPackageId: null,
@@ -89,7 +89,7 @@ export default function Billing() {
     [billing]
   );
 
-  const { unsubscribesRemaining, unsubscribesUsed } = state;
+  const { credits, unsubscribesUsed } = state;
 
   return (
     <ProfileLayout pageName="Billing">
@@ -106,14 +106,13 @@ export default function Billing() {
           <div styleName="billing-section information">
             <h2>Information</h2>
             <p>
-              You have <TextImportant>{unsubscribesRemaining}</TextImportant>{' '}
-              credits.
+              You have <TextImportant>{credits}</TextImportant> credits.
             </p>
             <p>
               You have used a total of{' '}
               <TextImportant>{unsubscribesUsed}</TextImportant> credits.
             </p>
-            {unsubscribesRemaining > 0 ? (
+            {credits > 0 ? (
               <p>
                 These credits will last <TextImportant>forever</TextImportant>.
               </p>

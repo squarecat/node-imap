@@ -84,7 +84,7 @@ export const ModalSaveAction = ({
   return (
     <ModalFooter>
       <div styleName="modal-actions">
-        <Button disabled={isLoading} secondary compact onClick={onCancel}>
+        <Button disabled={isLoading} compact onClick={onCancel}>
           Cancel
         </Button>
         <Button
@@ -120,7 +120,7 @@ export const ModalPaymentSaveAction = ({
         </p>
       </div>
       <div styleName="modal-actions">
-        <Button disabled={isLoading} secondary compact onClick={onCancel}>
+        <Button disabled={isLoading} compact onClick={onCancel}>
           Cancel
         </Button>
         <Button
@@ -158,7 +158,6 @@ export const ModalWizardActions = ({
         <span styleName="prev">
           <Button
             disabled={isLoading}
-            secondary
             compact
             onClick={() => {
               if (showBack) onBack();

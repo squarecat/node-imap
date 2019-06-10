@@ -16,7 +16,7 @@ import {
   getUser,
   getUserByEmail,
   getUserByReferralCode,
-  incrementUnsubscribesRemaining,
+  incrementCredits,
   incrementUserReferralBalance,
   removeAccount,
   removeBillingCard,
@@ -49,6 +49,7 @@ import {
 } from '../../utils/emails/newsletter';
 import {
   addUserToOrganisation,
+  getOrganisationById,
   getOrganisationByInviteCode
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
@@ -67,6 +68,14 @@ import { v4 } from 'node-uuid';
 export async function getUserById(id) {
   try {
     let user = await getUser(id);
+    if (user.organisationId) {
+      const { name, active } = await getOrganisationById(user.organisationId);
+      user = {
+        ...user,
+        organisationName: name,
+        organisationActive: active
+      };
+    }
     return user;
   } catch (err) {
     logger.error(`user-service: error getting user by id ${id}`);
@@ -756,7 +765,7 @@ export async function addActivityForUser(userId, name, data = {}) {
         };
 
         // give the user the unsubs
-        await incrementUnsubscribesRemaining(userId, unsubscriptions);
+        await incrementCredits(userId, unsubscriptions);
         addRewardGivenToStats(unsubscriptions);
       }
 
