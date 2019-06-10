@@ -118,23 +118,21 @@ export function useMailSync() {
               status: 'unsubscribed'
             });
             const mail = await db.mail.get(id);
-            actions.queueAlert({
-              message: (
-                <span>
-                  {`Unsubscribe to ${mail.fromEmail} failed`}
-                  {/* <span styleName="from-email-message">{mail.fromEmail}</span>{' '} */}
-                  {/* failed. */}
-                </span>
-              ),
-              actions: [
-                {
-                  label: 'See details',
-                  onClick: () => setUnsubData(mail)
-                }
-              ],
-              isDismissable: true,
-              level: 'warning'
-            });
+            if (!estimatedSuccess) {
+              actions.queueAlert({
+                message: (
+                  <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>
+                ),
+                actions: [
+                  {
+                    label: 'See details',
+                    onClick: () => setUnsubData(mail)
+                  }
+                ],
+                isDismissable: true,
+                level: 'warning'
+              });
+            }
             incrementUnsubCount();
           } catch (err) {
             console.error(`[db]: failed to set successful unsubscribe`);
@@ -156,20 +154,9 @@ export function useMailSync() {
               status: 'failed'
             });
             const mail = await db.mail.get(id);
+            // TODO use error code
             actions.queueAlert({
-              message: (
-                <span>
-                  {`Unsubscribe to ${mail.fromEmail} failed`}
-                  {/* <span styleName="from-email-message">{mail.fromEmail}</span>{' '} */}
-                  {/* failed. */}
-                </span>
-              ),
-              actions: [
-                {
-                  label: 'See details'
-                  // onClick: () => setUnsubModal(mail, true)
-                }
-              ],
+              message: <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>,
               isDismissable: true,
               level: 'warning'
             });

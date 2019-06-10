@@ -1,5 +1,5 @@
 import { ModalBody, ModalCloseIcon, ModalFooter, ModalHeader } from '..';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import Button from '../../btn';
 import { ExternalIcon } from '../../icons';
@@ -14,6 +14,13 @@ const UnsubModal = ({ onSubmit, mail }) => {
   const [selected, setSelected] = useState(null);
   const [imageLoading, setImageLoading] = useState(true);
 
+  const onClickSubmit = useCallback(
+    details => {
+      onSubmit(details);
+      close();
+    },
+    [close, onSubmit]
+  );
   const slideContent = useMemo(
     () => {
       const onClickPositive = () => {
@@ -52,7 +59,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
           type: unsubStrategy,
           link: unsubscribeLink,
           mailTo: unsubscribeMailTo,
-          onSubmit,
+          onSubmit: onClickSubmit,
           onClickBack: () => changeSlide('first'),
           selected,
           setSelected,
@@ -60,10 +67,10 @@ const UnsubModal = ({ onSubmit, mail }) => {
           title
         });
       } else if (slide === 'positive') {
-        return slide3(onSubmit, title);
+        return slide3(onClickSubmit, title);
       }
     },
-    [close, error, imageLoading, mail, onSubmit, selected, slide]
+    [close, error, imageLoading, mail, onClickSubmit, selected, slide]
   );
   return <div styleName="unsub-modal">{slideContent}</div>;
 };
@@ -98,18 +105,20 @@ function slide1(
   let content;
   if (timeout) {
     content = (
-      <ModalBody compact>
-        <ModalHeader>
-          {title}
-          <ModalCloseIcon />
-        </ModalHeader>
-        <p>{lead}</p>
+      <>
+        <ModalBody compact>
+          <ModalHeader>
+            {title}
+            <ModalCloseIcon />
+          </ModalHeader>
+          <p>{lead}</p>
+        </ModalBody>
         <ModalFooter>
           <Button compact basic onClick={onClickNegative}>
             Unsubscribe manually
           </Button>
         </ModalFooter>
-      </ModalBody>
+      </>
     );
   } else if (unsubStrategy === 'link') {
     let actions = null;
@@ -188,16 +197,15 @@ function slide1(
             If the provider is behaving themselves, then you shouldn't get any
             more subscription emails from them!
           </p>
-
-          <ModalFooter>
-            <Button basic compact onClick={onClickPositive}>
-              Awesome!{' '}
-              <span styleName="emoji" role="img" aria-label="thumbs up emoji">
-                ️👍
-              </span>
-            </Button>
-          </ModalFooter>
         </ModalBody>
+        <ModalFooter>
+          <Button basic compact onClick={onClickPositive}>
+            Awesome!{' '}
+            <span styleName="emoji" role="img" aria-label="thumbs up emoji">
+              ️👍
+            </span>
+          </Button>
+        </ModalFooter>
       </>
     );
   }
@@ -372,24 +380,23 @@ function slide3(onSubmit) {
           Awesome! Is it okay if we use that image so that next time we don't
           make the same mistake?
         </p>
-
-        <ModalFooter>
-          <Button
-            basic
-            compact
-            onClick={() => onSubmit({ success: true, useImage: false })}
-          >
-            Nope
-          </Button>
-          <Button
-            basic
-            compact
-            onClick={() => onSubmit({ success: true, useImage: true })}
-          >
-            Yes of course!
-          </Button>
-        </ModalFooter>
       </ModalBody>
+      <ModalFooter>
+        <Button
+          basic
+          compact
+          onClick={() => onSubmit({ success: true, useImage: false })}
+        >
+          Nope
+        </Button>
+        <Button
+          basic
+          compact
+          onClick={() => onSubmit({ success: true, useImage: true })}
+        >
+          Yes of course!
+        </Button>
+      </ModalFooter>
     </>
   );
 }
