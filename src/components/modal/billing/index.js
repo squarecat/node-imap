@@ -160,7 +160,7 @@ export default ({ onClose, selectedPackage, hasBillingCard }) => {
                 <div styleName="billing-success">
                   <StarIcon width="50" height="50" />
                   <p>
-                    You now have {state.selectedPackage.unsubscribes} more
+                    You now have {state.selectedPackage.credits} more
                     unsubscribe credits!
                   </p>
                 </div>

@@ -57,9 +57,9 @@ export default ({ credits }) => {
 
       return {
         referralCredits: referrals.find(r => r.name === 'referralSignUp')
-          .unsubscriptions,
+          .credits,
         referredCredits: referrals.find(r => r.name === 'signedUpFromReferral')
-          .unsubscriptions,
+          .credits,
         rewards: rewardValues
       };
     },
@@ -152,7 +152,7 @@ const rewardLabels = {
     text: 'Add two factor auth',
     description: (
       <span>
-        Make your account <Link to="/app/profile/security">more secure</Link>
+        <Link to="/app/profile/security">Secure</Link> your account
       </span>
     )
   },
@@ -225,7 +225,7 @@ function getRewardList(rewards = []) {
     .map(r => {
       return {
         ...rewardLabels[r.name],
-        reward: r.unsubscriptions,
+        reward: r.credits,
         awarded: r.timesCompleted,
         name: r.name
       };

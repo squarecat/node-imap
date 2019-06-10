@@ -34,7 +34,7 @@ export default app => {
         saveCard
       } = req.body;
       try {
-        const response = await PaymentService.createNewPaymentForUser(
+        const response = await PaymentService.createPaymentForUser(
           {
             paymentMethodId: payment_method_id,
             paymentIntentId: payment_intent_id

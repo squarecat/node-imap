@@ -1,5 +1,9 @@
+import {
+  addActivityForUser,
+  addPackageToUser,
+  getUserById
+} from '../services/user';
 import { addGiftRedemptionToStats, addPaymentToStats } from '../services/stats';
-import { addPackageToUser, getUserById } from '../services/user';
 import {
   attachPaymentMethod,
   confirmPaymentIntent,
@@ -28,17 +32,17 @@ import { updateUser } from '../dao/user';
 // TODO this is duplicated from 'utils/prices'
 // TODO put package data in the database?
 const PACKAGE_DATA = [
-  { id: '1', unsubscribes: 50, discount: 0.1 },
-  { id: '2', unsubscribes: 100, discount: 0.15 },
-  { id: '3', unsubscribes: 200, discount: 0.2 },
-  { id: '4', unsubscribes: 300, discount: 0.4 }
+  { id: '1', credits: 50, discount: 0.1 },
+  { id: '2', credits: 100, discount: 0.15 },
+  { id: '3', credits: 200, discount: 0.2 },
+  { id: '4', credits: 300, discount: 0.4 }
 ];
 
 const PACKAGE_BASE_PRICE = 10;
 
 export const PACKAGES = PACKAGE_DATA.map(p => ({
   ...p,
-  price: (PACKAGE_BASE_PRICE - PACKAGE_BASE_PRICE * p.discount) * p.unsubscribes
+  price: (PACKAGE_BASE_PRICE - PACKAGE_BASE_PRICE * p.discount) * p.credits
 }));
 
 // export function getProduct(id) {
@@ -69,86 +73,6 @@ export function applyCoupon(amount, { percent_off = 0, amount_off = 0 }) {
     return amount - amount_off;
   }
 }
-
-// export async function createPaymentForUser({
-//   token,
-//   user,
-//   productId,
-//   coupon,
-//   address,
-//   name
-// }) {
-//   try {
-//     let payment;
-//     const { id: userId } = user;
-//     let { customerId, referredBy } = await getUserById(userId);
-//     const { price: amount, label } = getProduct(productId);
-//     let price = amount;
-//     let couponObject;
-//     if (coupon) {
-//       couponObject = await getCoupon(coupon);
-//       price = applyCoupon(amount, couponObject);
-//     }
-
-//     if (price < 50 || process.env.NODE_ENV === 'beta') {
-//       payment = true;
-//     } else {
-//       if (customerId) {
-//         await updateCustomer({
-//           customerId: customerId,
-//           token,
-//           email: user.email,
-//           address,
-//           name
-//         });
-//       } else {
-//         const { id } = await createCustomer({
-//           token,
-//           email: user.email,
-//           address,
-//           name
-//         });
-//         customerId = id;
-//       }
-//       payment = await createPayment({
-//         address,
-//         customerId: customerId,
-//         productPrice: price,
-//         productLabel: label,
-//         provider: user.provider,
-//         coupon: couponObject && couponObject.valid ? coupon : null
-//       });
-
-//       await updateUser(userId, {
-//         customerId
-//       });
-
-//       if (referredBy) {
-//         updateReferralOnReferrer(referredBy, {
-//           userId: userId,
-//           scanType: label,
-//           price
-//         });
-//       }
-//       addPaymentToStats({ price: price / 100 });
-//     }
-
-//     addPaidScanToUser(userId, productId);
-//     if (couponObject) {
-//       updateCoupon(coupon);
-//     }
-
-//     return payment;
-//   } catch (err) {
-//     logger.error(
-//       `payments-service: failed to create payment for user ${
-//         user ? user.id : ''
-//       }`
-//     );
-//     logger.error(err);
-//     throw err;
-//   }
-// }
 
 export async function listPaymentsForUser(userId) {
   try {
@@ -262,10 +186,10 @@ export async function createPaymentWithExistingCardForUser({
 async function getPaymentDetails({ productId, coupon }) {
   try {
     // get which product they are buying
-    const { price: productPrice, unsubscribes } = PACKAGES.find(
+    const { price: productPrice, credits } = PACKAGES.find(
       p => p.id === productId
     );
-    const description = `Payment for ${unsubscribes} unsubscribes`;
+    const description = `Payment for ${credits} credits`;
 
     // calcualte any coupon discount
     let finalPrice = productPrice;
@@ -337,6 +261,7 @@ async function getOrUpdateCustomerForUser(
           exp_year
         }
       };
+      addActivityForUser(user.id, 'addBillingCard');
     }
 
     await updateUser(user.id, updates);
@@ -355,15 +280,11 @@ async function handlePaymentSuccess(
   try {
     logger.info(`payments-service: payment success for user ${user.id}`);
 
-    const { unsubscribes } = PACKAGES.find(p => p.id === productId);
+    const { credits } = PACKAGES.find(p => p.id === productId);
     logger.debug(
-      `payments-service: adding package ${productId} to user - unsubs ${unsubscribes}`
+      `payments-service: adding package ${productId} to user - unsubs ${credits}`
     );
-    const updatedUser = await addPackageToUser(
-      user.id,
-      productId,
-      unsubscribes
-    );
+    const updatedUser = await addPackageToUser(user.id, productId, credits);
 
     addPaymentToStats({ price: finalPrice / 100 });
     // TODO add package purchase to stats
@@ -383,7 +304,7 @@ async function handlePaymentSuccess(
   }
 }
 
-export async function createNewPaymentForUser(
+export async function createPaymentForUser(
   { paymentMethodId, paymentIntentId },
   { user, productId, coupon, name, address, saveCard }
 ) {

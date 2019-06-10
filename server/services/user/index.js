@@ -359,7 +359,7 @@ async function addReferralActivity({ user, referralUser }) {
       id: referralUser.id,
       email: referralUser.email,
       activityId: referrerActivity.id,
-      reward: referrerActivity.reward.unsubscriptions
+      reward: referrerActivity.reward.credits
     });
     // add the data to the user
     addReferralSignupToStats();
@@ -711,7 +711,6 @@ export async function removeUserBillingCard(id) {
       await detachPaymentMethod(paymentMethodId);
     }
     const user = await removeBillingCard(id);
-    // do not wait for this one as won't be a notification
     addActivityForUser(id, 'removeBillingCard');
     return user;
   } catch (err) {
@@ -755,9 +754,9 @@ export async function addActivityForUser(userId, name, data = {}) {
       });
 
       if (reward) {
-        const { unsubscriptions } = milestone;
+        const { credits } = milestone;
         logger.debug(
-          `user-service: adding reward of ${unsubscriptions} to user ${userId}`
+          `user-service: adding reward of ${credits} to user ${userId}`
         );
         activityData = {
           ...activityData,
@@ -765,8 +764,8 @@ export async function addActivityForUser(userId, name, data = {}) {
         };
 
         // give the user the unsubs
-        await incrementCredits(userId, unsubscriptions);
-        addRewardGivenToStats(unsubscriptions);
+        await incrementCredits(userId, credits);
+        addRewardGivenToStats(credits);
       }
 
       await setUserMilestoneCompleted(userId, name);
@@ -778,7 +777,7 @@ export async function addActivityForUser(userId, name, data = {}) {
       sendToUser(userId, 'notifications', [activity]);
     }
     if (activity.reward) {
-      sendToUser(userId, 'credits', activity.reward.unsubscriptions);
+      sendToUser(userId, 'credits', activity.reward.credits);
     }
     return activity;
   } catch (err) {
@@ -787,7 +786,7 @@ export async function addActivityForUser(userId, name, data = {}) {
 }
 
 function getReward({ userActivity, name, milestone, activityData }) {
-  const { maxRedemptions, unsubscriptions } = milestone;
+  const { maxRedemptions, credits } = milestone;
 
   // conditions for reward
   // 1. user has not yet completed reward
@@ -816,7 +815,7 @@ function getReward({ userActivity, name, milestone, activityData }) {
   logger.debug(`user-service: conditions for reward met for activity ${name}`);
   return {
     reward: {
-      unsubscriptions
+      credits
     },
     // if it's a reward we add a notification
     // TODO what other use cases do we need to do this for?

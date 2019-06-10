@@ -126,9 +126,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
       <div styleName="modal-content">
         <p>
           Purchasing a package of{' '}
-          <TextImportant>
-            {state.selectedPackage.unsubscribes} unsubscribes
-          </TextImportant>
+          <TextImportant>{state.selectedPackage.credits} credits</TextImportant>
           .
         </p>
         <form

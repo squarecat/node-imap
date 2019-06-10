@@ -23,9 +23,7 @@ export default function StartPurchase({ onClickClose }) {
       <div styleName="modal-content">
         <p>
           Purchasing a package of{' '}
-          <TextImportant>
-            {selectedPackage.unsubscribes} unsubscribes.
-          </TextImportant>
+          <TextImportant>{selectedPackage.credits} credits.</TextImportant>
         </p>
         <PlanImage smaller compact type="package" />
         <Price

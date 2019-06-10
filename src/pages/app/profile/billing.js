@@ -54,7 +54,7 @@ function billingReducer(state, action) {
 
 const initialState = {
   credits: 0,
-  unsubscribesUsed: 0,
+  creditsUsed: 0,
   card: null,
   previousPackageId: null,
   settings: {
@@ -89,7 +89,7 @@ export default function Billing() {
     [billing]
   );
 
-  const { credits, unsubscribesUsed } = state;
+  const { credits, creditsUsed } = state;
 
   return (
     <ProfileLayout pageName="Billing">
@@ -110,7 +110,7 @@ export default function Billing() {
             </p>
             <p>
               You have used a total of{' '}
-              <TextImportant>{unsubscribesUsed}</TextImportant> credits.
+              <TextImportant>{creditsUsed}</TextImportant> credits.
             </p>
             {credits > 0 ? (
               <p>
@@ -233,9 +233,9 @@ function Packages({ onClickBuy }) {
         const showReBuy = isPreviousPackage && !!state.card;
         const discountText = `Save ${p.discount * 100}%`;
         return (
-          <div styleName="plans-list" key={p.unsubscribes}>
+          <div styleName="plans-list" key={p.credits}>
             <PlanImage smaller compact type="package" />
-            <h3 styleName="plan-title">{p.unsubscribes} credits</h3>
+            <h3 styleName="plan-title">{p.credits} credits</h3>
             <Price price={p.price} />
             <div styleName="package-buy-btn">
               <a styleName="billing-btn" onClick={() => onClickBuy(p.id)}>
