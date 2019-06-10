@@ -5,7 +5,6 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useReducer,
   useState
 } from 'react';
@@ -265,15 +264,14 @@ function Enterprise() {
         <PlanImage smaller compact type="enterprise" />
         <div>
           <h3 styleName="plan-title">Unlimited credits</h3>
-          <span>Up to {ENTERPRISE.seats} seats</span>
+          {/* <span>${ENTERPRISE.pricePerSeat}/seat</span> */}
         </div>
-        <Price price={ENTERPRISE.price} asterisk />
+        <span>
+          <Price price={ENTERPRISE.pricePerSeat} asterisk /> per seat
+        </span>
         <a styleName="billing-btn">Contact</a>
       </div>
-      <TextFootnote>
-        * prices start from ${(ENTERPRISE.price / 100).toFixed(2)} for up to 10
-        seats.
-      </TextFootnote>
+      <TextFootnote>* billed monthly.</TextFootnote>
     </div>
   );
 }
