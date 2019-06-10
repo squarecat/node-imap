@@ -232,7 +232,8 @@ export const ModalCloseIcon = ({ onClose }) => {
         onClose ? onClose() : closeModal();
       }}
     >
-      <CloseIcon width="18" height="18" />
+      <CloseIcon width="8" height="8" />
+      close
     </a>
   );
 };

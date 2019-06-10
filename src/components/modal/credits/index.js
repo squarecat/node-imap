@@ -9,7 +9,9 @@ import Modal, {
 
 import Button from '../../btn';
 import { InlineFormInput } from '../../form';
+import { Link } from 'gatsby';
 import React from 'react';
+import { TextImportant } from '../../text';
 import { TwitterIcon } from '../../icons';
 import request from '../../../utils/request';
 import { useAsync } from 'react-use';
@@ -48,11 +50,13 @@ export default ({ shown = true, onClose, credits }) => {
       shown={shown}
       onClose={onClose}
       dismissable={false}
-      style={{ width: 580 }}
+      style={{ width: 680 }}
     >
-      <ModalCloseIcon />
       <ModalBody>
-        <ModalHeader>Credit Balance</ModalHeader>
+        <ModalHeader>
+          Credit Balance
+          <ModalCloseIcon />
+        </ModalHeader>
         <p styleName="balance">
           <span styleName="balance-text">
             Your current credit balance is{' '}
@@ -66,9 +70,10 @@ export default ({ shown = true, onClose, credits }) => {
         </p>
         <ModalSubHeader>Invite friends and Earn Credit</ModalSubHeader>
         <p>
-          You’ll receive 20 unsubscribe credits when the person you invite signs
-          up for an account, and they’ll also get 5 extra credits to get
-          started.
+          You’ll receive{' '}
+          <TextImportant>20 free unsubscribe credits</TextImportant> when the
+          person you invite signs up for an account, and they’ll also get{' '}
+          <TextImportant>10 extra credits</TextImportant> to get started.
         </p>
 
         <div styleName="invite-actions">
@@ -99,29 +104,50 @@ export default ({ shown = true, onClose, credits }) => {
 };
 
 const rewardLabels = {
-  sharedOnTwitter: {
-    icon: <TwitterIcon />,
-    text: 'Share on Twitter'
-  },
-  completedOnboarding: {
-    icon: <TwitterIcon />,
-    text: 'Connect first account'
+  connectedFirstAccount: {
+    text: 'Connect first account',
+    description: (
+      <span>
+        <Link to="/app/profile/accounts">Connect</Link> your first account
+      </span>
+    )
   },
   connectedAdditionalAccount: {
     icon: <TwitterIcon />,
-    text: 'Connect more accounts'
+    text: 'Connect more accounts',
+    description: (
+      <span>
+        <Link to="/app/profile/accounts">Connect</Link> another account
+      </span>
+    )
   },
   addedTwoFactorAuth: {
     icon: <TwitterIcon />,
-    text: 'Add two factor auth'
+    text: 'Add two factor auth',
+    description: (
+      <span>
+        Make your account <Link to="/app/profile/security">more secure</Link>
+      </span>
+    )
+  },
+  sharedOnTwitter: {
+    icon: <TwitterIcon />,
+    text: 'Share on Twitter',
+    description: (
+      <span>
+        <a href>Tweet about us</a> to your followers
+      </span>
+    )
   },
   reached100Unsubscribes: {
     icon: null,
-    text: 'Reach 100 total unsubscribes'
+    text: 'Reach 100 total unsubscribes',
+    description: <span>Become a Leave Me Alone super user!</span>
   },
   reached500Unsubscribes: {
     icon: null,
-    text: 'Reach 500 total unsubscribes'
+    text: 'Reach 500 total unsubscribes',
+    description: <span>We'll personally name you an unsubscribe master!</span>
   }
 };
 
@@ -136,12 +162,12 @@ const referralLabels = {
 };
 function getReferralList({ referredBy, referrals }) {
   return (
-    <ul styleName="earn-credit">
+    <ul styleName="earn-credit earn-credit-referrals">
       {referredBy ? (
         <li key={referredBy.email}>
-          <div styleName="earn-description earn-description-email">
+          <div styleName="earn-description">
             <span styleName="earn-email">{referredBy.email}</span>
-            <span>referred you</span>
+            <span styleName="earn-description-text">referred you</span>
           </div>
           <div styleName="earn-status">
             <span styleName="earn-amount">{`${
@@ -153,9 +179,9 @@ function getReferralList({ referredBy, referrals }) {
       ) : null}
       {referrals.map(({ email, reward }) => (
         <li key={email}>
-          <div styleName="earn-description earn-description-email">
+          <div styleName="earn-description">
             <span>{email}</span>
-            <span>was referred by you</span>
+            <span styleName="earn-description-text">was referred by you</span>
           </div>
           <div styleName="earn-status">
             <span styleName="earn-amount">{`${reward} credits`}</span>
@@ -165,37 +191,30 @@ function getReferralList({ referredBy, referrals }) {
       ))}
     </ul>
   );
-  // const rewardItems = referralList.map(r => {
-  //   return {
-  //     ...referralLabels[r.name],
-  //     reward: r.unsubscriptions,
-  //     awarded: r.timesCompleted,
-  //     name: r.name
-  //   };
-  // });
-  // return rewardList(rewardItems);
 }
 
 function getRewardList(rewards = []) {
-  const rewardItems = rewards.map(r => {
-    return {
-      ...rewardLabels[r.name],
-      reward: r.unsubscriptions,
-      awarded: r.timesCompleted,
-      name: r.name
-    };
-  });
+  const rewardItems = rewards
+    .filter(r => rewardLabels[r.name])
+    .map(r => {
+      return {
+        ...rewardLabels[r.name],
+        reward: r.unsubscriptions,
+        awarded: r.timesCompleted,
+        name: r.name
+      };
+    });
   return rewardList(rewardItems);
 }
 
 function rewardList(rewardItems) {
   return (
     <ul styleName="earn-credit">
-      {rewardItems.map(({ text, icon, name, reward, awarded }) => (
+      {rewardItems.map(({ text, name, reward, awarded, description }) => (
         <li key={name}>
           <div styleName="earn-description">
-            {icon}
             <span>{text}</span>
+            <span styleName="earn-description-text">{description}</span>
           </div>
           <div styleName="earn-status">
             <span styleName="earn-amount">{`${reward} credits`}</span>
