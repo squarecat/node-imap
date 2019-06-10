@@ -206,8 +206,11 @@
 .footer-info {
   margin-right: auto;
   font-size: 11px;
-  margin-bottom: 5px;
   line-height: 16px;
+
+  p {
+    margin: 0;
+  }
 
   @media (max-width: 500px) {
     margin: auto;

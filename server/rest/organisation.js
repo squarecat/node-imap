@@ -1,5 +1,6 @@
 import {
   getOrganisationById,
+  getOrganisationSubscription,
   getOrganisationUserStats,
   inviteUserToOrganisation,
   updateOrganisation
@@ -9,7 +10,8 @@ import Joi from 'joi';
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
 import logger from '../utils/logger';
-import { validateBody } from '../middleware/validation';
+
+// import { validateBody } from '../middleware/validation';
 
 export default app => {
   app.get('/api/organisation/:id', auth, async (req, res, next) => {
@@ -30,7 +32,7 @@ export default app => {
     }
   });
 
-  app.get('/api/organisation/stats/:id', auth, async (req, res, next) => {
+  app.get('/api/organisation/:id/stats', auth, async (req, res, next) => {
     const { id } = req.params;
 
     try {
@@ -47,6 +49,30 @@ export default app => {
       );
     }
   });
+
+  app.get(
+    '/api/organisation/:id/subscription',
+    auth,
+    async (req, res, next) => {
+      const { id } = req.params;
+
+      try {
+        const subscription = await getOrganisationSubscription(id);
+        return res.send(subscription);
+      } catch (err) {
+        logger.error(
+          'organisations-rest: error getting organisation subscription'
+        );
+        logger.error(err);
+        next(
+          new RestError('failed to get organisation subscription', {
+            organisationId: id,
+            cause: err
+          })
+        );
+      }
+    }
+  );
 
   app.post('/api/organisation/:id/invite', auth, async (req, res, next) => {
     const { id } = req.params;
@@ -70,9 +96,9 @@ export default app => {
   app.patch(
     '/api/organisation/:id',
     auth,
-    validateBody(updateParams, {
-      passthrough: true
-    }),
+    // validateBody(updateParams, {
+    //   passthrough: true
+    // }),
     async (req, res, next) => {
       const { id } = req.params;
       const { op, value } = req.body;

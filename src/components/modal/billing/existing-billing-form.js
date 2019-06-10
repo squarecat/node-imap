@@ -34,7 +34,7 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
     }
   }
 
-  // TODO a lot of duplication from checkout form
+  // TODO used elsewhere - make this common
   async function handleResponse(response) {
     if (response.error) {
       let message = DEFAULT_ERROR;
@@ -43,8 +43,16 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
       }
       dispatch({ type: 'set-error', error: message });
     } else if (response.requires_action) {
+      dispatch({ type: 'set-loading', loading: true });
       await handleRequiresAction(response);
+      dispatch({ type: 'set-loading', loading: false });
     } else if (response.requires_payment_method) {
+      // TODO better errors
+      dispatch({
+        type: 'set-error',
+        error:
+          'An error occured charging your card, please enter different card details.'
+      });
       dispatch({ type: 'set-step', data: 'enter-billing-details' });
     } else {
       onPurchaseSuccess(response.user);
@@ -52,6 +60,7 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
     }
   }
 
+  // TODO used elsewhere - make this common
   async function handleRequiresAction(response) {
     // Use Stripe.js to handle the required card action
     const { error: errorAction, paymentIntent } = await stripe.handleCardAction(
@@ -156,9 +165,9 @@ export default injectStripe(ExistingForm);
 async function confirmPaymentExistingCard({ productId, coupon }) {
   let url;
   if (coupon) {
-    url = `/api/checkout/${productId}/${coupon}`;
+    url = `/api/payments/checkout/${productId}/${coupon}`;
   } else {
-    url = `/api/checkout/${productId}`;
+    url = `/api/payments/checkout/${productId}`;
   }
   return request(url, {
     method: 'POST',

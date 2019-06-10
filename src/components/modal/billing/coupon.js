@@ -117,5 +117,5 @@ function getDiscountAmount(price, { percent_off, amount_off } = {}) {
 }
 
 function getCoupon(coupon) {
-  return request(`/api/checkout/${coupon}`);
+  return request(`/api/payments/coupon/${coupon}`);
 }

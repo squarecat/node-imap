@@ -1,19 +1,19 @@
 import '../modal.module.scss';
 
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
-import { StripeStateContext } from '../../../providers/stripe-provider';
-import { injectStripe } from 'react-stripe-elements';
 import { FormCheckbox, FormGroup, FormNotification } from '../../form';
-import { LockIcon } from '../../icons';
 import React, { useContext } from 'react';
 
 import Button from '../../btn';
 import CouponInput from './coupon';
+import { LockIcon } from '../../icons';
+import PaymentAddressDetails from '../../payments/address-details';
+import PaymentCardDetails from '../../payments/card-details';
+import { StripeStateContext } from '../../../providers/stripe-provider';
 import { TextImportant } from '../../text';
+import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
-import PaymentCardDetails from '../../payments/card-details';
-import PaymentAddressDetails from '../../payments/address-details';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
@@ -61,7 +61,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
           saveCard: state.save_payment_method,
           ...billingDetails
         });
-        handleConfirmPaymentResponse(response);
+        handleResponse(response);
       }
     } catch (err) {
       dispatch({
@@ -73,7 +73,8 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
     }
   }
 
-  async function handleConfirmPaymentResponse(response) {
+  // TODO used elsewhere - make this common
+  async function handleResponse(response) {
     if (response.error) {
       let message = DEFAULT_ERROR;
       if (response.error.message) {
@@ -82,14 +83,21 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
       dispatch({ type: 'set-error', error: message });
     } else if (response.requires_action) {
       dispatch({ type: 'set-loading', loading: true });
-      await handleRequiresAction();
+      await handleRequiresAction(response);
       dispatch({ type: 'set-loading', loading: false });
+    } else if (response.requires_payment_method) {
+      // TODO better errors
+      dispatch({
+        type: 'set-error',
+        error: 'An error occured charging your card'
+      });
     } else {
       onPurchaseSuccess(response.user);
       dispatch({ type: 'set-step', data: 'success' });
     }
   }
 
+  // TODO used elsewhere - make this common
   async function handleRequiresAction(response) {
     // Use Stripe.js to handle the required card action
     const { error: errorAction, paymentIntent } = await stripe.handleCardAction(
@@ -109,7 +117,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
         productId: state.selectedPackage.id,
         coupon: state.coupon
       });
-      handleConfirmPaymentResponse(response);
+      handleResponse(response);
     }
   }
 
@@ -142,7 +150,7 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
             }
           />
 
-          <PaymentCardDetails />
+          <PaymentCardDetails loading={state.loading} />
 
           <FormGroup>
             <FormCheckbox
@@ -225,9 +233,9 @@ async function confirmPayment({
   const { id } = paymentMethod;
   let url;
   if (coupon) {
-    url = `/api/checkout/new/${productId}/${coupon}`;
+    url = `/api/payments/checkout/new/${productId}/${coupon}`;
   } else {
-    url = `/api/checkout/new/${productId}`;
+    url = `/api/payments/checkout/new/${productId}`;
   }
   return request(url, {
     method: 'POST',

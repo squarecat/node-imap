@@ -19,9 +19,14 @@
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  background-color: #f1645f;
+
+  background-color: $color-grey-darker;
+
+  &.inactive {
+    background-color: $color-bg-error;
+  }
 
   &.active {
-    background-color: #37d288;
+    background-color: $color-bg-success;
   }
 }

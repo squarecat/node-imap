@@ -5,12 +5,14 @@ import {
   create,
   getById,
   getByInviteCode,
+  getBySubscription,
   getFromInvites,
   update
 } from '../dao/organisation';
 import { addOrganisationToStats, addOrganisationUserToStats } from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
 
+import { getSubscription } from '../utils/stripe';
 import logger from '../utils/logger';
 import { sendInviteMail } from '../utils/emails/transactional';
 
@@ -20,6 +22,10 @@ export function getOrganisationById(id) {
 
 export function getOrganisationByInviteCode(code) {
   return getByInviteCode(code);
+}
+
+export function getOrganisationBySubscription(subscriptionId) {
+  return getBySubscription(subscriptionId);
 }
 
 export async function createOrganisation(email, data) {
@@ -131,4 +137,29 @@ export async function getOrganisationUserStats(id) {
 
 export function updateOrganisation(id, data) {
   return update(id, data);
+}
+
+export async function getOrganisationSubscription(id) {
+  try {
+    const { billing } = await getOrganisationById(id);
+    if (!billing || !billing.subscriptionId) return null;
+    const {
+      canceled_at,
+      current_period_start,
+      current_period_end,
+      ended_at,
+      quantity,
+      plan
+    } = await getSubscription({ subscriptionId: billing.subscriptionId });
+    return {
+      canceled_at,
+      current_period_start,
+      current_period_end,
+      ended_at,
+      quantity,
+      plan
+    };
+  } catch (err) {
+    throw err;
+  }
 }

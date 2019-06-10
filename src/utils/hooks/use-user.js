@@ -59,6 +59,12 @@ export default globalReducer(
         ...state,
         billing
       };
+    },
+    setOrganisationLastUpdated: (state, lastUpdated) => {
+      return {
+        ...state,
+        organisationLastUpdated: lastUpdated
+      };
     }
   }
 );

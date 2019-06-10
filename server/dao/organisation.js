@@ -118,6 +118,18 @@ export async function getByInviteCode(inviteCode) {
     throw err;
   }
 }
+export async function getBySubscription(subscriptiondId) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.findOne({ 'billing.subscriptionId': subscriptiondId });
+  } catch (err) {
+    logger.error(
+      `organisation-dao: error getting organisation by subscription ${subscriptiondId}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
 
 export async function getFromInvites(id, email) {
   try {

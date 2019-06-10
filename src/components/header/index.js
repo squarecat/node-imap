@@ -16,7 +16,7 @@ export default ({ loaded }) => {
       </Link>
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
-        <Credits />
+        {/* <Credits /> */}
         <NotificationsDropdown />
         <SettingsDropdown />
       </div>
