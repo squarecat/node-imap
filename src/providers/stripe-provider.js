@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 
 import { StripeProvider as ReactStripeProvider } from 'react-stripe-elements';
+import scriptjs from 'scriptjs';
 
 export const StripeStateContext = createContext(null);
 
@@ -11,17 +12,9 @@ export function StripeProvider({ children }) {
   // for async script loads
   // https://github.com/stripe/react-stripe-elements#advanced-integrations
   useEffect(() => {
-    if (window.Stripe) {
-      console.log('stripe-provider: initialising Stripe from window');
+    scriptjs('https://js.stripe.com/v3/', function() {
       setStripe(window.Stripe(process.env.STRIPE_PK));
-    } else {
-      console.log('stripe-provider: doing query selector');
-      const stripEl = document.querySelector('#stripe-js');
-      stripEl.addEventListener('load', () => {
-        // Create Stripe instance once Stripe.js loads
-        setStripe(window.Stripe(process.env.STRIPE_PK));
-      });
-    }
+    });
   }, []);
 
   return (

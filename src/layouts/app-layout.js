@@ -5,6 +5,7 @@ import './layout.css';
 import { AlertProvider } from '../app/alert-provider';
 import { DatabaseProvider } from '../app/db-provider';
 import Helmet from 'react-helmet';
+import { ModalProvider } from '../providers/modal-provider';
 import React from 'react';
 import { StripeProvider } from '../providers/stripe-provider';
 import { setConfig } from 'react-hot-loader';
@@ -30,17 +31,14 @@ const AppLayout = ({ pageName, children }) => {
           }
         ]}
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
-        script={[
-          {
-            src: 'https://js.stripe.com/v3/',
-            type: 'text/javascript'
-          }
-        ]}
       />
+
       <DatabaseProvider>
-        <AlertProvider>
-          <StripeProvider>{children}</StripeProvider>
-        </AlertProvider>
+        <ModalProvider>
+          <AlertProvider>
+            <StripeProvider>{children}</StripeProvider>
+          </AlertProvider>
+        </ModalProvider>
       </DatabaseProvider>
     </>
   );

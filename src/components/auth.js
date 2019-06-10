@@ -1,6 +1,6 @@
 import './auth.module.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAsync, useLoader } from '../utils/hooks';
 
 import Loading from './loading';
@@ -25,7 +25,7 @@ export default ({ children }) => {
         load(user);
       }
     },
-    [userLoading]
+    [load, user, userLoading]
   );
 
   if (error) {

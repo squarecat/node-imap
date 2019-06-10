@@ -1,14 +1,9 @@
 import { CloseIcon, LockIcon } from '../icons';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import Button from '../btn';
 import LoadingOverlay from '../loading/overlay';
+import { ModalContext } from '../../providers/modal-provider';
 import ReactDOM from 'react-dom';
 import { Transition } from 'react-transition-group';
 import cx from 'classnames';
@@ -17,7 +12,6 @@ import modalStyles from './modal-template.module.scss';
 const modalRoot = document.getElementById('modal-root');
 const el = document.createElement('div');
 
-const ModalContext = createContext(null);
 /**
  * Modal component
  * @param children React node contents
@@ -30,76 +24,40 @@ const ModalContext = createContext(null);
  * </Button>
  *
  */
-export default ({
-  children,
-  shown = false,
-  fluid = false,
-  dismissable = true,
-  onClose = () => {},
-  wizardComponent = null,
-  style
-}) => {
-  const [isShown, setShown] = useState(false);
+export default ({ children, shown = false, wizardComponent = null, style }) => {
   const ref = useRef(null);
-
-  function closeModal() {
-    setShown(false);
-    onClose();
-    // setTimeout(onClose, 500);
-  }
-  function closeModalByEsc({ key }) {
-    if (dismissable && key === 'Escape') {
-      closeModal();
-    }
-  }
-
-  useEffect(() => {
-    modalRoot.appendChild(el);
-    document.addEventListener('keyup', closeModalByEsc);
-    return () => {
-      if (!shown) {
-        document.removeEventListener('keyup', closeModalByEsc);
-      }
-    };
-  }, []);
-
-  useEffect(
-    () => {
-      setShown(shown);
-    },
-    [shown]
-  );
 
   const btnHeight = ref.current
     ? ref.current.offsetTop + ref.current.height
     : 0;
 
+  useEffect(() => {
+    modalRoot.appendChild(el);
+  }, []);
+
   return ReactDOM.createPortal(
-    <ModalContext.Provider value={{ closeModal }}>
-      <Transition appear timeout={200} mountOnEnter unmountOnExit in={isShown}>
-        {state => {
-          const hasStyle = !!modalStyles[`modalContainer-${state}`];
-          const classes = cx(modalStyles['modalContainer'], {
-            [modalStyles[`modalContainer-${state}`]]: hasStyle,
-            fluid
-          });
-          return (
-            <div className={classes} data-modal>
-              <div styleName="modal-wizard-wrapper">
-                {wizardComponent ? (
-                  <span style={{ width: style.width, top: btnHeight }}>
-                    {wizardComponent}
-                  </span>
-                ) : null}
-                <div style={style} styleName="modal" ref={ref}>
-                  {children}
-                </div>
+    <Transition appear timeout={200} mountOnEnter unmountOnExit in={shown}>
+      {state => {
+        const hasStyle = !!modalStyles[`modalContainer-${state}`];
+        const classes = cx(modalStyles['modalContainer'], {
+          [modalStyles[`modalContainer-${state}`]]: hasStyle
+        });
+        return (
+          <div className={classes} data-modal>
+            <div styleName="modal-wizard-wrapper">
+              {wizardComponent ? (
+                <span style={{ width: style.width, top: btnHeight }}>
+                  {wizardComponent}
+                </span>
+              ) : null}
+              <div style={style} styleName="modal" ref={ref}>
+                {children}
               </div>
             </div>
-          );
-        }}
-      </Transition>
-    </ModalContext.Provider>,
+          </div>
+        );
+      }}
+    </Transition>,
     el
   );
 };
@@ -110,6 +68,10 @@ export const ModalFooter = ({ children }) => {
 
 export const ModalHeader = ({ children }) => {
   return <h3 styleName="modal-header">{children}</h3>;
+};
+
+export const ModalSubHeader = ({ children }) => {
+  return <h4 styleName="modal-subheader">{children}</h4>;
 };
 
 export const ModalSaveAction = ({
@@ -189,7 +151,7 @@ export const ModalWizardActions = ({
   onCancel = () => {},
   style
 }) => {
-  const { closeModal } = useContext(ModalContext);
+  const { close } = useContext(ModalContext);
   return (
     <div styleName="modal-wizard-actions" style={style}>
       {showBack ? (
@@ -213,7 +175,7 @@ export const ModalWizardActions = ({
           onClick={async () => {
             const hasNextPage = await onNext();
             if (hasNextPage === false) {
-              closeModal();
+              close();
             }
           }}
         >
@@ -224,16 +186,12 @@ export const ModalWizardActions = ({
   );
 };
 
-export const ModalCloseIcon = ({ onClose }) => {
-  const { closeModal } = useContext(ModalContext);
+export const ModalCloseIcon = () => {
+  const { close } = useContext(ModalContext);
   return (
-    <a
-      styleName="close"
-      onClick={() => {
-        onClose ? onClose() : closeModal();
-      }}
-    >
-      <CloseIcon width="18" height="18" />
+    <a styleName="close" onClick={close}>
+      <CloseIcon width="8" height="8" />
+      close
     </a>
   );
 };
@@ -246,9 +204,12 @@ export const ModalDismissAction = ({ onDismiss, btnText = 'Got it!' }) => {
   );
 };
 
-export const ModalBody = ({ children, compact, loading = false }) => {
+export const ModalBody = ({ children, compact = false, loading = false }) => {
+  const classes = cx(modalStyles.modalBody, {
+    [modalStyles.modalBodyCompact]: compact
+  });
   return (
-    <div styleName={`modal-body ${compact ? 'compact' : ''}`}>
+    <div className={classes}>
       <>
         {children}
         {loading ? <LoadingOverlay /> : null}

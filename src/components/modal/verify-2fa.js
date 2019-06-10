@@ -1,6 +1,6 @@
 import './modal.module.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Button from '../btn';
 import ModalClose from './modal-close';
@@ -9,18 +9,23 @@ import TwoFactorInput from '../2fa';
 export default ({ onClose, action }) => {
   const [isShown, setShown] = useState(false);
   const [{ isVerified, token }, setVerified] = useState({});
-  const onClickClose = async () => {
-    try {
-      if (action && isVerified) {
-        await action(token);
-      }
-      setShown(false);
-      setTimeout(() => onClose({ verified: isVerified }), 300);
-    } catch (err) {
-      setVerified({ isVerified: false });
-    }
-  };
+
   const [isLoading, setLoading] = useState(false);
+
+  const onClickClose = useCallback(
+    async () => {
+      try {
+        if (action && isVerified) {
+          await action(token);
+        }
+        setShown(false);
+        setTimeout(() => onClose({ verified: isVerified }), 300);
+      } catch (err) {
+        setVerified({ isVerified: false });
+      }
+    },
+    [action, isVerified, onClose, token]
+  );
 
   useEffect(
     () => {
@@ -28,17 +33,17 @@ export default ({ onClose, action }) => {
         onClickClose();
       }
     },
-    [isVerified]
+    [isVerified, onClickClose]
   );
 
   useEffect(() => {
     setShown(true);
-  });
+  }, []);
 
   return (
     <>
       <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-        <ModalClose onClose={onClickClose} />
+        <ModalClose onClose={onClose} />
         <h3>Two-factor Auth Required</h3>
         <div styleName="modal-content">
           <p>This action requires authentication.</p>

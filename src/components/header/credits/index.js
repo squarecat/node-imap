@@ -1,12 +1,14 @@
 import './credits.module.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import CreditModal from '../../modal/credits';
+import { ModalContext } from '../../../providers/modal-provider';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
 const Credits = () => {
+  const { open: openModal } = useContext(ModalContext);
   const [{ id, token, unsubscribesRemaining }] = useUser(
     ({ id, token, billing }) => ({
       id,
@@ -41,11 +43,12 @@ const Credits = () => {
 
   return (
     <>
-      <CreditModal credits={unsubscribesRemaining} />
       <button
         styleName="btn"
         data-count={unsubscribesRemaining}
-        onClick={() => {}}
+        onClick={() =>
+          openModal(<CreditModal credits={unsubscribesRemaining} />)
+        }
       >
         <span styleName="btn-text">{credits} credits</span>
       </button>
@@ -53,5 +56,4 @@ const Credits = () => {
   );
 };
 
-Credits.whyDidYouRender = true;
 export default Credits;

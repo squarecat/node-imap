@@ -103,15 +103,17 @@ export function AlertProvider({ children }) {
     return dispatch({ type: 'dismiss-alert' });
   }
 
+  const actions = {
+    setAlert: data => dispatch({ type: 'set-alert', data }),
+    dismiss: id => onDismiss(id),
+    queueAlert: data => dispatch({ type: 'queue-alert', data })
+  };
+
   return (
     <AlertContext.Provider
       value={{
         state,
-        actions: {
-          setAlert: data => dispatch({ type: 'set-alert', data }),
-          dismiss: id => onDismiss(id),
-          queueAlert: data => dispatch({ type: 'queue-alert', data })
-        }
+        actions
       }}
     >
       {children}

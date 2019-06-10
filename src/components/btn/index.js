@@ -29,11 +29,12 @@ export default ({
   as,
   linkArgs = {},
   disabled = false,
+  inline = false,
   ...props
 }) => {
   const classes = cx('btn', {
     loading,
-    inline: props.inline,
+    inline,
     compact: props.compact,
     centered: props.centered,
     muted: props.muted,

@@ -1,75 +1,78 @@
-import '../modal.module.scss';
+import { ModalBody, ModalCloseIcon, ModalFooter, ModalHeader } from '..';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
-import Modal, { ModalBody, ModalCloseIcon } from '..';
-import React, { useState } from 'react';
-
+import Button from '../../btn';
 import { ExternalIcon } from '../../icons';
+import { ModalContext } from '../../../providers/modal-provider';
 import { TextImportant } from '../../text';
+import styles from './unsub.module.scss';
 
-export default ({ shown, onClose, onSubmit, mail }) => {
-  const {
-    id: mailId,
-    estimatedSuccess,
-    hasImage,
-    unsubscribeLink,
-    unsubscribeMailTo,
-    unsubStrategy,
-    resolved
-  } = mail;
-  const error = !estimatedSuccess;
+const UnsubModal = ({ onSubmit, mail }) => {
+  const error = !mail.estimatedSuccess;
+  const { close } = useContext(ModalContext);
   const [slide, changeSlide] = useState('first');
   const [selected, setSelected] = useState(null);
   const [imageLoading, setImageLoading] = useState(true);
 
-  const onClickNegative = () => changeSlide('negative');
-  const onClickPositive = () => {
-    if (error && !resolved) {
-      return changeSlide('positive');
-    }
-    onClose();
-  };
-  const pickSlide = title => {
-    if (slide === 'first') {
-      return slide1(
-        mailId,
-        onClickPositive,
-        onClickNegative,
-        error,
-        hasImage,
-        unsubStrategy,
-        resolved,
-        imageLoading,
-        setImageLoading,
-        title
-      );
-    } else if (slide === 'negative') {
-      return slide2({
-        type: unsubStrategy,
-        link: unsubscribeLink,
-        mailTo: unsubscribeMailTo,
-        onSubmit,
-        onClickBack: () => changeSlide('first'),
-        selected,
-        setSelected,
-        hasImage,
-        title
-      });
-    } else if (slide === 'positive') {
-      return slide3(onSubmit, title);
-    }
-  };
-  const title = error ? 'Something went wrong...' : 'Successfully unsubscribed';
-  return (
-    <Modal
-      shown={shown}
-      onClose={onClose}
-      dismissable={false}
-      style={{ width: 580 }}
-    >
-      <ModalCloseIcon />
-      {pickSlide(title)}
-    </Modal>
+  const onClickSubmit = useCallback(
+    details => {
+      onSubmit(details);
+      close();
+    },
+    [close, onSubmit]
   );
+  const slideContent = useMemo(
+    () => {
+      const onClickPositive = () => {
+        if (error && !mail.resolved) {
+          return changeSlide('positive');
+        }
+        close();
+      };
+      const onClickNegative = () => changeSlide('negative');
+      const title = error
+        ? 'Something went wrong...'
+        : 'Successfully unsubscribed';
+      const {
+        id: mailId,
+        hasImage,
+        unsubscribeLink,
+        unsubscribeMailTo,
+        unsubStrategy,
+        resolved
+      } = mail;
+      if (slide === 'first') {
+        return slide1(
+          mailId,
+          onClickPositive,
+          onClickNegative,
+          error,
+          hasImage,
+          unsubStrategy,
+          resolved,
+          imageLoading,
+          setImageLoading,
+          title
+        );
+      } else if (slide === 'negative') {
+        return slide2({
+          type: unsubStrategy,
+          link: unsubscribeLink,
+          mailTo: unsubscribeMailTo,
+          onSubmit: onClickSubmit,
+          onClickBack: () => changeSlide('first'),
+          selected,
+          setSelected,
+          hasImage,
+          title
+        });
+      } else if (slide === 'positive') {
+        return slide3(onClickSubmit, title);
+      }
+    },
+    [close, error, imageLoading, mail, onClickSubmit, selected, slide]
+  );
+  return <div styleName="unsub-modal">{slideContent}</div>;
 };
 
 function slide1(
@@ -102,55 +105,63 @@ function slide1(
   let content;
   if (timeout) {
     content = (
-      <ModalBody compact>
-        <h3>{title}</h3>
-        <p>{lead}</p>
-        <div styleName="modal-actions">
-          <a styleName="modal-btn" onClick={onClickNegative}>
+      <>
+        <ModalBody compact>
+          <ModalHeader>
+            {title}
+            <ModalCloseIcon />
+          </ModalHeader>
+          <p>{lead}</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button compact basic onClick={onClickNegative}>
             Unsubscribe manually
-          </a>
-        </div>
-      </ModalBody>
+          </Button>
+        </ModalFooter>
+      </>
     );
   } else if (unsubStrategy === 'link') {
     let actions = null;
     if (resolved) {
       actions = (
-        <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
+        <Button compact basic onClick={onClickPositive}>
           Awesome!{' '}
           <span styleName="emoji" role="img" aria-label="thumbs up emoji">
             ️👍
           </span>
-        </a>
+        </Button>
       );
     } else {
       actions = (
         <>
-          <a styleName="modal-btn" onClick={onClickNegative}>
+          <Button compact inline basic onClick={onClickNegative}>
             It didn't work{' '}
             <span styleName="emoji" role="img" aria-label="thumbs-down emoji">
               ️👎
             </span>
-          </a>
+          </Button>
 
-          <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
+          <Button compact basic onClick={onClickPositive}>
             It looks great{' '}
             <span styleName="emoji" role="img" aria-label="thumbs-up emoji">
               ️️👍
             </span>
-          </a>
+          </Button>
         </>
       );
     }
     content = (
       <>
         <ModalBody compact>
-          <h3>{title}</h3>
+          <ModalHeader>
+            {title}
+            <ModalCloseIcon />
+          </ModalHeader>
           <p>{lead}</p>
           <div styleName="unsub-img-container">
             <img
               alt="Screenshot of the page response after unsubscribing"
-              styleName={`unsub-img modal-img-bordered ${
+              styleName={`unsub-img ${
                 imageLoading ? 'unsub-img--loading' : ''
               }`}
               src={`/api/mail/image/${mailId}`}
@@ -170,30 +181,31 @@ function slide1(
             <p>How does it look?</p>
           )}
         </ModalBody>
-        <div styleName="modal-actions">{actions}</div>
+        <ModalFooter>{actions}</ModalFooter>
       </>
     );
   } else {
     content = (
       <>
         <ModalBody compact>
-          <div styleName="modal-content">
-            <h3>{title}</h3>
-            <p>{lead}</p>
-            <p>
-              If the provider is behaving themselves, then you shouldn't get any
-              more subscription emails from them!
-            </p>
-          </div>
-          <div styleName="modal-actions">
-            <a styleName="modal-btn modal-btn--cta" onClick={onClickPositive}>
-              Awesome!{' '}
-              <span styleName="emoji" role="img" aria-label="thumbs up emoji">
-                ️👍
-              </span>
-            </a>
-          </div>
+          <ModalHeader>
+            {title}
+            <ModalCloseIcon />
+          </ModalHeader>
+          <p>{lead}</p>
+          <p>
+            If the provider is behaving themselves, then you shouldn't get any
+            more subscription emails from them!
+          </p>
         </ModalBody>
+        <ModalFooter>
+          <Button basic compact onClick={onClickPositive}>
+            Awesome!{' '}
+            <span styleName="emoji" role="img" aria-label="thumbs up emoji">
+              ️👍
+            </span>
+          </Button>
+        </ModalFooter>
       </>
     );
   }
@@ -237,10 +249,9 @@ function slide2({
   if (hasImage) {
     actions = (
       <>
-        <a
-          styleName={`modal-btn modal-btn--secondary ${
-            !selected ? 'disabled' : ''
-          }`}
+        <Button
+          basic
+          compact
           onClick={() =>
             onSubmit({
               success: false,
@@ -250,9 +261,11 @@ function slide2({
           }
         >
           Nope
-        </a>
-        <a
-          styleName={`modal-btn modal-btn--cta ${!selected ? 'disabled' : ''}`}
+        </Button>
+        <Button
+          disabled={!selected}
+          compact
+          basic
           onClick={() =>
             onSubmit({
               success: false,
@@ -262,13 +275,15 @@ function slide2({
           }
         >
           Yes of course!
-        </a>
+        </Button>
       </>
     );
   } else {
     actions = (
-      <a
-        styleName={`modal-btn modal-btn--cta ${!selected ? 'disabled' : ''}`}
+      <Button
+        disabled={!selected}
+        compact
+        basic
         onClick={() =>
           onSubmit({
             success: false,
@@ -278,16 +293,16 @@ function slide2({
         }
       >
         Submit
-      </a>
+      </Button>
     );
   }
 
   return (
     <>
-      <div styleName="modal-content">
+      <ModalBody compact>
         <p>{lead}</p>
         <a
-          styleName="modal-btn modal-btn--cta manual-unsubscribe-btn"
+          styleName="manual-unsubscribe-btn"
           target="_"
           href={type === 'link' ? link : mailTo}
         >
@@ -340,22 +355,19 @@ function slide2({
             Other
           </li>
         </ul>
-        <p styleName={`${!selected ? 'hidden' : ''}`}>
+        <p className={!selected ? styles.hidden : ''}>
           Thanks!{' '}
           {hasImage
             ? "Is it okay if we use that image so that next time we don't make the same mistake?"
             : ''}
         </p>
-      </div>
-      <div styleName="modal-actions">
-        <a
-          styleName={`modal-btn modal-btn--secondary modal-btn--cancel`}
-          onClick={onClickBack}
-        >
+      </ModalBody>
+      <ModalFooter>
+        <Button basic compact muted outlined onClick={onClickBack}>
           Back
-        </a>
+        </Button>
         {actions}
-      </div>
+      </ModalFooter>
     </>
   );
 }
@@ -363,26 +375,30 @@ function slide2({
 function slide3(onSubmit) {
   return (
     <>
-      <div styleName="modal-content">
+      <ModalBody compact>
         <p>
           Awesome! Is it okay if we use that image so that next time we don't
           make the same mistake?
         </p>
-      </div>
-      <div styleName="modal-actions">
-        <a
-          styleName="modal-btn modal-btn--secondary"
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          basic
+          compact
           onClick={() => onSubmit({ success: true, useImage: false })}
         >
           Nope
-        </a>
-        <a
-          styleName="modal-btn modal-btn--cta"
+        </Button>
+        <Button
+          basic
+          compact
           onClick={() => onSubmit({ success: true, useImage: true })}
         >
           Yes of course!
-        </a>
-      </div>
+        </Button>
+      </ModalFooter>
     </>
   );
 }
+
+export default UnsubModal;

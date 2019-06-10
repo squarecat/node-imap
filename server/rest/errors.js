@@ -55,8 +55,11 @@ function expressErrorHandler(err, req, res, next) {
   Sentry.captureException(err);
 
   if (res.headersSent) {
-    return next(err);
+    return next(json);
   }
   res.status(500);
-  res.send(json);
+  res.send({
+    internal_code: json.code,
+    message: json.message
+  });
 }

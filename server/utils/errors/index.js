@@ -27,20 +27,22 @@ export function LMAError(message, data = {}) {
   };
   let cause = this.cause;
   let id = this.id;
-  if (!(cause instanceof LMAError)) {
-    const causeId = genId();
-    savedErrors[causeId] = {
-      id: causeId,
-      name: cause.name,
-      message: cause.message,
-      level: cause.level,
-      timestamp: Date.now(),
-      stack: cause.stack
-    };
-    id = `${id}-${causeId}`;
-    cause = cause.cause;
-  } else {
-    id = `${id}-${cause.combinedId}`;
+  if (cause) {
+    if (!(cause instanceof LMAError)) {
+      const causeId = genId();
+      savedErrors[causeId] = {
+        id: causeId,
+        name: cause.name,
+        message: cause.message,
+        level: cause.level,
+        timestamp: Date.now(),
+        stack: cause.stack
+      };
+      id = `${id}-${causeId}`;
+      cause = cause.cause;
+    } else {
+      id = `${id}-${cause.combinedId}`;
+    }
   }
   this.combinedId = id;
 
