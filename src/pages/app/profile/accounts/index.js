@@ -111,17 +111,16 @@ export default () => {
         />
         {error ? <FormNotification error>{error}</FormNotification> : null}
       </div>
-      {showWarningModal ? (
-        <WarningModal
-          onClose={() => toggleWarningModal(false)}
-          onClickConfirm={() => {
-            toggleWarningModal(false);
-            onClickWarningConfirm(warningModalData);
-          }}
-          content={modalContent(warningModalData)}
-          confirmText={'Confirm'}
-        />
-      ) : null}
+      <WarningModal
+        shown={showWarningModal}
+        onClose={() => toggleWarningModal(false)}
+        onConfirm={() => {
+          toggleWarningModal(false);
+          onClickWarningConfirm(warningModalData);
+        }}
+        content={modalContent(warningModalData)}
+        confirmText={'Confirm'}
+      />
     </ProfileLayout>
   );
 };

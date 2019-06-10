@@ -6,7 +6,7 @@ import {
   FormInput,
   FormNotification
 } from '../../../../components/form';
-import React, {  useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';
@@ -16,25 +16,28 @@ import ErrorBoundary from '../../../../components/error-boundary';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
+import WarningModal from '../../../../components/modal/warning-modal';
 import cx from 'classnames';
+import formatDate from 'date-fns/format';
 import relative from 'tiny-relative-date';
 import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
 
 function Organisation() {
-  const [{ organisationId, organisationAdmin }] = useUser(u => {
+  const [
+    { organisationId, organisationAdmin, organisationLastUpdated }
+  ] = useUser(u => {
     return {
       organisationId: u.organisationId,
-      organisationAdmin: u.organisationAdmin
+      organisationAdmin: u.organisationAdmin,
+      organisationLastUpdated: u.organisationLastUpdated
     };
   });
 
   const { value: organisation = {}, loading } = useAsync(fetchOrganisation, [
-    organisationId
-  ]);
-  const { value: stats = [], loadingStats } = useAsync(fetchStats, [
-    organisationId
+    organisationId,
+    organisationLastUpdated
   ]);
 
   const {
@@ -42,11 +45,12 @@ function Organisation() {
     active,
     currentUsers = [],
     invitedUsers = [],
-    domain,
     billing
   } = organisation;
 
   if (loading) return <span>Loading...</span>;
+
+  const isInvitingEnabled = organisationAdmin && active;
 
   return (
     <>
@@ -58,83 +62,69 @@ function Organisation() {
         <p>
           <span
             styleName={cx('org-status', {
-              active
+              active,
+              inactive: !active
             })}
           >
             {active ? 'Active' : 'Inactive'}
           </span>{' '}
         </p>
-        {active ? (
-          <p>
-            Your account is <TextImportant>active</TextImportant>. Organisation
-            members can start unsubscribing!
-          </p>
-        ) : (
-          <p>
-            Your account is <TextImportant>inactive</TextImportant> because you
-            have disabled it or you have not added a payment method.
-          </p>
-        )}
-        <p>
-          {currentUsers.length} seats used (billed at $4 per seat per month)
-        </p>
+        <OrganisationStatus active={active} billing={billing} />
+        <p>{currentUsers.length} seats used</p>
         <p>{invitedUsers.length} invites pending</p>
       </div>
 
       <Billing
         organisationAdmin={organisationAdmin}
-        billing={billing}
-        onUpdateCard={() => {}}
-        onRemoveCard={() => {}}
+        organisation={organisation}
       />
 
       <Settings loading={loading} organisation={organisation} />
 
-      {organisationAdmin ? (
-        <InviteForm organisationId={organisation.id}/>
+      {isInvitingEnabled ? (
+        <InviteForm organisationId={organisationId} />
       ) : null}
 
-      {organisationAdmin ? (
-        <>
-          <div styleName="organisation-section tabled">
-            <div styleName="table-text-content">
-              <h2>Current Users</h2>
-            </div>
-            {loadingStats ? (
-              <span>Loading...</span>
-            ) : (
-              <Table>
-                {stats.map(stat => (
-                  <TableRow key={stat.id}>
-                    <TableCell>{stat.email}</TableCell>
-                    <TableCell>
-                      {stat.numberOfUnsubscribes} unsubscribes
-                    </TableCell>
-                    <TableCell>Joined {relative(stat.dateJoined)}</TableCell>
-                  </TableRow>
-                ))}
-              </Table>
-            )}
+      <CurrentUsers organisationId={organisationId} />
+
+      {isInvitingEnabled ? (
+        <div styleName="organisation-section tabled">
+          <div styleName="table-text-content">
+            <h2>Pending Invites</h2>
           </div>
-          <div styleName="organisation-section tabled">
-            <div styleName="table-text-content">
-              <h2>Pending Invites</h2>
-            </div>
-            {invitedUsers.length ? (
-              <Table>
-                {invitedUsers.map(e => (
-                  <TableRow key={e}>
-                    <TableCell>{e}</TableCell>
-                  </TableRow>
-                ))}
-              </Table>
-            ) : (
-              <p>There are no invites pending.</p>
-            )}
-          </div>
-        </>
+          {invitedUsers.length ? (
+            <Table>
+              {invitedUsers.map(e => (
+                <TableRow key={e}>
+                  <TableCell>{e}</TableCell>
+                </TableRow>
+              ))}
+            </Table>
+          ) : (
+            <p>There are no invites pending.</p>
+          )}
+        </div>
       ) : null}
     </>
+  );
+}
+
+function OrganisationStatus({ active, billing }) {
+  if (active) {
+    return (
+      <p>
+        Your account is <TextImportant>active</TextImportant>. Organisation
+        members can start unsubscribing!
+      </p>
+    );
+  }
+
+  return (
+    <p>
+      Your account is <TextImportant>inactive</TextImportant> because you have
+      not added a payment method or you have deactivated your account.
+      Organisation members cannot unsubscribe while your account is inactive.
+    </p>
   );
 }
 
@@ -145,27 +135,30 @@ function Settings({ loading, organisation }) {
     allowAnyUserWithCompanyEmail: organisation.allowAnyUserWithCompanyEmail
   });
 
-  const onToggleSetting = async () => {
+  const onToggleSetting = async toggled => {
     try {
       setState({
         ...state,
-        toggling: true,
-        allowAnyUserWithCompanyEmail: !state.allowAnyUserWithCompanyEmail
+        toggling: true
       });
 
-      await toggleOrganisationType(
-        organisation.id,
-        !state.allowAnyUserWithCompanyEmail
-      );
-      setTimeout(() => {
-        setState({ ...state, toggling: false, error: false });
+      await toggleOrganisationType(organisation.id, toggled);
+
+      setTimeout(async () => {
+        setState({
+          allowAnyUserWithCompanyEmail: toggled,
+          toggling: false,
+          error: false
+        });
+        // setState({ ...state, toggling: false, error: false });
       }, 300);
     } catch (err) {
       // revert if error
       setTimeout(() => {
         setState({
           ...state,
-          allowAnyUserWithCompanyEmail: state.allowAnyUserWithCompanyEmail,
+          allowAnyUserWithCompanyEmail:
+            organisation.allowAnyUserWithCompanyEmail,
           toggling: false,
           error: true
         });
@@ -200,9 +193,14 @@ function Settings({ loading, organisation }) {
       )}
       <FormCheckbox
         disabled={state.toggling}
-        onChange={() => onToggleSetting()}
+        onChange={() => onToggleSetting(!state.allowAnyUserWithCompanyEmail)}
         checked={state.allowAnyUserWithCompanyEmail}
-        label={`Allow any user with the ${organisation.domain} domain to join`}
+        label={
+          <span>
+            Allow any user with the{' '}
+            <TextImportant>{organisation.domain}</TextImportant> domain to join
+          </span>
+        }
       />
       {state.toggling ? <span>Saving...</span> : null}
       {state.error ? (
@@ -214,23 +212,47 @@ function Settings({ loading, organisation }) {
   );
 }
 
-function Billing({
-  organisationAdmin,
-  billing = {},
-  onUpdateCard,
-  onRemoveCard
-}) {
+function Billing({ organisationAdmin, organisation }) {
   const [showBillingModal, toggleBillingModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showWarningModal, toggleWarningModal] = useState(false);
+
+  const [state, setState] = useState({
+    loading: false,
+    error: false
+  });
+
+  const [, { setOrganisationLastUpdated }] = useUser(u => {
+    return {
+      organisationId: u.organisationId,
+      organisationAdmin: u.organisationAdmin,
+      organisationLastUpdated: u.organisationLastUpdated
+    };
+  });
 
   if (!organisationAdmin) return null;
 
-  const { card, company } = billing;
+  const { id, billing = {}, adminUserEmail } = organisation;
+  const { card, company = {}, subscriptionId } = billing;
+
+  async function removeCard() {
+    // TODO remove the card from the organisation
+    // cancel the subscription (and show when it will cancel)
+    // webhook for cancelled to update status
+    return true;
+  }
+
+  async function addPaymentMethodSuccess() {
+    toggleBillingModal(false);
+    setOrganisationLastUpdated(Date.now());
+  }
 
   return (
     <>
       <div styleName="organisation-section">
         <h2>Billing Details</h2>
+        {subscriptionId ? <BillingInformation organisationId={id} /> : null}
+
+        <h3>Card Details</h3>
         {card ? (
           <>
             <CardDetails card={billing.card} />
@@ -238,19 +260,9 @@ function Billing({
               basic
               compact
               stretch
-              disabled={loading}
-              loading={loading}
-              onClick={() => onUpdateCard()}
-            >
-              Update Card
-            </Button>
-            <Button
-              basic
-              compact
-              stretch
-              disabled={loading}
-              loading={loading}
-              onClick={() => onRemoveCard()}
+              disabled={state.loading}
+              loading={state.loading}
+              onClick={() => toggleWarningModal(true)}
             >
               Remove Card
             </Button>
@@ -265,29 +277,111 @@ function Billing({
               basic
               compact
               stretch
-              disabled={loading}
-              loading={loading}
+              disabled={state.loading}
+              loading={state.loading}
               onClick={() => toggleBillingModal(true)}
             >
               Add Payment Method
             </Button>
           </>
         )}
-        {company ? (
-          <>
-            <h2>Company Details</h2>
-            <p>Name: {company.name}</p>
-            <p>VAT Number: {company.vatNumber}</p>
-          </>
-        ) : null}
+      </div>
+      <div styleName="organisation-section">
+        <h2>Company Details</h2>
+        <p>Name: {company.name || '-'}</p>
+        <p>VAT Number: {company.vatNumber || '-'}</p>
+        <p>Billing email: {adminUserEmail}</p>
+        <Button
+          basic
+          compact
+          stretch
+          disabled={true} // not available yet
+          loading={state.loading}
+          onClick={() => toggleBillingModal(true)}
+        >
+          Update (coming soon)
+        </Button>
       </div>
       <Elements>
         <OrganisationBillingModal
+          organisation={organisation}
           shown={showBillingModal}
           onClose={() => toggleBillingModal(false)}
+          onSuccess={organisation => addPaymentMethodSuccess(organisation)}
         />
       </Elements>
+      <WarningModal
+        shown={showWarningModal}
+        onClose={() => toggleWarningModal(false)}
+        onConfirm={() => {
+          toggleWarningModal(false);
+          removeCard();
+        }}
+        content={
+          <p>
+            If you remove your payment method and do not add one by the end of
+            your billing period{' '}
+            <TextImportant>we will deactivate your account</TextImportant>. You
+            have until TODO billing_period_end to add a new payment method.
+          </p>
+        }
+        confirmText={'Confirm'}
+      />
     </>
+  );
+}
+
+function BillingInformation({ organisationId }) {
+  const { value: subscription = {}, loading } = useAsync(fetchSubscription, [
+    organisationId
+  ]);
+
+  if (loading) return 'Loading...';
+
+  const {
+    canceled_at,
+    current_period_start,
+    current_period_end,
+    ended_at,
+    quantity,
+    plan = {}
+  } = subscription;
+
+  const dateFormat = 'DD MMM YYYY';
+
+  return (
+    <div>
+      <h3>Details</h3>
+      <p>
+        Current period:{' '}
+        <TextImportant>
+          {formatDate(current_period_start * 1000, dateFormat)}
+        </TextImportant>{' '}
+        to{' '}
+        <TextImportant>
+          {formatDate(current_period_end * 1000, dateFormat)}
+        </TextImportant>
+      </p>
+      {/* If the subscription has been canceled, the date of that cancellation */}
+      {canceled_at ? (
+        <>
+          <p>Cancelled on: {formatDate(canceled_at * 1000, dateFormat)}</p>
+          {ended_at ? (
+            <p>Ended on: {formatDate(ended_at * 1000, dateFormat)}</p>
+          ) : (
+            <p>Ends on: {formatDate(current_period_end * 1000, dateFormat)}</p>
+          )}
+          <p>
+            Subscription ends:{' '}
+            {formatDate(current_period_end * 1000, dateFormat)}
+          </p>
+        </>
+      ) : null}
+
+      <h3>Pricing Plan</h3>
+      <p>Enterprise: ${plan.amount / 100} per seat</p>
+      <p>Seats: {quantity}</p>
+    </div>
   );
 }
 
@@ -370,11 +464,38 @@ function InviteForm({ organisationId }) {
         </Button>
         {state.sent ? <FormNotification success>Sent!</FormNotification> : null}
         {state.error ? (
-        <FormNotification error>
-          Something went wrong, your invite has not sent.
-        </FormNotification>
-      ) : null}
+          <FormNotification error>
+            Something went wrong, your invite has not sent.
+          </FormNotification>
+        ) : null}
       </form>
+    </div>
+  );
+}
+
+function CurrentUsers({ organisationId }) {
+  const { value: stats = [], loadingStats } = useAsync(fetchStats, [
+    organisationId
+  ]);
+
+  return (
+    <div styleName="organisation-section tabled">
+      <div styleName="table-text-content">
+        <h2>Current Users</h2>
+      </div>
+      {loadingStats ? (
+        <span>Loading...</span>
+      ) : (
+        <Table>
+          {stats.map(stat => (
+            <TableRow key={stat.id}>
+              <TableCell>{stat.email}</TableCell>
+              <TableCell>{stat.numberOfUnsubscribes} unsubscribes</TableCell>
+              <TableCell>Joined {relative(stat.dateJoined)}</TableCell>
+            </TableRow>
+          ))}
+        </Table>
+      )}
     </div>
   );
 }
@@ -399,7 +520,7 @@ function fetchOrganisation(id) {
 }
 
 function fetchStats(id) {
-  return request(`/api/organisation/stats/${id}`, {
+  return request(`/api/organisation/${id}/stats`, {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
@@ -433,5 +554,14 @@ function toggleOrganisationType(id, allowAnyUserWithCompanyEmail) {
         allowAnyUserWithCompanyEmail
       }
     })
+  });
+}
+
+function fetchSubscription(id) {
+  return request(`/api/organisation/${id}/subscription`, {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
   });
 }

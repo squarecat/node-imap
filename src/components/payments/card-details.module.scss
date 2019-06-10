@@ -1,0 +1,21 @@
+@import '../../styles/common/colors.scss';
+@import '../form/form.module.scss';
+
+.wrapper {
+}
+
+:global(.StripeElement) {
+  @extend .form-input;
+  @extend .input-smaller;
+
+  .loading &,
+  .disabled & {
+    pointer-events: none;
+    color: $color-input-disabled;
+    background-color: $color-input-disabled-bg;
+  }
+}
+
+:global(.StripeElement--focus) {
+  border-color: $color-input-border-focus;
+}

@@ -173,11 +173,11 @@ function generateCoupon(length = 8) {
     .toUpperCase();
 }
 
-export async function createCustomer({ email, name, address }) {
+export async function createCustomer({ email, ...data }) {
   try {
     const customer = await stripe.customers.create({
       email,
-      shipping: { name, address }
+      ...data
     });
     const { id } = customer;
     logger.info(`stripe: created customer ${id}`);
@@ -189,11 +189,10 @@ export async function createCustomer({ email, name, address }) {
   }
 }
 
-export async function updateCustomer({ customerId, name, address }) {
+export async function updateCustomer({ customerId, ...data }) {
   try {
     const customer = await stripe.customers.update(customerId, {
-      address,
-      shipping: { name, address }
+      ...data
     });
     const { id } = customer;
     logger.info(`stripe: updated customer ${id}`);
@@ -368,6 +367,76 @@ export const generatePaymentResponse = intent => {
     };
   }
 };
+
+// Multiple quantities of a plan are still billed using one invoice, and are prorated
+// when the subscription changes, including when you change just the quantities involved
+export async function createSubscription({ customerId, planId, quantity = 1 }) {
+  try {
+    const subscription = await stripe.subscriptions.create({
+      customer: customerId,
+      items: [
+        {
+          plan: planId,
+          quantity
+        }
+      ],
+      // When creating the subscription, expand the latest_invoice.payment_intent field in order to
+      // determine payment outcome using the invoice’s associated PaymentIntent.
+      expand: ['latest_invoice.payment_intent'],
+      enable_incomplete_payments: true
+    });
+    logger.info(`stripe: created subscription ${subscription.id}`);
+    return subscription;
+  } catch (err) {
+    logger.error(`stripe: failed to create subscription`);
+    logError(err);
+    throw err;
+  }
+}
+
+// export async function updateSubscription({ subscriptionId, quantity }) {
+//   try {
+//     const subscription = await stripe.subscriptions.update(subscriptionId, {
+//       quantity
+//     });
+//     const { id } = subscription;
+//     logger.info(`stripe: updated subscription ${id}`);
+//     return { id };
+//   } catch (err) {
+//     logger.error(`stripe: failed to update subscription`);
+//     logError(err);
+//     throw err;
+//   }
+// }
+
+export async function payUpcomingInvoice({ customerId, subscriptionId }) {
+  try {
+    const { id: invoiceId } = await stripe.invoices.retrieveUpcoming({
+      customer: customerId,
+      subscription: subscriptionId
+    });
+    const invoice = await stripe.invoices.pay(invoiceId, {
+      expand: ['payment_intent']
+    });
+    return invoice;
+  } catch (err) {
+    logger.error(`stripe: failed to update subscription`);
+    logError(err);
+    throw err;
+  }
+}
+
+export async function getSubscription({ subscriptionId }) {
+  try {
+    return stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ['latest_invoice']
+    });
+  } catch (err) {
+    logger.error(`stripe: failed to fetch subscription`);
+    logError(err);
+    throw err;
+  }
+}
 
 function logError(err) {
   const { type, message } = err;

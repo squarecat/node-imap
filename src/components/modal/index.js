@@ -116,7 +116,8 @@ export const ModalSaveAction = ({
   isDisabled,
   isLoading,
   onSave,
-  onCancel
+  onCancel,
+  saveText = 'Save'
 }) => {
   return (
     <ModalFooter>
@@ -127,12 +128,14 @@ export const ModalSaveAction = ({
         <Button
           basic
           compact
+          stretch
           type="submit"
           as="button"
           disabled={isDisabled || isLoading}
+          loading={isLoading}
           onClick={onSave}
         >
-          Save
+          {saveText}
         </Button>
       </div>
     </ModalFooter>
@@ -161,9 +164,11 @@ export const ModalPaymentSaveAction = ({
         <Button
           basic
           compact
+          stretch
           type="submit"
           as="button"
           disabled={isDisabled || isLoading}
+          loading={isLoading}
           onClick={onSave}
           form={formToSubmit}
         >

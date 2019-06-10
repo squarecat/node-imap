@@ -1,48 +1,30 @@
-import './modal.module.scss';
+import Modal, {
+  ModalBody,
+  ModalCloseIcon,
+  ModalHeader,
+  ModalSaveAction
+} from './';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import ModalClose from './modal-close';
-
-export default ({ onClose, onClickConfirm, content, confirmText }) => {
-  const [isShown, setShown] = useState(false);
-
-  const handleKeydown = e => {
-    if (e.keyCode === 27 || e.key === 'Escape') {
-      onClickClose();
-    }
-  };
-
-  // on mount
-  useEffect(() => {
-    setShown(true);
-    document.addEventListener('keydown', handleKeydown, false);
-    return function cleanup() {
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  }, []);
-
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(onClose, 300);
-  };
-
+export default ({ shown, onClose, onConfirm, content, confirmText }) => {
   return (
-    <>
-      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-        <ModalClose onClose={onClickClose} />
-        <h3>Are you sure?</h3>
-        <div styleName="modal-content">{content}</div>
-        <div styleName="modal-actions">
-          <a styleName="modal-btn modal-btn--secondary" onClick={onClickClose}>
-            Cancel
-          </a>
-          <a styleName="modal-btn modal-btn--cta" onClick={onClickConfirm}>
-            {confirmText}
-          </a>
-        </div>
-      </div>
-      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
-    </>
+    <Modal
+      shown={shown}
+      onClose={onClose}
+      dismissable={false}
+      style={{ width: 580 }}
+    >
+      <ModalCloseIcon />
+      <ModalBody>
+        <ModalHeader>Are you sure?</ModalHeader>
+        {content}
+      </ModalBody>
+      <ModalSaveAction
+        onSave={onConfirm}
+        onCancel={onClose}
+        saveText={confirmText}
+      />
+    </Modal>
   );
 };

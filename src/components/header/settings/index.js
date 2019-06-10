@@ -88,6 +88,13 @@ export default () => {
             Notifications
           </Link>
         </li>
+        {organisationId ? (
+          <li styleName="setting-item">
+            <Link styleName="setting-item-link" to="/app/profile/organisation">
+              Organisation
+            </Link>
+          </li>
+        ) : null}
         <li styleName="setting-item logout">
           <a styleName="setting-item-link" href="/logout">
             Logout

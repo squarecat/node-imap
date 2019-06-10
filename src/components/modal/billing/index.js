@@ -202,9 +202,9 @@ export function getDisplayPrice({ price, discountAmount, discountPrice }) {
 export async function confirmIntent({ paymentIntent, productId, coupon }) {
   let url;
   if (coupon) {
-    url = `/api/checkout/new/${productId}/${coupon}`;
+    url = `/api/payments/checkout/new/${productId}/${coupon}`;
   } else {
-    url = `/api/checkout/new/${productId}`;
+    url = `/api/payments/checkout/new/${productId}`;
   }
   return request(url, {
     method: 'POST',

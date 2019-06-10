@@ -3,6 +3,7 @@ import {
   addActivity,
   addPackage,
   addPaidScan,
+  addReferral,
   addScan,
   addScanReminder,
   addTotpSecret,
@@ -53,7 +54,6 @@ import {
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
 import addMonths from 'date-fns/add_months';
-// import { addReferralToReferrer } from '../referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
@@ -103,7 +103,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           name: displayName,
           email,
           profileImg,
-          referredBy,
+          referredBy: referredBy ? referredBy.id : null,
           organisationId: organisation ? organisation.id : null,
           loginProvider: provider,
           token: v4()
@@ -116,7 +116,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         }
       );
       if (referredBy) {
-        addReferralActivity({ userId: id, referralUserId: referredBy });
+        addReferralActivity({ user, referralUser: referredBy });
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
@@ -256,14 +256,14 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         name: displayName,
         email,
         password,
-        referredBy,
+        referredBy: referredBy ? referredBy.id : null,
         organisationId: organisation ? organisation.id : null,
         loginProvider: 'password',
         token: v4(),
         accounts: []
       });
       if (referredBy) {
-        await addReferralActivity({ userId: id, referralUserId: referredBy });
+        await addReferralActivity({ user, referralUser: referredBy });
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
@@ -329,20 +329,36 @@ async function getOrganisation(inviteCode, email) {
   return null;
 }
 
-async function addReferralActivity({ userId, referralUserId }) {
+async function addReferralActivity({ user, referralUser }) {
   try {
     // add sign up reward for this user
-    addActivityForUser(userId, 'signedUpFromReferral', {
-      id: userId
+    addActivityForUser(user.id, 'signedUpFromReferral', {
+      id: referralUser.id,
+      email: referralUser.email
     });
+
     // add sign up rewards for other user
-    addActivityForUser(referralUserId, 'referralSignUp', {
-      id: referralUserId
+    const referrerActivity = await addActivityForUser(
+      referralUser.id,
+      'referralSignUp',
+      {
+        id: user.id,
+        email: user.email
+      }
+    );
+    addReferral(referralUser.id, {
+      id: referralUser.id,
+      email: referralUser.email,
+      activityId: referrerActivity.id,
+      reward: referrerActivity.reward.unsubscriptions
     });
+    // add the data to the user
     addReferralSignupToStats();
   } catch (err) {
     logger.error(
-      `user-service: error adding referral activity for user ${userId}, referral user ${referralUserId}`
+      `user-service: error adding referral activity for user ${
+        user.id
+      }, referral user ${referralUser.id}`
     );
     throw err;
   }
@@ -755,6 +771,7 @@ export async function addActivityForUser(userId, name, data = {}) {
     if (activity.reward) {
       sendToUser(userId, 'credits', activity.reward.unsubscriptions);
     }
+    return activity;
   } catch (err) {
     throw err;
   }
