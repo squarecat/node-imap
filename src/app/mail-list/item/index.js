@@ -1,9 +1,8 @@
 import './item.module.scss';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useMailItem, useOccurrence, useScore } from '../db/hooks';
 
-import { AlertContext } from '../../alert-provider';
 import IgnoreIcon from '../../../components/ignore-icon';
 import { MailContext } from '../provider';
 import Score from '../../../components/score';
@@ -18,22 +17,41 @@ const mailTimeFormat = 'HH:mm YYYY';
 const mailDayStamp = 'Do MMM';
 const mailYearStamp = 'YYYY';
 
-export default function MailItem({ id }) {
+function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
   const { actions } = useContext(MailContext);
 
-  const [user, { setIgnoredSenderList }] = useUser();
-  const ignoredSenderList = user.ignoredSenderList || [];
+  const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
+    u => u.ignoredSenderList || []
+  );
 
-  const isIgnored = ignoredSenderList.includes(m.fromEmail);
-  const clickIgnore = () => {
-    const newList = isIgnored
-      ? ignoredSenderList.filter(sender => sender !== m.fromEmail)
-      : [...ignoredSenderList, m.fromEmail];
-    toggleFromIgnoreList(m.fromEmail, isIgnored ? 'remove' : 'add');
-    setIgnoredSenderList(newList);
-    return false;
-  };
+  const isIgnored = useMemo(
+    () => {
+      return ignoredSenderList.includes(m.fromEmail);
+    },
+    [ignoredSenderList, m.fromEmail]
+  );
+
+  const clickIgnore = useCallback(
+    () => {
+      const newList = isIgnored
+        ? ignoredSenderList.filter(sender => sender !== m.fromEmail)
+        : [...ignoredSenderList, m.fromEmail];
+      toggleFromIgnoreList(m.fromEmail, isIgnored ? 'remove' : 'add');
+      setIgnoredSenderList(newList);
+      return false;
+    },
+    [ignoredSenderList, isIgnored, m.fromEmail, setIgnoredSenderList]
+  );
+
+  useEffect(
+    () => {
+      if (m) {
+        onLoad();
+      }
+    },
+    [m, onLoad]
+  );
 
   return (
     <>
@@ -201,3 +219,5 @@ function DateCell({ date } = {}) {
     </>
   );
 }
+
+export default React.memo(MailItem);

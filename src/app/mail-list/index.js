@@ -1,3 +1,4 @@
+import { Empty, Loading } from './states';
 import { MailContext, MailProvider } from './provider';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
@@ -6,7 +7,6 @@ import MailList from './list';
 import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
 import UnsubModal from '../../components/modal/unsub-modal';
-import loadingImg from '../../assets/envelope-logo.png';
 import styles from './mail-list.module.scss';
 
 function MailView() {
@@ -80,8 +80,19 @@ function MailView() {
     [unsubData, actions, openModal, onSubmit]
   );
 
-  const showLoading = (isLoading || isFetching) && !mail.length;
-
+  const content = useMemo(
+    () => {
+      const showLoading = (isLoading || isFetching) && !mail.length;
+      if (showLoading) {
+        return <Loading />;
+      }
+      if (!mail.length) {
+        return <Empty hasFilters={activeFilters.length} />;
+      }
+      return <MailList mail={mail} />;
+    },
+    [isLoading, isFetching, mail, activeFilters]
+  );
   return (
     <div styleName="mail-list">
       <Filters
@@ -92,9 +103,7 @@ function MailView() {
         activeFilters={activeFilters}
         showLoading={isFetching}
       />
-      <div styleName="content">
-        {showLoading ? <Loading /> : <MailList mail={mail} />}
-      </div>
+      <div styleName="content">{content}</div>
       <div styleName="footer">
         <Pagination
           previousLabel={'prev'}
@@ -134,14 +143,3 @@ export default () => {
     </MailProvider>
   );
 };
-
-function Loading() {
-  return (
-    <div styleName="loading-wrapper">
-      <div styleName="loading">
-        <img styleName="loading-img" src={loadingImg} alt="loading image" />
-        <div styleName="loading-text">Loading subscriptions...</div>
-      </div>
-    </div>
-  );
-}

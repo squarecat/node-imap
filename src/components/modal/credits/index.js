@@ -1,20 +1,18 @@
 import './credits.module.scss';
 
-import Modal, {
-  ModalBody,
-  ModalCloseIcon,
-  ModalHeader,
-  ModalSubHeader
-} from '..';
+import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
 import React, { useMemo } from 'react';
 
 import Button from '../../btn';
+import CopyButton from '../../copy-to-clipboard';
 import { InlineFormInput } from '../../form';
 import { Link } from 'gatsby';
 import { TextImportant } from '../../text';
 import { TwitterIcon } from '../../icons';
+import { getSocialContent } from './tweets';
 import request from '../../../utils/request';
 import { useAsync } from 'react-use';
+import useUser from '../../../utils/hooks/use-user';
 
 async function getRewards() {
   return request('/api/me/milestones');
@@ -25,9 +23,28 @@ async function getReferrals() {
 }
 
 export default ({ credits }) => {
+  const [unsubCount] = useUser(u => u.unsubCount);
   const { loading, value } = useAsync(getRewards);
   const { loading: referralsLoading, value: referralValue } = useAsync(
     getReferrals
+  );
+
+  const referralCode = useMemo(
+    () => {
+      let referralCode = '';
+      if (referralValue) {
+        referralCode = referralValue.referralCode;
+      }
+      return referralCode;
+    },
+    [referralValue]
+  );
+
+  const socialContent = useMemo(
+    () => {
+      return getSocialContent(unsubCount, referralCode);
+    },
+    [unsubCount, referralCode]
   );
 
   const { referredCredits, referralCredits, rewards } = useMemo(
@@ -73,11 +90,11 @@ export default ({ credits }) => {
           Credit Balance
           <ModalCloseIcon />
         </ModalHeader>
-        <p styleName="balance">
-          <span styleName="balance-text">
+        <div styleName="balance">
+          <p styleName="balance-text">
             Your current credit balance is{' '}
             <span styleName="credit-balance">{credits}</span>
-          </span>
+          </p>
           <span styleName="action">
             <Button
               as="link"
@@ -90,7 +107,7 @@ export default ({ credits }) => {
               Buy more
             </Button>
           </span>
-        </p>
+        </div>
         <ModalSubHeader>Invite friends and Earn Credit</ModalSubHeader>
         <p>
           You’ll receive{' '}
@@ -113,17 +130,38 @@ export default ({ credits }) => {
               Invite
             </Button>
           </InlineFormInput>
-          <Button muted outlined stretch fill basic smaller inline>
+          <Button
+            target="_twitter"
+            href={`https://twitter.com/intent/tweet?text=${
+              socialContent.tweet
+            }`}
+            muted
+            outlined
+            stretch
+            fill
+            basic
+            smaller
+            inline
+          >
             <TwitterIcon />
             Tweet
           </Button>
-          <Button muted outlined stretch fill basic smaller inline>
+          <CopyButton
+            string={`${location.host}/r/${referralCode}`}
+            muted
+            outlined
+            stretch
+            fill
+            basic
+            smaller
+            inline
+          >
             Copy link
-          </Button>
+          </CopyButton>
         </div>
         {referralsLoading ? null : getReferralList(referralValue)}
         <ModalSubHeader>Other ways to Earn Credit</ModalSubHeader>
-        {loading ? null : getRewardList(rewards)}
+        {loading ? null : getRewardList(rewards, socialContent)}
       </ModalBody>
     </div>
   );
@@ -159,9 +197,15 @@ const rewardLabels = {
   sharedOnTwitter: {
     icon: <TwitterIcon />,
     text: 'Share on Twitter',
-    description: (
+    description: tweetText => (
       <span>
-        <a href>Tweet about us</a> to your followers
+        <a
+          target="_twitter"
+          href={`https://twitter.com/intent/tweet?text=${tweetText}`}
+        >
+          Tweet about us
+        </a>{' '}
+        to your followers
       </span>
     )
   },
@@ -219,7 +263,7 @@ function getReferralList({ referredBy, referrals }) {
   );
 }
 
-function getRewardList(rewards = []) {
+function getRewardList(rewards = [], socialContent) {
   const rewardItems = rewards
     .filter(r => rewardLabels[r.name])
     .map(r => {
@@ -230,17 +274,21 @@ function getRewardList(rewards = []) {
         name: r.name
       };
     });
-  return rewardList(rewardItems);
+  return rewardList(rewardItems, socialContent);
 }
 
-function rewardList(rewardItems) {
+function rewardList(rewardItems, socialContent) {
   return (
     <ul styleName="earn-credit">
       {rewardItems.map(({ text, name, reward, awarded, description }) => (
         <li key={name}>
           <div styleName="earn-description">
             <span>{text}</span>
-            <span styleName="earn-description-text">{description}</span>
+            <span styleName="earn-description-text">
+              {typeof description === 'function'
+                ? description(socialContent.tweet)
+                : description}
+            </span>
           </div>
           <div styleName="earn-status">
             <span styleName="earn-amount">{`${reward} credits`}</span>

@@ -154,7 +154,7 @@ export function useMailSync() {
               status: 'failed'
             });
             const mail = await db.mail.get(id);
-            // TODO use error code
+            // TODO use error code and show to the user
             actions.queueAlert({
               message: <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>,
               isDismissable: true,
@@ -166,8 +166,19 @@ export function useMailSync() {
           }
         });
       }
+      return () => {
+        if (socket) {
+          socket.off('mail');
+          socket.off('scores');
+          socket.off('mail:end');
+          socket.off('mail:err');
+          socket.off('mail:progress');
+          socket.off('unsubscribe:success');
+          socket.off('unsubscribe:err');
+        }
+      };
     },
-    [isConnected, error]
+    [isConnected, error, db]
   );
   return {
     ready: isConnected,

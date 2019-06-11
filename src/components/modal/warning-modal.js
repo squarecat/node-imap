@@ -1,30 +1,27 @@
-import Modal, {
-  ModalBody,
-  ModalCloseIcon,
-  ModalHeader,
-  ModalSaveAction
-} from './';
+import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from './';
+import React, { useContext } from 'react';
 
-import React from 'react';
+import { ModalContext } from '../../providers/modal-provider';
 
-export default ({ shown, onClose, onConfirm, content, confirmText }) => {
+export default ({ onConfirm, content, confirmText }) => {
+  const { close: closeModal } = useContext(ModalContext);
   return (
-    <Modal
-      shown={shown}
-      onClose={onClose}
-      dismissable={false}
-      style={{ width: 580 }}
-    >
-      <ModalCloseIcon />
-      <ModalBody>
-        <ModalHeader>Are you sure?</ModalHeader>
+    <div style={{ width: 600, maxWidth: '100%' }}>
+      <ModalBody compact>
+        <ModalHeader>
+          Are you sure?
+          <ModalCloseIcon />
+        </ModalHeader>
         {content}
       </ModalBody>
       <ModalSaveAction
-        onSave={onConfirm}
-        onCancel={onClose}
+        onSave={() => {
+          closeModal();
+          onConfirm();
+        }}
+        onCancel={closeModal}
         saveText={confirmText}
       />
-    </Modal>
+    </div>
   );
 };

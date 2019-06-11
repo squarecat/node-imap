@@ -15,10 +15,12 @@
 }
 
 .content {
+  position: relative;
   padding-top: 50px;
   display: flex;
   flex: 1;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .footer {
@@ -108,27 +110,4 @@
     top: -1px;
     margin: 0 0 0 4px;
   }
-}
-
-.loading-wrapper {
-  height: 100%;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.loading-img {
-  width: 75px;
-}
-
-.loading-text {
-  margin-top: 1em;
-  font-weight: bolder;
 }

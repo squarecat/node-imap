@@ -216,7 +216,11 @@ function Packages({ onClickBuy }) {
   );
   return (
     <div styleName="billing-section" id="packages">
-      <h2>Packages</h2>
+      <h2 styleName="package-title">
+        Packages
+        <span styleName="credit-info">1 Credit = 1 Unsubscribe</span>
+      </h2>
+
       <FormCheckbox
         onChange={() =>
           dispatch({
@@ -249,7 +253,7 @@ function Packages({ onClickBuy }) {
       <p>
         Pssst - Currently your inbox contains approximately{' '}
         <TextImportant>{count} subscription emails</TextImportant> that you
-        haven't unsubscribed from yet! Bear that in mind when buying a package!
+        haven't unsubscribed from yet. Bear that in mind when buying a package!
       </p>
     </div>
   );
@@ -263,15 +267,14 @@ function Enterprise() {
         <PlanImage smaller compact type="enterprise" />
         <div>
           <h3 styleName="plan-title">Unlimited credits</h3>
-          <span>Up to {ENTERPRISE.seats} seats</span>
+          {/* <span>${ENTERPRISE.pricePerSeat}/seat</span> */}
         </div>
-        <Price price={ENTERPRISE.price} asterisk />
+        <span>
+          <Price price={ENTERPRISE.pricePerSeat} asterisk /> per seat
+        </span>
         <a styleName="billing-btn">Contact</a>
       </div>
-      <TextFootnote>
-        * prices start from ${(ENTERPRISE.price / 100).toFixed(2)} for up to 10
-        seats.
-      </TextFootnote>
+      <TextFootnote>* billed monthly.</TextFootnote>
     </div>
   );
 }

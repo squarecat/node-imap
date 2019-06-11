@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 import Modal from '../components/modal';
+import { Transition } from 'react-transition-group';
 
 export const ModalContext = createContext(null);
 
