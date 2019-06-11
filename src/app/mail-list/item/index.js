@@ -17,7 +17,7 @@ const mailTimeFormat = 'HH:mm YYYY';
 const mailDayStamp = 'Do MMM';
 const mailYearStamp = 'YYYY';
 
-export default function MailItem({ id, onLoad }) {
+function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
   const { actions } = useContext(MailContext);
 
@@ -219,3 +219,5 @@ function DateCell({ date } = {}) {
     </>
   );
 }
+
+export default React.memo(MailItem);

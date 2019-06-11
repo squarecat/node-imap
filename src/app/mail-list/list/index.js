@@ -1,15 +1,28 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Transition, TransitionGroup } from 'react-transition-group';
 
 import MailItem from '../item';
+import _after from 'lodash.after';
 import { getTransitionClasses } from '../../../utils/transition';
 import styles from './list.module.scss';
 
 function MailList({ mail }) {
   const [loading, setLoading] = useState(true);
-  const onLoad = useCallback(() => {
-    setLoading(false);
-  }, []);
+
+  const setLoad = useCallback(
+    () => {
+      if (loading) {
+        setLoading(false);
+      }
+    },
+    [loading]
+  );
+  const onLoad = useMemo(
+    () => {
+      return _after(mail.length, setLoad);
+    },
+    [mail, setLoad]
+  );
   return (
     <>
       <table styleName="list">
@@ -22,8 +35,8 @@ function MailList({ mail }) {
                   mountOnEnter
                   unmountOnExit
                   timeout={{
-                    appear: 100 + 50 * i,
-                    enter: 100 + 50 * i,
+                    appear: 50 * i,
+                    enter: 50 * i,
                     exit: 0
                   }}
                   in={!loading}
