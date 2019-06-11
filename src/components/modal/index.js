@@ -6,6 +6,7 @@ import LoadingOverlay from '../loading/overlay';
 import { ModalContext } from '../../providers/modal-provider';
 import ReactDOM from 'react-dom';
 import { Transition } from 'react-transition-group';
+import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
 import modalStyles from './modal-template.module.scss';
 
@@ -36,11 +37,12 @@ export default ({ children, shown = false, wizardComponent = null, style }) => {
   }, []);
 
   return ReactDOM.createPortal(
-    <Transition appear timeout={200} mountOnEnter unmountOnExit in={shown}>
+    <Transition appear timeout={100} mountOnEnter unmountOnExit in={shown}>
       {state => {
-        const hasStyle = !!modalStyles[`modalContainer-${state}`];
+        const stateClass = _capitalize(state);
+        const hasStyle = !!modalStyles[`modalContainer${stateClass}`];
         const classes = cx(modalStyles['modalContainer'], {
-          [modalStyles[`modalContainer-${state}`]]: hasStyle
+          [modalStyles[`modalContainer${stateClass}`]]: hasStyle
         });
         return (
           <div className={classes} data-modal>
@@ -84,7 +86,14 @@ export const ModalSaveAction = ({
   return (
     <ModalFooter>
       <div styleName="modal-actions">
-        <Button disabled={isLoading} compact onClick={onCancel}>
+        <Button
+          disabled={isLoading}
+          basic
+          muted
+          outlined
+          compact
+          onClick={onCancel}
+        >
           Cancel
         </Button>
         <Button
