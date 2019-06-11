@@ -9,6 +9,7 @@
 
 .cell {
   padding: 10px;
+  border: 0;
 }
 
 .tags-column {
@@ -79,7 +80,6 @@
   max-width: 900px;
   width: 100%;
   margin: 0 auto;
-  border-bottom: 1px solid $color-border-red;
   padding: 20px 20px;
 }
 

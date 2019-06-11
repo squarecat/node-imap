@@ -15,10 +15,12 @@
 }
 
 .content {
+  position: relative;
   padding-top: 50px;
   display: flex;
   flex: 1;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .footer {
