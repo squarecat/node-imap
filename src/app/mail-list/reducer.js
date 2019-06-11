@@ -27,7 +27,8 @@ const mailReducer = (state = initialState, action) => {
     case 'remove-active-filters': {
       return {
         ...state,
-        activeFilters: []
+        activeFilters: [],
+        page: 0
       };
     }
     case 'remove-active-filter': {
@@ -35,7 +36,8 @@ const mailReducer = (state = initialState, action) => {
         ...state,
         activeFilters: state.activeFilters.filter(
           f => f.field !== action.data.field
-        )
+        ),
+        page: 0
       };
     }
     case 'set-active-filter': {
@@ -44,7 +46,8 @@ const mailReducer = (state = initialState, action) => {
         activeFilters: [
           ...state.activeFilters.filter(f => f.field !== action.data.field),
           action.data
-        ]
+        ],
+        page: 0
       };
     }
     case 'set-filter-values': {
