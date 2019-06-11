@@ -44,8 +44,12 @@ const activityEnum = {
   },
 
   // non reward
-  packagePurchase: ({ data }) =>
-    `You purchased a package of ${data.credits} credits.`,
+  packagePurchase: ({ data }) => {
+    if (data.price < 50) {
+      return `You claimed a free package of ${data.credits} credits!`;
+    }
+    return `You purchased a package of ${data.credits} credits.`;
+  },
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account (${_capitalize(data.provider)}).`,
   addedToOrganisation: ({ data }) =>

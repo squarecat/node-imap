@@ -10,7 +10,13 @@ export default ({ price, discounted, asterisk }) => (
       asterisk
     })}
   >
-    <span styleName="currency">$</span>
-    {(price / 100).toFixed(2)}
+    {price < 50 ? (
+      'Free'
+    ) : (
+      <>
+        <span styleName="currency">$</span>
+        {(price / 100).toFixed(2)}
+      </>
+    )}
   </p>
 );

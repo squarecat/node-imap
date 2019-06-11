@@ -503,12 +503,13 @@ export function addPaidScanToUser(userId, scanType) {
   return addPaidScan(userId, scanType);
 }
 
-export async function addPackageToUser(userId, packageId, unsubscribes = 0) {
+export async function addPackageToUser(userId, { packageId, credits, price }) {
   try {
-    const user = await addPackage(userId, packageId, unsubscribes);
+    const user = await addPackage(userId, packageId, credits);
     addActivityForUser(userId, 'packagePurchase', {
       id: packageId,
-      unsubscribes
+      credits,
+      price
     });
     return user;
   } catch (err) {

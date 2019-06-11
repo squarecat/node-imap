@@ -117,7 +117,10 @@ export default ({ onClose, selectedPackage, hasBillingCard }) => {
           {state.step === 'start-purchase' ? (
             <>
               <h3>Buy Package</h3>
-              <StartPurchaseForm />
+              <StartPurchaseForm
+                onClickClose={onClickClose}
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
             </>
           ) : null}
         </div>

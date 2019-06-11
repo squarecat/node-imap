@@ -22,7 +22,7 @@ export default app => {
   });
 
   app.post(
-    '/api/payments/checkout/new/:productId?/:coupon?',
+    '/api/payments/checkout/new/:productId/:coupon?',
     auth,
     async (req, res) => {
       const { productId, coupon } = req.params;
@@ -55,7 +55,7 @@ export default app => {
   );
 
   app.post(
-    '/api/payments/checkout/:productId?/:coupon?',
+    '/api/payments/checkout/:productId/:coupon?',
     auth,
     async (req, res) => {
       const { productId, coupon } = req.params;
@@ -75,6 +75,26 @@ export default app => {
       }
     }
   );
+
+  app.post('/api/payments/claim/:productId/:coupon', auth, async (req, res) => {
+    const { productId, coupon } = req.params;
+    try {
+      const response = await PaymentService.claimCreditsWithCoupon({
+        user: req.user,
+        productId,
+        coupon
+      });
+      return res.send(response);
+    } catch (err) {
+      logger.error('payments-rest: error creating new payment');
+      logger.error(err);
+      return res.status(500).send({
+        success: false,
+        err: err.toString(),
+        error: err.message
+      });
+    }
+  });
 
   app.post('/api/payments/subscription', auth, async (req, res) => {
     const { organisationId, token, name, address, company } = req.body;

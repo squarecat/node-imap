@@ -30,7 +30,7 @@ const Credits = () => {
         socket.on('credits', async data => {
           try {
             console.log('credits', data);
-            setCredits(data);
+            setCredits(initialCredits + data);
           } catch (err) {
             console.error(err);
           }

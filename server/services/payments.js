@@ -29,6 +29,7 @@ import {
 import logger from '../utils/logger';
 import { plans } from 'getconfig';
 import { updateUser } from '../dao/user';
+import { sendToUser } from '../rest/socket';
 
 // TODO this is duplicated from 'utils/prices'
 // TODO put package data in the database?
@@ -184,6 +185,47 @@ export async function createPaymentWithExistingCardForUser({
   }
 }
 
+export async function claimCreditsWithCoupon({ user, productId, coupon }) {
+  try {
+    logger.debug(`payments-service: claiming credits with coupon '${coupon}'`);
+    const { price: productPrice, credits } = PACKAGES.find(
+      p => p.id === productId
+    );
+
+    const couponObject = await getCoupon(coupon);
+    const discountedPrice = applyCoupon(productPrice, couponObject);
+
+    if (discountedPrice > 50) {
+      logger.debug(
+        `payments-service: failed to claim credits, applying coupon does not make package free`
+      );
+      return {
+        success: false,
+        error: {
+          message: 'Cannot claim free package, payment is required',
+          price: discountedPrice
+        }
+      };
+    }
+
+    logger.debug(
+      `payments-service: claim successful, adding package ${productId} of ${credits} credits to user`
+    );
+
+    return handlePaymentSuccess(
+      { success: true },
+      {
+        user,
+        productId,
+        finalPrice: 0,
+        coupon
+      }
+    );
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function getPaymentDetails({ productId, coupon }) {
   try {
     // get which product they are buying
@@ -283,17 +325,23 @@ async function handlePaymentSuccess(
 
     const { credits } = PACKAGES.find(p => p.id === productId);
     logger.debug(
-      `payments-service: adding package ${productId} to user - unsubs ${credits}`
+      `payments-service: adding package ${productId} to user - credits ${credits}`
     );
-    const updatedUser = await addPackageToUser(user.id, productId, credits);
+    const updatedUser = await addPackageToUser(user.id, {
+      packageId: productId,
+      credits,
+      price: finalPrice
+    });
 
-    addPaymentToStats({ price: finalPrice / 100 });
-    // TODO add package purchase to stats
+    if (finalPrice > 50) {
+      addPaymentToStats({ price: finalPrice / 100 });
+    }
 
     if (coupon) {
       updateCoupon(coupon);
     }
 
+    sendToUser(user.id, 'credits', credits);
     return {
       ...response,
       user: updatedUser
