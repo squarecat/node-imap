@@ -1,4 +1,3 @@
-import { addActivityForUser, getUserById, removeUserAccount } from './user';
 import {
   addInvitedUser,
   addUser,
@@ -6,10 +5,14 @@ import {
   getById,
   getByInviteCode,
   getBySubscription,
-  getFromInvites,
+  removeUser,
   update
 } from '../dao/organisation';
-import { addOrganisationToStats, addOrganisationUserToStats } from './stats';
+import {
+  addOrganisationToStats,
+  addOrganisationUserToStats,
+  removeOrganisationUserToStats
+} from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
 import { getSubscription, updateSubscription } from '../utils/stripe';
 
@@ -29,7 +32,9 @@ export function getOrganisationBySubscription(subscriptionId) {
 }
 
 export async function createOrganisation(email, data) {
-  logger.info(`organisation-service: creating an organisation ${email}`);
+  logger.info(
+    `organisation-service: creating an organisation - admin ${email}`
+  );
   try {
     const user = await getUserByEmail(email);
     if (!user) {
@@ -52,8 +57,7 @@ export async function createOrganisation(email, data) {
       organisationAdmin: true
     });
 
-    await addUserToOrganisation(organisation, {
-      userId: user.id,
+    await addUserToOrganisation(organisation.id, {
       email: user.email
     });
 
@@ -65,8 +69,10 @@ export async function createOrganisation(email, data) {
 
 export async function inviteUserToOrganisation(id, email) {
   try {
-    const invitedUser = await getFromInvites(id, email);
-    if (!invitedUser) {
+    const organisation = await getById(id);
+    const invited = organisation.invitedUsers.includes(email);
+
+    if (!invited) {
       logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
       const organisation = await addInvitedUser(id, email);
 
@@ -82,49 +88,83 @@ export async function inviteUserToOrganisation(id, email) {
   }
 }
 
-export async function addUserToOrganisation(organisationId, { userId, email }) {
+export async function addUserToOrganisation(organisationId, { email }) {
   try {
-    logger.debug(
-      `organisation-service: adding user ${userId} to org ${organisationId}`
-    );
-    // add the account to the organisation and remove from the invites
-    const organisation = await addUser(organisationId, email);
+    logger.debug(`organisation-service: adding user to org ${organisationId}`);
+
+    const organisation = await getById(organisationId);
+    const existingMember = organisation.currentUsers.includes(email);
+
+    if (existingMember) {
+      logger.debug(
+        `organisation-service: user already belongs to this organisation ${organisationId}`
+      );
+      return organisation;
+    }
+
+    // add the user to the organisation
+    const updatedOrganisation = await addUser(organisationId, email);
     addOrganisationUserToStats();
 
-    const { active, billing = {}, currentUsers } = organisation;
+    await updateOrganisationSubscription(updatedOrganisation);
 
+    return updatedOrganisation;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function removeUserFromOrganisation(organisationId, { email }) {
+  try {
     logger.debug(
-      `organisation-service: organisation ${organisationId} now has ${
-        currentUsers.length
-      } users`
+      `organisation-service: removing user from org ${organisationId}`
     );
 
-    if (active && billing.subscriptionId) {
-      const seats = currentUsers.length;
-      // update the subscription to add a user
+    const organisation = await getById(organisationId);
+    const existingMember = organisation.currentUsers.includes(email);
+
+    if (!existingMember) {
       logger.debug(
-        `organisation-service: org is active & has subscription ${organisationId}. Updating seats to ${seats}`
+        `organisation-service: user does not belong to this organisation ${organisationId}`
       );
-      await updateSubscription({
-        subscriptionId: billing.subscriptionId,
-        quantity: seats
-      });
+      return organisation;
+    }
+
+    // remove the user from the organisation
+    const updatedOrganisation = await removeUser(organisationId, email);
+    removeOrganisationUserToStats();
+
+    await updateOrganisationSubscription(updatedOrganisation);
+
+    return updatedOrganisation;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateOrganisationSubscription({
+  id,
+  billing = {},
+  currentUsers
+}) {
+  try {
+    if (!billing.subscriptionId) {
+      logger.debug(
+        `organisation-service: organisation ${id} has no active subscription`
+      );
+      return false;
     }
 
     logger.debug(
-      `organisation-service: removing user ${userId} connected accounts`
+      `organisation-service: updating organisation ${id} subscription to ${
+        currentUsers.length
+      } seats`
     );
-    const user = await getUserById(userId);
-    await Promise.all(
-      user.accounts.map(async a => removeUserAccount(user, a.email))
-    );
-
-    addActivityForUser(user.id, 'addedToOrganisation', {
-      id: organisation.id,
-      name: organisation.name
+    const seats = currentUsers.length;
+    await updateSubscription({
+      subscriptionId: billing.subscriptionId,
+      quantity: seats
     });
-
-    return organisation;
   } catch (err) {
     throw err;
   }
@@ -132,7 +172,7 @@ export async function addUserToOrganisation(organisationId, { userId, email }) {
 
 export async function getOrganisationUserStats(id) {
   try {
-    const organisation = await getOrganisationById(id);
+    const organisation = await getById(id);
     if (!organisation) return [];
 
     const users = await bulkGetUsersByEmail(organisation.currentUsers);
@@ -161,7 +201,7 @@ export function updateOrganisation(id, data) {
 
 export async function getOrganisationSubscription(id) {
   try {
-    const { billing } = await getOrganisationById(id);
+    const { billing } = await getById(id);
     if (!billing || !billing.subscriptionId) return null;
     const {
       canceled_at,
@@ -182,4 +222,76 @@ export async function getOrganisationSubscription(id) {
   } catch (err) {
     throw err;
   }
+}
+
+export function canUserJoinOrganisation(email, organisation) {
+  logger.debug(
+    `organisation-service: can user join the organisation ${organisation.id}`
+  );
+  const {
+    allowAnyUserWithCompanyEmail,
+    invitedUsers,
+    currentUsers,
+    domain
+  } = organisation;
+
+  // user already belongs to that organisation (no further steps required)
+  const existingMember = currentUsers.includes(email);
+  if (existingMember) {
+    logger.info(
+      `organisation-service: user cannot join - is already a member ${
+        organisation.id
+      }`
+    );
+    return {
+      allowed: false,
+      reason: 'existing-member'
+    };
+  }
+
+  // user is invited to the organisation
+  // invited users are always allowed to join
+  const invited = invitedUsers.includes(email);
+  if (invited) {
+    logger.info(
+      `organisation-service: user can join - is invited ${organisation.id}`
+    );
+    return {
+      allowed: true
+    };
+  }
+
+  // if not invited and allowed company domains
+  if (allowAnyUserWithCompanyEmail) {
+    const userEmailDomain = email.split('@')[1];
+    if (userEmailDomain === domain) {
+      logger.info(
+        `organisation-service: user can join - email has matching domain ${domain} with allow users with company email ${
+          organisation.id
+        }`
+      );
+      return {
+        allowed: true
+      };
+    } else {
+      logger.info(
+        `organisation-service: user cannot join - email domain does not match organisation ${
+          organisation.id
+        }`
+      );
+      return {
+        allowed: false,
+        reason: 'invalid-domain'
+      };
+    }
+  }
+
+  // user is not invited and their domain does not match the company
+  logger.info(
+    `organisation-service: user cannot join - not invited ${organisation.id}`
+  );
+  return {
+    allowed: false,
+    reason: 'not-invited'
+  };
 }

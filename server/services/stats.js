@@ -21,7 +21,8 @@ import {
   addUnsubscriptionByLink,
   addUser,
   addUserAccountDeactivated,
-  getStats
+  getStats,
+  removeOrganisationUser
 } from '../dao/stats';
 
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
@@ -85,11 +86,14 @@ export function addUnsubStatusToStats(status) {
 export function addRewardGivenToStats(unsubscriptions) {
   return addRewardGiven(unsubscriptions);
 }
-export function addOrganisationToStats(count = 1) {
+export function addOrganisationToStats(count) {
   return addOrganisation(count);
 }
-export function addOrganisationUserToStats(count = 1) {
+export function addOrganisationUserToStats(count) {
   return addOrganisationUser(count);
+}
+export function removeOrganisationUserToStats(count) {
+  return removeOrganisationUser(count);
 }
 
 export function getAllStats() {

@@ -49,11 +49,14 @@ import {
 } from '../../utils/emails/newsletter';
 import {
   addUserToOrganisation,
+  canUserJoinOrganisation,
   getOrganisationById,
-  getOrganisationByInviteCode
+  getOrganisationByInviteCode,
+  removeUserFromOrganisation
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
+import { ConnectAccountError } from '../../utils/errors';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
@@ -68,6 +71,7 @@ import { v4 } from 'node-uuid';
 export async function getUserById(id) {
   try {
     let user = await getUser(id);
+    if (!user) return null;
     if (user.organisationId) {
       const { name, active } = await getOrganisationById(user.organisationId);
       user = {
@@ -103,8 +107,9 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
   } = userData;
   try {
     let user = await getUser(id);
-    const organisation = await getOrganisation(inviteCode, email);
+    const organisation = await getOrganisationForUserEmail(inviteCode, email);
     if (!user) {
+      logger.debug(`user-service: creating new user`);
       const referredBy = await getReferrer(referralCode);
       user = await createUser(
         {
@@ -135,6 +140,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         provider
       });
     } else {
+      logger.debug(`user-service: updating user ${id}`);
       user = await updateUserWithAccount(
         { id, email },
         {
@@ -149,14 +155,9 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     // signing up or logging in with a provider counts as connecting
     // an account so we check the org stuff here
     if (organisation) {
-      logger.debug(
-        `user-service: adding user ${user.id} to organisation ${
-          organisation.id
-        }`
-      );
-      await addUserToOrganisation(organisation.id, {
-        userId: user.id,
-        email: user.email
+      await addCreatedOrUpdatedUserToOrganisation({
+        user,
+        organisation
       });
     }
 
@@ -166,6 +167,67 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       `user-service: error creating or updating user from ${provider} with ${id}`
     );
     logger.error(err);
+    throw err;
+  }
+}
+
+async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
+  try {
+    logger.debug(
+      `user-service: adding created or updated user ${
+        user.id
+      } to organisation ${organisation.id}`
+    );
+
+    // remove all the accounts which are not the primary account
+    logger.debug(`user-service: removing user ${user.id} connected accounts`);
+    await Promise.all(
+      user.accounts.map(a => {
+        if (a.email === user.email) {
+          logger.debug(
+            `user-service: ${a.email} is primary account, not removing`
+          );
+          return true;
+        }
+        logger.debug(
+          `user-service: ${a.email} is NOT primary account, removing`
+        );
+        return removeUserAccount(user, a.email);
+      })
+    );
+
+    await addUserToOrganisation(organisation.id, {
+      email: user.email
+    });
+
+    addActivityForUser(user.id, 'addedToOrganisation', {
+      id: organisation.id,
+      name: organisation.name,
+      email: user.email
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function addUserAccountToOrganisation({ user, account, organisation }) {
+  try {
+    logger.debug(
+      `user-service: adding user account ${account.id} to organisation ${
+        organisation.id
+      }`
+    );
+
+    await addUserToOrganisation(organisation.id, {
+      email: account.email
+    });
+
+    addActivityForUser(user.id, 'addedToOrganisation', {
+      id: organisation.id,
+      name: organisation.name,
+      email: account.email
+    });
+  } catch (err) {
     throw err;
   }
 }
@@ -196,7 +258,7 @@ export function connectUserGoogleAccount(userId, userData = {}, keys) {
 async function connectUserAccount(userId, userData = {}, keys, provider) {
   const { id: accountId, email, profileImg, displayName } = userData;
   try {
-    let user = await getUser(userId);
+    const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
     );
@@ -205,7 +267,7 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
       logger.debug(
         `user-service: ${provider} account already connected, updating...`
       );
-      user = await updateUser(
+      return updateUser(
         { userId, 'accounts.email': email },
         {
           'accounts.$.keys': keys,
@@ -213,31 +275,46 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
           name: displayName
         }
       );
-    } else {
-      logger.debug(
-        `user-service: ${provider} account not connected, adding...`
-      );
-      user = await addAccount(userId, {
-        id: accountId,
-        provider,
-        email,
-        keys
-      });
-      addConnectAccountActivity(accountId, provider, user);
+    }
 
+    // check if the user is part of an organisation
+    if (user.organisationId) {
       logger.debug(
-        `user-service: user ${user.id} belongs to an organisation ${
+        `user-service: user belongs to organisation ${
           user.organisationId
-        }, adding account...`
+        }, checking if this account can join`
       );
-      if (!user.organisationId) {
-        await addUserToOrganisation(user.organisationId, {
-          userId: user.id,
-          email: user.email
+      const organisation = await getOrganisationById(user.organisationId);
+      const { allowed, reason } = canUserJoinOrganisation(email, organisation);
+      if (!allowed) {
+        logger.debug(
+          `user-service: user cannot connect this account to this organisation ${
+            user.organisationId
+          }`
+        );
+        // TODO throw warning
+        throw new ConnectAccountError('user cannot join organisation', {
+          key: reason
         });
       }
+      await addUserAccountToOrganisation({
+        user,
+        organisation,
+        account: { id: accountId, email }
+      });
     }
-    return user;
+
+    // if not part of an org just add the account like normal
+    logger.debug(`user-service: ${provider} account not connected, adding...`);
+    const updatedUser = await addAccount(userId, {
+      id: accountId,
+      provider,
+      email,
+      keys
+    });
+    addConnectAccountActivity(accountId, provider, user);
+
+    return updatedUser;
   } catch (err) {
     logger.error(
       `user-service: error connecting user ${provider} account ${accountId}`
@@ -258,7 +335,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
   } = userData;
   let user;
   try {
-    const organisation = await getOrganisation(inviteCode, email);
+    const organisation = await getOrganisationForUserEmail(inviteCode, email);
     if (!id) {
       const referredBy = await getReferrer(referralCode);
       user = await createUserFromPassword({
@@ -298,44 +375,16 @@ async function getReferrer(referralCode) {
   return referralUserId;
 }
 
-async function getOrganisation(inviteCode, email) {
+async function getOrganisationForUserEmail(inviteCode, email) {
+  // no invite code
   if (!inviteCode) return null;
 
+  // no organisation associated with that invite code
   const organisation = await getOrganisationByInviteCode(inviteCode);
   if (!organisation) return null;
 
-  const { allowAnyUserWithCompanyEmail, invitedUsers, domain } = organisation;
-
-  const invited = invitedUsers.includes(email);
-
-  // we always allow invited users
-  if (invited) {
-    logger.info(
-      `user-service: user is invited to organisation ${organisation.id}`
-    );
-    return organisation;
-  }
-
-  // if not invited and allowed company domains
-  if (allowAnyUserWithCompanyEmail) {
-    const userEmailDomain = email.split('@')[1];
-    if (userEmailDomain === domain) {
-      logger.info(
-        `user-service: user email belongs to organisation with allow user with company email ${
-          organisation.id
-        }`
-      );
-      return organisation;
-    }
-  }
-
-  // user is not invited and their domain does not match the company
-  logger.info(
-    `user-service: user is not allowed to join the organisation ${
-      organisation.id
-    }`
-  );
-  return null;
+  const { allowed } = canUserJoinOrganisation(email, organisation);
+  return allowed ? organisation : null;
 }
 
 async function addReferralActivity({ user, referralUser }) {
@@ -590,16 +639,35 @@ export async function updateUserMarketingConsent(
 }
 
 export async function deactivateUserAccount(user) {
-  const { id, email, provider, keys } = user;
-  const { refreshToken } = keys;
-  logger.info(`user-service: deactivating user account ${id}`);
-
   try {
-    if (provider === 'google') {
-      await revokeTokenFromGoogle(refreshToken);
-    } else if (provider === 'outlook') {
-      await revokeTokenFromOutlook(refreshToken);
+    logger.info(`user-service: deactivating user account ${id}`);
+
+    const {
+      id,
+      email,
+      provider,
+      keys,
+      organisationId,
+      organisationAdmin
+    } = user;
+    const { refreshToken } = keys;
+
+    if (organisationAdmin) {
+      throw new Error(
+        'cannot deactivate account - user is an organisation admin'
+      );
     }
+
+    await Promise.all(
+      user.accounts.map(async a => {
+        removeUserAccount(user, a.email);
+      })
+    );
+
+    if (organisationId) {
+      await removeUserFromOrganisation({ email });
+    }
+    await revokeToken({ provider, refreshToken });
     await removeUser(id);
     removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
@@ -622,28 +690,48 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
 }
 
 export async function removeUserAccount(user, email) {
-  const { id: userId, accounts } = user;
-
   try {
+    const { id: userId, accounts, organisationId } = user;
+
     const account = accounts.find(e => e.email === email);
+
     const { id: accountId, provider, keys } = account;
     const { refreshToken } = keys;
 
-    if (provider === 'google') {
-      await revokeTokenFromGoogle(refreshToken);
-    } else if (provider === 'outlook') {
-      await revokeTokenFromOutlook(refreshToken);
-    }
+    await revokeToken({ provider, refreshToken });
     const updatedUser = await removeAccount(userId, { accountId, email });
     addActivityForUser(userId, 'removeAdditionalAccount', {
       id: accountId,
       provider
     });
+
+    if (organisationId) {
+      logger.debug(
+        `user-service: removed user account belonging to an organisation ${organisationId}`
+      );
+      const organisation = await removeUserFromOrganisation({
+        email: account.email
+      });
+      addActivityForUser(userId, 'removedFromOrganisation', {
+        id: organisation.id,
+        name: organisation.name,
+        email: account.email
+      });
+    }
+
     return updatedUser;
   } catch (err) {
     logger.error(
-      `user-service: failed to disconnect user account for user ${userId}`
+      `user-service: failed to disconnect user account for user ${user.id}`
     );
+  }
+}
+
+async function revokeToken({ provider, refreshToken }) {
+  if (provider === 'google') {
+    await revokeTokenFromGoogle(refreshToken);
+  } else if (provider === 'outlook') {
+    await revokeTokenFromOutlook(refreshToken);
   }
 }
 

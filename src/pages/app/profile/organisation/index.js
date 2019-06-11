@@ -120,11 +120,16 @@ function OrganisationStatus({ active, billing }) {
   }
 
   return (
-    <p>
-      Your account is <TextImportant>inactive</TextImportant> because you have
-      not added a payment method or you have deactivated your account.
-      Organisation members cannot unsubscribe while your account is inactive.
-    </p>
+    <>
+      <p>
+        Your account is <TextImportant>inactive</TextImportant> because you have
+        not added a payment method or you have deactivated your account.
+      </p>
+      <p>
+        You cannot invite new members, and existing members cannot unsubscribe
+        while your account is inactive.
+      </p>
+    </>
   );
 }
 
@@ -232,7 +237,7 @@ function Billing({ organisationAdmin, organisation }) {
   if (!organisationAdmin) return null;
 
   const { id, billing = {}, adminUserEmail } = organisation;
-  const { card, company = {}, subscriptionId } = billing;
+  const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
 
   async function removeCard() {
     // TODO remove the card from the organisation
@@ -251,6 +256,13 @@ function Billing({ organisationAdmin, organisation }) {
       <div styleName="organisation-section">
         <h2>Billing Details</h2>
         {subscriptionId ? <BillingInformation organisationId={id} /> : null}
+
+        {subscriptionStatus === 'incomplete' ? (
+          <p>
+            Your subscription is not active. You need to complete additional
+            card verification.
+          </p>
+        ) : null}
 
         <h3>Card Details</h3>
         {card ? (
@@ -291,6 +303,7 @@ function Billing({ organisationAdmin, organisation }) {
         <p>Name: {company.name || '-'}</p>
         <p>VAT Number: {company.vatNumber || '-'}</p>
         <p>Billing email: {adminUserEmail}</p>
+        <p>Contact us to add your VAT number and company details</p>
         <Button
           basic
           compact
@@ -322,7 +335,8 @@ function Billing({ organisationAdmin, organisation }) {
             If you remove your payment method and do not add one by the end of
             your billing period{' '}
             <TextImportant>we will deactivate your account</TextImportant>. You
-            have until TODO billing_period_end to add a new payment method.
+            have until the end of this billing period to add a new payment
+            method.
           </p>
         }
         confirmText={'Confirm'}

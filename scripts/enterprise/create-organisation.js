@@ -2,16 +2,16 @@ require('@babel/register');
 require('@babel/polyfill');
 
 const db = require('../../server/dao/db');
-const OrgDao = require('../../server/services/organisation');
+const OrgService = require('../../server/services/organisation');
 
 async function run() {
   console.log('connecting...');
   await db.connect();
   console.log('connected...');
-  await OrgDao.createOrganisation('danielle@squarecat.io', {
+  await OrgService.createOrganisation('dinkydani@gmail.com', {
     name: 'Squarecat',
     domain: 'squarecat.io',
-    allowAnyUserWithCompanyEmail: false
+    allowAnyUserWithCompanyEmail: true
   });
   console.log('success');
 }

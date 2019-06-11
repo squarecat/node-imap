@@ -10,6 +10,7 @@ import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
 import { fetchLoggedInUser } from '../../../../utils/auth';
+import { getConnectError } from '../../../../utils/errors';
 import request from '../../../../utils/request';
 import useUser from '../../../../utils/hooks/use-user';
 
@@ -64,10 +65,9 @@ export default () => {
     loadUser(user);
   };
 
-  const onConnectError = () => {
-    setError(
-      `Something went wrong connecting your account. Please try again or send us a message.`
-    );
+  const onConnectError = err => {
+    const msg = getConnectError(err);
+    setError(msg);
   };
 
   let connectedAccountsContent;
@@ -102,12 +102,12 @@ export default () => {
         <ConnectButton
           provider="google"
           onSuccess={() => onConnectSuccess()}
-          onError={() => onConnectError()}
+          onError={err => onConnectError(err)}
         />
         <ConnectButton
           provider="outlook"
           onSuccess={() => onConnectSuccess()}
-          onError={() => onConnectError()}
+          onError={err => onConnectError(err)}
         />
         {error ? <FormNotification error>{error}</FormNotification> : null}
       </div>

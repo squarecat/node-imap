@@ -27,6 +27,7 @@ import {
 } from './organisation';
 
 import logger from '../utils/logger';
+import { plans } from 'getconfig';
 import { updateUser } from '../dao/user';
 
 // TODO this is duplicated from 'utils/prices'
@@ -390,19 +391,7 @@ async function getOrUpdateCustomerForOrganisation(
       customerId = id;
     }
 
-    const { last4, exp_month, exp_year } = token.card;
-
-    const updates = {
-      customerId,
-      'billing.company': company,
-      'billing.card': {
-        last4,
-        exp_month,
-        exp_year
-      }
-    };
-
-    organisation = await updateOrganisation(organisationId, updates);
+    organisation = await updateOrganisation(organisationId, { customerId });
     return { organisation, customerId };
   } catch (err) {
     logger.error(
@@ -452,22 +441,31 @@ export async function createSubscriptionForOrganisation(
     logger.debug(
       `payments-service: creating subscription for customer ${customerId}`
     );
-    const planId = '1'; // todo put in config
+    const planId = plans.enterprise;
+    const seats = organisation.currentUsers.length;
     const {
       id: subscriptionId,
       status,
       latest_invoice
     } = await createSubscription({
       customerId,
-      planId
+      planId,
+      quantity: seats
     });
 
     logger.debug(`payments-service: updating organisation billing information`);
 
     // add the subscriptionId to lookup later incase of incomplete payment
+    const { last4, exp_month, exp_year } = token.card;
     await updateOrganisation(organisationId, {
       'billing.subscriptionId': subscriptionId,
-      'billing.subscriptionStatus': status
+      'billing.subscriptionStatus': status,
+      'billing.company': company,
+      'billing.card': {
+        last4,
+        exp_month,
+        exp_year
+      }
     });
 
     const response = generatePaymentResponse(latest_invoice.payment_intent);

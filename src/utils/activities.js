@@ -25,11 +25,17 @@ const activityEnum = {
       reward.credits
     } credits`,
   connectedFirstAccount: ({ reward, data }, user) => {
-    const text = accountConnection({ reward, data }, user);
+    const text = accountConnection(
+      { reward, data, type: 'connectedFirstAccount' },
+      user
+    );
     return reward ? rewardText(text, reward) : text;
   },
   connectedAdditionalAccount: ({ reward, data }, user) => {
-    const text = accountConnection({ reward, data }, user);
+    const text = accountConnection(
+      { reward, data, type: 'connectedAdditionalAccount' },
+      user
+    );
     return reward ? rewardText(text, reward) : text;
   },
   addedTwoFactorAuth: ({ reward }) => {
@@ -43,7 +49,9 @@ const activityEnum = {
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account (${_capitalize(data.provider)}).`,
   addedToOrganisation: ({ data }) =>
-    `You were added to the organistion ${data.name}.`,
+    `You added the account ${data.email} to your organistion ${data.name}.`,
+  removedFromOrganisation: ({ data }) =>
+    `You removed the account ${data.email} from your organistion ${data.name}.`,
   addBillingCard: () => `You added a saved payment method.`,
   removeBillingCard: () => `You removed your saved payment method.`
 };
@@ -62,10 +70,9 @@ function rewardText(text, { credits }) {
   return `${text} You have earned ${credits} credits.`;
 }
 
-function accountConnection({ reward, data }, user) {
+function accountConnection({ reward, data, type }, user) {
   const provider = _capitalize(data.provider);
-  const typeText =
-    reward.type === 'connectedFirstAccount' ? 'your first' : 'another';
+  const typeText = type === 'connectedFirstAccount' ? 'your first' : 'another';
   let text = `You connected ${typeText} account`;
   if (!user || !user.accounts) {
     return `${text} (${provider}).`;

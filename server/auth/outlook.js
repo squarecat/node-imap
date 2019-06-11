@@ -5,6 +5,7 @@ import {
 } from '../services/user';
 import { isBetaUser, setRememberMeCookie } from './access';
 
+import { AuthError } from '../utils/errors';
 import { Strategy as OutlookStrategy } from 'passport-outlook';
 import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
@@ -54,11 +55,11 @@ export const Strategy = new OutlookStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error(
-        'outlook-auth: failed to create or update user from Outlook'
+      done(
+        new AuthError('failed to create or update user from Outlook', {
+          cause: err
+        })
       );
-      logger.error(err);
-      done(err);
     }
   }
 );
@@ -89,9 +90,15 @@ export const ConnectAccountStrategy = new OutlookStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error('outlook-auth: failed to connect account from Outlook');
-      logger.error(err);
-      done(err);
+      if (err.data && err.data.key) {
+        done(err);
+      } else {
+        done(
+          new AuthError('failed to connect account from Outlook', {
+            cause: err
+          })
+        );
+      }
     }
   }
 );
@@ -183,6 +190,9 @@ export default app => {
           'outlook-auth: passport authentication error connecting account'
         );
         logger.error(err);
+        if (err.data && err.data.key) {
+          errUrl = `${errUrl}&reason=${err.data.key}`;
+        }
         return res.redirect(errUrl);
       }
 

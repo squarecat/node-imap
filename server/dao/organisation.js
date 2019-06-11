@@ -131,22 +131,6 @@ export async function getBySubscription(subscriptiondId) {
   }
 }
 
-export async function getFromInvites(id, email) {
-  try {
-    const col = await db().collection(COL_NAME);
-    return col.findOne({
-      id,
-      invitedUsers: {
-        $in: [email]
-      }
-    });
-  } catch (err) {
-    logger.error(`organisation-dao: error getting organisation ${id}`);
-    logger.error(err);
-    throw err;
-  }
-}
-
 export async function addInvitedUser(id, email) {
   try {
     const col = await db().collection(COL_NAME);

@@ -96,7 +96,7 @@ export default () => {
           </li>
         ) : null}
         <li styleName="setting-item logout">
-          <a styleName="setting-item-link" href="/logout">
+          <a styleName="setting-item-link" href="/auth/logout">
             Logout
           </a>
         </li>

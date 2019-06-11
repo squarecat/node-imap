@@ -38,7 +38,7 @@ function OrganisationBillingModal({
 
       console.log('on submit', state);
 
-      // TODO
+      // TODO after Beta
       // 1. if vat number validate it
       // 2. create token with card details
       // 3. send to server
@@ -74,6 +74,7 @@ function OrganisationBillingModal({
       }
     } catch (err) {
       console.error(err);
+      dispatch({ type: 'set-loading', data: false });
       dispatch({
         type: 'set-error',
         data: DEFAULT_ERROR
@@ -157,7 +158,7 @@ function OrganisationBillingModal({
 
             <PaymentCardDetails loading={state.loading} />
 
-            <PaymentCompanyDetails
+            {/* <PaymentCompanyDetails
               companyDetails={state.companyDetails}
               loading={state.loading}
               onChange={(key, value) =>
@@ -166,7 +167,7 @@ function OrganisationBillingModal({
                   data: { key, value }
                 })
               }
-            />
+            /> */}
 
             {state.error ? (
               <FormGroup>

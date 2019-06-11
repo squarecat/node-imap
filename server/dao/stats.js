@@ -91,6 +91,9 @@ export function addOrganisation(count = 1) {
 export function addOrganisationUser(count = 1) {
   return updateSingleStat('organisationUsers', count);
 }
+export function removeOrganisationUser(count = -1) {
+  return updateSingleStat('organisationUsers', count);
+}
 
 // generic update stat function for anything
 export async function updateSingleStat(statName, count = 1) {
@@ -254,7 +257,9 @@ const recordedStats = [
   'referralCredit',
   'newsletterUnsubscription',
   'failedEmailUnsubscribes',
-  'successfulEmailUnsubscribes'
+  'successfulEmailUnsubscribes',
+  'organisations',
+  'organisationUsers'
 ];
 
 export async function recordStats() {
