@@ -120,7 +120,7 @@ export function MailProvider({ children }) {
   );
 
   const value = {
-    isLoading: ready && state.initialized,
+    isLoading: !ready || !state.initialized,
     page: state.page,
     perPage: state.perPage,
     fetch,
