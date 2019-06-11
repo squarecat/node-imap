@@ -174,7 +174,7 @@ export async function addInvitedUser(id, email) {
   }
 }
 
-export async function addOrganisationUser(id, email) {
+export async function addUser(id, email) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(

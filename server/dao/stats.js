@@ -88,7 +88,7 @@ export function addUnsubStatus(status) {
 export function addOrganisation(count = 1) {
   return updateSingleStat('organisations', count);
 }
-export function addOrganisationUserToStats(count = 1) {
+export function addOrganisationUser(count = 1) {
   return updateSingleStat('organisationUsers', count);
 }
 

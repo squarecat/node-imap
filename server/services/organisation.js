@@ -89,10 +89,12 @@ export async function addUserToOrganisation(organisationId, { userId, email }) {
     );
     // add the account to the organisation and remove from the invites
     const organisation = await addUser(organisationId, email);
+    addOrganisationUserToStats();
+
     const { active, billing = {}, currentUsers } = organisation;
 
     logger.debug(
-      `organisation-service: organisation ${organisationId} has ${
+      `organisation-service: organisation ${organisationId} now has ${
         currentUsers.length
       } users`
     );
@@ -104,7 +106,7 @@ export async function addUserToOrganisation(organisationId, { userId, email }) {
         `organisation-service: org is active & has subscription ${organisationId}. Updating seats to ${seats}`
       );
       await updateSubscription({
-        subscriptionId: organisation.subscriptionId,
+        subscriptionId: billing.subscriptionId,
         quantity: seats
       });
     }
@@ -117,11 +119,11 @@ export async function addUserToOrganisation(organisationId, { userId, email }) {
       user.accounts.map(async a => removeUserAccount(user, a.email))
     );
 
-    addActivityForUser(userId, 'addedToOrganisation', {
-      id: organisationId,
+    addActivityForUser(user.id, 'addedToOrganisation', {
+      id: organisation.id,
       name: organisation.name
     });
-    addOrganisationUserToStats();
+
     return organisation;
   } catch (err) {
     throw err;
