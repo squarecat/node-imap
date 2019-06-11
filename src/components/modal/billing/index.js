@@ -2,11 +2,13 @@ import '../modal.module.scss';
 
 import React, { createContext, useEffect, useReducer, useState } from 'react';
 
+import Button from '../../btn';
 import ExistingBillingForm from './existing-billing-form';
 import ModalClose from '../modal-close';
 import NewBillingForm from './new-billing-form';
-import { StarIcon } from '../../icons';
+import PlanImage from '../../pricing/plan-image';
 import StartPurchaseForm from './start-purchase';
+import { TextImportant } from '../../text';
 // import { fetchLoggedInUser } from '../../../utils/auth';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
@@ -158,22 +160,38 @@ export default ({ onClose, selectedPackage, hasBillingCard }) => {
               <h3>Payment Successful</h3>
               <div styleName="modal-content">
                 <div styleName="billing-success">
-                  <StarIcon width="50" height="50" />
+                  <PlanImage type="package" />
                   <p>
-                    You now have {state.selectedPackage.unsubscribes} more
-                    unsubscribe credits!
+                    You now have{' '}
+                    <TextImportant>
+                      {state.selectedPackage.unsubscribes}
+                    </TextImportant>{' '}
+                    more unsubscribe credits!
                   </p>
                 </div>
               </div>
               <div styleName="modal-actions">
-                <a
-                  styleName="modal-btn modal-btn--cta"
+                <Button
+                  compact
+                  basic
+                  muted
                   onClick={() => {
                     onClickClose();
                   }}
                 >
-                  Awesome!
-                </a>
+                  Close
+                </Button>
+                <Button
+                  as="link"
+                  linkTo="/app"
+                  compact
+                  basic
+                  onClick={() => {
+                    onClickClose();
+                  }}
+                >
+                  Go to scan
+                </Button>
               </div>
             </>
           ) : null}

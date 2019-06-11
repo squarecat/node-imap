@@ -4,6 +4,7 @@ import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
 import React, { useMemo } from 'react';
 
 import Button from '../../btn';
+import CopyButton from '../../copy-to-clipboard';
 import { InlineFormInput } from '../../form';
 import { Link } from 'gatsby';
 import { TextImportant } from '../../text';
@@ -145,8 +146,8 @@ export default ({ credits }) => {
             <TwitterIcon />
             Tweet
           </Button>
-          <Button
-            onClick={copyToClipboard(`${location.host}/r/${referralCode}`)}
+          <CopyButton
+            string={`${location.host}/r/${referralCode}`}
             muted
             outlined
             stretch
@@ -156,7 +157,7 @@ export default ({ credits }) => {
             inline
           >
             Copy link
-          </Button>
+          </CopyButton>
         </div>
         {referralsLoading ? null : getReferralList(referralValue)}
         <ModalSubHeader>Other ways to Earn Credit</ModalSubHeader>
@@ -298,12 +299,3 @@ function rewardList(rewardItems, socialContent) {
     </ul>
   );
 }
-
-const copyToClipboard = str => {
-  const el = document.createElement('textarea');
-  el.value = str;
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand('copy');
-  document.body.removeChild(el);
-};

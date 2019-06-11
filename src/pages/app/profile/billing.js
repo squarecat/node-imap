@@ -216,7 +216,11 @@ function Packages({ onClickBuy }) {
   );
   return (
     <div styleName="billing-section" id="packages">
-      <h2>Packages</h2>
+      <h2 styleName="package-title">
+        Packages
+        <span styleName="credit-info">1 Credit = 1 Unsubscribe</span>
+      </h2>
+
       <FormCheckbox
         onChange={() =>
           dispatch({
@@ -249,7 +253,7 @@ function Packages({ onClickBuy }) {
       <p>
         Pssst - Currently your inbox contains approximately{' '}
         <TextImportant>{count} subscription emails</TextImportant> that you
-        haven't unsubscribed from yet! Bear that in mind when buying a package!
+        haven't unsubscribed from yet. Bear that in mind when buying a package!
       </p>
     </div>
   );
