@@ -108,9 +108,18 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
   } = userData;
   try {
     let user = await getUser(id);
-    const organisation = await getOrganisationForUserEmail(inviteCode, email);
+    let organisation;
     if (!user) {
       logger.debug(`user-service: creating new user`);
+      // new user account, check if they should be added to an org
+      organisation = await getOrganisationForUserEmail(inviteCode, email);
+      if (organisation) {
+        logger.debug(
+          `user-service: new user is invited to or has domain for org ${
+            organisation.id
+          }, adding...`
+        );
+      }
       const referredBy = await getReferrer(referralCode);
       user = await createUser(
         {
@@ -142,19 +151,33 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       });
     } else {
       logger.debug(`user-service: updating user ${id}`);
-      user = await updateUserWithAccount(
-        { id, email },
-        {
-          profileImg,
-          name: displayName,
-          organisationId: organisation ? organisation.id : null
-        },
-        keys
-      );
+      let updates = {
+        profileImg,
+        name: displayName
+      };
+      if (!user.organisationId) {
+        logger.debug(
+          `user-service: user ${id} not a member of an organisation, checking if they should be...`
+        );
+        // if the user is not already a member of an org see if they should be
+        organisation = await getOrganisationForUserEmail(inviteCode, email);
+        if (organisation) {
+          logger.debug(
+            `user-service: user ${id} is invited to or has domain for org ${
+              organisation.id
+            }, adding...`
+          );
+          updates = {
+            ...updates,
+            organisationId: organisation.id
+          };
+        }
+      }
+      user = await updateUserWithAccount({ id, email }, updates, keys);
     }
 
     // signing up or logging in with a provider counts as connecting
-    // an account so we check the org stuff here
+    // an account so we add this account to the organisation to be billed
     if (organisation) {
       await addCreatedOrUpdatedUserToOrganisation({
         user,
@@ -185,14 +208,8 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
     await Promise.all(
       user.accounts.map(a => {
         if (a.email === user.email) {
-          logger.debug(
-            `user-service: ${a.email} is primary account, not removing`
-          );
           return true;
         }
-        logger.debug(
-          `user-service: ${a.email} is NOT primary account, removing`
-        );
         return removeUserAccount(user, a.email);
       })
     );
@@ -336,6 +353,9 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
   } = userData;
   let user;
   try {
+    // signup/login with password if the user should belong to org
+    // add the id to them but don't add the email to the organisation
+    // as the org should only be billed for connected accounts
     const organisation = await getOrganisationForUserEmail(inviteCode, email);
     if (!id) {
       const referredBy = await getReferrer(referralCode);
@@ -380,7 +400,7 @@ async function getReferrer(referralCode) {
 // to an organisation based on
 // 1. with invite code we still want to check they are allowed to join that org
 // 2. no invite code get the first org they match by being invited or matching domain
-async function getOrganisationForUserEmail(inviteCode, email) {
+async function getOrganisationForUserEmail(inviteCode, { email }) {
   logger.debug(`user-service: getting organisation for user email`);
 
   let organisation;
