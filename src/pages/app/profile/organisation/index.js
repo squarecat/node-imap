@@ -11,6 +11,7 @@ import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
+import CopyButton from '../../../../components/copy-to-clipboard';
 import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../../components/error-boundary';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
@@ -81,9 +82,7 @@ function Organisation() {
 
       <Settings loading={loading} organisation={organisation} />
 
-      {isInvitingEnabled ? (
-        <InviteForm organisationId={organisationId} />
-      ) : null}
+      {isInvitingEnabled ? <InviteForm organisation={organisation} /> : null}
 
       <CurrentUsers organisationId={organisationId} />
 
@@ -243,6 +242,7 @@ function Billing({ organisationAdmin, organisation }) {
     // TODO remove the card from the organisation
     // cancel the subscription (and show when it will cancel)
     // webhook for cancelled to update status
+    console.warn('not yet implemented');
     return true;
   }
 
@@ -260,7 +260,7 @@ function Billing({ organisationAdmin, organisation }) {
         {subscriptionStatus === 'incomplete' ? (
           <p>
             Your subscription is not active. You need to complete additional
-            card verification.
+            card authentication.
           </p>
         ) : null}
 
@@ -399,13 +399,15 @@ function BillingInformation({ organisationId }) {
   );
 }
 
-function InviteForm({ organisationId }) {
+function InviteForm({ organisation }) {
   const [state, setState] = useState({
     email: '',
     loading: false,
     error: false,
     sent: false
   });
+
+  const { id, inviteCode, allowAnyUserWithCompanyEmail } = organisation;
 
   const onSubmit = async () => {
     try {
@@ -416,7 +418,7 @@ function InviteForm({ organisationId }) {
         sent: false
       });
 
-      await sendInvite(organisationId, state.email);
+      await sendInvite(id, state.email);
       setTimeout(() => {
         setState({
           ...state,
@@ -441,6 +443,24 @@ function InviteForm({ organisationId }) {
   return (
     <div styleName="organisation-section">
       <h2>Invite Users</h2>
+      {allowAnyUserWithCompanyEmail ? (
+        <p>
+          Any user with your company domain can join. Instead of inviting them
+          all, you can share this link:
+          <CopyButton
+            string={`${window.location.host}/i/${inviteCode}`}
+            muted
+            outlined
+            stretch
+            fill
+            basic
+            smaller
+            inline
+          >
+            {window.location.host}/i/{inviteCode} - Copy link
+          </CopyButton>
+        </p>
+      ) : null}
       <p>
         You can invite any member inside or outside of your organisation by
         email address. Members will be able to sign-in or connect an account

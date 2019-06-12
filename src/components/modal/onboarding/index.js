@@ -17,7 +17,13 @@ import useUser from '../../../utils/hooks/use-user';
 
 export default ({ shown, onClose }) => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);
-  const [accounts, { setMilestoneCompleted }] = useUser(u => u.accounts);
+  const [{ accounts, organisationId }, { setMilestoneCompleted }] = useUser(
+    u => ({
+      accounts: u.accounts,
+      organisationId: u.organisationId
+    })
+  );
+
   useEffect(
     () => {
       if (state.step === 'accounts') {
@@ -25,6 +31,13 @@ export default ({ shown, onClose }) => {
       }
     },
     [state.step, accounts.length]
+  );
+
+  useEffect(
+    () => {
+      dispatch({ type: 'organisation-member', data: !!organisationId });
+    },
+    [organisationId]
   );
 
   const onComplete = async () => {
