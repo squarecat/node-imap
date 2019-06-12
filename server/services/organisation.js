@@ -4,6 +4,7 @@ import {
   create,
   getById,
   getByInviteCode,
+  getByInvitedEmailOrValidDomain,
   getBySubscription,
   removeUser,
   update
@@ -222,6 +223,10 @@ export async function getOrganisationSubscription(id) {
   } catch (err) {
     throw err;
   }
+}
+
+export function getOrganisationByInvitedEmailOrValidDomain(email) {
+  return getByInvitedEmailOrValidDomain(email);
 }
 
 export function canUserJoinOrganisation(email, organisation) {

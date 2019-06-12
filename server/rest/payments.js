@@ -129,6 +129,7 @@ export default app => {
     }
   });
 
+  // stripe webhooks
   app.post('/api/payments/refund', async (req, res) => {
     res.sendStatus(200);
 

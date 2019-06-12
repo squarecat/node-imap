@@ -52,6 +52,7 @@ import {
   canUserJoinOrganisation,
   getOrganisationById,
   getOrganisationByInviteCode,
+  getOrganisationByInvitedEmailOrValidDomain,
   removeUserFromOrganisation
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
@@ -375,16 +376,43 @@ async function getReferrer(referralCode) {
   return referralUserId;
 }
 
+// when a user signs up or logs in check if they should be added
+// to an organisation based on
+// 1. with invite code we still want to check they are allowed to join that org
+// 2. no invite code get the first org they match by being invited or matching domain
 async function getOrganisationForUserEmail(inviteCode, email) {
+  logger.debug(`user-service: getting organisation for user email`);
+
+  let organisation;
   // no invite code
-  if (!inviteCode) return null;
+  if (inviteCode) {
+    logger.debug(`user-service: getting by invite code ${inviteCode}`);
+    organisation = await getOrganisationByInviteCode(inviteCode);
+  } else {
+    logger.debug(
+      `user-service: no invite code, trying to get org by invite or domain`
+    );
+    organisation = await getOrganisationByInvitedEmailOrValidDomain(email);
+  }
 
-  // no organisation associated with that invite code
-  const organisation = await getOrganisationByInviteCode(inviteCode);
-  if (!organisation) return null;
+  if (!organisation) {
+    logger.debug(
+      `user-service: no organisation found, no further action required`
+    );
+    return null;
+  }
 
-  const { allowed } = canUserJoinOrganisation(email, organisation);
-  return allowed ? organisation : null;
+  const { allowed, reason } = canUserJoinOrganisation(email, organisation);
+  if (allowed) {
+    logger.debug(
+      `user-service: got organisation ${organisation.id}, user email is allowed`
+    );
+    return organisation;
+  }
+  logger.debug(
+    `user-service: got organisation, user is not allowed - ${reason}`
+  );
+  return null;
 }
 
 async function addReferralActivity({ user, referralUser }) {

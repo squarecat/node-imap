@@ -130,6 +130,31 @@ export async function getBySubscription(subscriptiondId) {
     throw err;
   }
 }
+export async function getByInvitedEmailOrValidDomain(email) {
+  try {
+    const domain = email.split('@')[1];
+    const col = await db().collection(COL_NAME);
+    return col.findOne({
+      $or: [
+        {
+          invitedUsers: {
+            $in: [email]
+          }
+        },
+        {
+          allowAnyUserWithCompanyEmail: true,
+          domain
+        }
+      ]
+    });
+  } catch (err) {
+    logger.error(
+      `organisation-dao: error getting organisation by user invited email or valid domain`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
 
 export async function addInvitedUser(id, email) {
   try {
