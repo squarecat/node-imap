@@ -6,7 +6,7 @@ import {
   FormInput,
   FormNotification
 } from '../../../../components/form';
-import React, { useReducer, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';
@@ -14,6 +14,7 @@ import CardDetails from '../../../../components/card-details';
 import CopyButton from '../../../../components/copy-to-clipboard';
 import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../../components/error-boundary';
+import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
@@ -75,10 +76,12 @@ function Organisation() {
         <p>{invitedUsers.length} invites pending</p>
       </div>
 
-      <Billing
-        organisationAdmin={organisationAdmin}
-        organisation={organisation}
-      />
+      {organisationAdmin ? (
+        <Billing
+          organisationAdmin={organisationAdmin}
+          organisation={organisation}
+        />
+      ) : null}
 
       <Settings loading={loading} organisation={organisation} />
 
@@ -108,7 +111,7 @@ function Organisation() {
   );
 }
 
-function OrganisationStatus({ active, billing }) {
+function OrganisationStatus({ active }) {
   if (active) {
     return (
       <p>
@@ -217,8 +220,8 @@ function Settings({ loading, organisation }) {
 }
 
 function Billing({ organisationAdmin, organisation }) {
+  const { open: openModal } = useContext(ModalContext);
   const [showBillingModal, toggleBillingModal] = useState(false);
-  const [showWarningModal, toggleWarningModal] = useState(false);
 
   const [state, setState] = useState({
     loading: false,
@@ -233,23 +236,44 @@ function Billing({ organisationAdmin, organisation }) {
     };
   });
 
-  if (!organisationAdmin) return null;
-
   const { id, billing = {}, adminUserEmail } = organisation;
   const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
-
-  async function removeCard() {
-    // TODO remove the card from the organisation
-    // cancel the subscription (and show when it will cancel)
-    // webhook for cancelled to update status
-    console.warn('not yet implemented');
-    return true;
-  }
 
   async function addPaymentMethodSuccess() {
     toggleBillingModal(false);
     setOrganisationLastUpdated(Date.now());
   }
+
+  const onClickRemoveCard = useCallback(
+    () => {
+      const removeCard = () => {
+        // TODO remove the card from the organisation
+        // cancel the subscription (and show when it will cancel)
+        // webhook for cancelled to update status
+        console.warn('not yet implemented');
+        return true;
+      };
+      openModal(
+        <WarningModal
+          onConfirm={() => removeCard()}
+          content={
+            <p>
+              If you remove your payment method and do not add one by the end of
+              your billing period{' '}
+              <TextImportant>we will deactivate your account</TextImportant>.
+              You have until the end of this billing period to add a new payment
+              method.
+            </p>
+          }
+          confirmText="Confirm"
+        />,
+        {
+          dismissable: true
+        }
+      );
+    },
+    [openModal]
+  );
 
   return (
     <>
@@ -274,7 +298,7 @@ function Billing({ organisationAdmin, organisation }) {
               stretch
               disabled={state.loading}
               loading={state.loading}
-              onClick={() => toggleWarningModal(true)}
+              onClick={() => onClickRemoveCard()}
             >
               Remove Card
             </Button>
@@ -323,24 +347,6 @@ function Billing({ organisationAdmin, organisation }) {
           onSuccess={organisation => addPaymentMethodSuccess(organisation)}
         />
       </Elements>
-      <WarningModal
-        shown={showWarningModal}
-        onClose={() => toggleWarningModal(false)}
-        onConfirm={() => {
-          toggleWarningModal(false);
-          removeCard();
-        }}
-        content={
-          <p>
-            If you remove your payment method and do not add one by the end of
-            your billing period{' '}
-            <TextImportant>we will deactivate your account</TextImportant>. You
-            have until the end of this billing period to add a new payment
-            method.
-          </p>
-        }
-        confirmText={'Confirm'}
-      />
     </>
   );
 }
@@ -525,6 +531,7 @@ function CurrentUsers({ organisationId }) {
             <TableRow key={stat.id}>
               <TableCell>{stat.email}</TableCell>
               <TableCell>{stat.numberOfUnsubscribes} unsubscribes</TableCell>
+              <TableCell>{stat.timeSaved} time saved</TableCell>
               <TableCell>Joined {relative(stat.dateJoined)}</TableCell>
             </TableRow>
           ))}

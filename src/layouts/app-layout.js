@@ -34,11 +34,11 @@ const AppLayout = ({ pageName, children }) => {
       />
 
       <DatabaseProvider>
-        <ModalProvider>
-          <AlertProvider>
-            <StripeProvider>{children}</StripeProvider>
-          </AlertProvider>
-        </ModalProvider>
+        <StripeProvider>
+          <ModalProvider>
+            <AlertProvider>{children}</AlertProvider>
+          </ModalProvider>
+        </StripeProvider>
       </DatabaseProvider>
     </>
   );

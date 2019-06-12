@@ -1,10 +1,9 @@
-import '../modal.module.scss';
-
+import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from '..';
 import React, { useContext } from 'react';
 
 import { BillingModalContext } from './index';
-import Button from '../../../components/btn';
 import CouponForm from './coupon';
+import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import { TextImportant } from '../../text';
@@ -12,7 +11,8 @@ import request from '../../../utils/request';
 
 const DEFAULT_ERROR = `An error occured claiming your free credits, please contact support.`;
 
-export default function StartPurchase({ onClickClose, onPurchaseSuccess }) {
+export default function StartPurchase({ onPurchaseSuccess }) {
+  const { close: closeModal } = useContext(ModalContext);
   const { state, dispatch } = useContext(BillingModalContext);
   const { selectedPackage, hasBillingCard, coupon } = state;
 
@@ -54,7 +54,11 @@ export default function StartPurchase({ onClickClose, onPurchaseSuccess }) {
 
   return (
     <>
-      <div styleName="modal-content">
+      <ModalBody compact>
+        <ModalHeader>
+          Buy Package
+          <ModalCloseIcon />
+        </ModalHeader>
         <p>
           Purchasing a package of{' '}
           <TextImportant>{selectedPackage.credits} credits.</TextImportant>
@@ -68,33 +72,20 @@ export default function StartPurchase({ onClickClose, onPurchaseSuccess }) {
           <Price price={selectedPackage.discountPrice} />
         ) : null}
         <CouponForm />
-      </div>
-      <div styleName="modal-actions">
-        <div styleName="modal-buttons">
-          <a
-            styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-            onClick={onClickClose}
-          >
-            Cancel
-          </a>
+      </ModalBody>
 
-          <Button
-            basic
-            compact
-            stretch
-            disabled={state.loading}
-            loading={state.loading}
-            onClick={() => {
-              if (isFree) {
-                return handleFreeCredits();
-              }
-              return dispatch({ type: 'set-step', data: billingStep });
-            }}
-          >
-            {isFree ? 'Claim Free Credits!' : 'Secure Checkout'}
-          </Button>
-        </div>
-      </div>
+      <ModalSaveAction
+        isDisabled={state.loading}
+        isLoading={state.loading}
+        onSave={() => {
+          if (isFree) {
+            return handleFreeCredits();
+          }
+          return dispatch({ type: 'set-step', data: billingStep });
+        }}
+        onCancel={closeModal}
+        saveText={isFree ? 'Claim Free Credits!' : 'Secure Checkout'}
+      />
     </>
   );
 }

@@ -32,15 +32,12 @@ function CardDetails({ loading = false, disabled = false }) {
 
   const { actions } = useContext(StripeStateContext);
 
-  useEffect(
-    () => {
-      actions.setCardRef(cardRef);
-      return function cleanup() {
-        actions.reset();
-      };
-    },
-    [cardRef]
-  );
+  useEffect(() => {
+    actions.setCardRef(cardRef);
+    return function cleanup() {
+      actions.reset();
+    };
+  }, []);
 
   return (
     <FormGroup>
