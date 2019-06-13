@@ -1,0 +1,9 @@
+@import '../../../styles/common/colors.scss';
+
+.billing-success {
+  text-align: center;
+  svg {
+    margin-bottom: 10px;
+    color: $color-red-darker;
+  }
+}

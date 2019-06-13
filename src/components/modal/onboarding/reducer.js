@@ -39,15 +39,14 @@ export const initialState = {
   step: steps[0].value,
   isLoading: false,
   canProceed: true,
-  nextLabel: steps[0].nextLabel
+  nextLabel: steps[0].nextLabel,
+  organisationMember: false
 };
 
 export default (state, action) => {
   switch (action.type) {
     case 'next-step': {
-      const { value: step, nextLabel } = steps[
-        steps.findIndex(d => d.value === state.step) + 1
-      ];
+      const { value: step, nextLabel } = getNextStep(state);
       return {
         ...state,
         step,
@@ -55,9 +54,7 @@ export default (state, action) => {
       };
     }
     case 'prev-step': {
-      const { value: step, nextLabel } = steps[
-        steps.findIndex(d => d.value === state.step) - 1
-      ];
+      const { value: step, nextLabel } = getPrevStep(state);
       return {
         ...state,
         step,
@@ -70,6 +67,12 @@ export default (state, action) => {
         canProceed: action.data
       };
     }
+    case 'organisation-member': {
+      return {
+        ...state,
+        organisationMember: action.data
+      };
+    }
     default:
       return state;
   }
@@ -77,4 +80,20 @@ export default (state, action) => {
 
 export function isFirstStep(state) {
   return steps.indexOf(state.step) !== 0;
+}
+
+function getNextStep(state) {
+  let nextStep = steps[steps.findIndex(d => d.value === state.step) + 1];
+
+  if (nextStep.value === 'rewards' && state.organisationMember) {
+    nextStep = steps[steps.findIndex(d => d.value === state.step) + 2];
+  }
+  return nextStep;
+}
+function getPrevStep(state) {
+  let prevStep = steps[steps.findIndex(d => d.value === state.step) - 1];
+  if (prevStep.value === 'rewards' && state.organisationMember) {
+    prevStep = steps[steps.findIndex(d => d.value === state.step) - 2];
+  }
+  return prevStep;
 }

@@ -1,82 +1,19 @@
-import '../modal.module.scss';
+import './billing-modal.module.scss';
 
-import React, { createContext, useEffect, useReducer, useState } from 'react';
+import React, { createContext, useReducer } from 'react';
+import billingModalReducer, { initialState } from './reducer';
 
-import Button from '../../btn';
+import { Elements } from 'react-stripe-elements';
 import ExistingBillingForm from './existing-billing-form';
-import ModalClose from '../modal-close';
 import NewBillingForm from './new-billing-form';
-import PlanImage from '../../pricing/plan-image';
 import StartPurchaseForm from './start-purchase';
-import { TextImportant } from '../../text';
-// import { fetchLoggedInUser } from '../../../utils/auth';
+import Success from './success';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
-function billingModalReducer(state, action) {
-  const { type, data } = action;
-  switch (type) {
-    case 'set-step': {
-      return {
-        ...state,
-        step: data,
-        loading: false,
-        error: false
-      };
-    }
-    case 'set-billing-detail':
-      return {
-        ...state,
-        [data.key]: data.value
-      };
-    case 'set-coupon':
-      return {
-        ...state,
-        coupon: data
-      };
-    case 'set-package-discount-amount': {
-      const { price } = state.selectedPackage;
-      return {
-        ...state,
-        selectedPackage: {
-          ...state.selectedPackage,
-          discountAmount: data,
-          discountPrice: price - data
-        }
-      };
-    }
-    case 'set-loading':
-      return { ...state, loading: data };
-    case 'set-error':
-      return { ...state, error: data };
-    default:
-      return state;
-  }
-}
-
-const initialState = {
-  name: '',
-  line1: '',
-  line2: '',
-  city: '',
-  country: '',
-  postal_code: '',
-  save_payment_method: true,
-  coupon: '',
-  step: 'start-purchase',
-  selectedPackage: {}
-};
-
-// Steps
-// start-purchase
-// enter-billing-details - new billing details/checkout
-// existing-billing-details - use existing billing details
-// success - done screen
-
 export const BillingModalContext = createContext({ state: initialState });
 
-export default ({ onClose, selectedPackage, hasBillingCard }) => {
-  const [isShown, setShown] = useState(false);
+export default ({ selectedPackage, hasBillingCard }) => {
   const [state, dispatch] = useReducer(billingModalReducer, {
     ...initialState,
     hasBillingCard,
@@ -84,121 +21,44 @@ export default ({ onClose, selectedPackage, hasBillingCard }) => {
   });
   const [user, { setBilling: setUserBilling }] = useUser();
 
-  const handleKeydown = e => {
-    if (e.keyCode === 27 || e.key === 'Escape') {
-      onClickClose();
-    }
-  };
-
-  // on mount
-  useEffect(() => {
-    setShown(true);
-    document.addEventListener('keydown', handleKeydown, false);
-    return function cleanup() {
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  }, []);
-
-  const onClickClose = () => {
-    setShown(false);
-    setTimeout(onClose, 300);
-  };
-
   const onPurchaseSuccess = ({ billing }) => {
     setUserBilling(billing);
   };
 
   return (
-    <BillingModalContext.Provider value={{ state, dispatch }}>
-      <div styleName={`modal ${isShown ? 'shown' : ''}`}>
-        <ModalClose onClose={onClickClose} />
-        <div
-          // styleName="enter-billing-details-box"
-          data-active={state.step === 'start-purchase'}
-        >
-          {state.step === 'start-purchase' ? (
-            <>
-              <h3>Buy Package</h3>
-              <StartPurchaseForm />
-            </>
-          ) : null}
-        </div>
-        <div
-          // styleName="enter-billing-details-box"
-          data-active={state.step === 'enter-billing-details'}
-        >
-          {state.step === 'enter-billing-details' ? (
-            <>
-              <h3>Buy Package</h3>
-              <NewBillingForm
-                onClickClose={onClickClose}
+    <div styleName="billing-modal">
+      <Elements>
+        <BillingModalContext.Provider value={{ state, dispatch }}>
+          <div data-active={state.step === 'start-purchase'}>
+            {state.step === 'start-purchase' ? (
+              <StartPurchaseForm
                 onPurchaseSuccess={user => onPurchaseSuccess(user)}
               />
-            </>
-          ) : null}
-        </div>
-        <div
-          // styleName="enter-billing-details-box"
-          data-active={state.step === 'existing-billing-details'}
-        >
-          {state.step === 'existing-billing-details' ? (
-            <>
-              <h3>Buy Package</h3>
+            ) : null}
+          </div>
+          <div data-active={state.step === 'enter-billing-details'}>
+            {state.step === 'enter-billing-details' ? (
+              <NewBillingForm
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
+            ) : null}
+          </div>
+          <div data-active={state.step === 'existing-billing-details'}>
+            {state.step === 'existing-billing-details' ? (
               <ExistingBillingForm
                 card={user.billing.card}
                 onPurchaseSuccess={user => onPurchaseSuccess(user)}
               />
-            </>
-          ) : null}
-        </div>
-        <div
-          // styleName="enter-billing-details-box"
-          data-active={state.step === 'success'}
-        >
-          {state.step === 'success' ? (
-            <>
-              <h3>Payment Successful</h3>
-              <div styleName="modal-content">
-                <div styleName="billing-success">
-                  <PlanImage type="package" />
-                  <p>
-                    You now have{' '}
-                    <TextImportant>
-                      {state.selectedPackage.unsubscribes}
-                    </TextImportant>{' '}
-                    more unsubscribe credits!
-                  </p>
-                </div>
-              </div>
-              <div styleName="modal-actions">
-                <Button
-                  compact
-                  basic
-                  muted
-                  onClick={() => {
-                    onClickClose();
-                  }}
-                >
-                  Close
-                </Button>
-                <Button
-                  as="link"
-                  linkTo="/app"
-                  compact
-                  basic
-                  onClick={() => {
-                    onClickClose();
-                  }}
-                >
-                  Go to scan
-                </Button>
-              </div>
-            </>
-          ) : null}
-        </div>
-      </div>
-      <div styleName={`modal-bg ${isShown ? 'shown' : ''}`} />
-    </BillingModalContext.Provider>
+            ) : null}
+          </div>
+          <div data-active={state.step === 'success'}>
+            {state.step === 'success' ? (
+              <Success credits={state.selectedPackage.credits} />
+            ) : null}
+          </div>
+        </BillingModalContext.Provider>
+      </Elements>
+    </div>
   );
 };
 

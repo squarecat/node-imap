@@ -6,13 +6,15 @@ import {
   FormInput,
   FormNotification
 } from '../../../../components/form';
-import React, { useReducer, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
+import CopyButton from '../../../../components/copy-to-clipboard';
 import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../../components/error-boundary';
+import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
@@ -74,16 +76,11 @@ function Organisation() {
         <p>{invitedUsers.length} invites pending</p>
       </div>
 
-      <Billing
-        organisationAdmin={organisationAdmin}
-        organisation={organisation}
-      />
+      {organisationAdmin ? <Billing organisation={organisation} /> : null}
 
       <Settings loading={loading} organisation={organisation} />
 
-      {isInvitingEnabled ? (
-        <InviteForm organisationId={organisationId} />
-      ) : null}
+      {isInvitingEnabled ? <InviteForm organisation={organisation} /> : null}
 
       <CurrentUsers organisationId={organisationId} />
 
@@ -109,7 +106,7 @@ function Organisation() {
   );
 }
 
-function OrganisationStatus({ active, billing }) {
+function OrganisationStatus({ active }) {
   if (active) {
     return (
       <p>
@@ -120,11 +117,16 @@ function OrganisationStatus({ active, billing }) {
   }
 
   return (
-    <p>
-      Your account is <TextImportant>inactive</TextImportant> because you have
-      not added a payment method or you have deactivated your account.
-      Organisation members cannot unsubscribe while your account is inactive.
-    </p>
+    <>
+      <p>
+        Your account is <TextImportant>inactive</TextImportant> because you have
+        not added a payment method or you have deactivated your organisation.
+      </p>
+      <p>
+        You cannot invite new members, and existing members cannot unsubscribe
+        while your account is inactive.
+      </p>
+    </>
   );
 }
 
@@ -212,9 +214,8 @@ function Settings({ loading, organisation }) {
   );
 }
 
-function Billing({ organisationAdmin, organisation }) {
-  const [showBillingModal, toggleBillingModal] = useState(false);
-  const [showWarningModal, toggleWarningModal] = useState(false);
+function Billing({ organisation }) {
+  const { open: openModal } = useContext(ModalContext);
 
   const [state, setState] = useState({
     loading: false,
@@ -229,28 +230,66 @@ function Billing({ organisationAdmin, organisation }) {
     };
   });
 
-  if (!organisationAdmin) return null;
+  const { id, billing = {} } = organisation;
+  const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
 
-  const { id, billing = {}, adminUserEmail } = organisation;
-  const { card, company = {}, subscriptionId } = billing;
+  const onClickRemoveCard = useCallback(
+    () => {
+      const removeCard = () => {
+        console.log('not yet implemented');
+      };
+      openModal(
+        <WarningModal
+          onConfirm={() => removeCard()}
+          content={
+            <p>
+              If you remove your payment method and do not add one by the end of
+              your billing period{' '}
+              <TextImportant>
+                we will deactivate your organisation
+              </TextImportant>
+              . You have until the end of this billing period to add a new
+              payment method.
+            </p>
+          }
+          confirmText="Confirm"
+        />,
+        {
+          dismissable: true
+        }
+      );
+    },
+    [openModal]
+  );
 
-  async function removeCard() {
-    // TODO remove the card from the organisation
-    // cancel the subscription (and show when it will cancel)
-    // webhook for cancelled to update status
-    return true;
-  }
-
-  async function addPaymentMethodSuccess() {
-    toggleBillingModal(false);
-    setOrganisationLastUpdated(Date.now());
-  }
+  const onClickAddBilling = useCallback(
+    () => {
+      const addPaymentMethodSuccess = () => {
+        console.log('success adding organisation payment method!');
+        setOrganisationLastUpdated(Date.now());
+      };
+      openModal(
+        <OrganisationBillingModal
+          organisation={organisation}
+          onSuccess={() => addPaymentMethodSuccess()}
+        />
+      );
+    },
+    [openModal, organisation, setOrganisationLastUpdated]
+  );
 
   return (
     <>
       <div styleName="organisation-section">
         <h2>Billing Details</h2>
         {subscriptionId ? <BillingInformation organisationId={id} /> : null}
+
+        {subscriptionStatus === 'incomplete' ? (
+          <p>
+            Your subscription is not active. You need to complete additional
+            card authentication.
+          </p>
+        ) : null}
 
         <h3>Card Details</h3>
         {card ? (
@@ -262,10 +301,20 @@ function Billing({ organisationAdmin, organisation }) {
               stretch
               disabled={state.loading}
               loading={state.loading}
-              onClick={() => toggleWarningModal(true)}
+              onClick={() => onClickAddBilling()}
+            >
+              Change Payment Method
+            </Button>
+            {/* <Button
+              basic
+              compact
+              stretch
+              disabled={state.loading}
+              loading={state.loading}
+              onClick={() => onClickRemoveCard()}
             >
               Remove Card
-            </Button>
+            </Button> */}
           </>
         ) : (
           <>
@@ -279,7 +328,7 @@ function Billing({ organisationAdmin, organisation }) {
               stretch
               disabled={state.loading}
               loading={state.loading}
-              onClick={() => toggleBillingModal(true)}
+              onClick={() => onClickAddBilling()}
             >
               Add Payment Method
             </Button>
@@ -288,45 +337,25 @@ function Billing({ organisationAdmin, organisation }) {
       </div>
       <div styleName="organisation-section">
         <h2>Company Details</h2>
-        <p>Name: {company.name || '-'}</p>
-        <p>VAT Number: {company.vatNumber || '-'}</p>
-        <p>Billing email: {adminUserEmail}</p>
-        <Button
-          basic
-          compact
-          stretch
-          disabled={true} // not available yet
-          loading={state.loading}
-          onClick={() => toggleBillingModal(true)}
-        >
-          Update (coming soon)
-        </Button>
+        {company.vatNumber ? (
+          <>
+            <p>Name: {company.name || '-'}</p>
+            <p>VAT Number: {company.vatNumber || '-'}</p>
+            <Button
+              basic
+              compact
+              stretch
+              disabled={true} // not available yet
+              loading={state.loading}
+              onClick={() => {}}
+            >
+              Update (coming soon)
+            </Button>
+          </>
+        ) : (
+          <p>Contact us to add your VAT number and company details</p>
+        )}
       </div>
-      <Elements>
-        <OrganisationBillingModal
-          organisation={organisation}
-          shown={showBillingModal}
-          onClose={() => toggleBillingModal(false)}
-          onSuccess={organisation => addPaymentMethodSuccess(organisation)}
-        />
-      </Elements>
-      <WarningModal
-        shown={showWarningModal}
-        onClose={() => toggleWarningModal(false)}
-        onConfirm={() => {
-          toggleWarningModal(false);
-          removeCard();
-        }}
-        content={
-          <p>
-            If you remove your payment method and do not add one by the end of
-            your billing period{' '}
-            <TextImportant>we will deactivate your account</TextImportant>. You
-            have until TODO billing_period_end to add a new payment method.
-          </p>
-        }
-        confirmText={'Confirm'}
-      />
     </>
   );
 }
@@ -385,13 +414,15 @@ function BillingInformation({ organisationId }) {
   );
 }
 
-function InviteForm({ organisationId }) {
+function InviteForm({ organisation }) {
   const [state, setState] = useState({
     email: '',
     loading: false,
     error: false,
     sent: false
   });
+
+  const { id, inviteCode, allowAnyUserWithCompanyEmail } = organisation;
 
   const onSubmit = async () => {
     try {
@@ -402,7 +433,7 @@ function InviteForm({ organisationId }) {
         sent: false
       });
 
-      await sendInvite(organisationId, state.email);
+      await sendInvite(id, state.email);
       setTimeout(() => {
         setState({
           ...state,
@@ -427,6 +458,24 @@ function InviteForm({ organisationId }) {
   return (
     <div styleName="organisation-section">
       <h2>Invite Users</h2>
+      {allowAnyUserWithCompanyEmail ? (
+        <p>
+          Any user with your company domain can join. Instead of inviting them
+          all, you can share this link:
+          <CopyButton
+            string={`${window.location.host}/i/${inviteCode}`}
+            muted
+            outlined
+            stretch
+            fill
+            basic
+            smaller
+            inline
+          >
+            {window.location.host}/i/{inviteCode} - Copy link
+          </CopyButton>
+        </p>
+      ) : null}
       <p>
         You can invite any member inside or outside of your organisation by
         email address. Members will be able to sign-in or connect an account
@@ -491,6 +540,7 @@ function CurrentUsers({ organisationId }) {
             <TableRow key={stat.id}>
               <TableCell>{stat.email}</TableCell>
               <TableCell>{stat.numberOfUnsubscribes} unsubscribes</TableCell>
+              <TableCell>{stat.timeSaved} time saved</TableCell>
               <TableCell>Joined {relative(stat.dateJoined)}</TableCell>
             </TableRow>
           ))}

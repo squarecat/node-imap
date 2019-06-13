@@ -4,6 +4,7 @@ import AccountProviderButtons from '../../connect-account/providers';
 import ConnectedAccountList from '../../connect-account/list';
 import { FormNotification } from '../../form';
 import { fetchLoggedInUser } from '../../../utils/auth';
+import { getConnectError } from '../../../utils/errors';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
@@ -22,7 +23,10 @@ export default () => {
     loadUser(user);
   };
   let content;
-  const onConnectError = () => {};
+  const onConnectError = err => {
+    const msg = getConnectError(err);
+    setError(msg);
+  };
   if (!accounts.length) {
     content = <NoAccounts />;
   } else {

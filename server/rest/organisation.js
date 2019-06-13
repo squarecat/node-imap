@@ -6,6 +6,8 @@ import {
   updateOrganisation
 } from '../services/organisation';
 
+import * as PaymentService from '../services/payments';
+
 import Joi from 'joi';
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
@@ -124,6 +126,34 @@ export default app => {
       }
     }
   );
+
+  app.patch('/api/organisation/:id/billing', auth, async (req, res, next) => {
+    const { id } = req.params;
+    const { op, value } = req.body;
+    try {
+      let updatedOrg;
+      if (op === 'update') {
+        updatedOrg = await PaymentService.updateBillingForOrganisation(
+          id,
+          value
+        );
+      } else {
+        logger.error(
+          `organisations-rest: organisation billing patch op not supported ${op}`
+        );
+        throw new Error('organisations billing patch not supported');
+      }
+      res.send(updatedOrg);
+    } catch (err) {
+      next(
+        new RestError('failed to billing patch organisation', {
+          organisationId: id,
+          op,
+          cause: err
+        })
+      );
+    }
+  });
 };
 
 const updateParams = {

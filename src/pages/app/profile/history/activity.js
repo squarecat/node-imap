@@ -25,7 +25,6 @@ export default function ActivityHistory() {
 
   const sorted = _sortBy(activity, 'timestamp').reverse();
 
-  if (loading) return <span>Loading...</span>;
   return (
     <ProfileLayout pageName="Activity History">
       {loading ? (

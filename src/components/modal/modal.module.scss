@@ -126,14 +126,6 @@
   transform: translateY(0);
 }
 
-.price {
-  margin-left: 5px;
-}
-.price-discounted {
-  margin-left: 5px;
-  text-decoration: line-through;
-}
-
 .hidden {
   visibility: hidden;
 }
@@ -425,14 +417,6 @@ p.unsubscribe-link-alt {
     position: absolute;
     top: 50%;
     left: 50%;
-  }
-}
-
-.billing-success {
-  text-align: center;
-  svg {
-    margin-bottom: 10px;
-    color: $color-red-darker;
   }
 }
 

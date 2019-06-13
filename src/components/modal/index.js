@@ -68,6 +68,10 @@ export const ModalFooter = ({ children }) => {
   return <div styleName="modal-footer">{children}</div>;
 };
 
+export const ModalActions = ({ children }) => {
+  return <div styleName="modal-actions">{children}</div>;
+};
+
 export const ModalHeader = ({ children }) => {
   return <h3 styleName="modal-header">{children}</h3>;
 };
@@ -85,7 +89,7 @@ export const ModalSaveAction = ({
 }) => {
   return (
     <ModalFooter>
-      <div styleName="modal-actions">
+      <ModalActions>
         <Button
           disabled={isLoading}
           basic
@@ -108,7 +112,7 @@ export const ModalSaveAction = ({
         >
           {saveText}
         </Button>
-      </div>
+      </ModalActions>
     </ModalFooter>
   );
 };
@@ -118,7 +122,8 @@ export const ModalPaymentSaveAction = ({
   isLoading,
   onSave,
   onCancel,
-  formToSubmit
+  cancelText = 'Cancel',
+  saveText = 'Save'
 }) => {
   return (
     <ModalFooter>
@@ -128,9 +133,9 @@ export const ModalPaymentSaveAction = ({
           Payments Secured by <a href="https://stripe.com/">Stripe</a>
         </p>
       </div>
-      <div styleName="modal-actions">
+      <ModalActions>
         <Button disabled={isLoading} compact onClick={onCancel}>
-          Cancel
+          {cancelText}
         </Button>
         <Button
           basic
@@ -141,11 +146,10 @@ export const ModalPaymentSaveAction = ({
           disabled={isDisabled || isLoading}
           loading={isLoading}
           onClick={onSave}
-          form={formToSubmit}
         >
-          Save
+          {saveText}
         </Button>
-      </div>
+      </ModalActions>
     </ModalFooter>
   );
 };

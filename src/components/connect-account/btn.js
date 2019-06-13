@@ -42,9 +42,10 @@ export default ({
     if (event.origin !== process.env.BASE_URL) {
       return;
     }
+    const { data } = event;
 
-    if (event.data === 'error') {
-      return onError();
+    if (data.error) {
+      return onError(data.error);
     }
 
     return onSuccess();

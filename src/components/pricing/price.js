@@ -4,13 +4,19 @@ import React from 'react';
 import cx from 'classnames';
 
 export default ({ price, discounted, asterisk }) => (
-  <p
+  <span
     styleName={cx('price', {
       discounted,
       asterisk
     })}
   >
-    <span styleName="currency">$</span>
-    {(price / 100).toFixed(2)}
-  </p>
+    {price < 50 ? (
+      'Free'
+    ) : (
+      <>
+        <span styleName="currency">$</span>
+        {(price / 100).toFixed(2)}
+      </>
+    )}
+  </span>
 );

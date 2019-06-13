@@ -54,7 +54,10 @@
   "payments": {
     "publishableKey": "$STRIPE_PK",
     "secretKey": "$STRIPE_SK",
-    "vatKey": "$VAT_KEY"
+    "vatKey": "$VAT_KEY",
+    "plans": {
+      "enterprise": "1"
+    }
   },
   "urls": {
     "base": "http://local.leavemealone.xyz",

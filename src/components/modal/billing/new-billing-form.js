@@ -1,23 +1,23 @@
-import '../modal.module.scss';
-
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
 import { FormCheckbox, FormGroup, FormNotification } from '../../form';
+import {
+  ModalBody,
+  ModalCloseIcon,
+  ModalHeader,
+  ModalPaymentSaveAction
+} from '..';
 import React, { useContext } from 'react';
 
-import Button from '../../btn';
-import CouponInput from './coupon';
-import { LockIcon } from '../../icons';
 import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
 import { TextImportant } from '../../text';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-import useUser from '../../../utils/hooks/use-user';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
-function CheckoutForm({ stripe, onPurchaseSuccess }) {
+function NewBillingForm({ stripe, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
   const { state: stripeState } = useContext(StripeStateContext);
 
@@ -42,8 +42,6 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
         error: paymentError
       } = await stripe.createPaymentMethod(
         'card',
-        // TODO get the element a better way
-        // this does not accept a ref, or .current or findDOMNode...
         stripeState.cardRef.current._element,
         {
           billing_details: billingDetails
@@ -122,105 +120,75 @@ function CheckoutForm({ stripe, onPurchaseSuccess }) {
   }
 
   return (
-    <>
-      <div styleName="modal-content">
+    <form
+      id="payment-form"
+      onSubmit={e => {
+        e.preventDefault();
+        return onSubmit();
+      }}
+      method="post"
+    >
+      <ModalBody loading={!stripeState.isReady} compact>
+        <ModalHeader>
+          Enter Payment Method
+          <ModalCloseIcon />
+        </ModalHeader>
         <p>
           Purchasing a package of{' '}
-          <TextImportant>
-            {state.selectedPackage.unsubscribes} unsubscribes
-          </TextImportant>
+          <TextImportant>{state.selectedPackage.credits} credits</TextImportant>
           .
         </p>
-        <form
-          id="payment-form"
-          onSubmit={e => {
-            e.preventDefault();
-            return onSubmit();
-          }}
-          method="post"
-        >
-          <PaymentAddressDetails
-            addressDetails={state}
-            loading={state.loading}
-            onChange={(key, value) =>
+
+        <PaymentAddressDetails
+          addressDetails={state}
+          loading={state.loading}
+          onChange={(key, value) =>
+            dispatch({
+              type: 'set-billing-detail',
+              data: { key, value }
+            })
+          }
+        />
+
+        <PaymentCardDetails loading={state.loading} />
+
+        <FormGroup>
+          <FormCheckbox
+            onChange={() =>
               dispatch({
                 type: 'set-billing-detail',
-                data: { key, value }
+                data: {
+                  key: 'save_payment_method',
+                  value: !state.save_payment_method
+                }
               })
             }
+            checked={state.save_payment_method}
+            label="Save payment method"
           />
+        </FormGroup>
 
-          <PaymentCardDetails loading={state.loading} />
-
+        {state.error ? (
           <FormGroup>
-            <FormCheckbox
-              onChange={() =>
-                dispatch({
-                  type: 'set-billing-detail',
-                  data: {
-                    key: 'save_payment_method',
-                    value: !state.save_payment_method
-                  }
-                })
-              }
-              checked={state.save_payment_method}
-              label="Save payment method"
-            />
+            <FormNotification error>
+              {state.error.message || DEFAULT_ERROR}
+            </FormNotification>
           </FormGroup>
+        ) : null}
+      </ModalBody>
 
-          {state.error ? (
-            <FormGroup>
-              <FormNotification error>
-                {state.error.message || DEFAULT_ERROR}
-              </FormNotification>
-            </FormGroup>
-          ) : null}
-        </form>
-
-        <CouponInput />
-
-        {stripeState.isReady ? null : <div styleName="loading-overlay" />}
-      </div>
-
-      <div styleName="modal-actions">
-        <div styleName="modal-actions-info">
-          {/* <a href="https://stripe.com">
-            <PoweredByStripe />
-          </a> */}
-          <p styleName="modal-text--small secured-by">
-            <LockIcon />
-            Payments Secured by <a href="https://stripe.com/">Stripe</a>
-          </p>
-        </div>
-        <div styleName="modal-buttons">
-          <a
-            styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-            onClick={() =>
-              dispatch({ type: 'set-step', data: 'start-purchase' })
-            }
-          >
-            Back
-          </a>
-
-          <Button
-            basic
-            compact
-            stretch
-            disabled={state.loading || !stripeState.isReady}
-            loading={state.loading}
-            type="submit"
-            as="button"
-            form="payment-form"
-          >
-            Pay {getDisplayPrice(state.selectedPackage)}
-          </Button>
-        </div>
-      </div>
-    </>
+      <ModalPaymentSaveAction
+        isDisabled={state.loading || !stripeState.isReady}
+        isLoading={state.loading}
+        cancelText="Back"
+        saveText={<span>Pay{getDisplayPrice(state.selectedPackage)}</span>}
+        onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
+      />
+    </form>
   );
 }
 
-export default injectStripe(CheckoutForm);
+export default injectStripe(NewBillingForm);
 
 async function confirmPayment({
   paymentMethod,

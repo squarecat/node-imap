@@ -3,8 +3,10 @@ import './billing.module.scss';
 import { ENTERPRISE, PACKAGES, USAGE_BASED } from '../../../utils/prices';
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState
 } from 'react';
@@ -15,9 +17,9 @@ import BillingModal from '../../../components/modal/billing';
 import Button from '../../../components/btn';
 import CardDetails from '../../../components/card-details';
 import { DatabaseContext } from '../../../app/db-provider';
-import { Elements } from 'react-stripe-elements';
 import ErrorBoundary from '../../../components/error-boundary';
 import { FormCheckbox } from '../../../components/form';
+import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import ProfileLayout from './layout';
@@ -54,7 +56,7 @@ function billingReducer(state, action) {
 
 const initialState = {
   credits: 0,
-  unsubscribesUsed: 0,
+  creditsUsed: 0,
   card: null,
   previousPackageId: null,
   settings: {
@@ -65,9 +67,17 @@ const initialState = {
 
 export const BillingContext = createContext({ state: initialState });
 
-export default function Billing() {
+export default function() {
+  return (
+    <ProfileLayout pageName="Billing">
+      <Billing />
+    </ProfileLayout>
+  );
+}
+
+function Billing() {
   const [state, dispatch] = useReducer(billingReducer, initialState);
-  const [showBillingModal, toggleBillingModal] = useState(false);
+  const { open: openModal } = useContext(ModalContext);
   const [selectedPackage, setSelectedPackage] = useState(PACKAGES[0]);
 
   const [{ billing, organisationId }] = useUser(u => {
@@ -89,58 +99,56 @@ export default function Billing() {
     [billing]
   );
 
-  const { credits, unsubscribesUsed } = state;
+  const modal = useMemo(
+    () => {
+      return (
+        <BillingModal
+          selectedPackage={selectedPackage}
+          hasBillingCard={!!state.card}
+        />
+      );
+    },
+    [selectedPackage, state.card]
+  );
+  const onClickBuyPackage = useCallback(
+    id => {
+      const pkg = PACKAGES.find(p => p.id === id);
+      setSelectedPackage(pkg);
+      openModal(modal);
+    },
+    [openModal, modal]
+  );
+
+  if (organisationId) {
+    return (
+      <div styleName="billing-section information">
+        <h2>Information</h2>
+        <p>Your account belongs to an organisation.</p>
+        <p>
+          You have <TextImportant>unlimited</TextImportant> credits.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <ProfileLayout pageName="Billing">
-      {organisationId ? (
-        <div styleName="billing-section information">
-          <h2>Information</h2>
-          <p>Your account belongs to an organisation.</p>
-          <p>
-            You have <TextImportant>unlimited</TextImportant> credits.
-          </p>
-        </div>
-      ) : (
-        <BillingContext.Provider value={{ state, dispatch }}>
-          <div styleName="billing-section information">
-            <h2>Information</h2>
-            <p>
-              You have <TextImportant>{credits}</TextImportant> credits.
-            </p>
-            <p>
-              You have used a total of{' '}
-              <TextImportant>{unsubscribesUsed}</TextImportant> credits.
-            </p>
-            {credits > 0 ? (
-              <p>
-                These credits will last <TextImportant>forever</TextImportant>.
-              </p>
-            ) : null}
-          </div>
-          {/* <UsageBased /> */}
-          <Packages
-            onClickBuy={id => {
-              const pkg = PACKAGES.find(p => p.id === id);
-              setSelectedPackage(pkg);
-              toggleBillingModal(true);
-            }}
-          />
-          <Enterprise />
-          <BillingDetails />
-          <BillingHistory />
-          {showBillingModal ? (
-            <Elements>
-              <BillingModal
-                selectedPackage={selectedPackage}
-                hasBillingCard={!!state.card}
-                onClose={() => toggleBillingModal(false)}
-              />
-            </Elements>
-          ) : null}
-        </BillingContext.Provider>
-      )}
-    </ProfileLayout>
+    <BillingContext.Provider value={{ state, dispatch }}>
+      <div styleName="billing-section information">
+        <h2>Information</h2>
+        <p>
+          You have <TextImportant>{state.credits}</TextImportant> credits.
+        </p>
+        <p>
+          You have used a total of{' '}
+          <TextImportant>{state.creditsUsed}</TextImportant> credits.
+        </p>
+      </div>
+      {/* <UsageBased /> */}
+      <Packages onClickBuy={id => onClickBuyPackage(id)} />
+      <Enterprise />
+      <BillingDetails />
+      <BillingHistory />
+    </BillingContext.Provider>
   );
 }
 
@@ -237,9 +245,9 @@ function Packages({ onClickBuy }) {
         const showReBuy = isPreviousPackage && !!state.card;
         const discountText = `Save ${p.discount * 100}%`;
         return (
-          <div styleName="plans-list" key={p.unsubscribes}>
+          <div styleName="plans-list" key={p.credits}>
             <PlanImage smaller compact type="package" />
-            <h3 styleName="plan-title">{p.unsubscribes} credits</h3>
+            <h3 styleName="plan-title">{p.credits} credits</h3>
             <Price price={p.price} />
             <div styleName="package-buy-btn">
               <a styleName="billing-btn" onClick={() => onClickBuy(p.id)}>
@@ -283,17 +291,20 @@ function BillingDetails() {
   const { state, dispatch } = useContext(BillingContext);
   const { card } = state;
 
-  async function removeCard() {
-    dispatch({ type: 'set-loading', data: true });
-    try {
-      await removeUserBillingCard();
-      dispatch({ type: 'remove-card' });
-    } catch (err) {
-      dispatch({ type: 'set-error', data: err });
-    } finally {
-      dispatch({ type: 'set-loading', data: false });
-    }
-  }
+  const onClickRemoveCard = useCallback(
+    async () => {
+      dispatch({ type: 'set-loading', data: true });
+      try {
+        await removeUserBillingCard();
+        dispatch({ type: 'remove-card' });
+      } catch (err) {
+        dispatch({ type: 'set-error', data: err });
+      } finally {
+        dispatch({ type: 'set-loading', data: false });
+      }
+    },
+    [dispatch]
+  );
 
   return (
     <div styleName="billing-section">
@@ -307,7 +318,7 @@ function BillingDetails() {
             stretch
             disabled={state.loading}
             loading={state.loading}
-            onClick={() => removeCard()}
+            onClick={() => onClickRemoveCard()}
           >
             Remove Card
           </Button>

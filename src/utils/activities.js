@@ -10,11 +10,11 @@ const activityEnum = {
   referralSignup: ({ reward }) => {
     const text = `Someone just signed up through your referral link!`;
     if (!reward) return text;
-    return `${text} You have both earned ${reward.unsubscriptions} credits`;
+    return `${text} You have both earned ${reward.credits} credits`;
   },
   signedUpFromReferral: ({ reward }) =>
     `You signed up using a referral link! You have both earned ${
-      reward.unsubscriptions
+      reward.credits
     } credits`,
   referralPurchase: ({ reward }) => {
     const text = `Someone you referred just purchased their first package!`;
@@ -22,14 +22,20 @@ const activityEnum = {
   },
   purchaseFromReferral: ({ reward }) =>
     `You purchased your first package using a referral link! You have both earned ${
-      reward.unsubscriptions
+      reward.credits
     } credits`,
   connectedFirstAccount: ({ reward, data }, user) => {
-    const text = accountConnection({ reward, data }, user);
+    const text = accountConnection(
+      { reward, data, type: 'connectedFirstAccount' },
+      user
+    );
     return reward ? rewardText(text, reward) : text;
   },
   connectedAdditionalAccount: ({ reward, data }, user) => {
-    const text = accountConnection({ reward, data }, user);
+    const text = accountConnection(
+      { reward, data, type: 'connectedAdditionalAccount' },
+      user
+    );
     return reward ? rewardText(text, reward) : text;
   },
   addedTwoFactorAuth: ({ reward }) => {
@@ -38,12 +44,20 @@ const activityEnum = {
   },
 
   // non reward
-  packagePurchase: ({ data }) =>
-    `You purchased a package of ${data.unsubscribes} credits.`,
+  packagePurchase: ({ data }) => {
+    if (data.price < 50) {
+      return `You claimed a free package of ${data.credits} credits!`;
+    }
+    return `You purchased a package of ${data.credits} credits.`;
+  },
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account (${_capitalize(data.provider)}).`,
   addedToOrganisation: ({ data }) =>
-    `You were added to the organistion ${data.name}.`
+    `You added the account ${data.email} to your organistion ${data.name}.`,
+  removedFromOrganisation: ({ data }) =>
+    `You removed the account ${data.email} from your organistion ${data.name}.`,
+  addBillingCard: () => `You added a saved payment method.`,
+  removeBillingCard: () => `You removed your saved payment method.`
 };
 
 export function parseActivity(activity, user) {
@@ -56,14 +70,13 @@ export function parseActivity(activity, user) {
   return activityFn(activity, user);
 }
 
-function rewardText(text, { unsubscriptions }) {
-  return `${text} You have earned ${unsubscriptions} credits.`;
+function rewardText(text, { credits }) {
+  return `${text} You have earned ${credits} credits.`;
 }
 
-function accountConnection({ reward, data }, user) {
+function accountConnection({ reward, data, type }, user) {
   const provider = _capitalize(data.provider);
-  const typeText =
-    reward.type === 'connectedFirstAccount' ? 'your first' : 'another';
+  const typeText = type === 'connectedFirstAccount' ? 'your first' : 'another';
   let text = `You connected ${typeText} account`;
   if (!user || !user.accounts) {
     return `${text} (${provider}).`;

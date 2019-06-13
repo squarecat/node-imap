@@ -16,7 +16,7 @@ export async function getMilestones({ name, userId } = {}) {
         const stone = milestones[key];
         let ms = {
           name: key,
-          unsubscriptions: stone.unsubscriptions
+          credits: stone.credits
         };
         if (userMilestones[key]) {
           ms = {

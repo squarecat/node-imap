@@ -1,13 +1,15 @@
-import '../modal.module.scss';
-
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
 import { FormGroup, FormLabel, FormNotification } from '../../form';
+import {
+  ModalBody,
+  ModalCloseIcon,
+  ModalHeader,
+  ModalPaymentSaveAction
+} from '..';
 import React, { useContext } from 'react';
 import { TextImportant, TextLink } from '../../text';
 
-import Button from '../../btn';
 import CardDetails from '../../card-details';
-import { LockIcon } from '../../icons';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
 
@@ -91,12 +93,14 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
       }}
       method="post"
     >
-      <div styleName="modal-content">
+      <ModalBody compact>
+        <ModalHeader>
+          Use Existing Payment Method
+          <ModalCloseIcon />
+        </ModalHeader>
         <p>
           Purchasing a package of{' '}
-          <TextImportant>
-            {state.selectedPackage.unsubscribes} unsubscribes
-          </TextImportant>
+          <TextImportant>{state.selectedPackage.credits} credits</TextImportant>
           .
         </p>
 
@@ -118,44 +122,15 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
         >
           Use a different card
         </TextLink>
-      </div>
-      <div styleName="modal-actions">
-        <div styleName="modal-actions-info">
-          <p styleName="modal-text--small secured-by">
-            <LockIcon />
-            Payments Secured by <a href="https://stripe.com/">Stripe</a>
-          </p>
-        </div>
-        <div styleName="modal-buttons">
-          <a
-            styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-            onClick={() =>
-              dispatch({ type: 'set-step', data: 'start-purchase' })
-            }
-          >
-            Back
-          </a>
-          {/* <a
-            styleName="modal-btn modal-btn--secondary modal-btn--cancel"
-            onClick={() =>
-              dispatch({ type: 'set-step', data: 'enter-billing-details' })
-            }
-          >
-            Use a different card
-          </a> */}
-          <Button
-            basic
-            compact
-            stretch
-            disabled={state.loading}
-            loading={state.loading}
-            type="submit"
-            as="button"
-          >
-            Pay {getDisplayPrice(state.selectedPackage)}
-          </Button>
-        </div>
-      </div>
+      </ModalBody>
+
+      <ModalPaymentSaveAction
+        isDisabled={state.loading}
+        isLoading={state.loading}
+        cancelText="Back"
+        saveText={<span>Pay{getDisplayPrice(state.selectedPackage)}</span>}
+        onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
+      />
     </form>
   );
 };

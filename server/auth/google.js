@@ -96,11 +96,15 @@ export const ConnectAccountStrategy = new GoogleStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      done(
-        new AuthError('failed to connect account from Google', {
-          cause: err
-        })
-      );
+      if (err.data && err.data.key) {
+        done(err);
+      } else {
+        done(
+          new AuthError('failed to connect account from Google', {
+            cause: err
+          })
+        );
+      }
     }
   }
 );
@@ -209,6 +213,9 @@ export default app => {
           'google-auth: passport authentication error connecting account'
         );
         logger.error(err);
+        if (err.data && err.data.key) {
+          errUrl = `${errUrl}&reason=${err.data.key}`;
+        }
         return res.redirect(errUrl);
       }
 

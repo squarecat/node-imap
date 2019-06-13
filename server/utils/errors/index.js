@@ -100,7 +100,12 @@ util.inherits(AuthError, LMAError);
 export function PaymentError(message, data) {
   LMAError.call(this, message, data);
 }
-util.inherits(RestError, LMAError);
+util.inherits(PaymentError, LMAError);
+
+export function ConnectAccountError(message, data) {
+  LMAError.call(this, message, data);
+}
+util.inherits(ConnectAccountError, LMAError);
 
 export function UncaughtRestError(message = 'Uncaught error', data) {
   RestError.call(this, message, {

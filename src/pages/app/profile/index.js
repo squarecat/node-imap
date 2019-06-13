@@ -12,8 +12,9 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
-  const [{ email }] = useUser(u => ({
-    email: u.email
+  const [{ email, organisationAdmin }] = useUser(u => ({
+    email: u.email,
+    organisationAdmin: u.organisationAdmin
   }));
   return (
     <ProfileLayout pageName="Profile">
@@ -23,12 +24,12 @@ export default () => {
           Signed in with: <TextImportant>{email}</TextImportant>
         </p>
       </div>
-      <DangerZone />
+      <DangerZone organisationAdmin={organisationAdmin} />
     </ProfileLayout>
   );
 };
 
-function DangerZone() {
+function DangerZone({ organisationAdmin }) {
   const [loading, toggleLoading] = useState(false);
 
   const { open: openModal } = useContext(ModalContext);
@@ -131,14 +132,28 @@ function DangerZone() {
           to recipient and sender email addresses, and a timestamp, and is
           encrypted.
         </p>
-        <p>
-          If you still want to delete your account this action will delete all
-          of your data, revoke your API key, and sign you out.
-        </p>
 
-        <Button compact basic loading={loading} onClick={() => onClickDelete()}>
-          Deactivate Account
-        </Button>
+        {organisationAdmin ? (
+          <TextImportant>
+            You are an admin of an organisation. If you wish to deactivate your
+            account please contact us.
+          </TextImportant>
+        ) : (
+          <>
+            <p>
+              If you still want to delete your account this action will delete
+              all of your data, revoke your API key, and sign you out.
+            </p>
+            <Button
+              compact
+              basic
+              loading={loading}
+              onClick={() => onClickDelete()}
+            >
+              Deactivate Account
+            </Button>
+          </>
+        )}
       </div>
     </>
   );
