@@ -433,7 +433,7 @@ function InviteForm({ organisation }) {
         sent: false
       });
 
-      await sendInvite(id, state.email);
+      await sendOrganisationInvite(id, state.email);
       setTimeout(() => {
         setState({
           ...state,
@@ -578,7 +578,7 @@ function fetchStats(id) {
   });
 }
 
-function sendInvite(id, email) {
+function sendOrganisationInvite(id, email) {
   return request(`/api/organisation/${id}/invite`, {
     method: 'POST',
     cache: 'no-cache',
