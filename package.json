@@ -28,6 +28,7 @@
     "express": "^4.16.4",
     "express-rate-limit": "^3.4.0",
     "express-session": "^1.15.6",
+    "faker": "^4.1.0",
     "gatsby-plugin-google-gtag": "^1.0.8",
     "gatsby-plugin-sharp": "^2.0.18",
     "gatsby-plugin-sitemap": "^2.0.12",
