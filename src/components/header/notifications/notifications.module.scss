@@ -7,7 +7,15 @@
   height: 36px;
   width: 36px;
   padding: 0;
-  color: rgba(231, 57, 48, 0.749);
+  // color: rgba(231, 57, 48, 0.749);
+
+  &.unread {
+    background-color: lighten($color-red-darker, 5%);
+    color: white;
+  }
+  &:hover {
+    background-color: $color-red-darker;
+  }
 
   svg {
     margin: -1px 0 0 0px;
@@ -33,29 +41,29 @@
   @extend .shown;
 }
 
-.unread:after {
-  content: '';
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-  border-radius: 50%;
-  background: $color-red-darker;
-}
+// .unread:after {
+//   content: '';
+//   width: 12px;
+//   height: 12px;
+//   position: absolute;
+//   top: 2px;
+//   right: 8px;
+//   border-radius: 50%;
+//   background: $color-red-darker;
+// }
 
 .notification {
   position: relative;
   display: block;
   padding-right: 10px;
 
-  &.unread:after {
-    width: 9px;
-    height: 9px;
-    top: 50%;
-    transform: translateY(-50%);
-    right: -2px;
-  }
+  // &.unread:after {
+  //   width: 9px;
+  //   height: 9px;
+  //   top: 50%;
+  //   transform: translateY(-50%);
+  //   right: -2px;
+  // }
 }
 
 .notification-item,
@@ -79,7 +87,6 @@
   margin: 0;
   text-align: center;
   font-weight: bold;
-  text-decoration: underline;
 }
 
 .notifications-list {
@@ -89,13 +96,20 @@
   top: 58px;
 
   &:before {
-    right: 27px;
+    right: 21px;
   }
   &:after {
-    right: 28px;
+    right: 22px;
   }
 
-  @media (max-width: 400px) {
-    width: 100%;
+  @media (max-width: 500px) {
+    width: 80vw;
+
+    &:before {
+      right: 15px;
+    }
+    &:after {
+      right: 16px;
+    }
   }
 }

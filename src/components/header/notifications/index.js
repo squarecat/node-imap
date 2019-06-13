@@ -61,7 +61,7 @@ export default () => {
     setNotifications([]);
   };
 
-  const hasUnread = notifications.some(n => !n.notification.seen);
+  const unread = notifications.filter(n => !n.notification.seen).length;
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -89,12 +89,12 @@ export default () => {
 
   return (
     <div styleName="notifications">
-      <button styleName="btn" onClick={() => onDropdownOpen()}>
-        <div
-          styleName={cx('notification-icon', {
-            unread: hasUnread
-          })}
-        >
+      <button
+        styleName={cx('btn', { unread: unread })}
+        data-count={unread}
+        onClick={() => onDropdownOpen()}
+      >
+        <div styleName="notification-icon">
           <BellIcon width="20" height="20" />
         </div>
       </button>
