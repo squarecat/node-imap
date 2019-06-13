@@ -182,7 +182,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
       <ModalPaymentSaveAction
         isDisabled={state.loading || !stripeState.isReady}
         isLoading={state.loading}
-        onCancel={() => closeModal()}
+        onCancel={closeModal}
       />
     </form>
   );
@@ -190,17 +190,18 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
 export default injectStripe(OrganisationBillingForm);
 
-// function validateVatNumber(vatNumber) {
-//   return request('/api/payments/vat', {
-//     method: 'POST',
-//     cache: 'no-cache',
-//     credentials: 'same-origin',
-//     headers: {
-//       'Content-Type': 'application/json; charset=utf-8'
-//     },
-//     body: JSON.stringify({ vatNumber })
-//   });
-// }
+// eslint-disable-next-line no-unused-vars
+function validateVatNumber(vatNumber) {
+  return request('/api/payments/vat', {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ vatNumber })
+  });
+}
 
 function createSubscription(organisationId, { token, name, address, company }) {
   return request('/api/payments/subscription', {

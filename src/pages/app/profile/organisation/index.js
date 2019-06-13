@@ -1,27 +1,20 @@
 import './organisation.module.scss';
 
-import {
-  FormCheckbox,
-  FormGroup,
-  FormInput,
-  FormNotification
-} from '../../../../components/form';
-import React, { useCallback, useContext, useState } from 'react';
+import { FormCheckbox, FormNotification } from '../../../../components/form';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
-import CopyButton from '../../../../components/copy-to-clipboard';
-import { Elements } from 'react-stripe-elements';
+import CurrentUsers from './users';
 import ErrorBoundary from '../../../../components/error-boundary';
+import InviteForm from './invite';
 import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
-import WarningModal from '../../../../components/modal/warning-modal';
 import cx from 'classnames';
 import formatDate from 'date-fns/format';
-import relative from 'tiny-relative-date';
 import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
@@ -37,76 +30,89 @@ function Organisation() {
     };
   });
 
-  const { value: organisation = {}, loading } = useAsync(fetchOrganisation, [
+  const { value: organisation, loading } = useAsync(fetchOrganisation, [
     organisationId,
     organisationLastUpdated
   ]);
 
-  const {
-    name,
-    active,
-    currentUsers = [],
-    invitedUsers = [],
-    billing
-  } = organisation;
+  const content = useMemo(
+    () => {
+      if (loading) return <span>Loading...</span>;
 
-  if (loading) return <span>Loading...</span>;
+      const {
+        name,
+        active,
+        currentUsers = [],
+        invitedUsers = [],
+        billing
+      } = organisation;
 
-  const isInvitingEnabled = organisationAdmin && active;
-
-  return (
-    <>
-      <div styleName="organisation-section">
-        <h2>{name}</h2>
-        {organisationAdmin ? (
-          <p>You are the admin of this organisation.</p>
-        ) : null}
-        <p>
-          <span
-            styleName={cx('org-status', {
-              active,
-              inactive: !active
-            })}
-          >
-            {active ? 'Active' : 'Inactive'}
-          </span>{' '}
-        </p>
-        <OrganisationStatus active={active} billing={billing} />
-        <p>{currentUsers.length} seats used</p>
-        <p>{invitedUsers.length} invites pending</p>
-      </div>
-
-      {organisationAdmin ? <Billing organisation={organisation} /> : null}
-
-      <Settings loading={loading} organisation={organisation} />
-
-      {isInvitingEnabled ? <InviteForm organisation={organisation} /> : null}
-
-      <CurrentUsers organisationId={organisationId} />
-
-      {isInvitingEnabled ? (
-        <div styleName="organisation-section tabled">
-          <div styleName="table-text-content">
-            <h2>Pending Invites</h2>
+      const isInvitingEnabled = organisationAdmin && active;
+      return (
+        <>
+          <div styleName="organisation-section">
+            <h2>{name}</h2>
+            <p>
+              <span
+                styleName={cx('org-status', {
+                  active,
+                  inactive: !active
+                })}
+              >
+                {active ? 'Active' : 'Inactive'}
+              </span>
+              {organisationAdmin ? (
+                <span
+                  styleName={cx('org-status', {
+                    active: true
+                  })}
+                >
+                  Admin
+                </span>
+              ) : null}
+            </p>
+            <OrganisationStatus active={active} billing={billing} />
+            <p>{currentUsers.length} seats used</p>
+            <p>{invitedUsers.length} invites pending</p>
           </div>
-          {invitedUsers.length ? (
-            <Table>
-              {invitedUsers.map(e => (
-                <TableRow key={e}>
-                  <TableCell>{e}</TableCell>
-                </TableRow>
-              ))}
-            </Table>
-          ) : (
-            <p>There are no invites pending.</p>
-          )}
-        </div>
-      ) : null}
-    </>
+
+          {organisationAdmin ? <Billing organisation={organisation} /> : null}
+
+          <Settings loading={loading} organisation={organisation} />
+
+          {isInvitingEnabled ? (
+            <InviteForm organisation={organisation} />
+          ) : null}
+
+          <CurrentUsers organisationId={organisationId} />
+
+          {isInvitingEnabled ? (
+            <div styleName="organisation-section tabled">
+              <div styleName="table-text-content">
+                <h2>Pending Invites</h2>
+              </div>
+              {invitedUsers.length ? (
+                <Table>
+                  {invitedUsers.map(e => (
+                    <TableRow key={e}>
+                      <TableCell>{e}</TableCell>
+                    </TableRow>
+                  ))}
+                </Table>
+              ) : (
+                <p>There are no invites pending.</p>
+              )}
+            </div>
+          ) : null}
+        </>
+      );
+    },
+    [loading, organisation, organisationAdmin, organisationId]
   );
+  return content;
 }
 
-function OrganisationStatus({ active }) {
+const OrganisationStatus = React.memo(({ active }) => {
   if (active) {
     return (
       <p>
@@ -115,7 +121,6 @@ function OrganisationStatus({ active }) {
       </p>
     );
   }
-
   return (
     <>
       <p>
@@ -128,9 +133,9 @@ function OrganisationStatus({ active }) {
       </p>
     </>
   );
-}
+});
 
-function Settings({ loading, organisation }) {
+const Settings = React.memo(({ loading, organisation }) => {
   const [state, setState] = useState({
     toggling: false,
     error: false,
@@ -212,66 +217,56 @@ function Settings({ loading, organisation }) {
       ) : null}
     </div>
   );
-}
+});
 
 function Billing({ organisation }) {
   const { open: openModal } = useContext(ModalContext);
 
-  const [state, setState] = useState({
-    loading: false,
-    error: false
-  });
-
-  const [, { setOrganisationLastUpdated }] = useUser(u => {
-    return {
-      organisationId: u.organisationId,
-      organisationAdmin: u.organisationAdmin,
-      organisationLastUpdated: u.organisationLastUpdated
-    };
-  });
+  const [, { setOrganisationLastUpdated }] = useUser();
 
   const { id, billing = {} } = organisation;
   const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
 
-  const onClickRemoveCard = useCallback(
-    () => {
-      const removeCard = () => {
-        console.log('not yet implemented');
-      };
-      openModal(
-        <WarningModal
-          onConfirm={() => removeCard()}
-          content={
-            <p>
-              If you remove your payment method and do not add one by the end of
-              your billing period{' '}
-              <TextImportant>
-                we will deactivate your organisation
-              </TextImportant>
-              . You have until the end of this billing period to add a new
-              payment method.
-            </p>
-          }
-          confirmText="Confirm"
-        />,
-        {
-          dismissable: true
-        }
-      );
-    },
-    [openModal]
-  );
+  // const onClickRemoveCard = useCallback(
+  //   () => {
+  //     const removeCard = () => {
+  //       console.log('not yet implemented');
+  //     };
+  //     openModal(
+  //       <WarningModal
+  //         onConfirm={() => removeCard()}
+  //         content={
+  //           <p>
+  //             If you remove your payment method and do not add one by the end of
+  //             your billing period{' '}
+  //             <TextImportant>
+  //               we will deactivate your organisation
+  //             </TextImportant>
+  //             . You have until the end of this billing period to add a new
+  //             payment method.
+  //           </p>
+  //         }
+  //         confirmText="Confirm"
+  //       />,
+  //       {
+  //         dismissable: true
+  //       }
+  //     );
+  //   },
+  //   [openModal]
+  // );
 
   const onClickAddBilling = useCallback(
     () => {
       const addPaymentMethodSuccess = () => {
         console.log('success adding organisation payment method!');
-        setOrganisationLastUpdated(Date.now());
+        // setOrganisationLastUpdated(Date.now());
       };
+      console.log('opening modal');
       openModal(
         <OrganisationBillingModal
           organisation={organisation}
-          onSuccess={() => addPaymentMethodSuccess()}
+          onSuccess={addPaymentMethodSuccess}
         />
       );
     },
@@ -295,26 +290,9 @@ function Billing({ organisation }) {
         {card ? (
           <>
             <CardDetails card={billing.card} />
-            <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading}
-              loading={state.loading}
-              onClick={() => onClickAddBilling()}
-            >
+            <Button basic compact stretch onClick={onClickAddBilling}>
               Change Payment Method
             </Button>
-            {/* <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading}
-              loading={state.loading}
-              onClick={() => onClickRemoveCard()}
-            >
-              Remove Card
-            </Button> */}
           </>
         ) : (
           <>
@@ -322,14 +300,7 @@ function Billing({ organisation }) {
             <p>
               You need to add a payment method to activate your organisation.
             </p>
-            <Button
-              basic
-              compact
-              stretch
-              disabled={state.loading}
-              loading={state.loading}
-              onClick={() => onClickAddBilling()}
-            >
+            <Button basic compact stretch onClick={onClickAddBilling}>
               Add Payment Method
             </Button>
           </>
@@ -346,15 +317,13 @@ function Billing({ organisation }) {
               compact
               stretch
               disabled={true} // not available yet
-              loading={state.loading}
               onClick={() => {}}
             >
               Update (coming soon)
             </Button>
           </>
-        ) : (
-          <p>Contact us to add your VAT number and company details</p>
-        )}
+        ) : null}
+        <p>Contact us to add or modify your VAT number and company details</p>
       </div>
     </>
   );
@@ -414,142 +383,6 @@ function BillingInformation({ organisationId }) {
   );
 }
 
-function InviteForm({ organisation }) {
-  const [state, setState] = useState({
-    email: '',
-    loading: false,
-    error: false,
-    sent: false
-  });
-
-  const { id, inviteCode, allowAnyUserWithCompanyEmail } = organisation;
-
-  const onSubmit = async () => {
-    try {
-      setState({
-        ...state,
-        loading: true,
-        error: false,
-        sent: false
-      });
-
-      await sendInvite(id, state.email);
-      setTimeout(() => {
-        setState({
-          ...state,
-          loading: false,
-          error: false,
-          sent: true
-        });
-      }, 300);
-    } catch (err) {
-      console.error(err);
-      setTimeout(() => {
-        setState({
-          ...state,
-          loading: false,
-          error: true,
-          sent: false
-        });
-      }, 300);
-    }
-  };
-
-  return (
-    <div styleName="organisation-section">
-      <h2>Invite Users</h2>
-      {allowAnyUserWithCompanyEmail ? (
-        <p>
-          Any user with your company domain can join. Instead of inviting them
-          all, you can share this link:
-          <CopyButton
-            string={`${window.location.host}/i/${inviteCode}`}
-            muted
-            outlined
-            stretch
-            fill
-            basic
-            smaller
-            inline
-          >
-            {window.location.host}/i/{inviteCode} - Copy link
-          </CopyButton>
-        </p>
-      ) : null}
-      <p>
-        You can invite any member inside or outside of your organisation by
-        email address. Members will be able to sign-in or connect an account
-        with this email address.
-      </p>
-      <form
-        id="invite-user-form"
-        onSubmit={e => {
-          e.preventDefault();
-          return onSubmit();
-        }}
-      >
-        <FormGroup>
-          <FormInput
-            smaller
-            required
-            placeholder="Email address to invite"
-            value={state.email}
-            name="name"
-            onChange={e => {
-              setState({ ...state, email: e.currentTarget.value });
-            }}
-          />
-        </FormGroup>
-        <Button
-          basic
-          compact
-          stretch
-          loading={state.loading}
-          disabled={state.loading || !state.email}
-          type="submit"
-          as="button"
-        >
-          Send Invite
-        </Button>
-        {state.sent ? <FormNotification success>Sent!</FormNotification> : null}
-        {state.error ? (
-          <FormNotification error>
-            Something went wrong, your invite has not sent.
-          </FormNotification>
-        ) : null}
-      </form>
-    </div>
-  );
-}
-
-function CurrentUsers({ organisationId }) {
-  const { value: stats = [], loadingStats } = useAsync(fetchStats, [
-    organisationId
-  ]);
-
-  return (
-    <div styleName="organisation-section tabled">
-      <div styleName="table-text-content">
-        <h2>Current Users</h2>
-      </div>
-      {loadingStats ? (
-        <span>Loading...</span>
-      ) : (
-        <Table>
-          {stats.map(stat => (
-            <TableRow key={stat.id}>
-              <TableCell>{stat.email}</TableCell>
-              <TableCell>{stat.numberOfUnsubscribes} unsubscribes</TableCell>
-              <TableCell>{stat.timeSaved} time saved</TableCell>
-              <TableCell>Joined {relative(stat.dateJoined)}</TableCell>
-            </TableRow>
-          ))}
-        </Table>
-      )}
-    </div>
-  );
-}
-
 export default () => {
   return (
     <ProfileLayout pageName="Organisation">
@@ -566,27 +399,6 @@ function fetchOrganisation(id) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
-  });
-}
-
-function fetchStats(id) {
-  return request(`/api/organisation/${id}/stats`, {
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    }
-  });
-}
-
-function sendInvite(id, email) {
-  return request(`/api/organisation/${id}/invite`, {
-    method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
-    body: JSON.stringify({ email })
   });
 }
 

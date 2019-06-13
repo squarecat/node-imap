@@ -1,5 +1,5 @@
 import { CloseIcon, LockIcon } from '../icons';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 
 import Button from '../btn';
 import LoadingOverlay from '../loading/overlay';
@@ -36,32 +36,48 @@ export default ({ children, shown = false, wizardComponent = null, style }) => {
     modalRoot.appendChild(el);
   }, []);
 
-  return ReactDOM.createPortal(
-    <Transition appear timeout={100} mountOnEnter unmountOnExit in={shown}>
-      {state => {
-        const stateClass = _capitalize(state);
-        const hasStyle = !!modalStyles[`modalContainer${stateClass}`];
-        const classes = cx(modalStyles['modalContainer'], {
-          [modalStyles[`modalContainer${stateClass}`]]: hasStyle
-        });
-        return (
-          <div className={classes} data-modal>
-            <div styleName="modal-wizard-wrapper">
-              {wizardComponent ? (
-                <span style={{ width: style.width, top: btnHeight }}>
-                  {wizardComponent}
-                </span>
-              ) : null}
-              <div style={style} styleName="modal" ref={ref}>
-                {children}
+  const content = useMemo(
+    () => {
+      if (!children) {
+        return null;
+      }
+      return (
+        <Transition
+          component={null}
+          appear
+          timeout={100}
+          mountOnEnter
+          unmountOnExit
+          in={shown}
+        >
+          {state => {
+            const stateClass = _capitalize(state);
+            const hasStyle = !!modalStyles[`modalContainer${stateClass}`];
+            const classes = cx(modalStyles['modalContainer'], {
+              [modalStyles[`modalContainer${stateClass}`]]: hasStyle
+            });
+            return (
+              <div className={classes} data-modal>
+                <div styleName="modal-wizard-wrapper">
+                  {/* {wizardComponent ? (
+                    <span style={{ width: style.width, top: btnHeight }}>
+                      {wizardComponent}
+                    </span>
+                  ) : null} */}
+                  <div style={style} styleName="modal" ref={ref}>
+                    {children}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        );
-      }}
-    </Transition>,
-    el
+            );
+          }}
+        </Transition>
+      );
+    },
+    [children, shown, style]
   );
+
+  return ReactDOM.createPortal(content, el);
 };
 
 export const ModalFooter = ({ children }) => {
