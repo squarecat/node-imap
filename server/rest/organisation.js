@@ -84,7 +84,7 @@ export default app => {
       await inviteUserToOrganisation(id, email);
       return res.send({ success: true });
     } catch (err) {
-      logger.error('organisations-rest: error getting organisation');
+      logger.error('organisations-rest: error inviting user to organisation');
       logger.error(err);
       next(
         new RestError('failed to send invite', {

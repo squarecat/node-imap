@@ -423,6 +423,7 @@ async function getOrUpdateCustomerForOrganisation(
         name,
         address
       });
+      customerId = id;
       organisation = await updateOrganisation(organisationId, {
         customerId: id
       });
@@ -438,7 +439,7 @@ async function getOrUpdateCustomerForOrganisation(
   }
 }
 
-export async function createUpdateSubscriptionForOrganisation(
+export async function createSubscriptionForOrganisation(
   organisationId,
   { token, name, address, company }
 ) {

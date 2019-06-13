@@ -1,8 +1,8 @@
 import './credits.module.scss';
 
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
-import React, { useMemo, useState } from 'react';
-
+import React, { useMemo, useState, useCallback, useContext } from 'react';
+import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
 import CopyButton from '../../copy-to-clipboard';
 import { InlineFormInput } from '../../form';
@@ -23,6 +23,7 @@ async function getReferrals() {
 }
 
 export default ({ credits }) => {
+  const { actions: alertActions } = useContext(AlertContext);
   const [unsubCount] = useUser(u => u.unsubCount);
   const { loading, value } = useAsync(getRewards);
   const { loading: referralsLoading, value: referralValue } = useAsync(
@@ -83,36 +84,35 @@ export default ({ credits }) => {
     [loading, value]
   );
 
-  const [state, setState] = useState({
-    email: '',
-    loading: false,
-    error: false
-  });
+  const [email, setEmail] = useState('');
+  const [sendingInvite, setSendingInvite] = useState(false);
 
-  // const onClickInvite = useCallback(
-  //   async () => {
-  //     try {
-  //       setState({
-  //         ...state,
-  //         loading: true,
-  //         error: false
-  //       });
-  //       await sendReferralInvite(state.email);
-  //       setState({
-  //         ...state,
-  //         loading: false,
-  //         error: false
-  //       });
-  //     } catch (err) {
-  //       setState({
-  //         ...state,
-  //         loading: false,
-  //         error: true
-  //       });
-  //     }
-  //   },
-  //   [email]
-  // );
+  const onClickInvite = useCallback(
+    async () => {
+      try {
+        setSendingInvite(true);
+        await sendReferralInvite(email);
+        alertActions.setAlert({
+          id: 'referral-invite-success',
+          level: 'success',
+          message: `Successfully invited ${email}!`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      } catch (err) {
+        alertActions.setAlert({
+          id: 'referral-invite-error',
+          level: 'error',
+          message: `Error inviting ${email}!`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      } finally {
+        setSendingInvite(false);
+      }
+    },
+    [email]
+  );
 
   return (
     <div styleName="credits-modal">
@@ -156,10 +156,19 @@ export default ({ credits }) => {
             compact
             placeholder="Email address"
             name="email"
-            value={state.email}
-            onChange={e => setState({ ...state, email: e.currentTarget.value })}
+            value={email}
+            disabled={sendingInvite}
+            onChange={e => setEmail(e.currentTarget.value)}
           >
-            <Button fill basic smaller inline disabled={!state.email}>
+            <Button
+              fill
+              basic
+              smaller
+              inline
+              loading={sendingInvite}
+              disabled={sendingInvite || !email}
+              onClick={onClickInvite}
+            >
               Invite
             </Button>
           </InlineFormInput>
@@ -331,4 +340,16 @@ function rewardList(rewardItems, socialContent) {
       ))}
     </ul>
   );
+}
+
+function sendReferralInvite(email) {
+  return request(`/api/me/invite`, {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ email })
+  });
 }

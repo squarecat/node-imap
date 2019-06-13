@@ -47,6 +47,7 @@ import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
+import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import {
   addUserToOrganisation,
   canUserJoinOrganisation,
@@ -1053,4 +1054,19 @@ export function updateUserAutoBuy(id, autoBuy) {
   return updateUser(id, {
     'billing.autoBuy': autoBuy
   });
+}
+
+export async function inviteReferralUser(userId, email) {
+  try {
+    const user = await getUserById(userId);
+    const milestone = await getMilestone('referralSignUp');
+    sendReferralInviteMail({
+      toAddress: email,
+      referrer: user.email,
+      referralCode: user.referralCode,
+      reward: milestone.credits
+    });
+  } catch (err) {
+    throw err;
+  }
 }

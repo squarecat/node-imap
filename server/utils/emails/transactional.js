@@ -112,13 +112,32 @@ export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
 //   });
 // }
 
-export function sendInviteMail({ toAddress, organisationName, inviteCode }) {
+export function sendOrganisationInviteMail({
+  toAddress,
+  organisationName,
+  inviteCode
+}) {
   logger.info('email-utils: sending invite mail');
   return sendTransactionalMail({
     ...inviteOptions,
     subject: `${organisationName} has invited you to use Leave Me Alone`,
     to: toAddress,
     text: `You have been invited to use Leave Me Alone by ${organisationName}.\n\nLeave Me Alone is a service to easily unsubscribe from spam emails. As a member of the ${organisationName} organisation you can unsubscribe from as many unwanted subscription emails as you like. Simply sign-up or log-in using the following invite link and this email address to start unsubscribing now.\n\nAccept this invite:\n\n${baseUrl}/i/${inviteCode}\n\nJames & Danielle\n\nLeave Me Alone`
+  });
+}
+
+export function sendReferralInviteMail({
+  toAddress,
+  referrer,
+  referralCode,
+  reward
+}) {
+  logger.info('email-utils: sending invite mail');
+  return sendTransactionalMail({
+    ...inviteOptions,
+    subject: `You have been invited to use Leave Me Alone`,
+    to: toAddress,
+    text: `You have been invited to use Leave Me Alone by ${referrer}.\n\nLeave Me Alone is a service to easily unsubscribe from spam emails. With this referral link you will get ${reward} free credits to get started! Simply sign-up using the following referral link to start unsubscribing.\n\nSign-up now:\n\n${baseUrl}/r/${referralCode}\n\nJames & Danielle\n\nLeave Me Alone`
   });
 }
 

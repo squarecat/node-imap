@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import mailReducer, { initialState } from './reducer';
 
-import { DatabaseContext } from '../db-provider';
+import { DatabaseContext } from '../../providers/db-provider';
 import _sortBy from 'lodash.sortby';
 import { useMailSync } from './db';
 

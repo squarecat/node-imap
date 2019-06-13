@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { AlertContext } from '../../alert-provider';
-import { DatabaseContext } from '../../db-provider';
+import { AlertContext } from '../../../providers/alert-provider';
+import { DatabaseContext } from '../../../providers/db-provider';
 import React from 'react';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';

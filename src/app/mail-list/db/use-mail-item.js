@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { DatabaseContext } from '../../db-provider';
+import { DatabaseContext } from '../../../providers/db-provider';
 
 export default function useMailItem(id, reducer = v => v) {
   const db = useContext(DatabaseContext);

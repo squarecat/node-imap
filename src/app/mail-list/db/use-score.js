@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { DatabaseContext } from '../../db-provider';
+import { DatabaseContext } from '../../../providers/db-provider';
 
 export default function useScore(address) {
   const db = useContext(DatabaseContext);

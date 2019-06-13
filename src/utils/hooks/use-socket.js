@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 
-import { AlertContext } from '../../app/alert-provider';
-import { DatabaseContext } from '../../app/db-provider';
+import { AlertContext } from '../../providers/alert-provider';
+import { DatabaseContext } from '../../providers/db-provider';
 import io from 'socket.io-client';
 
 // socket singleton

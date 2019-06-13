@@ -15,10 +15,14 @@ import {
   removeOrganisationUserToStats
 } from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
-import { getSubscription, updateSubscription } from '../utils/stripe';
+import {
+  getSubscription,
+  updateSubscription,
+  getUpcomingInvoice
+} from '../utils/stripe';
 
 import logger from '../utils/logger';
-import { sendInviteMail } from '../utils/emails/transactional';
+import { sendOrganisationInviteMail } from '../utils/emails/transactional';
 
 export function getOrganisationById(id) {
   return getById(id);
@@ -77,7 +81,7 @@ export async function inviteUserToOrganisation(id, email) {
       logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
       const organisation = await addInvitedUser(id, email);
 
-      sendInviteMail({
+      sendOrganisationInviteMail({
         toAddress: email,
         organisationName: organisation.name,
         inviteCode: organisation.inviteCode
@@ -202,8 +206,11 @@ export function updateOrganisation(id, data) {
 
 export async function getOrganisationSubscription(id) {
   try {
-    const { billing } = await getById(id);
-    if (!billing || !billing.subscriptionId) return null;
+    const { customerId, billing = {} } = await getById(id);
+    const { subscriptionId } = billing;
+
+    if (!subscriptionId) return null;
+
     const {
       canceled_at,
       current_period_start,
@@ -211,14 +218,26 @@ export async function getOrganisationSubscription(id) {
       ended_at,
       quantity,
       plan
-    } = await getSubscription({ subscriptionId: billing.subscriptionId });
+    } = await getSubscription({ subscriptionId });
+
+    const upcomingInvoice = await getUpcomingInvoice({
+      customerId,
+      subscriptionId
+    });
+
     return {
       canceled_at,
       current_period_start,
       current_period_end,
       ended_at,
       quantity,
-      plan
+      plan,
+      upcomingInvoice: {
+        total: upcomingInvoice.total,
+        period_start: upcomingInvoice.period_start,
+        period_end: upcomingInvoice.period_end,
+        status: upcomingInvoice.status
+      }
     };
   } catch (err) {
     throw err;

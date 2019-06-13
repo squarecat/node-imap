@@ -18,7 +18,8 @@ import {
   setUserMilestoneCompleted,
   updateUserPassword,
   updateUserPreferences,
-  updateUserAutoBuy
+  updateUserAutoBuy,
+  inviteReferralUser
 } from '../services/user';
 
 import Joi from 'joi';
@@ -196,6 +197,25 @@ export default app => {
       next(
         new RestError('failed to get user notifications', {
           userId,
+          cause: err
+        })
+      );
+    }
+  });
+
+  app.post('/api/me/invite', auth, async (req, res, next) => {
+    const { id } = req.user;
+    const { email } = req.body;
+
+    try {
+      await inviteReferralUser(id, email);
+      return res.send({ success: true });
+    } catch (err) {
+      logger.error('user-rest: error inviting user');
+      logger.error(err);
+      next(
+        new RestError('failed to send invite', {
+          userId: id,
           cause: err
         })
       );

@@ -9,8 +9,8 @@ export default ({ alert, onDismiss }) => {
   const { isDismissable, isShown, level, message, actions } = alert;
 
   return (
-    <div styleName="error-banner" data-shown={isShown} data-level={level}>
-      <span styleName="error-message">{message}</span>
+    <div styleName="alert-banner" data-shown={isShown} data-level={level}>
+      <span styleName="alert-message">{message}</span>
       {(actions || []).map(({ onClick, label }) => (
         <button styleName="alert-btn" key={label} onClick={onClick}>
           <span styleName="alert-btn-text">{label}</span>
