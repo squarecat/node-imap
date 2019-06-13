@@ -341,14 +341,14 @@ export async function addPaidScan(id, scanType) {
   }
 }
 
-export async function addPackage(id, packageId, unsubscribes) {
+export async function addPackage(id, productId, unsubscribes) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
         $set: {
-          'billing.previousPackageId': packageId
+          'billing.previousPackageId': productId
         },
         $inc: {
           'billing.credits': unsubscribes
@@ -359,7 +359,7 @@ export async function addPackage(id, packageId, unsubscribes) {
     return user;
   } catch (err) {
     logger.error(
-      `users-dao: error adding user ${id} package ${packageId} unsubs ${unsubscribes}`
+      `users-dao: error adding user ${id} package ${productId} unsubs ${unsubscribes}`
     );
     logger.error(err);
     throw err;

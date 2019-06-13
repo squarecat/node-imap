@@ -71,6 +71,15 @@
   &:focus {
     border-color: transparent;
     border-bottom-color: $color-input-border-focus;
+    .container & {
+      border-bottom-color: $color-input-border;
+    }
+  }
+
+  &:last-child:not(.form-select-dropdown) {
+    .container & {
+      border-bottom-color: transparent;
+    }
   }
 }
 
@@ -93,8 +102,8 @@
   border-radius: 5px;
   padding: 0 5px;
 
-  .input-basic:last-child {
-    border-bottom: none;
+  &:focus-within {
+    border-color: $color-input-border-focus;
   }
 }
 
@@ -113,9 +122,52 @@
   vertical-align: bottom;
   white-space: nowrap;
   text-overflow: ellipsis;
+  display: inline-block;
 
   &:invalid {
     color: $color-input-placeholder;
+  }
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+
+  &.inline {
+    width: auto;
+  }
+}
+
+.select {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+
+  &:focus + .form-select-dropdown {
+    border-bottom-color: $color-input-border-focus;
+    .container & {
+      border-bottom-color: $color-input-border;
+    }
+  }
+
+  &:disabled + .form-select-dropdown {
+    pointer-events: none;
+    color: $color-input-disabled;
+    background-color: $color-input-disabled-bg;
+  }
+}
+
+.placeholder {
+  color: $color-input-placeholder;
+  font-size: 16px;
+
+  &.pill {
+    color: $color-primary-font;
+    font-size: 12px;
   }
 }
 
@@ -156,7 +208,7 @@
 }
 
 .form-checkbox {
-  display: block;
+  display: inline-block;
   margin-bottom: 10px;
 
   &:last-child {
@@ -258,17 +310,4 @@
     background: $color-bg-success;
     border: 1px solid $color-text-success;
   }
-}
-
-.select-wrapper {
-  position: relative;
-}
-
-.select {
-  opacity: 0;
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 30px;
 }

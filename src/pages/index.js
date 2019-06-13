@@ -1,7 +1,7 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
-import { ENTERPRISE, getPackage } from '../utils/prices';
+import { ENTERPRISE, getPackage } from '../../shared/prices';
 import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useCallback, useReducer, useRef, useState } from 'react';
 import { TextImportant, TextLink } from '../components/text';

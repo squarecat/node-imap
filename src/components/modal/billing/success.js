@@ -14,7 +14,7 @@ import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../pricing/plan-image';
 import { TextImportant } from '../../text';
 
-export default function StartPurchase({ credits }) {
+export default function PurchaseSuccess({ credits }) {
   const { close: closeModal } = useContext(ModalContext);
   return (
     <>

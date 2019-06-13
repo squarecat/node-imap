@@ -551,11 +551,11 @@ export function addPaidScanToUser(userId, scanType) {
   return addPaidScan(userId, scanType);
 }
 
-export async function addPackageToUser(userId, { packageId, credits, price }) {
+export async function addPackageToUser(userId, { productId, credits, price }) {
   try {
-    const user = await addPackage(userId, packageId, credits);
+    const user = await addPackage(userId, productId, credits);
     addActivityForUser(userId, 'packagePurchase', {
-      id: packageId,
+      id: productId,
       credits,
       price
     });
@@ -1044,4 +1044,13 @@ export async function getUserNotifications(userId, { seen } = {}) {
 export function setNotificationsReadForUser(userId, activityIds = []) {
   logger.debug(`user-service: setting notifications read for user ${userId}`);
   return setNotificationsRead(userId, activityIds);
+}
+
+export function updateUserAutoBuy(id, autoBuy) {
+  addActivityForUser(id, 'updatedPackageAutoBuyPreference', {
+    autoBuy
+  });
+  return updateUser(id, {
+    'billing.autoBuy': autoBuy
+  });
 }

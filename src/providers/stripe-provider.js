@@ -13,7 +13,9 @@ export function StripeProvider({ children }) {
   // https://github.com/stripe/react-stripe-elements#advanced-integrations
   useEffect(() => {
     scriptjs('https://js.stripe.com/v3/', function() {
-      setStripe(window.Stripe(process.env.STRIPE_PK));
+      if (window.Stripe) {
+        setStripe(window.Stripe(process.env.STRIPE_PK));
+      }
     });
   }, []);
 

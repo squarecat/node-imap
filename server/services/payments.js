@@ -31,21 +31,7 @@ import { payments } from 'getconfig';
 import { sendToUser } from '../rest/socket';
 import { updateUser } from '../dao/user';
 
-// TODO this is duplicated from 'utils/prices'
-// TODO put package data in the database?
-const PACKAGE_DATA = [
-  { id: '1', credits: 50, discount: 0.1 },
-  { id: '2', credits: 100, discount: 0.15 },
-  { id: '3', credits: 200, discount: 0.2 },
-  { id: '4', credits: 300, discount: 0.4 }
-];
-
-const PACKAGE_BASE_PRICE = 10;
-
-export const PACKAGES = PACKAGE_DATA.map(p => ({
-  ...p,
-  price: (PACKAGE_BASE_PRICE - PACKAGE_BASE_PRICE * p.discount) * p.credits
-}));
+import { getPackage } from '../../shared/prices';
 
 // export function getProduct(id) {
 //   return products.find(p => p.value === id);
@@ -188,9 +174,7 @@ export async function createPaymentWithExistingCardForUser({
 export async function claimCreditsWithCoupon({ user, productId, coupon }) {
   try {
     logger.debug(`payments-service: claiming credits with coupon '${coupon}'`);
-    const { price: productPrice, credits } = PACKAGES.find(
-      p => p.id === productId
-    );
+    const { price: productPrice, credits } = getPackage(productId);
 
     const couponObject = await getCoupon(coupon);
     const discountedPrice = applyCoupon(productPrice, couponObject);
@@ -229,9 +213,7 @@ export async function claimCreditsWithCoupon({ user, productId, coupon }) {
 async function getPaymentDetails({ productId, coupon }) {
   try {
     // get which product they are buying
-    const { price: productPrice, credits } = PACKAGES.find(
-      p => p.id === productId
-    );
+    const { price: productPrice, credits } = getPackage(productId);
     const description = `Payment for ${credits} credits`;
 
     // calcualte any coupon discount
@@ -305,6 +287,11 @@ async function getOrUpdateCustomerForUser(
         }
       };
       addActivityForUser(user.id, 'addBillingCard');
+    } else {
+      updates = {
+        ...updates,
+        'billing.autoBuy': false
+      };
     }
 
     await updateUser(user.id, updates);
@@ -323,12 +310,12 @@ async function handlePaymentSuccess(
   try {
     logger.info(`payments-service: payment success for user ${user.id}`);
 
-    const { credits } = PACKAGES.find(p => p.id === productId);
+    const { credits } = getPackage(productId);
     logger.debug(
       `payments-service: adding package ${productId} to user - credits ${credits}`
     );
     const updatedUser = await addPackageToUser(user.id, {
-      packageId: productId,
+      productId,
       credits,
       price: finalPrice
     });

@@ -11,14 +11,15 @@ import request from '../../../utils/request';
 
 const DEFAULT_ERROR = `An error occured claiming your free credits, please contact support.`;
 
-export default function StartPurchase({ onPurchaseSuccess }) {
+export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
   const { close: closeModal } = useContext(ModalContext);
   const { state, dispatch } = useContext(BillingModalContext);
-  const { selectedPackage, hasBillingCard, coupon } = state;
+  const { selectedPackage, coupon } = state;
 
   const billingStep = hasBillingCard
     ? 'existing-billing-details'
     : 'enter-billing-details';
+
   const isFree = selectedPackage.discountPrice < 50 || process.env.BETA;
 
   async function handleFreeCredits() {

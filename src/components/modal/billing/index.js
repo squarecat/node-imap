@@ -9,15 +9,13 @@ import NewBillingForm from './new-billing-form';
 import StartPurchaseForm from './start-purchase';
 import Success from './success';
 import request from '../../../utils/request';
-import useUser from '../../../utils/hooks/use-user';
 
 export const BillingModalContext = createContext({ state: initialState });
 
-export default ({ selectedPackage, hasBillingCard }) => {
+export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
   const [state, dispatch] = useReducer(billingModalReducer, {
     ...initialState
   });
-  const [user, { setBilling: setUserBilling }] = useUser();
 
   useEffect(
     () => {
@@ -25,17 +23,12 @@ export default ({ selectedPackage, hasBillingCard }) => {
         type: 'init',
         data: {
           ...initialState,
-          hasBillingCard,
           selectedPackage
         }
       });
     },
-    [selectedPackage, hasBillingCard]
+    [selectedPackage]
   );
-
-  const onPurchaseSuccess = ({ billing }) => {
-    setUserBilling(billing);
-  };
 
   return (
     <div styleName="billing-modal">
@@ -44,6 +37,7 @@ export default ({ selectedPackage, hasBillingCard }) => {
           <div data-active={state.step === 'start-purchase'}>
             {state.step === 'start-purchase' ? (
               <StartPurchaseForm
+                hasBillingCard={!!billingCard}
                 onPurchaseSuccess={user => onPurchaseSuccess(user)}
               />
             ) : null}
@@ -58,7 +52,7 @@ export default ({ selectedPackage, hasBillingCard }) => {
           <div data-active={state.step === 'existing-billing-details'}>
             {state.step === 'existing-billing-details' ? (
               <ExistingBillingForm
-                card={user.billing.card}
+                billingCard={billingCard}
                 onPurchaseSuccess={user => onPurchaseSuccess(user)}
               />
             ) : null}

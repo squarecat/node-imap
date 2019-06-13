@@ -97,17 +97,19 @@ export const FormSelect = ({
   ...props
 }) => {
   const ref = useRef(null);
+  const selected = options.find(o => o.value === value);
+  const selectedLabel = selected ? selected.label : placeholder;
+
   const classes = cx('form-input form-select-dropdown', {
     'input-compactt': compact,
     'input-basic': basic,
     'input-smaller': smaller,
-    pill: pill
+    pill: pill,
+    placeholder: !selected
   });
-  const selected = options.find(o => o.value === value);
-  const selectedLabel = selected ? selected.label : placeholder;
+
   return (
-    <span styleName="select-wrapper">
-      <span styleName={classes}>{selectedLabel}</span>
+    <span styleName={cx('select-wrapper', { inline: pill })}>
       <select
         {...props}
         ref={ref}
@@ -130,6 +132,7 @@ export const FormSelect = ({
           </option>
         ))}
       </select>
+      <span styleName={classes}>{selectedLabel}</span>
     </span>
   );
 };
