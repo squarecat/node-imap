@@ -338,24 +338,18 @@ function BillingInformation({ organisationId }) {
 
   const {
     canceled_at,
-    current_period_start,
     current_period_end,
     ended_at,
     quantity,
     plan = {}
   } = subscription;
 
-  const dateFormat = 'DD MMM YYYY';
+  const dateFormat = 'Do MMMM YYYY';
 
   return (
     <div>
-      <h3>Details</h3>
       <p>
-        Current period:{' '}
-        <TextImportant>
-          {formatDate(current_period_start * 1000, dateFormat)}
-        </TextImportant>{' '}
-        to{' '}
+        You'll next be billed on the{' '}
         <TextImportant>
           {formatDate(current_period_end * 1000, dateFormat)}
         </TextImportant>
@@ -376,9 +370,17 @@ function BillingInformation({ organisationId }) {
         </>
       ) : null}
 
-      <h3>Pricing Plan</h3>
-      <p>Enterprise: ${plan.amount / 100} per seat</p>
-      <p>Seats: {quantity}</p>
+      <p>
+        You are signed up for the <TextImportant>Enterprise plan</TextImportant>{' '}
+        billed at <TextImportant>${plan.amount / 100} per seat</TextImportant>.
+      </p>
+      <p>
+        You are currently using{' '}
+        <TextImportant>
+          {`${quantity} seat${quantity > 1 ? 's' : ''}`}
+        </TextImportant>
+        .
+      </p>
     </div>
   );
 }

@@ -26,12 +26,11 @@ import {
   updateOrganisation
 } from './organisation';
 
+import { getPackage } from '../../shared/prices';
 import logger from '../utils/logger';
 import { payments } from 'getconfig';
 import { sendToUser } from '../rest/socket';
 import { updateUser } from '../dao/user';
-
-import { getPackage } from '../../shared/prices';
 
 // export function getProduct(id) {
 //   return products.find(p => p.value === id);
@@ -417,17 +416,17 @@ async function getOrUpdateCustomerForOrganisation(
       logger.debug(
         `payments-service: creating customer for org ${organisationId}`
       );
-      const { id } = await createCustomer({
+      const { id: newCustomerId } = await createCustomer({
         source: token.id,
         email: adminUserEmail,
         name,
         address
       });
       organisation = await updateOrganisation(organisationId, {
-        customerId: id
+        customerId: newCustomerId
       });
+      customerId = newCustomerId;
     }
-
     return { organisation, customerId };
   } catch (err) {
     logger.error(
@@ -438,7 +437,7 @@ async function getOrUpdateCustomerForOrganisation(
   }
 }
 
-export async function createUpdateSubscriptionForOrganisation(
+export async function createSubscriptionForOrganisation(
   organisationId,
   { token, name, address, company }
 ) {
