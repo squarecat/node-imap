@@ -15,7 +15,7 @@ export default ({ children, overlay, placement = 'top', white }) => {
       trigger={['hover']}
       mouseLeaveDelay={0}
       overlayClassName={classes}
-      destroyTooltipOnHide={false}
+      destroyTooltipOnHide={true}
       overlay={overlay}
     >
       {children}

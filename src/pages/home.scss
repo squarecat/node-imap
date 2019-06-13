@@ -256,6 +256,13 @@ h1 {
 
 .trash-pile {
   padding-bottom: 300px;
+
+  // https://www.iconfinder.com/icons/2202473/dump_dumping_garbage_illegal_pollution_waste_water_icon
+  background-image: url('../assets/garbage-truck.png');
+  background-position: bottom -20px left;
+
+  background-size: 200px;
+  background-repeat: no-repeat;
 }
 
 .learn-providers {

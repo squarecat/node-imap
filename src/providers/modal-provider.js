@@ -4,7 +4,7 @@ import Modal from '../components/modal';
 
 export const ModalContext = createContext(null);
 
-export function ModalProvider({ children }) {
+function Provider({ children }) {
   const [state, setState] = useState({
     shown: false,
     options: {},
@@ -61,3 +61,5 @@ export function ModalProvider({ children }) {
     </ModalContext.Provider>
   );
 }
+
+export const ModalProvider = Provider;

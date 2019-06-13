@@ -3,7 +3,14 @@ import './home.scss';
 
 import { ENTERPRISE, getPackage } from '../../shared/prices';
 import { GoogleIcon, OutlookIcon } from '../components/icons';
-import React, { useCallback, useReducer, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
 import Browser from '../components/browser';
@@ -31,6 +38,7 @@ import truckImg from '../assets/truck.png';
 import unsubGif from '../assets/unsub-btn.gif';
 import unsubListGif from '../assets/unsubscribe-new.gif';
 import { useAsync } from '../utils/hooks';
+import { useWindowSize } from 'react-use';
 
 const faker = require('faker');
 
@@ -39,6 +47,7 @@ function getFeaturedNews() {
 }
 
 const IndexPage = ({ transitionStatus }) => {
+  const trashPileRef = useRef(null);
   const { error: statsError, loading: statsLoading, value } = useAsync(
     fetchStats
   );
@@ -100,7 +109,7 @@ const IndexPage = ({ transitionStatus }) => {
               </div>
             </div>
             <div className="hero-box">
-              <UnsubscribeDemo />
+              <UnsubscribeDemo trashPileRef={trashPileRef.current} />
             </div>
           </div>
         </div>
@@ -172,7 +181,7 @@ const IndexPage = ({ transitionStatus }) => {
           </div>
         </div>
 
-        <div className="learn-providers" id="providers">
+        <div className="learn-providers" ref={trashPileRef} id="providers">
           <div className="home-box text-box text-box-centered">
             <h3 className="providers-header">
               We support both Gmail and Outlook
@@ -663,8 +672,8 @@ const getMessage = count => {
     return (
       <span>
         ...Psst, you're awesome. Use the coupon{' '}
-        <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a big 10%
-        off 😍. Our little secret OK?
+        <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a huge
+        10% off 😍. Our little secret OK?
       </span>
     );
   }
@@ -698,7 +707,9 @@ function nodes(state, action) {
   }
 }
 
-function UnsubscribeDemo() {
+function UnsubscribeDemo({ trashPileRef }) {
+  const { width } = useWindowSize();
+  const ref = useRef(null);
   const [state, dispatch] = useReducer(nodes, {
     count: 0,
     nodes: [items[0]]
@@ -711,10 +722,29 @@ function UnsubscribeDemo() {
     [dispatch]
   );
 
+  const fallLimit = useMemo(
+    () => {
+      if (ref && trashPileRef) {
+        console.log(width);
+        const top = trashPileRef.offsetTop;
+        const elTop = ref.current.getBoundingClientRect().y;
+        return top - elTop - 50;
+      }
+    },
+    [width, ref, trashPileRef]
+  );
+
   return (
-    <div className="example-container">
+    <div className="example-container" ref={ref}>
       {state.nodes.map(item => {
-        return <Item key={item.name} {...item} onClick={onClick} />;
+        return (
+          <Item
+            fallLimit={fallLimit}
+            key={item.name}
+            {...item}
+            onClick={onClick}
+          />
+        );
       })}
     </div>
   );
@@ -730,16 +760,12 @@ function Item({
   email,
   text = '',
   onClick = () => {},
-
+  fallLimit,
   subject
 }) {
-  const [fallLimit, setFallLimit] = useState(null);
   const ref = useRef(null);
   const outerRef = useRef(null);
   const textRef = useRef(null);
-
-  const updateFallLimit = useCallback(() => {});
-  useEffect();
 
   const onChange = useCallback(
     () => {
@@ -786,13 +812,13 @@ function Item({
         // Increase the time by 0.10
         t = t + 0.15;
 
-        if (ny > -2715) {
+        if (ny > -fallLimit) {
           window.requestAnimationFrame(frame);
         }
       };
       window.requestAnimationFrame(frame);
     },
-    [ref, outerRef, onClick]
+    [ref, outerRef, onClick, fallLimit, animate]
   );
   return (
     <Transition timeout={200} appear in={true}>
