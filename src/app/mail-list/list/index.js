@@ -45,11 +45,7 @@ function MailList({ mail }) {
                   {state => {
                     const classes = getTransitionClasses('item', state, styles);
                     return (
-                      <tr
-                        className={classes}
-                        style={{ top: 50 + 74 * i }}
-                        key={id}
-                      >
+                      <tr className={classes} key={id}>
                         <MailItem id={id} onLoad={onLoad} />
                       </tr>
                     );

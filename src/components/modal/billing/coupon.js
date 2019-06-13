@@ -58,6 +58,7 @@ export default function CouponInput() {
 
   return (
     <form
+      styleName="coupon-form"
       id="coupon-form"
       onSubmit={e => {
         e.preventDefault();
