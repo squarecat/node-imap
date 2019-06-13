@@ -150,7 +150,7 @@ export const ModalPaymentSaveAction = ({
         </p>
       </div>
       <ModalActions>
-        <Button disabled={isLoading} compact onClick={onCancel}>
+        <Button basic muted disabled={isLoading} compact onClick={onCancel}>
           {cancelText}
         </Button>
         <Button

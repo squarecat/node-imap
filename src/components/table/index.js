@@ -5,11 +5,7 @@ import cx from 'classnames';
 
 export default ({ children }) => {
   const classes = cx('table');
-  return (
-    <table styleName={classes}>
-      <tbody>{children}</tbody>
-    </table>
-  );
+  return <table styleName={classes}>{children}</table>;
 };
 
 export const TableRow = ({ children, inverted, ...props }) => {

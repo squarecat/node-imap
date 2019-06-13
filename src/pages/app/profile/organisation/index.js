@@ -42,7 +42,7 @@ function Organisation() {
       const {
         name,
         active,
-        currentUsers = [],
+        adminUserEmail,
         invitedUsers = [],
         billing
       } = organisation;
@@ -72,8 +72,6 @@ function Organisation() {
               ) : null}
             </p>
             <OrganisationStatus active={active} billing={billing} />
-            <p>{currentUsers.length} seats used</p>
-            <p>{invitedUsers.length} invites pending</p>
           </div>
 
           {organisationAdmin ? <Billing organisation={organisation} /> : null}
@@ -84,7 +82,10 @@ function Organisation() {
             <InviteForm organisation={organisation} />
           ) : null}
 
-          <CurrentUsers organisationId={organisationId} />
+          <CurrentUsers
+            organisationId={organisationId}
+            adminUserEmail={adminUserEmail}
+          />
 
           {isInvitingEnabled ? (
             <div styleName="organisation-section tabled">
@@ -260,7 +261,7 @@ function Billing({ organisation }) {
     () => {
       const addPaymentMethodSuccess = () => {
         console.log('success adding organisation payment method!');
-        // setOrganisationLastUpdated(Date.now());
+        setOrganisationLastUpdated(Date.now());
       };
       console.log('opening modal');
       openModal(
@@ -286,7 +287,6 @@ function Billing({ organisation }) {
           </p>
         ) : null}
 
-        <h3>Card Details</h3>
         {card ? (
           <>
             <CardDetails card={billing.card} />

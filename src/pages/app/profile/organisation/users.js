@@ -3,11 +3,12 @@ import './organisation.module.scss';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import React from 'react';
+import cx from 'classnames';
 import relative from 'tiny-relative-date';
 import request from '../../../../utils/request';
 import useAsync from '../../../../utils/hooks/use-async';
 
-function CurrentUsers({ organisationId }) {
+function CurrentUsers({ organisationId, adminUserEmail }) {
   const { value: stats = [], loadingStats } = useAsync(fetchStats, [
     organisationId
   ]);
@@ -21,14 +22,36 @@ function CurrentUsers({ organisationId }) {
         <span>Loading...</span>
       ) : (
         <Table>
-          {stats.map(stat => (
-            <TableRow key={stat.id}>
-              <TableCell>{stat.email}</TableCell>
-              <TableCell>{stat.numberOfUnsubscribes} unsubscribes</TableCell>
-              <TableCell>{stat.timeSaved} time saved</TableCell>
-              <TableCell>Joined {relative(stat.dateJoined)}</TableCell>
-            </TableRow>
-          ))}
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th />
+              <th>Unsubscribes</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stats.map(stat => (
+              <TableRow key={stat.id}>
+                <TableCell>{stat.email}</TableCell>
+                <TableCell>
+                  {stat.email === adminUserEmail ? (
+                    <span
+                      styleName={cx('org-status', {
+                        active: true
+                      })}
+                    >
+                      Admin
+                    </span>
+                  ) : null}
+                </TableCell>
+
+                <TableCell>{stat.numberOfUnsubscribes}</TableCell>
+                {/* <TableCell>{stat.timeSaved} time saved</TableCell> */}
+                <TableCell>{relative(stat.dateJoined)}</TableCell>
+              </TableRow>
+            ))}
+          </tbody>
         </Table>
       )}
     </div>
