@@ -57,7 +57,11 @@ const activityEnum = {
   removedFromOrganisation: ({ data }) =>
     `You removed the account ${data.email} from your organistion ${data.name}.`,
   addBillingCard: () => `You added a saved payment method.`,
-  removeBillingCard: () => `You removed your saved payment method.`
+  removeBillingCard: () => `You removed your saved payment method.`,
+  updatedPackageAutoBuyPreference: ({ data }) =>
+    `You ${
+      data.autoBuy ? 'enabled' : 'disabled'
+    } the package auto-buy preference`
 };
 
 export function parseActivity(activity, user) {

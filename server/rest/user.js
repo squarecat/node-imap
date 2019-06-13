@@ -17,7 +17,8 @@ import {
   removeUserTotpToken,
   setUserMilestoneCompleted,
   updateUserPassword,
-  updateUserPreferences
+  updateUserPreferences,
+  updateUserAutoBuy
 } from '../services/user';
 
 import Joi from 'joi';
@@ -305,6 +306,9 @@ export default app => {
     try {
       if (op === 'remove-card') {
         updatedUser = await removeUserBillingCard(id);
+      } else if (op === 'update-autobuy') {
+        const { value: autoBuy } = body;
+        updatedUser = await updateUserAutoBuy(id, autoBuy);
       } else {
         logger.error(`user-rest: billing patch op not supported`);
       }

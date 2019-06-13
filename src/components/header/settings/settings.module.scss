@@ -25,13 +25,14 @@ $color-dropdown-border: $color-border-red;
   transform: translateY(5px);
   pointer-events: none;
   position: absolute;
-  top: 60px;
+  top: 48px;
   right: 0px;
   width: 200px;
   box-shadow: 0 1px 15px hsla(18, 100%, 38%, 0.15);
   border-radius: 7px;
   z-index: 10;
-  background-color: #fffbfb;
+  // background-color: #fffbfb;
+  background-color: white;
   margin: 0;
   border: 1px solid $color-dropdown-border;
   text-align: right;
@@ -71,10 +72,10 @@ $color-dropdown-border: $color-border-red;
 }
 .settings-dropdown-list {
   &:before {
-    right: 21px;
+    right: 10px;
   }
   &:after {
-    right: 22px;
+    right: 11px;
   }
 }
 

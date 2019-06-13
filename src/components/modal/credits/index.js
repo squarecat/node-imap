@@ -1,7 +1,7 @@
 import './credits.module.scss';
 
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import Button from '../../btn';
 import CopyButton from '../../copy-to-clipboard';
@@ -83,6 +83,37 @@ export default ({ credits }) => {
     [loading, value]
   );
 
+  const [state, setState] = useState({
+    email: '',
+    loading: false,
+    error: false
+  });
+
+  // const onClickInvite = useCallback(
+  //   async () => {
+  //     try {
+  //       setState({
+  //         ...state,
+  //         loading: true,
+  //         error: false
+  //       });
+  //       await sendReferralInvite(state.email);
+  //       setState({
+  //         ...state,
+  //         loading: false,
+  //         error: false
+  //       });
+  //     } catch (err) {
+  //       setState({
+  //         ...state,
+  //         loading: false,
+  //         error: true
+  //       });
+  //     }
+  //   },
+  //   [email]
+  // );
+
   return (
     <div styleName="credits-modal">
       <ModalBody>
@@ -125,8 +156,10 @@ export default ({ credits }) => {
             compact
             placeholder="Email address"
             name="email"
+            value={state.email}
+            onChange={e => setState({ ...state, email: e.currentTarget.value })}
           >
-            <Button fill basic smaller inline>
+            <Button fill basic smaller inline disabled={!state.email}>
               Invite
             </Button>
           </InlineFormInput>

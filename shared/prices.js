@@ -21,9 +21,5 @@ export function getPackage(id) {
 }
 
 export const ENTERPRISE = {
-  pricePerSeat: 500
+  pricePerSeat: 400
 };
-// export const ENTERPRISE = {
-//   seats: 10,
-//   price: 8000
-// };

@@ -60,6 +60,15 @@ export default globalReducer(
         billing
       };
     },
+    setCard: (state, card) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          card
+        }
+      };
+    },
     setOrganisationLastUpdated: (state, lastUpdated) => {
       return {
         ...state,

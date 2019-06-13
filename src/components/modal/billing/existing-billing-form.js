@@ -15,7 +15,7 @@ import request from '../../../utils/request';
 
 const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
 
-const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
+const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
   const { state, dispatch } = useContext(BillingModalContext);
 
   async function onSubmit() {
@@ -106,7 +106,7 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
 
         <FormLabel inline>Payment method</FormLabel>
         <FormGroup container>
-          <CardDetails card={card} />
+          <CardDetails card={billingCard} />
         </FormGroup>
 
         {state.error ? (
