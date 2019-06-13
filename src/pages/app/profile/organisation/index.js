@@ -76,12 +76,7 @@ function Organisation() {
         <p>{invitedUsers.length} invites pending</p>
       </div>
 
-      {organisationAdmin ? (
-        <Billing
-          organisationAdmin={organisationAdmin}
-          organisation={organisation}
-        />
-      ) : null}
+      {organisationAdmin ? <Billing organisation={organisation} /> : null}
 
       <Settings loading={loading} organisation={organisation} />
 
@@ -125,7 +120,7 @@ function OrganisationStatus({ active }) {
     <>
       <p>
         Your account is <TextImportant>inactive</TextImportant> because you have
-        not added a payment method or you have deactivated your account.
+        not added a payment method or you have deactivated your organisation.
       </p>
       <p>
         You cannot invite new members, and existing members cannot unsubscribe
@@ -219,9 +214,8 @@ function Settings({ loading, organisation }) {
   );
 }
 
-function Billing({ organisationAdmin, organisation }) {
+function Billing({ organisation }) {
   const { open: openModal } = useContext(ModalContext);
-  const [showBillingModal, toggleBillingModal] = useState(false);
 
   const [state, setState] = useState({
     loading: false,
@@ -236,22 +230,13 @@ function Billing({ organisationAdmin, organisation }) {
     };
   });
 
-  const { id, billing = {}, adminUserEmail } = organisation;
+  const { id, billing = {} } = organisation;
   const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
-
-  async function addPaymentMethodSuccess() {
-    toggleBillingModal(false);
-    setOrganisationLastUpdated(Date.now());
-  }
 
   const onClickRemoveCard = useCallback(
     () => {
       const removeCard = () => {
-        // TODO remove the card from the organisation
-        // cancel the subscription (and show when it will cancel)
-        // webhook for cancelled to update status
-        console.warn('not yet implemented');
-        return true;
+        console.log('not yet implemented');
       };
       openModal(
         <WarningModal
@@ -260,9 +245,11 @@ function Billing({ organisationAdmin, organisation }) {
             <p>
               If you remove your payment method and do not add one by the end of
               your billing period{' '}
-              <TextImportant>we will deactivate your account</TextImportant>.
-              You have until the end of this billing period to add a new payment
-              method.
+              <TextImportant>
+                we will deactivate your organisation
+              </TextImportant>
+              . You have until the end of this billing period to add a new
+              payment method.
             </p>
           }
           confirmText="Confirm"
@@ -273,6 +260,22 @@ function Billing({ organisationAdmin, organisation }) {
       );
     },
     [openModal]
+  );
+
+  const onClickAddBilling = useCallback(
+    () => {
+      const addPaymentMethodSuccess = () => {
+        console.log('success adding organisation payment method!');
+        setOrganisationLastUpdated(Date.now());
+      };
+      openModal(
+        <OrganisationBillingModal
+          organisation={organisation}
+          onSuccess={() => addPaymentMethodSuccess()}
+        />
+      );
+    },
+    [openModal, organisation, setOrganisationLastUpdated]
   );
 
   return (
@@ -298,10 +301,20 @@ function Billing({ organisationAdmin, organisation }) {
               stretch
               disabled={state.loading}
               loading={state.loading}
+              onClick={() => onClickAddBilling()}
+            >
+              Change Payment Method
+            </Button>
+            {/* <Button
+              basic
+              compact
+              stretch
+              disabled={state.loading}
+              loading={state.loading}
               onClick={() => onClickRemoveCard()}
             >
               Remove Card
-            </Button>
+            </Button> */}
           </>
         ) : (
           <>
@@ -315,7 +328,7 @@ function Billing({ organisationAdmin, organisation }) {
               stretch
               disabled={state.loading}
               loading={state.loading}
-              onClick={() => toggleBillingModal(true)}
+              onClick={() => onClickAddBilling()}
             >
               Add Payment Method
             </Button>
@@ -324,29 +337,25 @@ function Billing({ organisationAdmin, organisation }) {
       </div>
       <div styleName="organisation-section">
         <h2>Company Details</h2>
-        <p>Name: {company.name || '-'}</p>
-        <p>VAT Number: {company.vatNumber || '-'}</p>
-        <p>Billing email: {adminUserEmail}</p>
-        <p>Contact us to add your VAT number and company details</p>
-        <Button
-          basic
-          compact
-          stretch
-          disabled={true} // not available yet
-          loading={state.loading}
-          onClick={() => toggleBillingModal(true)}
-        >
-          Update (coming soon)
-        </Button>
+        {company.vatNumber ? (
+          <>
+            <p>Name: {company.name || '-'}</p>
+            <p>VAT Number: {company.vatNumber || '-'}</p>
+            <Button
+              basic
+              compact
+              stretch
+              disabled={true} // not available yet
+              loading={state.loading}
+              onClick={() => {}}
+            >
+              Update (coming soon)
+            </Button>
+          </>
+        ) : (
+          <p>Contact us to add your VAT number and company details</p>
+        )}
       </div>
-      <Elements>
-        <OrganisationBillingModal
-          organisation={organisation}
-          shown={showBillingModal}
-          onClose={() => toggleBillingModal(false)}
-          onSuccess={organisation => addPaymentMethodSuccess(organisation)}
-        />
-      </Elements>
     </>
   );
 }

@@ -130,7 +130,6 @@ const ExistingForm = ({ stripe, card, onPurchaseSuccess }) => {
         cancelText="Back"
         saveText={<span>Pay{getDisplayPrice(state.selectedPackage)}</span>}
         onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
-        formToSubmit="payment-form"
       />
     </form>
   );

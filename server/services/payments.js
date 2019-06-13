@@ -27,9 +27,9 @@ import {
 } from './organisation';
 
 import logger from '../utils/logger';
-import { plans } from 'getconfig';
-import { updateUser } from '../dao/user';
+import { payments } from 'getconfig';
 import { sendToUser } from '../rest/socket';
+import { updateUser } from '../dao/user';
 
 // TODO this is duplicated from 'utils/prices'
 // TODO put package data in the database?
@@ -436,10 +436,11 @@ async function getOrUpdateCustomerForOrganisation(
         name,
         address
       });
-      customerId = id;
+      organisation = await updateOrganisation(organisationId, {
+        customerId: id
+      });
     }
 
-    organisation = await updateOrganisation(organisationId, { customerId });
     return { organisation, customerId };
   } catch (err) {
     logger.error(
@@ -450,7 +451,7 @@ async function getOrUpdateCustomerForOrganisation(
   }
 }
 
-export async function createSubscriptionForOrganisation(
+export async function createUpdateSubscriptionForOrganisation(
   organisationId,
   { token, name, address, company }
 ) {
@@ -468,14 +469,15 @@ export async function createSubscriptionForOrganisation(
       address,
       company
     });
-    logger.debug(`payments-service: created customer ${customerId}`);
+    logger.debug(`payments-service: created/updated customer ${customerId}`);
 
-    const { billing } = organisation;
+    const { billing = {} } = organisation;
+    const { subscriptionStatus } = billing;
 
     // Subscription is incomplete if the initial payment attempt fails.
     // we are trying to create a subscription but the billing block will exist
     // with a subscriptionId already
-    if (billing && billing.subscriptionStatus === 'incomplete') {
+    if (subscriptionStatus === 'incomplete') {
       logger.debug(
         `payments-service: subscription status is incomplete - retrying payment`
       );
@@ -489,7 +491,7 @@ export async function createSubscriptionForOrganisation(
     logger.debug(
       `payments-service: creating subscription for customer ${customerId}`
     );
-    const planId = plans.enterprise;
+    const planId = payments.plans.enterprise;
     const seats = organisation.currentUsers.length;
     const {
       id: subscriptionId,
@@ -637,6 +639,38 @@ export async function handleInvoicePaymentSuccess({
       `payments-service: failed to handle invoice payment success for subscription ${subscription}`
     );
     logger.error(err);
+    throw err;
+  }
+}
+
+export async function updateBillingForOrganisation(
+  id,
+  { token, name, address, company }
+) {
+  try {
+    logger.debug(`payment-service: updating billing for organisation ${id}`);
+    // this will update as the organisation should have a customerID
+    await getOrUpdateCustomerForOrganisation(id, {
+      token,
+      name,
+      address,
+      company
+    });
+    // set the new card details
+    const { last4, exp_month, exp_year } = token.card;
+    await updateOrganisation(id, {
+      'billing.company': company,
+      'billing.card': {
+        last4,
+        exp_month,
+        exp_year
+      }
+    });
+    // return a response that would be the same as intent etc
+    return {
+      success: true
+    };
+  } catch (err) {
     throw err;
   }
 }
