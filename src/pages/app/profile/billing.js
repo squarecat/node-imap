@@ -78,7 +78,6 @@ export default function() {
 function Billing() {
   const [state, dispatch] = useReducer(billingReducer, initialState);
   const { open: openModal } = useContext(ModalContext);
-  const [selectedPackage, setSelectedPackage] = useState(PACKAGES[0]);
 
   const [{ billing, organisationId }] = useUser(u => {
     return {
@@ -99,24 +98,14 @@ function Billing() {
     [billing]
   );
 
-  const modal = useMemo(
-    () => {
-      return (
-        <BillingModal
-          selectedPackage={selectedPackage}
-          hasBillingCard={!!state.card}
-        />
-      );
-    },
-    [selectedPackage, state.card]
-  );
   const onClickBuyPackage = useCallback(
     id => {
       const pkg = PACKAGES.find(p => p.id === id);
-      setSelectedPackage(pkg);
-      openModal(modal);
+      openModal(
+        <BillingModal selectedPackage={pkg} hasBillingCard={!!state.card} />
+      );
     },
-    [openModal, modal]
+    [openModal, state.card]
   );
 
   if (organisationId) {
@@ -143,8 +132,7 @@ function Billing() {
           <TextImportant>{state.creditsUsed}</TextImportant> credits.
         </p>
       </div>
-      {/* <UsageBased /> */}
-      <Packages onClickBuy={id => onClickBuyPackage(id)} />
+      <Packages onClickBuy={onClickBuyPackage} />
       <Enterprise />
       <BillingDetails />
       <BillingHistory />

@@ -155,7 +155,7 @@ const IndexPage = ({ transitionStatus }) => {
             </div>
           </div>
 
-          <div className="trash-pile">
+          <div className="trash-pile" id="trash-pile">
             <div className="home-box text-box text-box-centered">
               <h3>Say goodbye to subscriptions forever</h3>
               <p>
@@ -733,9 +733,13 @@ function Item({
 
   subject
 }) {
+  const [fallLimit, setFallLimit] = useState(null);
   const ref = useRef(null);
   const outerRef = useRef(null);
   const textRef = useRef(null);
+
+  const updateFallLimit = useCallback(() => {});
+  useEffect();
 
   const onChange = useCallback(
     () => {

@@ -14,6 +14,9 @@ export const initialState = {
 function billingModalReducer(state, action) {
   const { type, data } = action;
   switch (type) {
+    case 'init': {
+      return action.data;
+    }
     case 'set-step': {
       return {
         ...state,

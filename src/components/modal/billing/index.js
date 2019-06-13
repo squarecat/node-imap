@@ -1,6 +1,6 @@
 import './billing-modal.module.scss';
 
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer } from 'react';
 import billingModalReducer, { initialState } from './reducer';
 
 import { Elements } from 'react-stripe-elements';
@@ -15,11 +15,23 @@ export const BillingModalContext = createContext({ state: initialState });
 
 export default ({ selectedPackage, hasBillingCard }) => {
   const [state, dispatch] = useReducer(billingModalReducer, {
-    ...initialState,
-    hasBillingCard,
-    selectedPackage
+    ...initialState
   });
   const [user, { setBilling: setUserBilling }] = useUser();
+
+  useEffect(
+    () => {
+      dispatch({
+        type: 'init',
+        data: {
+          ...initialState,
+          hasBillingCard,
+          selectedPackage
+        }
+      });
+    },
+    [selectedPackage, hasBillingCard]
+  );
 
   const onPurchaseSuccess = ({ billing }) => {
     setUserBilling(billing);

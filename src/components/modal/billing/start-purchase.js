@@ -63,7 +63,7 @@ export default function StartPurchase({ onPurchaseSuccess }) {
           Purchasing a package of{' '}
           <TextImportant>{selectedPackage.credits} credits.</TextImportant>
         </p>
-        <PlanImage smaller compact type="package" />
+        <PlanImage type="package" />
         <Price
           price={selectedPackage.price}
           discounted={selectedPackage.discountAmount}
