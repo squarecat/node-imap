@@ -42,7 +42,7 @@ function Organisation() {
       const {
         name,
         active,
-        currentUsers = [],
+        adminUserEmail,
         invitedUsers = [],
         billing
       } = organisation;
@@ -72,8 +72,6 @@ function Organisation() {
               ) : null}
             </p>
             <OrganisationStatus active={active} billing={billing} />
-            <p>{currentUsers.length} seats used</p>
-            <p>{invitedUsers.length} invites pending</p>
           </div>
 
           {organisationAdmin ? <Billing organisation={organisation} /> : null}
@@ -84,7 +82,10 @@ function Organisation() {
             <InviteForm organisation={organisation} />
           ) : null}
 
-          <CurrentUsers organisationId={organisationId} />
+          <CurrentUsers
+            organisationId={organisationId}
+            adminUserEmail={adminUserEmail}
+          />
 
           {isInvitingEnabled ? (
             <div styleName="organisation-section tabled">
@@ -260,7 +261,7 @@ function Billing({ organisation }) {
     () => {
       const addPaymentMethodSuccess = () => {
         console.log('success adding organisation payment method!');
-        // setOrganisationLastUpdated(Date.now());
+        setOrganisationLastUpdated(Date.now());
       };
       console.log('opening modal');
       openModal(
@@ -286,7 +287,6 @@ function Billing({ organisation }) {
           </p>
         ) : null}
 
-        <h3>Card Details</h3>
         {card ? (
           <>
             <CardDetails card={billing.card} />
@@ -338,24 +338,18 @@ function BillingInformation({ organisationId }) {
 
   const {
     canceled_at,
-    current_period_start,
     current_period_end,
     ended_at,
     quantity,
     plan = {}
   } = subscription;
 
-  const dateFormat = 'DD MMM YYYY';
+  const dateFormat = 'Do MMMM YYYY';
 
   return (
     <div>
-      <h3>Details</h3>
       <p>
-        Current period:{' '}
-        <TextImportant>
-          {formatDate(current_period_start * 1000, dateFormat)}
-        </TextImportant>{' '}
-        to{' '}
+        You'll next be billed on the{' '}
         <TextImportant>
           {formatDate(current_period_end * 1000, dateFormat)}
         </TextImportant>
@@ -376,9 +370,17 @@ function BillingInformation({ organisationId }) {
         </>
       ) : null}
 
-      <h3>Pricing Plan</h3>
-      <p>Enterprise: ${plan.amount / 100} per seat</p>
-      <p>Seats: {quantity}</p>
+      <p>
+        You are signed up for the <TextImportant>Enterprise plan</TextImportant>{' '}
+        billed at <TextImportant>${plan.amount / 100} per seat</TextImportant>.
+      </p>
+      <p>
+        You are currently using{' '}
+        <TextImportant>
+          {`${quantity} seat${quantity > 1 ? 's' : ''}`}
+        </TextImportant>
+        .
+      </p>
     </div>
   );
 }

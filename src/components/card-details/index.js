@@ -10,7 +10,6 @@ export default ({ card }) => (
       {`•••• •••• •••• ${card.last4}`}
     </div>
     <div styleName="box expires">
-      <span>Expires: </span>
       <span>
         {card.exp_month}/{card.exp_year}
       </span>

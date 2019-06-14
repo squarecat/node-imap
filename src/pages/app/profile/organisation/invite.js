@@ -3,7 +3,8 @@ import './organisation.module.scss';
 import {
   FormGroup,
   FormInput,
-  FormNotification
+  FormNotification,
+  InlineFormInput
 } from '../../../../components/form';
 import React, { useState } from 'react';
 
@@ -56,22 +57,36 @@ function InviteForm({ organisation }) {
     <div styleName="organisation-section">
       <h2>Invite Users</h2>
       {allowAnyUserWithCompanyEmail ? (
-        <p>
-          Any user with your company domain can join. Instead of inviting them
-          all, you can share this link:
-          <CopyButton
-            string={`${window.location.host}/i/${inviteCode}`}
-            muted
-            outlined
-            stretch
-            fill
-            basic
-            smaller
-            inline
-          >
-            {window.location.host}/i/{inviteCode} - Copy link
-          </CopyButton>
-        </p>
+        <>
+          <p>
+            Any user with your company domain can join. Instead of inviting them
+            all, you can share this link:
+          </p>
+          <div styleName="invite">
+            <InlineFormInput
+              smaller
+              compact
+              placeholder="Email address"
+              name="email"
+              value={`${window.location.protocol}//${
+                window.location.host
+              }/i/${inviteCode}`}
+              onChange={() => {}}
+            >
+              <CopyButton
+                string={`${window.location.protocol}//${
+                  window.location.host
+                }/i/${inviteCode}`}
+                fill
+                basic
+                smaller
+                inline
+              >
+                Copy link
+              </CopyButton>
+            </InlineFormInput>
+          </div>
+        </>
       ) : null}
       <p>
         You can invite any member inside or outside of your organisation by
@@ -79,6 +94,7 @@ function InviteForm({ organisation }) {
         with this email address.
       </p>
       <form
+        styleName="invite"
         id="invite-user-form"
         onSubmit={e => {
           e.preventDefault();
@@ -86,28 +102,32 @@ function InviteForm({ organisation }) {
         }}
       >
         <FormGroup>
-          <FormInput
+          <InlineFormInput
             smaller
-            required
-            placeholder="Email address to invite"
+            compact
+            placeholder="Email address"
+            name="email"
             value={state.email}
-            name="name"
             onChange={e => {
               setState({ ...state, email: e.currentTarget.value });
             }}
-          />
+          >
+            <Button
+              fill
+              basic
+              smaller
+              compact
+              inline
+              loading={state.loading}
+              disabled={state.loading || !state.email}
+              type="submit"
+              as="button"
+            >
+              Invite
+            </Button>
+          </InlineFormInput>
         </FormGroup>
-        <Button
-          basic
-          compact
-          stretch
-          loading={state.loading}
-          disabled={state.loading || !state.email}
-          type="submit"
-          as="button"
-        >
-          Send Invite
-        </Button>
+
         {state.sent ? <FormNotification success>Sent!</FormNotification> : null}
         {state.error ? (
           <FormNotification error>

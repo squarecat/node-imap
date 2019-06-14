@@ -7,6 +7,7 @@ import {
   LinkIcon,
   LockIcon,
   MailIcon,
+  SearchIcon,
   SettingsIcon,
   UserIcon,
   WorkIcon
@@ -37,7 +38,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <UserIcon width="16" height="16" /> Profile
+                  <UserIcon width="16" height="16" />
+                  <span>Profile</span>
                 </Link>
               </li>
               <li>
@@ -46,7 +48,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <LinkIcon width="16" height="16" /> Accounts
+                  <LinkIcon width="16" height="16" />
+                  <span>Accounts</span>
                 </Link>
               </li>
               <li>
@@ -56,7 +59,7 @@ export default ({ pageName, children }) => {
                   activeClassName="profile-nav-link--active"
                 >
                   <LockIcon width="16" height="16" />
-                  Security
+                  <span> Security</span>
                 </Link>
               </li>
               <li>
@@ -65,7 +68,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <CreditCardIcon width="16" height="16" /> Billing
+                  <CreditCardIcon width="16" height="16" />
+                  <span>Billing</span>
                 </Link>
               </li>
               <li>
@@ -74,7 +78,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <MailIcon width="16" height="16" /> Scan history
+                  <SearchIcon width="16" height="16" />
+                  <span>Scan history</span>
                 </Link>
               </li>
               <li>
@@ -83,7 +88,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <MailIcon width="16" height="16" /> Activity history
+                  <MailIcon width="16" height="16" />
+                  <span>Activity history</span>
                 </Link>
               </li>
               <li>
@@ -92,7 +98,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <BellIcon width="16" height="16" /> Notifications
+                  <BellIcon width="16" height="16" />
+                  <span>Notifications</span>
                 </Link>
               </li>
               <li>
@@ -101,7 +108,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <HeartIcon width="16" height="16" /> Favorite senders
+                  <HeartIcon width="16" height="16" />
+                  <span>Favorite senders</span>
                 </Link>
               </li>
               <li>
@@ -110,7 +118,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <SettingsIcon width="16" height="16" /> Preferences
+                  <SettingsIcon width="16" height="16" />
+                  <span>Preferences</span>
                 </Link>
               </li>
               {organisationId ? (
@@ -120,7 +129,8 @@ export default ({ pageName, children }) => {
                     styleName="profile-nav-link"
                     activeClassName="profile-nav-link--active"
                   >
-                    <WorkIcon width="16" height="16" /> Organisation
+                    <WorkIcon width="16" height="16" />
+                    <span>Organisation</span>
                   </Link>
                 </li>
               ) : null}
