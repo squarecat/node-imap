@@ -313,7 +313,7 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
         );
         // TODO throw warning
         throw new ConnectAccountError('user cannot join organisation', {
-          key: reason
+          errKey: reason
         });
       }
       await addUserAccountToOrganisation({
@@ -902,7 +902,7 @@ export async function addActivityForUser(userId, name, data = {}) {
         };
 
         // give the user the unsubs
-        await incrementCredits(userId, credits);
+        await incrementUserCredits(userId, credits);
         addRewardGivenToStats(credits);
       }
 
@@ -915,12 +915,19 @@ export async function addActivityForUser(userId, name, data = {}) {
       sendToUser(userId, 'notifications', [activity]);
     }
     if (activity.reward) {
-      sendToUser(userId, 'credits', activity.reward.credits);
+      sendToUser(userId, 'new-credits', activity.reward.credits);
     }
     return activity;
   } catch (err) {
     throw err;
   }
+}
+
+export function incrementUserCredits(id, credits) {
+  return incrementCredits(id, credits);
+}
+export function decrementUserCredits(id, credits) {
+  return incrementCredits(id, -credits);
 }
 
 function getReward({ userActivity, name, milestone, activityData }) {

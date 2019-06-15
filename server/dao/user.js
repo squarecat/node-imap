@@ -57,7 +57,10 @@ function getUserDefaults({ email }) {
       hideUnsubscribedMails: false,
       marketingConsent: true
     },
-    milestones: {}
+    milestones: {},
+    billing: {
+      credits: 0
+    }
   };
 }
 
@@ -341,7 +344,7 @@ export async function addPaidScan(id, scanType) {
   }
 }
 
-export async function addPackage(id, productId, unsubscribes) {
+export async function addPackage(id, productId, credits) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -351,7 +354,7 @@ export async function addPackage(id, productId, unsubscribes) {
           'billing.previousPackageId': productId
         },
         $inc: {
-          'billing.credits': unsubscribes
+          'billing.credits': credits
         }
       }
     );
@@ -359,14 +362,14 @@ export async function addPackage(id, productId, unsubscribes) {
     return user;
   } catch (err) {
     logger.error(
-      `users-dao: error adding user ${id} package ${productId} unsubs ${unsubscribes}`
+      `users-dao: error adding user ${id} package ${productId} credits ${credits}`
     );
     logger.error(err);
     throw err;
   }
 }
 
-export async function incrementCredits(id, unsubscribes) {
+export async function incrementCredits(id, credits) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -376,16 +379,14 @@ export async function incrementCredits(id, unsubscribes) {
           lastUpdatedAt: isoDate()
         },
         $inc: {
-          'billing.credits': unsubscribes
+          'billing.credits': credits
         }
       }
     );
     const user = await getUser(id);
     return user;
   } catch (err) {
-    logger.error(
-      `users-dao: error incrementing user ${id} unsubscribes remaining by ${unsubscribes}`
-    );
+    logger.error(`users-dao: error incrementing user ${id} credits by ${credits}`);
     logger.error(err);
     throw err;
   }
