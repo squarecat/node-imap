@@ -4,9 +4,9 @@ import { AlertContext } from '../../../providers/alert-provider';
 import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import React from 'react';
+import { getUnsubscribeAlert } from '../../../utils/errors';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
-import { getUnsubscribeAlert } from '../../../utils/errors';
 
 export function useMailSync() {
   const db = useContext(DatabaseContext);
@@ -159,24 +159,22 @@ export function useMailSync() {
           console.debug(`[db]: received unsubscribe error`);
           try {
             incrementCredits(1);
-            const { estimatedSuccess, unsubStrategy, hasImage, data } = err;
-            await db.mail.update(id, {
-              error: true,
-              isLoading: false,
-              subscribed: null,
-              estimatedSuccess: estimatedSuccess,
-              unsubStrategy: unsubStrategy,
-              hasImage: hasImage,
-              status: 'failed'
-            });
+            const { data } = err;
 
             const mail = await db.mail.get(id);
-            const alert = getUnsubscribeAlert(data.errKey, mail, {
+            const alert = getUnsubscribeAlert({
+              id: err.id,
+              reason: data.errKey,
+              mail,
               alertActions: actions,
               modalActions: { openModal },
               credits
             });
 
+            await db.mail.update(id, {
+              isLoading: false,
+              subscribed: true
+            });
             actions.queueAlert(alert);
           } catch (err) {
             console.error(`[db]: failed to set failed unsubscribe`);
@@ -223,18 +221,22 @@ export function useMailSync() {
     unsubscribe: async mailItem => {
       try {
         console.debug(`[db]: unsubscribing from ${mailItem.id}`);
+
         const { allowed, reason } = canUnsubscribe({
           credits,
           organisationId,
           organisationActive
         });
         if (!allowed) {
-          const alert = getUnsubscribeAlert(reason, mailItem, {
+          const alert = getUnsubscribeAlert({
+            reason,
+            mailItem,
             alertActions: actions,
             modalActions: { openModal },
             credits
           });
-          return actions.setAlert(alert);
+          actions.setAlert(alert);
+          return false;
         }
         if (!organisationId) {
           console.debug('[db]: decrementing credits');
@@ -244,7 +246,8 @@ export function useMailSync() {
           isLoading: true,
           subscribed: false
         });
-        return emit('unsubscribe', mailItem);
+        emit('unsubscribe', mailItem);
+        return true;
       } catch (err) {
         console.error('[db]: failed to unsubscribe mail');
         console.error(err);
