@@ -60,14 +60,19 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
 
 .disabled {
   pointer-events: none;
-  background-color: $color-btn-disabled-bg;
-  color: $color-btn-disabled;
+  opacity: 0.5;
   cursor: no-drop;
 }
 
 .inline {
   display: inline-block;
   margin: 0;
+
+  &.disabled {
+    opacity: 1;
+    background-color: $color-btn-disabled-bg;
+    color: $color-btn-disabled;
+  }
 }
 
 .compact {
