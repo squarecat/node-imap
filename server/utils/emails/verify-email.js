@@ -1,24 +1,19 @@
-import { domains, urls } from 'getconfig';
+import { mailgun, urls } from 'getconfig';
 
 import logger from '../logger';
-import { sendTransactionalMail } from './transactional';
+import { sendTransactionalMail, SIGN_OFF } from './transactional';
 
 const options = {
-  from: `Leave Me Alone <noreply@${domains.transactional}>`,
+  from: `Leave Me Alone <noreply@${mailgun.domains.transactional}>`,
   subject: 'Verify your email address'
 };
 
 export function sendVerifyEmailMail({ toAddress, code }) {
   logger.info('email-utils: sending verify email mail');
 
-  let text = `Welcome to Leave Me Alone!
-
-Before you can start using your account fully, we just need you to verify your email address. Click the link below to verify.
-
-<a href="${urls.base}/auth/verify/${code}">Verify email</a>
-
-Thanks!
-James & Danielle`;
+  const text = `Welcome to Leave Me Alone!\n\nThank you for signing up. Please verify your email address to begin using your account by clicking the following link:\n\n${
+    urls.base
+  }/verify/${code}.\n\n${SIGN_OFF}`;
 
   return sendTransactionalMail({
     ...options,

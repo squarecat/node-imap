@@ -73,7 +73,8 @@ export async function createUserFromPassword(data) {
       id,
       ...getUserDefaults({ email: data.email }),
       accounts: [],
-      password: hashPassword(data.password)
+      password: hashPassword(data.password),
+      verificationCode: shortid.generate()
     });
     return getUser(id);
   } catch (err) {
@@ -161,16 +162,15 @@ export async function bulkGetUsersByEmail(emails) {
 }
 
 export async function updateUser(id, userData) {
-  let updateObj = {
-    ...userData,
-    lastUpdatedAt: isoDate()
-  };
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
-        $set: updateObj
+        $set: {
+          ...userData,
+          lastUpdatedAt: isoDate()
+        }
       }
     );
     const user = await getUser(id);
@@ -804,7 +804,8 @@ export async function updatePassword(id, newPassword) {
       {
         $set: {
           'password.salt': password.salt,
-          'password.hash': password.hash
+          'password.hash': password.hash,
+          lastUpdatedAt: isoDate()
         },
         $unset: {
           resetCode: 1,
@@ -827,6 +828,9 @@ export async function removeBillingCard(userId) {
     await col.updateOne(
       { id: userId },
       {
+        $set: {
+          lastUpdatedAt: isoDate()
+        },
         $unset: {
           'billing.card': 1
         }
@@ -848,7 +852,8 @@ export async function setMilestoneCompleted(userId, milestoneName) {
       { id: userId },
       {
         $set: {
-          [`milestones.${milestoneName}`]: 1
+          [`milestones.${milestoneName}`]: 1,
+          lastUpdatedAt: isoDate()
         }
       }
     );
@@ -875,6 +880,9 @@ export async function addActivity(id, activityData) {
       {
         $push: {
           activity
+        },
+        $set: {
+          lastUpdatedAt: isoDate()
         }
       }
     );
@@ -935,6 +943,30 @@ export async function getUserByHashedEmail(hashedEmail) {
     return user;
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function verifyEmail(id) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          verified: true,
+          lastUpdatedAt: isoDate()
+        },
+        $unset: {
+          verificationCode: 1
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error('user-dao: failed to verify email');
     logger.error(err);
     throw err;
   }

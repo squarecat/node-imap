@@ -33,7 +33,8 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret
+  verifyTotpSecret,
+  verifyEmail
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -74,6 +75,7 @@ import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 import shortid from 'shortid';
 import { sendForgotPasswordMail } from '../../utils/emails/forgot-password';
+import { sendVerifyEmailMail } from '../../utils/emails/verify-email';
 
 export async function getUserById(id) {
   try {
@@ -381,6 +383,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
+      // sendVerifyEmailMail({ toAddress: email, code: user.verificationCode });
     } else {
       user = await updateUser(id, {
         name: displayName,
@@ -1134,4 +1137,8 @@ export async function resetUserPassword({ email, password, resetCode }) {
   } catch (err) {
     throw err;
   }
+}
+
+export function verifyUserEmail(id) {
+  return verifyEmail(id);
 }
