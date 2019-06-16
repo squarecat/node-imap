@@ -1,22 +1,17 @@
-import { domains, urls } from 'getconfig';
+import { mailgun } from 'getconfig';
 
 import logger from '../logger';
 import { sendTransactionalMail } from './transactional';
 
 const options = {
-  from: `Leave Me Alone <noreply@${domains.transactional}>`,
+  from: `Leave Me Alone <noreply@${mailgun.domains.transactional}>`,
   subject: 'Reset your password'
 };
 
-export function sendVerifyEmailMail({ toAddress, code }) {
-  logger.info('email-utils: sending verify email mail');
+export function sendForgotPasswordMail({ toAddress, resetCode }) {
+  logger.info('email-utils: sending forgot password mail');
 
-  let text = `Use the following link to reset your password.
-
-<a href="${urls.base}/auth/reset/${code}">Reset</a>
-
-Thanks!
-James & Danielle`;
+  let text = `Enter the following code on the password reset screen to change your password.\n\nReset code: ${resetCode}\n\nJames & Danielle\n\nLeave Me Alone`;
 
   return sendTransactionalMail({
     ...options,

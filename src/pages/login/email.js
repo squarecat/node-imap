@@ -7,21 +7,26 @@ import Button from '../../components/btn';
 import Hashes from 'jshashes';
 import { LoginContext } from './index';
 
-export default () => {
+export default ({ nextText = 'Next' }) => {
   const { state, dispatch } = useContext(LoginContext);
 
   async function submit(e) {
     e.preventDefault();
     try {
       dispatch({ type: 'set-loading', data: true });
-      const userStrat = await getUserLoginStrategy(state.email);
-      if (userStrat === 'password') {
-        dispatch({ type: 'set-step', data: 'enter-password' });
-      } else if (!userStrat) {
-        dispatch({ type: 'set-step', data: 'signup' });
+      if (state.step === 'forgot-password') {
+        await sendPasswordReset(state.email);
+        dispatch({ type: 'set-step', data: 'reset-password' });
       } else {
-        dispatch({ type: 'set-step', data: 'select-existing' });
-        dispatch({ type: 'set-existing-provider', data: userStrat });
+        const userStrat = await getUserLoginStrategy(state.email);
+        if (userStrat === 'password') {
+          dispatch({ type: 'set-step', data: 'enter-password' });
+        } else if (!userStrat) {
+          dispatch({ type: 'set-step', data: 'signup' });
+        } else {
+          dispatch({ type: 'set-step', data: 'select-existing' });
+          dispatch({ type: 'set-existing-provider', data: userStrat });
+        }
       }
     } catch (err) {
       dispatch({ type: 'set-loading', data: false });
@@ -32,6 +37,7 @@ export default () => {
       });
     }
   }
+
   return (
     <form id="email-form" styleName="sign-up-form" onSubmit={submit}>
       <FormGroup fluid>
@@ -82,7 +88,7 @@ export default () => {
           loading={state.loading}
           style={{ width: 150 }}
         >
-          <span styleName="text">Next</span>
+          <span styleName="text">{nextText}</span>
         </Button>
       </div>
     </form>
@@ -97,6 +103,17 @@ async function getUserLoginStrategy(username) {
     return null;
   } else if (resp.status === 200) {
     return resp.text();
+  }
+  throw new Error('Request failed');
+}
+
+async function sendPasswordReset(username) {
+  const userDigest = new Hashes.SHA1().hex(username);
+  const resp = await fetch(`/api/user/${userDigest}/forgot`);
+  if (resp.status === 404) {
+    return null;
+  } else if (resp.status === 200) {
+    return true;
   }
   throw new Error('Request failed');
 }

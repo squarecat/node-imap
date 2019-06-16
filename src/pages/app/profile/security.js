@@ -141,27 +141,26 @@ function ChangePassword() {
   async function onSubmit() {
     setState({ ...state, loading: true });
 
-    const { success, message } = await updatePassword(
-      state.oldPassword,
-      state.password
-    );
+    try {
+      await updatePassword(state.oldPassword, state.password);
 
-    if (success !== true) {
       return setState({
         ...state,
-        error: message,
+        oldPassword: '',
+        password: '',
+        confirmPassword: '',
+        error: false,
+        loading: false,
+        success: 'Password changed'
+      });
+    } catch (err) {
+      setState({
+        ...state,
+        error:
+          'Something went wrong changing your password. Please try again or send us a message.',
         loading: false
       });
     }
-    return setState({
-      ...state,
-      oldPassword: '',
-      password: '',
-      confirmPassword: '',
-      error: false,
-      loading: false,
-      success: 'Password changed'
-    });
   }
 
   const [state, setState] = useState({

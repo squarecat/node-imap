@@ -805,6 +805,10 @@ export async function updatePassword(id, newPassword) {
         $set: {
           'password.salt': password.salt,
           'password.hash': password.hash
+        },
+        $unset: {
+          resetCode: 1,
+          resetCodeExpires: 1
         }
       }
     );
@@ -912,6 +916,25 @@ export async function setNotificationsRead(id, activityIds = []) {
     return user;
   } catch (err) {
     logger.error(`user-dao: failed to add activity for user ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function getUserByHashedEmail(hashedEmail) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const user = await col.findOne(
+      { hashedEmails: hashedEmail },
+      {
+        id: 1,
+        email: 1
+      }
+    );
+    if (!user) return null;
+    return user;
+  } catch (err) {
+    logger.error('user-dao: failed to update unsub status');
     logger.error(err);
     throw err;
   }

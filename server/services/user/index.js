@@ -16,6 +16,7 @@ import {
   getUser,
   getUserByEmail,
   getUserByReferralCode,
+  getUserByHashedEmail,
   incrementCredits,
   incrementUserReferralBalance,
   removeAccount,
@@ -58,9 +59,11 @@ import {
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
-import { ConnectAccountError } from '../../utils/errors';
+import { ConnectAccountError, AuthError } from '../../utils/errors';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
+import addHours from 'date-fns/add_hours';
+
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
@@ -69,6 +72,8 @@ import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
 import { sendToUser } from '../../rest/socket';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
+import shortid from 'shortid';
+import { sendForgotPasswordMail } from '../../utils/emails/forgot-password';
 
 export async function getUserById(id) {
   try {
@@ -325,13 +330,14 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
 
     // if not part of an org just add the account like normal
     logger.debug(`user-service: ${provider} account not connected, adding...`);
-    const updatedUser = await addAccount(userId, {
+    const account = {
       id: accountId,
       provider,
       email,
       keys
-    });
-    addConnectAccountActivity(accountId, provider, user);
+    };
+    const updatedUser = await addAccount(userId, account);
+    addConnectAccountActivity(updatedUser, account);
 
     return updatedUser;
   } catch (err) {
@@ -401,7 +407,7 @@ async function getReferrer(referralCode) {
 // to an organisation based on
 // 1. with invite code we still want to check they are allowed to join that org
 // 2. no invite code get the first org they match by being invited or matching domain
-async function getOrganisationForUserEmail(inviteCode, { email }) {
+async function getOrganisationForUserEmail(inviteCode, email) {
   logger.debug(`user-service: getting organisation for user email`);
 
   let organisation;
@@ -471,11 +477,8 @@ async function addReferralActivity({ user, referralUser }) {
   }
 }
 
-function addConnectAccountActivity(
-  accountId,
-  provider,
-  { id: userId, loginProvider, accounts }
-) {
+function addConnectAccountActivity(user, account) {
+  const { id: userId, loginProvider, accounts } = user;
   let activityName;
   if (loginProvider === 'password') {
     // if logged in with password the first account will be 1 in the accounts array
@@ -488,8 +491,9 @@ function addConnectAccountActivity(
     activityName = 'connectedAdditionalAccount';
   }
   addActivityForUser(userId, activityName, {
-    id: accountId,
-    provider
+    id: account.id,
+    provider: account.provider,
+    email: account.email
   });
 }
 
@@ -722,7 +726,7 @@ export async function deactivateUserAccount(user) {
     removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
   } catch (err) {
-    logger.error(`user-service: error deactivating user account ${id}`);
+    logger.error(`user-service: error deactivating user account ${user.id}`);
     throw err;
   }
 }
@@ -788,7 +792,11 @@ async function revokeToken({ provider, refreshToken }) {
 export async function authenticateUser({ email, password }) {
   try {
     const user = await authenticate({ email, password });
-    if (user === null) throw new Error('user not found or password incorrect');
+    if (user === null) {
+      throw new AuthError('user not found or password incorrect', {
+        errKey: 'not-found'
+      });
+    }
     return user;
   } catch (err) {
     throw err;
@@ -1073,6 +1081,56 @@ export async function inviteReferralUser(userId, email) {
       referralCode: user.referralCode,
       reward: milestone.credits
     });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function handleUserForgotPassword({ hashedEmail }) {
+  try {
+    const user = await getUserByHashedEmail(hashedEmail);
+
+    if (!user) {
+      throw new AuthError('user not found or password incorrect', {
+        errKey: 'not-found'
+      });
+    }
+    // update user
+    const resetCode = shortid.generate();
+    await updateUser(user.id, {
+      resetCode,
+      resetCodeExpires: addHours(Date.now(), 2)
+    });
+    // send email
+    sendForgotPasswordMail({ toAddress: user.email, resetCode });
+    return true;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function resetUserPassword({ email, password, resetCode }) {
+  try {
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      throw new AuthError('user not found or password incorrect', {
+        errKey: 'not-found'
+      });
+    }
+    if (resetCode !== user.resetCode) {
+      throw new AuthError('user password reset code invalid', {
+        errKey: 'invalid-reset-code'
+      });
+    }
+    if (Date.now() > user.resetCodeExpires) {
+      throw new AuthError('user password reset code expired', {
+        errKey: 'expired-reset-code'
+      });
+    }
+
+    const updatedUser = await updatePassword(user.id, password);
+    return updatedUser;
   } catch (err) {
     throw err;
   }

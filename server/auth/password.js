@@ -1,7 +1,8 @@
 import {
   authenticateUser,
   authenticationRequiresTwoFactor,
-  createOrUpdateUserFromPassword
+  createOrUpdateUserFromPassword,
+  resetUserPassword
 } from '../services/user';
 import { isBetaUser, setRememberMeCookie } from './access';
 
@@ -10,6 +11,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import logger from '../utils/logger';
 import passport from 'passport';
 import { validateBody } from '../middleware/validation';
+import { AuthError } from '../utils/errors';
 
 const createUserParams = {
   username: Joi.string()
@@ -22,7 +24,8 @@ const createUserParams = {
     .label('Password must be a minimum of 6 characters'),
   ['password-confirm']: Joi.string()
     .valid(Joi.ref('password'))
-    .label('Passwords must match')
+    .label('Passwords must match'),
+  resetCode: Joi.string()
 };
 
 export const Strategy = new LocalStrategy(
@@ -60,11 +63,12 @@ export default app => {
       passport.authenticate('local', (err, user) => {
         if (err) return handleLoginError(res, err);
         if (!user) {
-          return res.send({
-            message: 'User not found or password incorrect',
-            success: false
+          const error = new AuthError('User not found or password incorrect', {
+            errKey: 'not-found'
           });
+          return handleLoginError(res, error);
         }
+
         req.logIn(user, async err => {
           const twoFactorRequired = await authenticationRequiresTwoFactor(user);
           if (err) return handleLoginError(res, err);
@@ -115,29 +119,56 @@ export default app => {
       }
     }
   );
+
+  app.post(
+    '/auth/reset',
+    validateBody(createUserParams, {
+      passthrough: true
+    }),
+    async (req, res) => {
+      const { body: userData, err: validationError } = res.locals;
+
+      try {
+        if (validationError) {
+          return res.status(400).send({
+            message: validationError.message,
+            success: false
+          });
+        }
+        const { username, password, resetCode } = userData;
+        const user = await resetUserPassword({
+          email: username,
+          password,
+          resetCode
+        });
+        req.logIn(user, err => {
+          if (err) return handleLoginError(res, err);
+          setRememberMeCookie(res, {
+            username: user.email,
+            provider: 'password'
+          });
+          return res.send({ success: true });
+        });
+      } catch (err) {
+        return handleSignupError(res, err);
+      }
+    }
+  );
 };
 
 function handleLoginError(res, err) {
-  let message;
-  message = `Something went wrong with the login process. Please contact support.`;
-  if (err.message === 'user not found or password incorrect') {
-    message = `User not found or the password is incorrect`;
-  }
-
   logger.warn('login error');
   logger.warn(err);
+
   return res.status(400).send({
-    message,
+    error: err,
     success: false
   });
 }
 
-function handleSignupError(res) {
-  let type = 'unknown';
-  const message = `Something went wrong with the sign up process. Please contact support.`;
+function handleSignupError(res, err) {
   return res.status(500).send({
-    error: type,
-    message,
+    error: err,
     success: false
   });
 }
