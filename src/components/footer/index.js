@@ -49,9 +49,6 @@ export default visProps => (
           Report a bug
         </TextLink>
       </li>
-      <li>
-        <TextLink href="/gifts">Purchase gift scan</TextLink>
-      </li>
     </ul>
     <ul styleName="footer-social">
       <li title="@LeaveMeAloneApp">

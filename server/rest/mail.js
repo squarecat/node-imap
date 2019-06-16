@@ -44,12 +44,13 @@ export default function(app, socket) {
       userId,
       socket
     );
-    const from = data ? data.from : null;
+    const { from, accountIds } = data;
     try {
       // get mail data for user
       const it = await fetchMail({
         userId,
-        from
+        from,
+        accountIds
       });
       let next = await it.next();
       while (!next.done) {

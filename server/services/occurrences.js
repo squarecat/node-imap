@@ -5,14 +5,14 @@ import {
   updateOccurrences
 } from '../dao/occurrences';
 
-export function addOrUpdateOccurrences(userId, dupeInfo, timeframe) {
+export function addOrUpdateOccurrences(userId, dupeInfo) {
   const occurrences = Object.keys(dupeInfo).map(d => ({
     sender: dupeInfo[d].sender,
     occurrences: dupeInfo[d].occurrences,
     isSpam: dupeInfo[d].isSpam,
     isTrash: dupeInfo[d].occurrences.isTrash
   }));
-  return updateOccurrences(userId, occurrences, timeframe);
+  return updateOccurrences(userId, occurrences, '6m');
 }
 
 export function addNewUnsubscribeOccrurence(userId, from) {

@@ -18,16 +18,16 @@ export default ({ setActive = () => {}, inverted = false }) => (
       ) : null}
     </div> */}
     <div styleName="header-inner">
-      <a href="/" styleName="header-logo">
+      <Link to="/" styleName="header-logo">
         <img alt="Leave Me Alone logo" src={logoUrl} />
-      </a>
+      </Link>
       <div styleName="header-title">Leave Me Alone </div>
       <ul styleName="header-nav">
         <li styleName="nav-link nav-how">
-          <TextLink href="/#learn">How it works</TextLink>
+          <Link to="/learn">How it works</Link>
         </li>
         <li styleName="nav-link">
-          <TextLink href="/#pricing">Pricing</TextLink>
+          <Link to="/pricing">Pricing</Link>
         </li>
         <li styleName="nav-login">
           <Link

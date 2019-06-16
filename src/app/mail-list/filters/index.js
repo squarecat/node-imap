@@ -5,6 +5,7 @@ import React, { useContext } from 'react';
 import { FormSelect } from '../../../components/form';
 import { MailContext } from '../provider';
 import Spinner from '../../../components/loading/spinner';
+import Tooltip from '../../../components/tooltip';
 
 export default React.memo(
   ({
@@ -161,9 +162,11 @@ export default React.memo(
             />
           </span>
         </span>
-        <span styleName="loader" data-loading={showLoading}>
-          <Spinner shown={showLoading} />
-        </span>
+        <Tooltip placement="left" overlay={<span>Syncing mail</span>}>
+          <span styleName="loader" data-loading={showLoading}>
+            <Spinner shown={showLoading} />
+          </span>
+        </Tooltip>
       </div>
     );
   }

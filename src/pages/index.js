@@ -1,7 +1,6 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
-import { ENTERPRISE, getPackage } from '../../shared/prices';
 import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, {
   useCallback,
@@ -18,6 +17,7 @@ import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import { Link } from 'gatsby';
+import { Pricing } from './pricing';
 import RangeInput from '../components/form/range';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
@@ -42,9 +42,32 @@ import { useWindowSize } from 'react-use';
 
 const faker = require('faker');
 
-function getFeaturedNews() {
-  return request('/api/news').then(data => data.filter(d => d.featured));
-}
+const news = [
+  {
+    name: 'Fast Company',
+    quote:
+      'No more junk. Although it’s not the first service that promises to unsubscribe you from junk emails, Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
+    shortQuote:
+      'Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
+    url:
+      'https://www.fastcompany.com/90326825/the-25-best-new-productivity-apps-for-2019',
+    logoUrl: 'https://cdn.leavemealone.xyz/images/news/fast-company-logo.png'
+  },
+  {
+    name: '.xyz',
+    quote:
+      'Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?',
+    url: 'https://gen.xyz/blog/leavemealonexyz',
+    logoUrl: 'https://cdn.leavemealone.xyz/images/news/xyz.png'
+  },
+  {
+    name: 'The Register',
+    quote:
+      'Leave Me Alone make significantly stronger privacy commitments than companies in the data collection business.',
+    url: 'https://www.theregister.co.uk/2019/02/11/google_gmail_developer/',
+    logoUrl: 'https://cdn.leavemealone.xyz/images/news/the-register-logo.png'
+  }
+];
 
 const IndexPage = ({ transitionStatus }) => {
   const trashPileRef = useRef(null);
@@ -55,8 +78,6 @@ const IndexPage = ({ transitionStatus }) => {
   if (!statsLoading) {
     statsData = value;
   }
-
-  const { value: featuredNews = [] } = useAsync(getFeaturedNews);
 
   const bannerShown = false;
 
@@ -177,6 +198,9 @@ const IndexPage = ({ transitionStatus }) => {
                 <TextImportant>forever</TextImportant>, even if you decide to
                 stop using our service.
               </p>
+              <p style={{ margin: '1.45rem auto' }}>
+                Read more about how it works <a href="/learn">here</a>.
+              </p>
             </div>
           </div>
         </div>
@@ -229,16 +253,11 @@ const IndexPage = ({ transitionStatus }) => {
           </div>
         </div>
 
-        {/* <div className="love home-container">
-          <div className="home-container-inner" id="wall-of-love">
-            <WallOfLove />
-          </div>
-        </div> */}
         <div className="pricing home-container">
           <div className="home-container-inner" id="pricing">
-            <h2>Let's talk money</h2>
+            <h3>Let's talk money</h3>
             <p>
-              So that we can <TextImportant>keep your data safe</TextImportant>{' '}
+              So that we can <a href="/pricing#why">keep your data safe</a>{' '}
               Leave Me Alone is a paid service.
             </p>
           </div>
@@ -247,9 +266,13 @@ const IndexPage = ({ transitionStatus }) => {
 
         <div className="news home-container">
           <div className="home-container-inner" id="news">
-            <h2>In The News</h2>
+            <h3>In the news</h3>
+            <p>
+              Don't take our word for it, see what people have been saying about
+              us
+            </p>
             <div className="in-the-news">
-              {featuredNews.map(({ quote, shortQuote, logoUrl, url }) => (
+              {news.map(({ quote, shortQuote, logoUrl, url }) => (
                 <div key={url} className="news-item">
                   <p>"{shortQuote || quote}"</p>
                   <a target="_" className="news-logo" href={url}>
@@ -258,51 +281,18 @@ const IndexPage = ({ transitionStatus }) => {
                 </div>
               ))}
             </div>
-            <TextLink href="/news">Read more...</TextLink>
+            <WallOfLove colLimit={1} />
           </div>
+
+          <a
+            href="/login"
+            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+          >
+            Get started for free
+          </a>
         </div>
 
-        {/* <div className="makers home-container">
-          <div className="home-container-inner" id="about">
-            <h2>Created by Independent Makers</h2>
-            <p className="maker-stuff">
-              Hey!{' '}
-              <span role="img" aria-label="Wave">
-                👋
-              </span>{' '}
-              We're Danielle and James. We work on products that help people
-              because it's rewarding and we love it, which we think is a good
-              reason to do just about anything!{' '}
-              <span role="img" aria-label="Heart">
-                ❤️
-              </span>
-            </p>
-            <div className="huskos">
-              <img
-                alt="The two creators Danielle and James with two husky dogs"
-                id="emoji-button"
-                src={dogs}
-              />
-            </div>
-
-            <p className="maker-stuff">
-              We're building <strong>Leave Me Alone</strong> on our own without
-              funding or outside support. We're real people (not the huskies!),
-              we're not a soulless corporation out to steal your money!
-            </p>
-            <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
-              Clean My Inbox!
-            </a>
-          </div>
-        </div> */}
         <Footer />
-        {/* <div className="makerads-container">
-          <p>Other indie made products we support</p>
-          <iframe
-            style={{ border: 0, width: '320px', height: '144px' }}
-            src="https://makerads.xyz/ad"
-          />
-        </div> */}
       </div>
     </Layout>
   );
@@ -377,213 +367,6 @@ function formatNumber(n) {
   return n > 999999 ? numeral(n).format('0a') : numeral(n).format('0,0');
 }
 
-function Pricing() {
-  const [packageValue, setPackageValue] = useState('1');
-  const [mailPerDay, setMailPerDay] = useState('20');
-
-  let { unsubscribes, discount, price } = getPackage(packageValue);
-
-  let mailPerDayLabel = '<10';
-  if (parseInt(mailPerDay, 10) <= 10) {
-    mailPerDayLabel = 'fewer than 10';
-  } else if (parseInt(mailPerDay, 10) < 300) {
-    mailPerDayLabel = mailPerDay;
-  } else if (parseInt(mailPerDay, 10) >= 300) {
-    mailPerDayLabel = '300+';
-  }
-  const mailPerMonth = mailPerDay === '0' ? 10 * 30 : mailPerDay * 30;
-  const spamPerMonth = mailPerMonth * 0.08;
-  const unsubsPerMonth = spamPerMonth * 0.36;
-  let recommendation;
-  let recommendationImage;
-  if (unsubsPerMonth < 45) {
-    recommendationImage = stampImg;
-    recommendation = (
-      <span>
-        We recommend you start on the{' '}
-        <TextImportant>Usage based plan</TextImportant>, if you receive more
-        than 85 unwanted subscription emails then it would be better to switch
-        to a package.
-      </span>
-    );
-  } else if (unsubsPerMonth < 200) {
-    recommendationImage = packageImg;
-    recommendation = (
-      <span>
-        The cheapest option would be to buy a{' '}
-        <TextImportant>Package</TextImportant> and get a bulk discount.
-      </span>
-    );
-  } else {
-    recommendationImage = truckImg;
-    recommendation = (
-      <span>
-        Wow, that's a lot of emails! We recommend you contact us for a{' '}
-        <TextImportant>special custom package</TextImportant> rate.
-      </span>
-    );
-  }
-  return (
-    <>
-      <div className="pricing-list-of-boxes-that-say-how-much">
-        <div className="a-load-of-boxes-with-prices">
-          {/* <div className="pricing-box" href="/login">
-            <h3 className="pricing-title">Usage Based</h3>
-            <img className="pricing-image" src={stampImg} />
-            <span className="pricing-text">Starting at</span>
-            <p className="pricing-price">
-              <span className="currency">$</span>
-              {(USAGE_BASED.price / 100).toFixed(2)}
-            </p>
-            <span className="pricing-text">per unsubscribe</span>
-            <ul className="pricing-features">
-              <li>Gmail and Outlook support</li>
-              <li data-checked="no">Limited API access</li>
-              <li>Email forwarding</li>
-              <li>Email and chat support</li>
-            </ul>
-          </div> */}
-          <div className="pricing-box" href="/login">
-            <h3 className="pricing-title">Packages</h3>
-            <img className="pricing-image" src={packageImg} />
-            <span className="pricing-text">Starting at</span>
-            <p className="pricing-price">
-              <span className="currency">$</span>
-              <span>{(price / 100).toFixed(2)}</span>
-            </p>
-            <span className="pricing-text">
-              for <span>{unsubscribes}</span> unsubscribes
-            </span>
-            <span className="pricing-slider">
-              <RangeInput
-                min="1"
-                max="3"
-                value={packageValue}
-                onChange={val => setPackageValue(val)}
-              />
-            </span>
-            <ul className="pricing-features">
-              <li>
-                <span>{discount * 100}</span>% bulk discount
-              </li>
-              <li>Gmail and Outlook support</li>
-              <li className="coming-soon">Limited API access</li>
-              <li className="coming-soon">Email forwarding</li>
-              <li>Email and chat support</li>
-            </ul>
-          </div>
-          <div className="pricing-box" href="/login">
-            <h3 className="pricing-title">Enterprise</h3>
-            <img className="pricing-image" src={truckImg} />
-            <span className="pricing-text">Starting at</span>
-            <p className="pricing-price">
-              <span className="currency">$</span>
-              {(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
-            </p>
-            <span className="pricing-text">per seat/month</span>
-            <ul className="pricing-features">
-              <li>Rid your office of useless email</li>
-              <li>Unlimited unsubscribes</li>
-              <li>Gmail and Outlook support</li>
-              <li className="coming-soon">Limitless API access</li>
-              <li className="coming-soon">Email forwarding</li>
-              <li>Email, chat and phone support</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div className="pricing-estimates">
-        <div className="pricing-estimator">
-          <div className="pricing-estimate-text">
-            <h3 className="pricing-estimate-title">
-              How many unsubscribes do I need?
-            </h3>
-            <p>
-              Based on our usage data we can estimate how many unsubscribes you
-              might need based on the size of your inbox.
-            </p>
-            <p>
-              Approximately how much mail do you receive{' '}
-              <TextImportant>each day?</TextImportant>
-            </p>
-            <RangeInput
-              min="0"
-              max="300"
-              value={mailPerDay}
-              step="20"
-              onChange={setMailPerDay}
-            />
-            <div style={{ marginTop: 10 }}>{mailPerDayLabel}</div>
-          </div>
-          <div className="pricing-estimate-values">
-            <div className="count">
-              <div className="count-value">
-                <div className="count-number">
-                  {numeral(mailPerMonth).format('0,00')}
-                </div>
-                <div className="count-label">emails</div>
-              </div>
-              <div className="count-icon">
-                <img src={mailBoxImg} />
-              </div>
-              <div className="count-description">
-                You received approximately this many emails per month
-              </div>
-            </div>
-            <div className="count">
-              <div className="count-value">
-                <div className="count-number">
-                  {numeral(spamPerMonth).format('0,00')}
-                </div>
-                <div className="count-label">subscriptions</div>
-              </div>
-              <div className="count-icon">
-                <img src={spamMailImg} />
-              </div>
-              <div className="count-description">
-                Around 8% of all mail we scan is a subscription email
-              </div>
-            </div>
-            <div className="count">
-              <div className="count-value">
-                <div className="count-number">
-                  {numeral(unsubsPerMonth).format('0,00')}
-                </div>
-                <div className="count-label">unsubscribes</div>
-              </div>
-              <div className="count-icon">
-                <img className="envelope-image" src={smallLogo} />
-              </div>
-              <div className="count-description">
-                Users report around 36% of the subscriptions we find are
-                unwanted
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="recommendation">
-          <div className="recommendation-image">
-            <img src={recommendationImage} />
-          </div>
-          <div className="recommendation-description">
-            <p>
-              Based on your mail received, we estimate you'll have received
-              around{' '}
-              <TextImportant>
-                {`${numeral(unsubsPerMonth).format(
-                  '0,00'
-                )} unwanted subscription emails `}
-              </TextImportant>{' '}
-              each month.
-            </p>
-            <p>{recommendation}</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
 const items = [
   {
     name: 'Black Friday Cacti',
@@ -594,7 +377,7 @@ const items = [
   {
     name: 'Mars Travel 🌝',
     email: '<marketing@travel.com>',
-    subject: 'New price alert for your flight outa here - Book!',
+    subject: 'New price alert for your flight outta here - Book!',
     text: 'Wohoo, that subscription is gone forever! How about this one?'
   },
   {

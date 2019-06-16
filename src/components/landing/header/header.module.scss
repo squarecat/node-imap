@@ -87,10 +87,17 @@
   margin-right: 0;
 }
 
-.nav-link a,
-.nav-link a:hover {
-  border-bottom: none;
+.nav-link a {
   padding: 10px;
+  border-bottom: none;
+  color: $color-link;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    color: $color-link-hover;
+    border-bottom: none;
+  }
 }
 
 .login-btn {

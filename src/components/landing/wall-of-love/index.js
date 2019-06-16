@@ -25,15 +25,15 @@ const query = graphql`
   }
 `;
 
-export default () => {
+export default ({ rowLimit, colLimit }) => {
   return (
     <div>
       <div styleName="header">
-        <h2>Wall of love</h2>
+        {/* <h2>Wall of love</h2>
         <p>
           Our users are awesome and they think we're awesome too. Take a look at
           all the nice things they've said about us!
-        </p>
+        </p> */}
         <a
           styleName="ph-badge"
           href="https://www.producthunt.com/posts/leave-me-alone-3?utm_source=badge-top-post-badge"
@@ -68,9 +68,9 @@ export default () => {
           <StaticQuery
             query={query}
             render={data => {
-              const colOne = data.tweetImages.edges.slice(0, 3);
-              const colTwo = data.tweetImages.edges.slice(3, 6);
-              const colThree = data.tweetImages.edges.slice(6, 9);
+              const colOne = data.tweetImages.edges.slice(0, 2);
+              const colTwo = data.tweetImages.edges.slice(2, 4);
+              const colThree = data.tweetImages.edges.slice(4, 6);
               return (
                 <>
                   <Col tweets={colOne} />

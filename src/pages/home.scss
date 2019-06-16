@@ -12,7 +12,6 @@ body {
 }
 
 #main {
-  padding-bottom: 100px;
   overflow-x: hidden;
   transition: opacity 250ms 250ms cubic-bezier(0.65, 0.05, 0.36, 1);
 
@@ -255,7 +254,7 @@ h1 {
 }
 
 .trash-pile {
-  padding-bottom: 300px;
+  padding: 20px 20px 300px 20px;
 
   // https://www.iconfinder.com/icons/2202473/dump_dumping_garbage_illegal_pollution_waste_water_icon
   background-image: url('../assets/garbage-truck.png');
@@ -278,7 +277,8 @@ h1 {
 }
 
 .text-box-centered {
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   text-align: center;
   margin: 0 auto;
 
@@ -491,7 +491,7 @@ h1 {
 
 .pricing-list-of-boxes-that-say-how-much,
 .pricing-estimates {
-  padding: 20px 20px 0 20px;
+  padding: 20px 0 20px 0;
   margin: 0 auto;
   text-align: center;
 }
@@ -508,7 +508,33 @@ h1 {
   grid-gap: 20px;
 }
 
+.pricing-description {
+  width: 100%;
+  max-width: 500px;
+}
+
+.pricing-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 30px;
+  grid-row-gap: 10px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pricing-why {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .pricing-box {
+  display: flex;
+  flex-direction: column;
+  max-width: 420px;
+  text-align: center;
+
   border: 1px solid #fddbd7;
   color: $color-primary-font;
   border-radius: 10px;
@@ -594,7 +620,8 @@ h1 {
 }
 
 .pricing-features {
-  margin: 25px 20px 0 20px;
+  flex: 1;
+  margin: 30px 20px 0 20px;
   border-top: 1px solid #fddbd7;
   text-align: left;
   padding: 36px 20px;
@@ -761,7 +788,10 @@ h1 {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  font-size: 14px;
+  margin: 6em auto 2em auto;
 }
+
 .news-item {
   flex-basis: 30%;
   margin: 0 10px 60px;
@@ -786,22 +816,28 @@ h1 {
 .pricing-estimates {
   margin: 6em auto;
   text-align: left;
-  width: 1280px;
+  // padding: 0 1em;
 }
 
 .pricing-estimator {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   padding-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pricing-estimate-text {
-  width: 600px;
   padding: 0 40px 0 0;
+  @media (max-width: 768px) {
+    padding: 0;
+  }
 }
 
 .pricing-estimate-values {
   padding-top: 0rem;
-  width: 50%;
   .count {
     display: flex;
     justify-content: center;
@@ -815,10 +851,16 @@ h1 {
   padding: 0 10px;
   text-align: center;
   margin: 0 20px;
-  // align-self: center;
-
+  min-width: 40px;
   img {
     width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0px 6px;
+  }
+  @media (max-width: 400px) {
+    padding: 0px 2px;
   }
 }
 
@@ -845,6 +887,8 @@ h1 {
 
 .recommendation-description {
   flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .count-label {
@@ -854,6 +898,10 @@ h1 {
   font-family: 'Gotham-Rounded-Medium', 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   text-align: right;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 }
 
 .count-number {
@@ -865,10 +913,23 @@ h1 {
   font-variant-numeric: tabular-nums;
   font-family: 'Gotham-Rounded-Medium', 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  @media (max-width: 980px) {
+    font-size: 30px;
+    width: 120px;
+  }
+  @media (max-width: 768px) {
+    width: 94px;
+  }
 }
 
 .count-description {
   flex: 1;
+  @media (max-width: 980px) {
+    font-size: 16px;
+  }
+  @media (max-width: 400px) {
+    font-size: 14px;
+  }
 }
 
 .envelope-image {
@@ -961,7 +1022,7 @@ h1 {
     padding: 20px;
   }
   #main {
-    padding-bottom: 50px;
+    // padding-bottom: 50px;
   }
   .stats {
     flex-direction: column;
@@ -1133,4 +1194,12 @@ h1 {
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.pricing-why {
+  padding-top: 2em;
+}
+
+.read-more {
+  margin-top: 1em;
 }
