@@ -17,22 +17,26 @@ export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
 
 export const unsubscribeFromMail = async (userId, mail) => {
-  const { billing, organisationId } = await getUserById(userId);
+  const { billing, organisationId, organisationActive } = await getUserById(
+    userId
+  );
   const credits = billing ? billing.credits : 0;
-  if (!organisationId && credits <= 0) {
-    logger.info(
-      `mail-service: user ${userId} has insufficient credits to unsubscribe`
-    );
-    throw new UserError(
-      'Unable to unsubscribe from mail - insufficient credits',
-      {
-        errKey: 'insufficient-credits'
-      }
-    );
+  const { allowed, reason } = canUnsubscribe({
+    credits,
+    organisationId,
+    organisationActive
+  });
+  if (!allowed) {
+    throw new UserError(`unsubscribe failed - ${reason}`, {
+      errKey: reason
+    });
   }
-  decrementUserCredits(userId, 1);
+
+  if (!organisationId) {
+    decrementUserCredits(userId, 1);
+  }
   const { unsubscribeLink, unsubscribeMailTo } = mail;
-  logger.info(`mail-service: unsubscribe from ${mail.id}`);
+  logger.info(`unsubscriber-service: unsubscribe from ${mail.id}`);
   let unsubStrategy;
   let output;
   let hasImage = false;
@@ -62,7 +66,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
     });
     if (output.estimatedSuccess) {
       addUnsubscriptionToStats({ unsubStrategy });
-    } else {
+    } else if (!organisationId) {
       incrementUserCredits(userId, 1);
     }
     addNewUnsubscribeOccrurence(userId, mail.from);
@@ -73,7 +77,9 @@ export const unsubscribeFromMail = async (userId, mail) => {
       unsubStrategy
     };
   } catch (err) {
-    logger.error(`mail-service: error unsubscribing from mail ${mail.id}`);
+    logger.error(
+      `unsubscriber-service: error unsubscribing from mail ${mail.id}`
+    );
     logger.error(err);
     throw err;
   }
@@ -93,4 +99,21 @@ function saveImageToDisk(userId, mailId, image) {
       return good();
     });
   });
+}
+
+function canUnsubscribe({ credits, organisationId, organisationActive }) {
+  if (organisationId && !organisationActive) {
+    logger.debug('unsubscriber-service: organisation inactive');
+    return {
+      allowed: false,
+      reason: 'organisation-inactive'
+    };
+  } else if (!organisationId && credits <= 0) {
+    logger.debug('unsubscriber-service: insufficient credits');
+    return {
+      allowed: false,
+      reason: 'insufficient-credits'
+    };
+  }
+  return { allowed: true };
 }

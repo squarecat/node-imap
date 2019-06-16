@@ -6,20 +6,21 @@ import { ModalContext } from '../../../providers/modal-provider';
 import React from 'react';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
-import CreditModal from '../../../components/modal/credits';
+import { getUnsubscribeAlert } from '../../../utils/errors';
 
 export function useMailSync() {
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
   const [
-    { token, id, credits, organisationId },
+    { token, id, credits, organisationId, organisationActive },
     { incrementUnsubCount, incrementCredits, decrementCredits }
   ] = useUser(u => ({
     id: u.id,
     token: u.token,
     credits: u.billing ? u.billing.credits : 0,
-    organisationId: u.organisationId
+    organisationId: u.organisationId,
+    organisationActive: u.organisationActive
   }));
   const { isConnected, socket, error, emit } = useSocket({
     token,
@@ -110,7 +111,7 @@ export function useMailSync() {
         socket.on('mail:progress', ({ progress, total }, ack) => {
           // const percentage = (progress / total) * 100;
           // setProgress((+percentage).toFixed());
-          // console.log(progress, total);
+          // console.debug(progress, total);
           ack && ack();
         });
 
@@ -127,7 +128,12 @@ export function useMailSync() {
             });
             const mail = await db.mail.get(id);
             if (!estimatedSuccess) {
-              incrementCredits(1);
+              if (!organisationId) {
+                console.debug(
+                  `[db]: unsub estimated success false - incrementing credits`
+                );
+                incrementCredits(1);
+              }
               actions.queueAlert({
                 message: (
                   <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>
@@ -163,34 +169,15 @@ export function useMailSync() {
               hasImage: hasImage,
               status: 'failed'
             });
-            const mail = await db.mail.get(id);
 
-            let options = {
-              id: 'insufficient-credits',
-              message: `Unsubscribe to ${mail.fromEmail} failed`,
-              autoDismiss: false,
-              level: 'warning'
-            };
-            if (data.errKey === 'insufficient-credits') {
-              options = {
-                ...options,
-                message: `${
-                  options.message
-                } because you have insufficient credits`,
-                actions: [
-                  {
-                    label: 'Buy more',
-                    onClick: () => {
-                      actions.dismiss('insufficient-credits');
-                      openModal(<CreditModal credits={credits} />);
-                    }
-                  }
-                ]
-              };
-            }
-            actions.queueAlert({
-              options
+            const mail = await db.mail.get(id);
+            const alert = getUnsubscribeAlert(data.errKey, mail, {
+              alertActions: actions,
+              modalActions: { openModal },
+              credits
             });
+
+            actions.queueAlert(alert);
           } catch (err) {
             console.error(`[db]: failed to set failed unsubscribe`);
             console.error(err);
@@ -236,32 +223,23 @@ export function useMailSync() {
     unsubscribe: async mailItem => {
       try {
         console.debug(`[db]: unsubscribing from ${mailItem.id}`);
-        if (!organisationId && credits <= 0) {
-          console.log('[db]: insufficient credits');
-          return actions.setAlert({
-            id: 'insufficient-credits',
-            message: (
-              <span>
-                Unsubscribe to {mailItem.fromEmail} failed because you have
-                insufficient credits
-              </span>
-            ),
-            isDismissable: true,
-            autoDismiss: false,
-            level: 'warning',
-            actions: [
-              {
-                label: 'Buy more',
-                onClick: () => {
-                  actions.dismiss('insufficient-credits');
-                  openModal(<CreditModal credits={credits} />);
-                }
-              }
-            ]
+        const { allowed, reason } = canUnsubscribe({
+          credits,
+          organisationId,
+          organisationActive
+        });
+        if (!allowed) {
+          const alert = getUnsubscribeAlert(reason, mailItem, {
+            alertActions: actions,
+            modalActions: { openModal },
+            credits
           });
+          return actions.setAlert(alert);
         }
-        console.log('[db]: decrementing credits');
-        decrementCredits(1);
+        if (!organisationId) {
+          console.debug('[db]: decrementing credits');
+          decrementCredits(1);
+        }
         await db.mail.update(mailItem.id, {
           isLoading: true,
           subscribed: false
@@ -309,4 +287,21 @@ function parseAddress(str = '') {
     email = str;
   }
   return { name, email: email.toLowerCase() };
+}
+
+function canUnsubscribe({ credits, organisationId, organisationActive }) {
+  if (organisationId && !organisationActive) {
+    console.debug('[db]: unsubscribe failed - organisation inactive');
+    return {
+      allowed: false,
+      reason: 'organisation-inactive'
+    };
+  } else if (!organisationId && credits <= 0) {
+    console.debug('[db]: unsubscribe failed - insufficient credits');
+    return {
+      allowed: false,
+      reason: 'insufficient-credits'
+    };
+  }
+  return { allowed: true };
 }

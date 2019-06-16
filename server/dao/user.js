@@ -386,7 +386,9 @@ export async function incrementCredits(id, credits) {
     const user = await getUser(id);
     return user;
   } catch (err) {
-    logger.error(`users-dao: error incrementing user ${id} credits by ${credits}`);
+    logger.error(
+      `users-dao: error incrementing user ${id} credits by ${credits}`
+    );
     logger.error(err);
     throw err;
   }
