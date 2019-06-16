@@ -46,7 +46,8 @@
 
   > a {
     flex: 1;
-    border: 1px solid $color-red-light;
+    border: 1px solid $color-input-border;
+    border-left: none;
   }
 
   input:focus + a {
