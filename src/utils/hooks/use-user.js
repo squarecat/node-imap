@@ -69,6 +69,33 @@ export default globalReducer(
         }
       };
     },
+    setCredits: (state, credits) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          credits
+        }
+      };
+    },
+    incrementCredits: (state, credits) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          credits: state.billing.credits + credits
+        }
+      };
+    },
+    decrementCredits: (state, credits) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          credits: state.billing.credits - credits
+        }
+      };
+    },
     setOrganisationLastUpdated: (state, lastUpdated) => {
       return {
         ...state,

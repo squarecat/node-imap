@@ -107,6 +107,11 @@ export function ConnectAccountError(message, data) {
 }
 util.inherits(ConnectAccountError, LMAError);
 
+export function UserError(message, data) {
+  LMAError.call(this, message, data);
+}
+util.inherits(UserError, LMAError);
+
 export function UncaughtRestError(message = 'Uncaught error', data) {
   RestError.call(this, message, {
     ...data,

@@ -410,12 +410,26 @@ export async function updateSubscription({ subscriptionId, quantity }) {
 
 export async function payUpcomingInvoice({ customerId, subscriptionId }) {
   try {
-    const { id: invoiceId } = await stripe.invoices.retrieveUpcoming({
-      customer: customerId,
-      subscription: subscriptionId
+    const { id: invoiceId } = await getUpcomingInvoice({
+      customerId,
+      subscriptionId
     });
     const invoice = await stripe.invoices.pay(invoiceId, {
       expand: ['payment_intent']
+    });
+    return invoice;
+  } catch (err) {
+    logger.error(`stripe: failed to update subscription`);
+    logError(err);
+    throw err;
+  }
+}
+
+export async function getUpcomingInvoice({ customerId, subscriptionId }) {
+  try {
+    const invoice = await stripe.invoices.retrieveUpcoming({
+      customer: customerId,
+      subscription: subscriptionId
     });
     return invoice;
   } catch (err) {

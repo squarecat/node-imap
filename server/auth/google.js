@@ -96,7 +96,7 @@ export const ConnectAccountStrategy = new GoogleStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      if (err.data && err.data.key) {
+      if (err.data && err.data.errKey) {
         done(err);
       } else {
         done(
@@ -213,8 +213,8 @@ export default app => {
           'google-auth: passport authentication error connecting account'
         );
         logger.error(err);
-        if (err.data && err.data.key) {
-          errUrl = `${errUrl}&reason=${err.data.key}`;
+        if (err.data && err.data.errKey) {
+          errUrl = `${errUrl}&reason=${err.data.errKey}`;
         }
         return res.redirect(errUrl);
       }

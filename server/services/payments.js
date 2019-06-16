@@ -327,7 +327,7 @@ async function handlePaymentSuccess(
       updateCoupon(coupon);
     }
 
-    sendToUser(user.id, 'credits', credits);
+    sendToUser(user.id, 'new-credits', credits);
     return {
       ...response,
       user: updatedUser
@@ -422,6 +422,7 @@ async function getOrUpdateCustomerForOrganisation(
         name,
         address
       });
+      customerId = id;
       organisation = await updateOrganisation(organisationId, {
         customerId: newCustomerId
       });

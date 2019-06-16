@@ -1,16 +1,36 @@
 import { addNewUnsubscribeOccrurence } from '../occurrences';
 import { addUnsubscriptionToStats } from '../stats';
-import { addUnsubscriptionToUser } from '../user';
+import {
+  addUnsubscriptionToUser,
+  getUserById,
+  incrementUserCredits,
+  decrementUserCredits
+} from '../user';
 import { unsubscribeWithLink as browserUnsub } from './browser';
 import { unsubscribeWithMailTo as emailUnsub } from './mail';
 import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
 import logger from '../../utils/logger';
+import { UserError } from '../../utils/errors';
 
 export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
 
 export const unsubscribeFromMail = async (userId, mail) => {
+  const { billing, organisationId } = await getUserById(userId);
+  const credits = billing ? billing.credits : 0;
+  if (!organisationId && credits <= 0) {
+    logger.info(
+      `mail-service: user ${userId} has insufficient credits to unsubscribe`
+    );
+    throw new UserError(
+      'Unable to unsubscribe from mail - insufficient credits',
+      {
+        errKey: 'insufficient-credits'
+      }
+    );
+  }
+  decrementUserCredits(userId, 1);
   const { unsubscribeLink, unsubscribeMailTo } = mail;
   logger.info(`mail-service: unsubscribe from ${mail.id}`);
   let unsubStrategy;
@@ -40,7 +60,11 @@ export const unsubscribeFromMail = async (userId, mail) => {
       hasImage,
       estimatedSuccess: output.estimatedSuccess
     });
-    if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
+    if (output.estimatedSuccess) {
+      addUnsubscriptionToStats({ unsubStrategy });
+    } else {
+      incrementUserCredits(userId, 1);
+    }
     addNewUnsubscribeOccrurence(userId, mail.from);
     return {
       id: output.id,

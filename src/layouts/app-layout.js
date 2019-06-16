@@ -2,8 +2,8 @@ import '@babel/polyfill';
 import '../common.scss';
 import './layout.css';
 
-import { AlertProvider } from '../app/alert-provider';
-import { DatabaseProvider } from '../app/db-provider';
+import { AlertProvider } from '../providers/alert-provider';
+import { DatabaseProvider } from '../providers/db-provider';
 import Helmet from 'react-helmet';
 import { ModalProvider } from '../providers/modal-provider';
 import React from 'react';
@@ -35,9 +35,9 @@ const AppLayout = ({ pageName, children }) => {
 
       <DatabaseProvider>
         <StripeProvider>
-          <ModalProvider>
-            <AlertProvider>{children}</AlertProvider>
-          </ModalProvider>
+          <AlertProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </AlertProvider>
         </StripeProvider>
       </DatabaseProvider>
     </>

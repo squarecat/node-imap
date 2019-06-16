@@ -13,7 +13,7 @@ import { TextFootnote, TextImportant } from '../../../components/text';
 import BillingModal from '../../../components/modal/billing';
 import Button from '../../../components/btn';
 import CardDetails from '../../../components/card-details';
-import { DatabaseContext } from '../../../app/db-provider';
+import { DatabaseContext } from '../../../providers/db-provider';
 import ErrorBoundary from '../../../components/error-boundary';
 import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';

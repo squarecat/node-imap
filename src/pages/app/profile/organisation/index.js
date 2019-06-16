@@ -38,6 +38,9 @@ function Organisation() {
   const content = useMemo(
     () => {
       if (loading) return <span>Loading...</span>;
+      if (!organisation) {
+        return <span>You are not part of an organisation.</span>;
+      }
 
       const {
         name,
@@ -323,7 +326,7 @@ function Billing({ organisation }) {
             </Button>
           </>
         ) : null}
-        <p>Contact us to add or modify your VAT number and company details</p>
+        <p>Contact us to add or modify your VAT number and company details.</p>
       </div>
     </>
   );
@@ -353,6 +356,7 @@ function BillingInformation({ organisationId }) {
         <TextImportant>
           {formatDate(current_period_end * 1000, dateFormat)}
         </TextImportant>
+        .
       </p>
       {/* If the subscription has been canceled, the date of that cancellation */}
       {canceled_at ? (

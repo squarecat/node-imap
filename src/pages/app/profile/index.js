@@ -3,7 +3,7 @@ import './profile.module.scss';
 import React, { useCallback, useContext, useState } from 'react';
 
 import Button from '../../../components/btn';
-import { DatabaseContext } from '../../../app/db-provider';
+import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import ProfileLayout from './layout';
 import { TextImportant } from '../../../components/text';

@@ -78,15 +78,19 @@ export default function(app, socket) {
   socket.on('unsubscribe', async (userId, mail) => {
     try {
       const data = await unsubscribeFromMail(userId, mail);
-      socket.emit(userId, 'unsubscribe:success', { id: mail.id, data });
+      return socket.emit(userId, 'unsubscribe:success', { id: mail.id, data });
     } catch (err) {
-      const error = new RestError('Failed to unsubscribe from mail', {
-        userId: userId,
-        mailId: mail.id,
-        cause: err
-      });
-      Sentry.captureException(error);
-      socket.emit(userId, 'unsubscribe:err', {
+      let error = err;
+      // if we haven't already handled this error then throw a rest error
+      if (!err.data && !err.data.errKey) {
+        error = new RestError('Failed to unsubscribe from mail', {
+          userId: userId,
+          mailId: mail.id,
+          cause: err
+        });
+        Sentry.captureException(error);
+      }
+      return socket.emit(userId, 'unsubscribe:err', {
         id: mail.id,
         err: error.toJSON()
       });
