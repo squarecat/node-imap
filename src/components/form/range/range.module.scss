@@ -1,10 +1,11 @@
 @import '../../../styles/common/colors.scss';
+@import '../../text/text.module.scss';
+
 // Styling Cross-Browser Compatible Range Inputs with Sass
 // Github: https://github.com/darlanrod/input-range-sass
 // Author: Darlan Rod https://github.com/darlanrod
 // Version 1.5.1
 // MIT License
-
 $track-color: $color-border-red !default;
 $thumb-color: $color-secondary-bg !default;
 
@@ -63,7 +64,7 @@ $ie-bottom-track-color: darken($track-color, $contrast) !default;
   cursor: not-allowed;
 }
 
-[type='range'] {
+.range-input [type='range'] {
   -webkit-appearance: none;
   background: transparent;
   margin: $thumb-height / 2 0;
@@ -186,4 +187,18 @@ $ie-bottom-track-color: darken($track-color, $contrast) !default;
       @include disabled;
     }
   }
+}
+
+.range-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1em;
+}
+.label + input {
+  flex: 1;
+}
+.label {
+  width: 42px;
+  @extend .important;
 }

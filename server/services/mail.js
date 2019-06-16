@@ -2,18 +2,15 @@ import {
   addEstimateToStats,
   addFailedUnsubscriptionToStats,
   addNumberofEmailsToStats,
-  addScanToStats,
   addUnsubscriptionToStats
 } from './stats';
-import { addOrUpdateOccurrences, getOccurrenceScores } from './occurrences';
 import {
   addResolvedUnsubscription,
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
 import {
   addScan as addScanToUser,
-  resolveUnsubscription as resolveUserUnsubscription,
-  updatePaidScan as updatePaidScanForUser
+  resolveUnsubscription as resolveUserUnsubscription
 } from '../dao/user';
 import {
   fetchMail as fetchMailFromGmail,
@@ -24,19 +21,25 @@ import {
   getEstimates as getMailEstimatesFromOutlook
 } from './mail/outlook';
 
+import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
 import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 import subMonths from 'date-fns/sub_months';
-import { updateOccurances } from '../dao/occurrences';
 
-export async function* fetchMail({ userId, from }) {
+export async function* fetchMail({ userId, from, accountIds = [] }) {
   const user = await getUserById(userId);
-  const { accounts } = user;
+  let { accounts } = user;
   let accountScanData = [];
   let accountOccurrences = {};
+  let dupes = [];
+  // if account ids is provided then only fetch from those accounts
+  // otherwise search from all accounts
+  if (accountIds) {
+    accounts = accounts.filter(ac => accountIds.includes(ac.id));
+  }
   try {
     const iterators = await Promise.all(
       accounts.map(account => fetchMailByAccount({ account, user, from }))
@@ -51,9 +54,11 @@ export async function* fetchMail({ userId, from }) {
       const { scanData, occurrences, dupeSenders } = next.value;
       accountScanData = [...accountScanData, scanData];
       accountOccurrences = { ...accountOccurrences, ...occurrences };
+      dupes = [...dupes, dupeSenders];
     }
-    // addOrUpdateOccurrences(userId, dupeSenders, timeframe);
-    // addScanToUser(user.id, scanData);
+
+    addOrUpdateOccurrences(userId, dupes);
+    addScanToUser(user.id, accountScanData);
     return {
       occurrences: accountOccurrences
     };

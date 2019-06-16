@@ -4,3 +4,13 @@
   @extend .btn;
   @extend .centered;
 }
+
+.enterprise-logos {
+  img {
+    max-width: 200px;
+  }
+}
+
+.gsuite {
+  padding: 10px 20px;
+}

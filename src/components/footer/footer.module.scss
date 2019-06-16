@@ -7,10 +7,22 @@
   align-items: center;
   width: 100%;
   padding: 100px 0;
-}
+  background-color: #1d1919;
+  margin-top: 10em;
 
-.subpage {
-  padding-bottom: 0;
+  a {
+    opacity: 0.9;
+  }
+  a,
+  a:hover {
+    color: #eae8e8;
+    border-bottom-color: transparent;
+  }
+
+  a:hover {
+    opacity: 1;
+    border-bottom-color: #eae8e8;
+  }
 }
 
 @media (max-width: 500px) {
@@ -33,9 +45,13 @@
   margin: 0 5px;
 }
 
+.footer-social {
+  margin-top: 2em;
+}
+
 .footer-social li svg {
-  color: $color-link;
+  color: #eae8e8;
 }
 .footer-social li:hover svg {
-  color: $color-red;
+  color: #eae8e8;
 }
