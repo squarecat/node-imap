@@ -67,6 +67,17 @@
   border-bottom-right-radius: 10px;
 }
 
+@media (max-width: 800px) {
+  .profile-nav li:first-child .profile-nav-link {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 0;
+  }
+  .profile-nav li:last-child .profile-nav-link {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 10px;
+  }
+}
+
 :global(.profile-nav-link--active),
 :global(.profile-nav-link:hover) {
   background-color: $color-red-lighter;
@@ -128,5 +139,15 @@
   }
   .profile-nav-container {
     margin-bottom: 40px;
+    width: 100%;
+  }
+
+  .profile-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
   }
 }
