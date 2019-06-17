@@ -16,7 +16,11 @@ import {
   removeOrganisationUserToStats,
   addOrganisationUnsubscribeToStats
 } from './stats';
-import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
+import {
+  bulkGetUsersByOrganisationId,
+  getUserByEmail,
+  updateUser
+} from '../dao/user';
 import {
   getSubscription,
   updateSubscription,
@@ -184,18 +188,18 @@ export async function getOrganisationUserStats(id) {
     const organisation = await getById(id);
     if (!organisation) return [];
 
-    const users = await bulkGetUsersByEmail(organisation.currentUsers);
+    const users = await bulkGetUsersByOrganisationId(id);
     if (!users) return [];
 
-    const stats = users.map(u => {
-      const joinActivity = organisation.activity.find(
-        a => a.type === 'addedUser' && a.data.email === u.email
+    const stats = users.map(user => {
+      const joinedOrgActivity = user.activity.find(
+        ({ type }) => type === 'joinedOrganisation'
       );
       return {
-        id: u.id,
-        email: u.email,
-        numberOfUnsubscribes: u.unsubscriptions.length,
-        dateJoined: joinActivity.timestamp
+        email: user.email,
+        joinedAt: joinedOrgActivity.timestamp,
+        numberOfUnsubscribes: user.unsubscriptions.length,
+        numberOfAccounts: user.accounts.length
       };
     });
     return stats;

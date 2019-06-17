@@ -144,18 +144,16 @@ export async function getUserByEmail(email, projection = {}) {
   }
 }
 
-export async function bulkGetUsersByEmail(emails) {
+export async function bulkGetUsersByOrganisationId(organisationId) {
   try {
     const col = await db().collection(COL_NAME);
     return col
       .find({
-        email: {
-          $in: emails
-        }
+        organisationId
       })
       .toArray();
   } catch (err) {
-    logger.error(`users-dao: failed to get user by email`);
+    logger.error(`users-dao: failed to get user by organisationId`);
     logger.error(err);
     throw err;
   }

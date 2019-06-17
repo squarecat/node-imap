@@ -103,7 +103,7 @@ export default ({ credits }) => {
         alertActions.setAlert({
           id: 'referral-invite-error',
           level: 'error',
-          message: `Error inviting ${email}!`,
+          message: `Error inviting ${email}. Please try again or send us a message.`,
           isDismissable: true,
           autoDismiss: true
         });
@@ -111,7 +111,7 @@ export default ({ credits }) => {
         setSendingInvite(false);
       }
     },
-    [email]
+    [email, alertActions]
   );
 
   return (

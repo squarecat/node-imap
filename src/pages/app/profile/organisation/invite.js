@@ -1,57 +1,46 @@
 import './organisation.module.scss';
 
-import {
-  FormGroup,
-  FormInput,
-  FormNotification,
-  InlineFormInput
-} from '../../../../components/form';
-import React, { useState } from 'react';
+import { FormGroup, InlineFormInput } from '../../../../components/form';
+import React, { useState, useCallback, useContext } from 'react';
 
 import Button from '../../../../components/btn';
 import CopyButton from '../../../../components/copy-to-clipboard';
 import request from '../../../../utils/request';
+import { AlertContext } from '../../../../providers/alert-provider';
 
 function InviteForm({ organisation }) {
-  const [state, setState] = useState({
-    email: '',
-    loading: false,
-    error: false,
-    sent: false
-  });
-
+  const { actions: alertActions } = useContext(AlertContext);
   const { id, inviteCode, allowAnyUserWithCompanyEmail } = organisation;
 
-  const onSubmit = async () => {
-    try {
-      setState({
-        ...state,
-        loading: true,
-        error: false,
-        sent: false
-      });
+  const [email, setEmail] = useState('');
+  const [sendingInvite, setSendingInvite] = useState(false);
 
-      await sendInvite(id, state.email);
-      setTimeout(() => {
-        setState({
-          ...state,
-          loading: false,
-          error: false,
-          sent: true
+  const onClickInvite = useCallback(
+    async () => {
+      try {
+        setSendingInvite(true);
+        await sendOrganisationInvite(id, email);
+        alertActions.setAlert({
+          id: 'org-invite-success',
+          level: 'success',
+          message: `Successfully invited ${email}!`,
+          isDismissable: true,
+          autoDismiss: true
         });
-      }, 300);
-    } catch (err) {
-      console.error(err);
-      setTimeout(() => {
-        setState({
-          ...state,
-          loading: false,
-          error: true,
-          sent: false
+      } catch (err) {
+        alertActions.setAlert({
+          id: 'org-invite-error',
+          level: 'error',
+          message: `Error inviting ${email}. Please try again or send us a message.`,
+          isDismissable: true,
+          autoDismiss: true
         });
-      }, 300);
-    }
-  };
+      } finally {
+        setSendingInvite(false);
+      }
+    },
+    [email, alertActions]
+  );
 
   return (
     <div styleName="organisation-section">
@@ -93,23 +82,16 @@ function InviteForm({ organisation }) {
         email address. Members will be able to sign-in or connect an account
         with this email address.
       </p>
-      <form
-        styleName="invite"
-        id="invite-user-form"
-        onSubmit={e => {
-          e.preventDefault();
-          return onSubmit();
-        }}
-      >
+      <form styleName="invite" id="invite-user-form">
         <FormGroup>
           <InlineFormInput
             smaller
             compact
             placeholder="Email address"
             name="email"
-            value={state.email}
+            value={email}
             onChange={e => {
-              setState({ ...state, email: e.currentTarget.value });
+              setEmail(e.currentValue.target);
             }}
           >
             <Button
@@ -118,28 +100,20 @@ function InviteForm({ organisation }) {
               smaller
               compact
               inline
-              loading={state.loading}
-              disabled={state.loading || !state.email}
-              type="submit"
-              as="button"
+              loading={sendingInvite}
+              disabled={sendingInvite || !email}
+              onClick={onClickInvite}
             >
               Invite
             </Button>
           </InlineFormInput>
         </FormGroup>
-
-        {state.sent ? <FormNotification success>Sent!</FormNotification> : null}
-        {state.error ? (
-          <FormNotification error>
-            Something went wrong, your invite has not sent.
-          </FormNotification>
-        ) : null}
       </form>
     </div>
   );
 }
 
-function sendInvite(id, email) {
+function sendOrganisationInvite(id, email) {
   return request(`/api/organisation/${id}/invite`, {
     method: 'POST',
     cache: 'no-cache',

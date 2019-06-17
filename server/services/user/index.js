@@ -241,11 +241,18 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
       })
     );
 
+    // add the email to the organisations users to be billed
     await addUserToOrganisation(organisation.id, {
       email: user.email
     });
 
-    addActivityForUser(user.id, 'addedToOrganisation', {
+    // add the joined and added acount activities
+    addActivityForUser(user.id, 'joinedOrganisation', {
+      id: organisation.id,
+      name: organisation.name,
+      email: user.email
+    });
+    addActivityForUser(user.id, 'addedAccountToOrganisation', {
       id: organisation.id,
       name: organisation.name,
       email: user.email
@@ -267,7 +274,7 @@ async function addUserAccountToOrganisation({ user, account, organisation }) {
       email: account.email
     });
 
-    addActivityForUser(user.id, 'addedToOrganisation', {
+    addActivityForUser(user.id, 'addedAccountToOrganisation', {
       id: organisation.id,
       name: organisation.name,
       email: account.email
@@ -381,11 +388,10 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
   } = userData;
   let user;
   try {
-    // signup/login with password if the user should belong to org
-    // add the id to them but don't add the email to the organisation
-    // as the org should only be billed for connected accounts
-    const organisation = await getOrganisationForUserEmail(inviteCode, email);
+    let organisation;
     if (!id) {
+      // new user account, check if they should be added to an org
+      organisation = await getOrganisationForUserEmail(inviteCode, email);
       const referredBy = await getReferrer(referralCode);
       user = await createUserFromPassword({
         name: displayName,
@@ -404,11 +410,41 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
       addUpdateNewsletterSubscriber(email);
       // sendVerifyEmailMail({ toAddress: email, code: user.verificationCode });
     } else {
-      user = await updateUser(id, {
-        name: displayName,
-        organisationId: organisation ? organisation.id : null
+      let updates = {
+        name: displayName
+      };
+      if (!user.organisationId) {
+        logger.debug(
+          `user-service: password user ${id} not a member of an organisation, checking if they should be...`
+        );
+        // if the user is not already a member of an org see if they should be
+        organisation = await getOrganisationForUserEmail(inviteCode, email);
+        if (organisation) {
+          logger.debug(
+            `user-service: user ${id} is invited to or has domain for org ${
+              organisation.id
+            }, adding...`
+          );
+          updates = {
+            ...updates,
+            organisationId: organisation.id
+          };
+        }
+      }
+      user = await updateUser(id, updates);
+    }
+
+    // if user has joined an organisation add the joined activity
+    // but do not add the email to the org current users
+    // as only connected accounts count towards billed seats
+    if (organisation) {
+      addActivityForUser(user.id, 'joinedOrganisation', {
+        id: organisation.id,
+        name: organisation.name,
+        email: user.email
       });
     }
+
     return user;
   } catch (err) {
     logger.error(
@@ -811,7 +847,7 @@ export async function removeUserAccount(user, accountEmail) {
       const organisation = await removeUserFromOrganisation({
         email: account.email
       });
-      addActivityForUser(userId, 'removedFromOrganisation', {
+      addActivityForUser(userId, 'removedAccountFromOrganisation', {
         id: organisation.id,
         name: organisation.name,
         email: account.email

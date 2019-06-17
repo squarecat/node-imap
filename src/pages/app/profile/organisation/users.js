@@ -32,24 +32,28 @@ function CurrentUsers({ organisationId, adminUserEmail }) {
           </thead>
           <tbody>
             {stats.map(stat => (
-              <TableRow key={stat.id}>
-                <TableCell>{stat.email}</TableCell>
-                <TableCell>
-                  {stat.email === adminUserEmail ? (
-                    <span
-                      styleName={cx('org-status', {
-                        active: true
-                      })}
-                    >
-                      Admin
-                    </span>
-                  ) : null}
-                </TableCell>
+              <>
+                <TableRow key={stat.email}>
+                  <TableCell>
+                    {stat.email} ({stat.numberOfAccounts} seats)
+                  </TableCell>
+                  <TableCell>
+                    {stat.email === adminUserEmail ? (
+                      <span
+                        styleName={cx('org-status', {
+                          active: true
+                        })}
+                      >
+                        Admin
+                      </span>
+                    ) : null}
+                  </TableCell>
 
-                <TableCell>{stat.numberOfUnsubscribes}</TableCell>
-                {/* <TableCell>{stat.timeSaved} time saved</TableCell> */}
-                <TableCell>{relative(stat.dateJoined)}</TableCell>
-              </TableRow>
+                  <TableCell>{stat.numberOfUnsubscribes}</TableCell>
+                  {/* <TableCell>{stat.timeSaved} time saved</TableCell> */}
+                  <TableCell>{relative(stat.joinedAt)}</TableCell>
+                </TableRow>
+              </>
             ))}
           </tbody>
         </Table>

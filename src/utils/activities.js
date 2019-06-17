@@ -46,10 +46,14 @@ const activityEnum = {
   },
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account - ${data.email}.`,
-  addedToOrganisation: ({ data }) =>
-    `You added the account ${data.email} to your organistion ${data.name}.`,
-  removedFromOrganisation: ({ data }) =>
-    `You removed the account ${data.email} from your organistion ${data.name}.`,
+  joinedOrganisation: ({ data }) => `You joined the ${data.name} organisation.`,
+  leftOrganisation: ({ data }) => `You left the ${data.name} organisation.`,
+  addedAccountToOrganisation: ({ data }) =>
+    `You added the account ${data.email} to your organisation ${data.name}.`,
+  removedAccountFromOrganisation: ({ data }) =>
+    `You removed the account ${data.email} from your organisation ${
+      data.name
+    }.`,
   addBillingCard: () => `You added a saved payment method.`,
   removeBillingCard: () => `You removed your saved payment method.`
   // updatedPackageAutoBuyPreference: ({ data }) =>
