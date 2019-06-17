@@ -265,7 +265,6 @@ export function useMailSync() {
         db.prefs.put({ key: 'lastFetchParams', value: fetchParams });
         return emit('fetch', fetchParams);
       } catch (err) {
-        debugger;
         console.error('[db]: failed to fetch mail');
         console.error(err);
       }
@@ -282,7 +281,7 @@ export function useMailSync() {
         if (!allowed) {
           const alert = getUnsubscribeAlert({
             reason,
-            mailItem,
+            mail: mailItem,
             alertActions: actions,
             modalActions: { openModal },
             credits
