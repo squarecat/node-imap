@@ -32,7 +32,12 @@ export default () => {
   );
 
   return (
-    <form id="2fa-form" onSubmit={onSubmit} method="post">
+    <form
+      id="2fa-form"
+      styleName="two-fa-form"
+      onSubmit={onSubmit}
+      method="post"
+    >
       <input type="hidden" name="username" value={state.email} />
       <FormGroup fluid>
         <TwoFactorInput

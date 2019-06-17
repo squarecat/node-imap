@@ -116,7 +116,7 @@ export function MailProvider({ children }) {
         db.prefs.put({ key: 'filters', value: state });
       }
     },
-    [state]
+    [db.prefs, state]
   );
 
   const value = {

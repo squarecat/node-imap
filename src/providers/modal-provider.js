@@ -23,16 +23,16 @@ function Provider({ children }) {
     options: {},
     modal: null
   });
+  const { options, shown, modal } = state;
 
   const closeModal = useCallback(
-    () => {
-      const { shown, options } = state;
+    data => {
       if (shown) {
-        setState({ ...state, shown: false });
+        setState({ options, modal, shown: false });
       }
-      options.onClose && options.onClose();
+      options.onClose && options.onClose(data);
     },
-    [state]
+    [modal, options, shown]
   );
 
   const openModal = useCallback((modal, options = {}) => {
@@ -49,7 +49,6 @@ function Provider({ children }) {
 
   useEffect(
     () => {
-      const { options } = state;
       function closeModalByEsc({ key }) {
         if (options.dismissable && key === 'Escape') {
           closeModal();
@@ -60,7 +59,7 @@ function Provider({ children }) {
         document.removeEventListener('keyup', closeModalByEsc);
       };
     },
-    [state, closeModal]
+    [closeModal, options.dismissable]
   );
 
   // useClickAway(
@@ -83,7 +82,7 @@ function Provider({ children }) {
     >
       {children}
       <Modal ref={modalRef} shown={state.shown} {...state.options}>
-        {state.modal}
+        {modal}
       </Modal>
     </ModalContext.Provider>
   );

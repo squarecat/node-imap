@@ -2,8 +2,8 @@ import './2fa.module.scss';
 
 import React, { useEffect, useState } from 'react';
 
-import useAsync from '../../utils/hooks/use-async';
 import request from '../../utils/request';
+import useAsync from '../../utils/hooks/use-async';
 
 export default ({ onComplete = () => {}, onLoading = () => {} }) => {
   const [value, setValue] = useState('');
@@ -16,7 +16,7 @@ export default ({ onComplete = () => {}, onLoading = () => {} }) => {
       }
       onLoading(loading);
     },
-    [verified, loading]
+    [verified, loading, onLoading, onComplete, value]
   );
 
   return (
@@ -26,7 +26,7 @@ export default ({ onComplete = () => {}, onLoading = () => {} }) => {
         value={value}
         max="6"
         placeholder="Enter 6-digit code"
-        onInput={({ currentTarget }) => setValue(currentTarget.value)}
+        onChange={({ currentTarget }) => setValue(currentTarget.value)}
       />
     </div>
   );

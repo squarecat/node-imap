@@ -6,12 +6,12 @@ import {
 } from '../services/user';
 import { isBetaUser, setRememberMeCookie } from './access';
 
+import { AuthError } from '../utils/errors';
 import Joi from 'joi';
 import { Strategy as LocalStrategy } from 'passport-local';
 import logger from '../utils/logger';
 import passport from 'passport';
 import { validateBody } from '../middleware/validation';
-import { AuthError } from '../utils/errors';
 
 const createUserParams = {
   username: Joi.string()
@@ -159,9 +159,6 @@ export default app => {
 };
 
 function handleLoginError(res, err) {
-  logger.warn('login error');
-  logger.warn(err);
-
   return res.status(400).send({
     error: err,
     success: false
