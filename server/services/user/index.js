@@ -5,8 +5,8 @@ import {
   addPackage,
   addPaidScan,
   addReferral,
-  addScan,
   addReminder,
+  addScan,
   addTotpSecret,
   addUnsubscription,
   authenticate,
@@ -16,8 +16,8 @@ import {
   getTotpSecret,
   getUser,
   getUserByEmail,
-  getUserByReferralCode,
   getUserByHashedEmail,
+  getUserByReferralCode,
   incrementCredits,
   incrementUserReferralBalance,
   removeAccount,
@@ -34,8 +34,8 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
-  verifyTotpSecret,
-  verifyEmail
+  verifyEmail,
+  verifyTotpSecret
 } from '../../dao/user';
 import {
   addNewsletterUnsubscriptionToStats,
@@ -60,23 +60,21 @@ import {
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
-import { ConnectAccountError, AuthError } from '../../utils/errors';
+import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
-import addHours from 'date-fns/add_hours';
-
 import { detachPaymentMethod } from '../../utils/stripe';
 import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { sendForgotPasswordMail } from '../../utils/emails/forgot-password';
 import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import { sendToUser } from '../../rest/socket';
+import { sendVerifyEmailMail } from '../../utils/emails/verify-email';
+import shortid from 'shortid';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
-import shortid from 'shortid';
-import { sendForgotPasswordMail } from '../../utils/emails/forgot-password';
-import { sendVerifyEmailMail } from '../../utils/emails/verify-email';
 
 export async function getUserById(id) {
   try {
