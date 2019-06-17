@@ -7,12 +7,14 @@ import {
   getByInvitedEmailOrValidDomain,
   getBySubscription,
   removeUser,
-  update
+  update,
+  recordUnsubscribe
 } from '../dao/organisation';
 import {
   addOrganisationToStats,
   addOrganisationUserToStats,
-  removeOrganisationUserToStats
+  removeOrganisationUserToStats,
+  addOrganisationUnsubscribeToStats
 } from './stats';
 import { bulkGetUsersByEmail, getUserByEmail, updateUser } from '../dao/user';
 import {
@@ -320,4 +322,9 @@ export function canUserJoinOrganisation(email, organisation) {
     allowed: false,
     reason: 'not-invited'
   };
+}
+
+export function recordUnsubscribeForOrganisation(id) {
+  addOrganisationUnsubscribeToStats();
+  return recordUnsubscribe(id);
 }

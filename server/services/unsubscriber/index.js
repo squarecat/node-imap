@@ -6,6 +6,7 @@ import {
   incrementUserCredits,
   decrementUserCredits
 } from '../user';
+import { recordUnsubscribeForOrganisation } from '../organisation';
 import { unsubscribeWithLink as browserUnsub } from './browser';
 import { unsubscribeWithMailTo as emailUnsub } from './mail';
 import fs from 'fs';
@@ -34,6 +35,8 @@ export const unsubscribeFromMail = async (userId, mail) => {
 
   if (!organisationId) {
     decrementUserCredits(userId, 1);
+  } else {
+    recordUnsubscribeForOrganisation(organisationId);
   }
   const { unsubscribeLink, unsubscribeMailTo } = mail;
   logger.info(`unsubscriber-service: unsubscribe from ${mail.id}`);
