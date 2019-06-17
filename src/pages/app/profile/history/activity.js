@@ -13,7 +13,7 @@ import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
 
-export default function ActivityHistory() {
+function ActivityHistory() {
   const { value, loading } = useAsync(fetchActivity);
   const activity = loading ? [] : value;
 
@@ -24,41 +24,34 @@ export default function ActivityHistory() {
   });
 
   const sorted = _sortBy(activity, 'timestamp').reverse();
-
+  if (loading) {
+    return <span>Loading...</span>;
+  }
   return (
-    <ProfileLayout pageName="Activity History">
-      {loading ? (
-        <span>Loading...</span>
-      ) : (
-        <>
-          <div styleName="scan-section">
-            <p>
-              Showing <TextImportant>{activity.length}</TextImportant> previous
-              actions.
-            </p>
-            <ErrorBoundary>
-              <Table>
-                {sorted.map(activity => {
-                  return (
-                    <TableRow key={activity.timestamp}>
-                      <TableCell>{relative(activity.timestamp)}</TableCell>
-                      <TableCell>
-                        {parseActivity(activity, { accounts })}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </Table>
-            </ErrorBoundary>
-          </div>
-          {sorted.map(activity => (
-            <pre key={activity.timestamp}>
-              {JSON.stringify(activity, null, 2)}
-            </pre>
-          ))}
-        </>
-      )}
-    </ProfileLayout>
+    <>
+      <div styleName="scan-section">
+        <p>
+          Showing <TextImportant>{activity.length}</TextImportant> previous
+          actions.
+        </p>
+        <ErrorBoundary>
+          <Table>
+            {sorted.map(activity => {
+              const parsedActivity = parseActivity(activity, { accounts });
+              return (
+                <TableRow key={activity.timestamp}>
+                  <TableCell>{relative(activity.timestamp)}</TableCell>
+                  <TableCell>{parsedActivity}</TableCell>
+                </TableRow>
+              );
+            })}
+          </Table>
+        </ErrorBoundary>
+      </div>
+      {sorted.map(activity => (
+        <pre key={activity.timestamp}>{JSON.stringify(activity, null, 2)}</pre>
+      ))}
+    </>
   );
 }
 
@@ -70,3 +63,11 @@ function fetchActivity() {
     }
   });
 }
+
+export default () => {
+  return (
+    <ProfileLayout pageName="Activity History">
+      <ActivityHistory />
+    </ProfileLayout>
+  );
+};

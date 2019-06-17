@@ -17,7 +17,7 @@ export default ({ loaded }) => {
 
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
-      <Link to="/login/" styleName="header-logo">
+      <Link to="/app" styleName="header-logo">
         <img alt="Leave Me Alone logo" src={logoUrl} />
       </Link>
       <div styleName="header-title">Leave Me Alone </div>

@@ -1,10 +1,23 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 import Modal from '../components/modal';
+import { useClickAway } from 'react-use';
 
 export const ModalContext = createContext(null);
 
+const defaultOptions = {
+  dismissable: true
+};
+
 function Provider({ children }) {
+  const modalRef = useRef(null);
+
   const [state, setState] = useState({
     shown: false,
     options: {},
@@ -26,7 +39,10 @@ function Provider({ children }) {
     const shown = typeof options.show !== 'undefined' ? options.show : true;
     setState({
       modal,
-      options,
+      options: {
+        ...defaultOptions,
+        ...options
+      },
       shown
     });
   }, []);
@@ -47,6 +63,17 @@ function Provider({ children }) {
     [state, closeModal]
   );
 
+  // useClickAway(
+  //   modalRef,
+  //   () => {
+  //     const { options } = state;
+  //     if (options.dismissable) {
+  //       closeModal();
+  //     }
+  //   },
+  //   [state, closeModal]
+  // );
+
   return (
     <ModalContext.Provider
       value={{
@@ -55,7 +82,7 @@ function Provider({ children }) {
       }}
     >
       {children}
-      <Modal shown={state.shown} {...state.options}>
+      <Modal ref={modalRef} shown={state.shown} {...state.options}>
         {state.modal}
       </Modal>
     </ModalContext.Provider>

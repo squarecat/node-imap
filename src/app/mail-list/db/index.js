@@ -4,23 +4,24 @@ import { AlertContext } from '../../../providers/alert-provider';
 import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import React from 'react';
+import { getUnsubscribeAlert } from '../../../utils/errors';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
-import { getUnsubscribeAlert } from '../../../utils/errors';
 
 export function useMailSync() {
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
   const [
-    { token, id, credits, organisationId, organisationActive },
+    { token, id, credits, organisationId, organisationActive, accountIds },
     { incrementUnsubCount, incrementCredits, decrementCredits }
   ] = useUser(u => ({
     id: u.id,
     token: u.token,
     credits: u.billing ? u.billing.credits : 0,
     organisationId: u.organisationId,
-    organisationActive: u.organisationActive
+    organisationActive: u.organisationActive,
+    accountIds: u.accounts.map(a => a.id)
   }));
   const { isConnected, socket, error, emit } = useSocket({
     token,
@@ -106,7 +107,12 @@ export function useMailSync() {
         });
         socket.on('mail:err', err => {
           console.error(`[db]: scan failed`);
-          console.error(err);
+          actions.setAlert({
+            message: <span>{`Failed to fetch mail. Code: ${err.id}`}</span>,
+            isDismissable: true,
+            autoDismiss: false,
+            level: 'error'
+          });
         });
         socket.on('mail:progress', ({ progress, total }, ack) => {
           // const percentage = (progress / total) * 100;
@@ -159,24 +165,22 @@ export function useMailSync() {
           console.debug(`[db]: received unsubscribe error`);
           try {
             incrementCredits(1);
-            const { estimatedSuccess, unsubStrategy, hasImage, data } = err;
-            await db.mail.update(id, {
-              error: true,
-              isLoading: false,
-              subscribed: null,
-              estimatedSuccess: estimatedSuccess,
-              unsubStrategy: unsubStrategy,
-              hasImage: hasImage,
-              status: 'failed'
-            });
+            const { data } = err;
 
             const mail = await db.mail.get(id);
-            const alert = getUnsubscribeAlert(data.errKey, mail, {
+            const alert = getUnsubscribeAlert({
+              id: err.id,
+              reason: data.errKey,
+              mail,
               alertActions: actions,
               modalActions: { openModal },
               credits
             });
 
+            await db.mail.update(id, {
+              isLoading: false,
+              subscribed: true
+            });
             actions.queueAlert(alert);
           } catch (err) {
             console.error(`[db]: failed to set failed unsubscribe`);
@@ -206,16 +210,62 @@ export function useMailSync() {
     fetch: async () => {
       try {
         setIsFetching(true);
-        const latestItem = await db.mail.orderBy('date').last();
-        // get latest items
-        if (latestItem) {
-          const { date: from } = latestItem;
-          console.debug(`[db]: fetching mail from ${new Date(from)}`);
-          return emit('fetch', { from });
+        const pref = await db.prefs.get('lastFetchParams');
+
+        let fetchParams = {
+          accounts: [],
+          timestamp: Date.now()
+        };
+
+        if (pref) {
+          const { value: lastFetchParams } = pref;
+          const {
+            accounts: lastFetchAccounts,
+            timestamp: lastFetchedTime
+          } = lastFetchParams;
+          // if there are accounts that we haven't searched for yet
+          // then do a search on those without a time filter
+          const newAccounts = accountIds.filter(
+            id => !lastFetchAccounts.map(a => a.id).includes(id)
+          );
+          console.debug(
+            `[db]: fetching mail from ${newAccounts.length} new accounts`
+          );
+          fetchParams = {
+            ...fetchParams,
+            accounts: [
+              ...fetchParams.accounts,
+              ...newAccounts.map(a => ({ id: a }))
+            ]
+          };
+
+          // if we've done a search before, then fill data up
+          // to the present on previously searched accounts
+          console.debug(`[db]: fetching new mail on existing accounts`);
+          fetchParams = {
+            ...fetchParams,
+            accounts: [
+              ...fetchParams.accounts,
+              ...lastFetchAccounts.map(a => ({
+                id: a.id,
+                from: lastFetchedTime
+              }))
+            ]
+          };
+          // TODO if there are any searches that didn't finish,
+          // then fill them
+        } else {
+          // otherwise fetch all mail on all accounts
+          fetchParams = {
+            ...fetchParams,
+            accounts: accountIds.map(id => ({ id }))
+          };
         }
-        console.debug('[db]: fetching all mail');
-        return emit('fetch');
+        console.debug('[db]: fetching mail', fetchParams);
+        db.prefs.put({ key: 'lastFetchParams', value: fetchParams });
+        return emit('fetch', fetchParams);
       } catch (err) {
+        debugger;
         console.error('[db]: failed to fetch mail');
         console.error(err);
       }
@@ -223,18 +273,22 @@ export function useMailSync() {
     unsubscribe: async mailItem => {
       try {
         console.debug(`[db]: unsubscribing from ${mailItem.id}`);
+
         const { allowed, reason } = canUnsubscribe({
           credits,
           organisationId,
           organisationActive
         });
         if (!allowed) {
-          const alert = getUnsubscribeAlert(reason, mailItem, {
+          const alert = getUnsubscribeAlert({
+            reason,
+            mailItem,
             alertActions: actions,
             modalActions: { openModal },
             credits
           });
-          return actions.setAlert(alert);
+          actions.setAlert(alert);
+          return false;
         }
         if (!organisationId) {
           console.debug('[db]: decrementing credits');
@@ -244,7 +298,8 @@ export function useMailSync() {
           isLoading: true,
           subscribed: false
         });
-        return emit('unsubscribe', mailItem);
+        emit('unsubscribe', mailItem);
+        return true;
       } catch (err) {
         console.error('[db]: failed to unsubscribe mail');
         console.error(err);

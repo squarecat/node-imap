@@ -22,11 +22,15 @@ export default React.memo(({ status, loading, disabled, onChange }) => {
   return (
     <span
       styleName={classes}
-      onClick={() => {
+      onClick={async () => {
         if (disabled) return false;
         if (isOn) {
           setStatus(false);
-          onChange(false);
+          const allowed = await onChange(false);
+          if (!allowed) {
+            // allow time for animation
+            setTimeout(() => setStatus(true), 300);
+          }
         }
       }}
     >

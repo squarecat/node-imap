@@ -57,7 +57,8 @@ export const Strategy = new OutlookStrategy(
     } catch (err) {
       done(
         new AuthError('failed to create or update user from Outlook', {
-          cause: err
+          cause: err,
+          type: err.data.type
         })
       );
     }
@@ -158,10 +159,9 @@ export default app => {
       const baseUrl = `/login?error=true`;
       if (err) {
         let errUrl = baseUrl;
-        const { type } = err;
-        if (type) errUrl += `&type=${type}`;
-        logger.error(`outlook-auth: passport authentication error ${type}`);
-        logger.error(err);
+        const { id: errId, data } = err.toJSON();
+        logger.error('outlook-auth: passport authentication error');
+        errUrl += `&id=${errId}&type=${data.type || 'unknown'}`;
         return res.redirect(errUrl);
       }
 

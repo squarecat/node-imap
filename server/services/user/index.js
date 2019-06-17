@@ -1,3 +1,4 @@
+import { AuthError, ConnectAccountError } from '../../utils/errors';
 import {
   addAccount,
   addActivity,
@@ -49,7 +50,6 @@ import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
-import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import {
   addUserToOrganisation,
   canUserJoinOrganisation,
@@ -70,6 +70,7 @@ import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import { sendToUser } from '../../rest/socket';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
@@ -97,12 +98,32 @@ export async function getUserById(id) {
   }
 }
 
-export function createOrUpdateUserFromOutlook(userData = {}, keys) {
-  return createOrUpdateUser(userData, keys, 'outlook');
+export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
+  try {
+    const user = await getUserByEmail(userData.email);
+    if (user.loginProvider !== 'outlook') {
+      throw new AuthError('user already exists with a different provider', {
+        type: 'auth-provider-error'
+      });
+    }
+    return createOrUpdateUser(userData, keys, 'outlook');
+  } catch (err) {
+    throw err;
+  }
 }
 
-export function createOrUpdateUserFromGoogle(userData = {}, keys) {
-  return createOrUpdateUser(userData, keys, 'google');
+export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
+  try {
+    const user = await getUserByEmail(userData.email);
+    if (user.loginProvider !== 'google') {
+      throw new AuthError('user already exists with a different provider', {
+        type: 'auth-provider-error'
+      });
+    }
+    return createOrUpdateUser(userData, keys, 'google');
+  } catch (err) {
+    throw err;
+  }
 }
 
 async function createOrUpdateUser(userData = {}, keys, provider) {

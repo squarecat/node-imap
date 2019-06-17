@@ -1,5 +1,5 @@
-import React from 'react';
 import CreditModal from '../components/modal/credits';
+import React from 'react';
 
 export function getConnectError(reason) {
   switch (reason) {
@@ -43,13 +43,16 @@ export function getAuthError(err = {}, type) {
   return defaultMsg;
 }
 
-export function getUnsubscribeAlert(
+export function getUnsubscribeAlert({
+  id = 0,
   reason,
-  { fromEmail },
-  { alertActions, modalActions, credits }
-) {
+  mail,
+  alertActions,
+  modalActions,
+  credits
+}) {
   let options = {
-    message: `Unsubscribe to ${fromEmail} failed`,
+    message: `Unsubscribe to ${mail.fromEmail} failed`,
     autoDismiss: false,
     isDismissable: true,
     level: 'warning'
@@ -60,14 +63,18 @@ export function getUnsubscribeAlert(
       return {
         ...options,
         id: 'organisation-inactive-warning',
-        message: `Unsubscribe to ${fromEmail} failed because your organisation is inactive, please contact your administrator.`
+        message: `Unsubscribe to ${
+          mail.fromEmail
+        } failed because your organisation is inactive, please contact your administrator.`
       };
     }
     case 'insufficient-credits': {
       return {
         ...options,
         id: 'insufficient-credits-warning',
-        message: `Unsubscribe to ${fromEmail} failed because you have insufficient credits`,
+        message: `Unsubscribe to ${
+          mail.fromEmail
+        } failed because you have insufficient credits`,
         actions: [
           {
             label: 'Buy more',
@@ -83,7 +90,7 @@ export function getUnsubscribeAlert(
       return {
         ...options,
         id: 'unsubscribe-failed',
-        message: `Unsubscribe to ${fromEmail} failed`
+        message: `Unsubscribe to ${mail.fromEmail} failed. Error code: ${id}`
       };
   }
 }

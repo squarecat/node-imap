@@ -20,8 +20,6 @@ export default ({
 }) => {
   const { state, dispatch } = useContext(LoginContext);
 
-  console.log('password form state', state);
-
   async function onSubmit(e) {
     try {
       e.preventDefault();

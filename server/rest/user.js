@@ -10,17 +10,17 @@ import {
   getUserLoginProvider,
   getUserNotifications,
   getUserPayments,
+  inviteReferralUser,
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserBillingCard,
   removeUserReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
-  updateUserPassword,
-  updateUserPreferences,
   updateUserAutoBuy,
-  inviteReferralUser,
-  handleUserForgotPassword
+  handleUserForgotPassword,
+  updateUserPassword,
+  updateUserPreferences
 } from '../services/user';
 
 import Joi from 'joi';
@@ -56,7 +56,6 @@ export default app => {
         beta,
         unsubscriptions,
         scans,
-        paidScans = [],
         profileImg,
         ignoredSenderList,
         referredBy,

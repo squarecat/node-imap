@@ -60,7 +60,8 @@ export const Strategy = new GoogleStrategy(
     } catch (err) {
       done(
         new AuthError('failed to create or update user from Google', {
-          cause: err
+          cause: err,
+          type: err.data.type
         })
       );
     }
@@ -179,12 +180,9 @@ export default app => {
     return passport.authenticate('google-login', (err, user) => {
       let errUrl = `/login?error=true`;
       if (err) {
+        const { id: errId, data } = err.toJSON();
         logger.error('google-auth: passport authentication error');
-        const { type } = err;
-        if (type) {
-          errUrl += `&type=${type}`;
-        }
-        logger.error(err);
+        errUrl += `&id=${errId}&type=${data.type || 'unknown'}`;
         return res.redirect(errUrl);
       }
 
