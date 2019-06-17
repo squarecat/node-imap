@@ -42,17 +42,28 @@
     border-bottom-left-radius: 0;
     border-left: 0;
     line-height: 38px;
-  }
-
-  > a {
     flex: 1;
     border: 1px solid $color-input-border;
     border-left: none;
   }
 
-  input:focus + a {
+  input:focus + a,
+  input:focus + button {
     border: 1px solid $color-input-border-focus;
     border-left: none;
+  }
+
+  ::-webkit-input-placeholder {
+    font-size: 14px;
+  }
+  :-moz-placeholder {
+    font-size: 14px;
+  }
+  ::-moz-placeholder {
+    font-size: 14px;
+  }
+  :-ms-input-placeholder {
+    font-size: 14px;
   }
 }
 
