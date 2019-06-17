@@ -1,22 +1,19 @@
-import { domains, urls } from 'getconfig';
+import { mailgun, urls } from 'getconfig';
 
 import logger from '../logger';
-import { sendTransactionalMail } from './transactional';
+import { sendTransactionalMail, SIGN_OFF } from './transactional';
 
 const options = {
-  from: `Leave Me Alone <noreply@${domains.transactional}>`,
+  from: `Leave Me Alone <noreply@${mailgun.domains.transactional}>`,
   subject: 'Reset your password'
 };
 
-export function sendVerifyEmailMail({ toAddress, code }) {
-  logger.info('email-utils: sending verify email mail');
+export function sendForgotPasswordMail({ toAddress, resetCode }) {
+  logger.info('email-utils: sending forgot password mail');
 
-  let text = `Use the following link to reset your password.
-
-<a href="${urls.base}/auth/reset/${code}">Reset</a>
-
-Thanks!
-James & Danielle`;
+  let text = `A password reset was requested for your account (${toAddress}) on Leave Me Alone (${
+    urls.base
+  }). If you did not authorize this, you may simply ignore this email.\n\nTo continue with your password reset, enter the following code on the password reset screen and you will be able to change your password.\n\nReset code: ${resetCode}\n\nThis link will expire in 2 hours.\n\n${SIGN_OFF}`;
 
   return sendTransactionalMail({
     ...options,

@@ -1,6 +1,6 @@
 import {
   addToUserIgnoreList,
-  addUserScanReminder,
+  addUserReminder,
   authenticationRequiresTwoFactor,
   createUserTotpToken,
   deactivateUserAccount,
@@ -14,10 +14,11 @@ import {
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserBillingCard,
-  removeUserScanReminder,
+  removeUserReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
   updateUserAutoBuy,
+  handleUserForgotPassword,
   updateUserPassword,
   updateUserPreferences
 } from '../services/user';
@@ -55,7 +56,6 @@ export default app => {
         beta,
         unsubscriptions,
         scans,
-        paidScans = [],
         profileImg,
         ignoredSenderList,
         referredBy,
@@ -88,9 +88,6 @@ export default app => {
         requiresTwoFactorAuth,
         hasScanned: scans ? !!scans.length : false,
         lastScan: scans.length ? scans[scans.length - 1] : null,
-        lastPaidScanType: paidScans.length
-          ? paidScans[paidScans.length - 1].scanType
-          : null,
         reminder,
         preferences,
         loginProvider,
@@ -254,9 +251,9 @@ export default app => {
     let newUser = user;
     try {
       if (op === 'add') {
-        newUser = await addUserScanReminder(id, timeframe);
+        newUser = await addUserReminder(id, timeframe);
       } else if (op === 'remove') {
-        newUser = await removeUserScanReminder(id);
+        newUser = await removeUserReminder(id);
       } else {
         logger.error(`user-rest: reminder patch op not supported`);
       }
@@ -350,7 +347,7 @@ export default app => {
     validateBody(patchPasswordParams, {
       passthrough: true
     }),
-    async (req, res) => {
+    async (req, res, next) => {
       const { user, body } = req;
       const { id, email } = user;
       const { op, value } = body;
@@ -369,7 +366,13 @@ export default app => {
         }
         res.send(updatedUser);
       } catch (err) {
-        return handleChangePasswordError(res, err);
+        next(
+          new RestError('failed to patch user password', {
+            userId: id,
+            op,
+            cause: err
+          })
+        );
       }
     }
   );
@@ -436,7 +439,7 @@ export default app => {
     async (req, res, next) => {
       const { hashedEmail } = req.params;
       try {
-        const strat = await getUserLoginProvider({ email: hashedEmail });
+        const strat = await getUserLoginProvider({ hashedEmail });
         if (!strat) {
           return res.status(404).send();
         }
@@ -444,6 +447,27 @@ export default app => {
       } catch (err) {
         next(
           new RestError('failed to get user login strategy', {
+            hashedEmail,
+            cause: err
+          })
+        );
+      }
+    }
+  );
+
+  // public route, locked down to our domains
+  app.get(
+    '/api/user/:hashedEmail/forgot',
+    rateLimit,
+    internalOnly,
+    async (req, res, next) => {
+      const { hashedEmail } = req.params;
+      try {
+        await handleUserForgotPassword({ hashedEmail });
+        return res.send({ success: true });
+      } catch (err) {
+        next(
+          new RestError('failed to handle forgot password', {
             hashedEmail,
             cause: err
           })
@@ -484,19 +508,3 @@ export default app => {
     }
   });
 };
-
-function handleChangePasswordError(res, err) {
-  let message = `Something went wrong. Please contact support.`;
-  if (err.message === 'user not found or password incorrect') {
-    message = `User not found or the password is incorrect`;
-    logger.warn('user-rest: change password warning');
-    logger.warn(err);
-    return res.status(400).send({
-      message,
-      success: false
-    });
-  }
-  logger.error(`user-rest: error patching user password`);
-  logger.error(err);
-  return res.status(500).send({ message, success: false });
-}

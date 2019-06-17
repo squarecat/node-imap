@@ -112,7 +112,7 @@ export default ({ provider, action }) => {
         styleName="login-me-in-dammit"
       >
         <OutlookIcon />
-        <span styleName="text">{`${action} with Outlook`}</span>
+        <span styleName="text">{`${action} with Microsoft`}</span>
       </a>
     );
   } else {

@@ -6,11 +6,14 @@ import React, { useContext } from 'react';
 import Button from '../../components/btn';
 import { LoginContext } from './index';
 import PasswordInput from '../../components/form/password';
+import { TextLink } from '../../components/text';
 import { navigate } from 'gatsby';
+import { getAuthError } from '../../utils/errors';
 
 export default ({
   doValidation = true,
   confirm = false,
+  reset = false,
   submitText = 'Login',
   submitAction = '/auth/login',
   autoComplete
@@ -18,27 +21,35 @@ export default ({
   const { state, dispatch } = useContext(LoginContext);
 
   async function onSubmit(e) {
-    e.preventDefault();
-    const { password, email } = state;
-    dispatch({ type: 'set-loading', data: true });
-    // TODO use request instead
-    const resp = await fetch(submitAction, {
-      method: 'POST',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      },
-      body: JSON.stringify({ username: email, password })
-    });
-    const { success, message, twoFactorRequired } = await resp.json();
-    if (success !== true) {
+    try {
+      e.preventDefault();
+      const { password, email, resetCode } = state;
+      dispatch({ type: 'set-loading', data: true });
+      // TODO use request instead
+      const resp = await fetch(submitAction, {
+        method: 'POST',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify({ username: email, password, resetCode })
+      });
+      const { success, error, twoFactorRequired } = await resp.json();
+      if (success !== true) {
+        throw error;
+      } else if (twoFactorRequired) {
+        return dispatch({ type: 'set-step', data: '2fa' });
+      } else {
+        return navigate('/app');
+      }
+    } catch (err) {
       dispatch({ type: 'set-loading', data: false });
+      let type = 'login';
+      if (confirm) type = 'signup';
+      if (reset) type = 'reset';
+      const message = getAuthError(err, type);
       return dispatch({ type: 'set-error', data: message });
-    } else if (twoFactorRequired) {
-      return dispatch({ type: 'set-step', data: '2fa' });
-    } else {
-      return navigate('/app');
     }
   }
 
@@ -50,6 +61,20 @@ export default ({
       onSubmit={onSubmit}
       method="post"
     >
+      {reset ? (
+        <FormGroup fluid>
+          <FormLabel htmlFor="reset-code">Reset code</FormLabel>
+          <FormInput
+            id="reset-code"
+            name="reset-code"
+            required
+            compact
+            onChange={({ currentTarget }) =>
+              dispatch({ type: 'set-reset-code', data: currentTarget.value })
+            }
+          />
+        </FormGroup>
+      ) : null}
       <input
         type="hidden"
         name="username"
@@ -82,14 +107,17 @@ export default ({
           />
         </FormGroup>
       ) : (
-        <a
-          onClick={() =>
-            dispatch({ type: 'set-step', data: 'forgot-password' })
-          }
-          styleName="forgot-password"
-        >
-          Forgot password?
-        </a>
+        <span styleName="forgot-password">
+          <TextLink
+            smaller
+            onClick={() =>
+              dispatch({ type: 'set-step', data: 'forgot-password' })
+            }
+            styleName="forgot-password"
+          >
+            Forgot password?
+          </TextLink>
+        </span>
       )}
 
       {state.error ? (

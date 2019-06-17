@@ -62,9 +62,11 @@ export async function createOrganisation(email, data) {
       organisationAdmin: true
     });
 
-    await addUserToOrganisation(organisation.id, {
-      email: user.email
-    });
+    if (user.loginProvider !== 'password') {
+      await addUserToOrganisation(organisation.id, {
+        email: user.email
+      });
+    }
 
     return organisation;
   } catch (err) {

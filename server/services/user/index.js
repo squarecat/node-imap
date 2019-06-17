@@ -5,8 +5,8 @@ import {
   addPackage,
   addPaidScan,
   addReferral,
+  addReminder,
   addScan,
-  addScanReminder,
   addTotpSecret,
   addUnsubscription,
   authenticate,
@@ -16,12 +16,13 @@ import {
   getTotpSecret,
   getUser,
   getUserByEmail,
+  getUserByHashedEmail,
   getUserByReferralCode,
   incrementCredits,
   incrementUserReferralBalance,
   removeAccount,
   removeBillingCard,
-  removeScanReminder,
+  removeReminder,
   removeTotpSecret,
   removeUser,
   resolveUnsubscription,
@@ -33,6 +34,7 @@ import {
   updateUnsubStatus,
   updateUser,
   updateUserWithAccount,
+  verifyEmail,
   verifyTotpSecret
 } from '../../dao/user';
 import {
@@ -58,6 +60,7 @@ import {
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
+import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
@@ -65,8 +68,11 @@ import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { sendForgotPasswordMail } from '../../utils/emails/forgot-password';
 import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import { sendToUser } from '../../rest/socket';
+import { sendVerifyEmailMail } from '../../utils/emails/verify-email';
+import shortid from 'shortid';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 
@@ -345,13 +351,14 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
 
     // if not part of an org just add the account like normal
     logger.debug(`user-service: ${provider} account not connected, adding...`);
-    const updatedUser = await addAccount(userId, {
+    const account = {
       id: accountId,
       provider,
       email,
       keys
-    });
-    addConnectAccountActivity(accountId, provider, user);
+    };
+    const updatedUser = await addAccount(userId, account);
+    addConnectAccountActivity(updatedUser, account);
 
     return updatedUser;
   } catch (err) {
@@ -395,6 +402,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
+      // sendVerifyEmailMail({ toAddress: email, code: user.verificationCode });
     } else {
       user = await updateUser(id, {
         name: displayName,
@@ -491,11 +499,8 @@ async function addReferralActivity({ user, referralUser }) {
   }
 }
 
-function addConnectAccountActivity(
-  accountId,
-  provider,
-  { id: userId, loginProvider, accounts }
-) {
+function addConnectAccountActivity(user, account) {
+  const { id: userId, loginProvider, accounts } = user;
   let activityName;
   if (loginProvider === 'password') {
     // if logged in with password the first account will be 1 in the accounts array
@@ -508,8 +513,9 @@ function addConnectAccountActivity(
     activityName = 'connectedAdditionalAccount';
   }
   addActivityForUser(userId, activityName, {
-    id: accountId,
-    provider
+    id: account.id,
+    provider: account.provider,
+    email: account.email
   });
 }
 
@@ -605,7 +611,7 @@ export async function removeFromUserIgnoreList(id, email) {
   }
 }
 
-export async function addUserScanReminder(id, timeframe) {
+export async function addUserReminder(id, timeframe) {
   try {
     const now = new Date();
     let remindAt = null;
@@ -613,21 +619,23 @@ export async function addUserScanReminder(id, timeframe) {
       remindAt = addWeeks(now, 1);
     } else if (timeframe === '1m') {
       remindAt = addMonths(now, 1);
+    } else if (timeframe === '3m') {
+      remindAt = addMonths(now, 3);
     } else if (timeframe === '6m') {
       remindAt = addMonths(now, 6);
     }
     if (!remindAt) {
-      throw new Error('invalid scan reminder timeframe');
+      throw new Error('invalid reminder timeframe');
     }
     addReminderRequestToStats();
-    return addScanReminder(id, { timeframe, remindAt });
+    return addReminder(id, { timeframe, remindAt });
   } catch (err) {
     throw err;
   }
 }
 
-export function removeUserScanReminder(id) {
-  return removeScanReminder(id);
+export function removeUserReminder(id) {
+  return removeReminder(id);
 }
 
 export async function getReferralStats(id) {
@@ -710,12 +718,12 @@ export async function updateUserMarketingConsent(
 
 export async function deactivateUserAccount(user) {
   try {
-    logger.info(`user-service: deactivating user account ${id}`);
+    logger.info(`user-service: deactivating user account ${user.id}`);
 
     const {
       id,
       email,
-      provider,
+      loginProvider,
       keys,
       organisationId,
       organisationAdmin
@@ -723,11 +731,15 @@ export async function deactivateUserAccount(user) {
     const { refreshToken } = keys;
 
     if (organisationAdmin) {
+      logger.error(
+        `user-service: cannot deactivate account, user is admin of organisation ${organisationId}`
+      );
       throw new Error(
         'cannot deactivate account - user is an organisation admin'
       );
     }
 
+    logger.debug(`user-service: removing user accounts...`);
     await Promise.all(
       user.accounts.map(async a => {
         removeUserAccount(user, a.email);
@@ -735,14 +747,27 @@ export async function deactivateUserAccount(user) {
     );
 
     if (organisationId) {
+      logger.debug(
+        `user-service: removing user from organisation ${organisationId}...`
+      );
       await removeUserFromOrganisation({ email });
     }
-    await revokeToken({ provider, refreshToken });
+
+    if (loginProvider !== 'password') {
+      logger.debug(`user-service: revoking token for ${loginProvider}...`);
+      await revokeToken({ provider: loginProvider, refreshToken });
+    }
+
+    logger.debug(`user-service: removing user ${id}...`);
     await removeUser(id);
+
+    logger.debug(`user-service: removing newsletter subscriber...`);
     removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
+
+    logger.debug(`user-service: deactivating account - done`);
   } catch (err) {
-    logger.error(`user-service: error deactivating user account ${id}`);
+    logger.error(`user-service: error deactivating user account ${user.id}`);
     throw err;
   }
 }
@@ -759,20 +784,24 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
   }
 }
 
-export async function removeUserAccount(user, email) {
+export async function removeUserAccount(user, accountEmail) {
   try {
     const { id: userId, accounts, organisationId } = user;
 
-    const account = accounts.find(e => e.email === email);
+    const account = accounts.find(e => e.email === accountEmail);
 
     const { id: accountId, provider, keys } = account;
     const { refreshToken } = keys;
 
     await revokeToken({ provider, refreshToken });
-    const updatedUser = await removeAccount(userId, { accountId, email });
+    const updatedUser = await removeAccount(userId, {
+      accountId,
+      email: accountEmail
+    });
     addActivityForUser(userId, 'removeAdditionalAccount', {
       id: accountId,
-      provider
+      provider,
+      email: accountEmail
     });
 
     if (organisationId) {
@@ -808,16 +837,20 @@ async function revokeToken({ provider, refreshToken }) {
 export async function authenticateUser({ email, password }) {
   try {
     const user = await authenticate({ email, password });
-    if (user === null) throw new Error('user not found or password incorrect');
+    if (user === null) {
+      throw new AuthError('user not found or password incorrect', {
+        errKey: 'not-found'
+      });
+    }
     return user;
   } catch (err) {
     throw err;
   }
 }
 
-export async function getUserLoginProvider({ email }) {
+export async function getUserLoginProvider({ hashedEmail }) {
   try {
-    return getLoginProvider(email);
+    return getLoginProvider(hashedEmail);
   } catch (err) {
     throw err;
   }
@@ -1096,4 +1129,58 @@ export async function inviteReferralUser(userId, email) {
   } catch (err) {
     throw err;
   }
+}
+
+export async function handleUserForgotPassword({ hashedEmail }) {
+  try {
+    const user = await getUserByHashedEmail(hashedEmail);
+
+    if (!user) {
+      throw new AuthError('user not found or password incorrect', {
+        errKey: 'not-found'
+      });
+    }
+    // update user
+    const resetCode = shortid.generate();
+    await updateUser(user.id, {
+      resetCode,
+      resetCodeExpires: addHours(Date.now(), 2)
+    });
+    // send email
+    sendForgotPasswordMail({ toAddress: user.email, resetCode });
+    return true;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function resetUserPassword({ email, password, resetCode }) {
+  try {
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      throw new AuthError('user not found or password incorrect', {
+        errKey: 'not-found'
+      });
+    }
+    if (resetCode !== user.resetCode) {
+      throw new AuthError('user password reset code invalid', {
+        errKey: 'invalid-reset-code'
+      });
+    }
+    if (Date.now() > user.resetCodeExpires) {
+      throw new AuthError('user password reset code expired', {
+        errKey: 'expired-reset-code'
+      });
+    }
+
+    const updatedUser = await updatePassword(user.id, password);
+    return updatedUser;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export function verifyUserEmail(id) {
+  return verifyEmail(id);
 }

@@ -9,6 +9,7 @@ import { Link } from 'gatsby';
 import PasswordForm from './password';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
+import { TextImportant } from '../../components/text';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
@@ -33,6 +34,10 @@ if (typeof window !== 'undefined') {
 
 if (strategy === 'password') {
   defaultStep = 'enter-email';
+} else if (strategy === 'reset') {
+  defaultStep = 'reset-password';
+} else if (strategy === 'signup') {
+  defaultStep = 'signup';
 }
 
 const selectCardHeight = 690;
@@ -40,6 +45,9 @@ const loginEmailCardHeight = 480;
 const loginWithPasswordHeight = 550;
 const loginNewUserHeight = 580;
 const existingStratHeight = 440;
+const twoFactorAuthHeight = 410;
+const forgotPasswordHeight = 480;
+const resetPasswordHeight = 640;
 
 // steps;
 // 1. select-strategy
@@ -64,6 +72,8 @@ function loginReducer(state, action) {
       return { ...state, password: action.data };
     case 'set-email':
       return { ...state, email: action.data };
+    case 'set-reset-code':
+      return { ...state, resetCode: action.data };
     case 'set-error':
       return { ...state, error: action.data };
     case 'set-active':
@@ -81,13 +91,14 @@ const initialState = {
   register: false,
   password: '',
   email: username || previousProvider === 'password' ? previousUsername : '',
+  resetCode: '',
   error,
   existingProvider: null
 };
 
 export const LoginContext = createContext({ state: initialState });
 
-const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
+const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
   const activeRef = useRef(null);
   const [state, dispatch] = useReducer(loginReducer, {
     ...initialState,
@@ -105,7 +116,11 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
   } else if (state.step === 'select-existing') {
     windowHeight = existingStratHeight;
   } else if (state.step === '2fa') {
-    windowHeight = 410;
+    windowHeight = twoFactorAuthHeight;
+  } else if (state.step === 'forgot-password') {
+    windowHeight = forgotPasswordHeight;
+  } else if (state.step === 'reset-password') {
+    windowHeight = resetPasswordHeight;
   } else {
     windowHeight = selectCardHeight;
   }
@@ -178,7 +193,7 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
               {state.step === 'enter-email' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logoUrl} alt="logo" />
+                    <img src={logoUrl} alt="Leave Me Alone logo" />
                   </div>
                   <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>You're one step away from a clean inbox!</p>
@@ -193,11 +208,11 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
               {state.step === 'signup' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logoUrl} alt="logo" />
+                    <img src={logoUrl} alt="Leave Me Alone logo" />
                   </div>
                   <h1 styleName="title">Welcome to Leave Me Alone!</h1>
                   <p>
-                    Signing in with{' '}
+                    Signing up with{' '}
                     <span styleName="email-label">{state.email}</span>
                   </p>
 
@@ -217,7 +232,7 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
               {state.step === 'enter-password' ? (
                 <>
                   <div styleName="beautiful-logo">
-                    <img src={logoUrl} alt="logo" />
+                    <img src={logoUrl} alt="Leave Me Alone logo" />
                   </div>
                   <h1 styleName="title">Login to Leave Me Alone</h1>
                   <p>Welcome back!</p>
@@ -230,6 +245,45 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
                     autoComplete="current-password"
                     submitAction="/auth/login"
                     doValidation={false}
+                  />
+                </>
+              ) : null}
+            </div>
+            <div
+              styleName="forgot-password-box"
+              data-active={state.step === 'forgot-password'}
+            >
+              {state.step === 'forgot-password' ? (
+                <>
+                  <div styleName="beautiful-logo">
+                    <img src={logoUrl} alt="Leave Me Alone logo" />
+                  </div>
+                  <h1 styleName="title">Forgot Password</h1>
+                  <p>We will email you a password reset code.</p>
+                  <EmailForm nextText="Send" />
+                </>
+              ) : null}
+            </div>
+            <div
+              styleName="reset-password-box"
+              data-active={state.step === 'reset-password'}
+            >
+              {state.step === 'reset-password' ? (
+                <>
+                  <div styleName="beautiful-logo">
+                    <img src={logoUrl} alt="Leave Me Alone logo" />
+                  </div>
+                  <h1 styleName="title">Reset Password</h1>
+                  <p>
+                    Reset password for{' '}
+                    <TextImportant>{state.email}</TextImportant>
+                  </p>
+                  <PasswordForm
+                    autoComplete="new-password"
+                    confirm={true}
+                    reset={true}
+                    checkPwned={true}
+                    submitAction="/auth/reset"
                   />
                 </>
               ) : null}
@@ -255,7 +309,7 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
               data-active={state.step === 'select-existing'}
             >
               <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="logo" />
+                <img src={logoUrl} alt="Leave Me Alone logo" />
               </div>
               <h1 styleName="title">Login to Leave Me Alone</h1>
               {state.existingProvider === 'connected-account' ? (

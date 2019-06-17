@@ -14,6 +14,35 @@ export function getConnectError(reason) {
   }
 }
 
+export function getAuthError(err = {}, type) {
+  let msg;
+  if (type === 'signup') {
+    msg = ' signing you up';
+  }
+  if (type === 'login') {
+    msg = ' logging you in';
+  }
+  if (type === 'reset') {
+    msg = ' resetting your password';
+  }
+  const defaultMsg = `Something went wrong${msg}. Please try again or send us a message.`;
+  if (!err) return defaultMsg;
+
+  if (err.data && err.data.errKey) {
+    switch (err.data.errKey) {
+      case 'not-found':
+        return 'User not found or password is incorrect.';
+      case 'invalid-reset-code':
+        return 'That reset code is invalid.';
+      case 'expired-reset-code':
+        return 'That reset code has expired.';
+      default:
+        return defaultMsg;
+    }
+  }
+  return defaultMsg;
+}
+
 export function getUnsubscribeAlert({
   id = 0,
   reason,

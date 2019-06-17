@@ -36,7 +36,9 @@ $active-bg-color: #ffc7c1;
 .new-user-login-box,
 .existing-user-login-box,
 .existing-user-suggestion-box,
-.two-factor-box {
+.two-factor-box,
+.forgot-password-box,
+.reset-password-box {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -109,6 +111,11 @@ $active-bg-color: #ffc7c1;
   margin-top: auto;
   a {
     height: 62px;
+    line-height: 60px;
+    @media (max-width: 400px) {
+      height: 54px;
+      line-height: 52px;
+    }
   }
 }
 
@@ -149,7 +156,7 @@ $active-bg-color: #ffc7c1;
   }
 
   @media (max-width: 400px) {
-    font-size: 16px;
+    font-size: 18px;
   }
 }
 
@@ -170,7 +177,7 @@ $active-bg-color: #ffc7c1;
   text-align: center;
   border: 1px solid $color-text-error;
   width: 90%;
-  margin: 0 auto;
+  margin: 10px auto 0;
 
   p {
     margin: 0;

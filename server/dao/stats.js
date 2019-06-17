@@ -204,7 +204,7 @@ export async function addRewardGiven(rewardAmount) {
       {},
       {
         $inc: {
-          unsubscriptionsRewarded: rewardAmount
+          creditsRewarded: rewardAmount
         }
       }
     );
@@ -259,7 +259,8 @@ const recordedStats = [
   'failedEmailUnsubscribes',
   'successfulEmailUnsubscribes',
   'organisations',
-  'organisationUsers'
+  'organisationUsers',
+  'creditsRewarded'
 ];
 
 export async function recordStats() {
