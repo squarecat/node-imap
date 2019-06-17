@@ -258,45 +258,6 @@ p.unsubscribe-link-alt {
   }
 }
 
-// .coupon-shown {
-//   height: 45px;
-//   margin: 10px 0;
-// }
-
-// .coupon-shown + .add-coupon {
-//   display: none;
-// }
-
-// .coupon-input {
-//   position: relative;
-//   width: 100%;
-//   max-width: 300px;
-// }
-
-// .coupon-input:after {
-//   position: absolute;
-//   right: 10px;
-//   top: 50%;
-//   transform: translateY(-50%);
-// }
-// .coupon-input.valid:after {
-//   content: '✔';
-//   color: $color-text-success;
-// }
-// .coupon-input.invalid:after {
-//   content: '✘';
-//   color: $color-primary-font;
-// }
-
-// .add-coupon p {
-//   margin: 0;
-//   font-size: 12px;
-// }
-
-// .add-coupon {
-//   margin-bottom: 10px;
-// }
-
 .modal-content {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
@@ -355,17 +316,6 @@ p.unsubscribe-link-alt {
 .referral-reasons li {
   font-size: 16px;
   padding: 0;
-}
-
-/* Reminders */
-.reminder-cta {
-  max-width: 400px;
-  margin: 30px auto;
-}
-
-.reminder-date {
-  @extend .important;
-  text-align: center;
 }
 
 .unsub-img-container {

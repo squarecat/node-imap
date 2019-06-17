@@ -5,7 +5,7 @@ import {
   addPaidScan,
   addReferral,
   addScan,
-  addScanReminder,
+  addReminder,
   addTotpSecret,
   addUnsubscription,
   authenticate,
@@ -21,7 +21,7 @@ import {
   incrementUserReferralBalance,
   removeAccount,
   removeBillingCard,
-  removeScanReminder,
+  removeReminder,
   removeTotpSecret,
   removeUser,
   resolveUnsubscription,
@@ -592,7 +592,7 @@ export async function removeFromUserIgnoreList(id, email) {
   }
 }
 
-export async function addUserScanReminder(id, timeframe) {
+export async function addUserReminder(id, timeframe) {
   try {
     const now = new Date();
     let remindAt = null;
@@ -600,21 +600,23 @@ export async function addUserScanReminder(id, timeframe) {
       remindAt = addWeeks(now, 1);
     } else if (timeframe === '1m') {
       remindAt = addMonths(now, 1);
+    } else if (timeframe === '3m') {
+      remindAt = addMonths(now, 3);
     } else if (timeframe === '6m') {
       remindAt = addMonths(now, 6);
     }
     if (!remindAt) {
-      throw new Error('invalid scan reminder timeframe');
+      throw new Error('invalid reminder timeframe');
     }
     addReminderRequestToStats();
-    return addScanReminder(id, { timeframe, remindAt });
+    return addReminder(id, { timeframe, remindAt });
   } catch (err) {
     throw err;
   }
 }
 
-export function removeUserScanReminder(id) {
-  return removeScanReminder(id);
+export function removeUserReminder(id) {
+  return removeReminder(id);
 }
 
 export async function getReferralStats(id) {

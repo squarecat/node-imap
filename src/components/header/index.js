@@ -1,6 +1,7 @@
 import './header.module.scss';
 
 import Credits from './credits';
+import Reminder from './reminder';
 import { Link } from 'gatsby';
 import NotificationsDropdown from './notifications';
 import React from 'react';
@@ -13,6 +14,7 @@ export default ({ loaded }) => {
   const [{ organisationId }] = useUser(({ organisationId }) => ({
     organisationId
   }));
+
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/login/" styleName="header-logo">
@@ -20,6 +22,7 @@ export default ({ loaded }) => {
       </Link>
       <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
+        <Reminder />
         {organisationId ? null : <Credits />}
         <NotificationsDropdown />
         <SettingsDropdown />

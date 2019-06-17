@@ -1,6 +1,6 @@
 import {
   addToUserIgnoreList,
-  addUserScanReminder,
+  addUserReminder,
   authenticationRequiresTwoFactor,
   createUserTotpToken,
   deactivateUserAccount,
@@ -13,7 +13,7 @@ import {
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserBillingCard,
-  removeUserScanReminder,
+  removeUserReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
   updateUserPassword,
@@ -89,9 +89,6 @@ export default app => {
         requiresTwoFactorAuth,
         hasScanned: scans ? !!scans.length : false,
         lastScan: scans.length ? scans[scans.length - 1] : null,
-        lastPaidScanType: paidScans.length
-          ? paidScans[paidScans.length - 1].scanType
-          : null,
         reminder,
         preferences,
         loginProvider,
@@ -255,9 +252,9 @@ export default app => {
     let newUser = user;
     try {
       if (op === 'add') {
-        newUser = await addUserScanReminder(id, timeframe);
+        newUser = await addUserReminder(id, timeframe);
       } else if (op === 'remove') {
-        newUser = await removeUserScanReminder(id);
+        newUser = await removeUserReminder(id);
       } else {
         logger.error(`user-rest: reminder patch op not supported`);
       }

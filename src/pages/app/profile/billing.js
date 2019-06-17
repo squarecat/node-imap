@@ -199,7 +199,7 @@ function Packages({ onClickBuy }) {
         );
       })}
       <p>
-        Pssst - Currently your inbox contains approximately{' '}
+        Psst - Currently your inbox contains approximately{' '}
         <TextImportant>{count} subscription emails</TextImportant> that you
         haven't unsubscribed from yet. Bear that in mind when buying a package!
       </p>
@@ -410,14 +410,14 @@ function getStatus({ attempted, paid, refunded }) {
   return <span styleName="invoice-status invoice--paid">Paid</span>;
 }
 
-function updateAutoBuy(autoBuy) {
-  return request('/api/me/billing', {
-    method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
-    body: JSON.stringify({ op: 'update-autobuy', value: autoBuy })
-  });
-}
+// function updateAutoBuy(autoBuy) {
+//   return request('/api/me/billing', {
+//     method: 'PATCH',
+//     cache: 'no-cache',
+//     credentials: 'same-origin',
+//     headers: {
+//       'Content-Type': 'application/json; charset=utf-8'
+//     },
+//     body: JSON.stringify({ op: 'update-autobuy', value: autoBuy })
+//   });
+// }

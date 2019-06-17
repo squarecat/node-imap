@@ -431,7 +431,7 @@ export async function updateIgnoreList(id, { action, value }) {
   }
 }
 
-export async function addScanReminder(id, { timeframe, remindAt }) {
+export async function addReminder(id, { timeframe, remindAt }) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -457,7 +457,7 @@ export async function addScanReminder(id, { timeframe, remindAt }) {
   }
 }
 
-export async function removeScanReminder(id) {
+export async function removeReminder(id) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
