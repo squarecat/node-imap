@@ -45,7 +45,7 @@ const activityEnum = {
     return `You purchased a package of ${data.credits} credits.`;
   },
   removeAdditionalAccount: ({ data }) =>
-    `You removed a connected account (${_capitalize(data.provider)}).`,
+    `You removed a connected account - ${data.email}.`,
   addedToOrganisation: ({ data }) =>
     `You added the account ${data.email} to your organistion ${data.name}.`,
   removedFromOrganisation: ({ data }) =>

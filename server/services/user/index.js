@@ -718,12 +718,12 @@ export async function updateUserMarketingConsent(
 
 export async function deactivateUserAccount(user) {
   try {
-    logger.info(`user-service: deactivating user account ${id}`);
+    logger.info(`user-service: deactivating user account ${user.id}`);
 
     const {
       id,
       email,
-      provider,
+      loginProvider,
       keys,
       organisationId,
       organisationAdmin
@@ -731,11 +731,15 @@ export async function deactivateUserAccount(user) {
     const { refreshToken } = keys;
 
     if (organisationAdmin) {
+      logger.error(
+        `user-service: cannot deactivate account, user is admin of organisation ${organisationId}`
+      );
       throw new Error(
         'cannot deactivate account - user is an organisation admin'
       );
     }
 
+    logger.debug(`user-service: removing user accounts...`);
     await Promise.all(
       user.accounts.map(async a => {
         removeUserAccount(user, a.email);
@@ -743,12 +747,25 @@ export async function deactivateUserAccount(user) {
     );
 
     if (organisationId) {
+      logger.debug(
+        `user-service: removing user from organisation ${organisationId}...`
+      );
       await removeUserFromOrganisation({ email });
     }
-    await revokeToken({ provider, refreshToken });
+
+    if (loginProvider !== 'password') {
+      logger.debug(`user-service: revoking token for ${loginProvider}...`);
+      await revokeToken({ provider: loginProvider, refreshToken });
+    }
+
+    logger.debug(`user-service: removing user ${id}...`);
     await removeUser(id);
+
+    logger.debug(`user-service: removing newsletter subscriber...`);
     removeNewsletterSubscriber(email);
     addUserAccountDeactivatedToStats();
+
+    logger.debug(`user-service: deactivating account - done`);
   } catch (err) {
     logger.error(`user-service: error deactivating user account ${user.id}`);
     throw err;
@@ -767,20 +784,24 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
   }
 }
 
-export async function removeUserAccount(user, email) {
+export async function removeUserAccount(user, accountEmail) {
   try {
     const { id: userId, accounts, organisationId } = user;
 
-    const account = accounts.find(e => e.email === email);
+    const account = accounts.find(e => e.email === accountEmail);
 
     const { id: accountId, provider, keys } = account;
     const { refreshToken } = keys;
 
     await revokeToken({ provider, refreshToken });
-    const updatedUser = await removeAccount(userId, { accountId, email });
+    const updatedUser = await removeAccount(userId, {
+      accountId,
+      email: accountEmail
+    });
     addActivityForUser(userId, 'removeAdditionalAccount', {
       id: accountId,
-      provider
+      provider,
+      email: accountEmail
     });
 
     if (organisationId) {
@@ -827,9 +848,9 @@ export async function authenticateUser({ email, password }) {
   }
 }
 
-export async function getUserLoginProvider({ email }) {
+export async function getUserLoginProvider({ hashedEmail }) {
   try {
-    return getLoginProvider(email);
+    return getLoginProvider(hashedEmail);
   } catch (err) {
     throw err;
   }

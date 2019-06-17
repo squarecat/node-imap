@@ -439,7 +439,7 @@ export default app => {
     async (req, res, next) => {
       const { hashedEmail } = req.params;
       try {
-        const strat = await getUserLoginProvider({ email: hashedEmail });
+        const strat = await getUserLoginProvider({ hashedEmail });
         if (!strat) {
           return res.status(404).send();
         }
