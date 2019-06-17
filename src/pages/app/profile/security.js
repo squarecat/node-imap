@@ -6,15 +6,16 @@ import {
   FormLabel,
   FormNotification
 } from '../../../components/form';
-import React, { useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 
 import Button from '../../../components/btn';
+import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
 import ProfileLayout from './layout';
-import SetupTwoFactorAuthModal from '../../../components/modal/create-2fa';
+import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
 import { TextImportant } from '../../../components/text';
-import VerifyTwoFacorAuthModal from '../../../components/modal/verify-2fa';
+import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
@@ -64,10 +65,40 @@ function TwoFactorAuth() {
       requiresTwoFactorAuth: u.requiresTwoFactorAuth
     })
   );
+  const { open: openModal } = useContext(ModalContext);
 
-  const [is2faSetup, show2faSetup] = useState(false);
-  const [is2faVerify, show2faVerify] = useState(false);
+  const { SetupModal, VerifyModal } = useMemo(
+    () => ({
+      SetupModal: <SetupTwoFactorAuthModal />,
+      VerifyModal: (
+        <VerifyTwoFacorAuthModal action={token => removeTwoFactorAuth(token)} />
+      )
+    }),
+    []
+  );
 
+  const open2faSetup = useCallback(
+    () => {
+      const onClose = ({ verified }) => {
+        if (verified) {
+          setRequiresTwoFactorAuth(true);
+        }
+      };
+      openModal(SetupModal, { dismissable: false, onClose });
+    },
+    [SetupModal, openModal, setRequiresTwoFactorAuth]
+  );
+  const open2faVerify = useCallback(
+    () => {
+      const onClose = ({ verified }) => {
+        if (verified) {
+          setRequiresTwoFactorAuth(false);
+        }
+      };
+      openModal(VerifyModal, { dismissable: false, onClose });
+    },
+    [VerifyModal, openModal, setRequiresTwoFactorAuth]
+  );
   return (
     <div styleName="security-section two-factor-auth">
       <div styleName="two-factor-auth-content">
@@ -80,59 +111,40 @@ function TwoFactorAuth() {
         </p>
       </div>
       <Table>
-        <TableRow>
-          <TableCell>Authenticator app</TableCell>
-          <TableCell>
-            <TextImportant>
-              {requiresTwoFactorAuth ? 'Enabled' : 'Disabled'}
-            </TextImportant>
-          </TableCell>
-          <TableCell>
-            {requiresTwoFactorAuth ? (
-              <Button
-                smaller
-                compact
-                muted
-                basic
-                onClick={() => show2faVerify(true)}
-              >
-                Remove
-              </Button>
-            ) : (
-              <Button
-                smaller
-                compact
-                muted
-                basic
-                onClick={() => show2faSetup(true)}
-              >
-                Setup
-              </Button>
-            )}
-          </TableCell>
-        </TableRow>
+        <tbody>
+          <TableRow>
+            <TableCell>Authenticator app</TableCell>
+            <TableCell>
+              <TextImportant>
+                {requiresTwoFactorAuth ? 'Enabled' : 'Disabled'}
+              </TextImportant>
+            </TableCell>
+            <TableCell>
+              {requiresTwoFactorAuth ? (
+                <Button
+                  smaller
+                  compact
+                  muted
+                  basic
+                  onClick={() => open2faVerify()}
+                >
+                  Remove
+                </Button>
+              ) : (
+                <Button
+                  smaller
+                  compact
+                  muted
+                  basic
+                  onClick={() => open2faSetup()}
+                >
+                  Setup
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        </tbody>
       </Table>
-      {is2faSetup ? (
-        <SetupTwoFactorAuthModal
-          onClose={({ verified }) => {
-            show2faSetup(false);
-            if (verified) {
-              setRequiresTwoFactorAuth(true);
-            }
-          }}
-        />
-      ) : null}
-      {is2faVerify ? (
-        <VerifyTwoFacorAuthModal
-          action={token => removeTwoFactorAuth(token)}
-          onClose={({ verified }) => {
-            show2faVerify(false);
-            if (verified) {
-              setRequiresTwoFactorAuth(false);
-            }
-          }}
-        />
-      ) : null}
     </div>
   );
 }

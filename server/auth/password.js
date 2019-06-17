@@ -123,9 +123,6 @@ function handleLoginError(res, err) {
   if (err.message === 'user not found or password incorrect') {
     message = `User not found or the password is incorrect`;
   }
-
-  logger.warn('login error');
-  logger.warn(err);
   return res.status(400).send({
     message,
     success: false

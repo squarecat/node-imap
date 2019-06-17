@@ -110,7 +110,7 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
     windowHeight = selectCardHeight;
   }
   if (state.error) {
-    windowHeight = windowHeight + 40;
+    windowHeight = windowHeight + 50;
   }
 
   const classes = cx('hold-onto-your-butts-we-are-logging-in', {

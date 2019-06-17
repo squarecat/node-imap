@@ -56,7 +56,7 @@ $active-bg-color: #ffc7c1;
     transform: rotateY(0);
   }
 
-  @media (max-width: 400px) {
+  @media (max-width: 420px) {
     border-radius: 0;
   }
 }
@@ -81,6 +81,10 @@ $active-bg-color: #ffc7c1;
     transform: scale(1);
     opacity: 1;
   }
+
+  @media (max-width: 420px) {
+    max-height: 100% !important;
+  }
 }
 
 .password-login .signup-buttons {
@@ -90,6 +94,11 @@ $active-bg-color: #ffc7c1;
 .beautiful-logo {
   width: 100px;
   margin: 20px auto;
+
+  @media (max-width: 420px) {
+    width: 140px;
+    margin: 30px auto;
+  }
 }
 
 .title {
@@ -101,6 +110,14 @@ $active-bg-color: #ffc7c1;
   a {
     height: 62px;
   }
+}
+
+.sign-up-form,
+.two-fa-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .sign-up-form {
@@ -190,11 +207,19 @@ $active-bg-color: #ffc7c1;
   align-items: center;
   justify-content: space-between;
   width: 90%;
-  margin: 20px auto 0 auto;
+  margin: auto auto 0 auto;
   transition: opacity 0ms 200ms linear;
   opacity: 0;
   [data-active='true'] & {
     opacity: 1;
+  }
+
+  > button {
+    margin-right: 10px;
+
+    &:last-child {
+      margin: 0;
+    }
   }
 }
 
