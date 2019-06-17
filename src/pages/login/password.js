@@ -1,6 +1,11 @@
 import './login.module.scss';
 
-import { FormGroup, FormInput, FormLabel } from '../../components/form';
+import {
+  FormGroup,
+  FormInput,
+  FormLabel,
+  FormNotification
+} from '../../components/form';
 import React, { useContext } from 'react';
 
 import Button from '../../components/btn';
@@ -121,9 +126,9 @@ export default ({
       )}
 
       {state.error ? (
-        <div styleName="error">
-          <p>{state.error}</p>
-        </div>
+        <FormNotification error fluid>
+          {state.error}
+        </FormNotification>
       ) : null}
       <div styleName="signup-buttons">
         <Button

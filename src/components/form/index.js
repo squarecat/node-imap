@@ -161,14 +161,21 @@ export const FormGroup = ({ children, fluid, column, container }) => {
   );
 };
 
-export const FormNotification = ({ children, error, warning, success }) => (
+export const FormNotification = ({
+  children,
+  error,
+  warning,
+  success,
+  ...visProps
+}) => (
   <div
     styleName={cx('form-notification', {
       error,
       warning,
-      success
+      success,
+      fluid: visProps.fluid
     })}
   >
-    <p>{children}</p>
+    <span>{children}</span>
   </div>
 );

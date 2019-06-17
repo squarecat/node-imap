@@ -3,7 +3,7 @@ import './login.module.scss';
 import React, { useContext, useEffect, useState } from 'react';
 
 import Button from '../../components/btn';
-import { FormGroup } from '../../components/form';
+import { FormGroup, FormNotification } from '../../components/form';
 import { LoginContext } from './index';
 import TwoFactorInput from '../../components/2fa';
 import { navigate } from 'gatsby';
@@ -41,9 +41,9 @@ export default () => {
         />
       </FormGroup>
       {state.error ? (
-        <div styleName="error">
-          <p>{state.message || state.error}</p>
-        </div>
+        <FormNotification error fluid>
+          {state.error}
+        </FormNotification>
       ) : null}
       <div styleName="signup-buttons">
         <Button

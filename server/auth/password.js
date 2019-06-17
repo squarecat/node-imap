@@ -38,8 +38,10 @@ export const Strategy = new LocalStrategy(
       if (process.env.NODE_ENV === 'beta') {
         const allowed = await isBetaUser({ email: username });
         if (!allowed) {
-          logger.debug('outlook-auth: user does not have access to the beta');
-          return done({ type: 'beta' }, null);
+          const error = new AuthError('user does not have access to the beta', {
+            errKey: 'beta'
+          });
+          return done(error, null);
         }
       }
       const user = await authenticateUser({ email: username, password });

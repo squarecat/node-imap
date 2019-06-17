@@ -3,10 +3,17 @@ import './text.module.scss';
 import React from 'react';
 import cx from 'classnames';
 
-export const TextLink = ({ children, smaller, undecorated, ...props }) => {
+export const TextLink = ({
+  children,
+  smaller,
+  undecorated,
+  inverted,
+  ...props
+}) => {
   const classes = cx('link', {
     smaller,
-    undecorated
+    undecorated,
+    inverted
   });
   return (
     <a styleName={classes} {...props}>

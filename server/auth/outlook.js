@@ -33,8 +33,10 @@ export const Strategy = new OutlookStrategy(
       if (process.env.NODE_ENV === 'beta') {
         const allowed = await isBetaUser({ email });
         if (!allowed) {
-          logger.debug('outlook-auth: user does not have access to the beta');
-          return done({ type: 'beta' }, null);
+          const error = new AuthError('user does not have access to the beta', {
+            errKey: 'beta'
+          });
+          return done(error, null);
         }
       }
 
@@ -58,7 +60,7 @@ export const Strategy = new OutlookStrategy(
       done(
         new AuthError('failed to create or update user from Outlook', {
           cause: err,
-          type: err.data.type
+          errKey: err.data.errKey
         })
       );
     }
@@ -156,12 +158,12 @@ export default app => {
     req.query = query;
 
     return passport.authenticate('outlook-login', (err, user) => {
-      const baseUrl = `/login?error=true`;
+      const baseErrUrl = `/login?error=true`;
       if (err) {
-        let errUrl = baseUrl;
-        const { id: errId, data } = err.toJSON();
         logger.error('outlook-auth: passport authentication error');
-        errUrl += `&id=${errId}&type=${data.type || 'unknown'}`;
+        const { id: errId, data } = err.toJSON();
+        const errUrl = `${baseErrUrl}&id=${errId}&errKey=${data.errKey ||
+          'unknown'}`;
         return res.redirect(errUrl);
       }
 
@@ -169,7 +171,7 @@ export default app => {
         if (loginErr) {
           logger.error('outlook-auth: login error');
           logger.error(loginErr);
-          return res.redirect(baseUrl);
+          return res.redirect(baseErrUrl);
         }
         setRememberMeCookie(res, {
           username: user.email,

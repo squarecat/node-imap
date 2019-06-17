@@ -326,6 +326,11 @@
   border: 1px solid $color-primary-font;
   margin: 0 auto;
 
+  &.fluid {
+    width: 90%;
+    margin: 10px auto;
+  }
+
   p {
     margin: 0;
   }
@@ -337,8 +342,8 @@
   }
   &.warning {
     color: white;
-    background: $color-bg-error;
-    border: 1px solid $color-text-error;
+    background: $color-bg-warning;
+    border: 1px solid $color-text-warning;
   }
   &.success {
     color: white;

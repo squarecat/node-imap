@@ -10,6 +10,8 @@ import PasswordForm from './password';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
 import { TextImportant } from '../../components/text';
+import { getAuthError } from '../../utils/errors';
+import { FormNotification } from '../../components/form';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
@@ -32,6 +34,13 @@ if (typeof window !== 'undefined') {
   }
 }
 
+function resetUrlParams(action) {
+  if (typeof window !== 'undefined') {
+    window.history.replaceState({}, '', `/${action}`);
+  }
+  error = null;
+}
+
 if (strategy === 'password') {
   defaultStep = 'enter-email';
 } else if (strategy === 'reset') {
@@ -44,7 +53,7 @@ const selectCardHeight = 690;
 const loginEmailCardHeight = 480;
 const loginWithPasswordHeight = 550;
 const loginNewUserHeight = 580;
-const existingStratHeight = 440;
+const existingStratHeight = 460;
 const twoFactorAuthHeight = 410;
 const forgotPasswordHeight = 480;
 const resetPasswordHeight = 640;
@@ -61,6 +70,8 @@ function loginReducer(state, action) {
     case 'set-loading':
       return { ...state, loading: data };
     case 'set-step': {
+      resetUrlParams(state.register ? 'signup' : 'login');
+
       return {
         ...state,
         step: action.data,
@@ -160,7 +171,7 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                     {authButtons({ dispatch, action })}
                   </div>
                   {register ? (
-                    <p>
+                    <p style={{ marginBottom: '10px' }}>
                       Already have an account?{' '}
                       <Link state={{ fromSignup: true }} to="/login">
                         Sign in
@@ -168,7 +179,7 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                       .
                     </p>
                   ) : (
-                    <p>
+                    <p style={{ marginBottom: '10px' }}>
                       Don't have an account yet?{' '}
                       <Link state={{ fromLogin: true }} to="/signup">
                         Sign up
@@ -327,6 +338,7 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                     <span styleName="provider-label">
                       {state.existingProvider}
                     </span>
+                    .
                   </p>
                   <div styleName="existing-provider-btn">
                     <AuthButton
@@ -368,39 +380,15 @@ function getError(error) {
   if (!error) return null;
 
   const params = new URLSearchParams(window.location.search);
-  const type = params.get('type');
+  const errKey = params.get('errKey');
   const id = params.get('id');
-  if (type === 'beta') {
-    return (
-      <div styleName="error">
-        <p>
-          You do not have access to the beta.{' '}
-          <a styleName="beta-link" href="/join-beta">
-            Request access here
-          </a>
-          .
-        </p>
-      </div>
-    );
-  }
-  if (type === 'auth-provider-error') {
-    return (
-      <div styleName="error">
-        <p>
-          That email address has already been used to sign in with a different
-          provider. Maybe you signed in using a password last time?
-        </p>
-      </div>
-    );
-  }
+
+  const errContent = getAuthError({ id, data: { errKey } });
+
   return (
-    <div styleName="error">
-      <p>
-        Something went wrong logging you in. Please try again or send us a
-        message.
-      </p>
-      <p>{`Error code: ${id}`}</p>
-    </div>
+    <FormNotification error fluid>
+      {errContent}
+    </FormNotification>
   );
 }
 

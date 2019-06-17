@@ -1,4 +1,5 @@
 import CreditModal from '../components/modal/credits';
+import { TextLink } from '../components/text';
 import React from 'react';
 
 export function getConnectError(reason) {
@@ -25,22 +26,44 @@ export function getAuthError(err = {}, type) {
   if (type === 'reset') {
     msg = ' resetting your password';
   }
+
   const defaultMsg = `Something went wrong${msg}. Please try again or send us a message.`;
   if (!err) return defaultMsg;
 
-  if (err.data && err.data.errKey) {
-    switch (err.data.errKey) {
-      case 'not-found':
-        return 'User not found or password is incorrect.';
-      case 'invalid-reset-code':
-        return 'That reset code is invalid.';
-      case 'expired-reset-code':
-        return 'That reset code has expired.';
-      default:
-        return defaultMsg;
-    }
+  const { id, data = {} } = err;
+
+  switch (data.errKey) {
+    case 'not-found':
+      return <span>User not found or password is incorrect.</span>;
+    case 'invalid-reset-code':
+      return <span>That reset code is invalid.</span>;
+    case 'expired-reset-code':
+      return <span>That reset code has expired.</span>;
+    case 'auth-provider-error':
+      return (
+        <span>
+          That email address has already been used to sign in with a different
+          provider. Maybe you signed in using a password last time?
+        </span>
+      );
+    case 'beta':
+      return (
+        <span>
+          You do not have access to the beta.{' '}
+          <TextLink href="/join-beta" inverted>
+            Request access here
+          </TextLink>
+          .
+        </span>
+      );
+    default:
+      return (
+        <>
+          <span>{defaultMsg}</span>
+          {id ? <span>{`Error code: ${id}`}</span> : null}
+        </>
+      );
   }
-  return defaultMsg;
 }
 
 export function getUnsubscribeAlert({
