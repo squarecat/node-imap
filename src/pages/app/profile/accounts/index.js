@@ -1,11 +1,12 @@
 import './accounts.module.scss';
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import ConnectButton from '../../../../components/connect-account/btn';
 import ConnectedAccountList from '../../../../components/connect-account/list';
 import { ExternalIcon } from '../../../../components/icons';
 import { FormNotification } from '../../../../components/form';
+import { ModalContext } from '../../../../providers/modal-provider';
 import ProfileLayout from '../layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
@@ -18,7 +19,7 @@ const revokeUrlForGoogle =
   'https://security.google.com/settings/security/permissions';
 const revokeUrlForOutlook = 'https://account.live.com/consent/Manage';
 
-export default () => {
+const Accounts = () => {
   const [
     { accounts = [], primaryEmail, loginProvider },
     { update: updateUser, load: loadUser }
@@ -27,16 +28,20 @@ export default () => {
     primaryEmail: email,
     loginProvider
   }));
-
-  const [showWarningModal, toggleWarningModal] = useState(false);
-  const [warningModalData, setWarningModalData] = useState(null);
+  const { open: openModal } = useContext(ModalContext);
   const [error, setError] = useState(false);
   const [removingAccount, toggleRemovingAccount] = useState({});
 
   const onClickRemoveAccount = async email => {
     const account = accounts.find(e => e.email === email);
-    setWarningModalData({ email, provider: account.provider });
-    toggleWarningModal(true);
+    const warningModalData = { email, provider: account.provider };
+    openModal(
+      <WarningModal
+        onConfirm={() => onClickWarningConfirm(warningModalData)}
+        content={modalContent(warningModalData)}
+        confirmText={'Confirm'}
+      />
+    );
   };
 
   const onClickWarningConfirm = async ({ email }) => {
@@ -91,7 +96,7 @@ export default () => {
   }
 
   return (
-    <ProfileLayout pageName="Accounts">
+    <>
       <div styleName="accounts-section">
         <h2>Connected accounts</h2>
         {connectedAccountsContent}
@@ -111,19 +116,7 @@ export default () => {
         />
         {error ? <FormNotification error>{error}</FormNotification> : null}
       </div>
-      {showWarningModal ? (
-        <WarningModal
-          shown={true}
-          onClose={() => toggleWarningModal(false)}
-          onConfirm={() => {
-            toggleWarningModal(false);
-            onClickWarningConfirm(warningModalData);
-          }}
-          content={modalContent(warningModalData)}
-          confirmText={'Confirm'}
-        />
-      ) : null}
-    </ProfileLayout>
+    </>
   );
 };
 
@@ -163,8 +156,8 @@ function modalContent({ email, provider }) {
         </p>
       ) : (
         <p>
-          We will revoke Leave Me Alone Google App permissions. You can check by
-          visiting your{' '}
+          We will also revoke our token to access this Google account. You can
+          double check this by visiting your{' '}
           <a
             href={revokeUrlForGoogle}
             target="_blank"
@@ -179,3 +172,11 @@ function modalContent({ email, provider }) {
     </>
   );
 }
+
+export default () => {
+  return (
+    <ProfileLayout pageName="Accounts">
+      <Accounts />
+    </ProfileLayout>
+  );
+};

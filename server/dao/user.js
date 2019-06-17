@@ -787,7 +787,7 @@ export async function getLoginProvider(hashedEmail) {
     );
     if (!user) return null;
     const isLoginEmail = hashEmail(user.email) === hashedEmail;
-    return isLoginEmail ? user.loginProvider : 'unknown';
+    return isLoginEmail ? user.loginProvider : 'connected-account';
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');
     logger.error(err);

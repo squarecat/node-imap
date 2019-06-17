@@ -29,20 +29,30 @@ import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 import subMonths from 'date-fns/sub_months';
 
-export async function* fetchMail({ userId, from, accountIds = [] }) {
+export async function* fetchMail({ userId, accountFilters = [] }) {
   const user = await getUserById(userId);
   let { accounts } = user;
   let accountScanData = [];
   let accountOccurrences = {};
   let dupes = [];
-  // if account ids is provided then only fetch from those accounts
+  // if account filters are provided then only fetch from those accounts
   // otherwise search from all accounts
-  if (accountIds) {
-    accounts = accounts.filter(ac => accountIds.includes(ac.id));
+  if (accountFilters.length) {
+    accounts = accounts.reduce((out, ac) => {
+      const filter = accountFilters.find(af => ac.id === af.id);
+      if (!filter) return out;
+      return [
+        ...out,
+        {
+          ...ac,
+          filter
+        }
+      ];
+    }, []);
   }
   try {
     const iterators = await Promise.all(
-      accounts.map(account => fetchMailByAccount({ account, user, from }))
+      accounts.map(account => fetchMailByAccount({ account, user }))
     );
     for (let iter of iterators) {
       let next = await iter.next();
@@ -67,28 +77,23 @@ export async function* fetchMail({ userId, from, accountIds = [] }) {
   }
 }
 
-export async function* fetchMailByAccount({
-  user,
-  account,
-  from = subMonths(Date.now(), 6),
-  ignore = false
-}) {
-  const { provider } = account;
-  let it;
-  let fromDate = from;
+export async function* fetchMailByAccount({ user, account, ignore = false }) {
+  const { provider, filter } = account;
+  let { from } = filter;
   // from should be max 6 months
   const sixMonthsAgo = subMonths(Date.now(), 6);
-  if (!fromDate || sixMonthsAgo > fromDate) {
-    fromDate = sixMonthsAgo;
+  if (!from || sixMonthsAgo > from) {
+    from = sixMonthsAgo;
   }
+  let it;
   try {
     if (provider === 'google') {
       it = await fetchMailFromGmail(
-        { user, account, from: fromDate },
+        { user, account, from },
         { strategy: 'api', batch: true }
       );
     } else if (provider === 'outlook') {
-      it = await fetchMailFromOutlook({ user, account, from: fromDate });
+      it = await fetchMailFromOutlook({ user, account, from });
     } else {
       throw new Error('mail-service unknown provider');
     }
@@ -108,7 +113,7 @@ export async function* fetchMailByAccount({
     } = next.value;
 
     const scanData = {
-      from: fromDate,
+      from,
       totalEmails: totalMail,
       totalUnsubscribableEmails: totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail,

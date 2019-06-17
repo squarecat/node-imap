@@ -1,3 +1,4 @@
+import { AuthError, ConnectAccountError } from '../../utils/errors';
 import {
   addAccount,
   addActivity,
@@ -47,7 +48,6 @@ import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
 } from '../../utils/emails/newsletter';
-import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import {
   addUserToOrganisation,
   canUserJoinOrganisation,
@@ -58,7 +58,6 @@ import {
 } from '../organisation';
 import { getMilestone, updateMilestoneCompletions } from '../milestones';
 
-import { ConnectAccountError } from '../../utils/errors';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../../utils/stripe';
@@ -66,6 +65,7 @@ import { listPaymentsForUser } from '../payments';
 import logger from '../../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
+import { sendReferralInviteMail } from '../../utils/emails/transactional';
 import { sendToUser } from '../../rest/socket';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
@@ -90,12 +90,32 @@ export async function getUserById(id) {
   }
 }
 
-export function createOrUpdateUserFromOutlook(userData = {}, keys) {
-  return createOrUpdateUser(userData, keys, 'outlook');
+export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
+  try {
+    const user = await getUserByEmail(userData.email);
+    if (user.loginProvider !== 'outlook') {
+      throw new AuthError('user already exists with a different provider', {
+        type: 'auth-provider-error'
+      });
+    }
+    return createOrUpdateUser(userData, keys, 'outlook');
+  } catch (err) {
+    throw err;
+  }
 }
 
-export function createOrUpdateUserFromGoogle(userData = {}, keys) {
-  return createOrUpdateUser(userData, keys, 'google');
+export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
+  try {
+    const user = await getUserByEmail(userData.email);
+    if (user.loginProvider !== 'google') {
+      throw new AuthError('user already exists with a different provider', {
+        type: 'auth-provider-error'
+      });
+    }
+    return createOrUpdateUser(userData, keys, 'google');
+  } catch (err) {
+    throw err;
+  }
 }
 
 async function createOrUpdateUser(userData = {}, keys, provider) {
@@ -401,7 +421,7 @@ async function getReferrer(referralCode) {
 // to an organisation based on
 // 1. with invite code we still want to check they are allowed to join that org
 // 2. no invite code get the first org they match by being invited or matching domain
-async function getOrganisationForUserEmail(inviteCode, { email }) {
+async function getOrganisationForUserEmail(inviteCode, email) {
   logger.debug(`user-service: getting organisation for user email`);
 
   let organisation;

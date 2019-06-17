@@ -10,16 +10,16 @@ import {
   getUserLoginProvider,
   getUserNotifications,
   getUserPayments,
+  inviteReferralUser,
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserBillingCard,
   removeUserScanReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
-  updateUserPassword,
-  updateUserPreferences,
   updateUserAutoBuy,
-  inviteReferralUser
+  updateUserPassword,
+  updateUserPreferences
 } from '../services/user';
 
 import Joi from 'joi';

@@ -74,16 +74,6 @@ export default ({ pageName, children }) => {
               </li>
               <li>
                 <Link
-                  to="/app/profile/history/scans"
-                  styleName="profile-nav-link"
-                  activeClassName="profile-nav-link--active"
-                >
-                  <SearchIcon width="16" height="16" />
-                  <span>Scan history</span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/app/profile/history/activity"
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"

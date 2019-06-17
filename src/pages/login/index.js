@@ -39,7 +39,7 @@ const selectCardHeight = 690;
 const loginEmailCardHeight = 480;
 const loginWithPasswordHeight = 550;
 const loginNewUserHeight = 580;
-const existingStratHeight = 470;
+const existingStratHeight = 440;
 
 // steps;
 // 1. select-strategy
@@ -258,13 +258,31 @@ const LoginPage = ({ register, transitionStatus, step = 'select' }) => {
                 <img src={logoUrl} alt="logo" />
               </div>
               <h1 styleName="title">Login to Leave Me Alone</h1>
-              <p>
-                That email address has already been used to sign in with{' '}
-                <span styleName="provider-label">{state.existingProvider}</span>
-              </p>
-              <div styleName="existing-provider-btn">
-                <AuthButton provider={state.existingProvider} action={action} />
-              </div>
+              {state.existingProvider === 'connected-account' ? (
+                <>
+                  <p>
+                    That email address already attached to another account, if
+                    you want to use it for password login then first remove it
+                    from the other account.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    That email address has already been used to sign in with{' '}
+                    <span styleName="provider-label">
+                      {state.existingProvider}
+                    </span>
+                  </p>
+                  <div styleName="existing-provider-btn">
+                    <AuthButton
+                      provider={state.existingProvider}
+                      action={action}
+                    />
+                  </div>
+                </>
+              )}
+
               <div styleName="signup-buttons">
                 <button
                   type="button"
@@ -295,7 +313,9 @@ export default LoginPage;
 function getError(error) {
   if (!error) return null;
 
-  const type = new URLSearchParams(window.location.search).get('type');
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get('type');
+  const id = params.get('id');
   if (type === 'beta') {
     return (
       <div styleName="error">
@@ -309,12 +329,23 @@ function getError(error) {
       </div>
     );
   }
+  if (type === 'auth-provider-error') {
+    return (
+      <div styleName="error">
+        <p>
+          That email address has already been used to sign in with a different
+          provider. Maybe you signed in using a password last time?
+        </p>
+      </div>
+    );
+  }
   return (
     <div styleName="error">
       <p>
         Something went wrong logging you in. Please try again or send us a
         message.
       </p>
+      <p>{`Error code: ${id}`}</p>
     </div>
   );
 }

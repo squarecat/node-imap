@@ -10,7 +10,7 @@ export function addOrUpdateOccurrences(userId, dupeInfo) {
     sender: dupeInfo[d].sender,
     occurrences: dupeInfo[d].occurrences,
     isSpam: dupeInfo[d].isSpam,
-    isTrash: dupeInfo[d].occurrences.isTrash
+    isTrash: dupeInfo[d].isTrash
   }));
   return updateOccurrences(userId, occurrences, '6m');
 }
