@@ -7,95 +7,95 @@ import { payments } from 'getconfig';
 
 const stripe = Stripe(payments.secretKey);
 
-export async function createPayment({
-  productPrice,
-  productLabel,
-  quantity = 1,
-  customerId,
-  coupon,
-  gift = false,
-  provider
-}) {
-  try {
-    const description = getDescription({
-      quantity,
-      productLabel,
-      provider,
-      gift
-    });
-    const totalAmount = productPrice * quantity;
+// export async function createPayment({
+//   productPrice,
+//   productLabel,
+//   quantity = 1,
+//   customerId,
+//   coupon,
+//   gift = false,
+//   provider
+// }) {
+//   try {
+//     const description = getDescription({
+//       quantity,
+//       productLabel,
+//       provider,
+//       gift
+//     });
+//     const totalAmount = productPrice * quantity;
 
-    const payment = await stripe.charges.create({
-      customer: customerId,
-      amount: totalAmount,
-      description,
-      currency: 'usd',
-      metadata: {
-        coupon
-      }
-    });
+//     const payment = await stripe.charges.create({
+//       customer: customerId,
+//       amount: totalAmount,
+//       description,
+//       currency: 'usd',
+//       metadata: {
+//         coupon
+//       }
+//     });
 
-    logger.info('stripe: created charge');
-    return payment;
-  } catch (err) {
-    logger.error('stripe: failed to create charge');
-    logError(err);
-    throw err;
-  }
-}
+//     logger.info('stripe: created charge');
+//     return payment;
+//   } catch (err) {
+//     logger.error('stripe: failed to create charge');
+//     logError(err);
+//     throw err;
+//   }
+// }
 
-export async function createInvoice({
-  productPrice,
-  productLabel,
-  quantity = 1,
-  customerId,
-  coupon,
-  address,
-  provider,
-  gift = false
-}) {
-  const { country } = address;
-  try {
-    const description = getDescription({
-      quantity,
-      productLabel,
-      provider,
-      gift
-    });
-    const { vatRate, vatAmount } = await getTaxInfo({
-      country,
-      amount: productPrice
-    });
+// export async function createInvoice({
+//   productPrice,
+//   productLabel,
+//   quantity = 1,
+//   customerId,
+//   coupon,
+//   address,
+//   provider,
+//   gift = false
+// }) {
+//   const { country } = address;
+//   try {
+//     const description = getDescription({
+//       quantity,
+//       productLabel,
+//       provider,
+//       gift
+//     });
+//     const { vatRate, vatAmount } = await getTaxInfo({
+//       country,
+//       amount: productPrice
+//     });
 
-    const newProductPrice = (productPrice - vatAmount).toFixed();
+//     const newProductPrice = (productPrice - vatAmount).toFixed();
 
-    // create invoice line item
-    await stripe.invoiceItems.create({
-      customer: customerId,
-      quantity,
-      unit_amount: newProductPrice,
-      currency: 'usd',
-      description
-    });
-    // invoice line item will automatically be
-    // applied to this invoice
-    const payment = await stripe.invoices.create({
-      customer: customerId,
-      billing: 'charge_automatically',
-      auto_advance: true,
-      tax_percent: vatRate,
-      metadata: {
-        coupon
-      }
-    });
-    logger.info('stripe: created invoice');
-    return payment;
-  } catch (err) {
-    logger.error('stripe: failed to create invoice');
-    logError(err);
-    throw err;
-  }
-}
+//     // create invoice line item
+//     await stripe.invoiceItems.create({
+//       customer: customerId,
+//       quantity,
+//       unit_amount: newProductPrice,
+//       currency: 'usd',
+//       description
+//     });
+//     // invoice line item will automatically be
+//     // applied to this invoice
+//     const payment = await stripe.invoices.create({
+//       customer: customerId,
+//       billing: 'charge_automatically',
+//       auto_advance: true,
+//       tax_percent: vatRate,
+//       metadata: {
+//         coupon
+//       }
+//     });
+//     logger.info('stripe: created invoice');
+//     return payment;
+//   } catch (err) {
+//     logger.error('stripe: failed to create invoice');
+//     logError(err);
+//     throw err;
+//   }
+// }
 
 export async function getPaymentCoupon(name) {
   try {
@@ -232,6 +232,7 @@ function getCountryCode(country) {
   }
   return countryEntry.code;
 }
+
 async function getTaxInfo({ amount, country }) {
   const countryCode = getCountryCode(country);
   if (!countryCode || countryCode === 'US') {
@@ -263,14 +264,14 @@ async function getTaxInfo({ amount, country }) {
   }
 }
 
-function getDescription({ quantity, productLabel, provider, gift }) {
-  if (gift) {
-    return `Payment for ${quantity} ${productLabel} gift scan${
-      quantity > 1 ? 's' : ''
-    }`;
-  }
-  return `Payment for ${productLabel} scan for ${_capitalize(provider)}`;
-}
+// function getDescription({ quantity, productLabel, provider, gift }) {
+//   if (gift) {
+//     return `Payment for ${quantity} ${productLabel} gift scan${
+//       quantity > 1 ? 's' : ''
+//     }`;
+//   }
+//   return `Payment for ${productLabel} scan for ${_capitalize(provider)}`;
+// }
 
 export async function createPaymentIntent(
   paymentMethodId,
