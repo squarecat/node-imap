@@ -9459,9 +9459,9 @@ passport-oauth2@1.x.x:
     uid2 "0.0.x"
     utils-merge "1.x.x"
 
-passport-outlook@^2.2.0:
+passport-outlook@squarecat/passport-outlook:
   version "2.2.0"
-  resolved "https://registry.yarnpkg.com/passport-outlook/-/passport-outlook-2.2.0.tgz#329bf27764ca1dd5bebb90104783f05db4568edf"
+  resolved "https://codeload.github.com/squarecat/passport-outlook/tar.gz/d07336edcf70f0d850cabc0ae87f3e8b1dc1c881"
   dependencies:
     passport-oauth2 "1.x.x"
     request "2.x.x"

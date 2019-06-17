@@ -17,6 +17,14 @@ import refresh from 'passport-oauth2-refresh';
 const { outlook } = auth;
 logger.info(`outlook-auth: redirecting to ${outlook.loginRedirect}`);
 
+// https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow
+// login: The user should be prompted to reauthenticate.
+// select_account:
+// The user is prompted to select an account, interrupting single sign on.
+// The user may select an existing signed-in account, enter their credentials
+// for a remembered account, or choose to use a different account altogether.
+const PROMPT_TYPE = 'select_account';
+
 export const Strategy = new OutlookStrategy(
   {
     clientID: outlook.clientId,
@@ -139,14 +147,16 @@ export default app => {
   app.get(
     '/auth/outlook',
     passport.authenticate('outlook-login', {
-      scope: outlook.scopes
+      scope: outlook.scopes,
+      prompt: PROMPT_TYPE
     })
   );
 
   app.get(
     '/auth/outlook/connect',
     passport.authenticate('connect-account-outlook', {
-      scope: outlook.scopes
+      scope: outlook.scopes,
+      prompt: PROMPT_TYPE
     })
   );
 

@@ -17,6 +17,10 @@ import refresh from 'passport-oauth2-refresh';
 const { google } = auth;
 logger.info(`google-auth: redirecting to ${google.loginRedirect}`);
 
+// Prompt the user to select an account.
+// https://developers.google.com/identity/protocols/OAuth2WebServer
+const PROMPT_TYPE = 'select_account';
+
 export const Strategy = new GoogleStrategy(
   {
     clientID: google.clientId,
@@ -150,9 +154,7 @@ export default app => {
     '/auth/google',
     passport.authenticate('google-login', {
       scope: google.scopes,
-      // Prompt the user to select an account.
-      // https://developers.google.com/identity/protocols/OAuth2WebServer
-      prompt: 'consent', // TODO CHANGE BACK TO select_account before phase-2 deploy
+      prompt: PROMPT_TYPE,
       accessType: 'offline'
     })
   );
@@ -161,9 +163,7 @@ export default app => {
     '/auth/google/connect',
     passport.authenticate('connect-account-google', {
       scope: google.scopes,
-      // Prompt the user to select an account.
-      // https://developers.google.com/identity/protocols/OAuth2WebServer
-      prompt: 'consent', // TODO CHANGE BACK TO select_account before phase-2 deploy
+      prompt: PROMPT_TYPE,
       accessType: 'offline'
     })
   );
