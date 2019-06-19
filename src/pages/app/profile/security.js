@@ -8,15 +8,16 @@ import {
 } from '../../../components/form';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
+import { TextImportant, TextLink } from '../../../components/text';
 
 import Button from '../../../components/btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
 import ProfileLayout from './layout';
 import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
-import { TextImportant } from '../../../components/text';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
+import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -49,10 +50,16 @@ export default () => {
         </>
       ) : (
         <div styleName="security-section">
-          <h2>Switch to email & password</h2>
-          <p>You currently login with {_capitalize(loginProvider)}.</p>
-          <p>You can switch to email and password instead...</p>
-          <p>Coming soon!</p>
+          <h2>Details</h2>
+          <p>
+            You currently log in with{' '}
+            <TextImportant>{_capitalize(loginProvider)}</TextImportant>.
+          </p>
+          <p>
+            Want to switch to email and password? We don't automate this yet but
+            you can <TextLink onClick={() => openChat()}>contact us</TextLink>{' '}
+            if you'd like to change your account.
+          </p>
         </div>
       )}
     </ProfileLayout>

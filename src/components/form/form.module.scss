@@ -178,7 +178,7 @@
   width: 100%;
   height: 100%;
 
-  &:focus + .form-select-dropdown:not(.basic) {
+  &:focus + .form-select-dropdown:not(.input-basic) {
     border-color: $color-input-border-focus;
 
     .container & {
@@ -186,7 +186,7 @@
     }
   }
 
-  &:focus + .form-select-dropdown.basic {
+  &:focus + .form-select-dropdown.input-basic {
     border-bottom-color: $color-input-border-focus;
     .container & {
       border-bottom-color: $color-input-border;

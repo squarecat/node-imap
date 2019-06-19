@@ -270,7 +270,7 @@ function BillingDetails() {
       <h2>Billing Details</h2>
       {card ? (
         <>
-          <CardDetails card={card} />
+          <CardDetails card={card} padded />
           <Button
             basic
             compact

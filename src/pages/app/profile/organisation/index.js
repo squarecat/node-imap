@@ -304,7 +304,7 @@ function Billing({ organisation }) {
 
         {card ? (
           <>
-            <CardDetails card={billing.card} />
+            <CardDetails card={billing.card} padded />
             <Button basic compact stretch onClick={onClickAddBilling}>
               Change Payment Method
             </Button>

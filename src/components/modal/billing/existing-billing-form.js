@@ -95,17 +95,12 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
     >
       <ModalBody compact>
         <ModalHeader>
-          Use Existing Payment Method
+          Buy Package
           <ModalCloseIcon />
         </ModalHeader>
-        <p>
-          Purchasing a package of{' '}
-          <TextImportant>{state.selectedPackage.credits} credits</TextImportant>
-          .
-        </p>
+        <p>Confirm purchase with your saved payment method:</p>
 
-        <FormLabel inline>Payment method</FormLabel>
-        <FormGroup container>
+        <FormGroup>
           <CardDetails card={billingCard} />
         </FormGroup>
 
@@ -115,13 +110,17 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
           </FormNotification>
         ) : null}
 
-        <TextLink
-          onClick={() =>
-            dispatch({ type: 'set-step', data: 'enter-billing-details' })
-          }
-        >
-          Use a different card
-        </TextLink>
+        <p>
+          Or{' '}
+          <a
+            onClick={() =>
+              dispatch({ type: 'set-step', data: 'enter-billing-details' })
+            }
+          >
+            use a different card
+          </a>
+          .
+        </p>
       </ModalBody>
 
       <ModalPaymentSaveAction
