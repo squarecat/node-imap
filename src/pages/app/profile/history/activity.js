@@ -36,15 +36,17 @@ function ActivityHistory() {
         </p>
         <ErrorBoundary>
           <Table>
-            {sorted.map(activity => {
-              const parsedActivity = parseActivity(activity, { accounts });
-              return (
-                <TableRow key={activity.timestamp}>
-                  <TableCell>{relative(activity.timestamp)}</TableCell>
-                  <TableCell>{parsedActivity}</TableCell>
-                </TableRow>
-              );
-            })}
+            <tbody>
+              {sorted.map(activity => {
+                const parsedActivity = parseActivity(activity, { accounts });
+                return (
+                  <TableRow key={activity.timestamp}>
+                    <TableCell>{relative(activity.timestamp)}</TableCell>
+                    <TableCell>{parsedActivity}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </tbody>
           </Table>
         </ErrorBoundary>
       </div>

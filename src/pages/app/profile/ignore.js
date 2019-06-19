@@ -29,18 +29,25 @@ export default () => {
         </p>
         <ErrorBoundary>
           <Table>
-            {ignoredSenderList.map(sender => {
-              return (
-                <TableRow key={sender}>
-                  <TableCell>{sender}</TableCell>
-                  <TableCell>
-                    <Button compact basic muted onClick={() => remove(sender)}>
-                      Remove
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            <tbody>
+              {ignoredSenderList.map(sender => {
+                return (
+                  <TableRow key={sender}>
+                    <TableCell>{sender}</TableCell>
+                    <TableCell>
+                      <Button
+                        compact
+                        basic
+                        muted
+                        onClick={() => remove(sender)}
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </tbody>
           </Table>
         </ErrorBoundary>
       </div>

@@ -8,6 +8,10 @@
   }
 }
 
+.head {
+  font-weight: bold;
+}
+
 .row {
   border-bottom: 1px solid $color-border-red;
   background-color: $color-red-lightest;
@@ -17,15 +21,18 @@
   border-top: 1px solid rgba(231, 58, 48, 0.1);
 }
 
+.head-cell,
 .cell {
-  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
   padding: 5px 20px;
   height: 65px;
-
   @media (max-width: 500px) {
     padding: 5px;
     height: 50px;
   }
+}
+
+.cell {
+  border-bottom: 1px solid rgba(231, 58, 48, 0.1);
 }
 
 .row:last-child,

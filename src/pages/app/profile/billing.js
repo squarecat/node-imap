@@ -323,36 +323,38 @@ function BillingHistory() {
       </div>
       <ErrorBoundary>
         <Table>
-          {payments.map(invoice => {
-            return (
-              <TableRow key={invoice.date}>
-                <TableCell>{getDate(invoice)}</TableCell>
-                <TableCell>{invoice.description}</TableCell>
-                <TableCell>{getPrice(invoice)}</TableCell>
-                <TableCell>{getStatus(invoice)}</TableCell>
-                <TableCell>
-                  {invoice.invoice_pdf ? (
-                    <a
-                      styleName="invoice-btn"
-                      href={invoice.invoice_pdf}
-                      target="_"
-                    >
-                      Download
-                    </a>
-                  ) : null}
-                  {invoice.receipt_url ? (
-                    <a
-                      styleName="invoice-btn"
-                      href={invoice.receipt_url}
-                      target="_"
-                    >
-                      Receipt
-                    </a>
-                  ) : null}
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          <tbody>
+            {payments.map(invoice => {
+              return (
+                <TableRow key={invoice.date}>
+                  <TableCell>{getDate(invoice)}</TableCell>
+                  <TableCell>{invoice.description}</TableCell>
+                  <TableCell>{getPrice(invoice)}</TableCell>
+                  <TableCell>{getStatus(invoice)}</TableCell>
+                  <TableCell>
+                    {invoice.invoice_pdf ? (
+                      <a
+                        styleName="invoice-btn"
+                        href={invoice.invoice_pdf}
+                        target="_"
+                      >
+                        Download
+                      </a>
+                    ) : null}
+                    {invoice.receipt_url ? (
+                      <a
+                        styleName="invoice-btn"
+                        href={invoice.receipt_url}
+                        target="_"
+                      >
+                        Receipt
+                      </a>
+                    ) : null}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </tbody>
         </Table>
       </ErrorBoundary>
 

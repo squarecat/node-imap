@@ -25,14 +25,10 @@ export default () => {
 
         <p styleName="email-container">
           <span>Signed in with: </span>
-          {loginProvider === 'password' ? null : (
-            <>
-              {getProviderIcon(loginProvider)}
-              <span styleName="email">
-                <TextImportant>{email}</TextImportant>
-              </span>
-            </>
-          )}
+          {loginProvider === 'password' ? null : getProviderIcon(loginProvider)}
+          <span styleName="email">
+            <TextImportant>{email}</TextImportant>
+          </span>
         </p>
       </div>
       <DangerZone organisationAdmin={organisationAdmin} />

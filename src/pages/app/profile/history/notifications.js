@@ -30,14 +30,16 @@ export default function Notifications() {
           </p>
           <ErrorBoundary>
             <Table>
-              {notifications.map(activity => {
-                return (
-                  <TableRow key={activity.timestamp}>
-                    <TableCell>{relative(activity.timestamp)}</TableCell>
-                    <TableCell>{parseActivity(activity)}</TableCell>
-                  </TableRow>
-                );
-              })}
+              <tbody>
+                {notifications.map(activity => {
+                  return (
+                    <TableRow key={activity.timestamp}>
+                      <TableCell>{relative(activity.timestamp)}</TableCell>
+                      <TableCell>{parseActivity(activity)}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </tbody>
             </Table>
           </ErrorBoundary>
         </div>

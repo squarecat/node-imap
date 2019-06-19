@@ -122,7 +122,11 @@
 .profile-section--unpadded {
   padding: 0;
 
-  > p,
+  p:last-child {
+    margin-bottom: 20px;
+  }
+
+  p,
   .unpadded-content {
     padding: 20px 20px 0 20px;
     margin-bottom: 20px;
@@ -148,10 +152,17 @@
 
   .profile-nav {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 0;
     width: 100%;
     border-radius: 10px;
     overflow: hidden;
+  }
+}
+
+@media (max-width: 400px) {
+  .profile-nav-link {
+    font-size: 12px;
+    padding: 10px 5px;
   }
 }

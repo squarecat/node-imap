@@ -110,41 +110,43 @@ function TwoFactorAuth() {
           Authenticaor
         </p>
       </div>
-      <Table>
-        <tbody>
-          <TableRow>
-            <TableCell>Authenticator app</TableCell>
-            <TableCell>
-              <TextImportant>
-                {requiresTwoFactorAuth ? 'Enabled' : 'Disabled'}
-              </TextImportant>
-            </TableCell>
-            <TableCell>
-              {requiresTwoFactorAuth ? (
-                <Button
-                  smaller
-                  compact
-                  muted
-                  basic
-                  onClick={() => open2faVerify()}
-                >
-                  Remove
-                </Button>
-              ) : (
-                <Button
-                  smaller
-                  compact
-                  muted
-                  basic
-                  onClick={() => open2faSetup()}
-                >
-                  Setup
-                </Button>
-              )}
-            </TableCell>
-          </TableRow>
-        </tbody>
-      </Table>
+      <div styleName="two-factor-auth-table">
+        <Table>
+          <tbody>
+            <TableRow>
+              <TableCell>Authenticator app</TableCell>
+              <TableCell>
+                <TextImportant>
+                  {requiresTwoFactorAuth ? 'Enabled' : 'Disabled'}
+                </TextImportant>
+              </TableCell>
+              <TableCell>
+                {requiresTwoFactorAuth ? (
+                  <Button
+                    smaller
+                    compact
+                    muted
+                    basic
+                    onClick={() => open2faVerify()}
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    smaller
+                    compact
+                    muted
+                    basic
+                    onClick={() => open2faSetup()}
+                  >
+                    Setup
+                  </Button>
+                )}
+              </TableCell>
+            </TableRow>
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }
@@ -195,9 +197,11 @@ function ChangePassword() {
         }}
         method="post"
       >
-        <FormGroup fluid>
+        <FormGroup>
           <FormLabel htmlFor="password">Old Password</FormLabel>
           <FormInput
+            autoFocus
+            autoComplete="current-password"
             compact
             value={state.oldPassword}
             type="password"
@@ -210,9 +214,10 @@ function ChangePassword() {
             }}
           />
         </FormGroup>
-        <FormGroup fluid>
+        <FormGroup>
           <FormLabel htmlFor="password">New Password</FormLabel>
           <PasswordInput
+            autoComplete="new-password"
             checkIfPwned={true}
             value={state.password}
             onChange={value =>
@@ -223,9 +228,10 @@ function ChangePassword() {
             }
           />
         </FormGroup>
-        <FormGroup fluid>
+        <FormGroup>
           <FormLabel htmlFor="password-confirm">Confirm new password</FormLabel>
           <FormInput
+            autoComplete="new-password"
             compact
             value={state.confirmPassword}
             type="password"
@@ -246,21 +252,19 @@ function ChangePassword() {
           <FormNotification success>{state.success}</FormNotification>
         ) : null}
 
-        <div styleName="password-btn">
-          <Button
-            basic
-            compact
-            stretch
-            loading={state.loading}
-            disabled={
-              !state.oldPassword || !state.password || !state.confirmPassword
-            }
-            type="submit"
-            as="button"
-          >
-            Update
-          </Button>
-        </div>
+        <Button
+          basic
+          compact
+          stretch
+          loading={state.loading}
+          disabled={
+            !state.oldPassword || !state.password || !state.confirmPassword
+          }
+          type="submit"
+          as="button"
+        >
+          Update
+        </Button>
       </form>
     </div>
   );

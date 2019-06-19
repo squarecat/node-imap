@@ -97,11 +97,13 @@ function Organisation() {
               </div>
               {invitedUsers.length ? (
                 <Table>
-                  {invitedUsers.map(e => (
-                    <TableRow key={e}>
-                      <TableCell>{e}</TableCell>
-                    </TableRow>
-                  ))}
+                  <tbody>
+                    {invitedUsers.map(email => (
+                      <TableRow key={email}>
+                        <TableCell>{email}</TableCell>
+                      </TableRow>
+                    ))}
+                  </tbody>
                 </Table>
               ) : (
                 <p>There are no invites pending.</p>
