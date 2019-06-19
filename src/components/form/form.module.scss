@@ -42,17 +42,28 @@
     border-bottom-left-radius: 0;
     border-left: 0;
     line-height: 38px;
-  }
-
-  > a {
     flex: 1;
     border: 1px solid $color-input-border;
     border-left: none;
   }
 
-  input:focus + a {
+  input:focus + a,
+  input:focus + button {
     border: 1px solid $color-input-border-focus;
     border-left: none;
+  }
+
+  ::-webkit-input-placeholder {
+    font-size: 14px;
+  }
+  :-moz-placeholder {
+    font-size: 14px;
+  }
+  ::-moz-placeholder {
+    font-size: 14px;
+  }
+  :-ms-input-placeholder {
+    font-size: 14px;
   }
 }
 
@@ -326,6 +337,11 @@
   border: 1px solid $color-primary-font;
   margin: 0 auto;
 
+  &.fluid {
+    width: 90%;
+    margin: 10px auto;
+  }
+
   p {
     margin: 0;
   }
@@ -337,8 +353,8 @@
   }
   &.warning {
     color: white;
-    background: $color-bg-error;
-    border: 1px solid $color-text-error;
+    background: $color-bg-warning;
+    border: 1px solid $color-text-warning;
   }
   &.success {
     color: white;

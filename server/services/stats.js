@@ -22,7 +22,8 @@ import {
   addUser,
   addUserAccountDeactivated,
   getStats,
-  removeOrganisationUser
+  removeOrganisationUser,
+  addOrganisationUnsubscribe
 } from '../dao/stats';
 
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
@@ -94,6 +95,9 @@ export function addOrganisationUserToStats(count) {
 }
 export function removeOrganisationUserToStats(count) {
   return removeOrganisationUser(count);
+}
+export function addOrganisationUnsubscribeToStats(count) {
+  return addOrganisationUnsubscribe(count);
 }
 
 export function getAllStats() {

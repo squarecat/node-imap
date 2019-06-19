@@ -95,6 +95,27 @@ export async function update(id, data) {
   }
 }
 
+export async function recordUnsubscribe(id) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $inc: {
+          numberOfUnsubscribes: 1
+        }
+      }
+    );
+    return getById(id);
+  } catch (err) {
+    logger.error(
+      `organisation-dao: error recording unsubscribe for organisation ${id}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function getById(id) {
   try {
     const col = await db().collection(COL_NAME);

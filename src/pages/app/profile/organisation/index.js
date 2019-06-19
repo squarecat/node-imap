@@ -228,7 +228,7 @@ function Billing({ organisation }) {
 
   const [, { setOrganisationLastUpdated }] = useUser();
 
-  const { id, billing = {} } = organisation;
+  const { id, active, billing = {} } = organisation;
   const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
 
   // const onClickRemoveCard = useCallback(
@@ -297,7 +297,9 @@ function Billing({ organisation }) {
               Change Payment Method
             </Button>
           </>
-        ) : (
+        ) : null}
+
+        {!card && !active ? (
           <>
             <p>No payment method stored.</p>
             <p>
@@ -307,7 +309,7 @@ function Billing({ organisation }) {
               Add Payment Method
             </Button>
           </>
-        )}
+        ) : null}
       </div>
       <div styleName="organisation-section">
         <h2>Company Details</h2>

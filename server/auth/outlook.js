@@ -17,6 +17,14 @@ import refresh from 'passport-oauth2-refresh';
 const { outlook } = auth;
 logger.info(`outlook-auth: redirecting to ${outlook.loginRedirect}`);
 
+// https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow
+// login: The user should be prompted to reauthenticate.
+// select_account:
+// The user is prompted to select an account, interrupting single sign on.
+// The user may select an existing signed-in account, enter their credentials
+// for a remembered account, or choose to use a different account altogether.
+const PROMPT_TYPE = 'select_account';
+
 export const Strategy = new OutlookStrategy(
   {
     clientID: outlook.clientId,
@@ -33,8 +41,10 @@ export const Strategy = new OutlookStrategy(
       if (process.env.NODE_ENV === 'beta') {
         const allowed = await isBetaUser({ email });
         if (!allowed) {
-          logger.debug('outlook-auth: user does not have access to the beta');
-          return done({ type: 'beta' }, null);
+          const error = new AuthError('user does not have access to the beta', {
+            errKey: 'beta'
+          });
+          return done(error, null);
         }
       }
 
@@ -58,7 +68,7 @@ export const Strategy = new OutlookStrategy(
       done(
         new AuthError('failed to create or update user from Outlook', {
           cause: err,
-          type: err.data.type
+          errKey: err.data.errKey
         })
       );
     }
@@ -137,14 +147,16 @@ export default app => {
   app.get(
     '/auth/outlook',
     passport.authenticate('outlook-login', {
-      scope: outlook.scopes
+      scope: outlook.scopes,
+      prompt: PROMPT_TYPE
     })
   );
 
   app.get(
     '/auth/outlook/connect',
     passport.authenticate('connect-account-outlook', {
-      scope: outlook.scopes
+      scope: outlook.scopes,
+      prompt: PROMPT_TYPE
     })
   );
 
@@ -156,12 +168,12 @@ export default app => {
     req.query = query;
 
     return passport.authenticate('outlook-login', (err, user) => {
-      const baseUrl = `/login?error=true`;
+      const baseErrUrl = `/login?error=true`;
       if (err) {
-        let errUrl = baseUrl;
-        const { id: errId, data } = err.toJSON();
         logger.error('outlook-auth: passport authentication error');
-        errUrl += `&id=${errId}&type=${data.type || 'unknown'}`;
+        const { id: errId, data } = err.toJSON();
+        const errUrl = `${baseErrUrl}&id=${errId}&errKey=${data.errKey ||
+          'unknown'}`;
         return res.redirect(errUrl);
       }
 
@@ -169,7 +181,7 @@ export default app => {
         if (loginErr) {
           logger.error('outlook-auth: login error');
           logger.error(loginErr);
-          return res.redirect(baseUrl);
+          return res.redirect(baseErrUrl);
         }
         setRememberMeCookie(res, {
           username: user.email,

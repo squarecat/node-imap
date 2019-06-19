@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import Button from '../../../components/btn';
 import { Link } from 'gatsby';
+import { openChat } from '../../../utils/chat';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
@@ -95,6 +96,11 @@ export default () => {
             </Link>
           </li>
         ) : null}
+        <li styleName="setting-item support">
+          <a styleName="setting-item-link" onClick={() => openChat()}>
+            Support
+          </a>
+        </li>
         <li styleName="setting-item logout">
           <a styleName="setting-item-link" href="/auth/logout">
             Logout

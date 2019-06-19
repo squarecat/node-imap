@@ -1,11 +1,6 @@
 import './billing.module.scss';
 
-import {
-  ENTERPRISE,
-  PACKAGES,
-  // USAGE_BASED,
-  getPackage
-} from '../../../../shared/prices';
+import { ENTERPRISE, PACKAGES, getPackage } from '../../../../shared/prices';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 import { TextFootnote, TextImportant } from '../../../components/text';
@@ -15,17 +10,17 @@ import Button from '../../../components/btn';
 import CardDetails from '../../../components/card-details';
 import { DatabaseContext } from '../../../providers/db-provider';
 import ErrorBoundary from '../../../components/error-boundary';
+import { FormNotification } from '../../../components/form';
 import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import ProfileLayout from './layout';
-import Tooltip from '../../../components/tooltip';
 import cx from 'classnames';
 import format from 'date-fns/format';
+import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import { useAsync } from '../../../utils/hooks';
 import useUser from '../../../utils/hooks/use-user';
-import { FormNotification, FormCheckbox } from '../../../components/form';
 
 export default function() {
   return (
@@ -220,7 +215,9 @@ function Enterprise() {
         <span>
           <Price price={ENTERPRISE.pricePerSeat} asterisk /> per seat
         </span>
-        <a styleName="billing-btn">Contact</a>
+        <a styleName="billing-btn" onClick={() => openChat()}>
+          Contact
+        </a>
       </div>
       <TextFootnote>* billed monthly.</TextFootnote>
     </div>

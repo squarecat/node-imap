@@ -17,6 +17,10 @@ import refresh from 'passport-oauth2-refresh';
 const { google } = auth;
 logger.info(`google-auth: redirecting to ${google.loginRedirect}`);
 
+// Prompt the user to select an account.
+// https://developers.google.com/identity/protocols/OAuth2WebServer
+const PROMPT_TYPE = 'select_account';
+
 export const Strategy = new GoogleStrategy(
   {
     clientID: google.clientId,
@@ -36,8 +40,10 @@ export const Strategy = new GoogleStrategy(
       if (process.env.NODE_ENV === 'beta') {
         const allowed = await isBetaUser({ email });
         if (!allowed) {
-          logger.debug('google-auth: user does not have access to the beta');
-          return done({ type: 'beta' }, null);
+          const error = new AuthError('user does not have access to the beta', {
+            errKey: 'beta'
+          });
+          return done(error, null);
         }
       }
 
@@ -61,7 +67,7 @@ export const Strategy = new GoogleStrategy(
       done(
         new AuthError('failed to create or update user from Google', {
           cause: err,
-          type: err.data.type
+          errKey: err.data.errKey
         })
       );
     }
@@ -148,9 +154,7 @@ export default app => {
     '/auth/google',
     passport.authenticate('google-login', {
       scope: google.scopes,
-      // Prompt the user to select an account.
-      // https://developers.google.com/identity/protocols/OAuth2WebServer
-      prompt: 'consent', // TODO CHANGE BACK TO select_account before phase-2 deploy
+      prompt: PROMPT_TYPE,
       accessType: 'offline'
     })
   );
@@ -159,9 +163,7 @@ export default app => {
     '/auth/google/connect',
     passport.authenticate('connect-account-google', {
       scope: google.scopes,
-      // Prompt the user to select an account.
-      // https://developers.google.com/identity/protocols/OAuth2WebServer
-      prompt: 'consent', // TODO CHANGE BACK TO select_account before phase-2 deploy
+      prompt: PROMPT_TYPE,
       accessType: 'offline'
     })
   );
@@ -178,11 +180,12 @@ export default app => {
     req.query = query;
 
     return passport.authenticate('google-login', (err, user) => {
-      let errUrl = `/login?error=true`;
+      const baseErrUrl = `/login?error=true`;
       if (err) {
-        const { id: errId, data } = err.toJSON();
         logger.error('google-auth: passport authentication error');
-        errUrl += `&id=${errId}&type=${data.type || 'unknown'}`;
+        const { id: errId, data } = err.toJSON();
+        const errUrl = `${baseErrUrl}&id=${errId}&errKey=${data.errKey ||
+          'unknown'}`;
         return res.redirect(errUrl);
       }
 
@@ -190,7 +193,7 @@ export default app => {
         if (loginErr) {
           logger.error('google-auth: login error');
           logger.error(loginErr);
-          return res.redirect(errUrl);
+          return res.redirect(baseErrUrl);
         }
         setRememberMeCookie(res, {
           username: user.email,

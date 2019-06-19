@@ -168,33 +168,6 @@ $active-bg-color: #ffc7c1;
   margin-bottom: 35px;
 }
 
-.error {
-  background: $color-red;
-  color: white;
-  padding: 5px;
-  font-weight: bold;
-  border-radius: 4px;
-  font-size: 14px;
-  line-height: 18px;
-  text-align: center;
-  border: 1px solid $color-text-error;
-  width: 90%;
-  margin: 10px auto 0;
-
-  p {
-    margin: 0;
-  }
-
-  .beta-link {
-    @extend .link;
-    @extend .link-inverted;
-  }
-
-  + .signup-buttons {
-    margin-top: 10px;
-  }
-}
-
 .notice,
 .no-account-notice {
   font-size: 11px;
@@ -253,8 +226,7 @@ $active-bg-color: #ffc7c1;
 }
 
 .existing-provider-btn a {
-  width: 90%;
-  margin: 10px 0 0 20px;
+  margin: 0 auto;
 }
 
 .forgot-password {

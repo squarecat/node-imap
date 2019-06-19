@@ -10,10 +10,11 @@
   color: $color-primary-font;
   font-weight: 600;
   width: 100%;
+  max-width: 240px;
 
   .text {
     margin-left: 15px;
-    width: 300px;
+    width: 150px;
   }
 
   &:hover {
@@ -28,6 +29,10 @@
 
 .account-list {
   margin: 0 0 1.5em 0;
+
+  a {
+    font-size: 14px;
+  }
 }
 
 .account {
