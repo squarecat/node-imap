@@ -1,5 +1,6 @@
 import './profile.module.scss';
 
+import { GoogleIcon, OutlookIcon } from '../../../components/icons';
 import React, { useCallback, useContext, useState } from 'react';
 
 import Button from '../../../components/btn';
@@ -12,16 +13,26 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
-  const [{ email, organisationAdmin }] = useUser(u => ({
+  const [{ email, organisationAdmin, loginProvider }] = useUser(u => ({
     email: u.email,
-    organisationAdmin: u.organisationAdmin
+    organisationAdmin: u.organisationAdmin,
+    loginProvider: u.loginProvider
   }));
   return (
     <ProfileLayout pageName="Profile">
-      <div styleName="section details">
+      <div styleName="section">
         <h2>Details</h2>
-        <p>
-          Signed in with: <TextImportant>{email}</TextImportant>
+
+        <p styleName="email-container">
+          <span>Signed in with: </span>
+          {loginProvider === 'password' ? null : (
+            <>
+              {getProviderIcon(loginProvider)}
+              <span styleName="email">
+                <TextImportant>{email}</TextImportant>
+              </span>
+            </>
+          )}
         </p>
       </div>
       <DangerZone organisationAdmin={organisationAdmin} />
@@ -171,4 +182,9 @@ async function deactivateAccount() {
     console.error(err);
     throw err;
   }
+}
+
+function getProviderIcon(provider) {
+  if (provider === 'google') return <GoogleIcon width="16" height="16" />;
+  if (provider === 'outlook') return <OutlookIcon width="16" height="16" />;
 }

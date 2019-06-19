@@ -1,9 +1,9 @@
 import './login.module.scss';
 
+import { FormGroup, FormNotification } from '../../components/form';
 import React, { useContext, useEffect, useState } from 'react';
 
 import Button from '../../components/btn';
-import { FormGroup, FormNotification } from '../../components/form';
 import { LoginContext } from './index';
 import TwoFactorInput from '../../components/2fa';
 import { navigate } from 'gatsby';
@@ -38,7 +38,15 @@ export default () => {
       onSubmit={onSubmit}
       method="post"
     >
-      <input type="hidden" name="username" value={state.email} />
+      <input
+        // Password forms should have (optionally hidden) username fields
+        // they need to be type text and hidden with CSS
+        style={{ display: 'none' }}
+        type="text"
+        name="username"
+        value={state.email}
+        autoComplete="username"
+      />
       <FormGroup fluid>
         <TwoFactorInput
           onLoading={setLoading}

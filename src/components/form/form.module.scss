@@ -124,10 +124,6 @@
   }
 }
 
-.no-focus:focus {
-  box-shadow: 0;
-}
-
 .form-input:focus + .form-label,
 .form-input:valid + .form-label {
   transform: translate(-5px, -30px);
@@ -219,6 +215,7 @@
   flex: 1;
   margin: 0 auto;
   margin-bottom: 1rem;
+  width: 100%;
 
   &.fluid {
     max-width: 90%;

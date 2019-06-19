@@ -58,7 +58,7 @@ export default ({
   return (
     <FormInput
       onChange={({ currentTarget }) => setValue(currentTarget.value)}
-      noFocus
+      autoFocus
       value={value}
       compact
       type="password"

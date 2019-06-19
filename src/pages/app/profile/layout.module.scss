@@ -109,6 +109,10 @@
   padding: 20px;
   border: 1px solid $color-border-red;
   border-radius: 10px;
+
+  p:last-child {
+    margin: 0;
+  }
 }
 
 .profile-section + .profile-section {

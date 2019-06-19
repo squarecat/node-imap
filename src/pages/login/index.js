@@ -4,14 +4,14 @@ import React, { createContext, useReducer, useRef } from 'react';
 
 import AuthButton from './auth-btn';
 import EmailForm from './email';
+import { FormNotification } from '../../components/form';
 import Layout from '../../layouts/layout';
 import { Link } from 'gatsby';
 import PasswordForm from './password';
+import { TextImportant } from '../../components/text';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
-import { TextImportant } from '../../components/text';
 import { getAuthError } from '../../utils/errors';
-import { FormNotification } from '../../components/form';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
@@ -173,18 +173,18 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                   {register ? (
                     <p style={{ marginBottom: '10px' }}>
                       Already have an account?{' '}
-                      <Link state={{ fromSignup: true }} to="/login">
-                        Sign in
-                      </Link>
-                      .
+                      {/* <Link state={{ fromSignup: true }} to="/login">
+                        Log in
+                      </Link> */}
+                      <a href="/login">Log in</a>.
                     </p>
                   ) : (
                     <p style={{ marginBottom: '10px' }}>
                       Don't have an account yet?{' '}
-                      <Link state={{ fromLogin: true }} to="/signup">
+                      {/* <Link state={{ fromLogin: true }} to="/signup">
                         Sign up
-                      </Link>
-                      .
+                      </Link> */}
+                      <a href="/signup">Sign up</a>.
                     </p>
                   )}
 

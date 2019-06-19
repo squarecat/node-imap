@@ -22,6 +22,7 @@ export default ({ onComplete = () => {}, onLoading = () => {} }) => {
   return (
     <div styleName="two-factor-input">
       <input
+        autoFocus
         type="text"
         value={value}
         max="6"
