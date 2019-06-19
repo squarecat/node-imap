@@ -1,6 +1,6 @@
 import CreditModal from '../components/modal/credits';
-import { TextLink } from '../components/text';
 import React from 'react';
+import { TextLink } from '../components/text';
 
 export function getConnectError(reason) {
   switch (reason) {
@@ -15,15 +15,15 @@ export function getConnectError(reason) {
   }
 }
 
-export function getAuthError(err = {}, type) {
-  let msg;
-  if (type === 'signup') {
+export function getAuthError(err = {}, authType) {
+  let msg = '';
+  if (authType === 'signup') {
     msg = ' signing you up';
   }
-  if (type === 'login') {
+  if (authType === 'login') {
     msg = ' logging you in';
   }
-  if (type === 'reset') {
+  if (authType === 'reset') {
     msg = ' resetting your password';
   }
 
@@ -60,7 +60,7 @@ export function getAuthError(err = {}, type) {
       return (
         <>
           <span>{defaultMsg}</span>
-          {id ? <span>{`Error code: ${id}`}</span> : null}
+          {id ? <span>{` Error code: ${id}`}.</span> : null}
         </>
       );
   }
@@ -113,7 +113,7 @@ export function getUnsubscribeAlert({
       return {
         ...options,
         id: 'unsubscribe-failed',
-        message: `Unsubscribe to ${mail.fromEmail} failed. Error code: ${id}`
+        message: `Unsubscribe to ${mail.fromEmail} failed. Error code: ${id}.`
       };
   }
 }
