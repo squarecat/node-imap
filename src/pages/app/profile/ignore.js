@@ -22,7 +22,7 @@ export default () => {
   return (
     <ProfileLayout pageName="Favorite Senders">
       <div styleName="ignore-section">
-        <p>
+        <p styleName="content">
           Showing <TextImportant>{ignoredSenderList.length}</TextImportant>{' '}
           favorite senders. Emails from these addresses will not show up in any
           future scans.

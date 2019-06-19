@@ -121,16 +121,11 @@
 
 .profile-section--unpadded {
   padding: 0;
+}
 
-  p:last-child {
-    margin-bottom: 20px;
-  }
-
-  p,
-  .unpadded-content {
-    padding: 20px 20px 0 20px;
-    margin-bottom: 20px;
-  }
+.profile-unpadded-content {
+  margin: 0;
+  padding: 20px;
 }
 
 .warning {

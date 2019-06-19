@@ -3,22 +3,10 @@
 @import '../../../../components/btn/btn.module.scss';
 @import '../layout.module.scss';
 
-.scan-section {
+.section {
   @extend .profile-section;
   @extend .profile-section--unpadded;
 }
-
-.scan-link {
-  @extend .link;
-}
-
-.scan-btn {
-  @extend .btn;
-  @extend .compact;
-  @extend .basic;
-
-  @media (max-width: 400px) {
-    padding: 2px 5px;
-    font-size: 12px;
-  }
+.content {
+  @extend .profile-unpadded-content;
 }

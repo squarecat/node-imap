@@ -19,6 +19,16 @@ import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
 
+export default () => {
+  return (
+    <ProfileLayout pageName="Organisation">
+      <ErrorBoundary>
+        <Organisation />
+      </ErrorBoundary>
+    </ProfileLayout>
+  );
+};
+
 function Organisation() {
   const [
     { organisationId, organisationAdmin, organisationLastUpdated }
@@ -392,16 +402,6 @@ function BillingInformation({ organisationId }) {
     </div>
   );
 }
-
-export default () => {
-  return (
-    <ProfileLayout pageName="Organisation">
-      <ErrorBoundary>
-        <Organisation />
-      </ErrorBoundary>
-    </ProfileLayout>
-  );
-};
 
 function fetchOrganisation(id) {
   return request(`/api/organisation/${id}`, {
