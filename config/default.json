@@ -16,7 +16,12 @@
       "connectRedirect": "https://dev.leavemealone.xyz/auth/google/connect/callback",
       "clientId": "$GOOGLE_CLIENT_ID",
       "clientSecret": "$GOOGLE_CLIENT_SECRET",
-      "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
+      "scopes": [
+        "https://www.googleapis.com/auth/gmail.readonly",
+        "email",
+        "profile",
+        "openid"
+      ]
     },
     "outlook": {
       "loginRedirect": "https://dev.leavemealone.xyz/login/outlook/redirect",

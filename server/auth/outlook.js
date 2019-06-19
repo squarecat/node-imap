@@ -36,10 +36,10 @@ export const Strategy = new OutlookStrategy(
     try {
       const { cookies } = req;
       const { referrer, invite } = cookies;
-      const email = getEmail(profile);
+      const parsedProfile = await parseProfile(profile);
 
       if (process.env.NODE_ENV === 'beta') {
-        const allowed = await isBetaUser({ email });
+        const allowed = await isBetaUser({ email: parsedProfile.email });
         if (!allowed) {
           const error = new AuthError('user does not have access to the beta', {
             errKey: 'beta'
@@ -50,9 +50,7 @@ export const Strategy = new OutlookStrategy(
 
       const user = await createOrUpdateUserFromOutlook(
         {
-          ...profile,
-          email,
-          profileImg: getProfileImg(profile),
+          ...parsedProfile,
           referralCode: referrer,
           inviteCode: invite
         },
@@ -65,12 +63,17 @@ export const Strategy = new OutlookStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      done(
-        new AuthError('failed to create or update user from Outlook', {
-          cause: err,
-          errKey: err.data.errKey
-        })
-      );
+      logger.error('outlook-auth: error authenticating');
+      logger.error(err);
+      if (err.data && err.data.errKey) {
+        done(err);
+      } else {
+        done(
+          new AuthError('failed to connect account from Outlook', {
+            cause: err
+          })
+        );
+      }
     }
   }
 );
@@ -84,23 +87,17 @@ export const ConnectAccountStrategy = new OutlookStrategy(
   },
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      const email = getEmail(profile);
-      const user = await connectUserOutlookAccount(
-        req.user.id,
-        {
-          ...profile,
-          email,
-          profileImg: getProfileImg(profile)
-        },
-        {
-          refreshToken,
-          accessToken,
-          expires: addSeconds(new Date(), 3600),
-          expiresIn: 3600
-        }
-      );
+      const parsedProfile = await parseProfile(profile);
+      const user = await connectUserOutlookAccount(req.user.id, parsedProfile, {
+        refreshToken,
+        accessToken,
+        expires: addSeconds(new Date(), 3600),
+        expiresIn: 3600
+      });
       done(null, { ...user });
     } catch (err) {
+      logger.error('outlook-auth: error connecting account');
+      logger.error(err);
       if (err.data && err.data.errKey) {
         done(err);
       } else {
@@ -136,7 +133,11 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
         } catch (err) {
           logger.error('outlook-auth: error updating user refresh token');
           logger.error(err);
-          reject(err);
+          reject(
+            new AuthError('failed to update Outlook access token', {
+              cause: err
+            })
+          );
         }
       }
     );
@@ -213,12 +214,12 @@ export default app => {
   });
 };
 
-function getEmail(profile) {
-  const { emails } = profile;
-  return emails.length ? emails[0].value : null;
-}
-
-function getProfileImg(profile) {
-  const { photos = [] } = profile;
-  return photos.length ? photos[0].value : null;
+async function parseProfile(profile) {
+  const { id, emails, displayName } = profile;
+  return {
+    id,
+    email: emails.length ? emails[0].value : null,
+    profileImg: null, // TODO use the photos API to get the image
+    displayName
+  };
 }

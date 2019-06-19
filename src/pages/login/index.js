@@ -164,7 +164,7 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                   </div>
                   <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
                   <p>
-                    Google and Outlook authorize Leave Me Alone without a
+                    Google and Microsoft authorize Leave Me Alone without a
                     password.
                   </p>
                   <div styleName="buttons">
