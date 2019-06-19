@@ -49,6 +49,9 @@ export default visProps => (
           Report a bug
         </TextLink>
       </li>
+      <li>
+        <a href="javascript:window.Metomic.raise()">Manage cookies</a>
+      </li>
     </ul>
     <ul styleName="footer-social">
       <li title="@LeaveMeAloneApp">

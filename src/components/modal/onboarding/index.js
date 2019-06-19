@@ -1,4 +1,4 @@
-import Modal, { ModalBody, ModalWizardActions } from '..';
+import Modal, { ModalBody, ModalFooter, ModalWizardActions } from '..';
 import OnboardingReducer, { initialState } from './reducer';
 import React, { useEffect, useReducer } from 'react';
 import { TextImportant, TextLead } from '../../text';
@@ -15,7 +15,7 @@ import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
 import useUser from '../../../utils/hooks/use-user';
 
-export default ({ shown, onClose }) => {
+export default () => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);
   const [{ accounts, organisationId }, { setMilestoneCompleted }] = useUser(
     u => ({
@@ -51,32 +51,23 @@ export default ({ shown, onClose }) => {
   };
 
   return (
-    <Modal
-      shown={shown}
-      onClose={onClose}
-      dismissable={false}
-      style={{ width: 650 }}
-      wizardComponent={
-        <ModalWizardActions
-          isLoading={state.isLoading}
-          isNextDisabled={!state.canProceed}
-          showBack={false}
-          nextLabel={state.nextLabel}
-          onNext={() => {
-            if (state.step === 'finish') {
-              return onComplete();
-            }
-            return dispatch({ type: 'next-step' });
-          }}
-          onBack={() => dispatch({ type: 'prev-step' })}
-          onCancel={() => {}}
-        />
-      }
-    >
+    <div styleName="onboarding-modal">
       <ModalBody>
         <Content step={state.step} accounts={accounts} />
       </ModalBody>
-    </Modal>
+      <ModalWizardActions
+        onNext={() => {
+          if (state.step === 'finish') {
+            return onComplete();
+          }
+          return dispatch({ type: 'next-step' });
+        }}
+        onBack={() => dispatch({ type: 'prev-step' })}
+        isLoading={state.isLoading}
+        isNextDisabled={!state.canProceed}
+        showBack={state.step !== 'welcome'}
+      />
+    </div>
   );
 };
 
@@ -86,7 +77,7 @@ function Content({ step, accounts }) {
     content = (
       <>
         <h2>Welcome to Leave Me Alone!</h2>
-        <TextLead prose> Let's get started</TextLead>
+        {/* <TextLead prose> Let's get started</TextLead> */}
         <p>
           <strong>Leave Me Alone</strong> connects to your email inboxes and
           scans for all your subscription mail. We'll show you which mail is the

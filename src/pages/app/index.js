@@ -1,8 +1,9 @@
 import 'isomorphic-fetch';
 
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import MailList from '../../app/mail-list';
+import { ModalContext } from '../../providers/modal-provider';
 import OnboardingModal from '../../components/modal/onboarding';
 import Template from '../../app/template';
 import { Transition } from 'react-transition-group';
@@ -14,18 +15,22 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function Content() {
-  const [user] = useUser();
-  const { hasCompletedOnboarding } = user;
+  const [hasCompletedOnboarding] = useUser(u => u.hasCompletedOnboarding);
+  const { open: openModal } = useContext(ModalContext);
 
-  const [showOnboardingModal, toggleOnboardingModal] = useState(
-    !hasCompletedOnboarding
+  useEffect(
+    () => {
+      if (!hasCompletedOnboarding) {
+        openModal(<OnboardingModal />, {
+          dismissable: false
+        });
+      }
+    },
+    [hasCompletedOnboarding, openModal]
   );
+
   return (
     <>
-      <OnboardingModal
-        shown={showOnboardingModal}
-        onClose={() => toggleOnboardingModal(false)}
-      />
       <Transition
         in={true}
         classNames="mail-list-content"

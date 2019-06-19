@@ -177,40 +177,40 @@ export const ModalWizardActions = ({
   nextLabel = 'Next',
   onNext = () => {},
   onBack = () => {},
-  onCancel = () => {},
-  style
+  onCancel = () => {}
 }) => {
   const { close } = useContext(ModalContext);
   return (
-    <div styleName="modal-wizard-actions" style={style}>
+    <ModalFooter>
       {showBack ? (
-        <span styleName="prev">
-          <Button
-            disabled={isLoading}
-            compact
-            onClick={() => {
-              if (showBack) onBack();
-              else onCancel();
-            }}
-          >
-            Back
-          </Button>
-        </span>
-      ) : null}
-      <span styleName="next">
         <Button
-          disabled={isNextDisabled || isLoading}
-          onClick={async () => {
-            const hasNextPage = await onNext();
-            if (hasNextPage === false) {
-              close();
-            }
+          disabled={isLoading}
+          compact
+          basic
+          muted
+          onClick={() => {
+            if (showBack) onBack();
+            else onCancel();
           }}
         >
-          {nextLabel}
+          Back
         </Button>
-      </span>
-    </div>
+      ) : null}
+
+      <Button
+        basic
+        compact
+        disabled={isNextDisabled || isLoading}
+        onClick={async () => {
+          const hasNextPage = await onNext();
+          if (hasNextPage === false) {
+            close();
+          }
+        }}
+      >
+        {nextLabel}
+      </Button>
+    </ModalFooter>
   );
 };
 

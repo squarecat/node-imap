@@ -167,35 +167,35 @@
   }
 }
 
-.next,
-.prev {
-  position: absolute;
+// .next,
+// .prev {
+//   position: absolute;
 
-  a {
-    background-color: white;
-    width: auto;
-    height: 60px;
-    box-shadow: 0 3px 8px rgba(194, 58, 0, 0.25);
-    transition: transform 250ms cubic-bezier(0.65, 0.05, 0.36, 1);
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 300px;
-    line-height: 60px;
+//   a {
+//     background-color: white;
+//     width: auto;
+//     height: 60px;
+//     box-shadow: 0 3px 8px rgba(194, 58, 0, 0.25);
+//     transition: transform 250ms cubic-bezier(0.65, 0.05, 0.36, 1);
+//     overflow: hidden;
+//     white-space: nowrap;
+//     max-width: 300px;
+//     line-height: 60px;
 
-    &[disabled] {
-      opacity: 1;
-      transform: scale(0);
-    }
-  }
-}
+//     &[disabled] {
+//       opacity: 1;
+//       transform: scale(0);
+//     }
+//   }
+// }
 
-.next {
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+// .next {
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+// }
 
-.prev {
-}
+// .prev {
+// }
 
 .modal-wizard-actions {
   height: 0px;

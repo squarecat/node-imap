@@ -12,6 +12,11 @@
   }
 }
 
+.onboarding-modal {
+  width: 600px;
+  max-width: 100%;
+}
+
 .onboarding-example-img {
   max-width: 95%;
   margin-bottom: 1.5em;
@@ -24,6 +29,10 @@
 
 .wizard-content-wrapper-entered {
   opacity: 1;
+}
+
+.wizardContentWrapper > *:last-child {
+  margin-bottom: 0;
 }
 
 .reward-icon {
