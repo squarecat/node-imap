@@ -67,7 +67,7 @@ export async function* fetchMail({ userId, accountFilters = [] }) {
       dupes = [...dupes, dupeSenders];
     }
 
-    addOrUpdateOccurrences(userId, dupes);
+    // addOrUpdateOccurrences(userId, dupes);
     addScanToUser(user.id, accountScanData);
     return {
       occurrences: accountOccurrences
