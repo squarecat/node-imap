@@ -7,7 +7,6 @@ import { DatabaseProvider } from '../providers/db-provider';
 import Helmet from 'react-helmet';
 import { ModalProvider } from '../providers/modal-provider';
 import React from 'react';
-import { StripeProvider } from '../providers/stripe-provider';
 import { setConfig } from 'react-hot-loader';
 
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
@@ -34,11 +33,9 @@ const AppLayout = ({ pageName, children }) => {
       />
 
       <DatabaseProvider>
-        <StripeProvider>
-          <AlertProvider>
-            <ModalProvider>{children}</ModalProvider>
-          </AlertProvider>
-        </StripeProvider>
+        <AlertProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </AlertProvider>
       </DatabaseProvider>
     </>
   );
