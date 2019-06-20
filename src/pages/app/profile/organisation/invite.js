@@ -59,8 +59,8 @@ function InviteForm({ organisation }) {
             <InlineFormInput
               smaller
               compact
-              placeholder="Email address"
-              name="email"
+              placeholder=""
+              name="inviteCode"
               value={`${window.location.protocol}//${
                 window.location.host
               }/i/${inviteCode}`}
