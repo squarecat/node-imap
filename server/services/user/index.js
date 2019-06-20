@@ -174,7 +174,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       // signing up with a provider counts as connecting the first account
       addActivityForUser(id, 'connectedFirstAccount', {
         id,
-        provider
+        provider,
+        email
       });
     } else {
       logger.debug(`user-service: updating user ${id}`);
