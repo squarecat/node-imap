@@ -237,7 +237,7 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
         if (a.email === user.email) {
           return true;
         }
-        return removeUserAccount(user, a.email);
+        return removeUserAccount(user.id, a.email);
       })
     );
 
@@ -752,10 +752,10 @@ export async function updateUserMarketingConsent(
   }
 }
 
-export async function deactivateUserAccount(user) {
+export async function deactivateUserAccount(userId) {
   try {
+    const user = await getUserById(userId, { withAccountKeys: true });
     logger.info(`user-service: deactivating user account ${user.id}`);
-
     const {
       id,
       email,
@@ -778,7 +778,7 @@ export async function deactivateUserAccount(user) {
     logger.debug(`user-service: removing user accounts...`);
     await Promise.all(
       user.accounts.map(async a => {
-        removeUserAccount(user, a.email);
+        removeUserAccount(user.id, a.email);
       })
     );
 
@@ -803,7 +803,7 @@ export async function deactivateUserAccount(user) {
 
     logger.debug(`user-service: deactivating account - done`);
   } catch (err) {
-    logger.error(`user-service: error deactivating user account ${user.id}`);
+    logger.error(`user-service: error deactivating user account`);
     throw err;
   }
 }
@@ -820,8 +820,9 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
   }
 }
 
-export async function removeUserAccount(user, accountEmail) {
+export async function removeUserAccount(userId, accountEmail) {
   try {
+    const user = await getUserById(userId, { withAccountKeys: true });
     const { id: userId, accounts, organisationId } = user;
 
     const account = accounts.find(e => e.email === accountEmail);
@@ -856,9 +857,11 @@ export async function removeUserAccount(user, accountEmail) {
 
     return updatedUser;
   } catch (err) {
-    logger.error(
-      `user-service: failed to disconnect user account for user ${user.id}`
-    );
+    console.log(err);
+    throw new Error('failed to disconnect user account', {
+      userId: userId,
+      cause: err
+    });
   }
 }
 

@@ -370,12 +370,13 @@ export default app => {
 
   app.patch('/api/me', auth, async (req, res, next) => {
     const { user, body } = req;
+    const { id: userId } = user;
     const { id } = user;
     const { op, value } = body;
     let updatedUser = user;
     try {
       if (op === 'remove-account') {
-        updatedUser = await removeUserAccount(user, value);
+        updatedUser = await removeUserAccount(userId, value);
       } else {
         logger.error(`user-rest: user patch op not supported`);
       }
@@ -408,8 +409,9 @@ export default app => {
 
   app.delete('/api/user/me', auth, async (req, res, next) => {
     const { user } = req;
+    const { id: userId } = user;
     try {
-      await deactivateUserAccount(user);
+      await deactivateUserAccount(userId);
       req.logout();
       res.status(200).send({ success: true });
     } catch (err) {

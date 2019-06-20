@@ -57,7 +57,7 @@ export default () => {
   return (
     <div styleName="onboarding-modal">
       <ModalBody>
-        <Content step={state.step} accounts={accounts} />
+        <Content step={state.step} accounts={accounts} isBeta={isBeta} />
       </ModalBody>
       <ModalWizardActions
         nextLabel={state.nextLabel}
@@ -114,26 +114,27 @@ function Content({ step, accounts, isBeta }) {
       if (step === 'rewards') {
         return (
           <>
-            <ModalHeader>Earn credits</ModalHeader>
+            <ModalHeader>Credits</ModalHeader>
             <p>
-              Each unsubscribe costs 1 credit.
-              {/* <TextImportant>1 credit = 1 unsubscribe</TextImportant>. */}
+              Each time you unsubscribe from a mailing list it will{' '}
+              <TextImportant>cost 1 credit</TextImportant>.
             </p>
-            {/* <p>
-              <span style={{ paddingTop: '30px', height: 100 }}>
-                Spot this icon to{' '}
-                <TextImportant>earn FREE credits</TextImportant>!
-              </span>
-            </p> */}
-            {/* <p styleName="text-column">
-              <GiftIcon height={90} width={100} />
-            </p> */}
+            {isBeta ? (
+              <p>
+                To say thanks for joining us during our beta period here are{' '}
+                <TextImportant>100 free credits</TextImportant> to get you
+                started!
+              </p>
+            ) : (
+              <p>
+                Here are <TextImportant>10 free credits</TextImportant> on us to
+                get you started!
+              </p>
+            )}
 
             <p>
-              Here are <TextImportant>10 free credits</TextImportant> to get you
-              started!
+              More credits can be purchased or earned for free if you run out.
             </p>
-            <p>More credits can be purchased when you run out.</p>
           </>
         );
       }

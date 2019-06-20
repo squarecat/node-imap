@@ -48,7 +48,8 @@ export default globalReducer(
       milestones: {
         ...state.milestones,
         [milestone]: true
-      }
+      },
+      hasCompletedOnboarding: milestone === 'completedOnboarding'
     }),
     setBilling: (state, billing) => {
       return {

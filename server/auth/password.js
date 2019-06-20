@@ -9,7 +9,6 @@ import { isBetaUser, setRememberMeCookie } from './access';
 import { AuthError } from '../utils/errors';
 import Joi from 'joi';
 import { Strategy as LocalStrategy } from 'passport-local';
-import logger from '../utils/logger';
 import passport from 'passport';
 import { validateBody } from '../middleware/validation';
 

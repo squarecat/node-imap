@@ -1,6 +1,7 @@
 import './onboarding.module.scss';
 
-import { Arrow as ArrowIcon } from '../../icons';
+import { Arrow as ArrowIcon, SearchIcon } from '../../icons';
+
 import { Gift as GiftIcon } from '../../icons';
 import React from 'react';
 
@@ -27,12 +28,20 @@ const steps = [
     value: 'rewards',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 10 }}>Claim reward</span>
-        <GiftIcon height={35} width={35} amount={10} filled />
+        <span style={{ marginRight: 8 }}>Claim credits</span>
+        <GiftIcon height={22} width={22} amount={10} filled />
       </span>
     )
   },
-  { value: 'finish', nextLabel: 'Start scan' }
+  {
+    value: 'finish',
+    nextLabel: (
+      <span styleName="onboarding-btn">
+        <span style={{ marginRight: 8 }}>Start scan</span>
+        <SearchIcon height={16} width={16} />
+      </span>
+    )
+  }
 ];
 
 export const initialState = {

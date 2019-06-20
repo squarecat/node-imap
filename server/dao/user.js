@@ -681,9 +681,11 @@ export async function removeAccount(userId, { accountId, email }) {
     const user = await getUser(userId);
     return user;
   } catch (err) {
-    logger.error(
-      `user-dao: failed to disconnect user account for user ${userId} and account ${accountId}`
-    );
+    throw new Error(`failed to disconnect user account for user`, {
+      userId,
+      accountId,
+      cause: err
+    });
   }
 }
 
