@@ -1,12 +1,10 @@
 import 'isomorphic-fetch';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import MailList from '../../app/mail-list';
-import { ModalContext } from '../../providers/modal-provider';
 import Template from '../../app/template';
 import { Transition } from 'react-transition-group';
-import useUser from '../../utils/hooks/use-user';
 
 if (process.env.NODE_ENV !== 'production') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render');

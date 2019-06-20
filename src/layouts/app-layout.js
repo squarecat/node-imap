@@ -2,11 +2,12 @@ import '@babel/polyfill';
 import '../common.scss';
 import './layout.css';
 
+import React, { useEffect } from 'react';
+
 import { AlertProvider } from '../providers/alert-provider';
 import { DatabaseProvider } from '../providers/db-provider';
 import Helmet from 'react-helmet';
 import { ModalProvider } from '../providers/modal-provider';
-import React from 'react';
 import { StripeProvider } from '../providers/stripe-provider';
 import { setConfig } from 'react-hot-loader';
 
@@ -15,6 +16,9 @@ const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
 setConfig({ pureSFC: true });
 
 const AppLayout = ({ pageName, children }) => {
+  useEffect(() => {
+    window.intergram.hide();
+  }, []);
   return (
     <>
       <Helmet

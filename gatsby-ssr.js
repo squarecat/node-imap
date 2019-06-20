@@ -47,14 +47,15 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
           closedChatAvatarUrl: '', // only used if closedStyle is set to 'chat'
           cookieExpiration: 1, // in days. Once opened, closed chat title will be shown as button (when closedStyle is set to 'chat')
           autoNoResponse:
-            'It seems that no one is available to answer right now. Please tell us how we can ' +
-            'contact you, and we will get back to you as soon as we can.',
+            'It seems that no one is available to answer right now. Please leave your email address ' +
+            'and we will get back to you as soon as we can.',
           placeholderText: 'Send a message...',
           displayMessageTime: true,
           mainColor: '#222',
           alwaysUseFloatingButton: false,
           desktopHeight: 550,
-          desktopWidth: 400
+          desktopWidth: 400,
+          hideButton: window.location.pathname.startsWith('/app')
         };
         `).code
       }}
