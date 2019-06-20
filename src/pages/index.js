@@ -288,12 +288,15 @@ const IndexPage = ({ transitionStatus }) => {
             <WallOfLove colLimit={1} />
           </div>
 
-          <a
-            href="/login"
-            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-          >
-            Get started for free
-          </a>
+          <div className="home-container-inner">
+            <p>What are you waiting for?</p>
+            <a
+              href="/login"
+              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+            >
+              Get started for free
+            </a>
+          </div>
         </div>
 
         <Footer />

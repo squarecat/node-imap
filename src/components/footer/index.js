@@ -1,15 +1,14 @@
-import './footer.module.scss';
-
 import { MailIcon, TwitterIcon } from '../icons';
 
 import React from 'react';
 import { TextLink } from '../text';
 import cx from 'classnames';
+import styles from './footer.module.scss';
 
 export default visProps => (
   <div
-    styleName={cx('footer', {
-      subpage: visProps.subpage
+    className={cx(styles.footer, {
+      [styles.subpage]: visProps.subpage
     })}
   >
     <ul styleName="footer-nav">

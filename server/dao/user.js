@@ -132,6 +132,7 @@ export async function getUserByEmail(email, projection = {}) {
   try {
     const col = await db().collection(COL_NAME);
     const user = await col.findOne({ email }, { _id: 0, ...projection });
+    if (!user) return null;
     return decryptUser(user);
   } catch (err) {
     logger.error(`users-dao: failed to get user by email`);
