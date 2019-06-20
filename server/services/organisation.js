@@ -6,15 +6,15 @@ import {
   getByInviteCode,
   getByInvitedEmailOrValidDomain,
   getBySubscription,
+  recordUnsubscribe,
   removeUser,
-  update,
-  recordUnsubscribe
+  update
 } from '../dao/organisation';
 import {
   addOrganisationToStats,
+  addOrganisationUnsubscribeToStats,
   addOrganisationUserToStats,
-  removeOrganisationUserToStats,
-  addOrganisationUnsubscribeToStats
+  removeOrganisationUserToStats
 } from './stats';
 import {
   bulkGetUsersByOrganisationId,
@@ -23,8 +23,8 @@ import {
 } from '../dao/user';
 import {
   getSubscription,
-  updateSubscription,
-  getUpcomingInvoice
+  getUpcomingInvoice,
+  updateSubscription
 } from '../utils/stripe';
 
 import logger from '../utils/logger';
@@ -85,16 +85,18 @@ export async function inviteUserToOrganisation(id, email) {
     const organisation = await getById(id);
     const invited = organisation.invitedUsers.includes(email);
 
+    logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
     if (!invited) {
-      logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
-      const organisation = await addInvitedUser(id, email);
-
-      sendOrganisationInviteMail({
-        toAddress: email,
-        organisationName: organisation.name,
-        inviteCode: organisation.inviteCode
-      });
+      // only add the user to the invite list if not already there
+      await addInvitedUser(id, email);
     }
+
+    // always send the invite email in case someone lost it etc
+    sendOrganisationInviteMail({
+      toAddress: email,
+      organisationName: organisation.name,
+      inviteCode: organisation.inviteCode
+    });
     return true;
   } catch (err) {
     throw err;
@@ -282,7 +284,7 @@ export function canUserJoinOrganisation(email, organisation) {
   }
 
   // user is invited to the organisation
-  // invited users are always allowed to join
+  // invited users are always allowed to join`
   const invited = invitedUsers.includes(email);
   if (invited) {
     logger.info(

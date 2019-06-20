@@ -230,6 +230,7 @@ $active-bg-color: #ffc7c1;
 }
 
 .forgot-password {
-  font-size: 14px;
-  margin-left: 26px;
+  @extend .link;
+  font-size: 11px;
+  margin-left: 5px;
 }

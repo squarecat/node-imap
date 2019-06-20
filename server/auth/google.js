@@ -35,10 +35,11 @@ export const Strategy = new GoogleStrategy(
       const { cookies } = req;
       const { referrer, invite } = cookies;
       const { expires_in } = params;
-      const email = getEmail(profile);
+
+      const parsedProfile = parseProfile(profile);
 
       if (process.env.NODE_ENV === 'beta') {
-        const allowed = await isBetaUser({ email });
+        const allowed = await isBetaUser({ email: parsedProfile.email });
         if (!allowed) {
           const error = new AuthError('user does not have access to the beta', {
             errKey: 'beta'
@@ -49,9 +50,7 @@ export const Strategy = new GoogleStrategy(
 
       const user = await createOrUpdateUserFromGoogle(
         {
-          ...profile,
-          email,
-          profileImg: getProfileImg(profile),
+          ...parsedProfile,
           referralCode: referrer,
           inviteCode: invite
         },
@@ -64,12 +63,17 @@ export const Strategy = new GoogleStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      done(
-        new AuthError('failed to create or update user from Google', {
-          cause: err,
-          errKey: err.data.errKey
-        })
-      );
+      logger.error('google-auth: error authenticating');
+      logger.error(err);
+      if (err.data && err.data.errKey) {
+        done(err);
+      } else {
+        done(
+          new AuthError('failed to connect account from Google', {
+            cause: err
+          })
+        );
+      }
     }
   }
 );
@@ -87,22 +91,17 @@ export const ConnectAccountStrategy = new GoogleStrategy(
     try {
       const { expires_in } = params;
 
-      const user = await connectUserGoogleAccount(
-        req.user.id,
-        {
-          ...profile,
-          email: getEmail(profile),
-          profileImg: getProfileImg(profile)
-        },
-        {
-          refreshToken,
-          accessToken,
-          expires: addSeconds(new Date(), expires_in),
-          expiresIn: expires_in
-        }
-      );
+      const parsedProfile = parseProfile(profile);
+      const user = await connectUserGoogleAccount(req.user.id, parsedProfile, {
+        refreshToken,
+        accessToken,
+        expires: addSeconds(new Date(), expires_in),
+        expiresIn: expires_in
+      });
       done(null, { ...user });
     } catch (err) {
+      logger.error('google-auth: error connecting account');
+      logger.error(err);
       if (err.data && err.data.errKey) {
         done(err);
       } else {
@@ -138,6 +137,8 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           });
           resolve(accessToken);
         } catch (err) {
+          logger.error('google-auth: error updating user refresh token');
+          logger.error(err);
           reject(
             new AuthError('failed to update Google access token', {
               cause: err
@@ -225,12 +226,12 @@ export default app => {
   });
 };
 
-function getEmail(profile) {
-  const { emails } = profile;
-  return emails.length ? emails[0].value : null;
-}
-
-function getProfileImg(profile) {
-  const { photos = [] } = profile;
-  return photos.length ? photos[0].value : null;
+function parseProfile(profile) {
+  const { id, emails, photos = [], displayName } = profile;
+  return {
+    id,
+    email: emails.length ? emails[0].value : null,
+    profileImg: photos.length ? photos[0].value : null,
+    displayName
+  };
 }

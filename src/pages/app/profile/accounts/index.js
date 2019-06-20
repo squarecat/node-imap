@@ -80,8 +80,10 @@ const Accounts = () => {
   if (!accounts.length) {
     connectedAccountsContent = (
       <p>
-        You haven't connected any accounts yet. Connect your Google or Outlook
-        accounts below to start scanning your inboxes for subscription spam.
+        You haven't connected any accounts yet. Connect your{' '}
+        <TextImportant>Google</TextImportant> or{' '}
+        <TextImportant>Microsoft</TextImportant> accounts below to start
+        scanning your inboxes for subscription spam.
       </p>
     );
   } else {

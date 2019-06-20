@@ -40,13 +40,9 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
       const {
         paymentMethod,
         error: paymentError
-      } = await stripe.createPaymentMethod(
-        'card',
-        stripeState.cardRef.current._element,
-        {
-          billing_details: billingDetails
-        }
-      );
+      } = await stripe.createPaymentMethod('card', stripeState.cardRef, {
+        billing_details: billingDetails
+      });
 
       if (paymentError) {
         console.error(paymentError);

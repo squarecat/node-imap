@@ -5,13 +5,19 @@
   @extend .profile-section;
 }
 
-.details {
-  p:last-child {
-    margin: 0;
-  }
-}
-
 .warning {
   color: $color-primary-font;
   font-weight: bold;
+}
+
+.email-container {
+  display: flex;
+  align-items: center;
+  > span {
+    margin-right: 5px;
+  }
+}
+
+svg + .email {
+  margin-left: 5px;
 }

@@ -109,6 +109,10 @@
   padding: 20px;
   border: 1px solid $color-border-red;
   border-radius: 10px;
+
+  p:last-child {
+    margin: 0;
+  }
 }
 
 .profile-section + .profile-section {
@@ -117,12 +121,11 @@
 
 .profile-section--unpadded {
   padding: 0;
+}
 
-  > p,
-  .unpadded-content {
-    padding: 20px 20px 0 20px;
-    margin-bottom: 20px;
-  }
+.profile-unpadded-content {
+  margin: 0;
+  padding: 20px;
 }
 
 .warning {
@@ -144,10 +147,17 @@
 
   .profile-nav {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 0;
     width: 100%;
     border-radius: 10px;
     overflow: hidden;
+  }
+}
+
+@media (max-width: 400px) {
+  .profile-nav-link {
+    font-size: 12px;
+    padding: 10px 5px;
   }
 }

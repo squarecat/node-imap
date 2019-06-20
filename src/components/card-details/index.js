@@ -2,9 +2,14 @@ import './card-details.module.scss';
 
 import { CreditCardIcon } from '../icons';
 import React from 'react';
+import cx from 'classnames';
 
-export default ({ card }) => (
-  <div styleName="details">
+export default ({ card, padded = false }) => (
+  <div
+    styleName={cx('details', {
+      padded
+    })}
+  >
     <div styleName="box last4">
       <CreditCardIcon />
       {`•••• •••• •••• ${card.last4}`}

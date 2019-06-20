@@ -1,15 +1,17 @@
 import './organisation.module.scss';
 
 import { FormGroup, InlineFormInput } from '../../../../components/form';
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
+import { AlertContext } from '../../../../providers/alert-provider';
 import Button from '../../../../components/btn';
 import CopyButton from '../../../../components/copy-to-clipboard';
 import request from '../../../../utils/request';
-import { AlertContext } from '../../../../providers/alert-provider';
+import useUser from '../../../../utils/hooks/use-user';
 
 function InviteForm({ organisation }) {
   const { actions: alertActions } = useContext(AlertContext);
+  const [, { setOrganisationLastUpdated }] = useUser();
   const { id, inviteCode, allowAnyUserWithCompanyEmail } = organisation;
 
   const [email, setEmail] = useState('');
@@ -20,6 +22,8 @@ function InviteForm({ organisation }) {
       try {
         setSendingInvite(true);
         await sendOrganisationInvite(id, email);
+        setEmail('');
+        setOrganisationLastUpdated(Date.now());
         alertActions.setAlert({
           id: 'org-invite-success',
           level: 'success',
@@ -90,8 +94,8 @@ function InviteForm({ organisation }) {
             placeholder="Email address"
             name="email"
             value={email}
-            onChange={e => {
-              setEmail(e.currentValue.target);
+            onChange={({ currentTarget }) => {
+              setEmail(currentTarget.value);
             }}
           >
             <Button

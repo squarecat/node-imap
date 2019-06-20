@@ -669,30 +669,32 @@ export default function OpenPage() {
                 <div styleName="box box--unpadded">
                   <h2>Last Month's Expenses</h2>
                   <Table>
-                    {itemised.map((expense, i) => {
-                      return (
-                        <TableRow key={i}>
-                          <TableCell>{expense.type}</TableCell>
-                          <TableCell>
-                            <TextLink href={expense.url}>
-                              {expense.service}
-                            </TextLink>
-                          </TableCell>
-                          <TableCell>{currency(expense.cost)}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                    <TableRow inverted>
-                      <TableCell />
-                      <TableCell>Total</TableCell>
-                      <TableCell>
-                        <span>
-                          {currency(
-                            itemised.reduce((out, e) => out + e.cost, 0)
-                          )}
-                        </span>
-                      </TableCell>
-                    </TableRow>
+                    <tbody>
+                      {itemised.map((expense, i) => {
+                        return (
+                          <TableRow key={i}>
+                            <TableCell>{expense.type}</TableCell>
+                            <TableCell>
+                              <TextLink href={expense.url}>
+                                {expense.service}
+                              </TextLink>
+                            </TableCell>
+                            <TableCell>{currency(expense.cost)}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      <TableRow inverted>
+                        <TableCell />
+                        <TableCell>Total</TableCell>
+                        <TableCell>
+                          <span>
+                            {currency(
+                              itemised.reduce((out, e) => out + e.cost, 0)
+                            )}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    </tbody>
                   </Table>
                 </div>
               )}

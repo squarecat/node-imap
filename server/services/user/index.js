@@ -99,7 +99,7 @@ export async function getUserById(id, options = {}) {
 export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
   try {
     const user = await getUserByEmail(userData.email);
-    if (user.loginProvider !== 'outlook') {
+    if (user && user.loginProvider !== 'outlook') {
       throw new AuthError('user already exists with a different provider', {
         errKey: 'auth-provider-error'
       });
@@ -113,7 +113,7 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
     const user = await getUserByEmail(userData.email);
-    if (user.loginProvider !== 'google') {
+    if (user && user.loginProvider !== 'google') {
       throw new AuthError('user already exists with a different provider', {
         errKey: 'auth-provider-error'
       });

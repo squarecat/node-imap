@@ -19,6 +19,16 @@ import request from '../../../../utils/request';
 import { useAsync } from '../../../../utils/hooks';
 import useUser from '../../../../utils/hooks/use-user';
 
+export default () => {
+  return (
+    <ProfileLayout pageName="Organisation">
+      <ErrorBoundary>
+        <Organisation />
+      </ErrorBoundary>
+    </ProfileLayout>
+  );
+};
+
 function Organisation() {
   const [
     { organisationId, organisationAdmin, organisationLastUpdated }
@@ -97,11 +107,13 @@ function Organisation() {
               </div>
               {invitedUsers.length ? (
                 <Table>
-                  {invitedUsers.map(e => (
-                    <TableRow key={e}>
-                      <TableCell>{e}</TableCell>
-                    </TableRow>
-                  ))}
+                  <tbody>
+                    {invitedUsers.map(email => (
+                      <TableRow key={email}>
+                        <TableCell>{email}</TableCell>
+                      </TableRow>
+                    ))}
+                  </tbody>
                 </Table>
               ) : (
                 <p>There are no invites pending.</p>
@@ -292,7 +304,7 @@ function Billing({ organisation }) {
 
         {card ? (
           <>
-            <CardDetails card={billing.card} />
+            <CardDetails card={billing.card} padded />
             <Button basic compact stretch onClick={onClickAddBilling}>
               Change Payment Method
             </Button>
@@ -390,16 +402,6 @@ function BillingInformation({ organisationId }) {
     </div>
   );
 }
-
-export default () => {
-  return (
-    <ProfileLayout pageName="Organisation">
-      <ErrorBoundary>
-        <Organisation />
-      </ErrorBoundary>
-    </ProfileLayout>
-  );
-};
 
 function fetchOrganisation(id) {
   return request(`/api/organisation/${id}`, {

@@ -9,7 +9,6 @@
   border-radius: 4px;
   display: inline-block;
   margin-right: 5px;
-  margin-bottom: 2em;
   font-family: 'Courier New', Courier, monospace;
   font-weight: 600;
 
@@ -20,4 +19,7 @@
 .last4 {
 }
 .expires {
+}
+.padded {
+  margin-bottom: 2em;
 }

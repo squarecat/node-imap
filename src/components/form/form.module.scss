@@ -124,10 +124,6 @@
   }
 }
 
-.no-focus:focus {
-  box-shadow: 0;
-}
-
 .form-input:focus + .form-label,
 .form-input:valid + .form-label {
   transform: translate(-5px, -30px);
@@ -182,7 +178,7 @@
   width: 100%;
   height: 100%;
 
-  &:focus + .form-select-dropdown:not(.basic) {
+  &:focus + .form-select-dropdown:not(.input-basic) {
     border-color: $color-input-border-focus;
 
     .container & {
@@ -190,7 +186,7 @@
     }
   }
 
-  &:focus + .form-select-dropdown.basic {
+  &:focus + .form-select-dropdown.input-basic {
     border-bottom-color: $color-input-border-focus;
     .container & {
       border-bottom-color: $color-input-border;
@@ -219,6 +215,7 @@
   flex: 1;
   margin: 0 auto;
   margin-bottom: 1rem;
+  width: 100%;
 
   &.fluid {
     max-width: 90%;

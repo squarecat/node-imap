@@ -48,7 +48,7 @@ export default ({ nextText = 'Next' }) => {
       <FormGroup fluid>
         <FormLabel htmlFor="username">Enter your email address...</FormLabel>
         <FormInput
-          noFocus
+          autoFocus
           compact
           type="email"
           placeholder=""

@@ -62,16 +62,18 @@ export default ({ pageName, children }) => {
                   <span> Security</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/app/profile/billing"
-                  styleName="profile-nav-link"
-                  activeClassName="profile-nav-link--active"
-                >
-                  <CreditCardIcon width="16" height="16" />
-                  <span>Billing</span>
-                </Link>
-              </li>
+              {organisationId ? null : (
+                <li>
+                  <Link
+                    to="/app/profile/billing"
+                    styleName="profile-nav-link"
+                    activeClassName="profile-nav-link--active"
+                  >
+                    <CreditCardIcon width="16" height="16" />
+                    <span>Billing</span>
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   to="/app/profile/history/activity"

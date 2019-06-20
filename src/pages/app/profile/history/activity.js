@@ -1,4 +1,4 @@
-import './scans.module.scss';
+import './history.module.scss';
 
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
@@ -28,14 +28,14 @@ function ActivityHistory() {
     return <span>Loading...</span>;
   }
   return (
-    <>
-      <div styleName="scan-section">
-        <p>
-          Showing <TextImportant>{activity.length}</TextImportant> previous
-          actions.
-        </p>
-        <ErrorBoundary>
-          <Table>
+    <div styleName="section">
+      <p styleName="content">
+        Showing <TextImportant>{activity.length}</TextImportant> previous
+        actions.
+      </p>
+      <ErrorBoundary>
+        <Table>
+          <tbody>
             {sorted.map(activity => {
               const parsedActivity = parseActivity(activity, { accounts });
               return (
@@ -45,13 +45,10 @@ function ActivityHistory() {
                 </TableRow>
               );
             })}
-          </Table>
-        </ErrorBoundary>
-      </div>
-      {sorted.map(activity => (
-        <pre key={activity.timestamp}>{JSON.stringify(activity, null, 2)}</pre>
-      ))}
-    </>
+          </tbody>
+        </Table>
+      </ErrorBoundary>
+    </div>
   );
 }
 

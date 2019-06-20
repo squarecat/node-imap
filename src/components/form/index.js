@@ -17,7 +17,6 @@ export const FormInput = ({
   type = 'text',
   name,
   required,
-  noFocus,
   compact,
   smaller,
   basic,
@@ -36,7 +35,6 @@ export const FormInput = ({
     [value]
   );
   const classes = cx('form-input', {
-    'no-focus': noFocus,
     'input-compactt': compact,
     'input-smaller': smaller,
     'input-basic': basic

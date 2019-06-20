@@ -82,7 +82,7 @@ export default ({
         }}
         styleName="connect-btn"
       >
-        <GoogleIcon />
+        <GoogleIcon width="20" height="20" />
         <span styleName="text">Connect Google</span>
       </a>
     );
@@ -97,8 +97,8 @@ export default ({
         }}
         styleName="connect-btn"
       >
-        <OutlookIcon />
-        <span styleName="text">Connect Outlook</span>
+        <OutlookIcon width="20" height="20" />
+        <span styleName="text">Connect Microsoft</span>
       </a>
     );
   } else {

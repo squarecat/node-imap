@@ -38,9 +38,9 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Preferences">
-      <div styleName="preferences-section">
+      {/* <div styleName="preferences-section">
         <h2>Mail</h2>
-        {/* <FormCheckbox
+        <FormCheckbox
           onChange={() =>
             onChange(
               'hideUnsubscribedMails',
@@ -49,8 +49,8 @@ export default () => {
           }
           checked={getPref(preferences, 'hideUnsubscribedMails')}
           label="Hide unsubscribed emails in future scans"
-        /> */}
-      </div>
+        />
+      </div> */}
       <div styleName="preferences-section">
         <h2>Marketing</h2>
         <FormCheckbox

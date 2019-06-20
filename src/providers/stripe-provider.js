@@ -39,8 +39,7 @@ function StripeStateProvider({ children }) {
       value={{
         state,
         actions: {
-          setCardRef: r => setState({ ...state, cardRef: r }),
-          setReady: () => setState({ ...state, isReady: true }),
+          setReady: el => setState({ ...state, isReady: true, cardRef: el }),
           reset: () => setState(initialState)
         }
       }}

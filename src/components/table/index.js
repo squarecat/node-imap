@@ -27,3 +27,15 @@ export const TableCell = ({ children, ...props }) => {
     </td>
   );
 };
+
+export const TableHead = ({ children }) => {
+  return (
+    <thead styleName="head">
+      <tr>{children}</tr>
+    </thead>
+  );
+};
+
+export const TableHeadCell = ({ children }) => {
+  return <th styleName="head-cell">{children}</th>;
+};

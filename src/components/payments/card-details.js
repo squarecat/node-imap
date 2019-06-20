@@ -1,6 +1,6 @@
 import './card-details.module.scss';
 
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { CardElement } from 'react-stripe-elements';
 import { FormGroup } from '../form';
@@ -28,16 +28,13 @@ const cardElementOptions = {
 };
 
 function CardDetails({ loading = false, disabled = false }) {
-  const cardRef = useRef(null);
-
   const { actions } = useContext(StripeStateContext);
 
   useEffect(() => {
-    actions.setCardRef(cardRef);
     return function cleanup() {
       actions.reset();
     };
-  }, []);
+  }, []); // do not pass actions in here or cleaup fires when the stripe state changes
 
   return (
     <FormGroup>
@@ -48,9 +45,8 @@ function CardDetails({ loading = false, disabled = false }) {
         })}
       >
         <CardElement
-          ref={cardRef}
           {...cardElementOptions}
-          onReady={() => actions.setReady()}
+          onReady={el => actions.setReady(el)}
         />
       </div>
     </FormGroup>

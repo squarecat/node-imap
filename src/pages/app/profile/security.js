@@ -8,15 +8,16 @@ import {
 } from '../../../components/form';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
+import { TextImportant, TextLink } from '../../../components/text';
 
 import Button from '../../../components/btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
 import ProfileLayout from './layout';
 import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
-import { TextImportant } from '../../../components/text';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
+import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -49,10 +50,16 @@ export default () => {
         </>
       ) : (
         <div styleName="security-section">
-          <h2>Switch to email & password</h2>
-          <p>You currently login with {_capitalize(loginProvider)}.</p>
-          <p>You can switch to email and password instead...</p>
-          <p>Coming soon!</p>
+          <h2>Details</h2>
+          <p>
+            You currently log in with{' '}
+            <TextImportant>{_capitalize(loginProvider)}</TextImportant>.
+          </p>
+          <p>
+            Want to switch to email and password? We don't automate this yet but
+            you can <TextLink onClick={() => openChat()}>contact us</TextLink>{' '}
+            if you'd like to change your account.
+          </p>
         </div>
       )}
     </ProfileLayout>
@@ -110,41 +117,43 @@ function TwoFactorAuth() {
           Authenticaor
         </p>
       </div>
-      <Table>
-        <tbody>
-          <TableRow>
-            <TableCell>Authenticator app</TableCell>
-            <TableCell>
-              <TextImportant>
-                {requiresTwoFactorAuth ? 'Enabled' : 'Disabled'}
-              </TextImportant>
-            </TableCell>
-            <TableCell>
-              {requiresTwoFactorAuth ? (
-                <Button
-                  smaller
-                  compact
-                  muted
-                  basic
-                  onClick={() => open2faVerify()}
-                >
-                  Remove
-                </Button>
-              ) : (
-                <Button
-                  smaller
-                  compact
-                  muted
-                  basic
-                  onClick={() => open2faSetup()}
-                >
-                  Setup
-                </Button>
-              )}
-            </TableCell>
-          </TableRow>
-        </tbody>
-      </Table>
+      <div styleName="two-factor-auth-table">
+        <Table>
+          <tbody>
+            <TableRow>
+              <TableCell>Authenticator app</TableCell>
+              <TableCell>
+                <TextImportant>
+                  {requiresTwoFactorAuth ? 'Enabled' : 'Disabled'}
+                </TextImportant>
+              </TableCell>
+              <TableCell>
+                {requiresTwoFactorAuth ? (
+                  <Button
+                    smaller
+                    compact
+                    muted
+                    basic
+                    onClick={() => open2faVerify()}
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    smaller
+                    compact
+                    muted
+                    basic
+                    onClick={() => open2faSetup()}
+                  >
+                    Setup
+                  </Button>
+                )}
+              </TableCell>
+            </TableRow>
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }
@@ -195,9 +204,11 @@ function ChangePassword() {
         }}
         method="post"
       >
-        <FormGroup fluid>
+        <FormGroup>
           <FormLabel htmlFor="password">Old Password</FormLabel>
           <FormInput
+            autoFocus
+            autoComplete="current-password"
             compact
             value={state.oldPassword}
             type="password"
@@ -210,9 +221,10 @@ function ChangePassword() {
             }}
           />
         </FormGroup>
-        <FormGroup fluid>
+        <FormGroup>
           <FormLabel htmlFor="password">New Password</FormLabel>
           <PasswordInput
+            autoComplete="new-password"
             checkIfPwned={true}
             value={state.password}
             onChange={value =>
@@ -223,9 +235,10 @@ function ChangePassword() {
             }
           />
         </FormGroup>
-        <FormGroup fluid>
+        <FormGroup>
           <FormLabel htmlFor="password-confirm">Confirm new password</FormLabel>
           <FormInput
+            autoComplete="new-password"
             compact
             value={state.confirmPassword}
             type="password"
@@ -246,21 +259,19 @@ function ChangePassword() {
           <FormNotification success>{state.success}</FormNotification>
         ) : null}
 
-        <div styleName="password-btn">
-          <Button
-            basic
-            compact
-            stretch
-            loading={state.loading}
-            disabled={
-              !state.oldPassword || !state.password || !state.confirmPassword
-            }
-            type="submit"
-            as="button"
-          >
-            Update
-          </Button>
-        </div>
+        <Button
+          basic
+          compact
+          stretch
+          loading={state.loading}
+          disabled={
+            !state.oldPassword || !state.password || !state.confirmPassword
+          }
+          type="submit"
+          as="button"
+        >
+          Update
+        </Button>
       </form>
     </div>
   );

@@ -22,25 +22,32 @@ export default () => {
   return (
     <ProfileLayout pageName="Favorite Senders">
       <div styleName="ignore-section">
-        <p>
+        <p styleName="content">
           Showing <TextImportant>{ignoredSenderList.length}</TextImportant>{' '}
           favorite senders. Emails from these addresses will not show up in any
           future scans.
         </p>
         <ErrorBoundary>
           <Table>
-            {ignoredSenderList.map(sender => {
-              return (
-                <TableRow key={sender}>
-                  <TableCell>{sender}</TableCell>
-                  <TableCell>
-                    <Button compact basic muted onClick={() => remove(sender)}>
-                      Remove
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            <tbody>
+              {ignoredSenderList.map(sender => {
+                return (
+                  <TableRow key={sender}>
+                    <TableCell>{sender}</TableCell>
+                    <TableCell>
+                      <Button
+                        compact
+                        basic
+                        muted
+                        onClick={() => remove(sender)}
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </tbody>
           </Table>
         </ErrorBoundary>
       </div>

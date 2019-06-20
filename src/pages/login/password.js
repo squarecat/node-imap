@@ -11,9 +11,8 @@ import React, { useContext } from 'react';
 import Button from '../../components/btn';
 import { LoginContext } from './index';
 import PasswordInput from '../../components/form/password';
-import { TextLink } from '../../components/text';
-import { navigate } from 'gatsby';
 import { getAuthError } from '../../utils/errors';
+import { navigate } from 'gatsby';
 
 export default ({
   doValidation = true,
@@ -70,6 +69,7 @@ export default ({
         <FormGroup fluid>
           <FormLabel htmlFor="reset-code">Reset code</FormLabel>
           <FormInput
+            autoFocus
             id="reset-code"
             name="reset-code"
             required
@@ -81,9 +81,13 @@ export default ({
         </FormGroup>
       ) : null}
       <input
-        type="hidden"
+        // Password forms should have (optionally hidden) username fields
+        // they need to be type text and hidden with CSS
+        style={{ display: 'none' }}
+        type="text"
         name="username"
         value={state.email}
+        onChange={() => {}}
         autoComplete="username"
       />
       <FormGroup fluid>
@@ -112,17 +116,16 @@ export default ({
           />
         </FormGroup>
       ) : (
-        <span styleName="forgot-password">
-          <TextLink
-            smaller
+        <FormGroup fluid>
+          <a
             onClick={() =>
               dispatch({ type: 'set-step', data: 'forgot-password' })
             }
             styleName="forgot-password"
           >
             Forgot password?
-          </TextLink>
-        </span>
+          </a>
+        </FormGroup>
       )}
 
       {state.error ? (
