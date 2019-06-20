@@ -1008,7 +1008,12 @@ export async function addActivityForUser(userId, name, data = {}) {
       sendToUser(userId, 'notifications', [activity]);
     }
     if (activity.rewardCredits) {
-      sendToUser(userId, 'new-credits', activity.rewardCredits);
+      logger.debug(
+        `user-service: activity has reward, sending credits to socket ${
+          activity.rewardCredits
+        }`
+      );
+      sendToUser(userId, 'update-credits', activity.rewardCredits);
     }
     return activity;
   } catch (err) {
@@ -1017,10 +1022,8 @@ export async function addActivityForUser(userId, name, data = {}) {
 }
 
 export function incrementUserCredits(id, credits) {
+  logger.debug(`user-service: incrementing credits by ${credits}`);
   return incrementCredits(id, credits);
-}
-export function decrementUserCredits(id, credits) {
-  return incrementCredits(id, -credits);
 }
 
 function getReward({ userActivity, name, milestone, activityData }) {
