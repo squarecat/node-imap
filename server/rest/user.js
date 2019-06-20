@@ -372,7 +372,6 @@ export default app => {
   app.patch('/api/me', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id: userId } = user;
-    const { id } = user;
     const { op, value } = body;
     let updatedUser = user;
     try {
@@ -385,7 +384,7 @@ export default app => {
     } catch (err) {
       next(
         new RestError('failed to patch user', {
-          userId: id,
+          userId,
           op,
           cause: err
         })

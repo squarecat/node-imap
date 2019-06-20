@@ -823,7 +823,7 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
 export async function removeUserAccount(userId, accountEmail) {
   try {
     const user = await getUserById(userId, { withAccountKeys: true });
-    const { id: userId, accounts, organisationId } = user;
+    const { accounts, organisationId } = user;
 
     const account = accounts.find(e => e.email === accountEmail);
 
