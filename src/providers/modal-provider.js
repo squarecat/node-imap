@@ -15,7 +15,7 @@ const defaultOptions = {
   dismissable: true
 };
 
-function Provider({ children }) {
+export const ModalProvider = ({ children }) => {
   const modalRef = useRef(null);
 
   const [state, setState] = useState({
@@ -81,11 +81,9 @@ function Provider({ children }) {
       }}
     >
       {children}
-      <Modal ref={modalRef} shown={state.shown} {...state.options}>
+      <Modal shown={state.shown} {...state.options}>
         {modal}
       </Modal>
     </ModalContext.Provider>
   );
-}
-
-export const ModalProvider = Provider;
+};
