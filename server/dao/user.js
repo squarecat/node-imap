@@ -775,17 +775,21 @@ export async function removeTotpSecret(userId) {
 export async function getLoginProvider(hashedEmail) {
   try {
     const col = await db().collection(COL_NAME);
-    const user = await col.findOne(
-      { hashedEmails: hashedEmail },
-      {
-        loginProvider: 1,
-        email: 1,
-        accounts: 1
-      }
+    const users = await col
+      .find(
+        { hashedEmails: hashedEmail },
+        {
+          loginProvider: 1,
+          email: 1,
+          accounts: 1
+        }
+      )
+      .toArray();
+    if (!users.length) return null;
+    const userWithLoginEmail = users.find(
+      u => hashEmail(u.email) === hashedEmail
     );
-    if (!user) return null;
-    const isLoginEmail = hashEmail(user.email) === hashedEmail;
-    return isLoginEmail ? user.loginProvider : 'connected-account';
+    return userWithLoginEmail ? userWithLoginEmail.loginProvider : null;
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');
     logger.error(err);

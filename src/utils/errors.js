@@ -26,13 +26,16 @@ export function getAuthError(err = {}, authType) {
   if (authType === 'reset') {
     msg = ' resetting your password';
   }
+  if (authType === 'change') {
+    msg = ' changing your password';
+  }
 
   const defaultMsg = `Something went wrong${msg}. Please try again or send us a message.`;
   if (!err) return defaultMsg;
 
-  const { id, data = {} } = err;
+  const { id, reason } = err;
 
-  switch (data.errKey) {
+  switch (reason) {
     case 'not-found':
       return <span>User not found or password is incorrect.</span>;
     case 'invalid-reset-code':

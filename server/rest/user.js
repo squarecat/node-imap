@@ -10,6 +10,7 @@ import {
   getUserLoginProvider,
   getUserNotifications,
   getUserPayments,
+  handleUserForgotPassword,
   inviteReferralUser,
   removeFromUserIgnoreList,
   removeUserAccount,
@@ -18,7 +19,6 @@ import {
   removeUserTotpToken,
   setUserMilestoneCompleted,
   updateUserAutoBuy,
-  handleUserForgotPassword,
   updateUserPassword,
   updateUserPreferences
 } from '../services/user';
@@ -370,7 +370,8 @@ export default app => {
           new RestError('failed to patch user password', {
             userId: id,
             op,
-            cause: err
+            cause: err,
+            ...err.data
           })
         );
       }

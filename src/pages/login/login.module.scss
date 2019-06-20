@@ -109,11 +109,18 @@ $active-bg-color: #ffc7c1;
   font-size: 1.62671rem;
   line-height: 1.1;
 }
+
 .buttons {
-  margin-top: auto;
+  margin: auto;
+
   a {
     height: 62px;
     line-height: 60px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
     @media (max-width: 400px) {
       height: 54px;
       line-height: 52px;
@@ -233,4 +240,10 @@ $active-bg-color: #ffc7c1;
   @extend .link;
   font-size: 11px;
   margin-left: 5px;
+}
+
+.switch-link {
+  @media (max-width: 400px) {
+    display: inline-block;
+  }
 }

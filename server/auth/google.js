@@ -185,7 +185,7 @@ export default app => {
       if (err) {
         logger.error('google-auth: passport authentication error');
         const { id: errId, data } = err.toJSON();
-        const errUrl = `${baseErrUrl}&id=${errId}&errKey=${data.errKey ||
+        const errUrl = `${baseErrUrl}&id=${errId}&reason=${data.errKey ||
           'unknown'}`;
         return res.redirect(errUrl);
       }

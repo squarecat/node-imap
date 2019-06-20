@@ -13,6 +13,7 @@ import ProfileLayout from './layout';
 import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
+import { getAuthError } from '../../../utils/errors';
 import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
@@ -176,10 +177,11 @@ function ChangePassword() {
         autoDismiss: true
       });
     } catch (err) {
+      const message = getAuthError(err, 'change');
       alertActions.setAlert({
         id: 'change-password-error',
         level: 'error',
-        message: `Something went wrong changing your password. Please try again or send us a message.`,
+        message,
         isDismissable: true,
         autoDismiss: true
       });
@@ -212,7 +214,7 @@ function ChangePassword() {
         <FormGroup>
           <FormLabel htmlFor="password">Old Password</FormLabel>
           <FormInput
-            autoFocus
+            autoFocus={false}
             autoComplete="current-password"
             compact
             value={state.oldPassword}
@@ -230,6 +232,7 @@ function ChangePassword() {
           <FormLabel htmlFor="password">New Password</FormLabel>
           <PasswordInput
             autoComplete="new-password"
+            autoFocus={false}
             checkIfPwned={true}
             value={state.password}
             onChange={value =>
@@ -243,6 +246,7 @@ function ChangePassword() {
         <FormGroup>
           <FormLabel htmlFor="password-confirm">Confirm new password</FormLabel>
           <FormInput
+            autoFocus={false}
             autoComplete="new-password"
             compact
             value={state.confirmPassword}
@@ -254,6 +258,9 @@ function ChangePassword() {
                 confirmPassword: e.currentTarget.value
               });
             }}
+            validation={value =>
+              value === state.password ? true : 'Passwords must match.'
+            }
           />
         </FormGroup>
         <Button

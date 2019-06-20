@@ -176,7 +176,10 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                       {/* <Link state={{ fromSignup: true }} to="/login">
                         Log in
                       </Link> */}
-                      <a href="/login">Log in</a>.
+                      <a styleName="switch-link" href="/login">
+                        Log in
+                      </a>
+                      .
                     </p>
                   ) : (
                     <p style={{ marginBottom: '10px' }}>
@@ -184,7 +187,10 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                       {/* <Link state={{ fromLogin: true }} to="/signup">
                         Sign up
                       </Link> */}
-                      <a href="/signup">Sign up</a>.
+                      <a styleName="switch-link" href="/signup">
+                        Sign up
+                      </a>
+                      .
                     </p>
                   )}
 
@@ -323,7 +329,7 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                 <img src={logoUrl} alt="Leave Me Alone logo" />
               </div>
               <h1 styleName="title">Login to Leave Me Alone</h1>
-              {state.existingProvider === 'connected-account' ? (
+              {/* {state.existingProvider === 'connected-account' ? (
                 <>
                   <p>
                     That email address already attached to another account, if
@@ -331,23 +337,23 @@ const LoginPage = ({ register, transitionStatus, step = defaultStep }) => {
                     from the other account.
                   </p>
                 </>
-              ) : (
-                <>
-                  <p>
-                    That email address has already been used to sign in with{' '}
-                    <span styleName="provider-label">
-                      {state.existingProvider}
-                    </span>
-                    .
-                  </p>
-                  <div styleName="existing-provider-btn">
-                    <AuthButton
-                      provider={state.existingProvider}
-                      action={action}
-                    />
-                  </div>
-                </>
-              )}
+              ) : ( */}
+              <>
+                <p>
+                  That email address has already been used to sign in with{' '}
+                  <span styleName="provider-label">
+                    {state.existingProvider}
+                  </span>
+                  .
+                </p>
+                <div styleName="existing-provider-btn">
+                  <AuthButton
+                    provider={state.existingProvider}
+                    action={action}
+                  />
+                </div>
+              </>
+              {/* )} */}
 
               <div styleName="signup-buttons">
                 <button
@@ -380,10 +386,10 @@ function getError(error) {
   if (!error) return null;
 
   const params = new URLSearchParams(window.location.search);
-  const errKey = params.get('errKey');
+  const reason = params.get('reason');
   const id = params.get('id');
 
-  const errContent = getAuthError({ id, data: { errKey } });
+  const errContent = getAuthError({ id, reason });
 
   return (
     <FormNotification error fluid>

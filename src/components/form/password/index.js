@@ -15,7 +15,8 @@ const passwordLengthText = 'Password must be greater than 6 characters';
 export default ({
   doValidation = true,
   onChange = () => {},
-  autoComplete = 'current-password'
+  autoComplete = 'current-password',
+  autoFocus = true
 }) => {
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
@@ -58,7 +59,7 @@ export default ({
   return (
     <FormInput
       onChange={({ currentTarget }) => setValue(currentTarget.value)}
-      autoFocus
+      autoFocus={autoFocus}
       value={value}
       compact
       type="password"
