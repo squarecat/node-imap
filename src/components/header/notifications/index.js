@@ -61,7 +61,7 @@ export default () => {
     setNotifications([]);
   };
 
-  const unread = notifications.filter(n => !n.notification.seen).length;
+  const unread = notifications.filter(n => !n.notificationSeen).length;
 
   const onClickBody = ({ target }) => {
     let { parentElement } = target;
@@ -103,7 +103,7 @@ export default () => {
           <li key={n.id} styleName="notification-item">
             <span
               styleName={cx('notification', {
-                unread: !n.notification.seen
+                unread: !n.notificationSeen
               })}
             >
               {parseActivity(n)}

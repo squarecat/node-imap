@@ -521,7 +521,7 @@ async function addReferralActivity({ user, referralUser }) {
       id: referralUser.id,
       email: referralUser.email,
       activityId: referrerActivity.id,
-      reward: referrerActivity.reward.credits
+      reward: referrerActivity.credits
     });
     // add the data to the user
     addReferralSignupToStats();
@@ -1000,11 +1000,11 @@ export async function addActivityForUser(userId, name, data = {}) {
 
     // add the activity to the array
     const activity = await addActivity(userId, activityData);
-    if (activity.notification) {
+    if (typeof activity.notificationSeen !== 'undefined') {
       sendToUser(userId, 'notifications', [activity]);
     }
-    if (activity.reward) {
-      sendToUser(userId, 'new-credits', activity.reward.credits);
+    if (activity.rewardCredits) {
+      sendToUser(userId, 'new-credits', activity.rewardCredits);
     }
     return activity;
   } catch (err) {
@@ -1048,14 +1048,8 @@ function getReward({ userActivity, name, milestone, activityData }) {
 
   logger.debug(`user-service: conditions for reward met for activity ${name}`);
   return {
-    reward: {
-      credits
-    },
-    // if it's a reward we add a notification
-    // TODO what other use cases do we need to do this for?
-    notification: {
-      seen: false
-    }
+    credits,
+    notificationSeen: false
   };
 }
 
@@ -1128,10 +1122,12 @@ export async function getUserNotifications(userId, { seen } = {}) {
     const user = await getUserById(userId);
     if (!user) return null;
     return user.activity.filter(a => {
-      if (seen === true || seen === false) {
-        return a.notification && a.notification.seen === seen;
+      // if seen is specified only return the ones which match this query
+      if (typeof seen !== 'undefined') {
+        return a.notificationSeen === seen;
       }
-      return a.notification;
+      // otherwise return them all
+      return a.notificationSeen !== 'undefined';
     });
   } catch (err) {
     throw err;

@@ -897,7 +897,6 @@ export async function setNotificationsRead(id, activityIds = []) {
     const col = await db().collection(COL_NAME);
     let query = {
       id
-      // 'activity.notification.seen': false
     };
     // specify which ones to set
     if (activityIds.length) {
@@ -910,12 +909,12 @@ export async function setNotificationsRead(id, activityIds = []) {
       query,
       {
         $set: {
-          'activity.$[elem].notification.seen': true
+          'activity.$[elem].notificationSeen': true
         }
       },
       {
         multi: true,
-        arrayFilters: [{ 'elem.notification.seen': false }]
+        arrayFilters: [{ 'elem.notificationSeen': false }]
       }
     );
     const user = await getUser(id);
