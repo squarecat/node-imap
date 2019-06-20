@@ -1,10 +1,10 @@
-import Modal, { ModalBody, ModalFooter, ModalWizardActions } from '..';
+import { ModalBody, ModalHeader, ModalWizardActions } from '..';
 import OnboardingReducer, { initialState } from './reducer';
-import React, { useEffect, useReducer } from 'react';
-import { TextImportant, TextLead } from '../../text';
+import React, { useEffect, useMemo, useReducer } from 'react';
 
 import ConnectAccounts from './connect-accounts';
 import { Gift as GiftIcon } from '../../icons';
+import { TextImportant } from '../../text';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
@@ -17,17 +17,21 @@ import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);
-  const [{ accounts, organisationId }, { setMilestoneCompleted }] = useUser(
-    u => ({
-      accounts: u.accounts,
-      organisationId: u.organisationId
-    })
-  );
+  const [
+    { accounts, organisationId, isBeta },
+    { setMilestoneCompleted }
+  ] = useUser(u => ({
+    accounts: u.accounts,
+    organisationId: u.organisationId,
+    isBeta: u.isBeta
+  }));
 
   useEffect(
     () => {
       if (state.step === 'accounts') {
         dispatch({ type: 'can-proceed', data: !!accounts.length });
+      } else {
+        dispatch({ type: 'can-proceed', data: true });
       }
     },
     [state.step, accounts.length]
@@ -56,6 +60,7 @@ export default () => {
         <Content step={state.step} accounts={accounts} />
       </ModalBody>
       <ModalWizardActions
+        nextLabel={state.nextLabel}
         onNext={() => {
           if (state.step === 'finish') {
             return onComplete();
@@ -71,79 +76,86 @@ export default () => {
   );
 };
 
-function Content({ step, accounts }) {
-  let content = null;
-  if (step === 'welcome') {
-    content = (
-      <>
-        <h2>Welcome to Leave Me Alone!</h2>
-        {/* <TextLead prose> Let's get started</TextLead> */}
-        <p>
-          <strong>Leave Me Alone</strong> connects to your email inboxes and
-          scans for all your subscription mail. We'll show you which mail is the
-          most spammy and you can unsubscribe from it easily!
-        </p>
-        <img
-          styleName="onboarding-example-img"
-          src={unsubscribeSpamImage}
-          alt="example-image"
-        />
-        <p>
-          Let's start by{' '}
-          <TextImportant>connecting some of your email accounts</TextImportant>.
-        </p>
-      </>
-    );
-  }
-  if (step === 'accounts') {
-    content = (
-      <>
-        <h2>Connect email accounts</h2>
-        <ConnectAccounts accounts={accounts} />
-      </>
-    );
-  }
-  if (step === 'rewards') {
-    content = (
-      <div style={{ textAlign: 'center' }}>
-        <h2>Earn credits.</h2>
-        <p>
-          {/* You can purchase different sized packages of credits for
-          unsubscribing.
-          <br /> */}
-          <TextImportant>1 credit = 1 unsubscribe</TextImportant>.
-        </p>
-        <p>
-          <span style={{ paddingTop: '30px', height: 100 }}>
-            Spot this icon to <TextImportant>earn FREE credits</TextImportant>!
-          </span>
-        </p>
-        <p styleName="text-column">
-          <GiftIcon height={90} width={100} />
-        </p>
+function Content({ step, accounts, isBeta }) {
+  const content = useMemo(
+    () => {
+      if (step === 'welcome') {
+        return (
+          <>
+            <ModalHeader>Welcome to Leave Me Alone!</ModalHeader>
+            <p>
+              <strong>Leave Me Alone</strong> connects to your email inboxes and
+              scans for all your subscription mail. We'll show you which mail is
+              the most spammy and you can unsubscribe from it easily!
+            </p>
+            <img
+              styleName="onboarding-example-img"
+              src={unsubscribeSpamImage}
+              alt="example-image"
+            />
+            <p>
+              Let's start by{' '}
+              <TextImportant>connecting your email account</TextImportant>.
+            </p>
+          </>
+        );
+      }
+      if (step === 'accounts') {
+        return (
+          <>
+            <ModalHeader>Connect account</ModalHeader>
+            <ConnectAccounts accounts={accounts} onboarding />
+            <p style={{ marginTop: '2em' }}>
+              If you have more accounts then you can connect them later.
+            </p>
+          </>
+        );
+      }
+      if (step === 'rewards') {
+        return (
+          <>
+            <ModalHeader>Earn credits</ModalHeader>
+            <p>
+              Each unsubscribe costs 1 credit.
+              {/* <TextImportant>1 credit = 1 unsubscribe</TextImportant>. */}
+            </p>
+            {/* <p>
+              <span style={{ paddingTop: '30px', height: 100 }}>
+                Spot this icon to{' '}
+                <TextImportant>earn FREE credits</TextImportant>!
+              </span>
+            </p> */}
+            {/* <p styleName="text-column">
+              <GiftIcon height={90} width={100} />
+            </p> */}
 
-        <p style={{ marginTop: -20 }}>
-          Here are <TextImportant>10 free credits</TextImportant> to get you
-          started!
-        </p>
-      </div>
-    );
-  }
-  if (step === 'finish') {
-    content = (
-      <>
-        <h2>Start unsubscribing!</h2>
-        <p>
-          From here on we'll show you all the mail you are subscribed to, just
-          hit the slider to unsubscribe, or the heart to keep.
-        </p>
-        <div styleName="animations">
-          <img src={unsubscribeGif} alt="tutorial animation" />
-          <img src={heartGif} alt="tutorial animation" />
-        </div>
-      </>
-    );
-  }
+            <p>
+              Here are <TextImportant>10 free credits</TextImportant> to get you
+              started!
+            </p>
+            <p>More credits can be purchased when you run out.</p>
+          </>
+        );
+      }
+      if (step === 'finish') {
+        return (
+          <>
+            <ModalHeader>Start unsubscribing!</ModalHeader>
+            <p>
+              From here on we'll show you all the mail you are subscribed to,
+              just hit the slider to unsubscribe, or the heart to keep.
+            </p>
+            <div styleName="animations">
+              <img src={unsubscribeGif} alt="tutorial animation" />
+              <img src={heartGif} alt="tutorial animation" />
+            </div>
+          </>
+        );
+      }
+    },
+    [step, accounts]
+  );
+
   return (
     <Transition appear timeout={200} mountOnEnter unmountOnExit in={true}>
       {state => {

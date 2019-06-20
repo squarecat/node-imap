@@ -25,12 +25,8 @@ const el = document.createElement('div');
  * </Button>
  *
  */
-export default ({ children, shown = false, wizardComponent = null, style }) => {
+export default ({ children, opaque, shown = false, style }) => {
   const ref = useRef(null);
-
-  const btnHeight = ref.current
-    ? ref.current.offsetTop + ref.current.height
-    : 0;
 
   useEffect(() => {
     modalRoot.appendChild(el);
@@ -54,16 +50,12 @@ export default ({ children, shown = false, wizardComponent = null, style }) => {
             const stateClass = _capitalize(state);
             const hasStyle = !!modalStyles[`modalContainer${stateClass}`];
             const classes = cx(modalStyles['modalContainer'], {
-              [modalStyles[`modalContainer${stateClass}`]]: hasStyle
+              [modalStyles[`modalContainer${stateClass}`]]: hasStyle,
+              [modalStyles.opaque]: opaque
             });
             return (
               <div className={classes} data-modal>
                 <div styleName="modal-wizard-wrapper">
-                  {/* {wizardComponent ? (
-                    <span style={{ width: style.width, top: btnHeight }}>
-                      {wizardComponent}
-                    </span>
-                  ) : null} */}
                   <div style={style} styleName="modal" ref={ref}>
                     {children}
                   </div>

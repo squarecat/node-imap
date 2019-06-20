@@ -10,6 +10,9 @@
   background: $color-modal-bg;
   opacity: 1;
   transition: opacity 200ms ease-in-out;
+  &.opaque {
+    background: $color-modal-bg-opaque;
+  }
 }
 
 .modal-container-entering,

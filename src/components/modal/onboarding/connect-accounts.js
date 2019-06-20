@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import AccountProviderButtons from '../../connect-account/providers';
 import ConnectedAccountList from '../../connect-account/list';
@@ -7,7 +7,7 @@ import { fetchLoggedInUser } from '../../../utils/auth';
 import { getConnectError } from '../../../utils/errors';
 import useUser from '../../../utils/hooks/use-user';
 
-export default () => {
+export default ({ onboarding = false }) => {
   const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(
     u => ({
       accounts: u.accounts,
@@ -22,30 +22,49 @@ export default () => {
     const user = await fetchLoggedInUser();
     loadUser(user);
   };
-  let content;
+
   const onConnectError = err => {
     const msg = getConnectError(err);
     setError(msg);
   };
-  if (!accounts.length) {
-    content = <NoAccounts />;
-  } else {
-    content = (
-      <SomeAccounts
-        accounts={accounts}
-        primaryEmail={email}
-        loginProvider={loginProvider}
-      />
-    );
-  }
+
+  const content = useMemo(
+    () => {
+      if (!accounts.length) {
+        return <NoAccounts />;
+      } else {
+        return (
+          <SomeAccounts
+            accounts={accounts}
+            primaryEmail={email}
+            loginProvider={loginProvider}
+            onboarding={onboarding}
+          />
+        );
+      }
+    },
+    [accounts, email, loginProvider, onboarding]
+  );
+  // show the provider buttons if user has yet
+  // to add an account during onboarding, or if
+  // not onboarding then always show
+  const showButtons = useMemo(
+    () => {
+      return !onboarding || !accounts.length;
+    },
+    [accounts.length, onboarding]
+  );
 
   return (
     <>
       {content}
-      <AccountProviderButtons
-        onSuccess={onConnectSuccess}
-        onError={onConnectError}
-      />
+      {showButtons ? (
+        <AccountProviderButtons
+          onSuccess={onConnectSuccess}
+          onError={onConnectError}
+        />
+      ) : null}
+
       {error ? (
         <FormNotification error>
           Something went wrong connecting your account. Please try again or send
@@ -65,13 +84,16 @@ function NoAccounts() {
   );
 }
 
-function SomeAccounts({ accounts, primaryEmail, loginProvider }) {
+function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
   return (
     <>
-      <p>
-        If you have multiple email accounts then we can scan all of them at
-        once.
-      </p>
+      {onboarding ? null : (
+        <p>
+          If you have multiple email accounts then we can scan all of them at
+          once.
+        </p>
+      )}
+
       <p>So far you have connected these accounts;</p>
       <ConnectedAccountList
         accounts={accounts}

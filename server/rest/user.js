@@ -10,6 +10,7 @@ import {
   getUserLoginProvider,
   getUserNotifications,
   getUserPayments,
+  handleUserForgotPassword,
   inviteReferralUser,
   removeFromUserIgnoreList,
   removeUserAccount,
@@ -18,7 +19,6 @@ import {
   removeUserTotpToken,
   setUserMilestoneCompleted,
   updateUserAutoBuy,
-  handleUserForgotPassword,
   updateUserPassword,
   updateUserPreferences
 } from '../services/user';
@@ -44,63 +44,54 @@ const patchPasswordParams = {
     .label('Passwords must match')
 };
 
+const isBeta = process.env.NODE_ENV === 'beta';
+const userProps = [
+  'id',
+  'email',
+  'token',
+  'beta',
+  'unsubscriptions',
+  'scans',
+  'profileImg',
+  'ignoredSenderList',
+  'referredBy',
+  'referralCode',
+  'reminder',
+  'preferences',
+  'loginProvider',
+  'lastUpdatedAt',
+  'accounts',
+  'billing',
+  'milestones',
+  'unreadNotifications',
+  'organisationId',
+  'organisationAdmin',
+  'organisationName',
+  'organisationActive'
+];
+
 export default app => {
   app.get('/api/me', auth, async (req, res, next) => {
     const { id: userId } = req.user;
     try {
       const user = await getUserById(userId);
-      const {
-        id,
-        email,
-        token,
-        beta,
-        unsubscriptions,
-        scans,
-        profileImg,
-        ignoredSenderList,
-        referredBy,
-        referralCode,
-        reminder,
-        preferences,
-        loginProvider,
-        lastUpdatedAt,
-        accounts,
-        billing,
-        milestones = {},
-        unreadNotifications = [],
-        organisationId,
-        organisationAdmin,
-        organisationName,
-        organisationActive
-      } = user;
-
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
-      res.send({
-        id,
-        email,
-        token,
-        beta,
-        unsubscriptions,
-        profileImg,
-        ignoredSenderList,
-        referredBy,
-        referralCode,
-        requiresTwoFactorAuth,
-        hasScanned: scans ? !!scans.length : false,
-        lastScan: scans.length ? scans[scans.length - 1] : null,
-        reminder,
-        preferences,
-        loginProvider,
-        lastUpdatedAt,
-        accounts,
-        billing,
-        milestones,
-        unreadNotifications,
-        organisationId,
-        organisationAdmin,
-        organisationName,
-        organisationActive
-      });
+      let response = {
+        ...Object.keys(user).reduce((u, key) => {
+          if (userProps.includes(key) && user[key] !== null) {
+            return { ...u, [key]: user[key] };
+          }
+          return u;
+        }, {}),
+        requiresTwoFactorAuth
+      };
+      if (isBeta) {
+        response = {
+          ...response,
+          isBeta: true
+        };
+      }
+      res.send(response);
     } catch (err) {
       next(
         new RestError('failed to get user', {

@@ -8,7 +8,7 @@ const steps = [
   {
     value: 'welcome',
     nextLabel: (
-      <span>
+      <span styleName="onboarding-btn">
         <span style={{ marginRight: 10 }}>Connect accounts</span>
         <ArrowIcon direction="right" />
       </span>
@@ -17,7 +17,7 @@ const steps = [
   {
     value: 'accounts',
     nextLabel: (
-      <span>
+      <span styleName="onboarding-btn">
         <span style={{ marginRight: 10 }}>I'm done</span>
         <ArrowIcon direction="right" />
       </span>
@@ -26,10 +26,10 @@ const steps = [
   {
     value: 'rewards',
     nextLabel: (
-      <>
+      <span styleName="onboarding-btn">
         <span style={{ marginRight: 10 }}>Claim reward</span>
         <GiftIcon height={35} width={35} amount={10} filled />
-      </>
+      </span>
     )
   },
   { value: 'finish', nextLabel: 'Start scan' }

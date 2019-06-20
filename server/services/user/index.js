@@ -76,9 +76,9 @@ import shortid from 'shortid';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
 
-export async function getUserById(id) {
+export async function getUserById(id, options = {}) {
   try {
-    let user = await getUser(id);
+    let user = await getUser(id, {}, options);
     if (!user) return null;
     if (user.organisationId) {
       const { name, active } = await getOrganisationById(user.organisationId);
