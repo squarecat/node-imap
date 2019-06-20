@@ -32,19 +32,33 @@
 
   a {
     font-size: 14px;
+    margin: 0;
+  }
+
+  .desktop {
+    @media (max-width: 500px) {
+      display: none;
+    }
+  }
+
+  .mobile {
+    display: none;
+    @media (max-width: 500px) {
+      display: inline;
+    }
   }
 }
 
 .account {
-  display: flex;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) 100px;
   align-items: center;
-  justify-content: space-between;
   font-size: 14px;
-  padding: 5px 20px 5px 5px;
+  padding: 5px 0;
   margin: 0;
   opacity: 0;
-  height: 0;
-  transition: height 200ms ease-in-out, opacity 200ms 175ms ease-in-out;
+  max-height: 0;
+  transition: max-height 200ms ease-in-out, opacity 200ms 175ms ease-in-out;
 
   &.bordered {
     border-bottom: 1px solid $color-border-red;
@@ -52,20 +66,20 @@
   &:only-child {
     border-bottom: none;
   }
+
+  @media (max-width: 400px) {
+    grid-template-columns: 26px minmax(0, 1fr) 40px;
+    padding: 0;
+  }
 }
 
 .account-entered {
   opacity: 1;
-  height: 35px;
-}
+  max-height: 35px;
 
-.email-container {
-  display: flex;
-  align-items: center;
-}
-
-.email {
-  margin-left: 10px;
+  @media (max-width: 400px) {
+    max-height: 200px;
+  }
 }
 
 .provider-btn-grid {

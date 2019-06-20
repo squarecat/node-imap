@@ -111,8 +111,13 @@ export default () => {
           </li>
         ))}
         {notifications.length ? null : (
-          <li styleName="notification-item">
-            You have no unread notifications
+          <li styleName="notification-item empty">
+            <p>
+              No new notifications!{' '}
+              <span role="img" aria-label="Tada">
+                🎉
+              </span>
+            </p>
           </li>
         )}
         <li styleName="view-all-link">

@@ -329,8 +329,12 @@ function BillingHistory() {
                 <TableRow key={invoice.date}>
                   <TableCell>{getDate(invoice)}</TableCell>
                   <TableCell>{invoice.description}</TableCell>
-                  <TableCell>{getPrice(invoice)}</TableCell>
-                  <TableCell>{getStatus(invoice)}</TableCell>
+                  <TableCell>
+                    <>
+                      {getPrice(invoice)} {getStatus(invoice)}
+                    </>
+                  </TableCell>
+                  {/* <TableCell>{}</TableCell> */}
                   <TableCell>
                     {invoice.invoice_pdf ? (
                       <a
