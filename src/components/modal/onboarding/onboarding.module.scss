@@ -12,14 +12,30 @@
   }
 }
 
+.onboarding-btn {
+  svg {
+    top: 1px;
+  }
+
+  [data-icon='search'] {
+    position: relative;
+    top: 3px;
+  }
+}
+
 .onboarding-modal {
   width: 600px;
   max-width: 100%;
 }
 
 .onboarding-example-img {
-  max-width: 95%;
+  max-width: 100%;
   margin-bottom: 1.5em;
+
+  @media (max-width: 400px) {
+    max-width: calc(100% + 40px);
+    margin: auto -20px 1.5em -20px;
+  }
 }
 
 .wizard-content-wrapper {

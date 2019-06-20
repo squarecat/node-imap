@@ -29,6 +29,16 @@ export default ({
       e.preventDefault();
       const { password, email, resetCode } = state;
       dispatch({ type: 'set-loading', data: true });
+      let body = {
+        username: email,
+        password
+      };
+      if (resetCode) {
+        body = {
+          ...body,
+          resetCode
+        };
+      }
       // TODO use request instead
       const resp = await fetch(submitAction, {
         method: 'POST',
@@ -37,7 +47,7 @@ export default ({
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         },
-        body: JSON.stringify({ username: email, password, resetCode })
+        body: JSON.stringify(body)
       });
       const { success, error, twoFactorRequired } = await resp.json();
       if (success !== true) {

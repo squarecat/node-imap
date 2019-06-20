@@ -1,5 +1,6 @@
 import {
   checkPassword,
+  decrypt,
   decryptUnsubscriptions,
   encrypt,
   hashEmail,
@@ -110,7 +111,7 @@ export async function createUser(data, provider) {
   }
 }
 
-export async function getUser(id, projection = {}) {
+export async function getUser(id, projection = {}, options = {}) {
   try {
     const col = await db().collection(COL_NAME);
     const user = await col.findOne(
@@ -118,13 +119,7 @@ export async function getUser(id, projection = {}) {
       { ...defaultProjection, ...projection }
     );
     if (!user) return null;
-    const decryptedUser = {
-      ...user,
-      unsubscriptions: decryptUnsubscriptions(
-        user.unsubscriptions,
-        encryptedUnsubCols
-      )
-    };
+    let decryptedUser = decryptUser(user, options);
     return decryptedUser;
   } catch (err) {
     logger.error(`users-dao: error fetching user ${id}`);
@@ -136,7 +131,8 @@ export async function getUser(id, projection = {}) {
 export async function getUserByEmail(email, projection = {}) {
   try {
     const col = await db().collection(COL_NAME);
-    return col.findOne({ email }, { _id: 0, ...projection });
+    const user = await col.findOne({ email }, { _id: 0, ...projection });
+    return decryptUser(user);
   } catch (err) {
     logger.error(`users-dao: failed to get user by email`);
     logger.error(err);
@@ -190,7 +186,7 @@ export async function updateUserWithAccount({ id, email }, userData, keys) {
       },
       {
         $set: {
-          'accounts.$.keys': keys,
+          'accounts.$.keys': encryptKeys(keys),
           ...userData,
           lastUpdatedAt: isoDate()
         }
@@ -213,7 +209,11 @@ export async function addAccount(id, data) {
       {
         $push: {
           hashedEmails: hashEmail(data.email),
-          accounts: { ...data, addedAt: isoDate() }
+          accounts: {
+            ...data,
+            keys: encryptKeys(data.keys),
+            addedAt: isoDate()
+          }
         }
       }
     );
@@ -681,9 +681,11 @@ export async function removeAccount(userId, { accountId, email }) {
     const user = await getUser(userId);
     return user;
   } catch (err) {
-    logger.error(
-      `user-dao: failed to disconnect user account for user ${userId} and account ${accountId}`
-    );
+    throw new Error(`failed to disconnect user account for user`, {
+      userId,
+      accountId,
+      cause: err
+    });
   }
 }
 
@@ -971,4 +973,50 @@ export async function verifyEmail(id) {
     logger.error(err);
     throw err;
   }
+}
+
+function decryptUser(user, options = {}) {
+  let decryptedUser = {
+    ...user,
+    // decrypt unsub info
+    unsubscriptions: decryptUnsubscriptions(
+      user.unsubscriptions,
+      encryptedUnsubCols
+    )
+  };
+  // don't return account keys unless specified
+  if (options.withAccountKeys) {
+    decryptedUser = {
+      ...decryptedUser,
+      accounts: user.accounts.map(({ id, provider, email, addedAt, keys }) => ({
+        id,
+        provider,
+        email,
+        addedAt,
+        keys: {
+          ...keys,
+          refreshToken: decrypt(keys.refreshToken),
+          accessToken: decrypt(keys.accessToken)
+        }
+      }))
+    };
+  } else {
+    decryptedUser = {
+      ...decryptedUser,
+      accounts: user.accounts.map(({ id, provider, email, addedAt }) => ({
+        id,
+        provider,
+        email,
+        addedAt
+      }))
+    };
+  }
+  return decryptedUser;
+}
+
+function encryptKeys(keys) {
+  return {
+    accessToken: encrypt(keys.accessToken),
+    refreshToken: encrypt(keys.refreshToken)
+  };
 }

@@ -48,6 +48,7 @@ export function SearchIcon({ width = 32, height = 32 }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"
+      data-icon="search"
     >
       <circle cx="14" cy="14" r="12" />
       <path d="M23 23 L30 30" />

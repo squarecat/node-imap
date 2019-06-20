@@ -10,6 +10,9 @@
   background: $color-modal-bg;
   opacity: 1;
   transition: opacity 200ms ease-in-out;
+  &.opaque {
+    background: $color-modal-bg-opaque;
+  }
 }
 
 .modal-container-entering,
@@ -49,6 +52,7 @@
     width cubic-bezier(0.65, 0.05, 0.36, 1) 500ms;
   overflow: hidden;
   max-width: 100%;
+  max-height: 100%;
   width: auto;
 
   .modal-container-entering &,
@@ -63,6 +67,11 @@
 
   @media (max-width: 600px) {
     border-radius: 0;
+  }
+
+  > * {
+    overflow: auto;
+    height: 100%;
   }
 }
 
@@ -83,6 +92,10 @@
 
   @media (max-width: 600px) {
     padding: 25px 25px;
+  }
+
+  &:last-child {
+    height: 100%;
   }
 }
 

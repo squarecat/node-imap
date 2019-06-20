@@ -30,7 +30,7 @@ import logger from '../utils/logger';
 import subMonths from 'date-fns/sub_months';
 
 export async function* fetchMail({ userId, accountFilters = [] }) {
-  const user = await getUserById(userId);
+  const user = await getUserById(userId, { withAccountKeys: true });
   let { accounts } = user;
   let accountScanData = [];
   let accountOccurrences = {};

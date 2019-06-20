@@ -37,6 +37,7 @@ export const validateBody = (type, { mappings = {}, passthrough = false }) => (
   const { hasError, value, ...error } = validate(type, body);
   if (hasError) {
     console.error('validation-middleware: validation error');
+    console.error(error);
     res.locals.err = error;
     res.locals.body = mapResponse(mappings, body);
     if (passthrough) {
