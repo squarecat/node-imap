@@ -3,38 +3,39 @@ import _startCase from 'lodash.startcase';
 
 // TODO remove duplicate calls to the reward text function
 const activityEnum = {
-  sharedOnTwitter: ({ reward }) => {
+  sharedOnTwitter: ({ rewardCredits }) => {
     const text = `You tweeted about us!`;
-    return reward ? rewardText(text, reward) : text;
+    if (!rewardCredits) return text;
+    return `${text} You have earned ${rewardCredits} credits.`;
   },
-  referralSignup: ({ reward }) => {
+  referralSignup: ({ rewardCredits }) => {
     const text = `Someone just signed up through your referral link!`;
-    if (!reward) return text;
-    return `${text} You have both earned ${reward.credits} credits.`;
+    if (!rewardCredits) return text;
+    return `${text} You have both earned ${rewardCredits} credits.`;
   },
-  signedUpFromReferral: ({ reward }) =>
-    `You signed up using a referral link! You have both earned ${
-      reward.credits
-    } credits.`,
-  referralPurchase: ({ reward }) => {
+  signedUpFromReferral: ({ rewardCredits }) =>
+    `You signed up using a referral link! You have both earned ${rewardCredits} credits.`,
+  referralPurchase: ({ rewardCredits }) => {
     const text = `Someone you referred just purchased their first package!`;
-    return reward ? rewardText(text, reward) : text;
+    if (!rewardCredits) return text;
+    return `${text} You have earned ${rewardCredits} credits.`;
   },
-  purchaseFromReferral: ({ reward }) =>
-    `You purchased your first package using a referral link! You have both earned ${
-      reward.credits
-    } credits.`,
-  connectedFirstAccount: ({ reward, data }) => {
+  purchaseFromReferral: ({ rewardCredits }) =>
+    `You purchased your first package using a referral link! You have both earned ${rewardCredits} credits.`,
+  connectedFirstAccount: ({ rewardCredits, data }) => {
     const text = `You connected your first account - ${data.email}.`;
-    return reward ? rewardText(text, reward) : text;
+    if (!rewardCredits) return text;
+    return `${text} You have earned ${rewardCredits} credits.`;
   },
-  connectedAdditionalAccount: ({ reward, data }) => {
+  connectedAdditionalAccount: ({ rewardCredits, data }) => {
     const text = `You connected another account - ${data.email}.`;
-    return reward ? rewardText(text, reward) : text;
+    if (!rewardCredits) return text;
+    return `${text} You have earned ${rewardCredits} credits.`;
   },
-  addedTwoFactorAuth: ({ reward }) => {
+  addedTwoFactorAuth: ({ rewardCredits }) => {
     const text = `You made your account more secure with two-factor authentication.`;
-    return reward ? rewardText(text, reward) : text;
+    if (!rewardCredits) return text;
+    return `${text} You have earned ${rewardCredits} credits.`;
   },
 
   // non reward
@@ -70,8 +71,4 @@ export function parseActivity(activity, user) {
     return _capitalize(_startCase(type));
   }
   return activityFn(activity, user);
-}
-
-function rewardText(text, { credits }) {
-  return `${text} You have earned ${credits} credits.`;
 }

@@ -7,6 +7,7 @@ import { Elements } from 'react-stripe-elements';
 import ExistingBillingForm from './existing-billing-form';
 import NewBillingForm from './new-billing-form';
 import StartPurchaseForm from './start-purchase';
+import { StripeProvider } from '../../../providers/stripe-provider';
 import Success from './success';
 import request from '../../../utils/request';
 
@@ -32,38 +33,40 @@ export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
 
   return (
     <div styleName="billing-modal">
-      <Elements>
-        <BillingModalContext.Provider value={{ state, dispatch }}>
-          <div data-active={state.step === 'start-purchase'}>
-            {state.step === 'start-purchase' ? (
-              <StartPurchaseForm
-                hasBillingCard={!!billingCard}
-                onPurchaseSuccess={user => onPurchaseSuccess(user)}
-              />
-            ) : null}
-          </div>
-          <div data-active={state.step === 'enter-billing-details'}>
-            {state.step === 'enter-billing-details' ? (
-              <NewBillingForm
-                onPurchaseSuccess={user => onPurchaseSuccess(user)}
-              />
-            ) : null}
-          </div>
-          <div data-active={state.step === 'existing-billing-details'}>
-            {state.step === 'existing-billing-details' ? (
-              <ExistingBillingForm
-                billingCard={billingCard}
-                onPurchaseSuccess={user => onPurchaseSuccess(user)}
-              />
-            ) : null}
-          </div>
-          <div data-active={state.step === 'success'}>
-            {state.step === 'success' ? (
-              <Success credits={state.selectedPackage.credits} />
-            ) : null}
-          </div>
-        </BillingModalContext.Provider>
-      </Elements>
+      <StripeProvider>
+        <Elements>
+          <BillingModalContext.Provider value={{ state, dispatch }}>
+            <div data-active={state.step === 'start-purchase'}>
+              {state.step === 'start-purchase' ? (
+                <StartPurchaseForm
+                  hasBillingCard={!!billingCard}
+                  onPurchaseSuccess={user => onPurchaseSuccess(user)}
+                />
+              ) : null}
+            </div>
+            <div data-active={state.step === 'enter-billing-details'}>
+              {state.step === 'enter-billing-details' ? (
+                <NewBillingForm
+                  onPurchaseSuccess={user => onPurchaseSuccess(user)}
+                />
+              ) : null}
+            </div>
+            <div data-active={state.step === 'existing-billing-details'}>
+              {state.step === 'existing-billing-details' ? (
+                <ExistingBillingForm
+                  billingCard={billingCard}
+                  onPurchaseSuccess={user => onPurchaseSuccess(user)}
+                />
+              ) : null}
+            </div>
+            <div data-active={state.step === 'success'}>
+              {state.step === 'success' ? (
+                <Success credits={state.selectedPackage.credits} />
+              ) : null}
+            </div>
+          </BillingModalContext.Provider>
+        </Elements>
+      </StripeProvider>
     </div>
   );
 };

@@ -81,7 +81,7 @@
   }
 
   > *:last-child {
-    margin: 0;
+    margin-bottom: 0;
   }
 
   @media (max-width: 600px) {
@@ -138,7 +138,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  button {
+  button,
+  a {
     margin-left: 10px;
   }
   // @media (max-width: 500px) {

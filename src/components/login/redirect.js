@@ -12,5 +12,5 @@ export default () => {
     }
   });
 
-  return <p>Please wait...</p>;
+  return <p>Redirecting you back to Leave Me Alone. Please wait...</p>;
 };
