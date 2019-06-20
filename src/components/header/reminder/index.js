@@ -1,10 +1,11 @@
 import './reminder.module.scss';
 
 import React, { useContext } from 'react';
-import { ModalContext } from '../../../providers/modal-provider';
-import useUser from '../../../utils/hooks/use-user';
-import ReminderModal from '../../modal/reminder';
+
 import { ClockIcon } from '../../icons';
+import { ModalContext } from '../../../providers/modal-provider';
+import ReminderModal from '../../modal/reminder';
+import useUser from '../../../utils/hooks/use-user';
 
 function Reminder() {
   const { open: openModal } = useContext(ModalContext);
@@ -18,7 +19,7 @@ function Reminder() {
         <ClockIcon inline={hasReminder} />
         {!hasReminder ? (
           <>
-            <span styleName="btn-text short">Remind</span>
+            <span styleName="btn-text short">Set</span>
             <span styleName="btn-text long">Set reminder</span>
           </>
         ) : null}

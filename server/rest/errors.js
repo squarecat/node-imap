@@ -60,6 +60,8 @@ function expressErrorHandler(err, req, res, next) {
   res.status(500);
   res.send({
     internal_code: json.code,
-    message: json.message
+    message: json.message,
+    id: json.id,
+    reason: json.data ? json.data.errKey : null
   });
 }

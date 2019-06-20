@@ -361,7 +361,8 @@ export default app => {
           new RestError('failed to patch user password', {
             userId: id,
             op,
-            cause: err
+            cause: err,
+            ...err.data
           })
         );
       }

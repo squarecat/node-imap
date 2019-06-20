@@ -1,18 +1,20 @@
-import { addNewUnsubscribeOccrurence } from '../occurrences';
-import { addUnsubscriptionToStats } from '../stats';
 import {
   addUnsubscriptionToUser,
+  decrementUserCredits,
   getUserById,
-  incrementUserCredits,
-  decrementUserCredits
+  incrementUserCredits
 } from '../user';
-import { recordUnsubscribeForOrganisation } from '../organisation';
+
+import { UserError } from '../../utils/errors';
+import { addNewUnsubscribeOccrurence } from '../occurrences';
+import { addUnsubscriptionToStats } from '../stats';
 import { unsubscribeWithLink as browserUnsub } from './browser';
 import { unsubscribeWithMailTo as emailUnsub } from './mail';
 import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
 import logger from '../../utils/logger';
-import { UserError } from '../../utils/errors';
+import { recordUnsubscribeForOrganisation } from '../organisation';
+import { sendToUser } from '../../rest/socket';
 
 export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
@@ -35,6 +37,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
 
   if (!organisationId) {
     decrementUserCredits(userId, 1);
+    sendToUser(userId, 'new-credits', -1);
   } else {
     recordUnsubscribeForOrganisation(organisationId);
   }
@@ -71,6 +74,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       addUnsubscriptionToStats({ unsubStrategy });
     } else if (!organisationId) {
       incrementUserCredits(userId, 1);
+      sendToUser(userId, 'new-credits', 1);
     }
     addNewUnsubscribeOccrurence(userId, mail.from);
     return {

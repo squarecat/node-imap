@@ -37,8 +37,7 @@ export default ({ nextText = 'Next' }) => {
       dispatch({ type: 'set-loading', data: false });
       dispatch({
         type: 'set-error',
-        data:
-          'Something went wrong. Please try again or send us a message for help!'
+        data: 'Something went wrong. Please try again or send us a message.'
       });
     }
   }

@@ -1,15 +1,11 @@
 import './security.module.scss';
 
-import {
-  FormGroup,
-  FormInput,
-  FormLabel,
-  FormNotification
-} from '../../../components/form';
+import { FormGroup, FormInput, FormLabel } from '../../../components/form';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 import { TextImportant, TextLink } from '../../../components/text';
 
+import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
@@ -17,6 +13,7 @@ import ProfileLayout from './layout';
 import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
+import { getAuthError } from '../../../utils/errors';
 import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
@@ -159,26 +156,37 @@ function TwoFactorAuth() {
 }
 
 function ChangePassword() {
+  const { actions: alertActions } = useContext(AlertContext);
+
   async function onSubmit() {
     setState({ ...state, loading: true });
 
     try {
       await updatePassword(state.oldPassword, state.password);
-
-      return setState({
-        ...state,
+      setState({
         oldPassword: '',
         password: '',
         confirmPassword: '',
-        error: false,
-        loading: false,
-        success: 'Password changed'
+        loading: false
+      });
+      alertActions.setAlert({
+        id: 'change-password-success',
+        level: 'success',
+        message: `Password changed.`,
+        isDismissable: true,
+        autoDismiss: true
       });
     } catch (err) {
+      const message = getAuthError(err, 'change');
+      alertActions.setAlert({
+        id: 'change-password-error',
+        level: 'error',
+        message,
+        isDismissable: true,
+        autoDismiss: true
+      });
       setState({
         ...state,
-        error:
-          'Something went wrong changing your password. Please try again or send us a message.',
         loading: false
       });
     }
@@ -188,7 +196,6 @@ function ChangePassword() {
     oldPassword: '',
     password: '',
     confirmPassword: '',
-    error: false,
     loading: false
   });
 
@@ -207,7 +214,7 @@ function ChangePassword() {
         <FormGroup>
           <FormLabel htmlFor="password">Old Password</FormLabel>
           <FormInput
-            autoFocus
+            autoFocus={false}
             autoComplete="current-password"
             compact
             value={state.oldPassword}
@@ -225,6 +232,7 @@ function ChangePassword() {
           <FormLabel htmlFor="password">New Password</FormLabel>
           <PasswordInput
             autoComplete="new-password"
+            autoFocus={false}
             checkIfPwned={true}
             value={state.password}
             onChange={value =>
@@ -238,6 +246,7 @@ function ChangePassword() {
         <FormGroup>
           <FormLabel htmlFor="password-confirm">Confirm new password</FormLabel>
           <FormInput
+            autoFocus={false}
             autoComplete="new-password"
             compact
             value={state.confirmPassword}
@@ -249,16 +258,11 @@ function ChangePassword() {
                 confirmPassword: e.currentTarget.value
               });
             }}
+            validation={value =>
+              value === state.password ? true : 'Passwords must match.'
+            }
           />
         </FormGroup>
-
-        {state.error ? (
-          <FormNotification error>{state.error}</FormNotification>
-        ) : null}
-        {state.success ? (
-          <FormNotification success>{state.success}</FormNotification>
-        ) : null}
-
         <Button
           basic
           compact

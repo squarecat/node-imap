@@ -77,7 +77,7 @@ export default function CouponInput() {
             <FormInput
               smaller
               disabled={fetchingCoupon}
-              placeholder="Enter discount coupon"
+              placeholder="Coupon"
               value={couponData.code}
               name="coupon"
               onChange={e => {

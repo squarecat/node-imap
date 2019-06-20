@@ -43,22 +43,20 @@ export default ({
               });
               return (
                 <li className={classes}>
-                  <span styleName="email-container">
-                    {getIcon(provider)}
-                    <span styleName="email">
-                      {email} {isPrimary ? '(primary)' : ''}
-                    </span>
+                  {getIcon(provider)}
+                  <span>
+                    {email} {isPrimary ? '(primary)' : ''}
                   </span>
                   {isPrimary ? null : (
                     <Button
                       compact
                       muted
                       basic
-                      fill
                       onClick={() => onClickRemoveAccount(email)}
                       loading={removingAccounts[email]}
                     >
-                      Remove
+                      <span styleName="desktop">Remove</span>
+                      <span styleName="mobile">x</span>
                     </Button>
                   )}
                 </li>

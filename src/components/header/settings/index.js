@@ -61,24 +61,24 @@ export default () => {
       <ul styleName={`settings-dropdown-list ${showSettings ? 'shown' : ''}`}>
         <li styleName="setting-item">
           <Link styleName="setting-item-link" to="/app/profile">
-            Settings
+            Profile
           </Link>
         </li>
         {organisationId ? null : (
           <li styleName="setting-item">
             <Link styleName="setting-item-link" to="/app/profile/accounts">
-              Connect account
+              Accounts
             </Link>
           </li>
         )}
         <li styleName="setting-item">
-          <Link styleName="setting-item-link" to="/app/profile/billing">
-            Billing
+          <Link styleName="setting-item-link" to="/app/profile/security">
+            Security
           </Link>
         </li>
         <li styleName="setting-item">
-          <Link styleName="setting-item-link" to="/app/profile/security">
-            Security
+          <Link styleName="setting-item-link" to="/app/profile/billing">
+            Billing
           </Link>
         </li>
         <li styleName="setting-item">

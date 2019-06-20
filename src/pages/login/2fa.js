@@ -43,7 +43,6 @@ export default () => {
         // they need to be type text and hidden with CSS
         style={{ display: 'none' }}
         type="text"
-        name="username"
         value={state.email}
         autoComplete="username"
       />

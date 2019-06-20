@@ -36,34 +36,26 @@ export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
       <StripeProvider>
         <Elements>
           <BillingModalContext.Provider value={{ state, dispatch }}>
-            <div data-active={state.step === 'start-purchase'}>
-              {state.step === 'start-purchase' ? (
-                <StartPurchaseForm
-                  hasBillingCard={!!billingCard}
-                  onPurchaseSuccess={user => onPurchaseSuccess(user)}
-                />
-              ) : null}
-            </div>
-            <div data-active={state.step === 'enter-billing-details'}>
-              {state.step === 'enter-billing-details' ? (
-                <NewBillingForm
-                  onPurchaseSuccess={user => onPurchaseSuccess(user)}
-                />
-              ) : null}
-            </div>
-            <div data-active={state.step === 'existing-billing-details'}>
-              {state.step === 'existing-billing-details' ? (
-                <ExistingBillingForm
-                  billingCard={billingCard}
-                  onPurchaseSuccess={user => onPurchaseSuccess(user)}
-                />
-              ) : null}
-            </div>
-            <div data-active={state.step === 'success'}>
-              {state.step === 'success' ? (
-                <Success credits={state.selectedPackage.credits} />
-              ) : null}
-            </div>
+            {state.step === 'start-purchase' ? (
+              <StartPurchaseForm
+                hasBillingCard={!!billingCard}
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
+            ) : null}
+            {state.step === 'enter-billing-details' ? (
+              <NewBillingForm
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
+            ) : null}
+            {state.step === 'existing-billing-details' ? (
+              <ExistingBillingForm
+                billingCard={billingCard}
+                onPurchaseSuccess={user => onPurchaseSuccess(user)}
+              />
+            ) : null}
+            {state.step === 'success' ? (
+              <Success credits={state.selectedPackage.credits} />
+            ) : null}
           </BillingModalContext.Provider>
         </Elements>
       </StripeProvider>

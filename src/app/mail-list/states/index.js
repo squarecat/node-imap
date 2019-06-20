@@ -21,7 +21,12 @@ export const Empty = ({ hasFilters } = {}) => {
     <div styleName="state-wrapper">
       <div styleName="state">
         <img styleName="state-img" src={stateImg} alt="empty list image" />
-        <div styleName="state-text">No subscriptions here! 🎉</div>
+        <div styleName="state-text">
+          No subscriptions here!{' '}
+          <span role="img" aria-label="Tada">
+            🎉
+          </span>
+        </div>
         {hasFilters ? (
           <Button compact basic onClick={clearFilters}>
             Clear filters

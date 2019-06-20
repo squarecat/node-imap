@@ -134,12 +134,12 @@ export function useMailSync() {
             });
             const mail = await db.mail.get(id);
             if (!estimatedSuccess) {
-              if (!organisationId) {
-                console.debug(
-                  `[db]: unsub estimated success false - incrementing credits`
-                );
-                incrementCredits(1);
-              }
+              // if (!organisationId) {
+              //   console.debug(
+              //     `[db]: unsub estimated success false - incrementing credits`
+              //   );
+              //   incrementCredits(1);
+              // }
               actions.queueAlert({
                 message: (
                   <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>
@@ -289,10 +289,10 @@ export function useMailSync() {
           actions.setAlert(alert);
           return false;
         }
-        if (!organisationId) {
-          console.debug('[db]: decrementing credits');
-          decrementCredits(1);
-        }
+        // if (!organisationId) {
+        //   console.debug('[db]: decrementing credits');
+        //   decrementCredits(1);
+        // }
         await db.mail.update(mailItem.id, {
           isLoading: true,
           subscribed: false

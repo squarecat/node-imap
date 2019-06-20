@@ -1,13 +1,14 @@
 import './organisation.module.scss';
 
-import { FormCheckbox, FormNotification } from '../../../../components/form';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
+import { AlertContext } from '../../../../providers/alert-provider';
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
 import CurrentUsers from './users';
 import ErrorBoundary from '../../../../components/error-boundary';
+import { FormCheckbox } from '../../../../components/form';
 import InviteForm from './invite';
 import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
@@ -152,10 +153,10 @@ const OrganisationStatus = React.memo(({ active }) => {
 });
 
 const Settings = React.memo(({ loading, organisation }) => {
+  const { actions: alertActions } = useContext(AlertContext);
   const [state, setState] = useState({
-    toggling: false,
-    error: false,
-    allowAnyUserWithCompanyEmail: organisation.allowAnyUserWithCompanyEmail
+    setting: organisation.allowAnyUserWithCompanyEmail,
+    toggling: false
   });
 
   const onToggleSetting = async toggled => {
@@ -169,21 +170,23 @@ const Settings = React.memo(({ loading, organisation }) => {
 
       setTimeout(async () => {
         setState({
-          allowAnyUserWithCompanyEmail: toggled,
-          toggling: false,
-          error: false
+          setting: toggled,
+          toggling: false
         });
-        // setState({ ...state, toggling: false, error: false });
       }, 300);
     } catch (err) {
+      alertActions.setAlert({
+        id: 'toggle-org-setting-error',
+        level: 'error',
+        message: `Error saving your settings. Please try again or send us a message.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
       // revert if error
       setTimeout(() => {
         setState({
-          ...state,
-          allowAnyUserWithCompanyEmail:
-            organisation.allowAnyUserWithCompanyEmail,
-          toggling: false,
-          error: true
+          setting: organisation.allowAnyUserWithCompanyEmail,
+          toggling: false
         });
       }, 300);
     }
@@ -226,11 +229,6 @@ const Settings = React.memo(({ loading, organisation }) => {
         }
       />
       {state.toggling ? <span>Saving...</span> : null}
-      {state.error ? (
-        <FormNotification error>
-          Something went wrong, your settings have not been saved.
-        </FormNotification>
-      ) : null}
     </div>
   );
 });
