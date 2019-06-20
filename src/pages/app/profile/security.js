@@ -1,15 +1,11 @@
 import './security.module.scss';
 
-import {
-  FormGroup,
-  FormInput,
-  FormLabel,
-  FormNotification
-} from '../../../components/form';
+import { FormGroup, FormInput, FormLabel } from '../../../components/form';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 import { TextImportant, TextLink } from '../../../components/text';
 
+import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
@@ -159,26 +155,36 @@ function TwoFactorAuth() {
 }
 
 function ChangePassword() {
+  const { actions: alertActions } = useContext(AlertContext);
+
   async function onSubmit() {
     setState({ ...state, loading: true });
 
     try {
       await updatePassword(state.oldPassword, state.password);
-
-      return setState({
-        ...state,
+      setState({
         oldPassword: '',
         password: '',
         confirmPassword: '',
-        error: false,
-        loading: false,
-        success: 'Password changed'
+        loading: false
+      });
+      alertActions.setAlert({
+        id: 'change-password-success',
+        level: 'success',
+        message: `Password changed.`,
+        isDismissable: true,
+        autoDismiss: true
       });
     } catch (err) {
+      alertActions.setAlert({
+        id: 'change-password-error',
+        level: 'error',
+        message: `Something went wrong changing your password. Please try again or send us a message.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
       setState({
         ...state,
-        error:
-          'Something went wrong changing your password. Please try again or send us a message.',
         loading: false
       });
     }
@@ -188,7 +194,6 @@ function ChangePassword() {
     oldPassword: '',
     password: '',
     confirmPassword: '',
-    error: false,
     loading: false
   });
 
@@ -251,14 +256,6 @@ function ChangePassword() {
             }}
           />
         </FormGroup>
-
-        {state.error ? (
-          <FormNotification error>{state.error}</FormNotification>
-        ) : null}
-        {state.success ? (
-          <FormNotification success>{state.success}</FormNotification>
-        ) : null}
-
         <Button
           basic
           compact

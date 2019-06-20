@@ -5,12 +5,12 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 import { TextFootnote, TextImportant } from '../../../components/text';
 
+import { AlertContext } from '../../../providers/alert-provider';
 import BillingModal from '../../../components/modal/billing';
 import Button from '../../../components/btn';
 import CardDetails from '../../../components/card-details';
 import { DatabaseContext } from '../../../providers/db-provider';
 import ErrorBoundary from '../../../components/error-boundary';
-import { FormNotification } from '../../../components/form';
 import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
@@ -225,32 +225,37 @@ function Enterprise() {
 }
 
 function BillingDetails() {
+  const { actions: alertActions } = useContext(AlertContext);
   const [card, { setCard }] = useUser(u => {
     const { billing = {} } = u;
     return billing.card;
   });
 
-  const [state, setState] = useState({ loading: false, error: false });
-  // const [autoBuy, setAutoBuy] = useState(initialAutoBuy);
+  const [loading, setLoading] = useState(false);
 
   const onClickRemoveCard = useCallback(
     async () => {
       try {
-        setState({
-          loading: true,
-          error: false
-        });
+        setLoading(true);
         await removeUserBillingCard();
         setCard(null);
-        setState({
-          loading: false,
-          error: false
+        alertActions.setAlert({
+          id: 'remove-billing-card-success',
+          level: 'success',
+          message: `Successfully removed stored payment method.`,
+          isDismissable: true,
+          autoDismiss: true
         });
       } catch (err) {
-        setState({
-          loading: false,
-          error: true
+        alertActions.setAlert({
+          id: 'remove-billing-card-error',
+          level: 'error',
+          message: `Error removing stored payment method. Please try again or send us a message.`,
+          isDismissable: true,
+          autoDismiss: true
         });
+      } finally {
+        setLoading(false);
       }
     },
     [setCard]
@@ -275,8 +280,8 @@ function BillingDetails() {
             basic
             compact
             stretch
-            disabled={state.loading}
-            loading={state.previousPackageIdloading}
+            disabled={loading}
+            loading={loading}
             onClick={() => onClickRemoveCard()}
           >
             Remove Card
@@ -286,12 +291,6 @@ function BillingDetails() {
             checked={autoBuy}
             label="Auto buy your previous package when you run out of credits"
           /> */}
-          {state.error ? (
-            <FormNotification error>
-              Something went wrong removing your card. Please try again or
-              contact support.
-            </FormNotification>
-          ) : null}
         </>
       ) : (
         <>
