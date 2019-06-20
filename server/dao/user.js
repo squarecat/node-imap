@@ -132,6 +132,7 @@ export async function getUserByEmail(email, projection = {}) {
   try {
     const col = await db().collection(COL_NAME);
     const user = await col.findOne({ email }, { _id: 0, ...projection });
+    if (!user) return null;
     return decryptUser(user);
   } catch (err) {
     logger.error(`users-dao: failed to get user by email`);
@@ -179,6 +180,19 @@ export async function updateUser(id, userData) {
 export async function updateUserWithAccount({ id, email }, userData, keys) {
   try {
     const col = await db().collection(COL_NAME);
+    let updatedKeys;
+    if (keys.refreshToken) {
+      updatedKeys = {
+        'accounts.$.keys': encryptKeys(keys)
+      };
+    } else {
+      updatedKeys = {
+        ...updatedKeys,
+        'accounts.$.keys.accessToken': encrypt(keys.accessToken),
+        'accounts.$.keys.expiresIn': keys.expiresIn,
+        'accounts.$.keys.expires': keys.expires
+      };
+    }
     await col.updateOne(
       {
         id,
@@ -186,7 +200,7 @@ export async function updateUserWithAccount({ id, email }, userData, keys) {
       },
       {
         $set: {
-          'accounts.$.keys': encryptKeys(keys),
+          ...updatedKeys,
           ...userData,
           lastUpdatedAt: isoDate()
         }
@@ -1016,6 +1030,7 @@ function decryptUser(user, options = {}) {
 
 function encryptKeys(keys) {
   return {
+    ...keys,
     accessToken: encrypt(keys.accessToken),
     refreshToken: encrypt(keys.refreshToken)
   };
