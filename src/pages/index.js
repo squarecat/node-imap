@@ -129,7 +129,7 @@ const IndexPage = ({ transitionStatus }) => {
                 </div>
               </div>
             </div>
-            <div className="hero-box">
+            <div className="hero-box hero-right">
               <UnsubscribeDemo trashPileRef={trashPileRef.current} />
             </div>
           </div>
@@ -145,11 +145,11 @@ const IndexPage = ({ transitionStatus }) => {
               </p>
             </div>
             <div className="home-box item-box">
-              <div className="image-box">
+              <div className="image-box right">
                 <img
                   src={allSubscriptions}
                   className="all-unsubscriptions-img"
-                  alt="subscriber score image"
+                  alt="all unsubscriptions"
                 />
               </div>
             </div>
@@ -157,8 +157,12 @@ const IndexPage = ({ transitionStatus }) => {
 
           <div className="learn-2 boxed home-container-inner">
             <div className="home-box item-box">
-              <div className="image-box">
-                <img src={subscriberScore} alt="subscriber score image" />
+              <div className="image-box left">
+                <img
+                  className="subscriber-score-img"
+                  src={subscriberScore}
+                  alt="subscriber score image"
+                />
               </div>
             </div>
             <div className="home-box text-box">
@@ -184,24 +188,23 @@ const IndexPage = ({ transitionStatus }) => {
               </p>
             </div>
           </div>
-
-          <div className="trash-pile" id="trash-pile">
-            <div className="home-box text-box text-box-centered">
-              <h3>Say goodbye to subscriptions forever</h3>
-              <p>
-                When you hit the unsubscribe button we don't just move your mail
-                into a folder or to trash, instead we actually unsubscribe you
-                from the list.
-              </p>
-              <p>
-                This means the subscriptions are gone{' '}
-                <TextImportant>forever</TextImportant>, even if you decide to
-                stop using our service.
-              </p>
-              <p style={{ margin: '1.45rem auto' }}>
-                Read more about how it works <a href="/learn">here</a>.
-              </p>
-            </div>
+        </div>
+        <div className="trash-pile" id="trash-pile">
+          <div className="home-box text-box text-box-centered">
+            <h3>Say goodbye to subscriptions forever</h3>
+            <p>
+              When you hit the unsubscribe button we don't just move your mail
+              into a folder or to trash, instead we actually unsubscribe you
+              from the list.
+            </p>
+            <p>
+              This means the subscriptions are gone{' '}
+              <TextImportant>forever</TextImportant>, even if you decide to stop
+              using our service.
+            </p>
+            <p style={{ margin: '1.45rem auto' }}>
+              Read more about how it works <a href="/learn">here</a>.
+            </p>
           </div>
         </div>
 
@@ -258,7 +261,8 @@ const IndexPage = ({ transitionStatus }) => {
             <h3>Let's talk money</h3>
             <p>
               So that we can <a href="/pricing#why">keep your data safe</a>{' '}
-              Leave Me Alone is a paid service.
+              Leave Me Alone is a paid service. Each email you unsubscribe from
+              costs one credit.
             </p>
           </div>
           <Pricing />
@@ -268,8 +272,8 @@ const IndexPage = ({ transitionStatus }) => {
           <div className="home-container-inner" id="news">
             <h3>In the news</h3>
             <p>
-              Don't take our word for it, see what people have been saying about
-              us
+              Don't take our word for it, see what these nice people have been
+              saying about us.
             </p>
             <div className="in-the-news">
               {news.map(({ quote, shortQuote, logoUrl, url }) => (
@@ -284,12 +288,15 @@ const IndexPage = ({ transitionStatus }) => {
             <WallOfLove colLimit={1} />
           </div>
 
-          <a
-            href="/login"
-            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-          >
-            Get started for free
-          </a>
+          <div className="home-container-inner">
+            <p>What are you waiting for?</p>
+            <a
+              href="/login"
+              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+            >
+              Get started for free
+            </a>
+          </div>
         </div>
 
         <Footer />

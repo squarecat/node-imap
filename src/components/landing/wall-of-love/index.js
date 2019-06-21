@@ -27,7 +27,26 @@ const query = graphql`
 
 export default ({ rowLimit, colLimit }) => {
   return (
-    <div>
+    <>
+      <div styleName="tweet-wall">
+        <div styleName="tweet-box">
+          <StaticQuery
+            query={query}
+            render={data => {
+              const colOne = data.tweetImages.edges.slice(0, 2);
+              const colTwo = data.tweetImages.edges.slice(2, 4);
+              const colThree = data.tweetImages.edges.slice(4, 6);
+              return (
+                <>
+                  <Col tweets={colOne} />
+                  <Col tweets={colTwo} />
+                  <Col tweets={colThree} />
+                </>
+              );
+            }}
+          />
+        </div>
+      </div>
       <div styleName="header">
         {/* <h2>Wall of love</h2>
         <p>
@@ -63,26 +82,7 @@ export default ({ rowLimit, colLimit }) => {
           />
         </a>
       </div>
-      <div styleName="tweet-wall">
-        <div styleName="tweet-box">
-          <StaticQuery
-            query={query}
-            render={data => {
-              const colOne = data.tweetImages.edges.slice(0, 2);
-              const colTwo = data.tweetImages.edges.slice(2, 4);
-              const colThree = data.tweetImages.edges.slice(4, 6);
-              return (
-                <>
-                  <Col tweets={colOne} />
-                  <Col tweets={colTwo} />
-                  <Col tweets={colThree} />
-                </>
-              );
-            }}
-          />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
