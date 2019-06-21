@@ -32,7 +32,7 @@ export default visProps => (
         </TextLink>
       </li>
       <li>
-        <TextLink target="_" href="https://blog.leavemealone.xyz">
+        <TextLink target="_" href="https://blog.leavemealone.app">
           Blog
         </TextLink>
       </li>
