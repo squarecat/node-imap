@@ -22,7 +22,7 @@ const EnterprisePage = () => {
           </p>
           <p>
             We support any Google or Microsoft email accounts, including those
-            with custom domains on Gsuite and Office 365.
+            with custom domains on G Suite and Office 365.
           </p>
           <p>
             <a href="mailto:hello@leavemealone.app">Contact us</a> for more
