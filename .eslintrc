@@ -5,6 +5,7 @@
     "plugin:react/recommended",
     "plugin:prettier/recommended"
   ],
+  "plugins": ["react-hooks"],
   "env": {
     "browser": true,
     "node": true,
@@ -20,6 +21,8 @@
     "react/prop-types": ["0"],
     "no-console": 0,
     "react/no-unescaped-entities": 0,
-    "react/display-name": 0
+    "react/display-name": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }

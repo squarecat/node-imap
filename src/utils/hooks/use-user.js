@@ -7,7 +7,14 @@ export default globalReducer(
       return {
         ...user,
         loaded: true,
-        unsubCount: user.unsubscriptions.length || 0
+        unsubCount: user.unsubscriptions.length || 0,
+        hasCompletedOnboarding: user.milestones.completedOnboarding
+      };
+    },
+    update: (state, user) => {
+      return {
+        ...state,
+        ...user
       };
     },
     incrementUnsubCount: (state, count = 1) => {
@@ -24,10 +31,6 @@ export default globalReducer(
       ...state,
       reminder
     }),
-    setLastPaidScanType: (state, timeframe) => ({
-      ...state,
-      lastPaidScanType: timeframe
-    }),
     setLastScan: (state, scan) => ({
       ...state,
       lastScan: scan
@@ -35,6 +38,66 @@ export default globalReducer(
     setPreferences: (state, preferences) => ({
       ...state,
       preferences
-    })
+    }),
+    setRequiresTwoFactorAuth: (state, bool) => ({
+      ...state,
+      requiresTwoFactorAuth: bool
+    }),
+    setMilestoneCompleted: (state, milestone) => ({
+      ...state,
+      milestones: {
+        ...state.milestones,
+        [milestone]: true
+      },
+      hasCompletedOnboarding: milestone === 'completedOnboarding'
+    }),
+    setBilling: (state, billing) => {
+      return {
+        ...state,
+        billing
+      };
+    },
+    setCard: (state, card) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          card
+        }
+      };
+    },
+    setCredits: (state, credits) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          credits
+        }
+      };
+    },
+    incrementCredits: (state, credits) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          credits: state.billing.credits + credits
+        }
+      };
+    },
+    decrementCredits: (state, credits) => {
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          credits: state.billing.credits - credits
+        }
+      };
+    },
+    setOrganisationLastUpdated: (state, lastUpdated) => {
+      return {
+        ...state,
+        organisationLastUpdated: lastUpdated
+      };
+    }
   }
 );

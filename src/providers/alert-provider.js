@@ -1,0 +1,123 @@
+import React, { createContext, useEffect, useReducer } from 'react';
+
+import AlertBanner from '../components/alerts';
+
+export const AlertContext = createContext(null);
+
+const initialState = {
+  current: null,
+  next: null,
+  queue: []
+};
+const defaultAlert = () => ({
+  message: '',
+  isShown: true,
+  isDismissable: false,
+  level: 'error',
+  autoDismiss: true,
+  dismissAfter: 5000,
+  actions: []
+});
+// mail reducer that represents the internal state
+// of indexdb database
+const AlertReducer = (state, action) => {
+  switch (action.type) {
+    case 'queue-alert': {
+      return {
+        ...state,
+        queue: [...state.queue, action.data]
+      };
+    }
+    case 'set-alert': {
+      const alert = {
+        ...defaultAlert(),
+        ...action.data
+      };
+      return {
+        ...state,
+        current: {
+          id: Math.random()
+            .toString()
+            .substr(2),
+          ...alert
+        }
+      };
+    }
+    case 'dismiss-alert': {
+      if (!state.current || (action.data && action.data !== state.current.id)) {
+        return state;
+      }
+      return {
+        ...state,
+        current: null
+      };
+    }
+    case 'set-next': {
+      let next = null;
+      const isNext = state.queue.length;
+      let newQueue = [];
+      if (isNext) {
+        next = {
+          ...defaultAlert(),
+          ...state.queue[0]
+        };
+        newQueue = state.queue.slice(1);
+      }
+      return {
+        ...state,
+        current: next,
+        queue: newQueue
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+export function AlertProvider({ children }) {
+  const [state, dispatch] = useReducer(AlertReducer, initialState);
+  const { current, queue } = state;
+  // if there's a new alert, then dismiss it
+  // after a timeout
+  useEffect(
+    () => {
+      if (current && current.autoDismiss) {
+        setTimeout(() => {
+          dispatch({ type: 'dismiss-alert' });
+        }, current.dismissAfter);
+      }
+      if (!current && queue.length) {
+        setTimeout(() => {
+          dispatch({ type: 'set-next' });
+        }, 500);
+      }
+    },
+    [current, queue]
+  );
+
+  function onDismiss(id) {
+    if (id && (current && current.id === id)) {
+      dispatch({ type: 'dismiss-alert', data: id });
+    }
+    return dispatch({ type: 'dismiss-alert' });
+  }
+
+  const actions = {
+    setAlert: data => dispatch({ type: 'set-alert', data }),
+    dismiss: id => onDismiss(id),
+    queueAlert: data => dispatch({ type: 'queue-alert', data })
+  };
+
+  return (
+    <AlertContext.Provider
+      value={{
+        state,
+        actions
+      }}
+    >
+      {children}
+      <AlertBanner alert={state.current} onDismiss={onDismiss} />
+    </AlertContext.Provider>
+  );
+}

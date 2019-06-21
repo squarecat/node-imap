@@ -5,9 +5,9 @@ import logger from '../../../utils/logger';
 
 const outlookDateFormat = 'YYYY-MM-DD';
 
-export function getSearchString({ then }) {
-  const thenStr = format(then, outlookDateFormat);
-  return `ReceivedDateTime gt ${thenStr}T00:00Z`;
+export function getSearchString({ from }) {
+  const fromStr = format(from, outlookDateFormat);
+  return `ReceivedDateTime gt ${fromStr}T00:00Z`;
 }
 
 export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {

@@ -1,0 +1,63 @@
+@import '../../../../styles/common/colors.scss';
+@import '../layout.module.scss';
+
+.organisation-section {
+  @extend .profile-section;
+}
+
+.tabled {
+  @extend .profile-section--unpadded;
+}
+
+.table-text-content {
+  @extend .profile-unpadded-content;
+}
+
+.org-status {
+  margin: 0 5px 0 0;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  background-color: $color-grey-darker;
+
+  &.inactive {
+    background-color: $color-bg-error;
+  }
+
+  &.active {
+    background-color: $color-bg-success;
+  }
+
+  @media (max-width: 400px) {
+    padding: 5px;
+  }
+}
+
+.invite {
+  margin-bottom: 2em;
+  input {
+    font-size: 14px;
+  }
+  a,
+  button {
+    min-width: 100px;
+  }
+}
+
+.users {
+  @media (max-width: 600px) {
+    // hide cells after first 3
+    th:nth-child(1n + 4),
+    td:nth-child(1n + 4) {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    // hide cells after first 2
+    th:nth-child(1n + 3),
+    td:nth-child(1n + 3) {
+      display: none;
+    }
+  }
+}

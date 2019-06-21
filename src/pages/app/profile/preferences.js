@@ -7,14 +7,14 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export async function savePreferences(data) {
-  return request('/api/me', {
+  return request('/api/me/preferences', {
     method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     },
-    body: JSON.stringify({ op: 'preferences', value: data })
+    body: JSON.stringify({ op: 'update', value: data })
   });
 }
 
@@ -38,7 +38,7 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Preferences">
-      <div styleName="preferences-section">
+      {/* <div styleName="preferences-section">
         <h2>Mail</h2>
         <FormCheckbox
           onChange={() =>
@@ -50,7 +50,7 @@ export default () => {
           checked={getPref(preferences, 'hideUnsubscribedMails')}
           label="Hide unsubscribed emails in future scans"
         />
-      </div>
+      </div> */}
       <div styleName="preferences-section">
         <h2>Marketing</h2>
         <FormCheckbox

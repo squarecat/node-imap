@@ -1,27 +1,21 @@
 import { doRequest, getAccessToken } from './access';
-import { getSearchString, getTimeRange, hasPaidScanAvailable } from './utils';
 
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
+import { getSearchString } from './utils';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
-export async function* fetchMail({ user, timeframe = '3d' }) {
+export async function* fetchMail({ user, account, from }) {
   const start = Date.now();
   try {
-    if (!hasPaidScanAvailable(user, timeframe)) {
-      logger.warn(
-        'mail-service: User attempted search that has not been paid for'
-      );
-      return { type: 'error', message: 'Not paid' };
-    }
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, accessToken] = await Promise.all([
-      getEstimateForTimeframe(user, {
-        timeframe,
+      getEstimateForTimeframe(account, {
+        from,
         includeTrash: true
       }),
-      getAccessToken(user)
+      getAccessToken(account)
     ]);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;
@@ -30,15 +24,15 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
     let dupeCache = {};
     let dupeSenders = [];
     logger.info(
-      `outlook-fetcher: started ${timeframe} scan (${
-        user.id
-      }) [estimated ${totalEstimate} mail]`
+      `outlook-fetcher: checking for new mail after ${getSearchString({
+        from
+      })} (${user.id}) [estimated ${totalEstimate} mail]`
     );
     // get the folders so we can associate them later
     const mailFolders = await getMailFolders(accessToken);
     for await (let mail of requestMail({
       accessToken,
-      timeframe
+      from
     })) {
       totalEmailsCount = totalEmailsCount + mail.length;
       progress = progress + mail.length;
@@ -66,9 +60,9 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
       yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
     logger.info(
-      `outlook-fetcher: finished ${timeframe} scan (${
-        user.id
-      }) [took ${(Date.now() - start) / 1000}s, ${totalEmailsCount} results]`
+      `outlook-fetcher: finished scan (${user.id}) [took ${(Date.now() -
+        start) /
+        1000}s, ${totalEmailsCount} results]`
     );
     return {
       totalMail: totalEmailsCount,
@@ -84,12 +78,10 @@ export async function* fetchMail({ user, timeframe = '3d' }) {
   }
 }
 
-async function* requestMail({ accessToken, timeframe }) {
+async function* requestMail({ accessToken, from }) {
   try {
-    const { then, now } = getTimeRange(timeframe);
     const query = getSearchString({
-      then,
-      now
+      from
     });
     let page = 0;
     let limit = 100;

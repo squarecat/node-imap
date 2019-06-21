@@ -1,7 +1,6 @@
 import './gifts.module.scss';
 
 import GiftsPrices from './gifts-prices';
-import { PRICES } from '../../utils/prices';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextImportant } from '../../components/text';
@@ -28,7 +27,7 @@ const GiftsPage = () => {
       <p>
         Just a few great reasons to buy a gift scan of Leave Me Alone today!
       </p>
-      <GiftsPrices prices={PRICES} />
+      {/* <GiftsPrices prices={PRICES} /> */}
       <div styleName="gift-discount">
         <h3>Buy more than 1 scan and receive a discount</h3>
         <p>
@@ -37,7 +36,7 @@ const GiftsPage = () => {
         <p>
           50 scans or more - <TextImportant>40% off</TextImportant>
         </p>
-        <GiftsPrices prices={PRICES} />
+        {/* <GiftsPrices prices={PRICES} /> */}
         <p>
           More than 100 scans - you might be interested in our{' '}
           <a href="/enterprise">enterprise pricing plan</a>.

@@ -7,7 +7,7 @@ export default function Terms() {
       title="Privacy Policy"
       description="Our privacy policy explains what information we collect and why. We do not store the content of any of your emails in any form. We do store metadata of your emails in order to identify if you have unsubscribed from a subscription in a previous scan."
     >
-      <h1>Privacy Policy</h1>
+      <h2>Privacy Policy</h2>
       <p>
         Your privacy is important to us. It is Squarecat's policy to respect
         your privacy regarding any information we may collect from you across

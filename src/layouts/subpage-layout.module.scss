@@ -1,5 +1,5 @@
 .subpage {
-  padding: 80px 44px;
+  padding: 80px 0 0 0;
   background-color: #fff;
   min-height: calc(100% - 50px);
   display: flex;
@@ -11,6 +11,11 @@
   max-width: 100%;
   margin: 0 auto;
   flex: 1;
+  padding: 0 40px;
+
+  @media (max-width: 700px) {
+    padding: 0 20px;
+  }
 }
 
 .subpage h1 {

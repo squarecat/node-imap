@@ -1,0 +1,113 @@
+@import '../../components/btn/btn.module.scss';
+@import '../../components/text/text.module.scss';
+@import '../../styles/common/layers.scss';
+
+.mail-list {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 100px);
+  background-color: $color-red-lightest;
+}
+
+.footer {
+  position: fixed;
+  @extend .banner-layer;
+}
+
+.content {
+  position: relative;
+  padding-top: 50px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: white;
+  border-top: 1px solid rgba(231, 58, 48, 0.1);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+
+  a {
+    position: relative;
+    padding: 5px 15px;
+    display: block;
+    user-select: none;
+  }
+
+  a:focus {
+    outline: 0;
+  }
+}
+.pagination-pages,
+.paginationBreak,
+.next,
+.prev {
+  @extend .btn;
+  @extend .compact;
+  @extend .muted;
+  @extend .basic;
+  margin: 0;
+  padding: 0;
+}
+
+.pagination-pages,
+.paginationBreak {
+  @media (max-width: 700px) {
+    display: none;
+  }
+}
+
+.pagination-active {
+  a:after {
+    width: 16px;
+    height: 1px;
+    background: rgba(231, 57, 48, 0.749);
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    bottom: 5px;
+  }
+}
+
+.count {
+  padding: 0 15px;
+  @extend .smaller;
+  height: auto;
+}
+
+.page-count {
+  @extend .important;
+}
+.total-count {
+  @extend .important;
+}
+
+.refresh {
+  margin-left: auto;
+
+  a {
+    font-size: 12px;
+  }
+
+  svg {
+    position: relative;
+    top: -1px;
+    margin: 0 0 0 4px;
+  }
+}

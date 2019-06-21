@@ -4,3 +4,6 @@
   @extend .profile-section;
   @extend .profile-section--unpadded;
 }
+.content {
+  @extend .profile-unpadded-content;
+}

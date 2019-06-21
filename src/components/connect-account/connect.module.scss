@@ -1,0 +1,90 @@
+@import '../../styles/common/colors.scss';
+@import '../btn/btn.module.scss';
+
+.connect-btn {
+  @extend .btn;
+  @extend .basic;
+  @extend .compact;
+  background: white;
+  border: 1px solid #8c8c8c;
+  color: $color-primary-font;
+  font-weight: 600;
+  width: 100%;
+  max-width: 240px;
+
+  .text {
+    margin-left: 15px;
+    width: 150px;
+  }
+
+  &:hover {
+    background-color: rgba(255, 218, 214, 0.2);
+    color: $color-primary-font;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
+}
+
+.account-list {
+  margin: 0 0 1.5em 0;
+
+  a {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .desktop {
+    @media (max-width: 500px) {
+      display: none;
+    }
+  }
+
+  .mobile {
+    display: none;
+    @media (max-width: 500px) {
+      display: inline;
+    }
+  }
+}
+
+.account {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) 100px;
+  align-items: center;
+  font-size: 14px;
+  padding: 5px 0;
+  margin: 0;
+  opacity: 0;
+  max-height: 0;
+  transition: max-height 200ms ease-in-out, opacity 200ms 175ms ease-in-out;
+
+  &.bordered {
+    border-bottom: 1px solid $color-border-red;
+  }
+  &:only-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 400px) {
+    grid-template-columns: 26px minmax(0, 1fr) 40px;
+    padding: 0;
+  }
+}
+
+.account-entered {
+  opacity: 1;
+  max-height: 35px;
+
+  @media (max-width: 400px) {
+    max-height: 200px;
+  }
+}
+
+.provider-btn-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column-gap: 20px;
+  grid-row-gap: 10px;
+}

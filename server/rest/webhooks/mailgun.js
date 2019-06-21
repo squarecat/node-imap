@@ -91,7 +91,7 @@ export default app => {
       const { event: eventType } = eventData;
       switch (eventType) {
         // Mailgun accepted the request to send/forward the email and the
-        // message has been placed in queue."
+        // message has been placed in queue.
         case 'accepted':
           break;
         // Mailgun rejected the request to send/forward the email.

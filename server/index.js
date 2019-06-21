@@ -4,15 +4,22 @@ import auth from './auth';
 import config from 'getconfig';
 import connectMongo from 'connect-mongo';
 import cookieParser from 'cookie-parser';
+import errorsApi from './rest/errors';
 import express from 'express';
-import giftsApi from './rest/gifts';
+// import giftsApi from './rest/gifts';
 import http from 'http';
 import logger from './utils/logger';
 import mailApi from './rest/mail';
 import mailgunWebhooks from './rest/webhooks/mailgun';
+import milestonesApi from './rest/milestones';
+import notificationsApi from './rest/notifications';
+import orgApi from './rest/organisation';
 import path from 'path';
 import paymentsApi from './rest/payments';
+import { refreshScores } from './dao/occurrences';
+import scoresApi from './rest/scores';
 import session from 'express-session';
+import socketApi from './rest/socket';
 import { startScheduler } from './utils/scheduler';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
@@ -52,22 +59,35 @@ app.use(
 
 auth(app);
 
+app.get('/api', (req, res) => res.send('OK'));
+
+const socket = socketApi(server);
 userApi(app);
-mailApi(app, server);
+mailApi(app, socket);
+scoresApi(app, socket);
+notificationsApi(app, socket);
 paymentsApi(app);
 statsApi(app);
-giftsApi(app);
-
+// giftsApi(app);
+milestonesApi(app);
+orgApi(app);
 mailgunWebhooks(app);
+errorsApi(app);
 
-// app.get('/sitemap.xml', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'sitemap.xml'));
-// });
-app.get('/api', (req, res) => res.send('OK'));
+app.get('/api/*', (req, res) => {
+  res.status(404).send({
+    error: 404,
+    message: 'That API route does not not exist'
+  });
+});
 app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
 app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
 app.get('/join-beta', (req, res) => res.redirect(config.urls.requestBeta));
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
 
 app.get('/r/:code', (req, res) => {
   // make sure only the first referrer gets the gold
@@ -76,6 +96,13 @@ app.get('/r/:code', (req, res) => {
   }
   res.redirect('/');
 });
+
+app.get('/i/:code', (req, res) => {
+  // make sure the latest invite is used
+  res.cookie('invite', req.params.code, { maxAge: 900000 });
+  res.redirect('/login');
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('*', (req, res) => {
@@ -92,6 +119,7 @@ const App = {
     // tell pm2 that the server is ready
     // to start receiving requests
     if (process.send) process.send('ready');
+    refreshScores();
   },
   async stop() {
     logger.info('server stopping');

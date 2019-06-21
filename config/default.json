@@ -6,18 +6,26 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "admins": ["james@squarecat.io", "danielle@squarecat.io"],
   "http": {
     "port": "$PORT"
   },
   "auth": {
     "google": {
-      "redirect": "http://local.leavemealone.xyz/auth/google/callback",
+      "loginRedirect": "https://dev.leavemealone.xyz/login/google/redirect",
+      "connectRedirect": "https://dev.leavemealone.xyz/auth/google/connect/callback",
       "clientId": "$GOOGLE_CLIENT_ID",
       "clientSecret": "$GOOGLE_CLIENT_SECRET",
-      "scopes": ["https://www.googleapis.com/auth/gmail.readonly", "email"]
+      "scopes": [
+        "https://www.googleapis.com/auth/gmail.readonly",
+        "email",
+        "profile",
+        "openid"
+      ]
     },
     "outlook": {
-      "redirect": "https://dev.leavemealone.xyz/auth/outlook/callback",
+      "loginRedirect": "https://dev.leavemealone.xyz/login/outlook/redirect",
+      "connectRedirect": "https://dev.leavemealone.xyz/auth/outlook/connect/callback",
       "clientId": "$OUTLOOK_CLIENT_ID",
       "clientSecret": "$OUTLOOK_CLIENT_SECRET",
       "scopes": [
@@ -29,7 +37,12 @@
     }
   },
   "imageStoragePath": "$IMAGE_STORAGE_PATH",
-  "unsubscribeKeywords": ["Success", "Successfully", "Unsubscribed"],
+  "unsubscribeKeywords": [
+    "Success",
+    "Successfully",
+    "Unsubscribed",
+    "has been removed"
+  ],
   "mailgun": {
     "apiKey": "$MAILGUN_API_KEY",
     "domains": {
@@ -46,9 +59,13 @@
   "payments": {
     "publishableKey": "$STRIPE_PK",
     "secretKey": "$STRIPE_SK",
-    "vatKey": "$VAT_KEY"
+    "vatKey": "$VAT_KEY",
+    "plans": {
+      "enterprise": "1"
+    }
   },
   "urls": {
+    "base": "http://local.leavemealone.xyz",
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
@@ -60,7 +77,8 @@
     "key": "key0cK6sejCiwx9p0",
     "expenses": {
       "baseId": "app0FrYsnDlnZvGHc",
-      "tableId": "Leave Me Alone"
+      "tableId": "Leave Me Alone",
+      "tableIdMonthly": "Leave Me Alone Monthly"
     },
     "beta": {
       "baseId": "appq5b5dkcmMPEbBA",

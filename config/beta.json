@@ -10,14 +10,17 @@
     "port": "$PORT"
   },
   "urls": {
-    "referral": "https://beta.leavemealone.xyz/r/"
+    "referral": "https://beta.leavemealone.xyz/r/",
+    "base": "https://beta.leavemealone.xyz"
   },
   "auth": {
     "google": {
-      "redirect": "https://beta.leavemealone.xyz/auth/google/callback"
+      "loginRedirect": "https://beta.leavemealone.xyz/login/google/redirect",
+      "connectRedirect": "https://beta.leavemealone.xyz/auth/google/connect/callback"
     },
     "outlook": {
-      "redirect": "https://beta.leavemealone.xyz/auth/outlook/callback"
+      "loginRedirect": "https://beta.leavemealone.xyz/login/outlook/redirect",
+      "connectRedirect": "https://beta.leavemealone.xyz/auth/outlook/connect/callback"
     }
   },
   "mailgun": {

@@ -8,6 +8,7 @@ import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 import addMonths from 'date-fns/add_months';
 import endOfMonth from 'date-fns/end_of_month';
+import formatDate from 'date-fns/format';
 import isAfter from 'date-fns/is_after';
 import isWithinRange from 'date-fns/is_within_range';
 import numeral from 'numeral';
@@ -22,6 +23,11 @@ const lineColorLight = '#fedbd5';
 
 const lineColor2 = '#9D5AAC';
 const lineColor2Light = '#CA9CD4';
+
+const barColor1 = 'rgba(157, 90, 172, 0.3)';
+// const barColor1 = 'rgba(0, 0, 0, 0.3)';
+const barColor2 = 'rgba(157, 90, 172, 0.7)';
+// const barColor2 = 'rgba(0, 0, 0, 0.5)';
 
 function getStats() {
   return request('/api/stats');
@@ -75,6 +81,108 @@ function dailyRevChart(ctx, stats) {
           {
             ticks: {
               beginAtZero: true,
+              precision: 0,
+              callback: function(label) {
+                return numeral(label).format('$0,0');
+              }
+            }
+          }
+        ]
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+function monthlyProfitChart(ctx, stats, expenses) {
+  if (!stats || !expenses) return null;
+
+  const grossRevenue = getMonthlyRevenueGraphStats(stats);
+  const costs = expenses.map(e => {
+    return {
+      x: startOfMonth(e.date),
+      y: e.total
+    };
+  });
+  const profits = grossRevenue.map(r => {
+    const formatted = formatDate(r.x, 'YYYY-MM');
+    const costs = expenses.find(
+      e => formatDate(e.date, 'YYYY-MM') === formatted
+    );
+    return {
+      x: r.x,
+      y: r.y - (costs ? costs.total : 0)
+    };
+  });
+
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          label: 'Profit',
+          type: 'line',
+          fill: false,
+          backgroundColor: lineColor,
+          borderColor: lineColor,
+          data: profits,
+          yAxisID: 'y-axis-1'
+        },
+        {
+          label: 'Revenue',
+          data: getMonthlyRevenueGraphStats(stats),
+          backgroundColor: barColor1,
+          yAxisID: 'y-axis-1'
+        },
+        {
+          label: 'Expenses',
+          data: costs,
+          backgroundColor: barColor2,
+          yAxisID: 'y-axis-1'
+        }
+      ]
+    },
+    type: 'bar',
+    options: {
+      legend: {
+        display: false
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: true,
+        callbacks: {
+          title: function(items) {
+            return formatDate(items[0].xLabel, 'MMM YYYY');
+          },
+          label: function(items, data) {
+            return `${data.datasets[items.datasetIndex].label} - ${currency(
+              items.yLabel
+            )}`;
+          }
+        }
+      },
+      scales: {
+        xAxes: [
+          {
+            offset: true,
+            stacked: true,
+            type: 'time',
+            time: {
+              unit: 'month'
+            }
+          }
+        ],
+        yAxes: [
+          {
+            stacked: true,
+            display: true,
+            position: 'left',
+            id: 'y-axis-1',
+            ticks: {
+              beginAtZero: true,
+              suggestedMin: 0,
+              suggestedMax: 10,
+              min: 0,
               precision: 0,
               callback: function(label) {
                 return numeral(label).format('$0,0');
@@ -222,6 +330,7 @@ function providerBarChart(ctx, stats) {
           {
             ticks: {
               beginAtZero: true,
+              precision: 0,
               callback: function(value) {
                 if (value % 1 === 0) {
                   return value;
@@ -231,18 +340,20 @@ function providerBarChart(ctx, stats) {
           }
         ]
       },
-
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
 
-export default function Terms() {
+export default function OpenPage() {
   const { value: stats, loading } = useAsync(getStats);
-  const { value: expenses, loadingExpenses } = useAsync(getExpenses);
+  const { value: expenses = {}, loadingExpenses } = useAsync(getExpenses);
+  const { itemised = [], monthly } = expenses;
 
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
+  const monthlyProfitRef = useRef(null);
   const scanRef = useRef(null);
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
@@ -256,6 +367,13 @@ export default function Terms() {
       }
       if (dailyRevRef.current) {
         dailyRevChart(dailyRevRef.current.getContext('2d'), stats);
+      }
+      if (monthlyProfitRef.current) {
+        monthlyProfitChart(
+          monthlyProfitRef.current.getContext('2d'),
+          stats,
+          monthly
+        );
       }
       if (scanRef.current) {
         scanChart(scanRef.current.getContext('2d'), stats);
@@ -273,7 +391,17 @@ export default function Terms() {
         providerBarChart(providersRef.current.getContext('2d'), stats);
       }
     },
-    [stats, subscriptionRef.current, dailyRevRef.current, scanRef.current]
+    [
+      stats,
+      subscriptionRef.current,
+      dailyRevRef.current,
+      monthlyProfitRef.current,
+      scanRef.current,
+      referralRef.current,
+      mailtoLinkRef.current,
+      usersRef.current,
+      providersRef.current
+    ]
   );
   if (loading) {
     return null;
@@ -397,7 +525,22 @@ export default function Terms() {
                   <span styleName="value">{format(stats.giftRedemptions)}</span>
                 </div>
               </div>
+
+              <div styleName="chart box">
+                <h2>
+                  <span style={{ color: lineColor }}>Monthly Profit</span> -{' '}
+                  <span styleName="title-colored" style={{ color: barColor1 }}>
+                    Revenue
+                  </span>{' '}
+                  vs{' '}
+                  <span styleName="title-colored" style={{ color: barColor2 }}>
+                    Expenses
+                  </span>
+                </h2>
+                <canvas ref={monthlyProfitRef} />
+              </div>
             </div>
+
             <div styleName="users">
               <div styleName="chart box">
                 <h2>New Signups</h2>
@@ -526,30 +669,32 @@ export default function Terms() {
                 <div styleName="box box--unpadded">
                   <h2>Last Month's Expenses</h2>
                   <Table>
-                    {(expenses || []).map((expense, i) => {
-                      return (
-                        <TableRow key={i}>
-                          <TableCell>{expense.type}</TableCell>
-                          <TableCell>
-                            <TextLink href={expense.url}>
-                              {expense.service}
-                            </TextLink>
-                          </TableCell>
-                          <TableCell>{currency(expense.cost)}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                    <TableRow inverted>
-                      <TableCell />
-                      <TableCell>Total</TableCell>
-                      <TableCell>
-                        <span>
-                          {currency(
-                            (expenses || []).reduce((out, e) => out + e.cost, 0)
-                          )}
-                        </span>
-                      </TableCell>
-                    </TableRow>
+                    <tbody>
+                      {itemised.map((expense, i) => {
+                        return (
+                          <TableRow key={i}>
+                            <TableCell>{expense.type}</TableCell>
+                            <TableCell>
+                              <TextLink href={expense.url}>
+                                {expense.service}
+                              </TextLink>
+                            </TableCell>
+                            <TableCell>{currency(expense.cost)}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      <TableRow inverted>
+                        <TableCell />
+                        <TableCell>Total</TableCell>
+                        <TableCell>
+                          <span>
+                            {currency(
+                              itemised.reduce((out, e) => out + e.cost, 0)
+                            )}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    </tbody>
                   </Table>
                 </div>
               )}
@@ -586,6 +731,53 @@ function getGraphStats(stats, stat) {
     }
     return out;
   }, []);
+}
+
+function getMonthlyRevenueGraphStats(stats, expenses) {
+  if (!stats) return null;
+  const { daily } = stats;
+  const { histogram } = daily;
+
+  const today = new Date();
+  // only show everything before the current month
+  // e.g. we are in June 2019 and we want everything up to May 2019
+  const lastMonthToShow = endOfMonth(addMonths(today, -1));
+
+  const byMonth = histogram.reduce((out, d) => {
+    const date = startOfMonth(subDays(startOfDay(d.timestamp), 1));
+    if (isAfter(date, lastMonthToShow)) return out;
+
+    const formatted = formatDate(date, 'YYYY-MM');
+    if (!out[formatted]) {
+      // const costs = expenses.find(
+      //   e => formatDate(e.date, 'YYYY-MM') === formatted
+      // );
+      return {
+        ...out,
+        [formatted]: {
+          date,
+          profit: getYValue(d, 'totalRevenue')
+          // expenses: costs ? costs.total : 0
+        }
+      };
+    }
+
+    return {
+      ...out,
+      [formatted]: {
+        ...out[formatted],
+        profit: out[formatted].profit + getYValue(d, 'totalRevenue')
+      }
+    };
+  }, {});
+
+  return Object.keys(byMonth).map(key => {
+    const month = byMonth[key];
+    return {
+      x: month.date,
+      y: month.profit
+    };
+  });
 }
 
 function getYValue(data, stat) {

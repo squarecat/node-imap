@@ -4,11 +4,18 @@
   margin-right: 7px;
   top: 1px;
 }
-
-.pad-left {
-  margin-left: 7px;
+// styling options
+.padleft {
+  margin: 0 0 0 7px;
+}
+.filled path {
+  fill: #fde4e2;
+}
+.inline {
+  margin: 0;
 }
 
+// icon specific
 .heart {
   color: #ff5955;
   fill: #ffb9b6;
@@ -33,4 +40,35 @@
 .lock {
 }
 .user {
+}
+.link {
+  top: 1px;
+}
+.arrows {
+}
+.gift {
+  margin-right: 0;
+}
+.gift-wrapper {
+  position: relative;
+  top: 2px;
+}
+.star {
+}
+.bell {
+}
+.refresh {
+  margin-right: 0 4px;
+}
+
+[data-amount]::after {
+  position: absolute;
+  content: attr(data-amount) ' ';
+  left: 50%;
+  z-index: 1;
+  top: 50%;
+  transform: translate(-50%, -50%) translateY(-1px);
+  font-family: 'Gotham-Rounded-Medium';
+  font-size: 8px;
+  font-weight: bolder;
 }

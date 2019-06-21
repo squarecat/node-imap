@@ -2,7 +2,23 @@ import './btn.module.scss';
 
 import { Link } from 'gatsby';
 import React from 'react';
+import _omit from 'lodash.omit';
 import cx from 'classnames';
+
+const styleProps = [
+  'loading',
+  'compact',
+  'centered',
+  'muted',
+  'icon',
+  'disabled',
+  'basic',
+  'smaller',
+  'stretch',
+  'outlined',
+  'fill',
+  'onDarkBg'
+];
 
 export default ({
   loading,
@@ -10,32 +26,49 @@ export default ({
   children,
   label,
   linkTo,
+  as,
   linkArgs = {},
-  ...visProps
+  disabled = false,
+  inline = false,
+  ...props
 }) => {
   const classes = cx('btn', {
     loading,
-    compact: visProps.compact,
-    centered: visProps.centered,
-    muted: visProps.muted,
-    icon: visProps.icon,
-    disabled: visProps.disabled,
-    basic: visProps.basic,
-    smaller: visProps.smaller,
-    stretch: visProps.stretch,
-    outlined: visProps.outlined,
-    fill: visProps.fill,
-    'on-dark-bg': visProps.onDarkBg
+    inline,
+    compact: props.compact,
+    centered: props.centered,
+    muted: props.muted,
+    icon: props.icon,
+    disabled,
+    basic: props.basic,
+    smaller: props.smaller,
+    stretch: props.stretch,
+    outlined: props.outlined,
+    fill: props.fill,
+    'on-dark-bg': props.onDarkBg
   });
-  if (linkTo) {
+
+  let elProps = _omit(props, styleProps);
+  if (disabled) {
+    elProps = { ...elProps, disabled };
+  }
+  if (as === 'link' || linkTo) {
     return (
       <Link styleName={classes} to={linkTo} state={linkArgs}>
         <span styleName="btn-content">{label || children}</span>
       </Link>
     );
   }
+  if (as === 'button') {
+    return (
+      <button styleName={classes} onClick={onClick} type="button" {...elProps}>
+        <span styleName="btn-content">{label || children}</span>
+        {loading ? <span styleName="btn-loader" /> : null}
+      </button>
+    );
+  }
   return (
-    <a styleName={classes} onClick={onClick}>
+    <a styleName={classes} onClick={onClick} {...elProps}>
       <span styleName="btn-content">{label || children}</span>
       {loading ? <span styleName="btn-loader" /> : null}
     </a>

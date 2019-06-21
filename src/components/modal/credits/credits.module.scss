@@ -1,0 +1,132 @@
+@import '../../../styles/common/colors.scss';
+@import '../../text/text.module.scss';
+
+.credits-modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: 600px;
+}
+
+.balance {
+  display: flex;
+  justify-content: space-between;
+}
+.action {
+}
+.credit-balance {
+  @extend .important;
+}
+.balance-text {
+  flex: 1;
+}
+
+.invite-actions {
+  display: grid;
+  grid-template-columns: 2.4fr 0.8fr 0.8fr;
+  max-width: 100%;
+  grid-column-gap: 5px;
+  grid-row-gap: 10px;
+  font-size: 14px;
+
+  svg {
+    position: relative;
+    top: -1px;
+  }
+
+  @media (max-width: 660px) {
+    grid-template-rows: 38px 38px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'header header'
+      'left right';
+
+    > *:first-child {
+      grid-area: header;
+    }
+  }
+}
+
+.earn-credit {
+  margin: 0;
+  padding: 0;
+
+  li {
+    margin: 0;
+    display: flex;
+    height: 58px;
+    line-height: 20px;
+    border-bottom: 1px solid rgba($color-border-red, 0.35);
+    align-items: center;
+    justify-content: space-between;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.earn-description {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  > span {
+    display: block;
+  }
+
+  svg {
+    top: -1px;
+  }
+}
+
+.earn-status {
+  display: flex;
+  align-items: center;
+  width: 90px;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.earn-checkbox {
+  border: 1px solid #ffc9c5;
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+.earn-checkbox[data-checked='true'] {
+  background-color: #fddbd7;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    border: 2px solid white;
+    border-left: 0;
+    border-top: 0;
+    width: 8px;
+    height: 14px;
+    transform: translate(-50%, -50%) translateY(-2px) rotate(40deg);
+    left: 50%;
+    top: 50%;
+  }
+}
+.earn-amount {
+}
+
+.earn-credit-referrals {
+  margin-top: 1em;
+}
+
+.earn-email {
+}
+
+.earn-description-text {
+  font-size: 12px;
+  opacity: 0.55;
+
+  a {
+    @extend .link;
+  }
+}

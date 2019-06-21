@@ -12,9 +12,10 @@
   }
 }
 
-.link-inverted {
+.inverted {
   color: white;
   border-color: white;
+
   &:hover {
     color: rgba(white, 0.8);
     border-bottom-color: rgba(white, 0.8);
@@ -32,8 +33,22 @@
 
 .bold {
   font-weight: bold;
+  font-family: 'Gotham-Rounded-Medium';
 }
 
 .undecorated {
   border-bottom: 0;
+}
+
+.footnote {
+  display: block;
+  font-size: 12px;
+  line-height: 18px;
+  margin: 0;
+}
+
+.lead {
+  font-weight: bold;
+  opacity: 0.5;
+  font-size: 18px;
 }

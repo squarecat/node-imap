@@ -1,8 +1,11 @@
-import './account.module.scss';
+import './profile.module.scss';
 
-import React, { useState } from 'react';
+import { GoogleIcon, OutlookIcon } from '../../../components/icons';
+import React, { useCallback, useContext, useState } from 'react';
 
 import Button from '../../../components/btn';
+import { DatabaseContext } from '../../../providers/db-provider';
+import { ModalContext } from '../../../providers/modal-provider';
 import ProfileLayout from './layout';
 import { TextImportant } from '../../../components/text';
 import WarningModal from '../../../components/modal/warning-modal';
@@ -10,76 +13,122 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
-  const [{ email }] = useUser(u => ({
-    email: u.email
+  const [{ email, organisationAdmin, loginProvider }] = useUser(u => ({
+    email: u.email,
+    organisationAdmin: u.organisationAdmin,
+    loginProvider: u.loginProvider
   }));
-  const [showWarningModal, toggleWarningModal] = useState(false);
-  const [warningModalAction, setWarningModalAction] = useState(null);
-  const [warningModalContent, setWarningModalContent] = useState(null);
-  const [loading, toggleLoading] = useState(false);
-
-  const clearLocalStorage = () => {
-    localStorage.clear();
-  };
-
-  const deactivateUserAccount = async () => {
-    toggleLoading(true);
-    clearLocalStorage();
-    try {
-      await deactivateAccount();
-      setTimeout(() => {
-        window.location.href = '/goodbye';
-      }, 300);
-    } catch (err) {
-      toggleLoading(false);
-      console.error('failed to deactivate account');
-      console.error(err);
-    }
-  };
-
-  const onClickClear = () => {
-    setWarningModalAction('clear');
-    setWarningModalContent(clearModalContent);
-    toggleWarningModal(true);
-  };
-
-  const onClickDelete = () => {
-    setWarningModalAction('delete');
-    setWarningModalContent(deleteModalContent);
-    toggleWarningModal(true);
-  };
-
-  const onClickWarningConfirm = () => {
-    if (warningModalAction === 'delete') {
-      deactivateUserAccount();
-    } else if (warningModalAction === 'clear') {
-      clearLocalStorage();
-    }
-    setWarningModalAction(null);
-  };
-
   return (
-    <ProfileLayout pageName="Account">
-      <div styleName="account-section details">
+    <ProfileLayout pageName="Profile">
+      <div styleName="section">
         <h2>Details</h2>
-        <p>
-          Signed in with: <TextImportant>{email}</TextImportant>
+
+        <p styleName="email-container">
+          <span>Signed in with: </span>
+          {loginProvider === 'password' ? null : getProviderIcon(loginProvider)}
+          <span styleName="email">
+            <TextImportant>{email}</TextImportant>
+          </span>
         </p>
       </div>
+      <DangerZone organisationAdmin={organisationAdmin} />
+    </ProfileLayout>
+  );
+};
 
-      <div styleName="account-section">
+function DangerZone({ organisationAdmin }) {
+  const [loading, toggleLoading] = useState(false);
+
+  const { open: openModal } = useContext(ModalContext);
+  const db = useContext(DatabaseContext);
+
+  const onClickClear = useCallback(
+    () =>
+      openModal(
+        <WarningModal
+          onConfirm={() => db.clear()}
+          content={
+            <>
+              <p>
+                <TextImportant>WARNING:</TextImportant> this will remove all of
+                the data from your scan. Re-running the full scan may take a few
+                minutes.
+              </p>
+              <p>
+                If you continue to have problems after this then please contact
+                support.
+              </p>
+            </>
+          }
+          confirmText="Confirm"
+        />,
+        {
+          dismissable: true
+        }
+      ),
+    [openModal, db]
+  );
+
+  const onClickDelete = useCallback(
+    () => {
+      const deactivateUserAccount = async () => {
+        toggleLoading(true);
+        await db.clear();
+        try {
+          await deactivateAccount();
+          setTimeout(() => {
+            window.location.href = '/goodbye';
+          }, 300);
+        } catch (err) {
+          toggleLoading(false);
+          console.error('failed to deactivate account');
+          console.error(err);
+        }
+      };
+      openModal(
+        <WarningModal
+          onConfirm={() => deactivateUserAccount()}
+          content={
+            <>
+              <p>
+                <TextImportant>WARNING:</TextImportant>
+                This will delete <TextImportant>
+                  ALL OF YOUR DATA
+                </TextImportant>{' '}
+                including your account details, scan history, favorite senders,
+                reminders, and referral data.
+              </p>
+              <p>
+                However, you are not tied to our service in any way. Any mailing
+                lists you unsubscribed from are gone forever.
+              </p>
+            </>
+          }
+          confirmText="Yes delete everything"
+        />,
+        {
+          dismissable: true
+        }
+      );
+    },
+    [openModal, db]
+  );
+
+  return (
+    <>
+      <div styleName="section">
         <h2>Clear Local Data</h2>
         <p>
-          We do not store any of your emails, everything is stored on your
-          client. If you are having problems with a scan you can try clearing
-          your local emails.
+          We do not store any of your emails, everything is stored in your
+          browser. If you are having problems with a scan you can try clearing
+          this data.
         </p>
         <Button compact basic onClick={() => onClickClear()}>
           Clear Local Emails
         </Button>
       </div>
 
-      <div styleName="account-section">
+      <div styleName="section">
         <h2>Deactivate Account</h2>
         <p styleName="warning">
           We NEVER store the content of your emails in any form.
@@ -90,59 +139,32 @@ export default () => {
           to recipient and sender email addresses, and a timestamp, and is
           encrypted.
         </p>
-        <p>
-          If you still want to delete your account this action will delete all
-          of your data, revoke your API key, and sign you out.
-        </p>
 
-        <Button compact basic loading={loading} onClick={() => onClickDelete()}>
-          Deactivate Account
-        </Button>
+        {organisationAdmin ? (
+          <TextImportant>
+            You are an admin of an organisation. If you wish to deactivate your
+            account please contact us.
+          </TextImportant>
+        ) : (
+          <>
+            <p>
+              If you still want to delete your account this action will delete
+              all of your data, revoke your API key, and sign you out.
+            </p>
+            <Button
+              compact
+              basic
+              loading={loading}
+              onClick={() => onClickDelete()}
+            >
+              Deactivate Account
+            </Button>
+          </>
+        )}
       </div>
-      {showWarningModal ? (
-        <WarningModal
-          onClose={() => toggleWarningModal(false)}
-          onClickConfirm={() => {
-            toggleWarningModal(false);
-            onClickWarningConfirm();
-          }}
-          content={warningModalContent}
-          confirmText={
-            warningModalAction === 'delete'
-              ? 'Yes delete everything'
-              : 'Confirm'
-          }
-        />
-      ) : null}
-    </ProfileLayout>
+    </>
   );
-};
-
-const clearModalContent = (
-  <>
-    <p>
-      <TextImportant>WARNING:</TextImportant> this will remove all of the data
-      from your last scan. If it has been more than 24 hours you will be unable
-      to run this scan again.
-    </p>
-    <p>If you continue to have problems please contact support.</p>
-  </>
-);
-
-const deleteModalContent = (
-  <>
-    <p>
-      This will delete <TextImportant>ALL OF YOUR DATA</TextImportant> including
-      your account details, scan history, favorite senders, reminders, and
-      referral data.
-    </p>
-    <p>
-      You are not tied to our service in any way. Any spam email lists you
-      unsubscribed from are gone forever.
-    </p>
-  </>
-);
-
+}
 async function deactivateAccount() {
   try {
     return request('/api/user/me', {
@@ -156,4 +178,9 @@ async function deactivateAccount() {
     console.error(err);
     throw err;
   }
+}
+
+function getProviderIcon(provider) {
+  if (provider === 'google') return <GoogleIcon width="16" height="16" />;
+  if (provider === 'outlook') return <OutlookIcon width="16" height="16" />;
 }

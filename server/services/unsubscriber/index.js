@@ -1,18 +1,48 @@
+import {
+  addUnsubscriptionToUser,
+  decrementUserCredits,
+  getUserById,
+  incrementUserCredits
+} from '../user';
+
+import { UserError } from '../../utils/errors';
 import { addNewUnsubscribeOccrurence } from '../occurrences';
 import { addUnsubscriptionToStats } from '../stats';
-import { addUnsubscriptionToUser } from '../user';
 import { unsubscribeWithLink as browserUnsub } from './browser';
 import { unsubscribeWithMailTo as emailUnsub } from './mail';
 import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
 import logger from '../../utils/logger';
+import { recordUnsubscribeForOrganisation } from '../organisation';
+import { sendToUser } from '../../rest/socket';
 
 export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
 
 export const unsubscribeFromMail = async (userId, mail) => {
+  const { billing, organisationId, organisationActive } = await getUserById(
+    userId
+  );
+  const credits = billing ? billing.credits : 0;
+  const { allowed, reason } = canUnsubscribe({
+    credits,
+    organisationId,
+    organisationActive
+  });
+  if (!allowed) {
+    throw new UserError(`unsubscribe failed - ${reason}`, {
+      errKey: reason
+    });
+  }
+
+  if (!organisationId) {
+    decrementUserCredits(userId, 1);
+    sendToUser(userId, 'new-credits', -1);
+  } else {
+    recordUnsubscribeForOrganisation(organisationId);
+  }
   const { unsubscribeLink, unsubscribeMailTo } = mail;
-  logger.info(`mail-service: unsubscribe from ${mail.id}`);
+  logger.info(`unsubscriber-service: unsubscribe from ${mail.id}`);
   let unsubStrategy;
   let output;
   let hasImage = false;
@@ -40,7 +70,12 @@ export const unsubscribeFromMail = async (userId, mail) => {
       hasImage,
       estimatedSuccess: output.estimatedSuccess
     });
-    if (output.estimatedSuccess) addUnsubscriptionToStats({ unsubStrategy });
+    if (output.estimatedSuccess) {
+      addUnsubscriptionToStats({ unsubStrategy });
+    } else if (!organisationId) {
+      incrementUserCredits(userId, 1);
+      sendToUser(userId, 'new-credits', 1);
+    }
     addNewUnsubscribeOccrurence(userId, mail.from);
     return {
       id: output.id,
@@ -49,7 +84,9 @@ export const unsubscribeFromMail = async (userId, mail) => {
       unsubStrategy
     };
   } catch (err) {
-    logger.error(`mail-service: error unsubscribing from mail ${mail.id}`);
+    logger.error(
+      `unsubscriber-service: error unsubscribing from mail ${mail.id}`
+    );
     logger.error(err);
     throw err;
   }
@@ -69,4 +106,21 @@ function saveImageToDisk(userId, mailId, image) {
       return good();
     });
   });
+}
+
+function canUnsubscribe({ credits, organisationId, organisationActive }) {
+  if (organisationId && !organisationActive) {
+    logger.debug('unsubscriber-service: organisation inactive');
+    return {
+      allowed: false,
+      reason: 'organisation-inactive'
+    };
+  } else if (!organisationId && credits <= 0) {
+    logger.debug('unsubscriber-service: insufficient credits');
+    return {
+      allowed: false,
+      reason: 'insufficient-credits'
+    };
+  }
+  return { allowed: true };
 }
