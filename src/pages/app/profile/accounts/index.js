@@ -7,7 +7,7 @@ import ConnectedAccountList from '../../../../components/connect-account/list';
 import { ExternalIcon } from '../../../../components/icons';
 import { FormNotification } from '../../../../components/form';
 import { ModalContext } from '../../../../providers/modal-provider';
-import ProfileLayout from '../layout';
+import ProfileLayout from '../../../../app/profile/layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
 import { fetchLoggedInUser } from '../../../../utils/auth';

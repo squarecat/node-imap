@@ -1,17 +1,17 @@
-import './organisation.module.scss';
+import './org.module.scss';
 
 import Table, {
   TableCell,
   TableHead,
   TableHeadCell,
   TableRow
-} from '../../../../components/table';
+} from '../../../components/table';
 
 import React from 'react';
 import cx from 'classnames';
 import relative from 'tiny-relative-date';
-import request from '../../../../utils/request';
-import useAsync from '../../../../utils/hooks/use-async';
+import request from '../../../utils/request';
+import useAsync from '../../../utils/hooks/use-async';
 
 function CurrentUsers({ organisationId, adminUserEmail }) {
   const { value: stats = [], loadingStats } = useAsync(fetchStats, [

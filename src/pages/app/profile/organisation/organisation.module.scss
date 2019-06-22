@@ -1,5 +1,5 @@
 @import '../../../../styles/common/colors.scss';
-@import '../layout.module.scss';
+@import '../profile.module.scss';
 
 .organisation-section {
   @extend .profile-section;
@@ -31,33 +31,5 @@
 
   @media (max-width: 400px) {
     padding: 5px;
-  }
-}
-
-.invite {
-  margin-bottom: 2em;
-  input {
-    font-size: 14px;
-  }
-  a,
-  button {
-    min-width: 100px;
-  }
-}
-
-.users {
-  @media (max-width: 600px) {
-    // hide cells after first 3
-    th:nth-child(1n + 4),
-    td:nth-child(1n + 4) {
-      display: none;
-    }
-  }
-  @media (max-width: 400px) {
-    // hide cells after first 2
-    th:nth-child(1n + 3),
-    td:nth-child(1n + 3) {
-      display: none;
-    }
   }
 }

@@ -9,7 +9,7 @@ import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
-import ProfileLayout from './layout';
+import ProfileLayout from '../../../app/profile/layout';
 import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';

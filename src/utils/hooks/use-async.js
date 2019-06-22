@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const useAsync = (fn, args = [], opts = { minWait: 0 }) => {
   const start = Date.now();
@@ -44,7 +44,7 @@ const useAsync = (fn, args = [], opts = { minWait: 0 }) => {
         mounted = false;
       };
     },
-    [memoized, ...args]
+    [args, memoized, opts.minWait, start]
   );
 
   return state;

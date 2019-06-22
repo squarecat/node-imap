@@ -53,15 +53,7 @@ export default function paginatedResponse(req, res, next) {
   return res.send(list || []);
 }
 
-export function getPages({
-  limit,
-  page,
-  total
-}: {
-  perPage: number,
-  page: number,
-  total: number
-}): { first: number, last: number, prev: number, next: number } {
+export function getPages({ limit, page, total }) {
   const hasNext = total <= page * limit;
   const hasPrev = page !== 1;
   const lastPage = Math.ceil(total / limit);

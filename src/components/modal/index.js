@@ -10,17 +10,20 @@ import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
 import modalStyles from './modal-template.module.scss';
 
-const modalRoot = document.getElementById('modal-root');
-const el = document.createElement('div');
+let el;
+let modalRoot;
 
+if (typeof window !== 'undefined') {
+  modalRoot = window.document.getElementById('modal-root');
+  el = window.document.createElement('div');
+}
 /**
  * Modal component
  * @param children React node contents
  * @param shown is the modal shown or not
- * @param onClose function called when the modal is closed manually
  *
  * eg.
- * <Modal shown={isModalShown} onClose={() => toggleModal(false)}>
+ * <Modal shown={isModalShown}>
  *    Modal Content
  * </Button>
  *
@@ -66,10 +69,13 @@ export default ({ children, opaque, shown = false, style }) => {
         </Transition>
       );
     },
-    [children, shown, style]
+    [children, opaque, shown, style]
   );
 
-  return ReactDOM.createPortal(content, el);
+  if (el) {
+    return ReactDOM.createPortal(content, el);
+  }
+  return content;
 };
 
 export const ModalFooter = ({ children }) => {

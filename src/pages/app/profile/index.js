@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import Button from '../../../components/btn';
 import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
-import ProfileLayout from './layout';
+import ProfileLayout from '../../../app/profile/layout';
 import { TextImportant } from '../../../components/text';
 import WarningModal from '../../../components/modal/warning-modal';
 import request from '../../../utils/request';

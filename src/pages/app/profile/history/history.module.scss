@@ -1,7 +1,7 @@
 @import '../../../../styles/common/colors.scss';
 @import '../../../../components/text/text.module.scss';
 @import '../../../../components/btn/btn.module.scss';
-@import '../layout.module.scss';
+@import './../../../app/profile/profile.module.scss';
 
 .section {
   @extend .profile-section;

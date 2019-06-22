@@ -6,7 +6,6 @@ import cx from 'classnames';
 import styles from './subpage-layout.module.scss';
 
 export default ({ title, description, children, ...visProps }) => {
-  console.log(styles);
   const classes = cx(styles.subpage, {
     [styles.centered]: visProps.centered
   });

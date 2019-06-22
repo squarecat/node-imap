@@ -3,7 +3,7 @@ import './history.module.scss';
 import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import ErrorBoundary from '../../../../components/error-boundary';
-import ProfileLayout from '../layout';
+import ProfileLayout from '../../../../app/profile/layout';
 import React from 'react';
 import { TextImportant } from '../../../../components/text';
 import _sortBy from 'lodash.sortby';

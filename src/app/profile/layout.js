@@ -7,16 +7,15 @@ import {
   LinkIcon,
   LockIcon,
   MailIcon,
-  SearchIcon,
   SettingsIcon,
   UserIcon,
   WorkIcon
-} from '../../../components/icons';
+} from '../../components/icons';
 
 import { Link } from 'gatsby';
 import React from 'react';
-import Template from '../../../app/template';
-import useUser from '../../../utils/hooks/use-user';
+import Template from '../template';
+import useUser from '../../utils/hooks/use-user';
 
 export default ({ pageName, children }) => {
   const [{ organisationId }] = useUser(u => ({

@@ -1,7 +1,7 @@
 import './preferences.module.scss';
 
 import { FormCheckbox } from '../../../components/form';
-import ProfileLayout from './layout';
+import ProfileLayout from '../../../app/profile/layout';
 import React from 'react';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';

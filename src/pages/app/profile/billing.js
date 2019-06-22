@@ -14,7 +14,7 @@ import ErrorBoundary from '../../../components/error-boundary';
 import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
-import ProfileLayout from './layout';
+import ProfileLayout from '../../../app/profile/layout';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import { openChat } from '../../../utils/chat';
