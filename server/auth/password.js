@@ -62,17 +62,17 @@ export default app => {
     }),
     (req, res, next) => {
       passport.authenticate('local', (err, user) => {
-        if (err) return handleLoginError(res, err);
+        if (err) return errorHandler(res, err);
         if (!user) {
           const error = new AuthError('User not found or password incorrect', {
             errKey: 'not-found'
           });
-          return handleLoginError(res, error);
+          return errorHandler(res, error);
         }
 
         req.logIn(user, async err => {
           const twoFactorRequired = await authenticationRequiresTwoFactor(user);
-          if (err) return handleLoginError(res, err);
+          if (err) return errorHandler(res, err);
           setRememberMeCookie(res, {
             username: user.email,
             provider: 'password'
@@ -108,7 +108,7 @@ export default app => {
           inviteCode: invite
         });
         req.logIn(user, err => {
-          if (err) return handleLoginError(res, err);
+          if (err) return errorHandler(res, err);
           setRememberMeCookie(res, {
             username: user.email,
             provider: 'password'
@@ -116,7 +116,7 @@ export default app => {
           return res.send({ success: true });
         });
       } catch (err) {
-        return handleSignupError(res, err);
+        return errorHandler(res, err);
       }
     }
   );
@@ -143,7 +143,7 @@ export default app => {
           resetCode
         });
         req.logIn(user, err => {
-          if (err) return handleLoginError(res, err);
+          if (err) return errorHandler(res, err);
           setRememberMeCookie(res, {
             username: user.email,
             provider: 'password'
@@ -151,22 +151,23 @@ export default app => {
           return res.send({ success: true });
         });
       } catch (err) {
-        return handleSignupError(res, err);
+        return errorHandler(res, err);
       }
     }
   );
 };
 
-function handleLoginError(res, err) {
-  return res.status(400).send({
-    error: err,
-    success: false
-  });
-}
+// the same response as expressErrorHandler
+function errorHandler(res, err) {
+  const json = err.toJSON ? err.toJSON() : err.stack;
 
-function handleSignupError(res, err) {
-  return res.status(500).send({
-    error: err,
+  return res.status(400).send({
+    error: {
+      internal_code: json.code,
+      message: json.message,
+      id: json.id,
+      reason: json.data ? json.data.errKey : null
+    },
     success: false
   });
 }

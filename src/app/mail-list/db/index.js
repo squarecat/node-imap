@@ -14,7 +14,7 @@ export function useMailSync() {
   const { open: openModal } = useContext(ModalContext);
   const [
     { token, id, credits, organisationId, organisationActive, accountIds },
-    { incrementUnsubCount, incrementCredits, decrementCredits }
+    { incrementUnsubCount }
   ] = useUser(u => ({
     id: u.id,
     token: u.token,
@@ -164,7 +164,7 @@ export function useMailSync() {
         socket.on('unsubscribe:err', async ({ id, err }) => {
           console.debug(`[db]: received unsubscribe error`);
           try {
-            incrementCredits(1);
+            // incrementCredits(1);
             const { data } = err;
 
             const mail = await db.mail.get(id);
@@ -289,10 +289,6 @@ export function useMailSync() {
           actions.setAlert(alert);
           return false;
         }
-        // if (!organisationId) {
-        //   console.debug('[db]: decrementing credits');
-        //   decrementCredits(1);
-        // }
         await db.mail.update(mailItem.id, {
           isLoading: true,
           subscribed: false

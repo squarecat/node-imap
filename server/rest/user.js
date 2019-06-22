@@ -214,7 +214,7 @@ export default app => {
     const { user, body } = req;
     const { id } = user;
     const { op, value } = body;
-    let newUser;
+    let newUser = user;
     try {
       if (op === 'add') {
         newUser = await addToUserIgnoreList(id, value);
@@ -336,7 +336,7 @@ export default app => {
     '/api/me/password',
     auth,
     validateBody(patchPasswordParams, {
-      passthrough: true
+      passthrough: false // TODO switch to true and handle here
     }),
     async (req, res, next) => {
       const { user, body } = req;
@@ -347,11 +347,10 @@ export default app => {
       try {
         if (op === 'update') {
           const { oldPassword, password: newPassword } = value;
-          await updateUserPassword(
+          updatedUser = await updateUserPassword(
             { id, email, password: oldPassword },
             newPassword
           );
-          return res.send({ success: true });
         } else {
           logger.error(`user-rest: password patch op not supported`);
         }
@@ -372,7 +371,6 @@ export default app => {
   app.patch('/api/me', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id: userId } = user;
-    const { id } = user;
     const { op, value } = body;
     let updatedUser = user;
     try {
@@ -385,7 +383,7 @@ export default app => {
     } catch (err) {
       next(
         new RestError('failed to patch user', {
-          userId: id,
+          userId,
           op,
           cause: err
         })

@@ -174,7 +174,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       // signing up with a provider counts as connecting the first account
       addActivityForUser(id, 'connectedFirstAccount', {
         id,
-        provider
+        provider,
+        email
       });
     } else {
       logger.debug(`user-service: updating user ${id}`);
@@ -823,7 +824,7 @@ export function updateUserUnsubStatus(userId, { mailId, status, message }) {
 export async function removeUserAccount(userId, accountEmail) {
   try {
     const user = await getUserById(userId, { withAccountKeys: true });
-    const { id: userId, accounts, organisationId } = user;
+    const { accounts, organisationId } = user;
 
     const account = accounts.find(e => e.email === accountEmail);
 
@@ -1007,7 +1008,12 @@ export async function addActivityForUser(userId, name, data = {}) {
       sendToUser(userId, 'notifications', [activity]);
     }
     if (activity.rewardCredits) {
-      sendToUser(userId, 'new-credits', activity.rewardCredits);
+      logger.debug(
+        `user-service: activity has reward, sending credits to socket ${
+          activity.rewardCredits
+        }`
+      );
+      sendToUser(userId, 'update-credits', activity.rewardCredits);
     }
     return activity;
   } catch (err) {
@@ -1016,10 +1022,8 @@ export async function addActivityForUser(userId, name, data = {}) {
 }
 
 export function incrementUserCredits(id, credits) {
+  logger.debug(`user-service: incrementing credits by ${credits}`);
   return incrementCredits(id, credits);
-}
-export function decrementUserCredits(id, credits) {
-  return incrementCredits(id, -credits);
 }
 
 function getReward({ userActivity, name, milestone, activityData }) {
