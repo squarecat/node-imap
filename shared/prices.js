@@ -1,6 +1,6 @@
-export const USAGE_BASED = {
-  price: 10
-};
+/**
+ * No ES6 please
+ */
 
 const PACKAGE_DATA = [
   { id: '1', credits: 50, discount: 0 },
@@ -11,15 +11,19 @@ const PACKAGE_DATA = [
 
 const PACKAGE_BASE_PRICE = 5;
 
-export const PACKAGES = PACKAGE_DATA.map(p => ({
+module.exports.USAGE_BASED = {
+  price: 10
+};
+
+module.exports.PACKAGES = PACKAGE_DATA.map(p => ({
   ...p,
   price: (PACKAGE_BASE_PRICE - PACKAGE_BASE_PRICE * p.discount) * p.credits
 }));
 
-export function getPackage(id) {
-  return PACKAGES.find(p => p.id === id);
-}
+module.exports.getPackage = function(id) {
+  return module.exports.PACKAGES.find(p => p.id === id);
+};
 
-export const ENTERPRISE = {
+module.exports.ENTERPRISE = {
   pricePerSeat: 400
 };
