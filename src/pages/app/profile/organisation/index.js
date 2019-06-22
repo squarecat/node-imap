@@ -239,7 +239,13 @@ function Billing({ organisation }) {
   const [, { setOrganisationLastUpdated }] = useUser();
 
   const { id, active, billing = {} } = organisation;
-  const { card, company = {}, subscriptionId, subscriptionStatus } = billing;
+  const {
+    card,
+    company = {},
+    subscriptionId,
+    subscriptionStatus,
+    delinquent
+  } = billing;
 
   // const onClickRemoveCard = useCallback(
   //   () => {
@@ -287,18 +293,32 @@ function Billing({ organisation }) {
     [openModal, organisation, setOrganisationLastUpdated]
   );
 
+  let infoText;
+  if (subscriptionStatus === 'incomplete') {
+    infoText = (
+      <p>
+        Your subscription is not active. You need to complete additional card
+        authentication. If you have not received instructions on how to do this
+        please send us a message and we will help.
+      </p>
+    );
+  } else if (subscriptionStatus === 'canceled') {
+    infoText = (
+      <p>
+        Your subscription has been canceled{' '}
+        {delinquent ? 'as we failed to collect payment' : null}. Update your
+        payment method or contact us to re-activate it.
+      </p>
+    );
+  }
+
   return (
     <>
       <div styleName="organisation-section">
         <h2>Billing Details</h2>
         {subscriptionId ? <BillingInformation organisationId={id} /> : null}
 
-        {subscriptionStatus === 'incomplete' ? (
-          <p>
-            Your subscription is not active. You need to complete additional
-            card authentication.
-          </p>
-        ) : null}
+        {infoText}
 
         {card ? (
           <>

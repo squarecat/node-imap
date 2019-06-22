@@ -153,15 +153,28 @@ export default app => {
     }
   });
 
-  app.post('/api/payments/invoice', async (req, res) => {
+  app.post('/api/payments/subscriptions', async (req, res) => {
     res.sendStatus(200);
 
     try {
-      logger.info('payments-rest: got invoice webhook');
+      logger.info('payments-rest: got subscriptions webhook');
       const { body } = req;
       const { type, data } = body;
-      if (type === 'invoice.payment_succeeded') {
+      // we dont need to handle invoice payments if they are not for subscription creation
+      // this event will fire if an invoice is incomplete and then succeeds
+      if (
+        type === 'invoice.payment_succeeded' &&
+        data.billing_reason === 'subscription_create'
+      ) {
         return PaymentService.handleInvoicePaymentSuccess(data);
+      }
+
+      if (type === 'invoice.payment_failed') {
+        return PaymentService.handleInvoicePaymentFailed(data);
+      }
+
+      if (type === 'customer.subscription.deleted') {
+        return PaymentService.handleSubscriptionDeleted(data);
       }
     } catch (err) {
       logger.error('payments-rest: error with invoice webhook');
