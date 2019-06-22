@@ -12,7 +12,7 @@ export default function Terms() {
         Your privacy is important to us. It is Squarecat's policy to respect
         your privacy regarding any information we may collect from you across
         our website,{' '}
-        <a href="https://leavemealone.xyz">https://leavemealone.xyz</a>, and
+        <a href="https://leavemealone.app">https://leavemealone.app</a>, and
         other sites we own and operate.
       </p>
       <p>

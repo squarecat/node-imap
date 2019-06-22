@@ -2,41 +2,22 @@ import 'isomorphic-fetch';
 import './home.scss';
 
 import { GoogleIcon, OutlookIcon } from '../components/icons';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState
-} from 'react';
-import { TextImportant, TextLink } from '../components/text';
+import React, { useCallback, useMemo, useReducer, useRef } from 'react';
+import { TextImportant } from '../components/text';
 
-import Browser from '../components/browser';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import { Link } from 'gatsby';
 import { Pricing } from './pricing';
-import RangeInput from '../components/form/range';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import WallOfLove from '../components/landing/wall-of-love';
 import allSubscriptions from '../assets/all-subscriptions.png';
-import dogs from '../assets/dogs.jpg';
 import envelope from '../assets/open-envelope-love.png';
-import heartGif from '../assets/heart.gif';
-import mailBoxImg from '../assets/mailbox.png';
 import numeral from 'numeral';
-import packageImg from '../assets/package.png';
 import request from '../utils/request';
-import smallLogo from '../assets/envelope-logo.png';
-import spamMailImg from '../assets/spam-email.png';
-import stampImg from '../assets/stamp.png';
 import subscriberScore from '../assets/subscriber-score.png';
-import truckImg from '../assets/truck.png';
-import unsubGif from '../assets/unsub-btn.gif';
-import unsubListGif from '../assets/unsubscribe-new.gif';
 import { useAsync } from '../utils/hooks';
 import { useWindowSize } from 'react-use';
 
@@ -51,21 +32,21 @@ const news = [
       'Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
     url:
       'https://www.fastcompany.com/90326825/the-25-best-new-productivity-apps-for-2019',
-    logoUrl: 'https://cdn.leavemealone.xyz/images/news/fast-company-logo.png'
+    logoUrl: 'https://cdn.leavemealone.app/images/news/fast-company-logo.png'
   },
   {
     name: '.xyz',
     quote:
       'Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?',
     url: 'https://gen.xyz/blog/leavemealonexyz',
-    logoUrl: 'https://cdn.leavemealone.xyz/images/news/xyz.png'
+    logoUrl: 'https://cdn.leavemealone.app/images/news/xyz.png'
   },
   {
     name: 'The Register',
     quote:
       'Leave Me Alone make significantly stronger privacy commitments than companies in the data collection business.',
     url: 'https://www.theregister.co.uk/2019/02/11/google_gmail_developer/',
-    logoUrl: 'https://cdn.leavemealone.xyz/images/news/the-register-logo.png'
+    logoUrl: 'https://cdn.leavemealone.app/images/news/the-register-logo.png'
   }
 ];
 
