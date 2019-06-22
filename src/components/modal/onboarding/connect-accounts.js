@@ -6,6 +6,7 @@ import { FormNotification } from '../../form';
 import { fetchLoggedInUser } from '../../../utils/auth';
 import { getConnectError } from '../../../utils/errors';
 import useUser from '../../../utils/hooks/use-user';
+import request from '../../../utils/request';
 
 export default ({ onboarding = false }) => {
   const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(
@@ -85,6 +86,20 @@ function NoAccounts() {
 }
 
 function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
+  const [, { update: updateUser }] = useUser();
+  const [error, setError] = useState(false);
+
+  const onClickRemoveAccount = async email => {
+    try {
+      setError(false);
+      const updatedUser = await removeAccount(email);
+      updateUser(updatedUser);
+    } catch (err) {
+      setError(
+        `Something went wrong removing your account. Please try again or send us a message.`
+      );
+    }
+  };
   return (
     <>
       {onboarding ? null : (
@@ -99,7 +114,21 @@ function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
         accounts={accounts}
         primaryEmail={primaryEmail}
         loginProvider={loginProvider}
+        onClickRemove={email => onClickRemoveAccount(email)}
       />
+      {error ? <FormNotification error>{error}</FormNotification> : null}
     </>
   );
+}
+
+async function removeAccount(email) {
+  return request('/api/me', {
+    method: 'PATCH',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({ op: 'remove-account', value: email })
+  });
 }
