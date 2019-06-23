@@ -181,7 +181,7 @@ export default function Estimator({
                 </TextImportant>{' '}
                 of time spent reading email each month if these were gone{' '}
                 <a styleName="cite-link" href="#cite-2">
-                  <sup>[2]</sup>
+                  <sup>[3]</sup>
                 </a>
                 .
               </p>

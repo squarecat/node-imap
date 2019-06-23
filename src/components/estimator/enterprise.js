@@ -70,8 +70,8 @@ export default function EnterpriseEstimator({ title, startFrom = 2 }) {
             <div className="count-description">
               <p style={{ margin: 0 }}>
                 Your offices receives approximately this many emails per month
-                <a styleName="cite-link" href="#cite-2">
-                  <sup>[2]</sup>
+                <a styleName="cite-link" href="#cite-3">
+                  <sup>[3]</sup>
                 </a>
               </p>
             </div>
@@ -126,16 +126,17 @@ export default function EnterpriseEstimator({ title, startFrom = 2 }) {
           <>
             <p>
               Collectively you could save{' '}
-              <TextImportant>{`${distance}`}</TextImportant> of time otherwise
+              <TextImportant>{`${distance}`} of time</TextImportant> otherwise
               spent reading email each month if these were gone{' '}
-              <a styleName="cite-link" href="#cite-3">
-                <sup>[3]</sup>
+              <a styleName="cite-link" href="#cite-4">
+                <sup>[4]</sup>
               </a>
               .
             </p>
             <p>
-              That's <TextImportant>{distancePerYear}</TextImportant> of time
-              savings each year!
+              That's{' '}
+              <TextImportant>{distancePerYear} of time savings</TextImportant>{' '}
+              each year!
             </p>
           </>
 

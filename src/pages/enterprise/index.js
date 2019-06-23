@@ -24,8 +24,11 @@ const EnterprisePage = () => {
             </a>
           </p>
           <p>
-            About <TextImportant>one in ten</TextImportant> of these emails are
-            subscriptions, and many are completely useless!
+            About <TextImportant>one in ten</TextImportant>
+            <a styleName="cite-link" href="#cite-1">
+              <sup>[2]</sup>
+            </a>{' '}
+            of these emails are subscriptions, and many are completely useless!
           </p>
           <p>
             Our Enterprise prices let every one of your employees completely
@@ -34,7 +37,7 @@ const EnterprisePage = () => {
           </p>
           <p>
             We support any Google or Microsoft email accounts, including those
-            with custom domains on Gsuite and Office 365.
+            with custom domains on G Suite and Office 365.
           </p>
           <div styleName="enterprise-logos">
             <img src={officeLogo} />
@@ -76,6 +79,14 @@ const EnterprisePage = () => {
           <li id="cite-2">
             <sup>[2]</sup>
             <cite>
+              Directly from our <a href="/open">anonymous usage stats</a>, on
+              average between 8 and 10% of all emails we see are subscription
+              emails.
+            </cite>
+          </li>
+          <li id="cite-3">
+            <sup>[3]</sup>
+            <cite>
               An{' '}
               <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
                 average of 96 business emails is received per worker every day
@@ -83,8 +94,8 @@ const EnterprisePage = () => {
               in 2019.
             </cite>
           </li>
-          <li id="cite-3">
-            <sup>[3]</sup>
+          <li id="cite-4">
+            <sup>[4]</sup>
             <cite>
               Based on{' '}
               <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
