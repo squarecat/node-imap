@@ -1,0 +1,104 @@
+.mission {
+  ul {
+    list-style: disc;
+  }
+}
+
+.image-section {
+  display: grid;
+  grid-column-gap: 50px;
+  margin: 0 auto 100px auto;
+
+  &.image-left {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+  &.image-right {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+
+  @media (max-width: 750px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &.image-left {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+.image-section-text,
+.image-section-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  p:last-child {
+    margin: 0;
+  }
+}
+
+.image-section-img {
+  @media (max-width: 750px) {
+    width: 300px;
+    max-width: 100%;
+    margin-top: 50px;
+  }
+}
+
+.huskos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  min-height: 260px;
+  height: 300px;
+  width: 300px;
+  overflow: hidden;
+
+  img {
+    height: 300px;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.special-thanks {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 50px;
+}
+
+.team-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  position: relative;
+  justify-content: center;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.oss {
+}
+
+.team-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  a {
+    font-size: 14px;
+    line-height: 18px;
+  }
+}
+
+.team-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.team-name {
+  font-size: 18px;
+  margin: 10px 0;
+}

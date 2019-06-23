@@ -232,7 +232,7 @@ const IndexPage = () => {
               href="/login"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
-              Start unsubscribing
+              Start Unsubscribing!
             </a>
           </div>
         </div>
@@ -275,7 +275,7 @@ const IndexPage = () => {
               href="/login"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
-              Get started for free
+              Get Started For Free
             </a>
           </div>
         </div>

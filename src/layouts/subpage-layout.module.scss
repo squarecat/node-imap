@@ -15,7 +15,6 @@
   max-width: 100%;
   margin: 0 auto;
   flex: 1;
-  max-width: 1050px;
 }
 
 .subpage h1 {
@@ -32,6 +31,10 @@
 
 .centered .subpage-content {
   max-width: 600px;
+}
+
+.subpage-section {
+  margin-top: 100px;
 }
 
 @media (max-width: 768px) {

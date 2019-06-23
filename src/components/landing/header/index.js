@@ -29,14 +29,20 @@ export default ({ setActive = () => {}, inverted = false }) => (
         <li styleName="nav-link">
           <Link to="/pricing">Pricing</Link>
         </li>
-        <li styleName="nav-login">
+        <li styleName="nav-link">
+          <Link to="/about">About</Link>
+        </li>
+        <li styleName="nav-link">
+          <Link to="/login">Log in</Link>
+        </li>
+        <li styleName="nav-btn">
           <Link
-            to="/login"
+            to="/signup"
             onMouseEnter={() => setActive(true)}
             onMouseLeave={() => setActive(false)}
             styleName="login-btn"
           >
-            Log in
+            Sign up
           </Link>
         </li>
       </ul>

@@ -30,7 +30,9 @@ export default function Learn() {
         <h1>How does Leave Me Alone work?</h1>
 
         <p className="sub-tagline">
-          Start unsubscribing in 3 simple steps - let's go!
+          Start unsubscribing in{' '}
+          <span style={{ textDecoration: 'underline' }}>3 simple steps</span> -
+          let's go!
         </p>
 
         <ol styleName="steps">
