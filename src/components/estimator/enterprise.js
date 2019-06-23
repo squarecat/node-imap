@@ -13,7 +13,7 @@ import spamMailImg from '../../assets/spam-email.png';
 import stampImg from '../../assets/stamp.png';
 import truckImg from '../../assets/truck.png';
 
-const avgMailPerDay = 30;
+const avgMailPerDay = 96;
 
 export default function EnterpriseEstimator({ title, startFrom = 2 }) {
   const [numEmployees, setNumEmployees] = useState(startFrom);
@@ -68,7 +68,12 @@ export default function EnterpriseEstimator({ title, startFrom = 2 }) {
               <img src={mailBoxImg} />
             </div>
             <div className="count-description">
-              Your offices receives approximately this many emails per month
+              <p style={{ margin: 0 }}>
+                Your offices receives approximately this many emails per month
+                <a styleName="cite-link" href="#cite-2">
+                  <sup>[2]</sup>
+                </a>
+              </p>
             </div>
           </div>
           <div className="count">
@@ -123,8 +128,8 @@ export default function EnterpriseEstimator({ title, startFrom = 2 }) {
               Collectively you could save{' '}
               <TextImportant>{`${distance}`}</TextImportant> of time otherwise
               spent reading email each month if these were gone{' '}
-              <a styleName="cite-link" href="#cite-2">
-                <sup>[2]</sup>
+              <a styleName="cite-link" href="#cite-3">
+                <sup>[3]</sup>
               </a>
               .
             </p>

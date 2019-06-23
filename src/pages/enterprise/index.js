@@ -76,11 +76,21 @@ const EnterprisePage = () => {
           <li id="cite-2">
             <sup>[2]</sup>
             <cite>
-              Based on average{' '}
+              An{' '}
               <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
-                1.1 minutes spent per email in 2019
-              </a>
-              .
+                average of 96 business emails is received per worker every day
+              </a>{' '}
+              in 2019.
+            </cite>
+          </li>
+          <li id="cite-3">
+            <sup>[3]</sup>
+            <cite>
+              Based on{' '}
+              <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
+                1.1 minutes spent on each email
+              </a>{' '}
+              in 2019.
             </cite>
           </li>
         </ul>
