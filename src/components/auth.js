@@ -1,12 +1,19 @@
 import './auth.module.scss';
 
-import React, { useContext, useEffect, useMemo } from 'react';
-import { useAsync, useLoader } from '../utils/hooks';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
+import { DatabaseContext } from '../providers/db-provider';
 import Loading from './loading';
 import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
 import { fetchLoggedInUser } from '../utils/auth';
+import { useAsync } from '../utils/hooks';
 import useUser from '../utils/hooks/use-user';
 
 export default ({ children }) => {
@@ -37,11 +44,26 @@ export default ({ children }) => {
 };
 
 function UserAuth({ children }) {
-  const [{ isUserLoaded, hasCompletedOnboarding }] = useUser(s => ({
+  const db = useContext(DatabaseContext);
+  const [isLoaded, setLoaded] = useState(false);
+  const [{ id, isUserLoaded, hasCompletedOnboarding }] = useUser(s => ({
+    id: s.id,
     isUserLoaded: s.loaded,
     hasCompletedOnboarding: s.hasCompletedOnboarding
   }));
   const { open: openModal } = useContext(ModalContext);
+
+  const checkDb = useCallback(
+    async () => {
+      const prevId = await db.prefs.get('userId');
+      if (prevId !== id) {
+        await db.clear();
+        db.prefs.put({ key: 'userId', value: id });
+      }
+      setLoaded(true);
+    },
+    [db, id]
+  );
 
   useEffect(
     () => {
@@ -51,20 +73,24 @@ function UserAuth({ children }) {
           opaque: true
         });
       }
+      if (isUserLoaded) {
+        // check db is this users data
+        checkDb();
+      }
     },
-    [isUserLoaded, hasCompletedOnboarding, openModal]
+    [isUserLoaded, hasCompletedOnboarding, openModal, checkDb]
   );
 
   const showContent = useMemo(
     () => {
-      return isUserLoaded && hasCompletedOnboarding;
+      return isLoaded && hasCompletedOnboarding;
     },
-    [hasCompletedOnboarding, isUserLoaded]
+    [hasCompletedOnboarding, isLoaded]
   );
 
   return (
-    <div styleName={`auth-loading ${!isUserLoaded ? '' : 'loaded'}`}>
-      <Loading loaded={isUserLoaded} />
+    <div styleName={`auth-loading ${!isLoaded ? '' : 'loaded'}`}>
+      <Loading loaded={isLoaded} />
       <div styleName="loaded-content">{showContent ? children : null}</div>
     </div>
   );

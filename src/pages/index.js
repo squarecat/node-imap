@@ -4,6 +4,7 @@ import './home.scss';
 import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 import { TextImportant } from '../components/text';
+import { useAsync, useWindowSize } from 'react-use';
 
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
@@ -18,8 +19,6 @@ import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
 import request from '../utils/request';
 import subscriberScore from '../assets/subscriber-score.png';
-import { useAsync } from '../utils/hooks';
-import { useWindowSize } from 'react-use';
 
 const faker = require('faker');
 
@@ -50,21 +49,38 @@ const news = [
   }
 ];
 
-const IndexPage = ({ transitionStatus }) => {
+const IndexPage = () => {
   const trashPileRef = useRef(null);
-  const { error: statsError, loading: statsLoading, value } = useAsync(
-    fetchStats
-  );
-  let statsData = { users: 0, unsubscriptions: 0 };
-  if (!statsLoading) {
-    statsData = value;
-  }
+  const {
+    error: statsError,
+    loading: statsLoading,
+    value: statsData
+  } = useAsync(fetchStats, []);
 
+  const statsContent = useMemo(
+    () => {
+      if (statsError) {
+        return null;
+      }
+      const userCount = statsData ? formatNumber(statsData.users) : 0;
+      const unsubCount = statsData
+        ? formatNumber(statsData.unsubscriptions)
+        : 0;
+      return (
+        <p className={`join-text ${statsLoading ? 'join-text-loading' : ''}`}>
+          Join <span className="join-stat">{userCount} users</span> who have
+          unsubscribed from a total of{' '}
+          <span className="join-stat">{unsubCount} spam</span> emails
+        </p>
+      );
+    },
+    [statsData, statsError, statsLoading]
+  );
   const bannerShown = false;
 
   return (
     <Layout>
-      <div id="main" data-status={transitionStatus}>
+      <div id="main">
         <Header setActive={() => {}} />
         <div
           className={`friendly-neighbourhood-hero ${
@@ -90,23 +106,7 @@ const IndexPage = ({ transitionStatus }) => {
                   >
                     Get Started For Free!
                   </Link>
-                  {!statsError ? (
-                    <p
-                      className={`join-text ${
-                        statsLoading ? 'join-text-loading' : ''
-                      }`}
-                    >
-                      Join{' '}
-                      <span className="join-stat">
-                        {formatNumber(statsData.users)} users
-                      </span>{' '}
-                      who have unsubscribed from a total of{' '}
-                      <span className="join-stat">
-                        {formatNumber(statsData.unsubscriptions)} spam
-                      </span>{' '}
-                      emails
-                    </p>
-                  ) : null}
+                  {statsContent}
                 </div>
               </div>
             </div>
@@ -287,7 +287,7 @@ const IndexPage = ({ transitionStatus }) => {
 };
 
 function fetchStats() {
-  return request('/api/stats');
+  return request('/api/stats?summary=true');
 }
 
 // function Stats({ isLoading, data, isVisible }) {
@@ -348,6 +348,8 @@ function fetchStats() {
 //     </div>
 //   );
 // }
+
+IndexPage.whyDidYouRender = true;
 
 export default IndexPage;
 
@@ -495,14 +497,14 @@ function UnsubscribeDemo({ trashPileRef }) {
 
   const fallLimit = useMemo(
     () => {
-      if (ref && trashPileRef) {
+      if (ref.current && trashPileRef) {
         console.log(width);
         const top = trashPileRef.offsetTop;
         const elTop = ref.current.getBoundingClientRect().y;
         return top - elTop - 50;
       }
     },
-    [width, ref, trashPileRef]
+    [trashPileRef, width]
   );
 
   return (
@@ -566,7 +568,7 @@ function Item({
       if (direction !== 0) randDeg2 = randDeg2 * direction;
       // And apply those
       const baseTransform = `scale(${randScale}) rotateZ(${randDeg2}deg)`;
-      console.log(`direction(${direction}) ${baseTransform}`);
+      // console.log(`direction(${direction}) ${baseTransform}`);
       ref.current.style.transform = baseTransform;
 
       const frame = function() {
@@ -585,8 +587,15 @@ function Item({
 
         if (ny > -fallLimit) {
           window.requestAnimationFrame(frame);
+        } else {
+          // remove will-change
+          ref.current.style.willChange = 'auto';
+          outerRef.current.style.willChange = 'auto';
         }
       };
+      // add will-change
+      ref.current.style.willChange = 'transform, opacity';
+      outerRef.current.style.willChange = 'transform';
       window.requestAnimationFrame(frame);
     },
     [ref, outerRef, onClick, fallLimit, animate]

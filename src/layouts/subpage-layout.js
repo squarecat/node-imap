@@ -14,8 +14,8 @@ export default ({ title, description, children, ...visProps }) => {
       <Header inverted />
       <div className={classes}>
         <div styleName="subpage-content">{children}</div>
-        <Footer subpage />
       </div>
+      <Footer subpage />
     </Layout>
   );
 };

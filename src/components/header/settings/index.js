@@ -1,13 +1,15 @@
 import './settings.module.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import Button from '../../../components/btn';
+import { DatabaseContext } from '../../../providers/db-provider';
 import { Link } from 'gatsby';
 import { openChat } from '../../../utils/chat';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
+  const db = useContext(DatabaseContext);
   const [showSettings, setShowSettings] = useState(false);
   const [{ profileImg, email, organisationId }] = useUser(
     ({ profileImg, email, organisationId }) => ({
@@ -17,7 +19,7 @@ export default () => {
     })
   );
 
-  const onClickBody = ({ target }) => {
+  const onClickBody = useCallback(({ target }) => {
     let { parentElement } = target;
     if (!parentElement) return;
     while (parentElement && parentElement !== document.body) {
@@ -27,7 +29,7 @@ export default () => {
       parentElement = parentElement.parentElement;
     }
     setShowSettings(false);
-  };
+  }, []);
 
   useEffect(
     () => {
@@ -38,7 +40,15 @@ export default () => {
       }
       return () => document.body.removeEventListener('click', onClickBody);
     },
-    [showSettings]
+    [onClickBody, showSettings]
+  );
+
+  const onLogout = useCallback(
+    async () => {
+      await db.clear();
+      window.location.href = '/auth/logout';
+    },
+    [db]
   );
 
   const accountLetter = email.length ? email[0] : '';
@@ -102,7 +112,7 @@ export default () => {
           </a>
         </li>
         <li styleName="setting-item logout">
-          <a styleName="setting-item-link" href="/auth/logout">
+          <a styleName="setting-item-link" onClick={onLogout}>
             Logout
           </a>
         </li>

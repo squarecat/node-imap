@@ -4,7 +4,7 @@
 .tweet-box {
   margin: 45px auto 6em auto;
   display: grid;
-  grid-template-columns: 33% 33% 33%;
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 15px;
   align-items: flex-start;
   padding-top: 0;
