@@ -18,7 +18,7 @@ const EnterprisePage = () => {
           <p>
             Did you know that on average your office spends{' '}
             <TextImportant>28 percent</TextImportant> of the work week on email?
-            That's almost 12 hours a week!
+            That's almost 12 hours a week per employee!
             <a styleName="cite-link" href="#cite-1">
               <sup>[1]</sup>
             </a>
