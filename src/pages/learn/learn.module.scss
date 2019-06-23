@@ -1,0 +1,140 @@
+@import '../../styles/common/colors.scss';
+
+.walkthrough,
+.features {
+  margin-top: 100px;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 50px;
+
+  @media (max-width: 750px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.step {
+  flex: 1;
+  padding: 0 25px;
+  text-align: center;
+
+  svg {
+    margin: 0;
+  }
+
+  @media (max-width: 750px) {
+    max-width: 100%;
+    width: 370px;
+    padding: 25px;
+  }
+}
+
+.step-title {
+  font-size: 20px;
+}
+
+.step-description {
+  font-size: 16px;
+}
+
+.step-icon {
+  display: block;
+  margin-bottom: 15px;
+  height: 48px;
+  color: $color-red;
+}
+
+.step-unsubscribe {
+  .step-icon svg {
+    position: relative;
+    top: -10px;
+  }
+}
+
+.step-arrow {
+  position: relative;
+  top: 20px;
+
+  svg {
+    stroke-width: 2px;
+  }
+
+  @media (max-width: 750px) {
+    transform: rotate(90deg);
+    top: -10px;
+    left: -5px;
+  }
+}
+
+.feature {
+  display: grid;
+  grid-column-gap: 50px;
+  margin: 0 auto 50px auto;
+  padding-bottom: 50px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(300px, 1fr);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  p {
+    font-size: 16px;
+  }
+
+  @media (max-width: 750px) {
+    display: flex;
+    flex-direction: column;
+
+    &.image-left {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+.feature-title {
+  font-size: 20px;
+}
+
+.feature-text,
+.feature-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.feature-text {
+  p:last-child {
+    margin: 0;
+  }
+}
+
+.feature-img {
+  @media (max-width: 750px) {
+    width: 450px;
+    max-width: 100%;
+    margin-top: 50px;
+  }
+}
+
+.bordered img {
+  border: 1px solid $color-border-red;
+  border-radius: 5px;
+  box-shadow: 0 1px 15px hsla(18, 100%, 38%, 0.15);
+}
+
+.heart-gif {
+  padding: 30px 30px 20px;
+  border: 1px solid $color-border-red;
+  border-radius: 5px;
+  box-shadow: 0 1px 15px hsla(18, 100%, 38%, 0.15);
+  text-align: center;
+
+  img {
+    max-height: 90px;
+  }
+}

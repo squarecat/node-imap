@@ -8,7 +8,10 @@ import officeLogo from '../../assets/office-365-logo.png';
 
 const EnterprisePage = () => {
   return (
-    <SubPageLayout title="Enterprise pricing plan">
+    <SubPageLayout
+      title="Enterprise Pricing"
+      description="Boost productivity and get an office that is completely free of unwanted spam and subscription emails with our enterprise plan."
+    >
       <div className="pricing-page">
         <div className="pricing-description">
           <h2>Enterprise Pricing</h2>

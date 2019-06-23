@@ -261,10 +261,16 @@ function Packages({ readMore = false }) {
 
 export default () => {
   return (
-    <SubPageLayout title="Pricing" description={``}>
+    <SubPageLayout
+      title="Pricing"
+      description="Whatever the size of your inbox our pricing has you covered."
+    >
       <div className="pricing-page">
         <div className="pricing-description">
           <h2>Pricing</h2>
+          <p className="sub-tagline">
+            Whatever the size of your inbox our pricing has you covered.
+          </p>
           <p>
             So that we can provide a great, privacy focused service, we charge a
             small amount for each unsubscribe.
