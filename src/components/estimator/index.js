@@ -80,14 +80,27 @@ export default function Estimator({
       <div className="pricing-estimator">
         <div className="pricing-estimate-text">
           <h3 className="pricing-estimate-title">{title}</h3>
-          <p>
-            From our anonymous usage data we can estimate how many unsubscribes
-            you might need based on the size of your inbox.
-          </p>
-          <p>
-            Approximately how much mail do you receive{' '}
-            <TextImportant>each day?</TextImportant>
-          </p>
+          {showTimeSaved ? (
+            <>
+              <p>
+                From our anonymous usage data we can estimate how much time your
+                company can save based on your number of employees.
+              </p>
+              <p>Approximately how many people work in your office?</p>
+            </>
+          ) : (
+            <>
+              <p>
+                From our anonymous usage data we can estimate how many
+                unsubscribes you might need based on the size of your inbox.
+              </p>
+              <p>
+                Approximately how much mail do you receive{' '}
+                <TextImportant>each day?</TextImportant>
+              </p>
+            </>
+          )}
+
           <RangeInput
             min="10"
             max="300"

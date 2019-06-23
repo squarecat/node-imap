@@ -1,7 +1,7 @@
 import './enterprise.module.scss';
 
 import { Enterprise } from '../pricing';
-import Estimator from '../../components/estimator';
+import EnterpriseEstimator from '../../components/estimator/enterprise';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextImportant } from '../../components/text';
@@ -60,11 +60,7 @@ const EnterprisePage = () => {
         <Enterprise />
       </div>
       <div styleName="savings">
-        <Estimator
-          title="How much time can I save?"
-          startFrom={50}
-          showTimeSaved={true}
-        />
+        <EnterpriseEstimator title="How much time can I save?" />
       </div>
       <div styleName="sources">
         <ul>
