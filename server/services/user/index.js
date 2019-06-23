@@ -1055,7 +1055,7 @@ function getReward({ userActivity, name, milestone, activityData }) {
 
   logger.debug(`user-service: conditions for reward met for activity ${name}`);
   return {
-    credits,
+    rewardCredits: credits,
     notificationSeen: false
   };
 }
