@@ -134,7 +134,8 @@ export default function EnterpriseEstimator({ title, startFrom = 2 }) {
               .
             </p>
             <p>
-              That's <TextImportant>{distancePerYear}</TextImportant> a year!
+              That's <TextImportant>{distancePerYear}</TextImportant> of time
+              savings each year!
             </p>
           </>
 
