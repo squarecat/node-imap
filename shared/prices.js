@@ -25,5 +25,5 @@ module.exports.getPackage = function(id) {
 };
 
 module.exports.ENTERPRISE = {
-  pricePerSeat: 400
+  pricePerSeat: 600
 };

@@ -316,7 +316,7 @@ h1 {
 
 .trash-pile {
   margin: 200px auto 0px auto;
-  padding-bottom: 200px;
+  padding-bottom: 300px;
   // https://www.iconfinder.com/icons/2202473/dump_dumping_garbage_illegal_pollution_waste_water_icon
   background-image: url('../assets/garbage-truck.png');
   background-position: bottom -20px left;
@@ -864,16 +864,19 @@ h1 {
 }
 
 .in-the-news {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   justify-content: center;
   font-size: 14px;
-  margin: 140px auto 140px auto;
+  margin: 140px auto 160px auto;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    margin: 100px auto 120px auto;
+  }
 }
 
 .news-item {
-  flex-basis: calc(100% / 3);
   padding: 0 40px;
   display: flex;
   flex-direction: column;
@@ -888,14 +891,18 @@ h1 {
     border-right: 1px solid #fddbd7;
   }
 
-  @media (max-width: 700px) {
-    flex-basis: 100%;
-    max-width: 100%;
+  @media (max-width: 800px) {
+    padding: 0 20px;
+    line-height: 22px;
   }
 
   @media (max-width: 700px) {
-    padding: 40px 0;
+    padding: 40px 0 20px 0;
+    flex-direction: column-reverse;
 
+    p {
+      margin-top: 25px;
+    }
     &:nth-child(2) {
       border-left: 0;
       border-right: 0;

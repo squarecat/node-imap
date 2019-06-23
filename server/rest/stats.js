@@ -2,12 +2,18 @@ import { getAllStats, getLeaderboardStats } from '../services/stats';
 import { getExpenses, getNews } from '../utils/airtable';
 
 import { RestError } from '../utils/errors';
-import logger from '../utils/logger';
 
 export default app => {
   app.get('/api/stats', async (req, res, next) => {
+    const { summary } = req.query;
     try {
       const stats = await getAllStats();
+      if (summary) {
+        return res.send({
+          unsubscriptions: stats.unsubscriptions,
+          users: stats.users
+        });
+      }
       res.send(stats);
     } catch (err) {
       next(new RestError('failed to get stats', { cause: err }));

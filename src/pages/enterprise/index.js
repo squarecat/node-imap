@@ -1,9 +1,12 @@
 import './enterprise.module.scss';
 
 import { Enterprise } from '../pricing';
+import Estimator from '../../components/estimator';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import { TextImportant } from '../../components/text';
 import googleLogo from '../../assets/gsuite-logo.png';
+import luke from '../../assets/luke.jpeg';
 import officeLogo from '../../assets/office-365-logo.png';
 
 const EnterprisePage = () => {
@@ -11,29 +14,80 @@ const EnterprisePage = () => {
     <SubPageLayout title="Enterprise pricing plan">
       <div className="pricing-page">
         <div className="pricing-description">
-          <h2>Enterprise Pricing</h2>
+          <h1>Enterprise Pricing</h1>
           <p>
-            Fancy an office email that is completely free of spammy
-            subscriptions?
+            Did you know that on average your office spends{' '}
+            <TextImportant>28 percent</TextImportant> of the work week on email?
+            That's almost 12 hours a week!
+            <a styleName="cite-link" href="#cite-1">
+              <sup>[1]</sup>
+            </a>
           </p>
           <p>
-            Our Enterprise prices are billed per seat so every one of your
-            employees can completely clean their inbox.
+            About <TextImportant>one in ten</TextImportant> of these emails are
+            subscriptions, and many are completely useless!
+          </p>
+          <p>
+            Our Enterprise prices let every one of your employees completely
+            clean their inbox of all unwanted subscriptions for a fixed price
+            per user.
           </p>
           <p>
             We support any Google or Microsoft email accounts, including those
             with custom domains on Gsuite and Office 365.
           </p>
-          <p>
-            <a href="mailto:hello@leavemealone.app">Contact us</a> for more
-            information or to start setting up your account today!
-          </p>
           <div styleName="enterprise-logos">
             <img src={officeLogo} />
             <img styleName="gsuite" src={googleLogo} />
           </div>
+          <p>
+            <a href="mailto:hello@leavemealone.app">Contact us</a> for more
+            information or to start setting up your account today!
+          </p>
+          <div styleName="testimonial">
+            <blockquote styleName="blockquote">
+              <p>
+                “Using Leave Me Alone has resulted in a 17% reduction in my
+                emails, saving me hours of time each month.”
+              </p>
+              <cite styleName="author">
+                <img src={luke} />{' '}
+                <span>Luke Chadwick, Founder - GraphQL360</span>
+              </cite>
+            </blockquote>
+          </div>
         </div>
         <Enterprise />
+      </div>
+      <div styleName="savings">
+        <Estimator
+          title="How much time can I save?"
+          startFrom={50}
+          showTimeSaved={true}
+        />
+      </div>
+      <div styleName="sources">
+        <ul>
+          <li id="cite-1">
+            <sup>[1]</sup>
+            <cite>
+              <a href="https://www.mckinsey.com/industries/high-tech/our-insights/the-social-economy">
+                "The average interaction worker spends an estimated 28 percent
+                of the workweek managing e-mail"
+              </a>
+            </cite>
+          </li>
+          <li id="cite-2">
+            <sup>[2]</sup>
+            <cite>
+              Based on average{' '}
+              <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
+                1.1 minutes spent per email in 2019
+              </a>
+              .
+            </cite>
+          </li>
+        </ul>
       </div>
     </SubPageLayout>
   );
