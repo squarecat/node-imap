@@ -605,6 +605,7 @@ h1 {
   flex-direction: column;
   max-width: 420px;
   text-align: center;
+  margin-left: auto;
 
   border: 1px solid #fddbd7;
   color: $color-primary-font;
@@ -614,6 +615,10 @@ h1 {
     color 200ms ease-in-out, background-color 200ms ease-in-out;
   position: relative;
   min-height: 400px;
+
+  .a-load-of-boxes-with-prices & {
+    margin: 0;
+  }
 
   &.featured {
     margin: -20px 0;
@@ -635,6 +640,10 @@ h1 {
       border-bottom-right-radius: 10px;
       border-top: 1px solid #fddbd7;
     }
+  }
+
+  @media (max-width: 700px) {
+    margin: auto;
   }
 }
 
