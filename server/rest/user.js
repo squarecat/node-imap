@@ -18,6 +18,7 @@ import {
   removeUserReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
+  updateUserActivityCompleted,
   updateUserAutoBuy,
   updateUserPassword,
   updateUserPreferences
@@ -269,6 +270,29 @@ export default app => {
     } catch (err) {
       next(
         new RestError('failed to patch user milestones', {
+          userId: id,
+          op,
+          cause: err
+        })
+      );
+    }
+  });
+
+  app.patch('/api/me/activity', auth, async (req, res, next) => {
+    const { user, body } = req;
+    const { id } = user;
+    const { op, value } = body;
+    let updatedUser = user;
+    try {
+      if (op === 'add') {
+        updatedUser = await updateUserActivityCompleted(id, value);
+      } else {
+        logger.error(`user-rest: activity patch op not supported`);
+      }
+      res.send(updatedUser);
+    } catch (err) {
+      next(
+        new RestError('failed to patch user activites', {
           userId: id,
           op,
           cause: err

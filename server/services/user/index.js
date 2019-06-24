@@ -1,4 +1,4 @@
-import { AuthError, ConnectAccountError } from '../../utils/errors';
+import { AuthError, ConnectAccountError, UserError } from '../../utils/errors';
 import {
   addAccount,
   addActivity,
@@ -935,6 +935,22 @@ export async function setUserMilestoneCompleted(userId, milestoneName) {
   try {
     await updateMilestoneCompletions(milestoneName);
     return setMilestoneCompleted(userId, milestoneName);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateUserActivityCompleted(userId, name) {
+  try {
+    // map frontend activity names to our ones to prevent users from adding them
+    if (name === 'tweet') {
+      return addActivityForUser(userId, 'sharedOnTwitter');
+    }
+
+    throw new UserError(`invalid activity`, {
+      userId,
+      errKey: 'invalid-activity'
+    });
   } catch (err) {
     throw err;
   }
