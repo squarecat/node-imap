@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useReducer } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer
+} from 'react';
 
 import AlertBanner from '../components/alerts';
 
@@ -96,26 +102,32 @@ export function AlertProvider({ children }) {
     [current, queue]
   );
 
-  function onDismiss(id) {
-    if (id && (current && current.id === id)) {
-      dispatch({ type: 'dismiss-alert', data: id });
-    }
-    return dispatch({ type: 'dismiss-alert' });
-  }
+  const onDismiss = useCallback(
+    id => {
+      if (id && (current && current.id === id)) {
+        dispatch({ type: 'dismiss-alert', data: id });
+      }
+      return dispatch({ type: 'dismiss-alert' });
+    },
+    [current]
+  );
 
-  const actions = {
-    setAlert: data => dispatch({ type: 'set-alert', data }),
-    dismiss: id => onDismiss(id),
-    queueAlert: data => dispatch({ type: 'queue-alert', data })
-  };
+  const value = useMemo(
+    () => {
+      const actions = {
+        setAlert: data => dispatch({ type: 'set-alert', data }),
+        dismiss: id => onDismiss(id),
+        queueAlert: data => dispatch({ type: 'queue-alert', data })
+      };
+      return {
+        actions
+      };
+    },
+    [onDismiss]
+  );
 
   return (
-    <AlertContext.Provider
-      value={{
-        state,
-        actions
-      }}
-    >
+    <AlertContext.Provider value={value}>
       {children}
       <AlertBanner alert={state.current} onDismiss={onDismiss} />
     </AlertContext.Provider>

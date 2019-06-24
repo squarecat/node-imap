@@ -40,8 +40,6 @@ function Auth({ children }) {
   return <UserAuth>{children}</UserAuth>;
 }
 
-Auth.whyDidYouRender = true;
-
 const UserAuth = React.memo(function UserAuth({ children }) {
   const db = useContext(DatabaseContext);
   const [isLoaded, setLoaded] = useState(false);
@@ -55,7 +53,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
   const checkDb = useCallback(
     async () => {
       const prevId = await db.prefs.get('userId');
-      if (prevId !== id) {
+      if (prevId && prevId.value !== id) {
         await db.clear();
         db.prefs.put({ key: 'userId', value: id });
       }
@@ -94,7 +92,5 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     </div>
   );
 });
-
-UserAuth.whyDidYouRender = true;
 
 export default Auth;

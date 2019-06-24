@@ -28,7 +28,7 @@ if (typeof window !== 'undefined') {
  * </Button>
  *
  */
-export default ({ children, opaque, shown = false, style }) => {
+export default React.memo(({ children, opaque, shown = false, style }) => {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -76,143 +76,143 @@ export default ({ children, opaque, shown = false, style }) => {
     return ReactDOM.createPortal(content, el);
   }
   return content;
-};
+});
 
-export const ModalFooter = ({ children }) => {
+export const ModalFooter = React.memo(({ children }) => {
   return <div styleName="modal-footer">{children}</div>;
-};
+});
 
-export const ModalActions = ({ children }) => {
+export const ModalActions = React.memo(({ children }) => {
   return <div styleName="modal-actions">{children}</div>;
-};
+});
 
-export const ModalHeader = ({ children }) => {
+export const ModalHeader = React.memo(({ children }) => {
   return <h3 styleName="modal-header">{children}</h3>;
-};
+});
 
-export const ModalSubHeader = ({ children }) => {
+export const ModalSubHeader = React.memo(({ children }) => {
   return <h4 styleName="modal-subheader">{children}</h4>;
-};
+});
 
-export const ModalSaveAction = ({
-  isDisabled,
-  isLoading,
-  onSave,
-  onCancel,
-  saveText = 'Save'
-}) => {
-  return (
-    <ModalFooter>
-      <ModalActions>
-        <Button
-          disabled={isLoading}
-          basic
-          muted
-          outlined
-          compact
-          onClick={onCancel}
-        >
-          Cancel
-        </Button>
-        <Button
-          basic
-          compact
-          stretch
-          type="submit"
-          as="button"
-          disabled={isDisabled || isLoading}
-          loading={isLoading}
-          onClick={onSave}
-        >
-          {saveText}
-        </Button>
-      </ModalActions>
-    </ModalFooter>
-  );
-};
+export const ModalSaveAction = React.memo(
+  ({ isDisabled, isLoading, onSave, onCancel, saveText = 'Save' }) => {
+    return (
+      <ModalFooter>
+        <ModalActions>
+          <Button
+            disabled={isLoading}
+            basic
+            muted
+            outlined
+            compact
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+          <Button
+            basic
+            compact
+            stretch
+            type="submit"
+            as="button"
+            disabled={isDisabled || isLoading}
+            loading={isLoading}
+            onClick={onSave}
+          >
+            {saveText}
+          </Button>
+        </ModalActions>
+      </ModalFooter>
+    );
+  }
+);
 
-export const ModalPaymentSaveAction = ({
-  isDisabled,
-  isLoading,
-  onSave,
-  onCancel,
-  cancelText = 'Cancel',
-  saveText = 'Save'
-}) => {
-  return (
-    <ModalFooter>
-      <div styleName="footer-info">
-        <p styleName="secured-by">
-          <LockIcon />
-          Payments Secured by <a href="https://stripe.com/">Stripe</a>
-        </p>
-      </div>
-      <ModalActions>
-        <Button basic muted disabled={isLoading} compact onClick={onCancel}>
-          {cancelText}
-        </Button>
-        <Button
-          basic
-          compact
-          stretch
-          type="submit"
-          as="button"
-          disabled={isDisabled || isLoading}
-          loading={isLoading}
-          onClick={onSave}
-        >
-          {saveText}
-        </Button>
-      </ModalActions>
-    </ModalFooter>
-  );
-};
+export const ModalPaymentSaveAction = React.memo(
+  ({
+    isDisabled,
+    isLoading,
+    onSave,
+    onCancel,
+    cancelText = 'Cancel',
+    saveText = 'Save'
+  }) => {
+    return (
+      <ModalFooter>
+        <div styleName="footer-info">
+          <p styleName="secured-by">
+            <LockIcon />
+            Payments Secured by <a href="https://stripe.com/">Stripe</a>
+          </p>
+        </div>
+        <ModalActions>
+          <Button basic muted disabled={isLoading} compact onClick={onCancel}>
+            {cancelText}
+          </Button>
+          <Button
+            basic
+            compact
+            stretch
+            type="submit"
+            as="button"
+            disabled={isDisabled || isLoading}
+            loading={isLoading}
+            onClick={onSave}
+          >
+            {saveText}
+          </Button>
+        </ModalActions>
+      </ModalFooter>
+    );
+  }
+);
 
-export const ModalWizardActions = ({
-  isLoading = false,
-  isNextDisabled = false,
-  showBack = true,
-  nextLabel = 'Next',
-  onNext = () => {},
-  onBack = () => {},
-  onCancel = () => {}
-}) => {
-  const { close } = useContext(ModalContext);
-  return (
-    <ModalFooter>
-      {showBack ? (
+export const ModalWizardActions = React.memo(
+  ({
+    isLoading = false,
+    isNextDisabled = false,
+    showBack = true,
+    nextLabel = 'Next',
+    onNext = () => {},
+    onBack = () => {},
+    onCancel = () => {}
+  }) => {
+    const { close } = useContext(ModalContext);
+    return (
+      <ModalFooter>
+        {showBack ? (
+          <Button
+            disabled={isLoading}
+            compact
+            basic
+            muted
+            onClick={() => {
+              if (showBack) onBack();
+              else onCancel();
+            }}
+          >
+            Back
+          </Button>
+        ) : null}
+
         <Button
-          disabled={isLoading}
-          compact
           basic
-          muted
-          onClick={() => {
-            if (showBack) onBack();
-            else onCancel();
+          compact
+          disabled={isNextDisabled || isLoading}
+          onClick={async () => {
+            const hasNextPage = await onNext();
+            if (hasNextPage === false) {
+              close();
+            }
           }}
         >
-          Back
+          {nextLabel}
         </Button>
-      ) : null}
+      </ModalFooter>
+    );
+  }
+);
 
-      <Button
-        basic
-        compact
-        disabled={isNextDisabled || isLoading}
-        onClick={async () => {
-          const hasNextPage = await onNext();
-          if (hasNextPage === false) {
-            close();
-          }
-        }}
-      >
-        {nextLabel}
-      </Button>
-    </ModalFooter>
-  );
-};
-
-export const ModalCloseIcon = () => {
+export const ModalCloseIcon = React.memo(() => {
   const { close } = useContext(ModalContext);
   return (
     <a styleName="close" onClick={close}>
@@ -220,26 +220,30 @@ export const ModalCloseIcon = () => {
       close
     </a>
   );
-};
+});
 
-export const ModalDismissAction = ({ onDismiss, btnText = 'Got it!' }) => {
-  return (
-    <div styleName="dismiss-footer">
-      <Button onClick={onDismiss}>{btnText}</Button>
-    </div>
-  );
-};
+export const ModalDismissAction = React.memo(
+  ({ onDismiss, btnText = 'Got it!' }) => {
+    return (
+      <div styleName="dismiss-footer">
+        <Button onClick={onDismiss}>{btnText}</Button>
+      </div>
+    );
+  }
+);
 
-export const ModalBody = ({ children, compact = false, loading = false }) => {
-  const classes = cx(modalStyles.modalBody, {
-    [modalStyles.modalBodyCompact]: compact
-  });
-  return (
-    <div className={classes}>
-      <>
-        {children}
-        {loading ? <LoadingOverlay /> : null}
-      </>
-    </div>
-  );
-};
+export const ModalBody = React.memo(
+  ({ children, compact = false, loading = false }) => {
+    const classes = cx(modalStyles.modalBody, {
+      [modalStyles.modalBodyCompact]: compact
+    });
+    return (
+      <div className={classes}>
+        <>
+          {children}
+          {loading ? <LoadingOverlay /> : null}
+        </>
+      </div>
+    );
+  }
+);

@@ -24,7 +24,7 @@ export async function unsubscribeWithLink(unsubUrl) {
     page = await browser.newPage();
     logger.info('browser: opened new tab');
     currentTabsOpen.inc();
-    await page.goto(unsubUrl, { waitUntil: 'networkidle0' });
+    await goToPage(page, unsubUrl);
     image = await page.screenshot({
       encoding: 'base64'
     });
@@ -74,6 +74,32 @@ export async function unsubscribeWithLink(unsubUrl) {
     await page.close();
     await closeInstance();
   }
+}
+
+async function goToPage(page, url) {
+  let url_redirected = false;
+  const responseHandler = response => {
+    const status = response.status();
+    // [301, 302, 303, 307, 308]
+    if (status >= 300 && status <= 399) {
+      url_redirected = true;
+    }
+  };
+  page.on('response', responseHandler);
+
+  // goto page
+  await page.goto(url, {
+    timeout: 0,
+    waitUntil: 'networkidle2'
+  });
+  if (url_redirected) {
+    logger.info('browser: page redirection');
+    //if page redireced , we wait for navigation end
+    await page.waitForNavigation({
+      waitUntil: 'networkidle2'
+    });
+  }
+  page.removeListener('response', responseHandler);
 }
 
 async function hasKeywords(page, keywords) {
