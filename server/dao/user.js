@@ -26,8 +26,6 @@ const defaultProjection = {
   token: 1,
   beta: 1,
   unsubscriptions: 1,
-  scans: 1,
-  paidScans: 1,
   profileImg: 1,
   ignoredSenderList: 1,
   referredBy: 1,
@@ -51,8 +49,6 @@ function getUserDefaults({ email }) {
     referralCode: shortid.generate(),
     referrals: [],
     unsubscriptions: [],
-    scans: [],
-    paidScans: [],
     activity: [],
     preferences: {
       hideUnsubscribedMails: false,
@@ -61,7 +57,8 @@ function getUserDefaults({ email }) {
     milestones: {},
     billing: {
       credits: 0
-    }
+    },
+    _version: '2.0'
   };
 }
 
@@ -305,52 +302,6 @@ export async function addScan(id, scanData) {
     );
   } catch (err) {
     logger.error(`users-dao: error updating user ${id} scans`);
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function updatePaidScan(id, scanType) {
-  try {
-    const col = await db().collection(COL_NAME);
-    const { paidScans = [] } = await getUser(id);
-    const newPaidScans = paidScans.reduce(
-      (out, p) => {
-        if (!out.done && p.scanType === scanType && !p.performed) {
-          return {
-            done: true,
-            scans: [...out.scans, { ...p, performed: true }]
-          };
-        }
-        return { ...out, scans: [...out.scans, p] };
-      },
-      { done: false, scans: [] }
-    );
-    await col.updateOne({ id }, { $set: { paidScans: newPaidScans.scans } });
-  } catch (err) {
-    logger.error(
-      `users-dao: error updating user ${id} paid scans with scan type ${scanType}`
-    );
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function addPaidScan(id, scanType) {
-  try {
-    const col = await db().collection(COL_NAME);
-    await col.updateOne(
-      { id },
-      {
-        $push: {
-          paidScans: { scanType, paidAt: isoDate(), performed: false }
-        }
-      }
-    );
-  } catch (err) {
-    logger.error(
-      `users-dao: error adding user ${id} paid scans with scan type ${scanType}`
-    );
     logger.error(err);
     throw err;
   }

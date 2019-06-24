@@ -2,12 +2,11 @@ import React, {
   createContext,
   useCallback,
   useEffect,
-  useRef,
+  useMemo,
   useState
 } from 'react';
 
 import Modal from '../components/modal';
-import { useClickAway } from 'react-use';
 
 export const ModalContext = createContext(null);
 
@@ -16,23 +15,19 @@ const defaultOptions = {
 };
 
 export const ModalProvider = ({ children }) => {
-  const modalRef = useRef(null);
-
   const [state, setState] = useState({
     shown: false,
     options: {},
     modal: null
   });
-  const { options, shown, modal } = state;
+  const { options, modal } = state;
 
   const closeModal = useCallback(
     data => {
-      if (shown) {
-        setState({ options, modal, shown: false });
-      }
+      setState({ options, modal, shown: false });
       options.onClose && options.onClose(data);
     },
-    [modal, options, shown]
+    [modal, options]
   );
 
   const openModal = useCallback((modal, options = {}) => {
@@ -62,24 +57,16 @@ export const ModalProvider = ({ children }) => {
     [closeModal, options.dismissable]
   );
 
-  // useClickAway(
-  //   modalRef,
-  //   () => {
-  //     const { options } = state;
-  //     if (options.dismissable) {
-  //       closeModal();
-  //     }
-  //   },
-  //   [state, closeModal]
-  // );
+  const value = useMemo(
+    () => ({
+      open: openModal,
+      close: closeModal
+    }),
+    [closeModal, openModal]
+  );
 
   return (
-    <ModalContext.Provider
-      value={{
-        open: openModal,
-        close: closeModal
-      }}
-    >
+    <ModalContext.Provider value={value}>
       {children}
       <Modal shown={state.shown} {...state.options}>
         {modal}

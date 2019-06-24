@@ -3,7 +3,7 @@ import './2fa.module.scss';
 import React, { useEffect, useState } from 'react';
 
 import request from '../../utils/request';
-import useAsync from '../../utils/hooks/use-async';
+import { useAsync } from 'react-use';
 
 export default ({ onComplete = () => {}, onLoading = () => {} }) => {
   const [value, setValue] = useState('');

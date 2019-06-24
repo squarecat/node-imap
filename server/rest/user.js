@@ -117,35 +117,6 @@ export default app => {
     }
   });
 
-  app.get('/api/me/scans', auth, async (req, res, next) => {
-    const { id: userId } = req.user;
-    try {
-      const { scans, paidScans } = await getUserById(userId);
-      const paidbyNotPerformed = paidScans
-        .filter(s => !s.performed)
-        .map(s => ({
-          scannedAt: s.paidAt,
-          totalPreviouslyUnsubscribedEmails: 0,
-          totalEmails: 0,
-          totalUnsubscribableEmails: 0,
-          timeframe: s.scanType,
-          performed: false
-        }));
-      const totalScans = _sortBy(
-        [...paidbyNotPerformed, ...scans.map(s => ({ ...s, performed: true }))],
-        'scannedAt'
-      ).reverse();
-      res.send(totalScans);
-    } catch (err) {
-      next(
-        new RestError('failed to get user scans', {
-          userId,
-          cause: err
-        })
-      );
-    }
-  });
-
   app.get('/api/me/billing', auth, async (req, res, next) => {
     const { id: userId } = req.user;
     try {

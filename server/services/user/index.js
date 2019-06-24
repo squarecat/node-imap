@@ -29,7 +29,6 @@ import {
   setMilestoneCompleted,
   setNotificationsRead,
   updateIgnoreList,
-  updatePaidScan,
   updatePassword,
   updateUnsubStatus,
   updateUser,
@@ -629,10 +628,6 @@ export async function addPackageToUser(userId, { productId, credits, price }) {
   }
 }
 
-export function updatePaidScanForUser(userId, scanType) {
-  return updatePaidScan(userId, scanType);
-}
-
 export async function addToUserIgnoreList(id, email) {
   try {
     return updateIgnoreList(id, { action: 'add', value: email });
@@ -757,15 +752,7 @@ export async function deactivateUserAccount(userId) {
   try {
     const user = await getUserById(userId, { withAccountKeys: true });
     logger.info(`user-service: deactivating user account ${user.id}`);
-    const {
-      id,
-      email,
-      loginProvider,
-      keys,
-      organisationId,
-      organisationAdmin
-    } = user;
-    const { refreshToken } = keys;
+    const { id, email, organisationId, organisationAdmin } = user;
 
     if (organisationAdmin) {
       logger.error(
@@ -788,11 +775,6 @@ export async function deactivateUserAccount(userId) {
         `user-service: removing user from organisation ${organisationId}...`
       );
       await removeUserFromOrganisation({ email });
-    }
-
-    if (loginProvider !== 'password') {
-      logger.debug(`user-service: revoking token for ${loginProvider}...`);
-      await revokeToken({ provider: loginProvider, refreshToken });
     }
 
     logger.debug(`user-service: removing user ${id}...`);
