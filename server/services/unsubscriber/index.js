@@ -1,6 +1,5 @@
 import {
   addUnsubscriptionToUser,
-  decrementUserCredits,
   getUserById,
   incrementUserCredits
 } from '../user';
@@ -36,10 +35,11 @@ export const unsubscribeFromMail = async (userId, mail) => {
   }
 
   if (!organisationId) {
-    decrementUserCredits(userId, 1);
-    sendToUser(userId, 'new-credits', -1);
-  } else {
-    recordUnsubscribeForOrganisation(organisationId);
+    logger.debug(
+      `unsubscriber-service: preparing to unsubscribe decrementing user credits by 1`
+    );
+    incrementUserCredits(userId, -1);
+    sendToUser(userId, 'update-credits', -1);
   }
   const { unsubscribeLink, unsubscribeMailTo } = mail;
   logger.info(`unsubscriber-service: unsubscribe from ${mail.id}`);
@@ -71,10 +71,17 @@ export const unsubscribeFromMail = async (userId, mail) => {
       estimatedSuccess: output.estimatedSuccess
     });
     if (output.estimatedSuccess) {
+      logger.debug(
+        `unsubscriber-service: success, adding ${unsubStrategy} unsubscription to stats`
+      );
       addUnsubscriptionToStats({ unsubStrategy });
+      if (organisationId) recordUnsubscribeForOrganisation(organisationId);
     } else if (!organisationId) {
+      logger.debug(
+        `unsubscriber-service: estimated success is false, incrementing user credits by 1`
+      );
       incrementUserCredits(userId, 1);
-      sendToUser(userId, 'new-credits', 1);
+      sendToUser(userId, 'update-credits', 1);
     }
     addNewUnsubscribeOccrurence(userId, mail.from);
     return {

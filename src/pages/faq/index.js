@@ -45,7 +45,7 @@ const FaqPage = () => (
         </p>
       </div>
       <div styleName="faq-box">
-        <h3 styleName="faq-title">How do you unsubscribe me from the lists?</h3>
+        <h3 styleName="faq-title">How do you unsubscribe me from emails?</h3>
         <p>
           If there's an unsubscribe link provided we follow it and unsubscribe
           you.
@@ -76,8 +76,8 @@ const FaqPage = () => (
         <h3 styleName="faq-title">What mail providers do you support?</h3>
         <p>
           We currently support Gmail and Outlook. We have plans to support more
-          providers. <a href="mailto:leavemalone@squarecat.io">Let us know</a>{' '}
-          which services you'd like us to integrate with and we'll add it to our{' '}
+          providers. <a href="mailto:hello@leavemalone">Let us know</a> which
+          services you'd like us to integrate with and we'll add it to our{' '}
           <TextLink target="_blank" rel="noopener noreferrer" href="/roadmap">
             roadmap
           </TextLink>
@@ -106,8 +106,11 @@ const FaqPage = () => (
         <p>Yes!</p>
         <p>
           You can deactivate your account in your{' '}
-          <TextLink href="/app/profile">account settings</TextLink>. This will
-          delete all of your data, revoke your API key, and sign you out.
+          <TextLink as="link" linkTo="/app/profile">
+            account settings
+          </TextLink>
+          . This will delete all of your data, revoke your API keys, and sign
+          you out.
         </p>
         <p>
           You will still be able to create an account again to clean your inbox
@@ -116,25 +119,14 @@ const FaqPage = () => (
       </div>
 
       <div styleName="faq-box">
-        <h3 styleName="faq-title">Can I purchase a monthly subscription?</h3>
+        <h3 styleName="faq-title">Do you have a monthly plan?</h3>
         <p>
-          Our pricing is tired on how far back in time you want to search your
-          inbox for subscription emails.
-        </p>
-        <p>
-          We’ll scan your inbox for any subscription emails received in the{' '}
-          <TextImportant>last 3 days for free</TextImportant>.
-        </p>
-        <p>
-          To scan for email subscriptions received in the{' '}
-          <TextImportant>last week, last month, or last 6 months</TextImportant>
-          , you can make a one-time purchase of one of our packages.
-        </p>
-        <p>
-          We are considering adding monthly subscription plans to Leave Me
-          Alone, if you'd be interested in this please{' '}
-          <a href="mailto:leavemalone@squarecat.io">email</a> or{' '}
-          <a href="https://twitter.com/leavemealoneapp">tweet</a> us.
+          We offer a{' '}
+          <TextLink as="link" linkTo="/enterprise">
+            monthly subscription for enterprise customers
+          </TextLink>{' '}
+          which are billed per seat so that your entire office can clean their
+          inboxes.
         </p>
       </div>
       <div styleName="faq-box">

@@ -28,19 +28,22 @@ const Credits = () => {
   useEffect(
     () => {
       if (isConnected) {
-        socket.on('new-credits', async data => {
+        socket.on('update-credits', async amount => {
           try {
-            console.log('new-credits', data);
-            setCredits(initialCredits + data);
-            incrementUserCredits(data);
+            console.log('update-credits', amount);
+            const newAmount = credits + amount;
+            console.log('setting credits to', newAmount);
+            setCredits(newAmount);
+            incrementUserCredits(amount);
           } catch (err) {
             console.error(err);
           }
         });
+
         emit('fetch-credits');
       }
     },
-    [isConnected, emit]
+    [isConnected, emit, credits, incrementUserCredits]
   );
 
   return (

@@ -11,15 +11,18 @@
 }
 
 .subpage-content {
-  width: 100%;
+  width: 1050px;
   max-width: 100%;
   margin: 0 auto;
   flex: 1;
-  max-width: 1050px;
 }
 
 .subpage h1 {
-  font-size: 30px;
+  font-size: 32px;
+}
+
+.subpage h2 {
+  font-size: 26px;
 }
 
 .centered {
@@ -28,6 +31,10 @@
 
 .centered .subpage-content {
   max-width: 600px;
+}
+
+.subpage-section {
+  margin-top: 100px;
 }
 
 @media (max-width: 768px) {

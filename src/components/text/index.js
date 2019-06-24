@@ -2,12 +2,15 @@ import './text.module.scss';
 
 import React from 'react';
 import cx from 'classnames';
+import { Link } from 'gatsby';
 
 export const TextLink = ({
   children,
   smaller,
   undecorated,
   inverted,
+  as,
+  linkTo,
   ...props
 }) => {
   const classes = cx('link', {
@@ -15,6 +18,13 @@ export const TextLink = ({
     undecorated,
     inverted
   });
+  if (as === 'link' || linkTo) {
+    return (
+      <Link to={linkTo} styleName={classes}>
+        {children}
+      </Link>
+    );
+  }
   return (
     <a styleName={classes} {...props}>
       {children}

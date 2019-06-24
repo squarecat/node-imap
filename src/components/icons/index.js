@@ -82,12 +82,20 @@ export function Gift({ width = 32, height = 32, amount, ...visProps }) {
   );
 }
 
-export const Arrow = ({ width = 15, height = 15, direction, ...visProps }) => {
+export const Arrow = ({
+  width = 15,
+  height = 15,
+  direction = 'right',
+  ...visProps
+}) => {
+  const arrowClasses = cx('arrows', {
+    direction
+  });
   if (direction === 'right') {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={getClasses('arrows', visProps)}
+        className={getClasses(arrowClasses, visProps)}
         viewBox="0 0 32 32"
         width={width}
         height={height}
@@ -330,6 +338,32 @@ export const WorkIcon = ({ width = 32, height = 32, ...visProps }) => (
   </svg>
 );
 
+export const ConnectIcon = ({ width = 32, height = 32, ...visProps }) => (
+  <svg
+    className={getClasses('connect', visProps)}
+    width={width}
+    height={height}
+    viewBox="0 0 24 24"
+    fill="currentcolor"
+  >
+    <path d="M 19 3 C 17.346 3 16 4.346 16 6 C 16 6.4617584 16.113553 6.8939944 16.300781 7.2851562 L 12.585938 11 L 7.8164062 11 C 7.4021391 9.8387486 6.3016094 9 5 9 C 3.346 9 2 10.346 2 12 C 2 13.654 3.346 15 5 15 C 6.3016094 15 7.4021391 14.161251 7.8164062 13 L 12.585938 13 L 16.300781 16.714844 C 16.113553 17.106006 16 17.538242 16 18 C 16 19.654 17.346 21 19 21 C 20.654 21 22 19.654 22 18 C 22 16.346 20.654 15 19 15 C 18.538242 15 18.106006 15.113553 17.714844 15.300781 L 14.414062 12 L 17.714844 8.6992188 C 18.106006 8.8864466 18.538242 9 19 9 C 20.654 9 22 7.654 22 6 C 22 4.346 20.654 3 19 3 z" />
+  </svg>
+);
+
+export const ToggleIcon = ({ width = 32, height = 32, ...visProps }) => (
+  <svg
+    className={getClasses('toggle', visProps)}
+    width={width}
+    height={height}
+    viewBox="0 0 32 32"
+    fill="currentcolor"
+  >
+    <g id="surface1">
+      <path d="M 9 7 C 4.039063 7 0 11.035156 0 16 C 0 20.964844 4.039063 25 9 25 L 23 25 C 27.957031 25 32 20.957031 32 16 C 32 11.042969 27.957031 7 23 7 Z M 23 9 C 26.878906 9 30 12.121094 30 16 C 30 19.878906 26.878906 23 23 23 C 19.121094 23 16 19.878906 16 16 C 16 12.121094 19.121094 9 23 9 Z " />
+    </g>
+  </svg>
+);
+
 export function OutlookIcon({ width = '34', height = '34' }) {
   return (
     <svg width={width} height={height} viewBox="0 0 21 21">
@@ -398,9 +432,6 @@ function getClasses(className, visProps = {}) {
     }
     return out;
   }, {});
-  const classes = cx(styles['icon'], {
-    [styles[className]]: true,
-    ...additional
-  });
+  const classes = cx(styles['icon'], styles[className], additional);
   return classes;
 }

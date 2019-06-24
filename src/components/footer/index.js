@@ -13,13 +13,30 @@ export default visProps => (
   >
     <ul styleName="footer-nav">
       <li>
+        <TextLink href="/about">About us</TextLink>
+      </li>
+      <li>
+        <TextLink href="/pricing">Pricing</TextLink>
+      </li>
+      <li>
+        <TextLink href="/learn">How it works</TextLink>
+      </li>
+      <li>
+        <TextLink href="/news">News</TextLink>
+      </li>
+      <li>
+        <TextLink href="/enterprise">Enterprise</TextLink>
+      </li>
+      <li>
+        <TextLink href="/faq">FAQ</TextLink>
+      </li>
+    </ul>
+    <ul styleName="footer-nav">
+      <li>
         <TextLink href="/privacy">Privacy</TextLink>
       </li>
       <li>
         <TextLink href="/terms">Terms</TextLink>
-      </li>
-      <li>
-        <TextLink href="/faq">FAQ</TextLink>
       </li>
       <li>
         <TextLink target="_" href="http://leavemealone.releasepage.co">
@@ -60,8 +77,16 @@ export default visProps => (
       </li>
       <li title="leavemealone@squarecat.io">
         <TextLink undecorated href="mailto:leavemealone@squarecat.io">
-          <MailIcon />
+          <MailIcon width="20" height="20" />
         </TextLink>
+      </li>
+    </ul>
+    <ul styleName="footer-nav">
+      <li>
+        <TextLink href="/login">Log in</TextLink>
+      </li>
+      <li>
+        <TextLink href="/signup">Sign up</TextLink>
       </li>
     </ul>
   </div>

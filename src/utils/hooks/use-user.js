@@ -84,15 +84,6 @@ export default globalReducer(
         }
       };
     },
-    decrementCredits: (state, credits) => {
-      return {
-        ...state,
-        billing: {
-          ...state.billing,
-          credits: state.billing.credits - credits
-        }
-      };
-    },
     setOrganisationLastUpdated: (state, lastUpdated) => {
       return {
         ...state,

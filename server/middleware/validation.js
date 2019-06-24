@@ -1,5 +1,6 @@
 import { paginationValidation } from './pagination-options';
 import validate from '../utils/validation';
+import logger from '../utils/logger';
 
 export const validateQuery = (type, mappings = {}) => (req, res, next) => {
   if (res.locals.err) return next();
@@ -14,10 +15,10 @@ export const validateQuery = (type, mappings = {}) => (req, res, next) => {
   const { hasError, value, ...error } = validate(validationType, query);
 
   if (hasError) {
-    console.error('validation-middleware: validation error');
-    console.error(error);
+    logger.error('validation-middleware: query validation error');
+    logger.error(error);
     res.locals.err = error;
-    return res.send(error);
+    return res.status(400).send(error);
   }
 
   res.locals.search = {
@@ -36,14 +37,14 @@ export const validateBody = (type, { mappings = {}, passthrough = false }) => (
   const { body } = req;
   const { hasError, value, ...error } = validate(type, body);
   if (hasError) {
-    console.error('validation-middleware: validation error');
-    console.error(error);
+    logger.error('validation-middleware: body validation error');
+    logger.error(error);
     res.locals.err = error;
     res.locals.body = mapResponse(mappings, body);
     if (passthrough) {
       return next();
     }
-    return res.send(error);
+    return res.status(400).send(error);
   }
   res.locals.body = mapResponse(mappings, value);
   return next();
@@ -63,3 +64,5 @@ function mapResponse(mappings, value) {
     };
   }, {});
 }
+
+function mapError({ message }) {}

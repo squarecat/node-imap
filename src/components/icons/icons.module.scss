@@ -45,6 +45,17 @@
   top: 1px;
 }
 .arrows {
+  &.right {
+  }
+  &.left {
+    transform: rotate(180deg);
+  }
+  &.down {
+    transform: rotate(90deg);
+  }
+  &.up {
+    transform: rotate(-90deg);
+  }
 }
 .gift {
   margin-right: 0;
@@ -59,6 +70,10 @@
 }
 .refresh {
   margin-right: 0 4px;
+}
+.connect {
+}
+.toggle {
 }
 
 [data-amount]::after {

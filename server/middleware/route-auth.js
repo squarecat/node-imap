@@ -11,9 +11,9 @@ const middleware = (req, res, next) => {
 
   if (isUnauthenticatedApiRequest) {
     logger.info(
-      `access forbidden at ${req.protocol}://${req.hostname}${req.baseUrl}, ${
-        user ? ` for user ${user.id}` : ' not logged in'
-      }`
+      `route-auth: access forbidden at ${req.protocol}://${req.hostname}${
+        req.baseUrl
+      }, user not logged in ${user ? user.id : null}`
     );
     return res.status(403).send({
       message: 'Not authorized'
@@ -50,6 +50,11 @@ export function adminOnly(req, res, next) {
   const { email } = user;
   const isAdmin = adminUsers.includes(email);
   if (!isAdmin) {
+    logger.info(
+      `route-auth: access forbidden at ${req.protocol}://${req.hostname}${
+        req.baseUrl
+      }, user not an admin ${user ? user.id : null}`
+    );
     return res.status(403).send({
       message: 'Not authorized'
     });

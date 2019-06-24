@@ -6,7 +6,11 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
-  "admins": ["james@squarecat.io", "danielle@squarecat.io"],
+  "admins": [
+    "james@squarecat.io",
+    "danielle@squarecat.io",
+    "dinkydani@gmail.com"
+  ],
   "http": {
     "port": "$PORT"
   },
@@ -71,7 +75,7 @@
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
     "referral": "http://local.leavemealone.xyz/r/",
     "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA",
-    "cdn": "https://cdn.leavemealone.xyz"
+    "cdn": "https://cdn.leavemealone.app"
   },
   "airtable": {
     "key": "key0cK6sejCiwx9p0",

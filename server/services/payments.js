@@ -327,7 +327,8 @@ async function handlePaymentSuccess(
       updateCoupon(coupon);
     }
 
-    sendToUser(user.id, 'new-credits', credits);
+    logger.debug(`payments-service: sending credits to socket ${credits}`);
+    sendToUser(user.id, 'update-credits', credits);
     return {
       ...response,
       user: updatedUser
@@ -497,6 +498,7 @@ export async function createSubscriptionForOrganisation(
     await updateOrganisation(organisationId, {
       'billing.subscriptionId': subscriptionId,
       'billing.subscriptionStatus': status,
+      'billing.delinquent': false,
       'billing.company': company,
       'billing.card': {
         last4,
@@ -581,7 +583,8 @@ async function handleSubscriptionSuccess(response, { organisationId }) {
 
     const organisation = await updateOrganisation(organisationId, {
       active: true,
-      'billing.subscriptionStatus': 'active'
+      'billing.subscriptionStatus': 'active',
+      'billing.delinquent': false
     });
     // add an activity?
     return {
@@ -598,20 +601,18 @@ async function handleSubscriptionSuccess(response, { organisationId }) {
 }
 
 export async function handleInvoicePaymentSuccess({
-  billing_reason,
-  subscription
+  subscription: subscriptionId
 }) {
   try {
-    if (billing_reason !== 'subscription_create') {
-      // we dont need to handle invoice payments if they are not for subscription creation
-      return false;
-    }
+    logger.info(
+      `payment-service: handling invoice payment success for subscription ${subscriptionId}`
+    );
 
-    const organisation = await getOrganisationBySubscription(subscription);
+    const organisation = await getOrganisationBySubscription(subscriptionId);
 
     if (!organisation) {
       logger.warn(
-        `payments-service: no organisation associated with subscription ${subscription}`
+        `payments-service: no organisation associated with subscription ${subscriptionId}`
       );
       return false;
     }
@@ -619,11 +620,119 @@ export async function handleInvoicePaymentSuccess({
     // after 3D secure or additional SCA payment steps the user might navigate away
     // so this will ensure that the organisation is active after successful payment
     return updateOrganisation(organisation.id, {
-      active: true
+      active: true,
+      'billing.delinquent': false
     });
   } catch (err) {
     logger.error(
-      `payments-service: failed to handle invoice payment success for subscription ${subscription}`
+      `payments-service: failed to handle invoice payment success for subscription ${subscriptionId}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+// When an automatic payment on a subscription fails, a charge.failed and an invoice.payment_failed event are sent, and the subscription state becomes past_due. Stripe attempts to recover payment according to your configured retry rules.
+
+// After Stripe completes the configured recovery process, the subscription status remains past_due, or transitions to one of canceled or unpaid, depending upon your settings:
+export async function handleInvoicePaymentFailed({
+  subscription: subscriptionId
+}) {
+  try {
+    // TODO do we need to handlet his or do we only need to know when the customer subscription was deleted?
+    // after stripe has retried 3 times
+    logger.info(
+      `payment-service: handling invoice payment failed for subscription ${subscriptionId}`
+    );
+
+    const organisation = await getOrganisationBySubscription(subscriptionId);
+    const { id: organisationId } = organisation;
+
+    if (!organisation) {
+      logger.warn(
+        `payments-service: no organisation associated with subscription ${subscriptionId}`
+      );
+      return false;
+    }
+
+    const subscription = await getSubscription({ subscriptionId });
+
+    if (!subscription) {
+      // can this happen?
+      // handle it just in case
+      logger.warn(
+        `payments-service: no subscription with id found ${subscriptionId}, setting org inactive`
+      );
+
+      await updateOrganisation(organisationId, {
+        active: false,
+        'billing.subscriptionStatus': 'canceled'
+      });
+    }
+
+    const { status } = subscription;
+    let updates = {
+      'billing.subscriptionStatus': status
+    };
+    if (status === 'canceled' || status === 'unpaid') {
+      logger.info(
+        `payments-service: subscription ${subscriptionId} status ${status}, setting org inactive`
+      );
+      updates = {
+        ...updates,
+        active: false
+      };
+    }
+    await updateOrganisation(organisationId, updates);
+    return true;
+  } catch (err) {
+    logger.error(
+      `payments-service: failed to handle invoice payment failed for subscription ${subscriptionId}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+// When a subscription becomes canceled, the most recent unpaid invoice is closed, and no further invoices are generated.
+// A customer.subscription.deleted event is triggered. (You can see that a subscription was canceled automatically—as opposed
+// to by your request—if the customer.subscription.deleted event's request property is null.) Since the subscription has been
+// deleted, it cannot be reactivated. Instead, collect updated billing details from your customer, update their default payment
+// method in Stripe, and create a new subscription for their customer record.
+export async function handleSubscriptionDeleted({
+  subscription: subscriptionId,
+  request
+}) {
+  try {
+    logger.info(
+      `payment-service: handling invoice payment failed for subscription ${subscriptionId}`
+    );
+
+    const organisation = await getOrganisationBySubscription(subscriptionId);
+    const { id: organisationId } = organisation;
+
+    if (!organisation) {
+      logger.warn(
+        `payments-service: no organisation associated with subscription ${subscriptionId}`
+      );
+      return false;
+    }
+
+    // a deleted subscription cannot be re-activated
+    // 1. collect updated billing details from your customer - customer will change payment method from the org screen
+    // 2. update their default payment method in Stripe - customerID is still valid so will update card
+    // 3. create a new subscription for their customer record - there will be no subscription ID so will create one
+    await updateOrganisation(organisationId, {
+      active: false,
+      'billing.subscriptionStatus': 'canceled',
+      'billing.subscriptionId': null,
+      // if the request property is null it was cancelled automatically
+      'billing.delinquent': request === null
+    });
+    return true;
+  } catch (err) {
+    logger.error(
+      `payments-service: failed to handle subscription deleted for subscription ${subscriptionId}`
     );
     logger.error(err);
     throw err;

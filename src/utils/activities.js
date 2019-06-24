@@ -8,7 +8,7 @@ const activityEnum = {
     if (!rewardCredits) return text;
     return `${text} You have earned ${rewardCredits} credits.`;
   },
-  referralSignup: ({ rewardCredits }) => {
+  referralSignUp: ({ rewardCredits }) => {
     const text = `Someone just signed up through your referral link!`;
     if (!rewardCredits) return text;
     return `${text} You have both earned ${rewardCredits} credits.`;

@@ -1,15 +1,15 @@
 import './accounts.module.scss';
 
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 import ConnectButton from '../../../../components/connect-account/btn';
 import ConnectedAccountList from '../../../../components/connect-account/list';
 import { ExternalIcon } from '../../../../components/icons';
-import { FormNotification } from '../../../../components/form';
 import { ModalContext } from '../../../../providers/modal-provider';
 import ProfileLayout from '../../../../app/profile/layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
+import { AlertContext } from '../../../../providers/alert-provider';
 import { fetchLoggedInUser } from '../../../../utils/auth';
 import { getConnectError } from '../../../../utils/errors';
 import request from '../../../../utils/request';
@@ -20,6 +20,7 @@ const revokeUrlForGoogle =
 const revokeUrlForOutlook = 'https://account.live.com/consent/Manage';
 
 const Accounts = () => {
+  const { actions: alertActions } = useContext(AlertContext);
   const [
     { accounts = [], primaryEmail, loginProvider },
     { update: updateUser, load: loadUser }
@@ -28,9 +29,8 @@ const Accounts = () => {
     primaryEmail: email,
     loginProvider
   }));
+
   const { open: openModal } = useContext(ModalContext);
-  const [error, setError] = useState(false);
-  const [removingAccount, toggleRemovingAccount] = useState({});
 
   const onClickRemoveAccount = async email => {
     const account = accounts.find(e => e.email === email);
@@ -45,34 +45,48 @@ const Accounts = () => {
   };
 
   const onClickWarningConfirm = async ({ email }) => {
-    toggleRemovingAccount({
-      ...removingAccount,
-      [email]: true
-    });
     try {
       const updatedUser = await removeAccount(email);
       updateUser(updatedUser);
+      alertActions.setAlert({
+        id: 'remove-account-success',
+        level: 'success',
+        message: `Successfully removed account.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
     } catch (err) {
-      setError(
-        `Something went wrong removing your account. Please try again or send us a message.`
-      );
-    } finally {
-      toggleRemovingAccount({
-        ...removingAccount,
-        [email]: false
+      alertActions.setAlert({
+        id: 'remove-account-error',
+        level: 'error',
+        message: `Something went wrong removing your account. Please try again or send us a message.`,
+        isDismissable: true,
+        autoDismiss: true
       });
     }
   };
 
   const onConnectSuccess = async () => {
-    setError(false);
     const user = await fetchLoggedInUser();
     loadUser(user);
+    alertActions.setAlert({
+      id: 'connect-account-success',
+      level: 'success',
+      message: `Successfully connected account.`,
+      isDismissable: true,
+      autoDismiss: true
+    });
   };
 
   const onConnectError = err => {
-    const msg = getConnectError(err);
-    setError(msg);
+    const message = getConnectError(err);
+    alertActions.setAlert({
+      id: 'connect-account-error',
+      level: 'error',
+      message,
+      isDismissable: true,
+      autoDismiss: true
+    });
   };
 
   let connectedAccountsContent;
@@ -116,7 +130,6 @@ const Accounts = () => {
           onSuccess={() => onConnectSuccess()}
           onError={err => onConnectError(err)}
         />
-        {error ? <FormNotification error>{error}</FormNotification> : null}
       </div>
     </>
   );
