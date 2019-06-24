@@ -42,7 +42,10 @@ export function Enterprise({ readMore = false }) {
         <li className="coming-soon">Email forwarding</li>
         <li>Email, chat and phone support</li>
       </ul>
-      <a href="/" className={`beam-me-up-cta beam-me-up-cta-center`}>
+      <a
+        href="mailto:hello@leavemealone.app"
+        className={`beam-me-up-cta beam-me-up-cta-center`}
+      >
         Contact us
       </a>
       {readMore ? (
