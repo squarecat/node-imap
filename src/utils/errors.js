@@ -15,6 +15,20 @@ export function getConnectError(reason) {
   }
 }
 
+export function getBasicError(err = {}) {
+  const defaultMsg = `Something went wrong. Please try again or send us a message.`;
+  if (!err) return defaultMsg;
+
+  const { id } = err;
+
+  return (
+    <>
+      <span>{defaultMsg}</span>
+      {id ? <span>{` Error code: ${id}`}.</span> : null}
+    </>
+  );
+}
+
 export function getAuthError(err = {}, authType) {
   let msg = '';
   if (authType === 'signup') {

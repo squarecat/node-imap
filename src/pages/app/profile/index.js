@@ -3,12 +3,14 @@ import './profile.module.scss';
 import { GoogleIcon, OutlookIcon } from '../../../components/icons';
 import React, { useCallback, useContext, useState } from 'react';
 
+import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
 import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import ProfileLayout from '../../../app/profile/layout';
 import { TextImportant } from '../../../components/text';
 import WarningModal from '../../../components/modal/warning-modal';
+import { getBasicError } from '../../../utils/errors';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -41,6 +43,7 @@ function DangerZone({ organisationAdmin }) {
 
   const { open: openModal } = useContext(ModalContext);
   const db = useContext(DatabaseContext);
+  const { actions: alertActions } = useContext(AlertContext);
 
   const onClickClear = useCallback(
     () =>
@@ -72,17 +75,23 @@ function DangerZone({ organisationAdmin }) {
   const onClickDelete = useCallback(
     () => {
       const deactivateUserAccount = async () => {
-        toggleLoading(true);
-        await db.clear();
         try {
+          toggleLoading(true);
+          await db.clear();
           await deactivateAccount();
           setTimeout(() => {
             window.location.href = '/goodbye';
           }, 300);
         } catch (err) {
           toggleLoading(false);
-          console.error('failed to deactivate account');
-          console.error(err);
+          const message = getBasicError(err);
+          alertActions.setAlert({
+            id: 'deactivate-account-error',
+            level: 'error',
+            message,
+            isDismissable: true,
+            autoDismiss: false
+          });
         }
       };
       openModal(

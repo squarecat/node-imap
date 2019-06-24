@@ -388,7 +388,8 @@ export default app => {
       next(
         new RestError('failed to delete user', {
           userId: user.id,
-          cause: err
+          cause: err,
+          ...err.data
         })
       );
     }
