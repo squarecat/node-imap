@@ -21,36 +21,6 @@
   }
 }
 
-.blockquote {
-  font-family: 'Gotham-Rounded-Medium', 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  margin: 0;
-  font-size: 16px;
-  padding: 40px 0;
-  font-style: italic;
-}
-
-.testimonial {
-}
-
-.author {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-style: normal;
-  font-family: 'Gotham-Rounded', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
-    'Open Sans', 'Helvetica Neue', sans-serif;
-  span {
-    opacity: 0.75;
-  }
-  img {
-    width: 50px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 15px;
-  }
-}
-
 .savings {
   margin-top: 80px;
 }

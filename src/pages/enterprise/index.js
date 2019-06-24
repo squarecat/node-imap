@@ -4,6 +4,7 @@ import { Enterprise } from '../pricing';
 import EnterpriseEstimator from '../../components/estimator/enterprise';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import Testimonial from '../../components/landing/testimonial';
 import { TextImportant } from '../../components/text';
 import googleLogo from '../../assets/gsuite-logo.png';
 import luke from '../../assets/luke.jpeg';
@@ -50,18 +51,13 @@ const EnterprisePage = () => {
             <a href="mailto:hello@leavemealone.app">Contact us</a> for more
             information or to start setting up your account today!
           </p>
-          <div styleName="testimonial">
-            <blockquote styleName="blockquote">
-              <p>
-                “Using Leave Me Alone has resulted in a 17% reduction in my
-                emails, saving me hours of time each month.”
-              </p>
-              <cite styleName="author">
-                <img src={luke} />{' '}
-                <span>Luke Chadwick, Founder - GraphQL360</span>
-              </cite>
-            </blockquote>
-          </div>
+
+          <Testimonial
+            text={`Using Leave Me Alone has resulted in a 17% reduction in my
+                emails, saving me hours of time each month.`}
+            author="Luke Chadwick, Founder - GraphQL360"
+            image={luke}
+          />
         </div>
         <Enterprise />
       </div>

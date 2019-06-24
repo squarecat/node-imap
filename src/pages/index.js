@@ -3,7 +3,6 @@ import './home.scss';
 
 import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
-import { TextImportant } from '../components/text';
 import { useAsync, useWindowSize } from 'react-use';
 
 import Footer from '../components/footer';
@@ -11,6 +10,7 @@ import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import { Link } from 'gatsby';
 import { Pricing } from './pricing';
+import { TextImportant } from '../components/text';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import WallOfLove from '../components/landing/wall-of-love';
@@ -147,7 +147,7 @@ const IndexPage = () => {
               </div>
             </div>
             <div className="home-box text-box">
-              <h3>Easily see what's worth your time</h3>
+              <h3>Quicky see the worst spammers</h3>
               <p>
                 We rank each of your subscriptions based on our unique
                 Subscriber Score, so you can quickly tell if it's worth hanging
@@ -156,17 +156,17 @@ const IndexPage = () => {
             </div>
           </div>
           <div className="learn-1 boxed home-container-inner">
-            <div className="home-box item-box">
-              <div className="image-box">
-                <img src={envelope} alt="private envelope image" />
-              </div>
-            </div>
             <div className="home-box text-box">
               <h3>Privacy first</h3>
               <p>
                 We're committed to privacy. We don't store any email content so
                 you don't have to worry about us losing or selling your data.
               </p>
+            </div>
+            <div className="home-box item-box">
+              <div className="image-box">
+                <img src={envelope} alt="private envelope image" />
+              </div>
             </div>
           </div>
         </div>
@@ -183,9 +183,9 @@ const IndexPage = () => {
               <TextImportant>forever</TextImportant>, even if you decide to stop
               using our service.
             </p>
-            <p style={{ margin: '1.45rem auto' }}>
-              Read more about how it works <a href="/learn">here</a>.
-            </p>
+            <a href="/learn" className={`beam-me-up-cta beam-me-up-cta-center`}>
+              Learn More
+            </a>
           </div>
         </div>
 

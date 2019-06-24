@@ -5,6 +5,7 @@ import Estimator from '../../components/estimator';
 import { Link } from 'gatsby';
 import RangeInput from '../../components/form/range';
 import SubPageLayout from '../../layouts/subpage-layout';
+import Testimonial from '../../components/landing/testimonial';
 import { TextImportant } from '../../components/text';
 import packageImg from '../../assets/package.png';
 import truckImg from '../../assets/truck.png';
@@ -116,7 +117,7 @@ export default () => {
             Whatever the size of your inbox our pricing has you covered.
           </p>
           <p>
-            So that we can provide a great, privacy focused service, we charge a
+            So that we can provide a great, privacy-focused service, we charge a
             small amount for each unsubscribe.
             <br />
           </p>
@@ -128,8 +129,7 @@ export default () => {
 
           <p>Check out how many unsubscribe credits you might need below.</p>
           <p>
-            Or interested in our <TextImportant>Enterprise plans</TextImportant>
-            ? Read about them <Link to="/enterprise">here</Link>.
+            Or interested in our <Link to="/enterprise">enterprise plans</Link>?
           </p>
         </div>
         <Packages />
@@ -196,7 +196,7 @@ export default () => {
 
         <br />
         <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
-          Sign me up!
+          Sign Me Up!
         </a>
       </div>
     </SubPageLayout>

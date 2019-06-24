@@ -1,24 +1,26 @@
 import './learn.module.scss';
 
-import React from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
-import { div } from '../../components/text';
 import {
+  Arrow as ArrowIcon,
   ConnectIcon,
   SearchIcon,
-  ToggleIcon,
-  Arrow as ArrowIcon
+  ToggleIcon
 } from '../../components/icons';
 
-import mailImg from '../../assets/example-spam-2.png';
-import heartGif from '../../assets/heart.gif';
-import spamLabelImg from '../../assets/learn/spam.png';
-import searchbarImg from '../../assets/learn/searchbar.png';
-import frequencyImg from '../../assets/learn/frequency2.png';
-import subscriberScoreImg from '../../assets/subscriber-score.png';
+import React from 'react';
+import SubPageLayout from '../../layouts/subpage-layout';
+import Testimonial from '../../components/landing/testimonial';
 import creditsImg from '../../assets/learn/credits.png';
+import { div } from '../../components/text';
+import frequencyImg from '../../assets/learn/frequency2.png';
+import heartGif from '../../assets/heart.gif';
+import mailImg from '../../assets/example-spam-2.png';
 import notificationsImg from '../../assets/learn/notifications.png';
 import reminderImg from '../../assets/learn/reminder.png';
+import searchbarImg from '../../assets/learn/searchbar.png';
+import spamLabelImg from '../../assets/learn/spam.png';
+import subscriberScoreImg from '../../assets/subscriber-score.png';
+import tom from '../../assets/tom.jpg';
 
 export default function Learn() {
   return (
@@ -244,6 +246,22 @@ export default function Learn() {
             />
           </div>
         </div>
+
+        <div styleName="cta-testimonial">
+          <Testimonial
+            text={`I must admit I'm lazy at unsubscribing to subscription emails, so my email inbox grows at an alarming rate every day. I just used Leave Me Alone and unsubscribed to 15 emails in 3 minutes. What a great idea!`}
+            author="Tom Haworth, Managing Director - B13 Technology"
+            image={tom}
+          />
+        </div>
+
+        <a
+          href="/login"
+          className={`beam-me-up-cta beam-me-up-cta-center`}
+          style={{ marginTop: '50px' }}
+        >
+          Get Started For Free!
+        </a>
       </div>
     </SubPageLayout>
   );
