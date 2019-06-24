@@ -6,10 +6,10 @@ import {
   addNewsletterUnsubscription,
   addNumberofEmails,
   addOrganisation,
+  addOrganisationUnsubscribe,
   addOrganisationUser,
   addPayment,
   addReferralCredit,
-  addReferralPaidScan,
   addReferralSignup,
   addRefund,
   addReminderRequest,
@@ -22,8 +22,7 @@ import {
   addUser,
   addUserAccountDeactivated,
   getStats,
-  removeOrganisationUser,
-  addOrganisationUnsubscribe
+  removeOrganisationUser
 } from '../dao/stats';
 
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
@@ -68,9 +67,6 @@ export function addReminderSentToStats(count) {
 }
 export function addReferralSignupToStats() {
   return addReferralSignup();
-}
-export function addReferralPaidScanToStats() {
-  return addReferralPaidScan();
 }
 export function addReferralCreditToStats({ amount }) {
   return addReferralCredit({ amount });

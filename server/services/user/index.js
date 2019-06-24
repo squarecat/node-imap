@@ -29,7 +29,6 @@ import {
   setMilestoneCompleted,
   setNotificationsRead,
   updateIgnoreList,
-  updatePaidScan,
   updatePassword,
   updateUnsubStatus,
   updateUser,
@@ -626,10 +625,6 @@ export async function addPackageToUser(userId, { productId, credits, price }) {
   } catch (err) {
     throw err;
   }
-}
-
-export function updatePaidScanForUser(userId, scanType) {
-  return updatePaidScan(userId, scanType);
 }
 
 export async function addToUserIgnoreList(id, email) {

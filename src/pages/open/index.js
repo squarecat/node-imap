@@ -650,9 +650,7 @@ export default function OpenPage() {
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Referral conversion rate</span>
-                  <span styleName="value">
-                    {percent(stats.referralPaidScan / stats.referralSignup)}
-                  </span>
+                  <span styleName="value">FIXME</span>
                 </div>
                 {/* <div styleName="big-stat box">
                   <span styleName="label">Total referral payouts</span>

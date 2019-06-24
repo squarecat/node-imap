@@ -263,7 +263,8 @@ export async function getScores(senderAddresses) {
       const addressScore = sender.addressScores[hashedAddress];
       const occurrences = sender.addressOccurrences[hashedAddress];
       const unsubscribes = sender.addressUnsubscribes[hashedAddress] || 0;
-      const unsubscribePercentage = unsubscribes > 0 ? unsubscribes / occurrences : 0;
+      const unsubscribePercentage =
+        unsubscribes > 0 ? unsubscribes / occurrences : 0;
       return [
         ...out,
         {
