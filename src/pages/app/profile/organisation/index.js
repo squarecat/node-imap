@@ -17,7 +17,7 @@ import { TextImportant } from '../../../../components/text';
 import cx from 'classnames';
 import formatDate from 'date-fns/format';
 import request from '../../../../utils/request';
-import { useAsync } from '../../../../utils/hooks';
+import { useAsync } from 'react-use';
 import useUser from '../../../../utils/hooks/use-user';
 
 export default () => {

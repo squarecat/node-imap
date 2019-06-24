@@ -19,7 +19,7 @@ import cx from 'classnames';
 import format from 'date-fns/format';
 import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
-import { useAsync } from '../../../utils/hooks';
+import { useAsync } from 'react-use';
 import useUser from '../../../utils/hooks/use-user';
 
 export default function() {

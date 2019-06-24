@@ -16,7 +16,7 @@ import request from '../../utils/request';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
-import { useAsync } from '../../utils/hooks';
+import { useAsync } from 'react-use';
 
 const lineColor = '#EB6C69';
 const lineColorLight = '#fedbd5';

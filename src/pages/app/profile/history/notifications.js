@@ -10,7 +10,7 @@ import _sortBy from 'lodash.sortby';
 import { parseActivity } from '../../../../utils/activities';
 import relative from 'tiny-relative-date';
 import request from '../../../../utils/request';
-import { useAsync } from '../../../../utils/hooks';
+import { useAsync } from 'react-use';
 
 export default () => {
   return (

@@ -4,7 +4,7 @@ import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 import request from '../../utils/request';
-import { useAsync } from '../../utils/hooks';
+import { useAsync } from 'react-use';
 
 // Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?
 

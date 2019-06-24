@@ -2,7 +2,7 @@ import { FormCheckbox, FormGroup, FormInput, FormSelect } from '../form';
 import React, { useEffect, useState } from 'react';
 
 import request from '../../utils/request';
-import { useAsync } from '../../utils/hooks';
+import { useAsync } from 'react-use';
 
 export default ({ addressDetails, loading, onChange }) => {
   const { value: countries = [], loading: countriesLoading } = useAsync(

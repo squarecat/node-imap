@@ -42,12 +42,12 @@ function Auth({ children }) {
 
 const UserAuth = React.memo(function UserAuth({ children }) {
   const db = useContext(DatabaseContext);
-  const [isLoaded, setLoaded] = useState(false);
   const [{ id, isUserLoaded, hasCompletedOnboarding }] = useUser(s => ({
     id: s.id,
     isUserLoaded: s.loaded,
     hasCompletedOnboarding: s.hasCompletedOnboarding
   }));
+  const [isLoaded, setLoaded] = useState(isUserLoaded);
   const { open: openModal } = useContext(ModalContext);
 
   const checkDb = useCallback(
