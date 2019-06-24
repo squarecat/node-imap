@@ -6,7 +6,7 @@ import AnimatedNumber from 'react-animated-number';
 import ModalClose from './modal-close';
 import { TextImportant } from '../text';
 import request from '../../utils/request';
-import useAsync from '../../utils/hooks/use-async';
+import { useAsync } from 'react-use';
 
 async function fetchReferralStats() {
   return request('/api/me/referrals', {

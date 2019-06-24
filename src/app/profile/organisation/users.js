@@ -11,7 +11,7 @@ import React from 'react';
 import cx from 'classnames';
 import relative from 'tiny-relative-date';
 import request from '../../../utils/request';
-import useAsync from '../../../utils/hooks/use-async';
+import { useAsync } from 'react-use';
 
 function CurrentUsers({ organisationId, adminUserEmail }) {
   const { value: stats = [], loadingStats } = useAsync(fetchStats, [

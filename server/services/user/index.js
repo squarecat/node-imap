@@ -752,15 +752,7 @@ export async function deactivateUserAccount(userId) {
   try {
     const user = await getUserById(userId, { withAccountKeys: true });
     logger.info(`user-service: deactivating user account ${user.id}`);
-    const {
-      id,
-      email,
-      loginProvider,
-      keys,
-      organisationId,
-      organisationAdmin
-    } = user;
-    const { refreshToken } = keys;
+    const { id, email, organisationId, organisationAdmin } = user;
 
     if (organisationAdmin) {
       logger.error(
@@ -783,11 +775,6 @@ export async function deactivateUserAccount(userId) {
         `user-service: removing user from organisation ${organisationId}...`
       );
       await removeUserFromOrganisation({ email });
-    }
-
-    if (loginProvider !== 'password') {
-      logger.debug(`user-service: revoking token for ${loginProvider}...`);
-      await revokeToken({ provider: loginProvider, refreshToken });
     }
 
     logger.debug(`user-service: removing user ${id}...`);

@@ -13,16 +13,13 @@ import Loading from './loading';
 import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
 import { fetchLoggedInUser } from '../utils/auth';
-import { useAsync } from '../utils/hooks';
+import { useAsync } from 'react-use';
 import useUser from '../utils/hooks/use-user';
 
-export default ({ children }) => {
+function Auth({ children }) {
   const { error, value: user, loading: userLoading } = useAsync(
     fetchLoggedInUser,
-    [],
-    {
-      minWait: 2000
-    }
+    []
   );
   const [, { load }] = useUser(s => s.loaded);
 
@@ -41,9 +38,11 @@ export default ({ children }) => {
     return <span>{error}</span>;
   }
   return <UserAuth>{children}</UserAuth>;
-};
+}
 
-function UserAuth({ children }) {
+Auth.whyDidYouRender = true;
+
+const UserAuth = React.memo(function UserAuth({ children }) {
   const db = useContext(DatabaseContext);
   const [isLoaded, setLoaded] = useState(false);
   const [{ id, isUserLoaded, hasCompletedOnboarding }] = useUser(s => ({
@@ -94,4 +93,8 @@ function UserAuth({ children }) {
       <div styleName="loaded-content">{showContent ? children : null}</div>
     </div>
   );
-}
+});
+
+UserAuth.whyDidYouRender = true;
+
+export default Auth;
