@@ -1,4 +1,6 @@
 import {
+  addConnectedAccount,
+  addCreditsRewarded,
   addEstimate,
   addFailedUnsubscription,
   addGiftPayment,
@@ -8,13 +10,13 @@ import {
   addOrganisation,
   addOrganisationUnsubscribe,
   addOrganisationUser,
+  addPackage,
   addPayment,
-  addReferralCredit,
+  addReferralPurchase,
   addReferralSignup,
   addRefund,
   addReminderRequest,
   addReminderSent,
-  addRewardGiven,
   addScan,
   addUnsubStatus,
   addUnsubscriptionByEmail,
@@ -47,6 +49,9 @@ export function addUserToStats(count) {
 export function addPaymentToStats({ price }) {
   return addPayment({ price });
 }
+export function addPackageToStats({ credits }) {
+  return addPackage({ credits });
+}
 export function addRefundToStats({ price }) {
   return addRefund({ price });
 }
@@ -68,8 +73,8 @@ export function addReminderSentToStats(count) {
 export function addReferralSignupToStats() {
   return addReferralSignup();
 }
-export function addReferralCreditToStats({ amount }) {
-  return addReferralCredit({ amount });
+export function addReferralPurchaseToStats() {
+  return addReferralPurchase();
 }
 export function addUserAccountDeactivatedToStats(count) {
   return addUserAccountDeactivated(count);
@@ -80,8 +85,8 @@ export function addNewsletterUnsubscriptionToStats(count) {
 export function addUnsubStatusToStats(status) {
   return addUnsubStatus(status);
 }
-export function addRewardGivenToStats(unsubscriptions) {
-  return addRewardGiven(unsubscriptions);
+export function addCreditsRewardedToStats(credits) {
+  return addCreditsRewarded(credits);
 }
 export function addOrganisationToStats(count) {
   return addOrganisation(count);
@@ -94,6 +99,9 @@ export function removeOrganisationUserToStats(count) {
 }
 export function addOrganisationUnsubscribeToStats(count) {
   return addOrganisationUnsubscribe(count);
+}
+export function addConnectedAccountToStats(provider) {
+  return addConnectedAccount(provider);
 }
 
 export function getAllStats() {

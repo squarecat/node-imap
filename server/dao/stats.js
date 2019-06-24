@@ -66,13 +66,13 @@ export function addReminderSent(count = 1) {
 }
 
 export function addReferralSignup(count = 1) {
-  return updateSingleStat('referralSignup', count);
+  return updateSingleStat('referralSignupV2', count);
+}
+export function addReferralPurchase(count = 1) {
+  return updateSingleStat('referralPurchaseV2', count);
 }
 export function addReferralPaidScan(count = 1) {
   return updateSingleStat('referralPaidScan', count);
-}
-export function addReferralCredit({ amount = 5 }) {
-  return updateSingleStat('referralCredit', amount);
 }
 export function addNewsletterUnsubscription(count = 1) {
   return updateSingleStat('newsletterUnsubscription', count);
@@ -96,6 +96,14 @@ export function removeOrganisationUser(count = -1) {
 }
 export function addOrganisationUnsubscribe(count = 1) {
   return updateSingleStat('organisationUnsubscribes', count);
+}
+export function addConnectedAccount(provider, count = 1) {
+  if (provider === 'google') {
+    return updateSingleStat('connectedAccountGoogle', count);
+  }
+  if (provider === 'outlook') {
+    return updateSingleStat('connectedAccountOutlook', count);
+  }
 }
 
 // generic update stat function for anything
@@ -162,6 +170,25 @@ export async function addPayment({ price }, count = 1) {
   }
 }
 
+export async function addPackage({ credits }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          creditsPurchased: credits,
+          packagesPurchased: count
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting package stat ${credits}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function addRefund({ price }, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
@@ -200,19 +227,19 @@ export async function addGiftPayment({ price }, count = 1) {
   }
 }
 
-export async function addRewardGiven(rewardAmount) {
+export async function addCreditsRewarded(credits) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       {},
       {
         $inc: {
-          creditsRewarded: rewardAmount
+          creditsRewarded: credits
         }
       }
     );
   } catch (err) {
-    logger.error(`stats-dao: error inserting reward ${rewardAmount}`);
+    logger.error(`stats-dao: error inserting reward ${credits}`);
     logger.error(err);
     throw err;
   }
@@ -255,16 +282,20 @@ const recordedStats = [
   'usersDeactivated',
   'remindersRequested',
   'remindersSent',
-  'referralSignup',
+  'referralSignupV2',
   'referralPaidScan',
-  'referralCredit',
+  'referralPurchaseV2',
   'newsletterUnsubscription',
   'failedEmailUnsubscribes',
   'successfulEmailUnsubscribes',
   'organisations',
   'organisationUsers',
   'organisationUnsubscribes',
-  'creditsRewarded'
+  'creditsRewarded',
+  'creditsPurchased',
+  'packagesPurchased',
+  'connectedAccountGoogle',
+  'connectedAccountOutlook'
 ];
 
 export async function recordStats() {

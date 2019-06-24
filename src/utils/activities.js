@@ -16,12 +16,17 @@ const activityEnum = {
   signedUpFromReferral: ({ rewardCredits }) =>
     `You signed up using a referral link! You have both earned ${rewardCredits} credits.`,
   referralPurchase: ({ rewardCredits }) => {
-    const text = `Someone you referred just purchased their first package!`;
-    if (!rewardCredits) return text;
-    return `${text} You have earned ${rewardCredits} credits.`;
+    return null;
+    // const text = `Someone you referred just purchased their first package!`;
+    // if (!rewardCredits) return text;
+    // return `${text} You have earned ${rewardCredits} credits.`;
   },
-  purchaseFromReferral: ({ rewardCredits }) =>
-    `You purchased your first package using a referral link! You have both earned ${rewardCredits} credits.`,
+  purchaseFromReferral: ({ rewardCredits }) => {
+    // const text = `You purchased your first package using a referral link!`;
+    // if (!rewardCredits) return text;
+    // return `${text} You have both earned ${rewardCredits} credits.`;
+    return null;
+  },
   connectedFirstAccount: ({ rewardCredits, data }) => {
     const text = `You connected your first account - ${data.email}.`;
     if (!rewardCredits) return text;

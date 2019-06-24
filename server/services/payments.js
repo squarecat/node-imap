@@ -3,7 +3,11 @@ import {
   addPackageToUser,
   getUserById
 } from '../services/user';
-import { addGiftRedemptionToStats, addPaymentToStats } from '../services/stats';
+import {
+  addGiftRedemptionToStats,
+  addPackageToStats,
+  addPaymentToStats
+} from '../services/stats';
 import {
   attachPaymentMethod,
   confirmPaymentIntent,
@@ -321,6 +325,7 @@ async function handlePaymentSuccess(
 
     if (finalPrice > 50) {
       addPaymentToStats({ price: finalPrice / 100 });
+      addPackageToStats({ credits });
     }
 
     if (coupon) {
