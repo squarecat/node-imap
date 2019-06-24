@@ -76,11 +76,17 @@ export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
   if (!unsubInfo) {
     return null;
   }
-  const { unsubscribeStrategy, estimatedSuccess, resolved } = unsubInfo;
+  const {
+    unsubscribeStrategy,
+    estimatedSuccess,
+    resolved,
+    hasImage
+  } = unsubInfo;
   return {
     unsubStrategy: unsubscribeStrategy,
     estimatedSuccess,
-    resolved
+    resolved,
+    hasImage
   };
 }
 

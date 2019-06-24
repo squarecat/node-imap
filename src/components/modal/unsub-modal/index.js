@@ -12,7 +12,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
   const { close } = useContext(ModalContext);
   const [slide, changeSlide] = useState('first');
   const [selected, setSelected] = useState(null);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(mail.hasImage);
 
   const onClickSubmit = useCallback(
     details => {
@@ -89,18 +89,37 @@ function slide1(
 ) {
   let lead;
   let timeout = false;
-  if (error && !hasImage) {
-    lead = `We couldn't tell if we successfully unsubscribed and we got no response from the provider...`;
+  if (resolved) {
+    lead = null;
+  } else if (error && !hasImage) {
+    lead = (
+      <>
+        <p>
+          We couldn't tell if we successfully unsubscribed and we got no
+          response from the provider...
+        </p>
+        <p>This has not cost you any credits.</p>
+      </>
+    );
     timeout = true;
   } else if (error) {
-    lead = `We couldn't tell if we successfully unsubscribed, here's the response we
-    got:`;
+    lead = (
+      <>
+        <p>
+          We couldn't tell if we successfully unsubscribed, here's the response
+          we got:
+        </p>
+      </>
+    );
   } else {
-    lead = `We unsubscribed you via ${
-      unsubStrategy === 'link'
-        ? `a URL link here's the response we got;`
-        : `sending an unsubscribe email.`
-    }`;
+    lead = (
+      <p>
+        We unsubscribed you via
+        {unsubStrategy === 'link'
+          ? ` URL link here's the response we got;`
+          : `sending an unsubscribe email.`}
+      </p>
+    );
   }
   let content;
   if (timeout) {
@@ -157,29 +176,34 @@ function slide1(
             {title}
             <ModalCloseIcon />
           </ModalHeader>
-          <p>{lead}</p>
-          <div styleName="unsub-img-container">
-            <img
-              alt="Screenshot of the page response after unsubscribing"
-              styleName={`unsub-img ${
-                imageLoading ? 'unsub-img--loading' : ''
-              }`}
-              src={`/api/mail/image/${mailId}`}
-              onLoad={() => setImageLoading(false)}
-            />
-            {imageLoading ? <div styleName="image-loading" /> : null}
-          </div>
+          {lead}
+          {hasImage || imageLoading ? (
+            <div styleName="unsub-img-container">
+              <>
+                <img
+                  alt="Screenshot of the page response after unsubscribing"
+                  styleName={`unsub-img ${
+                    imageLoading ? 'unsub-img--loading' : ''
+                  }`}
+                  src={`/api/mail/image/${mailId}`}
+                  onLoad={() => setImageLoading(false)}
+                />
+                {imageLoading ? <div styleName="image-loading" /> : null}
+              </>
+            </div>
+          ) : null}
           {resolved ? (
             <p>
-              You have already let us know this was{' '}
+              You have already let us know this unsubscribe was{' '}
               <TextImportant>
                 {error ? 'unsuccessful' : 'successful'}
               </TextImportant>
-              .
+              , and you unsubscribed manually.
             </p>
           ) : (
             <p>How does it look?</p>
           )}
+          {error ? <p>This did not cost you any credits.</p> : null}
         </ModalBody>
         <ModalFooter>{actions}</ModalFooter>
       </>

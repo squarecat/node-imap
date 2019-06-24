@@ -1,8 +1,7 @@
 import 'isomorphic-fetch';
 
-import React, { useEffect } from 'react';
-
 import MailList from '../../app/mail-list';
+import React from 'react';
 import Template from '../../app/template';
 import { Transition } from 'react-transition-group';
 

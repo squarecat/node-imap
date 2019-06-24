@@ -1,19 +1,26 @@
 import './header.module.scss';
 
+import React, { useMemo } from 'react';
+
 import Credits from './credits';
 import { Link } from 'gatsby';
 import NotificationsDropdown from './notifications';
-import React from 'react';
 import Reminder from './reminder';
 import SettingsDropdown from './settings';
 import useUser from '../../utils/hooks/use-user';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
-export default ({ loaded }) => {
-  const [{ organisationId }] = useUser(({ organisationId }) => ({
-    organisationId
-  }));
+const Header = React.memo(({ loaded }) => {
+  const [organisationId] = useUser(({ organisationId }) => organisationId);
+
+  const CreditsContent = useMemo(
+    () => {
+      if (organisationId) return null;
+      return <Credits />;
+    },
+    [organisationId]
+  );
 
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
@@ -23,10 +30,12 @@ export default ({ loaded }) => {
       </Link>
       <div styleName="header-actions">
         <Reminder />
-        {organisationId ? null : <Credits />}
+        {CreditsContent}
         <NotificationsDropdown />
         <SettingsDropdown />
       </div>
     </div>
   );
-};
+});
+
+export default Header;

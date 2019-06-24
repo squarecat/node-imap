@@ -134,12 +134,6 @@ export function useMailSync() {
             });
             const mail = await db.mail.get(id);
             if (!estimatedSuccess) {
-              // if (!organisationId) {
-              //   console.debug(
-              //     `[db]: unsub estimated success false - incrementing credits`
-              //   );
-              //   incrementCredits(1);
-              // }
               actions.queueAlert({
                 message: (
                   <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>

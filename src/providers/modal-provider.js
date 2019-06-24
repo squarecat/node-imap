@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 
@@ -14,38 +15,46 @@ const defaultOptions = {
   dismissable: true
 };
 
-export const ModalProvider = ({ children }) => {
+export const ModalProvider = React.memo(({ children }) => {
+  const [openState, setOpenState] = useState({ shown: false, data: {} });
   const [state, setState] = useState({
-    shown: false,
     options: {},
     modal: null
   });
-  const { options, modal } = state;
+  const previousOpenState = usePrevious(openState);
 
-  const closeModal = useCallback(
-    data => {
-      setState({ options, modal, shown: false });
-      options.onClose && options.onClose(data);
+  const closeModal = useCallback(data => {
+    setOpenState({ shown: false, data });
+  }, []);
+
+  // after the modal is closed, call the onClose
+  // function if one was provided
+  useEffect(
+    () => {
+      if (previousOpenState && previousOpenState.shown && !openState.shown) {
+        state.options.onClose && state.options.onClose(openState.data);
+      }
     },
-    [modal, options]
+    [state.options, openState.shown, openState.data, previousOpenState]
   );
 
   const openModal = useCallback((modal, options = {}) => {
-    const shown = typeof options.show !== 'undefined' ? options.show : true;
+    const initialShown =
+      typeof options.show !== 'undefined' ? options.show : true;
     setState({
       modal,
       options: {
         ...defaultOptions,
         ...options
-      },
-      shown
+      }
     });
+    setOpenState({ shown: initialShown });
   }, []);
 
   useEffect(
     () => {
       function closeModalByEsc({ key }) {
-        if (options.dismissable && key === 'Escape') {
+        if (state.options.dismissable && key === 'Escape') {
           closeModal();
         }
       }
@@ -54,7 +63,7 @@ export const ModalProvider = ({ children }) => {
         document.removeEventListener('keyup', closeModalByEsc);
       };
     },
-    [closeModal, options.dismissable]
+    [closeModal, state.options.dismissable]
   );
 
   const value = useMemo(
@@ -68,9 +77,17 @@ export const ModalProvider = ({ children }) => {
   return (
     <ModalContext.Provider value={value}>
       {children}
-      <Modal shown={state.shown} {...state.options}>
-        {modal}
+      <Modal shown={openState.shown} {...state.options}>
+        {state.modal}
       </Modal>
     </ModalContext.Provider>
   );
-};
+});
+
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}

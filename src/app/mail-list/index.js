@@ -11,7 +11,7 @@ import styles from './mail-list.module.scss';
 
 function MailView() {
   const { state, dispatch, actions } = useContext(MailContext);
-  const { open: openModal } = useContext(ModalContext);
+  const { open: openModal, onClose } = useContext(ModalContext);
   const {
     fetch,
     totalCount,
@@ -69,15 +69,22 @@ function MailView() {
     [actions, unsubData]
   );
 
+  const clearUnsubData = useCallback(
+    () => {
+      actions.setUnsubData(null);
+    },
+    [actions]
+  );
+
   useEffect(
     () => {
       if (unsubData) {
         openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
-          onClose: () => actions.setUnsubData(null)
+          onClose: clearUnsubData
         });
       }
     },
-    [unsubData, actions, openModal, onSubmit]
+    [unsubData, actions, openModal, onSubmit, clearUnsubData, onClose]
   );
 
   const content = useMemo(
