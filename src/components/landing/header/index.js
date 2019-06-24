@@ -2,13 +2,14 @@ import './header.module.scss';
 
 import { Link } from 'gatsby';
 import React from 'react';
-import { TextLink } from '../../text';
 import cx from 'classnames';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ setActive = () => {}, inverted = false }) => (
-  <div styleName={cx('header', { 'header-inverted': inverted })}>
+  <div
+    styleName={cx('landing-header', { 'landing-header-inverted': inverted })}
+  >
     {/* <div styleName="ref-banner">
       {bannerShown ? (
         <span>
@@ -17,22 +18,22 @@ export default ({ setActive = () => {}, inverted = false }) => (
         </span>
       ) : null}
     </div> */}
-    <div styleName="header-inner">
-      <Link to="/" styleName="header-logo">
+    <div styleName="landing-header-inner">
+      <Link to="/" styleName="landing-header-logo">
         <img alt="Leave Me Alone logo" src={logoUrl} />
+        <span styleName="landing-header-title">Leave Me Alone</span>
       </Link>
-      <div styleName="header-title">Leave Me Alone </div>
-      <ul styleName="header-nav">
+      <ul styleName="nav">
         <li styleName="nav-link nav-how">
           <Link to="/learn">How it works</Link>
         </li>
-        <li styleName="nav-link">
+        <li styleName="nav-link nav-pricing">
           <Link to="/pricing">Pricing</Link>
         </li>
-        <li styleName="nav-link">
+        <li styleName="nav-link nav-about">
           <Link to="/about">About</Link>
         </li>
-        <li styleName="nav-link">
+        <li styleName="nav-link nav-login">
           <Link to="/login">Log in</Link>
         </li>
         <li styleName="nav-btn">
@@ -40,7 +41,7 @@ export default ({ setActive = () => {}, inverted = false }) => (
             to="/signup"
             onMouseEnter={() => setActive(true)}
             onMouseLeave={() => setActive(false)}
-            styleName="login-btn"
+            styleName="signup-btn"
           >
             Sign up
           </Link>

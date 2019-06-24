@@ -13,8 +13,11 @@
 }
 
 .onboarding-btn {
+  display: flex;
+  align-items: center;
+
   svg {
-    top: 1px;
+    top: 0;
   }
 
   [data-icon='search'] {
