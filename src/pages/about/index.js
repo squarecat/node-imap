@@ -1,16 +1,16 @@
-import React from 'react';
 import './about.module.scss';
-import SubPageLayout from '../../layouts/subpage-layout';
 
+import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
+
+import React from 'react';
+import { TextLink } from '../../components/text';
+import danImg from '../../assets/about/dan_klammer.jpg';
 import huskoImg from '../../assets/dogs.jpg';
 import rocketImg from '../../assets/rocket.png';
 import worldImg from '../../assets/geography.png';
-import { TextLink } from '../../components/text';
-import request from '../../utils/request';
-import { useAsync } from 'react-use';
+
 // import { TwitterIcon } from '../../components/icons';
 
-import danImg from '../../assets/about/dan_klammer.jpg';
 
 export default function About() {
   return (
@@ -18,11 +18,11 @@ export default function About() {
       <div styleName="mission image-section image-right">
         <div styleName="image-section-text">
           <h1>Our mission</h1>
-          <p className="sub-tagline">
+          <SubpageTagline>
             Helping email users{' '}
             <span style={{ textDecoration: 'underline' }}>keep</span> control of
             their inbox.
-          </p>
+          </SubpageTagline>
 
           <p>
             In the Leave Me Alone office we're 100% committed to helping reduce

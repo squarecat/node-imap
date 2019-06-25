@@ -6,9 +6,9 @@ import {
   SearchIcon,
   ToggleIcon
 } from '../../components/icons';
+import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
 import React from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
 import creditsImg from '../../assets/learn/credits.png';
 import { div } from '../../components/text';
@@ -30,9 +30,9 @@ export default function Learn() {
       <div>
         <h1>How does Leave Me Alone work?</h1>
 
-        <p className="sub-tagline">
+        <SubpageTagline>
           Start unsubscribing in 3 simple steps - let's go!
-        </p>
+        </SubpageTagline>
 
         <ol styleName="steps">
           <li styleName="step">
@@ -234,7 +234,7 @@ export default function Learn() {
         </div>
 
         <a
-          href="/login"
+          href="/signup"
           className={`beam-me-up-cta beam-me-up-cta-center`}
           style={{ marginTop: '50px' }}
         >

@@ -136,7 +136,7 @@ const FaqPage = () => (
           from. You'd need to visit the website and subscribe again manually.
         </p>
       </div>
-      <a href="/login" styleName="cta">
+      <a href="/signup" styleName="cta">
         Get Started For Free!
       </a>
     </div>

@@ -58,6 +58,9 @@ export default visProps => (
             <TextLink href="/terms">Terms</TextLink>
           </li>
           <li>
+            <TextLink href="/data-management">Data management</TextLink>
+          </li>
+          <li>
             <TextLink target="_" href="http://leavemealone.releasepage.co">
               Releases
             </TextLink>
@@ -74,6 +77,9 @@ export default visProps => (
           </li>
         </ul>
         <ul styleName="footer-nav">
+          <li>
+            <TextLink href="/open">Open stats</TextLink>
+          </li>
           <li>
             <TextLink
               target="_blank"
@@ -113,6 +119,11 @@ export default visProps => (
           </TextLink>
         </li>
       </ul>
+      <div styleName="made-by">
+        <span>
+          Made by <TextLink href="https://squarecat.io">Squarecat</TextLink>
+        </span>
+      </div>
     </div>
   </div>
 );

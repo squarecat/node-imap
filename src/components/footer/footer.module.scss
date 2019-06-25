@@ -24,6 +24,10 @@
     border-bottom-color: #eae8e8;
   }
 
+  @media (max-width: 768px) {
+    margin-top: 5em;
+  }
+
   @media (max-width: 500px) {
     padding: 50px 10px;
   }
@@ -102,4 +106,23 @@
 }
 
 .subpage {
+}
+
+.made-by,
+p.made-by {
+  text-align: center;
+  color: #eae8e8;
+  a {
+    opacity: 0.9;
+  }
+  a,
+  a:hover {
+    color: #eae8e8;
+    border-bottom-color: transparent;
+  }
+
+  a:hover {
+    opacity: 1;
+    border-bottom-color: #eae8e8;
+  }
 }

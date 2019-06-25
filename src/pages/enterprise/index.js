@@ -64,6 +64,14 @@ const EnterprisePage = () => {
       <div styleName="savings">
         <EnterpriseEstimator title="How much time can I save?" />
       </div>
+
+      <a
+        href="mailto:hello@leavemealone.app"
+        className={`beam-me-up-cta beam-me-up-cta-center`}
+      >
+        Contact Us
+      </a>
+
       <div styleName="sources">
         <ul>
           <li id="cite-1">

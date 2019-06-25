@@ -5,8 +5,8 @@
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 700px) {
-    padding: 80px 20px 0 20px;
+  @media (max-width: 768px) {
+    padding: 40px 20px;
   }
 }
 
@@ -18,11 +18,18 @@
 }
 
 .subpage h1 {
-  font-size: 32px;
+  font-size: 30px;
+
+  @media (max-width: 768px) {
+    font-size: 25px;
+  }
 }
 
 .subpage h2 {
-  font-size: 26px;
+  font-size: 25px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 }
 
 .centered {
@@ -31,20 +38,23 @@
 
 .centered .subpage-content {
   max-width: 600px;
+  @media (max-width: 600px) {
+    max-width: 100%;
+  }
 }
 
 .subpage-section {
   margin-top: 100px;
 }
 
-@media (max-width: 768px) {
-  .subpage {
-    padding: 40px 20px;
-  }
-}
+.subpage-tagline {
+  font-size: 22px;
+  line-height: 30px;
+  margin-bottom: 2rem;
+  opacity: 0.6;
+  font-weight: bold;
 
-@media (max-width: 600px) {
-  .centered .subpage-content {
-    max-width: 100%;
+  @media (max-width: 768px) {
+    font-size: 18px;
   }
 }

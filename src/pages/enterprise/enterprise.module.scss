@@ -22,18 +22,17 @@
 }
 
 .enterprise-logos {
+  margin: 30px 0;
+
   img {
-    max-width: 200px;
+    max-height: 70px;
+    @media (max-width: 700px) {
+      max-height: 50px;
+    }
   }
-  margin-bottom: 30px;
-}
 
-.gsuite {
-  padding: 10px 20px;
-
-  @media (max-width: 500px) {
-    padding: 10px;
-    max-width: 180px;
+  .gsuite {
+    padding: 10px 20px 10px 10px;
   }
 }
 

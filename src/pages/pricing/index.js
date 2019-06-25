@@ -2,11 +2,11 @@ import './pricing.module.scss';
 
 import { ENTERPRISE, getPackage } from '../../../shared/prices';
 import React, { useState } from 'react';
+import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
 import Estimator from '../../components/estimator';
 import { Link } from 'gatsby';
 import RangeInput from '../../components/form/range';
-import SubPageLayout from '../../layouts/subpage-layout';
 import { TextImportant } from '../../components/text';
 import packageImg from '../../assets/package.png';
 import truckImg from '../../assets/truck.png';
@@ -26,7 +26,7 @@ export function Pricing() {
 
 export function Enterprise({ readMore = false }) {
   return (
-    <div styleName="pricing-box" href="/login">
+    <div styleName="pricing-box">
       <h3 styleName="pricing-title">Enterprise</h3>
       <img styleName="pricing-image" src={truckImg} />
       <span styleName="pricing-text">Starting at</span>
@@ -64,7 +64,7 @@ function Packages({ readMore = false }) {
   const [packageValue, setPackageValue] = useState('1');
   let { credits, discount, price } = getPackage(packageValue);
   return (
-    <div styleName="pricing-box" href="/login">
+    <div styleName="pricing-box">
       <h3 styleName="pricing-title">Packages</h3>
       <img styleName="pricing-image" src={packageImg} />
       <span styleName="pricing-text">Starting at</span>
@@ -94,8 +94,8 @@ function Packages({ readMore = false }) {
           </li>
         ) : null}
       </ul>
-      <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
-        Get started
+      <a href="/signup" className={`beam-me-up-cta beam-me-up-cta-center`}>
+        Get Started
       </a>
       {readMore ? (
         <div styleName="read-more">
@@ -117,9 +117,9 @@ export default () => {
       <div styleName="pricing-page">
         <div styleName="pricing-description">
           <h1>Pricing</h1>
-          <p className="sub-tagline">
+          <SubpageTagline>
             Whatever the size of your inbox our pricing has you covered.
-          </p>
+          </SubpageTagline>
           <p>
             So that we can provide a great, privacy-focused service, we charge a
             small amount for each unsubscribe.
@@ -195,11 +195,11 @@ export default () => {
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
           power our Subscriber Score algorithm. You can read more about this and
-          how we manage all our data <Link to="/data">here</Link>.
+          how we manage all our data <Link to="/data-management">here</Link>.
         </p>
 
         <br />
-        <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
+        <a href="/signup" className={`beam-me-up-cta beam-me-up-cta-center`}>
           Sign Me Up!
         </a>
       </div>

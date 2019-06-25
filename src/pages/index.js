@@ -235,7 +235,7 @@ const IndexPage = () => {
                 </Browser>
               </div> */}
             <a
-              href="/login"
+              href="/signup"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
               Start Unsubscribing!
@@ -278,7 +278,7 @@ const IndexPage = () => {
           <div className="home-container-inner">
             <p>What are you waiting for?</p>
             <a
-              href="/login"
+              href="/signup"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
               Get Started For Free
