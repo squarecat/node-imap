@@ -15,7 +15,6 @@ import { div } from '../../components/text';
 import frequencyImg from '../../assets/learn/frequency2.png';
 import heartGif from '../../assets/heart.gif';
 import mailImg from '../../assets/example-spam-2.png';
-import notificationsImg from '../../assets/learn/notifications.png';
 import reminderImg from '../../assets/learn/reminder.png';
 import searchbarImg from '../../assets/learn/searchbar.png';
 import spamLabelImg from '../../assets/learn/spam.png';
@@ -32,9 +31,7 @@ export default function Learn() {
         <h1>How does Leave Me Alone work?</h1>
 
         <p className="sub-tagline">
-          Start unsubscribing in{' '}
-          <span style={{ textDecoration: 'underline' }}>3 simple steps</span> -
-          let's go!
+          Start unsubscribing in 3 simple steps - let's go!
         </p>
 
         <ol styleName="steps">
@@ -214,23 +211,10 @@ export default function Learn() {
         <div styleName="feature image-left">
           <div styleName="feature-img">
             <img
-              src={notificationsImg}
-              alt="list of notifications with credit rewards"
+              src={reminderImg}
+              alt="setting a reminder to scan again in 6 months"
             />
           </div>
-          <div styleName="feature-text">
-            <h3 styleName="feature-title">Notifications</h3>
-            <p>
-              Keep track of the activity on your account and the free credits
-              you are earning with your notifications.
-            </p>
-            <p>
-              Don't forget to share your referral URL as both you and the person
-              signing up will earn credits!
-            </p>
-          </div>
-        </div>
-        <div styleName="feature">
           <div styleName="feature-text">
             <h3 styleName="feature-title">Set a reminder</h3>
             <p>
@@ -238,12 +222,6 @@ export default function Learn() {
               clean up emails from the future.
             </p>
             <p>Set a reminder to clean your inbox again whenever suits you!</p>
-          </div>
-          <div styleName="feature-img">
-            <img
-              src={reminderImg}
-              alt="setting a reminder to scan again in 6 months"
-            />
           </div>
         </div>
 

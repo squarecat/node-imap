@@ -60,54 +60,59 @@
   font-size: 16px;
 }
 
-.nav-link,
 .nav-btn {
-  margin: 0 5px;
+  margin: 0;
 }
 
 .nav-link {
-  @media (max-width: 700px) {
-    font-size: 14px;
-    padding: 10px 5px;
-  }
-}
-
-.nav-how {
-  @media (max-width: 400px) {
-    display: none;
-  }
-}
-
-.nav-pricing {
-}
-
-.nav-about {
-  @media (max-width: 700px) {
-    display: none;
-  }
-}
-
-.nav-login {
-  @media (max-width: 800px) {
-    display: none;
-  }
-}
-
-.nav-btn {
-  padding: 0 0 0 10px;
-  margin-right: 0;
-}
-
-.nav-link a {
-  padding: 10px;
-  border-bottom: none;
-  color: $color-link;
-  cursor: pointer;
-  font-weight: bold;
-
-  &:hover {
-    color: $color-link-hover;
+  margin: 0 5px 0 0;
+  a {
     border-bottom: none;
+    color: $color-link;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:hover {
+      color: $color-link-hover;
+      border-bottom: none;
+    }
+  }
+}
+
+.nav-link,
+.nav-btn {
+  a {
+    padding: 10px;
+
+    @media (max-width: 760px) {
+      padding: 7px;
+    }
+
+    @media (max-width: 700px) {
+      font-size: 14px;
+    }
+
+    @media (max-width: 500px) {
+      padding: 10px;
+    }
+  }
+}
+
+.nav-how,
+.nav-pricing,
+.nav-about,
+.nav-login {
+  @media (max-width: 500px) {
+    display: none;
+  }
+}
+
+.nav-more {
+  display: none;
+  margin: 0 10px 0 0;
+
+  @media (max-width: 500px) {
+    display: flex;
   }
 }
 

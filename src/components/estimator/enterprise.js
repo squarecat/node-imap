@@ -7,15 +7,16 @@ import RangeInput from '../../components/form/range';
 import { TextImportant } from '../../components/text';
 import mailBoxImg from '../../assets/mailbox.png';
 import numeral from 'numeral';
-import packageImg from '../../assets/package.png';
+// import packageImg from '../../assets/package.png';
 import smallLogo from '../../assets/envelope-logo.png';
 import spamMailImg from '../../assets/spam-email.png';
-import stampImg from '../../assets/stamp.png';
-import truckImg from '../../assets/truck.png';
+
+// import stampImg from '../../assets/stamp.png';
+// import truckImg from '../../assets/truck.png';
 
 const avgMailPerDay = 96;
 
-export default function EnterpriseEstimator({ title, startFrom = 2 }) {
+export default function EnterpriseEstimator({ title, startFrom = 20 }) {
   const [numEmployees, setNumEmployees] = useState(startFrom);
 
   const mailPerDay = avgMailPerDay * numEmployees;
@@ -38,7 +39,7 @@ export default function EnterpriseEstimator({ title, startFrom = 2 }) {
     <div className="pricing-estimates">
       <div className="pricing-estimator">
         <div className="pricing-estimate-text">
-          <h3 className="pricing-estimate-title">{title}</h3>
+          <h3>{title}</h3>
 
           <p>
             From our anonymous usage data we can estimate how much time your

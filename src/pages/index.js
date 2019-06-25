@@ -170,22 +170,27 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="trash-pile" id="trash-pile">
-          <div className="home-box text-box text-box-centered">
-            <h3>Say goodbye to subscriptions forever</h3>
-            <p>
-              When you hit the unsubscribe button we don't just move your mail
-              into a folder or to trash, instead we actually unsubscribe you
-              from the list.
-            </p>
-            <p>
-              This means the subscriptions are gone{' '}
-              <TextImportant>forever</TextImportant>, even if you decide to stop
-              using our service.
-            </p>
-            <a href="/learn" className={`beam-me-up-cta beam-me-up-cta-center`}>
-              Learn More
-            </a>
+        <div className="home-container">
+          <div className="trash-pile" id="trash-pile">
+            <div className="home-box text-box text-box-centered">
+              <h3>Say goodbye to subscriptions forever</h3>
+              <p>
+                When you hit the unsubscribe button we don't just move your mail
+                into a folder or to trash, instead we actually unsubscribe you
+                from the list.
+              </p>
+              <p>
+                This means the subscriptions are gone{' '}
+                <TextImportant>forever</TextImportant>, even if you decide to
+                stop using our service.
+              </p>
+              <a
+                href="/learn"
+                className={`beam-me-up-cta beam-me-up-cta-center`}
+              >
+                Learn More
+              </a>
+            </div>
           </div>
         </div>
 
@@ -206,6 +211,7 @@ const IndexPage = () => {
                 <OutlookIcon width="60" height="60" />
               </span>
             </div>
+
             {/* <div className="provider-stats">
                 <p>
                   <span className="provider-stats-num">

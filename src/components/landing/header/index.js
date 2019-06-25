@@ -1,7 +1,12 @@
 import './header.module.scss';
 
+import Dropdown, {
+  DropdownItem,
+  DropdownList
+} from '../../../components/dropdown';
+import React, { useState } from 'react';
+
 import { Link } from 'gatsby';
-import React from 'react';
 import cx from 'classnames';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
@@ -36,6 +41,7 @@ export default ({ setActive = () => {}, inverted = false }) => (
         <li styleName="nav-link nav-login">
           <Link to="/login">Log in</Link>
         </li>
+        <MoreDropdown />
         <li styleName="nav-btn">
           <Link
             to="/signup"
@@ -50,3 +56,30 @@ export default ({ setActive = () => {}, inverted = false }) => (
     </div>
   </div>
 );
+
+function MoreDropdown() {
+  return (
+    <Dropdown
+      toggleBtn={
+        <li styleName="nav-link nav-more">
+          <a>More</a>
+        </li>
+      }
+    >
+      <DropdownList>
+        <DropdownItem>
+          <Link to="/learn">How it works</Link>
+        </DropdownItem>
+        <DropdownItem>
+          <Link to="/pricing">Pricing</Link>
+        </DropdownItem>
+        <DropdownItem>
+          <Link to="/about">About</Link>
+        </DropdownItem>
+        <DropdownItem separated>
+          <Link to="/login">Log in</Link>
+        </DropdownItem>
+      </DropdownList>
+    </Dropdown>
+  );
+}
