@@ -60,8 +60,9 @@ $active-bg-color: #ffc7c1;
     transform: rotateY(0);
   }
 
-  @media (max-width: 420px) {
+  @media (max-width: 500px) {
     border-radius: 0;
+    transition: none;
   }
 }
 
@@ -86,7 +87,7 @@ $active-bg-color: #ffc7c1;
     opacity: 1;
   }
 
-  @media (max-width: 420px) {
+  @media (max-width: 500px) {
     max-height: 100% !important;
   }
 }
@@ -99,7 +100,7 @@ $active-bg-color: #ffc7c1;
   width: 100px;
   margin: 20px auto;
 
-  @media (max-width: 420px) {
+  @media (max-width: 500px) {
     width: 140px;
     margin: 30px auto;
   }
@@ -111,6 +112,7 @@ $active-bg-color: #ffc7c1;
 }
 
 .buttons {
+  max-width: 100%;
   margin: auto;
 
   a {
@@ -124,6 +126,8 @@ $active-bg-color: #ffc7c1;
     @media (max-width: 400px) {
       height: 54px;
       line-height: 52px;
+      font-size: 16px;
+      padding: 0 15px;
     }
   }
 }
