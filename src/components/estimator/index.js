@@ -80,7 +80,7 @@ export default function Estimator({
     <div className="pricing-estimates">
       <div className="pricing-estimator">
         <div className="pricing-estimate-text">
-          <h3 className="pricing-estimate-title">{title}</h3>
+          <h3>{title}</h3>
           {showTimeSaved ? (
             <>
               <p>

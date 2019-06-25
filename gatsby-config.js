@@ -18,11 +18,11 @@ module.exports = {
       options: {
         exclude: [
           `/maintenance`,
+          `/login/2fa`,
+          `/login/auth-btn`,
+          `/login/email`,
+          `/login/password`,
           `/goodbye`,
-          `/wall-of-love`,
-          `/header`,
-          `/gifts/gift-checkout`,
-          `/gifts/gifts-prices`,
           `/app/**/*`
         ]
       }

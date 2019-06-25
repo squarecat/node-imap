@@ -1,11 +1,12 @@
+import './pricing.module.scss';
+
 import { ENTERPRISE, getPackage } from '../../../shared/prices';
 import React, { useState } from 'react';
+import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
 import Estimator from '../../components/estimator';
 import { Link } from 'gatsby';
 import RangeInput from '../../components/form/range';
-import SubPageLayout from '../../layouts/subpage-layout';
-import Testimonial from '../../components/landing/testimonial';
 import { TextImportant } from '../../components/text';
 import packageImg from '../../assets/package.png';
 import truckImg from '../../assets/truck.png';
@@ -13,8 +14,8 @@ import truckImg from '../../assets/truck.png';
 export function Pricing() {
   return (
     <>
-      <div className="pricing-list-of-boxes-that-say-how-much">
-        <div className="a-load-of-boxes-with-prices">
+      <div styleName="pricing-list-of-boxes-that-say-how-much">
+        <div styleName="a-load-of-boxes-with-prices">
           <Packages readMore={true} />
           <Enterprise readMore={true} />
         </div>
@@ -25,21 +26,21 @@ export function Pricing() {
 
 export function Enterprise({ readMore = false }) {
   return (
-    <div className="pricing-box" href="/login">
-      <h3 className="pricing-title">Enterprise</h3>
-      <img className="pricing-image" src={truckImg} />
-      <span className="pricing-text">Starting at</span>
-      <p className="pricing-price">
-        <span className="currency">$</span>
+    <div styleName="pricing-box">
+      <h3 styleName="pricing-title">Enterprise</h3>
+      <img styleName="pricing-image" src={truckImg} />
+      <span styleName="pricing-text">Starting at</span>
+      <p styleName="pricing-price">
+        <span styleName="currency">$</span>
         {(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
       </p>
-      <span className="pricing-text">per seat/month</span>
-      <ul className="pricing-features">
+      <span styleName="pricing-text">per seat/month</span>
+      <ul styleName="pricing-features">
         <li>Rid your office of useless email</li>
         <li>Unlimited unsubscribes</li>
         <li>Gmail and Outlook support</li>
-        <li className="coming-soon">Limitless API access</li>
-        <li className="coming-soon">Email forwarding</li>
+        <li styleName="coming-soon">Limitless API access</li>
+        <li styleName="coming-soon">Email forwarding</li>
         <li>Email, chat and phone support</li>
       </ul>
       <a
@@ -49,7 +50,7 @@ export function Enterprise({ readMore = false }) {
         Contact us
       </a>
       {readMore ? (
-        <div className="read-more">
+        <div styleName="read-more">
           <p>
             <a href="/enterprise">or read more</a>
           </p>
@@ -63,18 +64,18 @@ function Packages({ readMore = false }) {
   const [packageValue, setPackageValue] = useState('1');
   let { credits, discount, price } = getPackage(packageValue);
   return (
-    <div className="pricing-box" href="/login">
-      <h3 className="pricing-title">Packages</h3>
-      <img className="pricing-image" src={packageImg} />
-      <span className="pricing-text">Starting at</span>
-      <p className="pricing-price">
-        <span className="currency">$</span>
+    <div styleName="pricing-box">
+      <h3 styleName="pricing-title">Packages</h3>
+      <img styleName="pricing-image" src={packageImg} />
+      <span styleName="pricing-text">Starting at</span>
+      <p styleName="pricing-price">
+        <span styleName="currency">$</span>
         <span>{(price / 100).toFixed(2)}</span>
       </p>
-      <span className="pricing-text">
+      <span styleName="pricing-text">
         for <span>{credits}</span> credits
       </span>
-      <span className="pricing-slider">
+      <span styleName="pricing-slider">
         <RangeInput
           min="1"
           max="4"
@@ -82,10 +83,10 @@ function Packages({ readMore = false }) {
           onChange={val => setPackageValue(val)}
         />
       </span>
-      <ul className="pricing-features">
+      <ul styleName="pricing-features">
         <li>Gmail and Outlook support</li>
-        <li className="coming-soon">Limited API access</li>
-        <li className="coming-soon">Email forwarding</li>
+        <li styleName="coming-soon">Limited API access</li>
+        <li styleName="coming-soon">Email forwarding</li>
         <li>Email and chat support</li>
         {discount ? (
           <li>
@@ -93,11 +94,11 @@ function Packages({ readMore = false }) {
           </li>
         ) : null}
       </ul>
-      <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
-        Get started
+      <a href="/signup" className={`beam-me-up-cta beam-me-up-cta-center`}>
+        Get Started
       </a>
       {readMore ? (
-        <div className="read-more">
+        <div styleName="read-more">
           <p>
             <a href="/pricing">or read more</a>
           </p>
@@ -113,12 +114,12 @@ export default () => {
       title="Pricing"
       description="Whatever the size of your inbox our pricing has you covered."
     >
-      <div className="pricing-page">
-        <div className="pricing-description">
+      <div styleName="pricing-page">
+        <div styleName="pricing-description">
           <h1>Pricing</h1>
-          <p className="sub-tagline">
+          <SubpageTagline>
             Whatever the size of your inbox our pricing has you covered.
-          </p>
+          </SubpageTagline>
           <p>
             So that we can provide a great, privacy-focused service, we charge a
             small amount for each unsubscribe.
@@ -139,8 +140,8 @@ export default () => {
       </div>
 
       <Estimator title="How many unsubscribes do I need?" />
-      <div className="pricing-why" id="why">
-        <h3 className="pricing-estimate-title">Why is it not free?</h3>
+      <div styleName="pricing-why" id="why">
+        <h3>Why is it not free?</h3>
         <p>
           Some of our competitors offer a similar unsubscription service for
           free. They are able to do this because they make money by{' '}
@@ -194,11 +195,11 @@ export default () => {
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
           power our Subscriber Score algorithm. You can read more about this and
-          how we manage all our data <Link to="/data">here</Link>.
+          how we manage all our data <Link to="/data-management">here</Link>.
         </p>
 
         <br />
-        <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
+        <a href="/signup" className={`beam-me-up-cta beam-me-up-cta-center`}>
           Sign Me Up!
         </a>
       </div>

@@ -18,7 +18,19 @@ async function getNews() {
 }
 
 const InTheNewsPage = () => {
-  const { value: news = [], loading: loadingNews } = useAsync(getNews);
+  return (
+    <SubPageLayout
+      title="In The News"
+      description="Read about Leave Me Alone featured in news articles around the world"
+    >
+      <h1 styleName="title">In The News</h1>
+      <News />
+    </SubPageLayout>
+  );
+};
+
+function News() {
+  const { value: news = [], loading } = useAsync(getNews);
 
   const [quotes, list] = news.reduce(
     (out, n) => {
@@ -30,42 +42,40 @@ const InTheNewsPage = () => {
     [[], []]
   );
 
+  if (loading) {
+    return <p styleName="loading">Getting Leave Me Alone news...</p>;
+  }
+
+  if (!news.length) {
+    return <p styleName="loading">Something went wrong fetching the news.</p>;
+  }
+
   return (
-    <SubPageLayout
-      title="In The News"
-      description="Read about Leave Me Alone featured in news articles around the world"
-    >
-      <h1 styleName="title">In The News</h1>
-      {loadingNews ? (
-        <p styleName="loading">Getting Leave Me Alone news...</p>
-      ) : (
-        <>
-          <div styleName="news-list">
-            {quotes.map(({ quote, logoUrl, url }) => (
-              <div key={url} styleName="item">
-                <p>"{quote}"</p>
-                <a target="_" styleName="logo" href={url}>
-                  <img src={logoUrl} />
-                </a>
-              </div>
-            ))}
+    <>
+      <div styleName="news-list">
+        {quotes.map(({ quote, logoUrl, url }) => (
+          <div key={url} styleName="item">
+            <p>"{quote}"</p>
+            <a target="_" styleName="logo" href={url}>
+              <img src={logoUrl} />
+            </a>
           </div>
-          <div styleName="simple">
-            <h2>Plus we are mentioned here:</h2>
-            <ul>
-              {list.map(({ url, name }) => (
-                <li key={name}>
-                  <TextLink target="_" href={url}>
-                    {name}
-                  </TextLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </>
-      )}
-    </SubPageLayout>
+        ))}
+      </div>
+      <div styleName="simple">
+        <h2>Plus we are mentioned here:</h2>
+        <ul>
+          {list.map(({ url, name }) => (
+            <li key={name}>
+              <TextLink target="_" href={url}>
+                {name}
+              </TextLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
-};
+}
 
 export default InTheNewsPage;

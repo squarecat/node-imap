@@ -19,3 +19,7 @@ export default ({ title, description, children, ...visProps }) => {
     </Layout>
   );
 };
+
+export function SubpageTagline({ children }) {
+  return <p styleName="subpage-tagline">{children}</p>;
+}

@@ -16,8 +16,8 @@ const EnterprisePage = () => {
       title="Enterprise Pricing"
       description="Boost productivity and get an office that is completely free of unwanted spam and subscription emails with our enterprise plan."
     >
-      <div className="pricing-page">
-        <div className="pricing-description">
+      <div styleName="enterprise-page">
+        <div styleName="enterprise-description">
           <h1>Enterprise Pricing</h1>
           <p>
             Did you know that on average your office spends{' '}
@@ -64,6 +64,14 @@ const EnterprisePage = () => {
       <div styleName="savings">
         <EnterpriseEstimator title="How much time can I save?" />
       </div>
+
+      <a
+        href="mailto:hello@leavemealone.app"
+        className={`beam-me-up-cta beam-me-up-cta-center`}
+      >
+        Contact Us
+      </a>
+
       <div styleName="sources">
         <ul>
           <li id="cite-1">
