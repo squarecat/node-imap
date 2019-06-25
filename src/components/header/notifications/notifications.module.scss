@@ -20,6 +20,16 @@
   svg {
     margin: -1px 0 0 0px;
   }
+
+  @media (max-width: 500px) {
+    height: 30px;
+    width: 30px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
 }
 
 .notifications {
