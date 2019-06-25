@@ -440,7 +440,7 @@ export async function removeReminder(id) {
   }
 }
 
-export async function addReferral(id, { userId, scanType, price }) {
+export async function addReferral(id, { id: userId, email, reward }) {
   try {
     const col = await db().collection(COL_NAME);
     if (id === userId) {
@@ -454,8 +454,8 @@ export async function addReferral(id, { userId, scanType, price }) {
         $push: {
           referrals: {
             userId,
-            scanType,
-            price
+            email,
+            reward
           }
         }
       }
@@ -478,31 +478,6 @@ export async function findUsersNeedReminders() {
     return users.toArray();
   } catch (err) {
     logger.error(`users-dao: error finding users needing reminders`);
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function updateReferral(id, { userId, scanType, price }) {
-  try {
-    const col = await db().collection(COL_NAME);
-    if (id === userId) {
-      return logger.warn(
-        `users-dao: user ${id} tried to redeem own referral code`
-      );
-    }
-    await col.updateOne(
-      { id, 'referrals.userId': userId },
-      {
-        $set: {
-          'referrals.$.scanType': scanType,
-          'referrals.$.price': price
-        }
-      }
-    );
-    return getUser(id);
-  } catch (err) {
-    logger.error(`users-dao: failed to update referral to ${id}`);
     logger.error(err);
     throw err;
   }

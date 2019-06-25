@@ -62,7 +62,8 @@ export default function Estimator({
         recommendationImage = truckImg;
         recommendation = (
           <span>
-            Wow, that's a lot of emails! We recommend you contact us for a{' '}
+            Wow, that's a lot of emails! We recommend you{' '}
+            <a href="mailto:hello@leavemealone.app">contact us</a> for a{' '}
             <TextImportant>special custom package</TextImportant> rate.
           </span>
         );

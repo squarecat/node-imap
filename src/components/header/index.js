@@ -26,8 +26,8 @@ const Header = React.memo(({ loaded }) => {
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app" styleName="header-logo">
         <img alt="Leave Me Alone logo" src={logoUrl} />
+        <span styleName="header-title">Leave Me Alone</span>
       </Link>
-      <div styleName="header-title">Leave Me Alone </div>
       <div styleName="header-actions">
         <Reminder />
         {CreditsContent}

@@ -1,7 +1,8 @@
 import './credits.module.scss';
 
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
-import React, { useMemo, useState, useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
 import CopyButton from '../../copy-to-clipboard';
@@ -20,6 +21,13 @@ async function getRewards() {
 
 async function getReferrals() {
   return request('/api/me/referrals');
+}
+
+async function setTweeted() {
+  return request('/api/me/activity', {
+    method: 'PATCH',
+    body: JSON.stringify({ op: 'add', value: 'tweet' })
+  });
 }
 
 export default ({ credits }) => {
@@ -173,10 +181,6 @@ export default ({ credits }) => {
             </Button>
           </InlineFormInput>
           <Button
-            target="_twitter"
-            href={`https://twitter.com/intent/tweet?text=${
-              socialContent.tweet
-            }`}
             muted
             outlined
             stretch
@@ -184,6 +188,7 @@ export default ({ credits }) => {
             basic
             smaller
             inline
+            onClick={() => onClickTweet(socialContent.tweet)}
           >
             <TwitterIcon />
             Tweet
@@ -241,13 +246,8 @@ const rewardLabels = {
     text: 'Share on Twitter',
     description: tweetText => (
       <span>
-        <a
-          target="_twitter"
-          href={`https://twitter.com/intent/tweet?text=${tweetText}`}
-        >
-          Tweet about us
-        </a>{' '}
-        to your followers
+        <a onClick={() => onClickTweet(tweetText)}>Tweet about us</a> to your
+        followers
       </span>
     )
   },
@@ -340,6 +340,38 @@ function rewardList(rewardItems, socialContent) {
       ))}
     </ul>
   );
+}
+
+const twitterWindowOpts = [
+  'height=300',
+  'width=700',
+  'top=100',
+  'left=100',
+  // A dependent window closes when its parent window closes.
+  'dependent=yes',
+  // hide menubars and toolbars for the simplest popup
+  'menubar=no',
+  'toolbar=no',
+  'location=yes',
+  // enable for accessibility
+  'resizable=yes',
+  'scrollbars=yes',
+  'status=yes',
+  // chrome specific
+  'chrome=yes',
+  'centerscreen=yes'
+].join(',');
+
+function onClickTweet(tweetText) {
+  try {
+    const url = `https://twitter.com/intent/tweet?text=${tweetText}`;
+    window.open(url, 'twitter', twitterWindowOpts);
+    setTimeout(() => {
+      setTweeted();
+    }, 1000);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function sendReferralInvite(email) {

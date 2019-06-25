@@ -417,7 +417,7 @@ export default function OpenPage() {
       description="All of our metrics are public. See our sales, revenue, expenses, users, and more"
     >
       <div styleName="open-page">
-        <div styleName="open-title box box--centered">
+        <div styleName="open-title box">
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
@@ -426,7 +426,7 @@ export default function OpenPage() {
           </h2>
         </div>
         {loading ? (
-          <div styleName="box box--centered">
+          <div styleName="box">
             <h2>Loading stats...</h2>
           </div>
         ) : (
@@ -440,7 +440,7 @@ export default function OpenPage() {
                 </h2>
                 <canvas ref={dailyRevRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's revenue</span>
                   <span styleName="value">
@@ -473,8 +473,7 @@ export default function OpenPage() {
                     )}
                   </span>
                 </div>
-              </div>
-              <div styleName="totals">
+
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's sales</span>
                   <span styleName="value">{format(salesStats.lastMonth)}</span>
@@ -500,8 +499,7 @@ export default function OpenPage() {
                     {format(calculateWithRefunds(stats, 'totalSales'))}
                   </span>
                 </div>
-              </div>
-              <div styleName="totals">
+
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue per user</span>
                   <span styleName="value">
@@ -511,6 +509,22 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
+                  <span styleName="label">Total packages purchased</span>
+                  <span styleName="value">
+                    {format(stats.packagesPurchased)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total credits purchased</span>
+                  <span styleName="value">
+                    {format(stats.creditsPurchased)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total credits rewarded</span>
+                  <span styleName="value">{format(stats.creditsRewarded)}</span>
+                </div>
+                {/* <div styleName="big-stat box">
                   <span styleName="label">Revenue from gifts</span>
                   <span styleName="value">
                     {`${percentageRevenueFromGifts(stats)}%`}
@@ -523,7 +537,7 @@ export default function OpenPage() {
                 <div styleName="big-stat box">
                   <span styleName="label">Gifts redeemed</span>
                   <span styleName="value">{format(stats.giftRedemptions)}</span>
-                </div>
+                </div> */}
               </div>
 
               <div styleName="chart box">
@@ -546,7 +560,7 @@ export default function OpenPage() {
                 <h2>New Signups</h2>
                 <canvas ref={usersRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's new signups</span>
                   <span styleName="value">{format(usersStats.lastMonth)}</span>
@@ -572,21 +586,44 @@ export default function OpenPage() {
                   <span styleName="label">Total users</span>
                   <span styleName="value">{format(stats.users)}</span>
                 </div>
+
+                <div styleName="big-stat box">
+                  <span styleName="label">Enterprise customers</span>
+                  <span styleName="value">{format(stats.organisations)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Organisation members</span>
+                  <span styleName="value">
+                    {format(stats.organisationUsers)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Google accounts connected</span>
+                  <span styleName="value">
+                    {format(stats.connectedAccountGoogle)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Outlook accounts connected</span>
+                  <span styleName="value">
+                    {format(stats.connectedAccountOutlook)}
+                  </span>
+                </div>
               </div>
-              <div styleName="chart box">
+              {/* <div styleName="chart box">
                 <h2>
                   Users - <span style={{ color: lineColor }}>Google</span> vs{' '}
                   <span style={{ color: lineColor2 }}>Outlook</span>
                 </h2>
                 <canvas ref={providersRef} />
-              </div>
+              </div> */}
             </div>
             <div styleName="subscriptions">
               <div styleName="chart box">
                 <h2>Daily Spam Email Unsubscriptions</h2>
                 <canvas ref={subscriptionRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Total Spam Emails</span>
                   <span styleName="value">
@@ -614,7 +651,7 @@ export default function OpenPage() {
                 <h2>Scans</h2>
                 <canvas ref={scanRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Total number of scans</span>
                   <span styleName="value">{format(stats.scans)}</span>
@@ -623,8 +660,6 @@ export default function OpenPage() {
                   <span styleName="label">Total emails scanned</span>
                   <span styleName="value">{format(stats.emails)}</span>
                 </div>
-              </div>
-              <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Total reminders requested</span>
                   <span styleName="value">
@@ -639,32 +674,45 @@ export default function OpenPage() {
             </div>
 
             <div styleName="referrals">
-              {/* <div styleName="chart box">
-                <h2>Referrals</h2>
-                <canvas ref={referralRef} />
-              </div> */}
-              <div styleName="totals">
+              <h2>v1.0 Referrals</h2>
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Total referral signups</span>
                   <span styleName="value">{format(stats.referralSignup)}</span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Referral conversion rate</span>
-                  <span styleName="value">FIXME</span>
+                  <span styleName="value">
+                    {percent(stats.referralPaidScan / stats.referralSignup)}
+                  </span>
                 </div>
-                {/* <div styleName="big-stat box">
-                  <span styleName="label">Total referral payouts</span>
-                  <span styleName="value">{currency(stats.referralCredit)}</span>
-                </div> */}
+              </div>
+            </div>
+
+            <div styleName="referrals">
+              <h2>v2.0 Referrals</h2>
+              <div styleName="boxes">
+                <div styleName="big-stat box">
+                  <span styleName="label">Total referral signups</span>
+                  <span styleName="value">
+                    {format(stats.referralSignupV2)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Referral conversion rate</span>
+                  <span styleName="value">
+                    {percent(stats.referralPurchaseV2 / stats.referralSignupV2)}
+                  </span>
+                </div>
               </div>
             </div>
             <div styleName="expenses">
               {loadingExpenses ? (
-                <div styleName="box box--unpadded">
+                <div styleName="box">
                   <h2>Loading expenses...</h2>
                 </div>
               ) : (
-                <div styleName="box box--unpadded">
+                <div styleName="box">
                   <h2>Last Month's Expenses</h2>
                   <Table>
                     <tbody>
