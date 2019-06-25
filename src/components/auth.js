@@ -82,7 +82,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
             </p>
             <p>
               Think you are seeing this message by mistake? Please{' '}
-              <a onClick={window.intergram.open}>let us know</a>.
+              <a onClick={() => window.intergram.open()}>let us know</a>.
             </p>
           </AlertModal>,
           {
