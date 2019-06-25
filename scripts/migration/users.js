@@ -48,6 +48,15 @@ const migrateUser = oldRecord => {
       }
     ]
   };
+  // migrate referrals
+  newRecord = {
+    ...newRecord,
+    referrals: oldRecord.referrals.map(r => ({
+      userId: r.userId,
+      reward: 5
+    }))
+  };
+
   newRecord = {
     ...newRecord,
     lastUpdatedAt: now,

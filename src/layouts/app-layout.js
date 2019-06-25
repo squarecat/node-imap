@@ -16,7 +16,9 @@ setConfig({ pureSFC: true });
 
 const AppLayout = ({ pageName, children }) => {
   useEffect(() => {
-    window.intergram.hide();
+    if (window.intergram && window.intergram.hide) {
+      window.intergram.hide();
+    }
   }, []);
   return (
     <>

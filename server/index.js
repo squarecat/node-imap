@@ -18,6 +18,7 @@ import path from 'path';
 import paymentsApi from './rest/payments';
 import { refreshScores } from './dao/occurrences';
 import scoresApi from './rest/scores';
+import sentryWebhooks from './rest/webhooks/sentry';
 import session from 'express-session';
 import socketApi from './rest/socket';
 import { startScheduler } from './utils/scheduler';
@@ -72,6 +73,7 @@ statsApi(app);
 milestonesApi(app);
 orgApi(app);
 mailgunWebhooks(app);
+sentryWebhooks(app);
 errorsApi(app);
 
 app.get('/api/*', (req, res) => {
