@@ -20,13 +20,13 @@ export default function DataManagementPage() {
       <ul styleName="list">
         <li>
           <span style={{ textDecoration: 'underline' }}>Statistical data</span>{' '}
-          which you see on our homepage and open page . This consists of 'counts
+          which you see on our homepage and open page. This consists of 'counts
           of events' such as number of users, number of emails we have seen,
           number of emails unsubscribed from, total revenue etc.
         </li>
         <li>
           <span style={{ textDecoration: 'underline' }}>Algorithmic data</span>{' '}
-          which powers features like Subscriber Score . This consists of
+          which powers features like Subscriber Score. This consists of
           'metadata about senders' such as email frequencies and unsubscribe
           rates. Read more below.
         </li>

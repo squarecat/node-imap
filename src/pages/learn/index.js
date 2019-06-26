@@ -103,13 +103,11 @@ export default function Learn() {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">Credits</h3>
+            <p>1 credit = 1 unsubscribe.</p>
+            <p>Only pay for what you want to unsubscribe from.</p>
             <p>
-              Keep track of your credits in the navigation bar and buy or earn
-              more when you run out.
-            </p>
-            <p>
-              1 credit = 1 unsubscribe. You can earn more credits for inviting
-              friends, tweeting about us, reaching milestones and more!
+              Earn more credits for inviting friends, tweeting about us,
+              reaching milestones and more!
             </p>
           </div>
         </div>

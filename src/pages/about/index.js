@@ -19,7 +19,7 @@ export default function About() {
         <div styleName="image-section-text">
           <h1>Our mission</h1>
           <SubpageTagline>
-            Helping email users{' '}
+            Helping people{' '}
             <span style={{ textDecoration: 'underline' }}>keep</span> control of
             their inbox.
           </SubpageTagline>

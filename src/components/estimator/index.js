@@ -92,8 +92,8 @@ export default function Estimator({
           ) : (
             <>
               <p>
-                From our anonymous usage data we can estimate how many
-                unsubscribes you might need based on the size of your inbox.
+                From our anonymous usage data we can estimate how many credits
+                you might need based on the size of your inbox.
               </p>
               <p>
                 Approximately how much mail do you receive{' '}

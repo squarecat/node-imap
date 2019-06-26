@@ -14,6 +14,7 @@ import { TextImportant } from '../components/text';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import WallOfLove from '../components/landing/wall-of-love';
+import _capitalize from 'lodash.capitalize';
 import allSubscriptions from '../assets/all-subscriptions.png';
 import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
@@ -90,9 +91,9 @@ const IndexPage = () => {
           <div className="hero-inner">
             <div className="hero-box hero-left">
               <div className="hero-right-inner">
-                <p className="catchy-tagline">
+                <h1 className="catchy-tagline">
                   Easily unsubscribe from spam emails
-                </p>
+                </h1>
                 <p className="informative-description">
                   See all of your subscription emails in one place and
                   unsubscribe from them with a single click.
@@ -147,7 +148,7 @@ const IndexPage = () => {
               </div>
             </div>
             <div className="home-box text-box">
-              <h3>Quicky see the worst spammers</h3>
+              <h3>Quickly see the worst spammers</h3>
               <p>
                 We rank each of your subscriptions based on our unique
                 Subscriber Score, so you can quickly tell if it's worth hanging
@@ -170,8 +171,8 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="home-container">
-          <div className="trash-pile" id="trash-pile">
+        <div className="trash-pile" id="trash-pile">
+          <div className="home-container">
             <div className="home-box text-box text-box-centered">
               <h3>Say goodbye to subscriptions forever</h3>
               <p>
@@ -468,6 +469,7 @@ function nodes(state, action) {
         newNode = {
           name: faker.name.findName(),
           email,
+          subject: _capitalize(faker.company.bs()),
           text: getMessage(newCount)
         };
       }
@@ -620,7 +622,7 @@ function Item({
               <div ref={ref} className="example-unsubscribe" data-state={state}>
                 <div className="example-from-column">
                   <div className="example-from-name-container">
-                    <span className="exmaple-from-name">{name}</span>
+                    <span className="example-from-name">{name}</span>
                   </div>
                   <span className="example-from-email">{email}</span>
                 </div>

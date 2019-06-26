@@ -3,11 +3,11 @@ import './pricing.module.scss';
 import { ENTERPRISE, getPackage } from '../../../shared/prices';
 import React, { useState } from 'react';
 import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
+import { TextImportant, TextLink } from '../../components/text';
 
 import Estimator from '../../components/estimator';
 import { Link } from 'gatsby';
 import RangeInput from '../../components/form/range';
-import { TextImportant } from '../../components/text';
 import packageImg from '../../assets/package.png';
 import truckImg from '../../assets/truck.png';
 
@@ -35,12 +35,17 @@ export function Enterprise({ readMore = false }) {
         {(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
       </p>
       <span styleName="pricing-text">per seat/month</span>
+      <span styleName="pricing-separator" />
       <ul styleName="pricing-features">
-        <li>Rid your office of useless email</li>
-        <li>Unlimited unsubscribes</li>
+        {/* <li>Rid your office of useless email</li> */}
         <li>Gmail and Outlook support</li>
-        <li styleName="coming-soon">Limitless API access</li>
-        <li styleName="coming-soon">Email forwarding</li>
+        <li>Unlimited credits</li>
+        <li styleName="coming-soon">
+          Unlimited API access <span>(coming soon)</span>
+        </li>
+        <li styleName="coming-soon">
+          Email forwarding <span>(coming soon)</span>
+        </li>
         <li>Email, chat and phone support</li>
       </ul>
       <a
@@ -85,8 +90,13 @@ function Packages({ readMore = false }) {
       </span>
       <ul styleName="pricing-features">
         <li>Gmail and Outlook support</li>
-        <li styleName="coming-soon">Limited API access</li>
-        <li styleName="coming-soon">Email forwarding</li>
+        <li>1 credit = 1 unsubscribe</li>
+        <li styleName="coming-soon">
+          Limited API access <span>(coming soon)</span>
+        </li>
+        <li styleName="coming-soon">
+          Email forwarding <span>(coming soon)</span>
+        </li>
         <li>Email and chat support</li>
         {discount ? (
           <li>
@@ -139,7 +149,7 @@ export default () => {
         <Packages />
       </div>
 
-      <Estimator title="How many unsubscribes do I need?" />
+      <Estimator title="How many credits do I need?" />
       <div styleName="pricing-why" id="why">
         <h3>Why is it not free?</h3>
         <p>
@@ -202,6 +212,16 @@ export default () => {
         <a href="/signup" className={`beam-me-up-cta beam-me-up-cta-center`}>
           Sign Me Up!
         </a>
+      </div>
+
+      <div styleName="more">
+        <h2>Want to know more?</h2>
+        <p>
+          Check out <TextLink href="/learn">how it works</TextLink>, read about
+          our <TextLink href="/data-management">data management</TextLink>, and
+          find out more{' '}
+          <TextLink href="/about">about us and our mission</TextLink>.
+        </p>
       </div>
     </SubPageLayout>
   );

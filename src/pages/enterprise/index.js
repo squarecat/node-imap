@@ -1,11 +1,12 @@
 import './enterprise.module.scss';
 
+import { TextImportant, TextLink } from '../../components/text';
+
 import { Enterprise } from '../pricing';
 import EnterpriseEstimator from '../../components/estimator/enterprise';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
-import { TextImportant } from '../../components/text';
 import googleLogo from '../../assets/gsuite-logo.png';
 import luke from '../../assets/luke.jpeg';
 import officeLogo from '../../assets/office-365-logo.png';
@@ -13,7 +14,7 @@ import officeLogo from '../../assets/office-365-logo.png';
 const EnterprisePage = () => {
   return (
     <SubPageLayout
-      title="Enterprise Pricing"
+      title="Leave Me Alone for Enterprises"
       description="Boost productivity and get an office that is completely free of unwanted spam and subscription emails with our enterprise plan."
     >
       <div styleName="enterprise-page">
@@ -65,13 +66,21 @@ const EnterprisePage = () => {
         <EnterpriseEstimator title="How much time can I save?" />
       </div>
 
-      <a
-        href="mailto:hello@leavemealone.app"
-        className={`beam-me-up-cta beam-me-up-cta-center`}
-      >
-        Contact Us
-      </a>
+      <div styleName="cta">
+        <a href="mailto:hello@leavemealone.app" className={`beam-me-up-cta`}>
+          Contact Us
+        </a>
+      </div>
 
+      <div styleName="more">
+        <h2>Want to know more?</h2>
+        <p>
+          Check out <TextLink href="/learn">how it works</TextLink>, read about
+          our <TextLink href="/data-management">data management</TextLink>, and
+          find out more{' '}
+          <TextLink href="/about">about us and our mission</TextLink>.
+        </p>
+      </div>
       <div styleName="sources">
         <ul>
           <li id="cite-1">

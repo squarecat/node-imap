@@ -124,14 +124,14 @@
 }
 
 .pricing-slider {
-  margin: 8px 25px 0px 25px;
+  margin: 8px 25px;
   display: block;
 }
 
 .pricing-features {
   flex: 1;
-  margin: 30px 20px 0 20px;
-  border-top: 1px solid #fddbd7;
+  margin: 0 20px;
+  // border-top: 1px solid #fddbd7;
   text-align: left;
   padding: 36px 20px;
   font-weight: bold;
@@ -173,10 +173,18 @@
   }
 }
 
-.pricing-slider + .pricing-features {
-  border-top: 0;
-  padding-top: 0;
+.coming-soon {
+  span {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.4);
+    display: inline-block;
+  }
 }
+
+// .pricing-slider + .pricing-features {
+//   border-top: 0;
+//   padding-top: 0;
+// }
 
 .pricing-cta {
   margin: 20px 0;
@@ -185,6 +193,14 @@
 .pricing-enterprise {
   @extend .link;
   font-size: 14px;
+}
+
+.pricing-separator {
+  height: 1px;
+  background-color: #fddbd7;
+  box-shadow: 0 1px 1px #fddbd7;
+  margin: 20px 25px;
+  display: block;
 }
 
 .pricing-why {
@@ -200,4 +216,16 @@
   @media (max-width: 700px) {
     font-size: 14px;
   }
+}
+
+.more {
+  margin-top: 100px;
+  padding-top: 100px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.credit-info {
+  opacity: 0.6;
+  font-size: 12px;
+  float: right;
 }

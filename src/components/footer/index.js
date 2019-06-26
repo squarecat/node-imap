@@ -95,7 +95,9 @@ export default visProps => (
             </TextLink>
           </li>
           <li>
-            <a href="javascript:window.Metomic.raise()">Manage cookies</a>
+            <TextLink href="javascript:window.Metomic.raise()">
+              Manage cookies
+            </TextLink>
           </li>
         </ul>
         {/* <ul styleName="footer-nav">

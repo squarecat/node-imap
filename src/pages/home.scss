@@ -128,17 +128,6 @@ a.more-info:visited {
   }
 }
 
-.more-info {
-  display: block;
-  font-weight: 800;
-  cursor: pointer;
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  text-align: center;
-}
-
 .catchy-tagline {
   font-size: 42px;
   line-height: 52px;
@@ -183,41 +172,6 @@ a.more-info:visited {
   text-align: center;
 }
 
-h1 {
-  font-size: 100px;
-}
-
-.leave-me-alone-logo {
-  position: relative;
-  width: 300px;
-  height: 210px;
-}
-
-.logo-emoji {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) translateY(2px);
-  display: block;
-  pointer-events: none;
-  padding: 0;
-}
-
-.leave-me-alone-logo .gmail-logo {
-  width: 100%;
-  opacity: 0.75;
-  margin: 0;
-  -webkit-filter: blur(0);
-  filter: blur(0);
-  transition: -webkit-filter 500ms ease-in-out;
-  transition: filter 500ms ease-in-out;
-  transition: filter 500ms ease-in-out, -webkit-filter 500ms ease-in-out;
-}
-
-.leave-me-alone-logo.active .gmail-logo {
-  filter: blur(10px);
-}
-
 .beam-me-up-cta {
   @extend .btn;
   @extend .stretch;
@@ -230,8 +184,6 @@ h1 {
 }
 
 .beam-me-up-cta-invert {
-  // @extend .on-dark-bg;
-  // background-color: rgba(255, 251, 251, 0.65);
   background-color: $color-red-darker;
   color: white;
 }
@@ -273,6 +225,10 @@ h1 {
     display: flex;
     flex-direction: column;
     margin: 50px auto;
+
+    img {
+      max-width: 400px;
+    }
   }
 }
 
@@ -287,11 +243,6 @@ h1 {
   width: 100%;
   border: 1px solid #fddbd7;
   border-radius: 4px;
-}
-
-.subscriber-score-img {
-  max-width: 400px;
-  width: 100%;
 }
 
 .text-box {
@@ -445,66 +396,6 @@ h1 {
 
 .unsub-list-img {
   margin: 50px 0;
-}
-
-.privacy {
-  background: linear-gradient(to bottom right, #ffefee, #ffefee 60%);
-  color: $color-primary-font;
-  font-weight: bolder;
-  min-height: 65vh;
-  padding: 250px 0 150px 0;
-  text-shadow: 1px 1px 1px rgba(250, 28, 31, 0.1);
-}
-
-.privacy:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  border: 100px solid transparent;
-  border-top-color: #fddbd7;
-  border-left-width: 50vw;
-  border-right-width: 50vw;
-}
-
-.love:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  border: 100px solid transparent;
-  border-top-color: #ffefee;
-  border-left-width: 50vw;
-  border-right-width: 50vw;
-}
-.makers,
-.love,
-.pricing,
-.news,
-.how {
-  padding-top: 180px;
-  min-height: 80vh;
-}
-
-.container-emoji,
-.privacy-padlock {
-  font-size: 70px;
-  height: 80px;
-  line-height: 70px;
-  margin: 50px 0 20px 0;
-  display: block;
-}
-
-.privacy-source-ref {
-  vertical-align: super;
-  font-size: 10px;
-}
-
-.privacy-source {
-  font-size: 10px;
-  opacity: 0.6;
 }
 
 .example-img {
@@ -913,6 +804,7 @@ h1 {
 .example-subject-column {
   font-size: 14px;
   line-height: 22px;
+  text-align: left;
 
   @media (max-width: 560px) {
     display: none;
@@ -973,7 +865,7 @@ h1 {
   }
 }
 
-.exmaple-from-name {
+.example-from-name {
   font-size: 15px;
 }
 
@@ -981,8 +873,12 @@ h1 {
   opacity: 0.75;
   font-size: 11px;
   display: block;
+}
+
+.example-from-name,
+.example-from-email {
+  white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 100%;
   overflow: hidden;
-  white-space: nowrap;
 }
