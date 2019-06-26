@@ -6,9 +6,6 @@ export default app => {
     try {
       sendMessage('🚨');
       res.send(200);
-
-      <b>${issue.title}</b>
-      sentry.io/organizations/kanbanmail/issues/${issue.id}');
     } catch (err) {
       logger.error(err);
     }
@@ -19,11 +16,11 @@ export default app => {
     const issue = body.data;
     try {
       sendMessage(
-`🚨 New Sentry issue: <code>${issue.shortId}</code>
+        `🚨 New Sentry issue: <code>${issue.shortId}</code>
 <b>${issue.title}</b>
 sentry.io/organizations/squarecat-0d/issues/${issue.id}
 `
-);
+      );
       res.send(200);
     } catch (err) {
       logger.error(err);
