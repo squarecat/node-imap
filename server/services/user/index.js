@@ -198,7 +198,11 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           };
         }
       }
-      user = await updateUserWithAccount({ id, email }, updates, keys);
+      user = await updateUserWithAccount(
+        { userId: id, accountEmail: email },
+        updates,
+        keys
+      );
     }
 
     // signing up or logging in with a provider counts as connecting
@@ -297,16 +301,21 @@ export async function updateUserOrganisation(
   }
 }
 
-export function connectUserOutlookAccount(userId, userData = {}, keys) {
-  return connectUserAccount(userId, userData, keys, 'outlook');
+export function connectUserOutlookAccount(userId, accountData = {}, keys) {
+  return connectUserAccount(userId, accountData, keys, 'outlook');
 }
 
-export function connectUserGoogleAccount(userId, userData = {}, keys) {
-  return connectUserAccount(userId, userData, keys, 'google');
+export function connectUserGoogleAccount(userId, accountData = {}, keys) {
+  return connectUserAccount(userId, accountData, keys, 'google');
 }
 
-async function connectUserAccount(userId, userData = {}, keys, provider) {
-  const { id: accountId, email, profileImg, displayName } = userData;
+async function connectUserAccount(userId, accountData = {}, keys, provider) {
+  const {
+    id: accountId,
+    email: accountEmail,
+    profileImg,
+    displayName
+  } = accountData;
   try {
     const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
@@ -317,13 +326,13 @@ async function connectUserAccount(userId, userData = {}, keys, provider) {
       logger.debug(
         `user-service: ${provider} account already connected, updating...`
       );
-      return updateUser(
-        { userId, 'accounts.email': email },
+      return updateUserWithAccount(
+        { userId, accountEmail },
         {
-          'accounts.$.keys': keys,
           profileImg,
           name: displayName
-        }
+        },
+        keys
       );
     }
 
