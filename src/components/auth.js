@@ -78,7 +78,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
             </p>
             <p>
               Leave Me Alone should work in the latest versions of Edge,
-              Firefox, Chrome, or other modern browsers.
+              Firefox, Chrome, Safari, or other modern browsers.
             </p>
             <p>
               Think you are seeing this message by mistake? Please{' '}

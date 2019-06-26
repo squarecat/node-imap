@@ -733,7 +733,7 @@ export async function getLoginProvider(hashedEmail) {
     );
     return userWithLoginEmail ? userWithLoginEmail.loginProvider : null;
   } catch (err) {
-    logger.error('user-dao: failed to update unsub status');
+    logger.error('user-dao: failed to get user login provider');
     logger.error(err);
     throw err;
   }

@@ -1,4 +1,4 @@
-import { AuthError, ConnectAccountError, UserError } from '../../utils/errors';
+import { AuthError, ConnectAccountError, UserError } from '../utils/errors';
 import {
   addAccount,
   addActivity,
@@ -35,7 +35,7 @@ import {
   updateUserWithAccount,
   verifyEmail,
   verifyTotpSecret
-} from '../../dao/user';
+} from '../dao/user';
 import {
   addConnectedAccountToStats,
   addCreditsRewardedToStats,
@@ -46,11 +46,11 @@ import {
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
   addUserToStats
-} from '../stats';
+} from './stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
   removeSubscriber as removeNewsletterSubscriber
-} from '../../utils/emails/newsletter';
+} from '../utils/emails/newsletter';
 import {
   addUserToOrganisation,
   canUserJoinOrganisation,
@@ -58,21 +58,21 @@ import {
   getOrganisationByInviteCode,
   getOrganisationByInvitedEmailOrValidDomain,
   removeUserFromOrganisation
-} from '../organisation';
-import { getMilestone, updateMilestoneCompletions } from '../milestones';
+} from './organisation';
+import { getMilestone, updateMilestoneCompletions } from './milestones';
 
 import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
 import addWeeks from 'date-fns/add_weeks';
-import { detachPaymentMethod } from '../../utils/stripe';
-import { listPaymentsForUser } from '../payments';
-import logger from '../../utils/logger';
-import { revokeToken as revokeTokenFromGoogle } from '../../utils/gmail';
-import { revokeToken as revokeTokenFromOutlook } from '../../utils/outlook';
-import { sendForgotPasswordMail } from '../../utils/emails/forgot-password';
-import { sendReferralInviteMail } from '../../utils/emails/transactional';
-import { sendToUser } from '../../rest/socket';
-import { sendVerifyEmailMail } from '../../utils/emails/verify-email';
+import { detachPaymentMethod } from '../utils/stripe';
+import { listPaymentsForUser } from './payments';
+import logger from '../utils/logger';
+import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
+import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
+import { sendForgotPasswordMail } from '../utils/emails/forgot-password';
+import { sendReferralInviteMail } from '../utils/emails/transactional';
+import { sendToUser } from '../rest/socket';
+import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';
