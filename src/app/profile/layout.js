@@ -28,7 +28,7 @@ export default ({ pageName, children }) => {
         <div styleName="profile-container">
           <div styleName="profile-nav-container">
             <p styleName="profile-back">
-              <Link to="/app">&lt; Back to scan</Link>
+              <Link to="/app">&lt; Back to mail</Link>
             </p>
             <ul styleName="profile-nav">
               <li>

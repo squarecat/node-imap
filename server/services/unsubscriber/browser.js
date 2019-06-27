@@ -81,6 +81,7 @@ async function goToPage(page, url) {
   const responseHandler = response => {
     const status = response.status();
     // [301, 302, 303, 307, 308]
+    logger.info(`browser: got status code ${status}`);
     if (status >= 300 && status <= 399) {
       url_redirected = true;
     }
