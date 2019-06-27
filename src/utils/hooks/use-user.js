@@ -4,6 +4,7 @@ export default globalReducer(
   {},
   {
     load: (state, user) => {
+      console.log('loaded user');
       return {
         ...user,
         loaded: true,
@@ -12,6 +13,7 @@ export default globalReducer(
       };
     },
     update: (state, user) => {
+      console.log('updated user');
       return {
         ...state,
         ...user

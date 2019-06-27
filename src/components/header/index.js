@@ -22,6 +22,7 @@ const Header = React.memo(({ loaded }) => {
     [organisationId]
   );
 
+  console.log('render header');
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app" styleName="header-logo">
@@ -37,5 +38,7 @@ const Header = React.memo(({ loaded }) => {
     </div>
   );
 });
+
+Header.whyDidYouRender = true;
 
 export default Header;

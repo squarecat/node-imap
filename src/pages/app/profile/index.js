@@ -54,8 +54,9 @@ function DangerZone({ organisationAdmin }) {
             <>
               <p>
                 <TextImportant>WARNING:</TextImportant> this will remove all of
-                the data from your scan. Re-running the full scan may take a few
-                minutes.
+                the local email data that you see on the mail page. Re-scanning
+                will automatically take place when you return to that page but
+                may take a few minutes.
               </p>
               <p>
                 If you continue to have problems after this then please contact
