@@ -116,6 +116,7 @@ const LoginPage = React.memo(
       register: !!register,
       step
     });
+    const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
     const windowHeight = useMemo(
       () => {
@@ -151,8 +152,6 @@ const LoginPage = React.memo(
     const action = register ? 'Sign up' : 'Login';
 
     const style = useMemo(() => ({ maxHeight: windowHeight }), [windowHeight]);
-
-    const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
     // FIXME this could definitely be better, but it's currently
     // contrained by the way I've done the CSS transitions, requiring
