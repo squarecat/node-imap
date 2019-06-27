@@ -10,15 +10,15 @@
     color: $color-link-hover;
     border-bottom-color: $color-link-hover;
   }
-}
 
-.inverted {
-  color: white;
-  border-color: white;
+  &.inverted {
+    color: white !important;
+    border-color: white !important;
 
-  &:hover {
-    color: rgba(white, 0.8);
-    border-bottom-color: rgba(white, 0.8);
+    &:hover {
+      color: rgba(white, 0.8) !important;
+      border-bottom-color: rgba(white, 0.8) !important;
+    }
   }
 }
 
@@ -29,6 +29,10 @@
 .important {
   color: $color-text-important;
   font-weight: bold;
+
+  &.inverted {
+    color: white;
+  }
 }
 
 .bold {

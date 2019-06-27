@@ -76,9 +76,9 @@ function LearnMoreDropdown() {
 
         <div styleName="learn-more-extras">
           <DropdownItem>
-            <DropdownItem>
-              <Link to="/pricing">Pricing</Link>
-            </DropdownItem>
+            <Link to="/pricing">Pricing</Link>
+          </DropdownItem>
+          <DropdownItem>
             <Link to="/enterprise">Enterprise</Link>
           </DropdownItem>
           <DropdownItem separated>

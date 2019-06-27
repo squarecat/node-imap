@@ -1,9 +1,14 @@
 @import '../../components/btn/btn.module.scss';
+@import '../../layouts/subpage-layout.module.scss';
 
 .container {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-column-gap: 70px;
+}
+
+.enterprise-inner {
+  @extend .subpage-content;
 }
 
 .container-text {
@@ -19,16 +24,21 @@
     text-align: right;
   }
   h1 {
-    font-size: 35px;
     max-width: 380px;
   }
 }
 
+.features,
+.security,
+.pricing,
+.savings {
+  margin-top: 150px;
+}
+
 .features {
-  margin-top: 80px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  grid-column-gap: 30px;
+  grid-column-gap: 50px;
 }
 
 .feature {
@@ -49,13 +59,79 @@
 }
 
 .security {
-  margin-top: 80px;
   background-color: $color-dark-background;
   color: white;
+  padding: 90px 0 170px 0;
+
+  .image-section {
+    margin-bottom: 0;
+  }
+  .image-section-img {
+    width: 450px;
+    max-width: 100%;
+  }
 }
 
-.enterprise-pricing {
-  margin-top: 80px;
+.end-stuff {
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 100px;
+}
+
+.image-section {
+  display: grid;
+  grid-column-gap: 50px;
+  margin: 0 auto 100px auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @media (max-width: 750px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &.image-left {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+.image-section-text,
+.image-section-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  p:last-child {
+    margin: 0;
+  }
+}
+
+.image-section-img {
+  img {
+    border-radius: 5px;
+    max-height: 400px;
+  }
+
+  @media (max-width: 750px) {
+    width: 300px;
+    max-width: 100%;
+    margin: 50px auto 0;
+  }
+}
+
+.trustbar {
+}
+.trustbar-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+.trustbar-logo {
+}
+
+.pricing {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-column-gap: 30px;
@@ -80,24 +156,12 @@
   margin: 30px 0;
 
   img {
-    max-height: 70px;
-    @media (max-width: 700px) {
-      max-height: 50px;
-    }
+    max-height: 50px;
   }
 
   .gsuite {
     padding: 10px 20px 10px 10px;
   }
-}
-
-.savings {
-  margin-top: 80px;
-}
-
-.cta {
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .more {
@@ -107,11 +171,15 @@
 }
 
 .sources {
-  margin-top: 100px;
+  margin: 100px 0 -100px 0;
   font-size: 10px;
   line-height: 20px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 100px;
+
+  ul {
+    margin: 0;
+  }
 
   sup {
     margin-right: 4px;

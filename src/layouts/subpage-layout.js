@@ -5,7 +5,13 @@ import React from 'react';
 import cx from 'classnames';
 import styles from './subpage-layout.module.scss';
 
-export default ({ title, description, children, ...visProps }) => {
+export default ({
+  title,
+  description,
+  children,
+  withContent = true,
+  ...visProps
+}) => {
   const classes = cx(styles.subpage, {
     [styles.centered]: visProps.centered
   });
@@ -13,7 +19,11 @@ export default ({ title, description, children, ...visProps }) => {
     <Layout title={title} description={description}>
       <Header inverted />
       <div className={classes}>
-        <div styleName="subpage-content">{children}</div>
+        {withContent ? (
+          <div styleName="subpage-content">{children}</div>
+        ) : (
+          <div>{children}</div>
+        )}
       </div>
       <Footer subpage />
     </Layout>

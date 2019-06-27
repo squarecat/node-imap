@@ -11,7 +11,6 @@ import worldImg from '../../assets/geography.png';
 
 // import { TwitterIcon } from '../../components/icons';
 
-
 export default function About() {
   return (
     <SubPageLayout title="About" description="">
