@@ -38,21 +38,14 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Preferences">
-      {/* <div styleName="preferences-section">
-        <h2>Mail</h2>
-        <FormCheckbox
-          onChange={() =>
-            onChange(
-              'hideUnsubscribedMails',
-              !preferences.hideUnsubscribedMails
-            )
-          }
-          checked={getPref(preferences, 'hideUnsubscribedMails')}
-          label="Hide unsubscribed emails in future scans"
-        />
-      </div> */}
       <div styleName="preferences-section">
         <h2>Marketing</h2>
+        <p>
+          We will use your email to very occassionally send you product updates.
+          You can opt-out at any time. We will NEVER share it with anyone, for
+          any reason, EVER.
+        </p>
+
         <FormCheckbox
           onChange={() =>
             onChange('marketingConsent', !preferences.marketingConsent)

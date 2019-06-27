@@ -28,7 +28,7 @@ export default ({ pageName, children }) => {
         <div styleName="profile-container">
           <div styleName="profile-nav-container">
             <p styleName="profile-back">
-              <Link to="/app">&lt; Back to scan</Link>
+              <Link to="/app">&lt; Back to mail</Link>
             </p>
             <ul styleName="profile-nav">
               <li>
@@ -83,7 +83,7 @@ export default ({ pageName, children }) => {
                   <span>Activity history</span>
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/app/profile/history/notifications"
                   styleName="profile-nav-link"
@@ -92,7 +92,7 @@ export default ({ pageName, children }) => {
                   <BellIcon width="16" height="16" />
                   <span>Notifications</span>
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
                   to="/app/profile/ignore"

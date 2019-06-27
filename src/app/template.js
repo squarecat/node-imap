@@ -20,15 +20,17 @@ function App({ children }) {
   const loaded = !!user;
 
   return (
-    <Auth loaded={loaded}>
+    <>
       <Header loaded={loaded} />
-      <ErrorBoundary>
-        <div styleName="app-content">{loaded ? children : null}</div>
-      </ErrorBoundary>
-      {/* {showReferrerModal ? (
+      <Auth loaded={loaded}>
+        <ErrorBoundary>
+          <div styleName="app-content">{loaded ? children : null}</div>
+        </ErrorBoundary>
+        {/* {showReferrerModal ? (
 <ReferralModal onClose={() => toggleReferrerModal(false)} />
 ) : null}
 */}
-    </Auth>
+      </Auth>
+    </>
   );
 }

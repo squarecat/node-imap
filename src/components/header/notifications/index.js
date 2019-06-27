@@ -1,6 +1,12 @@
 import './notifications.module.scss';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState
+} from 'react';
 
 import { BellIcon } from '../../../components/icons';
 import { Link } from 'gatsby';
@@ -9,14 +15,27 @@ import { parseActivity } from '../../../utils/activities';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
+const notificationReducer = (state = [], action) => {
+  if (action.type === 'add') {
+    const { data } = action;
+    const updated = [
+      ...state.filter(n => !data.find(d => d.id === n.id)),
+      ...data
+    ];
+    return [...state, ...updated];
+  }
+  if (action.type === 'reset' && state.length) {
+    return [];
+  }
+  return state;
+};
 const Notifications = () => {
   const [showSettings, setShowSettings] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, dispatch] = useReducer(notificationReducer, []);
 
   const [{ token, id }] = useUser(u => ({
     id: u.id,
-    token: u.token,
-    unreadNotifications: u.unreadNotifications
+    token: u.token
   }));
   const { isConnected, socket, emit, error } = useSocket({
     token,
@@ -30,36 +49,25 @@ const Notifications = () => {
         try {
           console.log('notifications', data);
           // remove jank
-          requestAnimationFrame(() => onNotifications(data));
+          requestAnimationFrame(() => {
+            dispatch({ type: 'set', data });
+          });
         } catch (err) {
           console.error(err);
         }
       }
       if (isConnected) {
-        console.log('listen');
         socket.on('notifications', onNotification);
         emit('notifications:fetch-unread');
       }
 
       return () => {
         if (socket) {
-          console.log('stop listen');
           socket.off('notifications', onNotification);
         }
       };
     },
-    [isConnected, error, socket, onNotifications, emit]
-  );
-
-  const onNotifications = useCallback(
-    data => {
-      const updated = [
-        ...notifications.filter(n => !data.find(d => d.id === n.id)),
-        ...data
-      ];
-      setNotifications(updated);
-    },
-    [notifications]
+    [isConnected, error, socket, emit]
   );
 
   const onDropdownOpen = () => {
@@ -72,7 +80,7 @@ const Notifications = () => {
       if (notifications.length) {
         socket.emit('notifications:set-read');
       }
-      setNotifications([]);
+      dispatch({ type: 'reset' });
     },
     [notifications.length, socket]
   );

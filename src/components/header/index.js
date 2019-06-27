@@ -12,14 +12,25 @@ import useUser from '../../utils/hooks/use-user';
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 const Header = React.memo(({ loaded }) => {
-  const [organisationId] = useUser(({ organisationId }) => organisationId);
+  const [{ organisationId, isUserLoaded }] = useUser(u => ({
+    organisationId: u.organisationId,
+    isUserLoaded: u.loaded
+  }));
 
-  const CreditsContent = useMemo(
+  const content = useMemo(
     () => {
-      if (organisationId) return null;
-      return <Credits />;
+      if (!isUserLoaded) {
+        return null;
+      }
+      return (
+        <>
+          <Reminder />
+          {organisationId ? <Credits /> : null}
+          <SettingsDropdown />
+        </>
+      );
     },
-    [organisationId]
+    [isUserLoaded, organisationId]
   );
 
   return (
@@ -28,14 +39,11 @@ const Header = React.memo(({ loaded }) => {
         <img alt="Leave Me Alone logo" src={logoUrl} />
         <span styleName="header-title">Leave Me Alone</span>
       </Link>
-      <div styleName="header-actions">
-        <Reminder />
-        {CreditsContent}
-        <NotificationsDropdown />
-        <SettingsDropdown />
-      </div>
+      <div styleName="header-actions">{content}</div>
     </div>
   );
 });
+
+Header.whyDidYouRender = true;
 
 export default Header;

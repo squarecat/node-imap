@@ -1,6 +1,6 @@
 import './credits.module.scss';
 
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 import CreditModal from '../../modal/credits';
 import { ModalContext } from '../../../providers/modal-provider';
@@ -23,26 +23,34 @@ const Credits = () => {
     userId: id
   });
 
+  const update = useCallback(
+    async amount => {
+      try {
+        console.log('update-credits', amount);
+        // remove jank
+        requestAnimationFrame(() => {
+          incrementUserCredits(amount);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [incrementUserCredits]
+  );
+
   useEffect(
     () => {
       if (isConnected) {
-        socket.on('update-credits', async amount => {
-          try {
-            console.log('update-credits', amount);
-            // const newAmount = credits + amount;
-            // remove jank
-            requestAnimationFrame(() => {
-              // setCredits(newAmount);
-              incrementUserCredits(amount);
-            });
-          } catch (err) {
-            console.error(err);
-          }
-        });
+        socket.on('update-credits', update);
         emit('fetch-credits');
       }
+      return () => {
+        if (socket) {
+          socket.off('update-credits', update);
+        }
+      };
     },
-    [isConnected, emit, credits, incrementUserCredits, socket]
+    [isConnected, emit, credits, incrementUserCredits, socket, update]
   );
 
   const onClick = useCallback(

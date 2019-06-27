@@ -180,12 +180,12 @@ export async function updateUserWithAccount(
     logger.debug('user-dao: updating user with account');
     let updatedKeys;
     if (keys.refreshToken) {
-      logger.debug('user-dao: updating refresh token');
+      logger.debug('user-dao: updating user refresh token');
       updatedKeys = {
         'accounts.$.keys': encryptKeys(keys)
       };
     } else {
-      logger.debug('user-dao: not updating refresh token');
+      logger.debug('user-dao: not updating user refresh token');
       updatedKeys = {
         'accounts.$.keys.accessToken': encrypt(keys.accessToken),
         'accounts.$.keys.expiresIn': keys.expiresIn,
@@ -205,12 +205,10 @@ export async function updateUserWithAccount(
         }
       }
     );
-    const user = await getUser(id);
-    console.log(user);
-    debugger;
+    const user = await getUser(userId);
     return user;
   } catch (err) {
-    logger.error(`users-dao: error updating user ${id}`);
+    logger.error(`users-dao: error updating user ${userId}`);
     logger.error(err);
     throw err;
   }

@@ -134,6 +134,7 @@ export default Auth;
 
 async function checkBrowserSupported(db) {
   let unsupported = [];
+  console.log('checking browser suppot');
   try {
     await db.prefs.put({ key: 'browser-supported', value: true });
   } catch (err) {

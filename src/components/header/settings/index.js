@@ -91,14 +91,14 @@ export default () => {
             Billing
           </Link>
         </li>
-        <li styleName="setting-item">
+        {/* <li styleName="setting-item">
           <Link
             styleName="setting-item-link"
             to="/app/profile/history/notifications"
           >
             Notifications
           </Link>
-        </li>
+        </li> */}
         {organisationId ? (
           <li styleName="setting-item">
             <Link styleName="setting-item-link" to="/app/profile/organisation">
