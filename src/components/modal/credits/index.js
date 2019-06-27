@@ -32,7 +32,10 @@ async function setTweeted() {
 
 export default ({ credits }) => {
   const { actions: alertActions } = useContext(AlertContext);
-  const [unsubCount] = useUser(u => u.unsubCount);
+  const [{ unsubCount, loginProvider }] = useUser(u => ({
+    unsubCount: u.unsubCount,
+    loginProvider: u.loginProvider
+  }));
   const { loading, value } = useAsync(getRewards);
   const { loading: referralsLoading, value: referralValue } = useAsync(
     getReferrals
@@ -208,7 +211,7 @@ export default ({ credits }) => {
         </div>
         {referralsLoading ? null : getReferralList(referralValue)}
         <ModalSubHeader>Other ways to Earn Credit</ModalSubHeader>
-        {loading ? null : getRewardList(rewards, socialContent)}
+        {loading ? null : getRewardList(rewards, socialContent, loginProvider)}
       </ModalBody>
     </div>
   );
@@ -273,13 +276,14 @@ const referralLabels = {
   }
 };
 function getReferralList({ referredBy, referrals }) {
+  const referralsCredits = referrals.reduce((out, r) => out + r.reward, 0);
+
   return (
     <ul styleName="earn-credit earn-credit-referrals">
       {referredBy ? (
-        <li key={referredBy.email}>
+        <li>
           <div styleName="earn-description">
-            <span styleName="earn-email">{referredBy.email}</span>
-            <span styleName="earn-description-text">referred you</span>
+            <span>Signed up from a referral</span>
           </div>
           <div styleName="earn-status">
             <span styleName="earn-amount">{`${
@@ -289,25 +293,30 @@ function getReferralList({ referredBy, referrals }) {
           </div>
         </li>
       ) : null}
-      {referrals.map(({ email, reward }) => (
-        <li key={email}>
+      {referrals.length ? (
+        <li>
           <div styleName="earn-description">
-            <span>{email}</span>
-            <span styleName="earn-description-text">was referred by you</span>
+            <span>Referred {referrals.length} people</span>
           </div>
           <div styleName="earn-status">
-            <span styleName="earn-amount">{`${reward} credits`}</span>
+            <span styleName="earn-amount">{`${referralsCredits} credits`}</span>
             <span styleName="earn-checkbox" data-checked="true" />
           </div>
         </li>
-      ))}
+      ) : null}
     </ul>
   );
 }
 
-function getRewardList(rewards = [], socialContent) {
+function getRewardList(rewards = [], socialContent, loginProvider) {
   const rewardItems = rewards
-    .filter(r => rewardLabels[r.name])
+    .filter(r => {
+      const hasReward = rewardLabels[r.name];
+      if (r.name === 'addedTwoFactorAuth') {
+        return loginProvider === 'password' && hasReward;
+      }
+      return hasReward;
+    })
     .map(r => {
       return {
         ...rewardLabels[r.name],
