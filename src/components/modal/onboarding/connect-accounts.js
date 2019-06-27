@@ -3,10 +3,12 @@ import React, { useMemo, useState } from 'react';
 import AccountProviderButtons from '../../connect-account/providers';
 import ConnectedAccountList from '../../connect-account/list';
 import { FormNotification } from '../../form';
+import { TextImportant } from '../../text';
+import _capitalize from 'lodash.capitalize';
 import { fetchLoggedInUser } from '../../../utils/auth';
 import { getConnectError } from '../../../utils/errors';
-import useUser from '../../../utils/hooks/use-user';
 import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 export default ({ onboarding = false }) => {
   const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(
@@ -109,8 +111,19 @@ function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
         </p>
       )}
 
-      <p>So far you have connected these accounts;</p>
+      {loginProvider === 'password' ? null : (
+        <p>
+          You logged in with{' '}
+          <TextImportant>
+            {loginProvider === 'outlook'
+              ? 'Microsoft'
+              : _capitalize(loginProvider)}
+          </TextImportant>
+          , so this account is already connected.
+        </p>
+      )}
       <ConnectedAccountList
+        showPrimary={false}
         accounts={accounts}
         primaryEmail={primaryEmail}
         loginProvider={loginProvider}

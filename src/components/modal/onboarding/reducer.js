@@ -19,7 +19,7 @@ const steps = [
     value: 'accounts',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 10 }}>I'm done</span>
+        <span style={{ marginRight: 10 }}>Next</span>
         <ArrowIcon direction="right" />
       </span>
     )

@@ -105,9 +105,11 @@ function Content({ step, accounts, isBeta }) {
           <>
             <ModalHeader>Connect account</ModalHeader>
             <ConnectAccounts accounts={accounts} onboarding />
-            <p style={{ marginTop: '2em' }}>
-              If you have more accounts then you can connect them later.
-            </p>
+            {accounts.length ? (
+              <p style={{ marginTop: '2em' }}>
+                If you have more accounts then you can connect them later.
+              </p>
+            ) : null}
           </>
         );
       }
@@ -116,8 +118,11 @@ function Content({ step, accounts, isBeta }) {
           <>
             <ModalHeader>Credits</ModalHeader>
             <p>
-              Each time you unsubscribe from a mailing list it will{' '}
-              <TextImportant>cost 1 credit</TextImportant>.
+              <TextImportant>1 credit = 1 unsubscribe.</TextImportant>
+            </p>
+            <p>
+              Each time you unsubscribe from a mailing list it will cost 1
+              credit.
             </p>
             {isBeta ? (
               <p>
@@ -127,8 +132,8 @@ function Content({ step, accounts, isBeta }) {
               </p>
             ) : (
               <p>
-                Here are <TextImportant>10 free credits</TextImportant> on us to
-                get you started!
+                Here are <TextImportant>10 free credits</TextImportant> to get
+                you started!
               </p>
             )}
 
@@ -141,15 +146,15 @@ function Content({ step, accounts, isBeta }) {
       if (step === 'finish') {
         return (
           <>
-            <ModalHeader>Start unsubscribing!</ModalHeader>
+            <ModalHeader>Let's start unsubscribing!</ModalHeader>
             <p>
-              From here on we'll show you all the mail you are subscribed to,
-              just hit the slider to unsubscribe, or the heart to keep.
+              You will see all the mail you are subscribed to, just hit the
+              toggle to unsubscribe!
             </p>
             <div styleName="animations">
               <img src={unsubscribeGif} alt="tutorial animation" />
-              <img src={heartGif} alt="tutorial animation" />
             </div>
+            {/* <img src={heartGif} alt="tutorial animation" /> */}
           </>
         );
       }

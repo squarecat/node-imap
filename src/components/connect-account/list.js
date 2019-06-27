@@ -11,7 +11,8 @@ const ConnectList = ({
   primaryEmail = '',
   loginProvider = 'password',
   accounts = [],
-  onClickRemove
+  onClickRemove,
+  showPrimary = true
 }) => {
   const [removingAccounts, setRemovingAccounts] = useState({});
 
@@ -35,6 +36,7 @@ const ConnectList = ({
           isPrimary={
             loginProvider !== 'password' && primaryEmail === account.email
           }
+          showPrimary={showPrimary}
           loading={removingAccounts[account.email]}
           onClickRemoveAccount={onClickRemoveAccount}
         />
@@ -43,7 +45,13 @@ const ConnectList = ({
   );
 };
 
-function Account({ account, isPrimary, loading, onClickRemoveAccount }) {
+function Account({
+  account,
+  isPrimary,
+  showPrimary,
+  loading,
+  onClickRemoveAccount
+}) {
   const { email, provider, id } = account;
 
   return (
@@ -65,7 +73,7 @@ function Account({ account, isPrimary, loading, onClickRemoveAccount }) {
           <li className={classes}>
             {getIcon(provider)}
             <span>
-              {email} {isPrimary ? '(primary)' : ''}
+              {email} {showPrimary && isPrimary ? '(primary)' : ''}
             </span>
             {isPrimary ? null : (
               <Button

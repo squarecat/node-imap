@@ -2,6 +2,7 @@ import './accounts.module.scss';
 
 import React, { useContext } from 'react';
 
+import { AlertContext } from '../../../../providers/alert-provider';
 import ConnectButton from '../../../../components/connect-account/btn';
 import ConnectedAccountList from '../../../../components/connect-account/list';
 import { ExternalIcon } from '../../../../components/icons';
@@ -9,7 +10,6 @@ import { ModalContext } from '../../../../providers/modal-provider';
 import ProfileLayout from '../../../../app/profile/layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
-import { AlertContext } from '../../../../providers/alert-provider';
 import { fetchLoggedInUser } from '../../../../utils/auth';
 import { getConnectError } from '../../../../utils/errors';
 import request from '../../../../utils/request';
@@ -157,7 +157,7 @@ function modalContent({ email, provider }) {
       {provider === 'outlook' ? (
         <p>
           While we will remove this account and any data associated with it, you
-          need to revoke Leave Me Alone Outlook App permissions manually by
+          need to revoke Leave Me Alone Microsoft App permissions manually by
           visiting your{' '}
           <a
             href={revokeUrlForOutlook}
@@ -165,7 +165,7 @@ function modalContent({ email, provider }) {
             rel="noopener noreferrer"
             className="revoke-link"
           >
-            <span>Outlook Account Settings</span>
+            <span>Microsoft Account Settings</span>
             <ExternalIcon padleft width={14} height={14} />
           </a>
         </p>
