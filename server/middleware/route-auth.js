@@ -46,6 +46,11 @@ function isUserAuthenticated(req) {
 }
 
 export function adminOnly(req, res, next) {
+  if (!isUserAuthenticated) {
+    return res.status(403).send({
+      message: 'Not authorized'
+    });
+  }
   const { user } = req;
   const { email } = user;
   const isAdmin = adminUsers.includes(email);

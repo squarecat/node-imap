@@ -77,6 +77,9 @@ function hashEmail(email) {
   const conn = await db.connect();
   const col = await conn.collection('users');
   const cur = await col.find({ _version: { $ne: '2.0' } });
+  const count = await cur.countDocuments();
+  console.log(`migrating ${count} users...`);
+  let currentCount = 1;
   cur.forEach(async user => {
     // double check this hasn't been updated yet
     // due to mongo replacing objects in the cursor
@@ -84,7 +87,15 @@ function hashEmail(email) {
     if (user.version === '2.0') {
       return;
     }
+    console.log(`${currentCount}/${count}`);
     const newUser = migrateUser(user);
-    await col.replaceOne({ id: user.id }, newUser);
+    try {
+      await col.replaceOne({ id: user.id }, newUser);
+    } catch (err) {
+      console.log(`failed on user ${user.id}`);
+      console.error(err);
+    } finally {
+      currentCount = currentCount + 1;
+    }
   });
 })();

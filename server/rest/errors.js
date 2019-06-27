@@ -7,6 +7,7 @@ const Sentry = require('@sentry/node');
 
 export default app => {
   app.get('/api/errors/:ids', adminOnly, (req, res, next) => {
+    console.log(JSON.stringify(savedErrors, null, 2));
     try {
       const { ids } = req.params;
       if (ids === 'all') {
