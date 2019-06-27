@@ -97,21 +97,17 @@
   }
 }
 
-.nav-how,
-.nav-pricing,
-.nav-about,
-.nav-login {
+.nav-extra {
   @media (max-width: 500px) {
     display: none;
   }
 }
 
-.nav-more {
+.learn-more-extras {
   display: none;
-  margin: 0 10px 0 0;
 
   @media (max-width: 500px) {
-    display: flex;
+    display: block;
   }
 }
 
