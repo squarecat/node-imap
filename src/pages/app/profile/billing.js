@@ -1,7 +1,13 @@
 import './billing.module.scss';
 
 import { ENTERPRISE, PACKAGES, getPackage } from '../../../../shared/prices';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 import { TextFootnote, TextImportant } from '../../../components/text';
 
@@ -295,10 +301,6 @@ function BillingDetails() {
       ) : (
         <>
           <p>No payment method stored.</p>
-          <p>
-            You will have to enter your card details each time you purchase a
-            package.
-          </p>
         </>
       )}
     </div>
@@ -307,63 +309,80 @@ function BillingDetails() {
 
 function BillingHistory() {
   const { value, loading, error } = useAsync(fetchBillingHistory);
-  const history = loading || error ? {} : value;
-  const { payments = [], has_more = false } = history;
 
-  if (loading) return <span>Loading...</span>;
-  return (
-    <div styleName="billing-section history">
-      <div styleName="content">
-        <h2>History</h2>
-        <p>
-          Showing <TextImportant>{payments.length}</TextImportant> previous
-          payments.
-        </p>
-      </div>
-      <ErrorBoundary>
-        <Table>
-          <tbody>
-            {payments.map(invoice => {
-              return (
-                <TableRow key={invoice.date}>
-                  <TableCell>{getDate(invoice)}</TableCell>
-                  <TableCell>{invoice.description}</TableCell>
-                  <TableCell>
-                    <>
-                      {getPrice(invoice)} {getStatus(invoice)}
-                    </>
-                  </TableCell>
-                  {/* <TableCell>{}</TableCell> */}
-                  <TableCell>
-                    {invoice.invoice_pdf ? (
-                      <a
-                        styleName="invoice-btn"
-                        href={invoice.invoice_pdf}
-                        target="_"
-                      >
-                        Download
-                      </a>
-                    ) : null}
-                    {invoice.receipt_url ? (
-                      <a
-                        styleName="invoice-btn"
-                        href={invoice.receipt_url}
-                        target="_"
-                      >
-                        Receipt
-                      </a>
-                    ) : null}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </tbody>
-        </Table>
-      </ErrorBoundary>
+  const content = useMemo(
+    () => {
+      const history = loading || error ? {} : value;
+      const { payments = [], has_more = false } = history;
+      let text;
+      if (loading) {
+        text = <span>Loading...</span>;
+      } else if (!payments.length) {
+        text = <p>No payments yet.</p>;
+      } else {
+        text = (
+          <p>
+            Showing <TextImportant>{payments.length}</TextImportant> previous
+            payments.
+          </p>
+        );
+      }
 
-      {has_more ? <p>For older invoices please contact support.</p> : null}
-    </div>
+      return (
+        <>
+          <div styleName="content">
+            <h2>Payment history</h2>
+            {text}
+          </div>
+          <ErrorBoundary>
+            <Table>
+              <tbody>
+                {payments.map(invoice => {
+                  return (
+                    <TableRow key={invoice.date}>
+                      <TableCell>{getDate(invoice)}</TableCell>
+                      <TableCell>{invoice.description}</TableCell>
+                      <TableCell>
+                        <>
+                          {getPrice(invoice)} {getStatus(invoice)}
+                        </>
+                      </TableCell>
+                      {/* <TableCell>{}</TableCell> */}
+                      <TableCell>
+                        {invoice.invoice_pdf ? (
+                          <a
+                            styleName="invoice-btn"
+                            href={invoice.invoice_pdf}
+                            target="_"
+                          >
+                            Download
+                          </a>
+                        ) : null}
+                        {invoice.receipt_url ? (
+                          <a
+                            styleName="invoice-btn"
+                            href={invoice.receipt_url}
+                            target="_"
+                          >
+                            Receipt
+                          </a>
+                        ) : null}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </ErrorBoundary>
+
+          {has_more ? <p>For older invoices please contact support.</p> : null}
+        </>
+      );
+    },
+    [error, loading, value]
   );
+
+  return <div styleName="billing-section history">{content}</div>;
 }
 
 async function fetchBillingHistory() {

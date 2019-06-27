@@ -31,7 +31,7 @@ const Header = React.memo(({ loaded }) => {
       <div styleName="header-actions">
         <Reminder />
         {CreditsContent}
-        <NotificationsDropdown />
+        {/* <NotificationsDropdown /> */}
         <SettingsDropdown />
       </div>
     </div>
