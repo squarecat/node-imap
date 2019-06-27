@@ -22,7 +22,6 @@ const Header = React.memo(({ loaded }) => {
     [organisationId]
   );
 
-  console.log('render header');
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app" styleName="header-logo">

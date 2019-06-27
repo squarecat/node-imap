@@ -344,7 +344,10 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
         }, checking if this account can join`
       );
       const organisation = await getOrganisationById(user.organisationId);
-      const { allowed, reason } = canUserJoinOrganisation(email, organisation);
+      const { allowed, reason } = canUserJoinOrganisation(
+        accountEmail,
+        organisation
+      );
       if (!allowed) {
         logger.debug(
           `user-service: user cannot connect this account to this organisation ${
@@ -359,7 +362,7 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
       await addUserAccountToOrganisation({
         user,
         organisation,
-        account: { id: accountId, email }
+        account: { id: accountId, email: accountEmail }
       });
     }
 
@@ -368,7 +371,7 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     const account = {
       id: accountId,
       provider,
-      email,
+      email: accountEmail,
       keys
     };
     const updatedUser = await addAccount(userId, account);
