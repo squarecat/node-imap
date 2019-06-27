@@ -205,7 +205,7 @@ export default () => {
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
           power our Subscriber Score algorithm. You can read more about this and
-          how we manage all our data <Link to="/data-management">here</Link>.
+          how we manage all our data <Link to="/security">here</Link>.
         </p>
 
         <br />
@@ -218,8 +218,7 @@ export default () => {
         <h2>Want to know more?</h2>
         <p>
           Check out <TextLink href="/learn">how it works</TextLink>, read about
-          our <TextLink href="/data-management">data management</TextLink>, and
-          find out more{' '}
+          our <TextLink href="/security">security</TextLink>, and find out more{' '}
           <TextLink href="/about">about us and our mission</TextLink>.
         </p>
       </div>
