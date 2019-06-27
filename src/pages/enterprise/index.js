@@ -1,24 +1,117 @@
 import './enterprise.module.scss';
 
+import { TextImportant, TextLink } from '../../components/text';
+
+import { Arrow as ArrowIcon } from '../../components/icons';
 import { Enterprise } from '../pricing';
 import EnterpriseEstimator from '../../components/estimator/enterprise';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
-import { TextImportant } from '../../components/text';
+import allSubscriptions from '../../assets/all-subscriptions.png';
+import broom from '../../assets/enterprise/broom.png';
+import envelope from '../../assets/open-envelope-love.png';
 import googleLogo from '../../assets/gsuite-logo.png';
+import happy from '../../assets/enterprise/happy.png';
 import luke from '../../assets/luke.jpeg';
 import officeLogo from '../../assets/office-365-logo.png';
 
 const EnterprisePage = () => {
   return (
     <SubPageLayout
-      title="Enterprise Pricing"
+      title="Leave Me Alone for Enterprises"
       description="Boost productivity and get an office that is completely free of unwanted spam and subscription emails with our enterprise plan."
     >
-      <div styleName="enterprise-page">
-        <div styleName="enterprise-description">
-          <h1>Enterprise Pricing</h1>
+      <div styleName="container intro-header">
+        <div styleName="container-text">
+          <h1>Productive Teams Use Leave Me Alone</h1>
+          <p>
+            The most efficient businesses work without interruption. Take back
+            control of your office from unwanted spam email.
+          </p>
+
+          <a href="mailto:hello@leavemealone.app" className={`beam-me-up-cta`}>
+            Contact Us
+          </a>
+        </div>
+        <div styleName="container-image">
+          <img src={allSubscriptions} alt="all unsubscriptions" />
+        </div>
+      </div>
+
+      <div styleName="features">
+        <div styleName="feature">
+          <div styleName="feature-img">
+            <img src={happy} alt="happy face image" />
+          </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">Inbox sanity for happy teams</h3>
+            <p>
+              Recieving unwanted subscription emails is a source of annoyance,
+              frustration and interruption. Leave Me Alone makes it quick and
+              easy to unsubscribe so that your team can focus on building your
+              business.
+            </p>
+          </div>
+        </div>
+        <div styleName="feature">
+          <div styleName="feature-img">
+            <img src={broom} alt="broom sweeping image" />
+          </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">Clean all email addresses</h3>
+            <p>
+              Email is neccessary for company communication. Each team member
+              can connect all of their email accounts and see all of their
+              subscription emails in one go. Email will become a productive tool
+              again.
+            </p>
+          </div>
+        </div>
+        <div styleName="feature">
+          <div styleName="feature-img">
+            <img src={envelope} alt="private envelope image" />
+          </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">Stay focused and productive</h3>
+            <p>
+              When you unsubscribe we don't just move your mail into a folder or
+              to trash, instead we actually unsubscribe you from the list. Your
+              company will be clear of subscriptions forever, even if you decide
+              to stop using our service.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* <div styleName="container security">
+        <div styleName="container-text">
+          <h2>Security</h2>
+          <ul>
+            <li>We never store any emails on our servers.</li>
+            <li>All sensitive information is encrypted.</li>
+            <li>
+              Our servers are secured using industry standard methods and all
+              requests are sent using HTTPS.
+            </li>
+            <li>
+              We support two-factor authentication for username and password
+              accounts.
+            </li>
+          </ul>
+          <TextLink inverted href="/security">
+            Learn more about security and data management{' '}
+            <ArrowIcon width="16" height="16" />
+          </TextLink>
+        </div>
+        <div styleName="container-image">
+          <img src={allSubscriptions} alt="all unsubscriptions" />
+        </div>
+      </div> */}
+
+      <div styleName="enterprise-pricing">
+        <div styleName="pricing-description">
+          <h2>Pricing</h2>
           <p>
             Did you know that on average your office spends{' '}
             <TextImportant>28 percent</TextImportant> of the work week on email?
@@ -43,7 +136,7 @@ const EnterprisePage = () => {
             We support any Google or Microsoft email accounts, including those
             with custom domains on G Suite and Office 365.
           </p>
-          <div styleName="enterprise-logos">
+          <div styleName="provider-logos">
             <img src={officeLogo} />
             <img styleName="gsuite" src={googleLogo} />
           </div>
@@ -62,16 +155,24 @@ const EnterprisePage = () => {
         <Enterprise />
       </div>
       <div styleName="savings">
-        <EnterpriseEstimator title="How much time can I save?" />
+        <EnterpriseEstimator title="How much time can we save?" />
       </div>
 
-      <a
-        href="mailto:hello@leavemealone.app"
-        className={`beam-me-up-cta beam-me-up-cta-center`}
-      >
-        Contact Us
-      </a>
+      <div styleName="cta">
+        <a href="mailto:hello@leavemealone.app" className={`beam-me-up-cta`}>
+          Contact Us
+        </a>
+      </div>
 
+      {/* <div styleName="more">
+        <h2>Want to know more?</h2>
+        <p>
+          Check out <TextLink href="/learn">how it works</TextLink>, read about
+          our <TextLink href="/dsecurity-management">data management</TextLink>, and
+          find out more{' '}
+          <TextLink href="/about">about us and our mission</TextLink>.
+        </p>
+      </div> */}
       <div styleName="sources">
         <ul>
           <li id="cite-1">

@@ -82,7 +82,7 @@ export async function createUserFromPassword(data) {
   }
 }
 
-export async function createUser(data, provider) {
+export async function createUser(data, account) {
   try {
     const col = await db().collection(COL_NAME);
     await col.insertOne({
@@ -90,12 +90,8 @@ export async function createUser(data, provider) {
       ...getUserDefaults({ email: data.email }),
       accounts: [
         {
-          ...provider,
-          keys: {
-            ...provider.keys,
-            refreshToken: encrypt(provider.keys.refreshToken),
-            accessToken: encrypt(provider.keys.accessToken)
-          }
+          ...account,
+          keys: encryptKeys(account.keys)
         }
       ]
     });
@@ -174,17 +170,23 @@ export async function updateUser(id, userData) {
   }
 }
 
-export async function updateUserWithAccount({ id, email }, userData, keys) {
+export async function updateUserWithAccount(
+  { userId, accountEmail },
+  accountData,
+  keys
+) {
   try {
     const col = await db().collection(COL_NAME);
+    logger.debug('user-dao: updating user with account');
     let updatedKeys;
     if (keys.refreshToken) {
+      logger.debug('user-dao: updating refresh token');
       updatedKeys = {
         'accounts.$.keys': encryptKeys(keys)
       };
     } else {
+      logger.debug('user-dao: not updating refresh token');
       updatedKeys = {
-        ...updatedKeys,
         'accounts.$.keys.accessToken': encrypt(keys.accessToken),
         'accounts.$.keys.expiresIn': keys.expiresIn,
         'accounts.$.keys.expires': keys.expires
@@ -192,18 +194,20 @@ export async function updateUserWithAccount({ id, email }, userData, keys) {
     }
     await col.updateOne(
       {
-        id,
-        'accounts.email': email
+        id: userId,
+        'accounts.email': accountEmail
       },
       {
         $set: {
           ...updatedKeys,
-          ...userData,
+          ...accountData,
           lastUpdatedAt: isoDate()
         }
       }
     );
     const user = await getUser(id);
+    console.log(user);
+    debugger;
     return user;
   } catch (err) {
     logger.error(`users-dao: error updating user ${id}`);

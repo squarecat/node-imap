@@ -1,8 +1,63 @@
 @import '../../components/btn/btn.module.scss';
 
-.enterprise-page {
+.container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column-gap: 70px;
+}
+
+.container-text {
+}
+
+.container-image {
+  display: flex;
+  align-items: center;
+}
+
+.intro-header {
+  .container-image {
+    text-align: right;
+  }
+  h1 {
+    font-size: 35px;
+    max-width: 380px;
+  }
+}
+
+.features {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-column-gap: 30px;
+}
+
+.feature {
+  p {
+    font-size: 14px;
+  }
+}
+
+.feature-title {
+  font-size: 20px;
+}
+
+.feature-img {
+  max-width: 150px;
+}
+
+.feature-text {
+}
+
+.security {
+  margin-top: 80px;
+  background-color: $color-dark-background;
+  color: white;
+}
+
+.enterprise-pricing {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-column-gap: 30px;
   grid-row-gap: 10px;
 
@@ -11,7 +66,7 @@
   }
 }
 
-.enterprise-description {
+.pricing-description {
   width: 100%;
   max-width: 500px;
 }
@@ -21,7 +76,7 @@
   @extend .centered;
 }
 
-.enterprise-logos {
+.provider-logos {
   margin: 30px 0;
 
   img {
@@ -38,6 +93,17 @@
 
 .savings {
   margin-top: 80px;
+}
+
+.cta {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.more {
+  margin-top: 100px;
+  padding-top: 100px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .sources {

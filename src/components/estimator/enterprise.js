@@ -1,6 +1,6 @@
 import './estimator.module.scss';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { addMinutes, distanceInWordsStrict } from 'date-fns';
 
 import RangeInput from '../../components/form/range';

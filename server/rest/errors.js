@@ -33,9 +33,10 @@ export default app => {
           if (i === 0) {
             out = [...out, `${new Date(err.timestamp).toString()}`];
           }
+          const stack = err.stack ? err.stack.trim() : err;
           return [
             ...out,
-            `[${err.level ? err.level : 'system'}] ${err.stack.trim()}`
+            `[${err.level ? err.level : 'system'}] ${stack}`
           ].join('\n');
         })
         .join(`\n\n`)}

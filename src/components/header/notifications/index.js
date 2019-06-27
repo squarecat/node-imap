@@ -166,5 +166,4 @@ const Notifications = () => {
   );
 };
 
-Notifications.whyDidYouRender = true;
 export default Notifications;

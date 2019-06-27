@@ -4,9 +4,9 @@ import Dropdown, {
   DropdownItem,
   DropdownList
 } from '../../../components/dropdown';
-import React, { useState } from 'react';
 
 import { Link } from 'gatsby';
+import React from 'react';
 import cx from 'classnames';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;

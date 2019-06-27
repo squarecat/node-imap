@@ -122,6 +122,8 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
       refreshToken,
       async (err, accessToken) => {
         if (err) {
+          logger.error('google-auth: error requesting new access token');
+          logger.error(err);
           return reject(
             new AuthError('failed to fetch new Google access token', {
               cause: err

@@ -193,7 +193,7 @@ $ie-bottom-track-color: darken($track-color, $contrast) !default;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1em;
+  // margin-bottom: 1em;
 }
 .label + input {
   flex: 1;
