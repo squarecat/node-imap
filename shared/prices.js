@@ -24,6 +24,10 @@ module.exports.getPackage = function(id) {
   return module.exports.PACKAGES.find(p => p.id === id);
 };
 
+module.exports.getRecommendation = function(num) {
+  return module.exports.PACKAGES.find(p => num <= p.credits);
+};
+
 module.exports.ENTERPRISE = {
   pricePerSeat: 600
 };
