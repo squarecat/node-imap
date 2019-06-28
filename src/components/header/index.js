@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 
 import Credits from './credits';
 import { Link } from 'gatsby';
-import NotificationsDropdown from './notifications';
 import Reminder from './reminder';
 import SettingsDropdown from './settings';
 import useUser from '../../utils/hooks/use-user';
@@ -12,8 +11,8 @@ import useUser from '../../utils/hooks/use-user';
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 const Header = React.memo(({ loaded }) => {
-  const [{ organisationId, isUserLoaded }] = useUser(u => ({
-    organisationId: u.organisationId,
+  const [{ hasOrganisation, isUserLoaded }] = useUser(u => ({
+    hasOrganisation: !!u.organisationId,
     isUserLoaded: u.loaded
   }));
 
@@ -25,12 +24,12 @@ const Header = React.memo(({ loaded }) => {
       return (
         <>
           <Reminder />
-          {organisationId ? <Credits /> : null}
+          {hasOrganisation ? null : <Credits />}
           <SettingsDropdown />
         </>
       );
     },
-    [isUserLoaded, organisationId]
+    [isUserLoaded, hasOrganisation]
   );
 
   return (

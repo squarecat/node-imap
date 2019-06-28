@@ -841,7 +841,7 @@ export async function updateUserUnsubStatus(
 ) {
   try {
     addUnsubStatusToStats(status);
-    await updateUnsubStatus(userId, { mailId, status, message, data });
+    await updateUnsubStatus(userId, { mailId, status, message, ...data });
     if (status === 'rejected' || status === 'failed') {
       incrementUserCredits(userId, 1);
     }
