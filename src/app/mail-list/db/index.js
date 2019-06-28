@@ -56,7 +56,6 @@ export function useMailSync() {
             await db.mail.bulkPut(mailData);
             const count = await db.mail.count();
             await db.prefs.put({ key: 'totalMail', value: count });
-            console.debug('[db]: fetching mail scores');
             const senders = mailData.map(md => md.fromEmail);
             emit('fetch-scores', { senders });
           } catch (err) {
@@ -216,8 +215,7 @@ export function useMailSync() {
         const pref = await db.prefs.get('lastFetchParams');
 
         let fetchParams = {
-          accounts: [],
-          timestamp: Date.now()
+          accounts: []
         };
 
         if (pref) {
