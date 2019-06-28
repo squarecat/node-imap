@@ -3,12 +3,19 @@ import {
   updateUserUnsubStatus
 } from '../../services/user';
 
+import config from 'getconfig';
+import crypto from 'crypto';
 import logger from '../../utils/logger';
+
+const signingKey = config.mailgun.apiKey;
 
 export default app => {
   app.post('/webhooks/mailgun/unsubs', async (req, res) => {
     try {
       const { body } = req;
+      if (!verify(body)) {
+        throw new Error('mailgun: webhook failed to verify');
+      }
       const eventData = body['event-data'];
       const { event: eventType } = eventData;
       const variables = eventData['user-variables'];
@@ -89,6 +96,9 @@ export default app => {
     const { sender, recipient, subject, ['body-plain']: bodyPlain } = body;
 
     try {
+      if (!verify(body)) {
+        throw new Error('mailgun: webhook failed to verify');
+      }
       // get the user and mail that this is in reference to
       const [, userId, mailId] = recipient.match(/^(.+)\.(.+)-bot@.*$/);
       updateUserUnsubStatus(userId, {
@@ -107,6 +117,9 @@ export default app => {
   app.post('/webhooks/mailgun/newsletter', async (req, res) => {
     try {
       const { body } = req;
+      if (!verify(body)) {
+        throw new Error('mailgun: webhook failed to verify');
+      }
       const eventData = body['event-data'];
       const { event: eventType } = eventData;
       switch (eventType) {
@@ -166,3 +179,12 @@ export default app => {
     }
   });
 };
+
+function verify({ signature: mailSig }) {
+  const { token, timestamp, signature } = mailSig;
+  const digest = crypto
+    .createHmac('sha256', signingKey)
+    .update(`${token}${timestamp}`)
+    .digest('hex');
+  return digest === signature;
+}
