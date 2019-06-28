@@ -14,11 +14,12 @@ export async function checkUserReminders() {
     if (!users.length) return true;
 
     await Promise.all(
-      users.map(async ({ email, reminder }) => {
+      users.map(async ({ email, name, reminder }) => {
         logger.info(`reminders-dao: sending mail to ${email}`);
         const coupon = await generateCoupon(reminder.timeframe);
         sendReminderMail({
           toAddress: email,
+          toName: name,
           reminderPeriod: getTimeframeText(reminder.timeframe, email),
           coupon
         });

@@ -52,7 +52,7 @@ const FaqPage = () => (
         </p>
         <p>
           If the sender didn't provide a link then we send an email on your
-          behalf using the a unique address which identifies your subscription.
+          behalf using a unique address which identifies your subscription.
         </p>
         <p>
           If the provider{' '}

@@ -172,7 +172,7 @@ const IndexPage = () => {
               </div>
             </div>
 
-            <div className="image-section image-left">
+            <div className="image-section image-left privacy">
               <div className="image-section-img">
                 <img src={envelope} alt="private envelope image" />
               </div>

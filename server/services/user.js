@@ -4,7 +4,6 @@ import {
   addActivity,
   addPackage,
   addPaidScan,
-  addReferral,
   addReminder,
   addScan,
   addTotpSecret,
@@ -41,7 +40,6 @@ import {
   addCreditsRewardedToStats,
   addNewsletterUnsubscriptionToStats,
   addReferralPurchaseToStats,
-  addReferralSignupToStats,
   addReminderRequestToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
@@ -63,6 +61,7 @@ import { getMilestone, updateMilestoneCompletions } from './milestones';
 
 import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
+import { addReferralToBothUsers } from './referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../utils/stripe';
 import { listPaymentsForUser } from './payments';
@@ -70,7 +69,6 @@ import logger from '../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
 import { sendForgotPasswordMail } from '../utils/emails/forgot-password';
-import { sendReferralInviteMail } from '../utils/emails/transactional';
 import { sendToUser } from '../rest/socket';
 // import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
@@ -148,7 +146,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           }, adding...`
         );
       }
-      const referredBy = await getReferrerData(referralCode);
+      const referredBy = await getReferredByData(referralCode);
       const account = {
         id,
         provider,
@@ -169,7 +167,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         account
       );
       if (referredBy) {
-        addReferralActivity({ user, referralUser: referredBy });
+        await addReferralToBothUsers({ user, referredBy });
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
@@ -402,7 +400,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     if (!id) {
       // new user account, check if they should be added to an org
       organisation = await getOrganisationForUserEmail(inviteCode, email);
-      const referredBy = await getReferrerData(referralCode);
+      const referredBy = await getReferredByData(referralCode);
       user = await createUserFromPassword({
         name: displayName,
         email,
@@ -414,7 +412,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         accounts: []
       });
       if (referredBy) {
-        await addReferralActivity({ user, referralUser: referredBy });
+        await addReferralToBothUsers({ user, referredBy });
       }
       addUserToStats();
       addUpdateNewsletterSubscriber(email);
@@ -465,7 +463,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
   }
 }
 
-async function getReferrerData(referralCode) {
+async function getReferredByData(referralCode) {
   if (!referralCode) return null;
   const referrer = await getUserByReferralCode(referralCode);
   const { credits } = await getMilestone('signedUpFromReferral');
@@ -513,48 +511,6 @@ async function getOrganisationForUserEmail(inviteCode, email) {
     `user-service: got organisation, user is not allowed - ${reason}`
   );
   return null;
-}
-
-async function addReferralActivity({ user, referralUser }) {
-  try {
-    logger.debug(
-      `user-service: adding referral activity. referee: ${user.id}, referrer: ${
-        referralUser.id
-      }`
-    );
-    // record that this user signed from a referral link and the details of the user they signed up from
-    addActivityForUser(user.id, 'signedUpFromReferral', {
-      id: referralUser.id,
-      email: referralUser.email
-    });
-
-    // record this user signing up on the user who referred them
-    const referrerActivity = await addActivityForUser(
-      referralUser.id, // update the referrer
-      'referralSignUp',
-      {
-        id: user.id,
-        email: user.email
-      }
-    );
-
-    // add this referral data to the referrer user account array
-    addReferral(referralUser.id, {
-      id: user.id,
-      email: user.email,
-      reward: referrerActivity.rewardCredits
-    });
-
-    // add the data to the user
-    addReferralSignupToStats();
-  } catch (err) {
-    logger.error(
-      `user-service: error adding referral activity for user ${
-        user.id
-      }, referral user ${referralUser.id}`
-    );
-    throw err;
-  }
 }
 
 function addConnectAccountActivity(updatedUser, account) {
@@ -712,15 +668,6 @@ export async function addUserReminder(id, timeframe) {
 
 export function removeUserReminder(id) {
   return removeReminder(id);
-}
-
-export async function getReferralStats(id) {
-  try {
-    const { referralCode, referrals, referredBy } = await getUserById(id);
-    return { referralCode, referrals, referredBy };
-  } catch (err) {
-    throw err;
-  }
 }
 
 export async function creditUserAccount(id, { amount }) {
@@ -1198,21 +1145,6 @@ export function updateUserAutoBuy(id, autoBuy) {
   return updateUser(id, {
     'billing.autoBuy': autoBuy
   });
-}
-
-export async function inviteReferralUser(userId, email) {
-  try {
-    const user = await getUserById(userId);
-    const milestone = await getMilestone('referralSignUp');
-    sendReferralInviteMail({
-      toAddress: email,
-      referrer: user.email,
-      referralCode: user.referralCode,
-      reward: milestone.credits
-    });
-  } catch (err) {
-    throw err;
-  }
 }
 
 export async function handleUserForgotPassword({ hashedEmail }) {

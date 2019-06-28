@@ -1,17 +1,17 @@
 import './reminder-modal.module.scss';
 
+import { FormGroup, FormLabel, FormSelect } from '../../../components/form';
 import { ModalBody, ModalCloseIcon, ModalHeader } from '..';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import Button from '../../btn';
 import { ClockIcon } from '../../icons';
-import { TextImportant } from '../../text';
-import { FormSelect, FormGroup, FormLabel } from '../../../components/form';
-import format from 'date-fns/format';
-import useUser from '../../../utils/hooks/use-user';
-import { ModalContext } from '../../../providers/modal-provider';
 import { DatabaseContext } from '../../../providers/db-provider';
+import { ModalContext } from '../../../providers/modal-provider';
+import { TextImportant } from '../../text';
+import format from 'date-fns/format';
 import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 const reminderDateFormat = 'Do MMMM YYYY';
 
@@ -104,6 +104,10 @@ export default () => {
             onClick={() => onSetReminder('remove')}
           >
             Clear reminder
+          </Button>
+
+          <Button basic compact outlined onClick={() => closeModal()}>
+            Okay
           </Button>
         </div>
       </div>

@@ -37,16 +37,6 @@
 //   });
 // }
 
-// export function sendReminderMail({ toAddress, reminderPeriod, coupon }) {
-//   logger.info('email-utils: sending reminder mail');
-//   return sendTransactionalMail({
-//     ...reminderMailOptions,
-//     subject: `Reminder 🕐 - it's been ${reminderPeriod} since your last scan`,
-//     to: toAddress,
-//     text: `You asked us to remind you to use Leave Me Alone again.\n\nIt's been ${reminderPeriod} since your last scan.\n\nKeep your inbox clean by scanning again now. Use the coupon ${coupon} for 10% off your next purchase.\n\nJames & Danielle\n\nLeave Me Alone`
-//   });
-// }
-
 // export function sendReferralLinkUsedMail({
 //   toAddress,
 //   referralCount,

@@ -44,7 +44,7 @@ export default function Estimator({
                 </p>
                 {recommendedPackage.discount ? (
                   <p>
-                    You'll get a ${recommendedPackage.discount * 100}% bulk
+                    You'll get a {recommendedPackage.discount * 100}% bulk
                     discount!
                   </p>
                 ) : null}

@@ -58,7 +58,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
   const checkDb = useCallback(
     async () => {
       const prevId = await db.prefs.get('userId');
-      if (prevId && prevId.value !== id) {
+      if (!prevId || prevId.value !== id) {
         await db.clear();
         db.prefs.put({ key: 'userId', value: id });
       }

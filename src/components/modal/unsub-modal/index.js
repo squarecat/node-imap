@@ -104,12 +104,10 @@ function slide1(
     timeout = true;
   } else if (error) {
     lead = (
-      <>
-        <p>
-          We couldn't tell if we successfully unsubscribed, here's the response
-          we got:
-        </p>
-      </>
+      <p>
+        We couldn't tell if we successfully unsubscribed, here's the response we
+        got:
+      </p>
     );
   } else {
     lead = (
@@ -130,7 +128,7 @@ function slide1(
             {title}
             <ModalCloseIcon />
           </ModalHeader>
-          <p>{lead}</p>
+          {lead}
         </ModalBody>
         <ModalFooter>
           <Button compact basic onClick={onClickNegative}>

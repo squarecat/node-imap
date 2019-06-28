@@ -68,13 +68,17 @@
 
 .dropdown-item {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 
   a {
     color: $color-red;
-    padding: 6px 10px 6px 35px;
+    padding: 10px;
     display: block;
+  }
+
+  @media (max-width: 700px) {
+    font-size: 14px;
   }
 
   &:hover {
