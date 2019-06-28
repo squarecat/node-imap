@@ -1,52 +1,97 @@
-// import { addReferral, updateReferral } from '../dao/user';
-// import { addReferralCreditToStats, addReferralPaidScanToStats } from './stats';
-// import { creditUserAccount, getUserById } from './user';
-// import {
-//   sendReferralLinkUsedMail,
-//   sendReferralRewardMail
-// } from '../utils/emails/transactional';
+import { addActivityForUser, getUserById } from './user';
+import {
+  sendReferralInviteMail,
+  sendReferralSignUpMail
+} from '../utils/emails/transactional';
 
-// import config from 'getconfig';
+import { addReferral } from '../dao/user';
+import { addReferralSignupToStats } from './stats';
+import config from 'getconfig';
+import { getMilestone } from './milestones';
+import logger from '../utils/logger';
 
-// export function addReferralToReferrer(id, { userId, price, scanType }) {
-//   return addReferral(id, { userId, price, scanType });
-// }
+export async function inviteReferralUser(userId, email) {
+  try {
+    const user = await getUserById(userId);
+    const milestone = await getMilestone('referralSignUp');
+    sendReferralInviteMail({
+      toAddress: email,
+      referrerName: user.name,
+      referralCode: user.referralCode,
+      reward: milestone.credits
+    });
+  } catch (err) {
+    throw err;
+  }
+}
 
-// export async function updateReferralOnReferrer(
-//   id,
-//   { userId, price, scanType }
-// ) {
-//   const { referrals, email, referralCode } = await getUserById(id);
-//   const { referrals: newReferrals } = await updateReferral(id, {
-//     userId,
-//     price,
-//     scanType
-//   });
-//   const prevPaidReferrals = referrals.filter(r => r.price > 0);
-//   const paidReferrals = newReferrals.filter(r => r.price > 0);
+export async function getReferralStats(id) {
+  try {
+    const { referralCode, referrals, referredBy } = await getUserById(id);
+    return { referralCode, referrals, referredBy };
+  } catch (err) {
+    throw err;
+  }
+}
 
-//   const hasNewReferrals = prevPaidReferrals.length !== paidReferrals.length;
-//   if (!hasNewReferrals) {
-//     return paidReferrals;
-//   }
-//   addReferralPaidScanToStats();
-//   // new paid referral has been recorded, so do some things!
-//   if (paidReferrals.length % 3 === 0) {
-//     // credit account with 5 bucks
-//     await creditUserAccount(id, 500);
-//     addReferralCreditToStats({ amount: 5 });
-//     sendReferralRewardMail({
-//       toAddress: email,
-//       rewardCount: paidReferrals.length / 3,
-//       referralUrl: `${config.urls.referral}${referralCode}`
-//     });
-//   } else if (paidReferrals.length < 3) {
-//     // we only send these if user has <3 referrals so we
-//     // dont send too much spam if they are a big referrer
-//     sendReferralLinkUsedMail({
-//       toAddress: email,
-//       referralUrl: `${config.urls.referral}${referralCode}`,
-//       referralCount: paidReferrals.length
-//     });
-//   }
-// }
+export async function addReferralToBothUsers({ user, referredBy }) {
+  try {
+    logger.debug(
+      `referral-service: adding referral activity. referee: ${
+        user.id
+      }, referrer: ${referredBy.id}`
+    );
+    // record that this user signed from a referral link and the details of the user they signed up from
+    addActivityForUser(user.id, 'signedUpFromReferral', {
+      id: referredBy.id,
+      email: referredBy.email
+    });
+
+    logger.debug(`referral-service: adding activity for referredBy`);
+    // record this user signing up on the user who referred them
+    const referrerActivity = await addActivityForUser(
+      referredBy.id, // update the referrer
+      'referralSignUp',
+      {
+        id: user.id,
+        email: user.email
+      }
+    );
+
+    logger.debug(
+      `referral-service: added ${referrerActivity.rewardCredits} credits`
+    );
+
+    // add this referral data to the referrer user account array
+    const updatedReferredBy = await addReferral(referredBy.id, {
+      id: user.id,
+      email: user.email,
+      // this can be 0 if this same user has signed up with this referral link before
+      reward: referrerActivity.rewardCredits
+    });
+
+    addReferralSignupToStats();
+
+    // email for the first 3 referrals
+    const { referrals } = updatedReferredBy;
+    if (referrerActivity.rewardCredits && referrals.length <= 3) {
+      logger.debug(
+        `referral-service: valid referral and less than 3 total, sending mail...`
+      );
+      sendReferralSignUpMail({
+        toAddress: updatedReferredBy.email,
+        toName: updatedReferredBy.name,
+        referralUrl: `${config.urls.referral}${updatedReferredBy.referralCode}`,
+        refereeName: user.name,
+        reward: referrerActivity.rewardCredits
+      });
+    }
+  } catch (err) {
+    logger.error(
+      `referral-service: error adding referral activity for user ${
+        user.id
+      }, referral user ${referredBy.id}`
+    );
+    throw err;
+  }
+}

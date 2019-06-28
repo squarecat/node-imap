@@ -450,7 +450,7 @@ export async function addReferral(id, { id: userId, email, reward }) {
         `users-dao: user ${id} tried to redeem own referral code`
       );
     }
-    return col.updateOne(
+    await col.updateOne(
       { id },
       {
         $push: {
@@ -462,6 +462,7 @@ export async function addReferral(id, { id: userId, email, reward }) {
         }
       }
     );
+    return getUser(id);
   } catch (err) {
     logger.error(`users-dao: failed to add referral to ${id}`);
     logger.error(err);

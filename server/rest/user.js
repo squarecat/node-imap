@@ -4,14 +4,12 @@ import {
   authenticationRequiresTwoFactor,
   createUserTotpToken,
   deactivateUserAccount,
-  getReferralStats,
   getUserActivity,
   getUserById,
   getUserLoginProvider,
   getUserNotifications,
   getUserPayments,
   handleUserForgotPassword,
-  inviteReferralUser,
   removeFromUserIgnoreList,
   removeUserAccount,
   removeUserBillingCard,
@@ -23,11 +21,11 @@ import {
   updateUserPassword,
   updateUserPreferences
 } from '../services/user';
+import { getReferralStats, inviteReferralUser } from '../services/referral';
 
 import Joi from 'joi';
 import QRCode from 'qrcode';
 import { RestError } from '../utils/errors';
-import _sortBy from 'lodash.sortby';
 import auth from '../middleware/route-auth';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
