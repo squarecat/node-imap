@@ -35,8 +35,8 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
     />,
     <script
       key="support-start"
-      // type="text/x-metomic"
-      // data-micropolicy="live-chat"
+      type="text/x-metomic"
+      data-micropolicy="live-chat"
       dangerouslySetInnerHTML={{
         __html: Terser.minify(`window.intergramId = "-388078727";
         window.intergramServer = "https://support.squarecat.io"
@@ -62,8 +62,8 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
     />,
     <script
       id="intergram"
-      // type="text/x-metomic"
-      // data-micropolicy="live-chat"
+      type="text/x-metomic"
+      data-micropolicy="live-chat"
       key="intergram"
       src="https://support.squarecat.io/js/widget.js"
     />
