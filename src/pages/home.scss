@@ -683,7 +683,7 @@ a.more-info:visited {
   }
 }
 
-.example-from-name,
+// .example-from-name,
 .example-toggle {
   display: flex;
   align-items: center;
@@ -726,7 +726,7 @@ a.more-info:visited {
   display: block;
 }
 
-.example-from-name,
+.example-from-name-container,
 .example-from-email {
   white-space: nowrap;
   text-overflow: ellipsis;
