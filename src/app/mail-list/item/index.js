@@ -191,16 +191,24 @@ function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
       </svg>
     );
   }
+
+  let status;
+  if (mail.isLoading) {
+    status = null;
+  } else if (!isSubscribed) {
+    status = (
+      <a styleName="status" onClick={() => setUnsubModal(mail)}>
+        See details
+      </a>
+    );
+  } else {
+    status = <span styleName="status subscribed">Subscribed</span>;
+  }
+
   return (
     <>
       {content}
-      {!isSubscribed ? (
-        <a styleName="status" onClick={() => setUnsubModal(mail)}>
-          See details
-        </a>
-      ) : (
-        <span styleName="status subscribed">Subscribed</span>
-      )}
+      {status}
     </>
   );
 }
