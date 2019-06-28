@@ -1,0 +1,1 @@
+BROWSER_DEBUG=true node ./tests/unsubscriber.js "https://cursedcrypt.us20.list-manage.com/unsubscribe?u=d66f80f7431dfef3bda29b2ee&id=7c7cf70e71&e=d8a8859e0a&c=0a3c73c2ed"

@@ -146,8 +146,8 @@ function Content({ step, accounts, isBeta }) {
           <>
             <ModalHeader>Let's start unsubscribing!</ModalHeader>
             <p>
-              You will see all the mail you are subscribed to, just hit the
-              toggle to unsubscribe!
+              On the next screen you will see all the mail you are subscribed
+              to, just hit the toggle to unsubscribe!
             </p>
             <div styleName="animations">
               <img src={unsubscribeGif} alt="tutorial animation" />

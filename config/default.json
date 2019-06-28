@@ -56,9 +56,10 @@
     }
   },
   "puppeteer": {
-    "dumpio": true,
+    "dumpio": false,
     "devtools": false,
-    "headeless": false
+    "headless": true,
+    "env": {}
   },
   "payments": {
     "publishableKey": "$STRIPE_PK",

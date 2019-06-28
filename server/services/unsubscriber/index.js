@@ -47,29 +47,41 @@ export const unsubscribeFromMail = async (userId, mail) => {
   let output;
   let hasImage = false;
   try {
+    const mailData = {
+      mail,
+      unsubscribeStrategy: unsubStrategy,
+      unsubscribeLink,
+      unsubscribeMailTo
+    };
     if (unsubscribeLink) {
       unsubStrategy = 'link';
       output = await unsubscribeByLink(unsubscribeLink);
       hasImage = !!output.image;
+      if (hasImage) {
+        saveImageToDisk(userId, mail.id, output.image);
+      }
+      addUnsubscriptionToUser(userId, {
+        ...mailData,
+        hasImage,
+        estimatedSuccess: output.estimatedSuccess
+      });
     } else {
       unsubStrategy = 'mailto';
+      // in case the email response comes back faster
+      // than we can save to the db, do the db save first
+      // and then do the mailto unsubscribe
+      await addUnsubscriptionToUser(userId, {
+        ...mailData,
+        hasImage,
+        estimatedSuccess: true
+      });
       output = await unsubscribeByMailTo({
         mailId: mail.id,
         userId,
         unsubMailto: unsubscribeMailTo
       });
     }
-    if (hasImage) {
-      saveImageToDisk(userId, mail.id, output.image);
-    }
-    addUnsubscriptionToUser(userId, {
-      mail,
-      unsubscribeStrategy: unsubStrategy,
-      unsubscribeLink,
-      unsubscribeMailTo,
-      hasImage,
-      estimatedSuccess: output.estimatedSuccess
-    });
+
     if (output.estimatedSuccess) {
       logger.debug(
         `unsubscriber-service: success, adding ${unsubStrategy} unsubscription to stats`

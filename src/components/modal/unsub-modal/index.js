@@ -115,7 +115,7 @@ function slide1(
         We unsubscribed you via
         {unsubStrategy === 'link'
           ? ` URL link here's the response we got;`
-          : `sending an unsubscribe email.`}
+          : ` sending an unsubscribe email.`}
       </p>
     );
   }

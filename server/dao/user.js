@@ -586,7 +586,7 @@ export async function removeUser(id) {
 
 export async function updateUnsubStatus(
   id,
-  { mailId, status, message = '' } = {}
+  { mailId, status, message = '', ...data } = {}
 ) {
   try {
     const col = await db().collection(COL_NAME);
@@ -595,7 +595,8 @@ export async function updateUnsubStatus(
       {
         $set: {
           'unsubscriptions.$.status': status,
-          'unsubscriptions.$.message': message
+          'unsubscriptions.$.message': message,
+          'unsubscriptions.$.data': data
         }
       }
     );
