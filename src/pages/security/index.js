@@ -89,7 +89,7 @@ export default function SecurityPage() {
               choose to unsubscribe.
             </p>
             <p>
-              As it is anoymous, it is not possible for this data to be
+              As it is anonymous, it is not possible for this data to be
               associated with a Leave Me Alone account or email address.
             </p>
           </div>
