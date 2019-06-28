@@ -125,13 +125,22 @@ export function useMailSync() {
           console.debug(`[db]: successfully unsubscribed from ${id}`);
           try {
             const { estimatedSuccess, unsubStrategy, hasImage } = data;
-            await db.mail.update(id, {
+            let update = {
+              estimatedSuccess,
+              unsubStrategy,
+              hasImage,
               isLoading: false,
-              estimatedSuccess: estimatedSuccess,
-              unsubStrategy: unsubStrategy,
-              hasImage: hasImage,
               status: 'unsubscribed'
-            });
+            };
+            if (unsubStrategy === 'mailto') {
+              const { emailStatus, emailData } = data;
+              update = {
+                ...update,
+                emailStatus,
+                emailData
+              };
+            }
+            await db.mail.update(id, update);
             const mail = await db.mail.get(id);
             if (!estimatedSuccess) {
               actions.queueAlert({

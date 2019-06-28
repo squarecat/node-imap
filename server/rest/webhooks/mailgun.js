@@ -84,6 +84,26 @@ export default app => {
     }
   });
 
+  app.post('/webhooks/mailgun/message', async (req, res) => {
+    const { body } = req;
+    const { sender, recipient, subject, ['body-plain']: bodyPlain } = body;
+
+    try {
+      // get the user and mail that this is in reference to
+      const [, userId, mailId] = recipient.match(/^(.+)\.(.+)-bot@.*$/);
+      updateUserUnsubStatus(userId, {
+        mailId,
+        status: 'replied',
+        sender,
+        subject,
+        bodyPlain
+      });
+    } catch (err) {
+      logger.error('mailgun-webhook: failed to parse message reply');
+      logger.error(err);
+      res.sendStatus(500);
+    }
+  });
   app.post('/webhooks/mailgun/newsletter', async (req, res) => {
     try {
       const { body } = req;
