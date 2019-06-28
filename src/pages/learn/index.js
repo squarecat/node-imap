@@ -10,6 +10,7 @@ import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
 import React from 'react';
 import Testimonial from '../../components/landing/testimonial';
+import connectAccountsImg from '../../assets/accounts.png';
 import creditsImg from '../../assets/learn/credits.png';
 import { div } from '../../components/text';
 import frequencyImg from '../../assets/learn/frequency2.png';
@@ -97,10 +98,22 @@ export default function Learn() {
             />
           </div>
         </div>
+
         <div styleName="feature image-left">
           <div styleName="feature-img bordered">
-            <img src={creditsImg} alt="your credits balance modal" />
+            <img src={connectAccountsImg} alt="connected accounts image" />
           </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">Clean all of your inboxes at once</h3>
+            <p>
+              Connect all of your email accounts and scan them together. Clear
+              out all of your subscription emails from all of your email
+              addresses in one go.
+            </p>
+          </div>
+        </div>
+
+        <div styleName="feature">
           <div styleName="feature-text">
             <h3 styleName="feature-title">Credits</h3>
             <p>1 credit = 1 unsubscribe.</p>
@@ -110,10 +123,20 @@ export default function Learn() {
               reaching milestones and more!
             </p>
           </div>
+          <div styleName="feature-img bordered">
+            <img src={creditsImg} alt="your credits balance modal" />
+          </div>
         </div>
-        <div styleName="feature">
+
+        <div styleName="feature image-left">
+          <div styleName="feature-img bordered">
+            <img
+              src={searchbarImg}
+              alt="the mail list search bar with filtering and sorting options"
+            />
+          </div>
           <div styleName="feature-text">
-            <h3 styleName="feature-title">Mail list</h3>
+            <h3 styleName="feature-title">Customisable mail list</h3>
             <p>
               Filter and sort your mail by email address, date received, score,
               and more.
@@ -123,20 +146,9 @@ export default function Learn() {
               subscription emails will be ready to view.
             </p>
           </div>
-          <div styleName="feature-img bordered">
-            <img
-              src={searchbarImg}
-              alt="the mail list search bar with filtering and sorting options"
-            />
-          </div>
         </div>
-        <div styleName="feature image-left">
-          <div styleName="feature-img">
-            <img
-              src={subscriberScoreImg}
-              alt="subscriber score for a subscription email showing a rating of C"
-            />
-          </div>
+
+        <div styleName="feature">
           <div styleName="feature-text">
             <h3 styleName="feature-title">Subscriber Score</h3>
             <p>
@@ -149,16 +161,15 @@ export default function Learn() {
               unsubscribe!
             </p>
           </div>
-        </div>
-        <div styleName="feature">
-          <div styleName="feature-text">
-            <h3 styleName="feature-title">Keep your favourites</h3>
-            <p>Not all subscription email is spam!</p>
-            <p>
-              Add senders you want to keep to your favourites and prevent
-              accidental unsubscribes from the newsletters you actually read.
-            </p>
+          <div styleName="feature-img">
+            <img
+              src={subscriberScoreImg}
+              alt="subscriber score for a subscription email showing a rating of C"
+            />
           </div>
+        </div>
+
+        <div styleName="feature  image-left">
           <div styleName="feature-img">
             <div styleName="heart-gif">
               <img
@@ -167,14 +178,17 @@ export default function Learn() {
               />
             </div>
           </div>
-        </div>
-        <div styleName="feature image-left">
-          <div styleName="feature-img">
-            <img
-              src={frequencyImg}
-              alt="frequency tooltip showing 42 LinkedIn emails were received in the last 6 months"
-            />
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">Keep your favourites</h3>
+            <p>Not all subscription email is spam!</p>
+            <p>
+              Add senders you want to keep to your favourites and prevent
+              accidental unsubscribes from the newsletters you actually read.
+            </p>
           </div>
+        </div>
+
+        <div styleName="feature">
           <div styleName="feature-text">
             <h3 styleName="feature-title">Frequency of emails</h3>
             <p>
@@ -186,8 +200,21 @@ export default function Learn() {
               senders may surprise you with their frequency.
             </p>
           </div>
+          <div styleName="feature-img">
+            <img
+              src={frequencyImg}
+              alt="frequency tooltip showing 42 LinkedIn emails were received in the last 6 months"
+            />
+          </div>
         </div>
-        <div styleName="feature">
+
+        <div styleName="feature image-left">
+          <div styleName="feature-img bordered">
+            <img
+              src={spamLabelImg}
+              alt="a subscription email with a spam label"
+            />
+          </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">Scan all your folders</h3>
             <p>
@@ -199,20 +226,9 @@ export default function Learn() {
               folder.
             </p>
           </div>
-          <div styleName="feature-img bordered">
-            <img
-              src={spamLabelImg}
-              alt="a subscription email with a spam label"
-            />
-          </div>
         </div>
-        <div styleName="feature image-left">
-          <div styleName="feature-img">
-            <img
-              src={reminderImg}
-              alt="setting a reminder to scan again in 6 months"
-            />
-          </div>
+
+        <div styleName="feature">
           <div styleName="feature-text">
             <h3 styleName="feature-title">Set a reminder</h3>
             <p>
@@ -220,6 +236,12 @@ export default function Learn() {
               clean up emails from the future.
             </p>
             <p>Set a reminder to clean your inbox again whenever suits you!</p>
+          </div>
+          <div styleName="feature-img">
+            <img
+              src={reminderImg}
+              alt="setting a reminder to scan again in 6 months"
+            />
           </div>
         </div>
 

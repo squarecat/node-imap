@@ -46,7 +46,7 @@
   text-align: center;
   margin-left: auto;
 
-  border: 1px solid #fddbd7;
+  border: 1px solid $color-red-light;
   color: $color-primary-font;
   border-radius: 10px;
   padding: 30px 10px 30px 10px;
@@ -77,7 +77,7 @@
       color: rgba(231, 57, 48, 0.749);
       border-bottom-left-radius: 10px;
       border-bottom-right-radius: 10px;
-      border-top: 1px solid #fddbd7;
+      border-top: 1px solid $color-red-light;
     }
   }
 
@@ -131,7 +131,7 @@
 .pricing-features {
   flex: 1;
   margin: 0 20px;
-  // border-top: 1px solid #fddbd7;
+  // border-top: 1px solid $color-red-light;
   text-align: left;
   padding: 36px 20px;
   font-weight: bold;
@@ -197,7 +197,7 @@
 
 .pricing-separator {
   height: 1px;
-  background-color: #fddbd7;
+  background-color: $color-red-light;
   margin: 20px 25px;
   display: block;
 }

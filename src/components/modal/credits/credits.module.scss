@@ -96,7 +96,7 @@
   border-radius: 50%;
 }
 .earn-checkbox[data-checked='true'] {
-  background-color: #fddbd7;
+  background-color: $color-red-light;
   position: relative;
 
   &:after {

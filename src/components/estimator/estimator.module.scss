@@ -1,3 +1,165 @@
+.pricing-estimates {
+  padding: 20px 0 20px 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pricing-estimates {
+  margin: 6em auto;
+  text-align: left;
+  // padding: 0 1em;
+}
+
+.pricing-estimator {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pricing-estimate-text {
+  padding: 0 40px 0 0;
+  @media (max-width: 768px) {
+    padding: 0;
+  }
+}
+
+.pricing-estimate-values {
+  padding-top: 0rem;
+}
+
+.count {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.count-value {
+}
+
+.count-label {
+  display: flex;
+  flex-direction: column;
+  color: rgba(231, 57, 48, 0.749);
+  font-family: 'Gotham-Rounded-Medium', 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  text-align: right;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+}
+
+.count-number {
+  font-size: 40px;
+  width: 210px;
+  text-align: right;
+  color: rgba(231, 57, 48, 0.749);
+  line-height: 40px;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Gotham-Rounded-Medium', 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  @media (max-width: 980px) {
+    font-size: 30px;
+    width: 160px;
+  }
+  @media (max-width: 768px) {
+    font-size: 24px;
+    width: 126px;
+  }
+  @media (max-width: 400px) {
+    width: 100px;
+  }
+}
+
+.count-description {
+  flex: 1;
+  @media (max-width: 980px) {
+    font-size: 16px;
+  }
+  @media (max-width: 400px) {
+    font-size: 14px;
+  }
+}
+
+.count-icon {
+  max-width: 10%;
+  padding: 0 10px;
+  text-align: center;
+  margin: 0 20px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0px 6px;
+  }
+  @media (max-width: 400px) {
+    padding: 0px 2px;
+  }
+}
+
+.recommendation {
+  margin-top: 20px;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  p {
+    margin-bottom: 1em;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.recommendation-image {
+  width: 180px;
+  padding: 0 35px;
+}
+
+.recommendation-description {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.recommendation-package {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  align-items: center;
+  margin: 50px 0;
+
+  div {
+    margin-left: 20px;
+  }
+
+  p:first-child {
+    margin-bottom: 5px;
+  }
+}
+
 .cite-link {
   border-bottom: 0;
+}
+
+.slider {
+  margin-bottom: 1em;
+}
+
+.envelope-image {
+  border: 1px solid #8c6d9e;
+  border-radius: 2px;
+  margin-left: 2px;
 }

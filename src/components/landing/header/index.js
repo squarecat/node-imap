@@ -29,19 +29,16 @@ export default ({ setActive = () => {}, inverted = false }) => (
         <span styleName="landing-header-title">Leave Me Alone</span>
       </Link>
       <ul styleName="nav">
-        <li styleName="nav-link nav-how">
-          <Link to="/learn">How it works</Link>
-        </li>
-        <li styleName="nav-link nav-pricing">
+        <LearnMoreDropdown />
+        <li styleName="nav-link nav-extra">
           <Link to="/pricing">Pricing</Link>
         </li>
-        <li styleName="nav-link nav-about">
-          <Link to="/about">About</Link>
+        <li styleName="nav-link nav-extra">
+          <Link to="/enterprise">Enterprise</Link>
         </li>
-        <li styleName="nav-link nav-login">
+        <li styleName="nav-link nav-extra">
           <Link to="/login">Log in</Link>
         </li>
-        <MoreDropdown />
         <li styleName="nav-btn">
           <Link
             to="/signup"
@@ -57,12 +54,12 @@ export default ({ setActive = () => {}, inverted = false }) => (
   </div>
 );
 
-function MoreDropdown() {
+function LearnMoreDropdown() {
   return (
     <Dropdown
       toggleBtn={
-        <li styleName="nav-link nav-more">
-          <a>More</a>
+        <li styleName="nav-link">
+          <a>Learn More</a>
         </li>
       }
     >
@@ -71,14 +68,23 @@ function MoreDropdown() {
           <Link to="/learn">How it works</Link>
         </DropdownItem>
         <DropdownItem>
-          <Link to="/pricing">Pricing</Link>
+          <Link to="/security">Security</Link>
         </DropdownItem>
         <DropdownItem>
-          <Link to="/about">About</Link>
+          <Link to="/about">About us</Link>
         </DropdownItem>
-        <DropdownItem separated>
-          <Link to="/login">Log in</Link>
-        </DropdownItem>
+
+        <div styleName="learn-more-extras">
+          <DropdownItem>
+            <Link to="/pricing">Pricing</Link>
+          </DropdownItem>
+          <DropdownItem>
+            <Link to="/enterprise">Enterprise</Link>
+          </DropdownItem>
+          <DropdownItem separated>
+            <Link to="/login">Log in</Link>
+          </DropdownItem>
+        </div>
       </DropdownList>
     </Dropdown>
   );

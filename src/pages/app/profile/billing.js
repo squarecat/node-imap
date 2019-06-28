@@ -215,7 +215,7 @@ function Enterprise() {
       <div styleName="plans-list">
         <PlanImage smaller compact type="enterprise" />
         <div>
-          <h3 styleName="plan-title">Unlimited credits</h3>
+          <h3 styleName="plan-title">Unlimited unsubscribes</h3>
           {/* <span>${ENTERPRISE.pricePerSeat}/seat</span> */}
         </div>
         <span>

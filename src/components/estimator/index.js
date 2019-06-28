@@ -2,15 +2,17 @@ import './estimator.module.scss';
 
 import React, { useMemo, useState } from 'react';
 
+import PlanImage from '../../components/pricing/plan-image';
 import RangeInput from '../../components/form/range';
 import { TextImportant } from '../../components/text';
+import { getRecommendation } from '../../../shared/prices';
 import mailBoxImg from '../../assets/mailbox.png';
 import numeral from 'numeral';
-import packageImg from '../../assets/package.png';
 import smallLogo from '../../assets/envelope-logo.png';
 import spamMailImg from '../../assets/spam-email.png';
-import stampImg from '../../assets/stamp.png';
-import truckImg from '../../assets/truck.png';
+
+// import stampImg from '../../assets/stamp.png';
+// import truckImg from '../../assets/truck.png';
 
 export default function Estimator({
   title,
@@ -23,7 +25,55 @@ export default function Estimator({
   const spamPerMonth = mailPerMonth * 0.08;
   const unsubsPerMonth = spamPerMonth * 0.36;
 
-  const {
+  const recommendationContent = useMemo(
+    () => {
+      const recommendedPackage = getRecommendation(unsubsPerMonth);
+      if (recommendedPackage) {
+        return (
+          <>
+            <div styleName="recommendation-package">
+              <PlanImage type="package" compact />
+              <div>
+                <p>
+                  We recommend a package of{' '}
+                  <TextImportant>
+                    {recommendedPackage.credits} credits for $
+                    {(recommendedPackage.price / 100).toFixed(2)}
+                  </TextImportant>
+                  .
+                </p>
+                {recommendedPackage.discount ? (
+                  <p>
+                    You'll get a ${recommendedPackage.discount * 100}% bulk
+                    discount!
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <a href="/signup" className={`beam-me-up-cta`}>
+              Start Unsubscribing
+            </a>
+          </>
+        );
+      }
+      return (
+        <>
+          <div styleName="recommendation-package">
+            <PlanImage type="enterprise" compact />
+            Wow, that's a lot of emails! We recommend you contact us for a{' '}
+            <TextImportant>custom package</TextImportant> rate.
+          </div>
+          <a href="mailto:hello@leavemealone.app" className={`beam-me-up-cta`}>
+            Contact Us
+          </a>
+        </>
+      );
+    },
+    [unsubsPerMonth]
+  );
+
+  {
+    /* const {
     mailPerDayLabel,
     recommendationImage,
     recommendationContent
@@ -75,11 +125,13 @@ export default function Estimator({
       };
     },
     [mailPerDay, unsubsPerMonth]
-  );
+  ); */
+  }
+
   return (
-    <div className="pricing-estimates">
-      <div className="pricing-estimator">
-        <div className="pricing-estimate-text">
+    <div styleName="pricing-estimates">
+      <div styleName="pricing-estimator">
+        <div styleName="pricing-estimate-text">
           <h3>{title}</h3>
           {showTimeSaved ? (
             <>
@@ -102,68 +154,67 @@ export default function Estimator({
             </>
           )}
 
-          <RangeInput
-            min="10"
-            max="300"
-            value={mailPerDay}
-            step="10"
-            onChange={setMailPerDay}
-            label={mailPerDay}
-          />
+          <div styleName="slider">
+            <RangeInput
+              min="10"
+              max="300"
+              value={mailPerDay}
+              step="10"
+              onChange={setMailPerDay}
+              label={mailPerDay}
+            />
+          </div>
           {/* <div style={{ marginTop: 10 }}>{mailPerDayLabel}</div> */}
         </div>
-        <div className="pricing-estimate-values">
-          <div className="count">
-            <div className="count-value">
-              <div className="count-number">
+        <div styleName="pricing-estimate-values">
+          <div styleName="count">
+            <div styleName="count-value">
+              <div styleName="count-number">
                 {numeral(mailPerMonth).format('0,00')}
               </div>
-              <div className="count-label">emails</div>
+              <div styleName="count-label">emails</div>
             </div>
-            <div className="count-icon">
+            <div styleName="count-icon">
               <img src={mailBoxImg} />
             </div>
-            <div className="count-description">
+            <div styleName="count-description">
               You receive approximately this many emails per month
             </div>
           </div>
-          <div className="count">
-            <div className="count-value">
-              <div className="count-number">
+          <div styleName="count">
+            <div styleName="count-value">
+              <div styleName="count-number">
                 {numeral(spamPerMonth).format('0,00')}
               </div>
-              <div className="count-label">subscriptions</div>
+              <div styleName="count-label">subscriptions</div>
             </div>
-            <div className="count-icon">
+            <div styleName="count-icon">
               <img src={spamMailImg} />
             </div>
-            <div className="count-description">
+            <div styleName="count-description">
               Around <TextImportant>8-10%</TextImportant> of all mail we scan is
               a subscription email
             </div>
           </div>
-          <div className="count">
-            <div className="count-value">
-              <div className="count-number">
+          <div styleName="count">
+            <div styleName="count-value">
+              <div styleName="count-number">
                 {numeral(unsubsPerMonth).format('0,00')}
               </div>
-              <div className="count-label">unsubscribes</div>
+              <div styleName="count-label">unsubscribes</div>
             </div>
-            <div className="count-icon">
-              <img className="envelope-image" src={smallLogo} />
+            <div styleName="count-icon">
+              <img styleName="envelope-image" src={smallLogo} />
             </div>
-            <div className="count-description">
+            <div styleName="count-description">
               Users report around <TextImportant>36%</TextImportant> of the
               subscriptions we find are unwanted
             </div>
           </div>
         </div>
       </div>
-      <div className="recommendation">
-        {/* <div className="recommendation-image">
-          <img src={recommendationImage} />
-        </div> */}
-        <div className="recommendation-description">
+      <div styleName="recommendation">
+        <div styleName="recommendation-description">
           <p>
             We estimate you receive around{' '}
             <TextImportant>
@@ -196,18 +247,9 @@ export default function Estimator({
                 a year!
               </p>
             </>
-          ) : null}
-          {/* <p>
-            The average person needs a huge{' '}
-            <TextImportant>23 minutes</TextImportant> to get fully back on task
-            after an interruption from email, so these unwanted emails could be
-            costing your team an additional{' '}
-            <TextImportant>
-              {numeral((unsubsPerMonth * 32) / 60).format('0,00')} hours
-            </TextImportant>{' '}
-            each month in lost productivity!
-          </p> */}
-          {/* <p>{recommendationContent}</p> */}
+          ) : (
+            recommendationContent
+          )}
         </div>
       </div>
     </div>

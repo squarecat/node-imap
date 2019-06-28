@@ -1,8 +1,8 @@
 import './text.module.scss';
 
+import { Link } from 'gatsby';
 import React from 'react';
 import cx from 'classnames';
-import { Link } from 'gatsby';
 
 export const TextLink = ({
   children,
@@ -32,8 +32,11 @@ export const TextLink = ({
   );
 };
 
-export const TextImportant = ({ children }) => {
-  return <span styleName="important">{children}</span>;
+export const TextImportant = ({ children, inverted }) => {
+  const classes = cx('important', {
+    inverted
+  });
+  return <span styleName={classes}>{children}</span>;
 };
 
 export const TextBold = ({ children }) => {

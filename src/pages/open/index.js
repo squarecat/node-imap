@@ -604,7 +604,7 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Outlook accounts connected</span>
+                  <span styleName="label">Microsoft accounts connected</span>
                   <span styleName="value">
                     {format(stats.connectedAccountOutlook)}
                   </span>

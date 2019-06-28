@@ -72,7 +72,7 @@ import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
 import { sendForgotPasswordMail } from '../utils/emails/forgot-password';
 import { sendReferralInviteMail } from '../utils/emails/transactional';
 import { sendToUser } from '../rest/socket';
-import { sendVerifyEmailMail } from '../utils/emails/verify-email';
+// import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
 import { v4 } from 'node-uuid';

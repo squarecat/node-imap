@@ -36,9 +36,9 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
     addMinutes(now, minutesSavedPerYear)
   );
   return (
-    <div className="pricing-estimates">
-      <div className="pricing-estimator">
-        <div className="pricing-estimate-text">
+    <div styleName="pricing-estimates">
+      <div styleName="pricing-estimator">
+        <div styleName="pricing-estimate-text">
           <h3>{title}</h3>
 
           <p>
@@ -57,18 +57,18 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
           />
           {/* <div style={{ marginTop: 10 }}>{mailPerDayLabel}</div> */}
         </div>
-        <div className="pricing-estimate-values">
-          <div className="count">
-            <div className="count-value">
-              <div className="count-number">
+        <div styleName="pricing-estimate-values">
+          <div styleName="count">
+            <div styleName="count-value">
+              <div styleName="count-number">
                 {numeral(mailPerMonth).format('0,00')}
               </div>
-              <div className="count-label">emails</div>
+              <div styleName="count-label">emails</div>
             </div>
-            <div className="count-icon">
+            <div styleName="count-icon">
               <img src={mailBoxImg} />
             </div>
-            <div className="count-description">
+            <div styleName="count-description">
               <p style={{ margin: 0 }}>
                 Your offices receives approximately this many emails per month
                 <a styleName="cite-link" href="#cite-3">
@@ -77,43 +77,40 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
               </p>
             </div>
           </div>
-          <div className="count">
-            <div className="count-value">
-              <div className="count-number">
+          <div styleName="count">
+            <div styleName="count-value">
+              <div styleName="count-number">
                 {numeral(spamPerMonth).format('0,00')}
               </div>
-              <div className="count-label">subscriptions</div>
+              <div styleName="count-label">subscriptions</div>
             </div>
-            <div className="count-icon">
+            <div styleName="count-icon">
               <img src={spamMailImg} />
             </div>
-            <div className="count-description">
+            <div styleName="count-description">
               Around <TextImportant>8-10%</TextImportant> of all mail we scan is
               a subscription email
             </div>
           </div>
-          <div className="count">
-            <div className="count-value">
-              <div className="count-number">
+          <div styleName="count">
+            <div styleName="count-value">
+              <div styleName="count-number">
                 {numeral(unsubsPerMonth).format('0,00')}
               </div>
-              <div className="count-label">are unwanted</div>
+              <div styleName="count-label">are unwanted</div>
             </div>
-            <div className="count-icon">
-              <img className="envelope-image" src={smallLogo} />
+            <div styleName="count-icon">
+              <img styleName="envelope-image" src={smallLogo} />
             </div>
-            <div className="count-description">
+            <div styleName="count-description">
               Our users report around <TextImportant>36%</TextImportant> of the
               subscriptions we find are unwanted
             </div>
           </div>
         </div>
       </div>
-      <div className="recommendation">
-        {/* <div className="recommendation-image">
-          <img src={recommendationImage} />
-        </div> */}
-        <div className="recommendation-description">
+      <div styleName="recommendation">
+        <div styleName="recommendation-description">
           <p>
             We estimate your company receives around{' '}
             <TextImportant>

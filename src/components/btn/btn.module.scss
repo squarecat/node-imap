@@ -47,11 +47,16 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
   user-select: none;
   outline: none;
 
+  [data-icon='gift'] path {
+    transition: fill 200ms ease-in-out;
+  }
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 7px 1em $color-btn-border-focus;
     background-color: $color-red-darker;
     color: white;
+
     [data-icon='gift'] path {
       fill: #e9443c;
     }

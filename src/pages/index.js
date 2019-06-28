@@ -3,19 +3,21 @@ import './home.scss';
 
 import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
+import { TextImportant, TextLink } from '../components/text';
 import { useAsync, useWindowSize } from 'react-use';
 
+import { Arrow as ArrowIcon } from '../components/icons';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import { Link } from 'gatsby';
 import { Pricing } from './pricing';
-import { TextImportant } from '../components/text';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import WallOfLove from '../components/landing/wall-of-love';
 import _capitalize from 'lodash.capitalize';
 import allSubscriptions from '../assets/all-subscriptions.png';
+import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
 import request from '../utils/request';
@@ -118,62 +120,83 @@ const IndexPage = () => {
         </div>
 
         <div className="home-container">
-          <div className="learn-1 boxed home-container-inner" id="learn">
-            <div className="home-box text-box">
-              <h3>All of your subscription emails together</h3>
-              <p>
-                Too much noise in your inbox? We show you all the mailing lists
-                you're subscribed to and let you unsubscribe with one click.
-              </p>
-            </div>
-            <div className="home-box item-box">
-              <div className="image-box right">
+          <div className="home-container-inner" id="learn">
+            <div className="image-section image-right">
+              <div className="image-section-text">
+                <h3>All of your subscription emails together</h3>
+                <p>
+                  Too much noise in your inbox? We show you all the mailing
+                  lists you're subscribed to and let you unsubscribe with one
+                  click.
+                </p>
+              </div>
+              <div className="image-section-img bordered">
                 <img
                   src={allSubscriptions}
-                  className="all-unsubscriptions-img"
-                  alt="all unsubscriptions"
+                  alt="list of subscription emails image"
                 />
               </div>
             </div>
-          </div>
 
-          <div className="learn-2 boxed home-container-inner">
-            <div className="home-box item-box">
-              <div className="image-box left">
-                <img
-                  className="subscriber-score-img"
-                  src={subscriberScore}
-                  alt="subscriber score image"
-                />
+            <div className="image-section image-left">
+              <div className="image-section-img">
+                <img src={subscriberScore} alt="subscriber score image" />
+              </div>
+              <div className="image-section-text">
+                <h3>Quickly see the worst spammers</h3>
+                <p>
+                  We rank each of your subscriptions based on our unique
+                  Subscriber Score, so you can quickly tell if it's worth
+                  hanging on to.
+                </p>
+                <p>
+                  <TextLink href="/learn">
+                    <span>View all features of Leave Me Alone</span>{' '}
+                    <ArrowIcon />
+                  </TextLink>
+                </p>
               </div>
             </div>
-            <div className="home-box text-box">
-              <h3>Quickly see the worst spammers</h3>
-              <p>
-                We rank each of your subscriptions based on our unique
-                Subscriber Score, so you can quickly tell if it's worth hanging
-                on to.
-              </p>
+
+            <div className="image-section image-right">
+              <div className="image-section-text">
+                <h3>Clean all of your inboxes at once</h3>
+                <p>
+                  Connect all of your email accounts and scan them together.
+                  Clear out all of your subscription emails from all of your
+                  email addresses in one go.
+                </p>
+              </div>
+              <div className="image-section-img bordered">
+                <img src={connectAccounts} alt="connected accounts image" />
+              </div>
             </div>
-          </div>
-          <div className="learn-1 boxed home-container-inner">
-            <div className="home-box text-box">
-              <h3>Privacy first</h3>
-              <p>
-                We're committed to privacy. We don't store any email content so
-                you don't have to worry about us losing or selling your data.
-              </p>
-            </div>
-            <div className="home-box item-box">
-              <div className="image-box">
+
+            <div className="image-section image-left">
+              <div className="image-section-img">
                 <img src={envelope} alt="private envelope image" />
+              </div>
+              <div className="image-section-text">
+                <h3>Privacy first</h3>
+                <p>
+                  We're committed to privacy. We don't store any email content
+                  so you don't have to worry about us losing or selling your
+                  data.
+                </p>
+                <p>
+                  <TextLink href="/security">
+                    <span>Learn more about security and data management</span>{' '}
+                    <ArrowIcon />
+                  </TextLink>
+                </p>
               </div>
             </div>
           </div>
         </div>
+
         <div className="trash-pile" id="trash-pile">
           <div className="home-container">
-            <div className="home-box text-box text-box-centered">
+            <div className="text-box text-box-centered">
               <h3>Say goodbye to subscriptions forever</h3>
               <p>
                 When you hit the unsubscribe button we don't just move your mail
@@ -181,8 +204,8 @@ const IndexPage = () => {
                 from the list.
               </p>
               <p>
-                This means the subscriptions are gone{' '}
-                <TextImportant>forever</TextImportant>, even if you decide to
+                This means the subscriptions are {' '}
+                <TextImportant>gone forever</TextImportant>, even if you decide to
                 stop using our service.
               </p>
               <a
@@ -196,7 +219,7 @@ const IndexPage = () => {
         </div>
 
         <div className="learn-providers" ref={trashPileRef} id="providers">
-          <div className="home-box text-box text-box-centered">
+          <div className="text-box text-box-centered">
             <h3 className="providers-header">
               We support both Gmail and Outlook
             </h3>
@@ -244,7 +267,7 @@ const IndexPage = () => {
           </div>
         </div>
 
-        <div className="pricing home-container">
+        <div className="pricing home-container section-padded">
           <div className="home-container-inner" id="pricing">
             <h3>Let's talk money</h3>
             <p>
@@ -256,12 +279,11 @@ const IndexPage = () => {
           <Pricing />
         </div>
 
-        <div className="news home-container">
+        <div className="news home-container section-padded">
           <div className="home-container-inner" id="news">
             <h3>In the news</h3>
             <p>
-              Don't take our word for it, see what these nice people have been
-              saying about us.
+              Don't take our word for it, read what people are saying about us.
             </p>
             <div className="in-the-news">
               {news.map(({ quote, shortQuote, logoUrl, url }) => (
@@ -273,10 +295,12 @@ const IndexPage = () => {
                 </div>
               ))}
             </div>
-            <WallOfLove colLimit={1} />
           </div>
+        </div>
 
+        <div className="home-container">
           <div className="home-container-inner">
+            <WallOfLove colLimit={1} />
             <p>What are you waiting for?</p>
             <a
               href="/signup"
