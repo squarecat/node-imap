@@ -8,7 +8,7 @@ import EnterpriseEstimator from '../../components/estimator/enterprise';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
-import allSubscriptions from '../../assets/all-subscriptions.png';
+import allSubscriptions from '../../assets/mail-list-illustration.png';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
 import googleLogo from '../../assets/gsuite-logo.png';
