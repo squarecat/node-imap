@@ -255,7 +255,7 @@ a.more-info:visited {
 
 .image-section-img {
   img {
-    width: 400px;
+    max-width: 400px;
   }
 
   &.bordered img {
@@ -266,6 +266,12 @@ a.more-info:visited {
 
   @media (max-width: 768px) {
     margin: 50px auto 0;
+  }
+}
+
+.privacy{
+  img {
+    max-width: 300px;
   }
 }
 
