@@ -3,12 +3,10 @@ import OnboardingReducer, { initialState } from './reducer';
 import React, { useEffect, useMemo, useReducer } from 'react';
 
 import ConnectAccounts from './connect-accounts';
-import { Gift as GiftIcon } from '../../icons';
 import { TextImportant } from '../../text';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
-import heartGif from '../../../assets/heart.gif';
 import request from '../../../utils/request';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';

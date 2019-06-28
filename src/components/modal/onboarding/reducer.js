@@ -92,17 +92,20 @@ export function isFirstStep(state) {
 }
 
 function getNextStep(state) {
-  let nextStep = steps[steps.findIndex(d => d.value === state.step) + 1];
+  const currentStep = steps.findIndex(d => d.value === state.step);
+  let nextStep = steps[currentStep + 1];
 
   if (nextStep.value === 'rewards' && state.organisationMember) {
-    nextStep = steps[steps.findIndex(d => d.value === state.step) + 2];
+    nextStep = steps[currentStep + 2];
   }
   return nextStep;
 }
 function getPrevStep(state) {
-  let prevStep = steps[steps.findIndex(d => d.value === state.step) - 1];
+  const currentStep = steps.findIndex(d => d.value === state.step);
+  let prevStep = steps[currentStep - 1];
+
   if (prevStep.value === 'rewards' && state.organisationMember) {
-    prevStep = steps[steps.findIndex(d => d.value === state.step) - 2];
+    prevStep = steps[currentStep - 2];
   }
   return prevStep;
 }
