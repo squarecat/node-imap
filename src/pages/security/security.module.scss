@@ -39,11 +39,8 @@
   }
 }
 
-.image-section-text,
-.image-section-img {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.image-section-text {
+  text-align: left;
 
   p:last-child {
     margin: 0;
@@ -57,9 +54,13 @@
   }
 
   @media (max-width: 768px) {
-    width: 300px;
+    width: 400px;
     max-width: 100%;
     margin: 50px auto 0;
+
+    &.smaller {
+      width: 300px;
+    }
   }
 }
 

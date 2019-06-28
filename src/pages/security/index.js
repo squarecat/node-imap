@@ -52,7 +52,7 @@ export default function SecurityPage() {
               </li>
             </ul>
           </div>
-          <div styleName="image-section-img">
+          <div styleName="image-section-img smaller">
             <img alt="lock image in a cloud" src={lockImg} />
           </div>
         </div>
