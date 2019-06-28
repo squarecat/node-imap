@@ -40,17 +40,56 @@
 .intro-header {
   .container-image {
     text-align: right;
+
+    @media (max-width: 768px) {
+      max-width: 500px;
+    }
   }
 }
 
 h1.tagline {
-  font-size: 32px;
-  line-height: 45px;
-  max-width: 340px;
-  margin: 0 0 30px 0;
+  font-size: 42px;
+  line-height: 52px;
+  margin-bottom: 35px;
+  max-width: 450px;
+
+  @media (max-width: 1050px) {
+    font-size: 38px;
+    max-width: 410px;
+  }
+
+  @media (max-width: 1000px) {
+    font-size: 32px;
+    line-height: 45px;
+    margin-bottom: 30px;
+    max-width: 340px;
+  }
 
   @media (max-width: 768px) {
-    margin: 0 auto 30px;
+    margin: 0 auto 30px auto;
+  }
+
+  @media (max-width: 500px) {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 22px;
+    line-height: 30px;
+    margin: 0 auto 20px auto;
+  }
+}
+
+.description {
+  margin-bottom: 45px;
+  font-size: 20px;
+  line-height: 28px;
+
+  @media (max-width: 400px) {
+    margin-bottom: 15px;
+    font-size: 16px;
+    line-height: 22px;
   }
 }
 

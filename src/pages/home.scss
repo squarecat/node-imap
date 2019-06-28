@@ -161,7 +161,7 @@ a.more-info:visited {
 
   @media (max-width: 400px) {
     margin-bottom: 15px;
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
@@ -244,6 +244,7 @@ a.more-info:visited {
   display: flex;
   flex-direction: column;
   justify-content: center;
+
   p:last-child {
     margin: 0;
   }
@@ -254,9 +255,7 @@ a.more-info:visited {
 }
 
 .image-section-img {
-  img {
-    max-width: 400px;
-  }
+  max-width: 400px;
 
   &.bordered img {
     border: 1px solid $color-border-red;
@@ -269,7 +268,7 @@ a.more-info:visited {
   }
 }
 
-.privacy{
+.privacy {
   img {
     max-width: 300px;
   }

@@ -43,10 +43,8 @@ const EnterprisePage = () => {
       <div styleName="enterprise-inner">
         <div styleName="container intro-header">
           <div styleName="container-text">
-            <h1 className="catchy-tagline">
-              Productive Teams Use Leave Me Alone
-            </h1>
-            <p className="informative-description">
+            <h1 styleName="tagline">Productive Teams Use Leave Me Alone</h1>
+            <p styleName="description">
               The most efficient businesses work without interruption. Take back
               control of your office from unwanted spam email.
             </p>
@@ -59,11 +57,7 @@ const EnterprisePage = () => {
             </a>
           </div>
           <div styleName="container-image">
-            <img
-              src={allSubscriptions}
-              className="all-unsubscriptions-img"
-              alt="all unsubscriptions"
-            />
+            <img src={allSubscriptions} alt="all unsubscriptions" />
           </div>
         </div>
 
