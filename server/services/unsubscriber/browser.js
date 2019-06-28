@@ -7,6 +7,19 @@ const currentTabsOpen = io.counter({
   name: 'Current Tabs Open'
 });
 
+const isDebug = process.env.BROWSER_DEBUG;
+let puppeteerConfig;
+if (isDebug) {
+  puppeteerConfig = {
+    dumpio: true,
+    devtools: true,
+    headless: false,
+    ignoreHTTPSErrors: true,
+    slowMo: true
+  };
+} else {
+  puppeteerConfig = config.puppeteer;
+}
 // get lowercase, uppercase and capitalized versions of all keywords too
 const unsubSuccessKeywords = config.unsubscribeKeywords.reduce(
   (words, keyword) => [...words, keyword, keyword.toLowerCase()],
@@ -64,7 +77,16 @@ export async function unsubscribeWithLink(unsubUrl) {
     return { estimatedSuccess: hasSuccessKeywords, image };
   } catch (err) {
     logger.error('browser: error opening page or searching for content');
-    logger.error(err);
+    logger.error(`${err.name}: ${err.message}`);
+    // try one more time to take a screenshot
+    try {
+      image = await page.screenshot({
+        encoding: 'binary',
+        type: 'png'
+      });
+    } catch (e) {
+      // it failed
+    }
     return { estimatedSuccess: false, err, image };
   } finally {
     // clear tab memory
@@ -77,30 +99,44 @@ export async function unsubscribeWithLink(unsubUrl) {
 }
 
 async function goToPage(page, url) {
-  let url_redirected = false;
-  const responseHandler = response => {
-    const status = response.status();
-    // [301, 302, 303, 307, 308]
-    logger.info(`browser: got status code ${status}`);
-    if (status >= 300 && status <= 399) {
-      url_redirected = true;
-    }
-  };
-  page.on('response', responseHandler);
+  return new Promise(async (resolve, reject) => {
+    const responseHandler = async response => {
+      if (response.url() !== url) {
+        return;
+      }
+      const status = response.status();
+      // [301, 302, 303, 307, 308]
+      logger.info(`browser: got status code ${status}`);
+      if (status >= 300 && status <= 399) {
+        try {
+          // wait for the rediect to happen
+          await page.waitForNavigation({
+            timeout: 10000,
+            waitUntil: 'networkidle2'
+          });
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      } else {
+        // no redirect so we're done
+        resolve();
+      }
+    };
+    page.on('response', responseHandler);
 
-  // goto page
-  await page.goto(url, {
-    timeout: 0,
-    waitUntil: 'networkidle2'
+    try {
+      // goto page
+      await page.goto(url, {
+        timeout: 10000,
+        waitUntil: 'networkidle2'
+      });
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+    page.removeListener('response', responseHandler);
   });
-  if (url_redirected) {
-    logger.info('browser: page redirection');
-    //if page redireced , we wait for navigation end
-    await page.waitForNavigation({
-      waitUntil: 'networkidle2'
-    });
-  }
-  page.removeListener('response', responseHandler);
 }
 
 async function hasKeywords(page, keywords) {
@@ -118,7 +154,7 @@ async function getPuppeteerInstance() {
   if (puppeteerInstance) {
     return puppeteerInstance;
   }
-  puppeteerInstance = await puppeteer.launch(config.puppeteer);
+  puppeteerInstance = await puppeteer.launch(puppeteerConfig);
   logger.info('browser: launched new browser');
   return puppeteerInstance;
 }
