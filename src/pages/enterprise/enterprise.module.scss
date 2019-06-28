@@ -4,7 +4,22 @@
 .container {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-column-gap: 70px;
+  grid-gap: 70px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 0;
+
+    a {
+      margin: 0 auto;
+    }
+  }
 }
 
 .enterprise-inner {
@@ -12,6 +27,9 @@
 }
 
 .container-text {
+  @media (max-width: 768px) {
+    margin-bottom: 70px;
+  }
 }
 
 .container-image {
@@ -23,22 +41,34 @@
   .container-image {
     text-align: right;
   }
-  h1 {
-    max-width: 380px;
-  }
+}
+
+.tagline {
+  font-size: 32px;
+  line-height: 45px;
+  margin-bottom: 30px;
 }
 
 .features,
-.security,
-.pricing,
 .savings {
   margin-top: 150px;
+}
+
+.security,
+.pricing {
+  margin-top: 90px;
 }
 
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   grid-column-gap: 50px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+  }
 }
 
 .feature {
@@ -53,6 +83,7 @@
 
 .feature-img {
   max-width: 150px;
+  margin-left: -15px;
 }
 
 .feature-text {
@@ -84,7 +115,7 @@
   margin: 0 auto 100px auto;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
-  @media (max-width: 750px) {
+  @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -112,7 +143,7 @@
     max-height: 400px;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: 768px) {
     width: 300px;
     max-width: 100%;
     margin: 50px auto 0;

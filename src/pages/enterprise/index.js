@@ -43,8 +43,10 @@ const EnterprisePage = () => {
       <div styleName="enterprise-inner">
         <div styleName="container intro-header">
           <div styleName="container-text">
-            <h1>Productive Teams Use Leave Me Alone</h1>
-            <p>
+            <h1 className="catchy-tagline">
+              Productive Teams Use Leave Me Alone
+            </h1>
+            <p className="informative-description">
               The most efficient businesses work without interruption. Take back
               control of your office from unwanted spam email.
             </p>
@@ -85,12 +87,12 @@ const EnterprisePage = () => {
               <img src={broom} alt="broom sweeping image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Clean all accounts at once</h3>
+              <h3 styleName="feature-title">Clean all accounts together</h3>
               <p>
                 Email is neccessary for company communication. Each team member
                 can connect all of their email accounts and see all of their
-                subscription emails in one go. Email will become a productive
-                tool again.
+                subscription emails in one go. Make email a productive tool
+                again.
               </p>
             </div>
           </div>

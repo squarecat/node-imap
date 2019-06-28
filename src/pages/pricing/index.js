@@ -39,7 +39,7 @@ export function Enterprise({ readMore = false }) {
       <ul styleName="pricing-features">
         {/* <li>Rid your office of useless email</li> */}
         <li>Gmail and Outlook support</li>
-        <li>Unlimited credits</li>
+        <li>Unlimited unsubscribes</li>
         <li styleName="coming-soon">
           Unlimited API access <span>(coming soon)</span>
         </li>
