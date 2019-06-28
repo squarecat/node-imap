@@ -184,7 +184,7 @@ function verify({ signature: mailSig }) {
   const { token, timestamp, signature } = mailSig;
   const digest = crypto
     .createHmac('sha256', signingKey)
-    .update(`${token}${timestamp}`)
+    .update(`${timestamp}${token}`)
     .digest('hex');
   return digest === signature;
 }
