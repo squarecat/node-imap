@@ -147,8 +147,7 @@ const Layout = ({
                 {
                   rel: 'shortcut icon',
                   type: 'image/png',
-                  href: faviconUrl,
-                  id: 'dynamic-favicon'
+                  href: faviconUrl
                 }
               ]}
             />

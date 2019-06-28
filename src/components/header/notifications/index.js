@@ -151,7 +151,7 @@ const Notifications = () => {
         onClick={onDropdownOpen}
       >
         <div styleName="notification-icon">
-          <BellIcon width="20" height="20" />
+          <BellIcon width="20" height="20" inline />
         </div>
       </button>
       <ul styleName={`notifications-list ${showSettings ? 'shown' : ''}`}>
