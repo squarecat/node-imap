@@ -66,6 +66,15 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
       data-micropolicy="live-chat"
       key="intergram"
       src="https://support.squarecat.io/js/widget.js"
+    />,
+    <script
+      id="intergram-boot"
+      type="text/x-metomic"
+      data-micropolicy="live-chat"
+      key="intergram-boot"
+      dangerouslySetInnerHTML={{
+        __html: `window.injectChat()`
+      }}
     />
   ];
 
