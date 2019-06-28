@@ -37,8 +37,8 @@ const steps = [
     value: 'finish',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 8 }}>Start scan</span>
-        <SearchIcon height={16} width={16} />
+        <span style={{ marginRight: 8 }}>Let's do it!</span>
+        <ArrowIcon direction="right" />
       </span>
     )
   }
