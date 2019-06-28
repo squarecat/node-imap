@@ -16,7 +16,7 @@ import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import WallOfLove from '../components/landing/wall-of-love';
 import _capitalize from 'lodash.capitalize';
-import allSubscriptions from '../assets/all-subscriptions.png';
+import allSubscriptions from '../assets/mail-list-illustration.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
@@ -130,7 +130,7 @@ const IndexPage = () => {
                   click.
                 </p>
               </div>
-              <div className="image-section-img bordered">
+              <div className="image-section-img">
                 <img
                   src={allSubscriptions}
                   alt="list of subscription emails image"
@@ -204,9 +204,9 @@ const IndexPage = () => {
                 from the list.
               </p>
               <p>
-                This means the subscriptions are {' '}
-                <TextImportant>gone forever</TextImportant>, even if you decide to
-                stop using our service.
+                This means the subscriptions are{' '}
+                <TextImportant>gone forever</TextImportant>, even if you decide
+                to stop using our service.
               </p>
               <a
                 href="/learn"

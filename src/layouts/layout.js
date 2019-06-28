@@ -8,8 +8,8 @@ import React from 'react';
 import { setConfig } from 'react-hot-loader';
 
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
-const metaImgUrl = `${process.env.CDN_URL}/images/meta/meta-img.png`;
-const logoSquareUrl = `${process.env.CDN_URL}/images/meta/logo-square.png`;
+const metaImgUrl = `${process.env.CDN_URL}/images/meta/meta-img-v2.png`;
+const logoSquareUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 setConfig({ pureSFC: true });
 

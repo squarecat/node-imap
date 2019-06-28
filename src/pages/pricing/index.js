@@ -35,7 +35,9 @@ export function Enterprise({ readMore = false }) {
         {(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
       </p>
       <span styleName="pricing-text">per seat/month</span>
-      <span styleName="pricing-separator" />
+      <div styleName="pricing-separator-container">
+        <span styleName="pricing-separator" />
+      </div>
       <ul styleName="pricing-features">
         {/* <li>Rid your office of useless email</li> */}
         <li>Gmail and Outlook support</li>
