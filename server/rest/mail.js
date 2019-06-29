@@ -81,7 +81,7 @@ export default function(app, socket) {
     } catch (err) {
       let error = err;
       // if we haven't already handled this error then throw a rest error
-      if (!err.data && !err.data.errKey) {
+      if (!err.data || !err.data.errKey) {
         error = new RestError('Failed to unsubscribe from mail', {
           userId: userId,
           mailId: mail.id,
