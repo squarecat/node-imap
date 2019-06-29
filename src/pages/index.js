@@ -438,7 +438,7 @@ const getMessage = count => {
     return `Holy moly you're dedicated! Maybe you should actually sign in and do this for real?`;
   }
   if (count < 100) {
-    return `Okay you're pretty serious about this. But I bet you can't get to 100! You're at ${count}`;
+    return `Okay you're pretty serious about this. But I bet you can't get to 100!`;
   }
   if (count < 120) {
     return `Okay, okay, you win, please stop clicking.`;
@@ -548,6 +548,7 @@ function UnsubscribeDemo({ trashPileRef }) {
             key={item.name}
             {...item}
             onClick={onClick}
+            count={state.count}
           />
         );
       })}
@@ -566,7 +567,8 @@ function Item({
   text = '',
   onClick = () => {},
   fallLimit,
-  subject
+  subject,
+  count = 0
 }) {
   const ref = useRef(null);
   const outerRef = useRef(null);
@@ -657,8 +659,9 @@ function Item({
               </div>
             </div>
             {text ? (
-              <div className="example-unsub-text">
-                <p ref={textRef}>{text}</p>
+              <div className="example-unsub-text" ref={textRef}>
+                <p>{text}</p>
+                {count > 2 && count < 250 ? <p>That's {count} gone!</p> : null}
               </div>
             ) : null}
           </>
