@@ -11,9 +11,9 @@ const isDebug = process.env.BROWSER_DEBUG;
 let puppeteerConfig;
 if (isDebug) {
   puppeteerConfig = {
-    dumpio: true,
+    // dumpio: true,
     devtools: true,
-    headless: false,
+    // headless: false,
     ignoreHTTPSErrors: true,
     slowMo: true
   };
@@ -100,6 +100,8 @@ export async function unsubscribeWithLink(unsubUrl) {
 
 async function goToPage(page, url) {
   return new Promise(async (resolve, reject) => {
+    let reqDone = false;
+    let handlerDone = false;
     const responseHandler = async response => {
       // some other request, like javascript and that.
       if (response.url() !== url) {
@@ -110,20 +112,32 @@ async function goToPage(page, url) {
       // check for page redirects [301, 302, 303, 307, 308]
       logger.info(`browser: got status code ${status}`);
       if (status >= 300 && status <= 399) {
+        logger.info(`browser: waiting for redirect`);
         try {
           // wait for the rediect to happen
           await page.waitForNavigation({
             timeout: 20000,
-            waitUntil: 'networkidle2'
+            waitUntil: 'networkidle0'
           });
-          resolve();
+          logger.info(`browser: redirect finished`);
+          if (reqDone) {
+            resolve();
+          }
         } catch (e) {
-          reject(e);
+          handlerDone = true;
+          if (reqDone) {
+            reject(e);
+          }
         }
       } else {
+        logger.info(`browser: no redirect`);
         // no redirect so we're done
-        resolve();
+        if (reqDone) {
+          resolve();
+        }
       }
+      handlerDone = true;
+      logger.info(`browser: removing listener`);
       // remove the listener in case we reuse this page
       page.removeListener('response', responseHandler);
     };
@@ -131,12 +145,22 @@ async function goToPage(page, url) {
     try {
       page.on('response', responseHandler);
       // goto page
+      logger.info(`browser: going to page`);
       await page.goto(url, {
         timeout: 20000,
-        waitUntil: 'networkidle2'
+        waitUntil: 'networkidle0'
       });
+      reqDone = true;
+      if (handlerDone) {
+        resolve();
+      }
     } catch (e) {
-      reject(e);
+      reqDone = true;
+      logger.info(e);
+      logger.info(`browser: going to page failed`);
+      if (handlerDone) {
+        reject(e);
+      }
     }
   });
 }

@@ -452,49 +452,55 @@ function getError(error) {
 const AuthButtons = React.memo(({ dispatch, action }) => {
   const btns = useMemo(
     () => {
-      return [
-        {
-          type: 'password',
-          el: (
-            <a
-              key="pw"
-              onClick={() =>
-                dispatch({ type: 'set-step', data: 'enter-email' })
-              }
-              onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-              onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
-              styleName="login-me-in-dammit"
-            >
-              <span
-                style={{ marginLeft: 0, textAlign: 'center' }}
-                styleName="text"
-              >{`${action} with Password`}</span>
-            </a>
-          )
-        },
-        {
-          type: 'google',
-          el: <AuthButton action={action} provider="google" />
-        },
-        {
-          type: 'outlook',
-          el: <AuthButton action={action} provider="outlook" />
-        }
-      ]
-        .sort(a => (a.type === previousProvider ? -1 : 1))
-        .map(b => <span key={b.type}>{b.el}</span>);
+      return (
+        [
+          {
+            type: 'password',
+            el: (
+              <a
+                key="pw"
+                onClick={() =>
+                  dispatch({ type: 'set-step', data: 'enter-email' })
+                }
+                onMouseEnter={() =>
+                  dispatch({ type: 'set-active', data: true })
+                }
+                onMouseLeave={() =>
+                  dispatch({ type: 'set-active', data: false })
+                }
+                styleName="login-me-in-dammit"
+              >
+                <span
+                  style={{ marginLeft: 0, textAlign: 'center' }}
+                  styleName="text"
+                >{`${action} with Password`}</span>
+              </a>
+            )
+          },
+          {
+            type: 'google',
+            el: <AuthButton action={action} provider="google" />
+          },
+          {
+            type: 'outlook',
+            el: <AuthButton action={action} provider="outlook" />
+          }
+        ]
+          // .sort(a => (a.type === previousProvider ? -1 : 1))
+          .map(b => <span key={b.type}>{b.el}</span>)
+      );
     },
     [action, dispatch]
   );
-  let content = null;
-  if (previousProvider) {
-    content = (
-      <span styleName="last-login">Last time you logged in with...</span>
-    );
-  }
+  // let content = null;
+  // if (previousProvider) {
+  //   content = (
+  //     <span styleName="last-login">Last time you logged in with...</span>
+  //   );
+  // }
   return (
     <>
-      {content}
+      {/* {content} */}
       {btns}
     </>
   );
