@@ -605,7 +605,7 @@ export async function addPackageToUser(userId, { productId, credits, price }) {
         price
       });
       // add activity for the referral user too
-      addActivityForUser(referredBy, 'referralPurchase', {
+      addActivityForUser(referredBy.id, 'referralPurchase', {
         id: user.id,
         email: user.email,
         productId,
