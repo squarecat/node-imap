@@ -101,7 +101,19 @@ export async function* fetchMailByAccount({ user, account, ignore = false }) {
     let next = await it.next();
     while (!next.done) {
       const { value } = next;
-      yield value;
+      if (value.type === 'mail') {
+        yield {
+          type: value.type,
+          data: value.data.map(v => ({
+            forAccount: account.email,
+            provider,
+            ...v
+          }))
+        };
+      } else {
+        yield value;
+      }
+
       next = await it.next();
     }
     const {

@@ -31,12 +31,17 @@ export function MailProvider({ children }) {
   // when we get new data we check all the filter values
   // and set them again for the filter drop downs
   async function setFilterValues() {
-    db.mail.orderBy('to').uniqueKeys(function(recipients) {
-      return dispatch({
-        type: 'set-filter-values',
-        data: { name: 'recipients', value: recipients }
+    db.mail
+      .orderBy('[to+forAccount+provider]')
+      .uniqueKeys(function(recipients) {
+        return dispatch({
+          type: 'set-filter-values',
+          data: {
+            name: 'recipients',
+            value: recipients
+          }
+        });
       });
-    });
   }
 
   // setting the mail count will cause the mail list to

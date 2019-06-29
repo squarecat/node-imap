@@ -70,6 +70,8 @@ export default () => {
         isNextDisabled={!state.canProceed}
         showBack={state.step !== 'welcome'}
       />
+      <img styleName="preload" src={unsubscribeSpamImage} />
+      <img styleName="preload" src={unsubscribeGif} />
     </div>
   );
 };

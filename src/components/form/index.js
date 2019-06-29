@@ -1,6 +1,6 @@
 import './form.module.scss';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import cx from 'classnames';
 
@@ -95,7 +95,10 @@ export const FormSelect = ({
   ...props
 }) => {
   const ref = useRef(null);
-  const selected = options.find(o => o.value === value);
+  const selected = useMemo(() => findSelectedOption(options, value), [
+    options,
+    value
+  ]);
   const selectedLabel = selected ? selected.label : placeholder;
 
   const classes = cx('form-input form-select-dropdown', {
@@ -124,16 +127,42 @@ export const FormSelect = ({
       >
         {placeholder ? <option value="">{placeholder}</option> : null}
 
-        {options.map(opt => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
+        {options.map(opt => {
+          if (opt.options) {
+            return (
+              <optgroup key={opt.label} label={opt.label}>
+                {opt.options.map(o => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </optgroup>
+            );
+          }
+          return (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          );
+        })}
       </select>
       <span styleName={classes}>{selectedLabel}</span>
     </span>
   );
 };
+
+function findSelectedOption(options, value) {
+  return options.reduce((out, option) => {
+    if (out) {
+      // already found
+      return out;
+    }
+    if (option.options) {
+      return option.options.find(o => o.value === value);
+    }
+    return option.value === value ? option : null;
+  }, null);
+}
 
 export const FormCheckbox = ({ id, name, label, ...props }) => {
   return (

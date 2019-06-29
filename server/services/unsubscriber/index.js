@@ -116,7 +116,7 @@ function saveImageToDisk(userId, mailId, image) {
   const path = `${dir}/${mailId}.png`;
   return new Promise((good, bad) => {
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
+      fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFile(path, image, 'binary', err => {
       if (err) {
