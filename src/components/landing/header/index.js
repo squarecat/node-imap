@@ -4,9 +4,9 @@ import Dropdown, {
   DropdownItem,
   DropdownList
 } from '../../../components/dropdown';
+import React, { useRef } from 'react';
 
 import { Link } from 'gatsby';
-import React from 'react';
 import cx from 'classnames';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
@@ -56,36 +56,35 @@ export default ({ setActive = () => {}, inverted = false }) => (
 
 function LearnMoreDropdown() {
   return (
-    <Dropdown
-      toggleBtn={
-        <li styleName="nav-link">
-          <a>Learn More</a>
-        </li>
-      }
-    >
-      <DropdownList>
-        <DropdownItem>
-          <Link to="/learn">How it works</Link>
-        </DropdownItem>
-        <DropdownItem>
-          <Link to="/security">Security</Link>
-        </DropdownItem>
-        <DropdownItem>
-          <Link to="/about">About us</Link>
-        </DropdownItem>
+    <li styleName="nav-link">
+      <Dropdown toggleBtn={<a>Learn more</a>} toggleEvent="hover">
+        <DropdownList>
+          <DropdownItem>
+            <Link to="/learn">How it works</Link>
+          </DropdownItem>
+          <DropdownItem>
+            <Link to="/security">Security</Link>
+          </DropdownItem>
+          <DropdownItem>
+            <Link to="/about">About us</Link>
+          </DropdownItem>
+          <DropdownItem>
+            <Link to="/enterprise">FAQ</Link>
+          </DropdownItem>
 
-        <div styleName="learn-more-extras">
-          <DropdownItem>
-            <Link to="/pricing">Pricing</Link>
-          </DropdownItem>
-          <DropdownItem>
-            <Link to="/enterprise">Enterprise</Link>
-          </DropdownItem>
-          <DropdownItem separated>
-            <Link to="/login">Log in</Link>
-          </DropdownItem>
-        </div>
-      </DropdownList>
-    </Dropdown>
+          <div styleName="learn-more-extras">
+            <DropdownItem>
+              <Link to="/pricing">Pricing</Link>
+            </DropdownItem>
+            <DropdownItem>
+              <Link to="/enterprise">Enterprise</Link>
+            </DropdownItem>
+            <DropdownItem separated>
+              <Link to="/login">Log in</Link>
+            </DropdownItem>
+          </div>
+        </DropdownList>
+      </Dropdown>
+    </li>
   );
 }

@@ -1,6 +1,6 @@
 import './filters.module.scss';
 
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { FormSelect } from '../../../components/form';
 import { MailContext } from '../provider';
@@ -19,8 +19,19 @@ export default React.memo(
     showLoading = false
   }) => {
     const { dispatch } = useContext(MailContext);
-    const recipientValue = activeFilters.find(v => v.field === 'to');
+    const { recipients } = filterValues;
+
+    let recipientValue = activeFilters.find(
+      v => v.field === 'to' || v.field === 'forAccount'
+    );
+    if (recipientValue && recipientValue.field === 'forAccount') {
+      recipientValue = `all/${recipientValue.value}`;
+    } else if (recipientValue) {
+      recipientValue = recipientValue.value;
+    }
     const statusValue = activeFilters.find(v => v.field === 'status');
+    const recipientValues = getRecipientValues(recipients);
+
     return (
       <div styleName="filters">
         <span>
@@ -71,21 +82,36 @@ export default React.memo(
                 if (!value) {
                   return dispatch({
                     type: 'remove-active-filter',
-                    data: { field: 'to' }
+                    data: { fields: ['to', 'forAccount'] }
                   });
                 }
-                dispatch({
-                  type: 'set-active-filter',
-                  data: { field: 'to', type: 'equals', value }
-                });
+                if (value.startsWith('all/')) {
+                  const [, account] = value.split('/');
+                  return dispatch({
+                    type: 'replace-active-filter',
+                    data: {
+                      remove: ['forAccount', 'to'],
+                      field: 'forAccount',
+                      type: 'equals',
+                      value: account
+                    }
+                  });
+                } else {
+                  return dispatch({
+                    type: 'replace-active-filter',
+                    data: {
+                      remove: ['forAccount', 'to'],
+                      field: 'to',
+                      type: 'equals',
+                      value
+                    }
+                  });
+                }
               }}
               name="filter-recipient"
               compact
-              options={filterValues['recipients'].map(v => ({
-                value: v,
-                label: v
-              }))}
-              value={recipientValue ? recipientValue.value : ''}
+              options={recipientValues}
+              value={recipientValue || ''}
               basic
               placeholder="all addresses"
             />
@@ -171,3 +197,42 @@ export default React.memo(
     );
   }
 );
+
+function getRecipientValues(recipients) {
+  return recipients.reduce((out, v) => {
+    const [to, account, provider] = v;
+    const existing = out.find(o => o.value === account);
+    if (existing) {
+      return [
+        ...out.filter(o => o.value !== existing.value),
+        {
+          ...existing,
+          options: [
+            ...(existing.options || []),
+            {
+              value: to,
+              label: to || '(none)'
+            }
+          ]
+        }
+      ];
+    }
+    return [
+      ...out,
+      {
+        label: `${account} (${provider})`,
+        value: account,
+        options: [
+          {
+            value: `all/${account}`,
+            label: `all from (${account})`
+          },
+          {
+            value: to,
+            label: to || '(none)'
+          }
+        ]
+      }
+    ];
+  }, []);
+}

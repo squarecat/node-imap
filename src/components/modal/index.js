@@ -58,8 +58,13 @@ export default React.memo(({ children, opaque, shown = false, style }) => {
             });
             return (
               <div className={classes} data-modal>
-                <div styleName="modal-wizard-wrapper">
-                  <div style={style} styleName="modal" ref={ref}>
+                <div styleName="modal-wizard-wrapper" data-modal-wrapper>
+                  <div
+                    style={style}
+                    styleName="modal"
+                    ref={ref}
+                    data-modal-content
+                  >
                     {children}
                   </div>
                 </div>

@@ -176,7 +176,9 @@ const LoginPage = React.memo(
                 Google and Microsoft authorize Leave Me Alone without a
                 password.
               </p>
-              <div styleName="buttons">{authButtons({ dispatch, action })}</div>
+              <div styleName="buttons">
+                <AuthButtons dispatch={dispatch} action={action} />
+              </div>
               {register ? (
                 <p style={{ marginBottom: '10px' }}>
                   Already have an account?{' '}
@@ -447,35 +449,44 @@ function getError(error) {
   );
 }
 
-function authButtons({ dispatch, action }) {
-  const btns = [
-    {
-      type: 'password',
-      el: (
-        <a
-          key="pw"
-          onClick={() => dispatch({ type: 'set-step', data: 'enter-email' })}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
-          styleName="login-me-in-dammit"
-        >
-          <span
-            style={{ marginLeft: 0, textAlign: 'center' }}
-            styleName="text"
-          >{`${action} with Password`}</span>
-        </a>
-      )
+const AuthButtons = React.memo(({ dispatch, action }) => {
+  const btns = useMemo(
+    () => {
+      return [
+        {
+          type: 'password',
+          el: (
+            <a
+              key="pw"
+              onClick={() =>
+                dispatch({ type: 'set-step', data: 'enter-email' })
+              }
+              onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
+              onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
+              styleName="login-me-in-dammit"
+            >
+              <span
+                style={{ marginLeft: 0, textAlign: 'center' }}
+                styleName="text"
+              >{`${action} with Password`}</span>
+            </a>
+          )
+        },
+        {
+          type: 'google',
+          el: <AuthButton action={action} provider="google" />
+        },
+        {
+          type: 'outlook',
+          el: <AuthButton action={action} provider="outlook" />
+        }
+      ]
+        .sort(a => (a.type === previousProvider ? -1 : 1))
+        .map(b => <span key={b.type}>{b.el}</span>);
     },
-    {
-      type: 'google',
-      el: <AuthButton action={action} provider="google" />
-    },
-    {
-      type: 'outlook',
-      el: <AuthButton action={action} provider="outlook" />
-    }
-  ];
-  let content;
+    [action, dispatch]
+  );
+  let content = null;
   if (previousProvider) {
     content = (
       <span styleName="last-login">Last time you logged in with...</span>
@@ -484,14 +495,10 @@ function authButtons({ dispatch, action }) {
   return (
     <>
       {content}
-      {btns
-        .sort(a => (a.type === previousProvider ? -1 : 1))
-        .map(b => (
-          <span key={b.type}>{b.el}</span>
-        ))}
+      {btns}
     </>
   );
-}
+});
 
 function getCookie(name) {
   var value = '; ' + document.cookie;

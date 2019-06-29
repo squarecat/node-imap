@@ -12,6 +12,12 @@
   }
 }
 
+.preload {
+  visibility: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
 .onboarding-btn {
   display: flex;
   align-items: center;

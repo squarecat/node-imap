@@ -66,19 +66,16 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
       data-micropolicy="live-chat"
       key="intergram"
       src="https://support.squarecat.io/js/widget.js"
-      onLoad={() => {
-        window.injectChat();
+    />,
+    <script
+      id="intergram-boot"
+      type="text/x-metomic"
+      data-micropolicy="live-chat"
+      key="intergram-boot"
+      dangerouslySetInnerHTML={{
+        __html: `(function () { let i = setInterval(function() { window.injectChat && (clearInterval(i) || window.injectChat())}, 3000) })()`
       }}
     />
-    // <script
-    //   id="intergram-boot"
-    //   type="text/x-metomic"
-    //   data-micropolicy="live-chat"
-    //   key="intergram-boot"
-    //   dangerouslySetInnerHTML={{
-    //     __html: `setTimeout(function() {  }, 1000)`
-    //   }}
-    // />
   ];
 
   setPostBodyComponents(components);

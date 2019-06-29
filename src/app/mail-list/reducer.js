@@ -32,11 +32,23 @@ const mailReducer = (state = initialState, action) => {
       };
     }
     case 'remove-active-filter': {
+      let fields = action.data.fields || [action.data.field];
       return {
         ...state,
         activeFilters: state.activeFilters.filter(
-          f => f.field !== action.data.field
+          f => !fields.includes(f.field)
         ),
+        page: 0
+      };
+    }
+    case 'replace-active-filter': {
+      let { remove, field, type, value } = action.data;
+      return {
+        ...state,
+        activeFilters: [
+          ...state.activeFilters.filter(f => !remove.includes(f.field)),
+          { field, type, value }
+        ],
         page: 0
       };
     }

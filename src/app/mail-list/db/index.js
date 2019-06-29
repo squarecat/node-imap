@@ -217,13 +217,10 @@ export function useMailSync() {
         let fetchParams = {
           accounts: []
         };
-
+        const now = Date.now();
         if (pref) {
           const { value: lastFetchParams } = pref;
-          const {
-            accounts: lastFetchAccounts,
-            timestamp: lastFetchedTime
-          } = lastFetchParams;
+          const { accounts: lastFetchAccounts } = lastFetchParams;
           // if there are accounts that we haven't searched for yet
           // then do a search on those without a time filter
           const newAccounts = accountIds.filter(
@@ -249,7 +246,7 @@ export function useMailSync() {
               ...fetchParams.accounts,
               ...lastFetchAccounts.map(a => ({
                 id: a.id,
-                from: lastFetchedTime
+                from: a.from
               }))
             ]
           };
@@ -263,7 +260,15 @@ export function useMailSync() {
           };
         }
         console.debug('[db]: fetching mail', fetchParams);
-        db.prefs.put({ key: 'lastFetchParams', value: fetchParams });
+        // save the fetch time to prefs, so we know what to search on
+        // next time the user visits the page
+        db.prefs.put({
+          key: 'lastFetchParams',
+          value: {
+            ...fetchParams,
+            accounts: fetchParams.accounts.map(a => ({ ...a, from: now }))
+          }
+        });
         return emit('fetch', fetchParams);
       } catch (err) {
         console.error('[db]: failed to fetch mail');
