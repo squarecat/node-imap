@@ -16,7 +16,7 @@ function Reminder() {
   return (
     <>
       <button styleName="btn" onClick={() => openModal(<ReminderModal />)}>
-        <ClockIcon inline={hasReminder} />
+        <ClockIcon inline />
         {!hasReminder ? (
           <span styleName="btn-text long">Set reminder</span>
         ) : null}
