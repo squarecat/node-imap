@@ -1,6 +1,7 @@
 import {
   addUnsubscriptionToUser,
   getUserById,
+  incrementCreditsUsedForUser,
   incrementUserCredits
 } from '../user';
 
@@ -87,7 +88,11 @@ export const unsubscribeFromMail = async (userId, mail) => {
         `unsubscriber-service: success, adding ${unsubStrategy} unsubscription to stats`
       );
       addUnsubscriptionToStats({ unsubStrategy });
-      if (organisationId) recordUnsubscribeForOrganisation(organisationId);
+      if (organisationId) {
+        recordUnsubscribeForOrganisation(organisationId);
+      } else {
+        incrementCreditsUsedForUser(userId);
+      }
     } else if (!organisationId) {
       logger.debug(
         `unsubscriber-service: estimated success is false, incrementing user credits by 1`

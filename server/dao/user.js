@@ -359,6 +359,31 @@ export async function incrementCredits(id, credits) {
   }
 }
 
+export async function incrementCreditsUsed(id, credits = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          lastUpdatedAt: isoDate()
+        },
+        $inc: {
+          'billing.creditsUsed': credits
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(
+      `users-dao: error incrementing user ${id} credits by ${credits}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function updateIgnoreList(id, { action, value }) {
   try {
     const col = await db().collection(COL_NAME);
@@ -499,24 +524,6 @@ export async function updateUsersReminded(ids) {
       { multi: true }
     );
     return users;
-  } catch (err) {
-    logger.error(`users-dao: error updating reminded users`);
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function incrementUserReferralBalance(id, amount) {
-  try {
-    const col = await db().collection(COL_NAME);
-    await col.updateOne(
-      { id },
-      {
-        $inc: { referralBalance: amount }
-      }
-    );
-    const user = await getUser(id);
-    return user;
   } catch (err) {
     logger.error(`users-dao: error updating reminded users`);
     logger.error(err);

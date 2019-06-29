@@ -17,7 +17,7 @@ import {
   getUserByHashedEmail,
   getUserByReferralCode,
   incrementCredits,
-  incrementUserReferralBalance,
+  incrementCreditsUsed,
   removeAccount,
   removeBillingCard,
   removeReminder,
@@ -669,10 +669,6 @@ export function removeUserReminder(id) {
   return removeReminder(id);
 }
 
-export async function creditUserAccount(id, { amount }) {
-  return incrementUserReferralBalance(id, amount);
-}
-
 export async function getUserPayments(id) {
   return listPaymentsForUser(id);
 }
@@ -1018,6 +1014,10 @@ export async function addActivityForUser(userId, name, data = {}) {
 export function incrementUserCredits(id, credits) {
   logger.debug(`user-service: incrementing credits by ${credits}`);
   return incrementCredits(id, credits);
+}
+
+export function incrementCreditsUsedForUser(id, credits) {
+  return incrementCreditsUsed(id, credits);
 }
 
 function getReward({ userActivity, name, milestone, activityData }) {
