@@ -793,10 +793,13 @@ export async function updateUserUnsubStatus(
     }
     const estimatedSuccess = status === 'delivered';
     sendToUser(userId, 'unsubscribe:success', {
-      estimatedSuccess,
-      unsubStrategy: 'mailto',
-      emailStatus: status,
-      emailData: data
+      id: mailId,
+      data: {
+        estimatedSuccess,
+        unsubStrategy: 'mailto',
+        emailStatus: status,
+        emailData: data
+      }
     });
   } catch (err) {
     logger.error(

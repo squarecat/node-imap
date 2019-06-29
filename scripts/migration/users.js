@@ -36,6 +36,7 @@ const migrateUser = oldRecord => {
     hashedEmails: [hashEmail(oldRecord.email)]
   };
   // move the keys object to be an account
+  // and add a relevant activity
   newRecord = {
     ...newRecord,
     accounts: [
@@ -46,7 +47,24 @@ const migrateUser = oldRecord => {
         keys: oldRecord.keys,
         addedAt: now
       }
-    ]
+    ],
+    activity: [
+      {
+        type: 'connectedFirstAccount',
+        data: {
+          id: oldRecord.id,
+          provider: oldRecord.provider,
+          email: oldRecord.email
+        },
+        rewardCredits: 100,
+        notificationSeen: true,
+        id: '0',
+        timestamp: now
+      }
+    ],
+    billing: {
+      credits: 100
+    }
   };
   // migrate referrals
   newRecord = {
@@ -60,10 +78,11 @@ const migrateUser = oldRecord => {
   newRecord = {
     ...newRecord,
     lastUpdatedAt: now,
-    migratedFrom: '1.0',
-    version: '2.0',
-    milestones: {},
-    activity: []
+    milestones: {
+      connectedFirstAccount: true
+    },
+    __migratedFrom: '1.0',
+    __version: '2.0'
   };
 
   return newRecord;
@@ -76,7 +95,7 @@ function hashEmail(email) {
 (async () => {
   const conn = await db.connect();
   const col = await conn.collection('users');
-  const cur = await col.find({ _version: { $ne: '2.0' } });
+  const cur = await col.find({ __version: { $ne: '2.0' } });
   const count = await cur.countDocuments();
   console.log(`migrating ${count} users...`);
   let currentCount = 1;
@@ -84,7 +103,7 @@ function hashEmail(email) {
     // double check this hasn't been updated yet
     // due to mongo replacing objects in the cursor
     // as we iterate
-    if (user.version === '2.0') {
+    if (user.__version === '2.0') {
       return;
     }
     console.log(`${currentCount}/${count}`);
