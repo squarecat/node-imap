@@ -69,7 +69,9 @@ export async function listPaymentsForUser(userId) {
   try {
     const { customerId } = await getUserById(userId);
     if (!customerId) {
-      logger.debug(`payments-service: cannot list payments for user, user has no customer ID ${userId}`);
+      logger.debug(
+        `payments-service: cannot list payments for user, user has no customer ID ${userId}`
+      );
       return [];
     }
 
@@ -133,6 +135,12 @@ export async function createPaymentWithExistingCardForUser({
   coupon
 }) {
   try {
+    logger.info(
+      `payments-service: creating payment with existing card for user ${
+        user.id
+      }`
+    );
+
     let intent;
 
     const { customerId, paymentMethodId } = await getUserById(user.id);
@@ -141,11 +149,21 @@ export async function createPaymentWithExistingCardForUser({
       coupon
     });
 
-    if (finalPrice < 50 || process.env.NODE_ENV === 'beta') {
+    if (finalPrice < 50) {
+      logger.debug(
+        `payments-service: payment is less than 50, returning success ${
+          user.id
+        }`
+      );
       intent = {
-        success: true
+        status: 'succeeded',
+        amount: finalPrice,
+        metadata: {
+          coupon
+        }
       };
     } else {
+      logger.debug(`payments-service: creating payment intent ${user.id}`);
       intent = await createPaymentIntent(paymentMethodId, {
         amount: finalPrice,
         customerId,
@@ -359,9 +377,18 @@ export async function createPaymentForUser(
       });
 
       // return success for beta users or amounts under 0.50c
-      if (finalPrice < 50 || process.env.NODE_ENV === 'beta') {
+      if (finalPrice < 50) {
+        logger.debug(
+          `payments-service: payment is less than 50, returning success ${
+            user.id
+          }`
+        );
         intent = {
-          success: true
+          status: 'succeeded',
+          amount: finalPrice,
+          metadata: {
+            coupon
+          }
         };
       } else {
         const customerId = await getOrUpdateCustomerForUser(

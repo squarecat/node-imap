@@ -43,11 +43,11 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
       if (response.error.message) {
         message = response.error.message;
       }
-      dispatch({ type: 'set-error', error: message });
+      dispatch({ type: 'set-error', data: message });
     } else if (response.requires_action) {
-      dispatch({ type: 'set-loading', loading: true });
+      dispatch({ type: 'set-loading', data: true });
       await handleRequiresAction(response);
-      dispatch({ type: 'set-loading', loading: false });
+      dispatch({ type: 'set-loading', data: false });
     } else if (response.requires_payment_method) {
       // TODO better errors
       dispatch({
@@ -71,7 +71,7 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
 
     if (errorAction) {
       // Show error from Stripe.js in payment form
-      dispatch({ type: 'set-error', error: errorAction });
+      dispatch({ type: 'set-error', data: errorAction });
     } else {
       // The card action has been handled
       // The PaymentIntent can be confirmed again on the server
