@@ -51,7 +51,6 @@ function getUserDefaults({ email }) {
     unsubscriptions: [],
     activity: [],
     preferences: {
-      hideUnsubscribedMails: false,
       marketingConsent: true
     },
     milestones: {},
@@ -91,7 +90,8 @@ export async function createUser(data, account) {
       accounts: [
         {
           ...account,
-          keys: encryptKeys(account.keys)
+          keys: encryptKeys(account.keys),
+          addedAt: isoDate()
         }
       ]
     });
@@ -291,23 +291,23 @@ export async function resolveUnsubscription(id, mailId) {
   }
 }
 
-export async function addScan(id, scanData) {
-  try {
-    const col = await db().collection(COL_NAME);
-    await col.updateOne(
-      { id },
-      {
-        $push: {
-          scans: { ...scanData, scannedAt: isoDate(scanData.scannedAt) }
-        }
-      }
-    );
-  } catch (err) {
-    logger.error(`users-dao: error updating user ${id} scans`);
-    logger.error(err);
-    throw err;
-  }
-}
+// export async function addScan(id, scanData) {
+//   try {
+//     const col = await db().collection(COL_NAME);
+//     await col.updateOne(
+//       { id },
+//       {
+//         $push: {
+//           scans: { ...scanData, scannedAt: isoDate(scanData.scannedAt) }
+//         }
+//       }
+//     );
+//   } catch (err) {
+//     logger.error(`users-dao: error updating user ${id} scans`);
+//     logger.error(err);
+//     throw err;
+//   }
+// }
 
 export async function addPackage(id, productId, credits) {
   try {

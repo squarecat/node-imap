@@ -19,14 +19,12 @@ export async function savePreferences(data) {
 }
 
 const DEFAULTS = {
-  hideUnsubscribedMails: false,
   marketingConsent: true
 };
 
 export default () => {
   const [user, { setPreferences }] = useUser();
   const preferences = {
-    hideUnsubscribedMails: getPref(user.preferences, 'hideUnsubscribedMails'),
     marketingConsent: getPref(user.preferences, 'marketingConsent')
   };
 
