@@ -20,7 +20,7 @@ export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
     ? 'existing-billing-details'
     : 'enter-billing-details';
 
-  const isFree = selectedPackage.discountPrice < 50 || process.env.BETA;
+  const isFree = selectedPackage.discountPrice < 50;
 
   async function handleFreeCredits() {
     try {

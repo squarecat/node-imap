@@ -46,7 +46,7 @@ function Billing() {
     };
   });
 
-  const { credits, creditsUsed = 0, card } = billing;
+  const { credits = 0, creditsUsed = 0, card } = billing;
 
   const onClickBuyPackage = useCallback(
     id => {
