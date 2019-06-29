@@ -101,17 +101,19 @@ export async function unsubscribeWithLink(unsubUrl) {
 async function goToPage(page, url) {
   return new Promise(async (resolve, reject) => {
     const responseHandler = async response => {
+      // some other request, like javascript and that.
       if (response.url() !== url) {
         return;
       }
+
       const status = response.status();
-      // [301, 302, 303, 307, 308]
+      // check for page redirects [301, 302, 303, 307, 308]
       logger.info(`browser: got status code ${status}`);
       if (status >= 300 && status <= 399) {
         try {
           // wait for the rediect to happen
           await page.waitForNavigation({
-            timeout: 10000,
+            timeout: 20000,
             waitUntil: 'networkidle2'
           });
           resolve();
@@ -122,20 +124,20 @@ async function goToPage(page, url) {
         // no redirect so we're done
         resolve();
       }
+      // remove the listener in case we reuse this page
+      page.removeListener('response', responseHandler);
     };
-    page.on('response', responseHandler);
 
     try {
+      page.on('response', responseHandler);
       // goto page
       await page.goto(url, {
-        timeout: 10000,
+        timeout: 20000,
         waitUntil: 'networkidle2'
       });
-      resolve();
     } catch (e) {
       reject(e);
     }
-    page.removeListener('response', responseHandler);
   });
 }
 

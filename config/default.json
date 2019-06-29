@@ -42,7 +42,11 @@
   },
   "imageStoragePath": "$IMAGE_STORAGE_PATH",
   "unsubscribeKeywords": [
+    "have been updated",
+    "has been updated",
+    "completed",
     "Success",
+    "Unsubscribe Successful",
     "Successfully",
     "Unsubscribed",
     "has been removed"
