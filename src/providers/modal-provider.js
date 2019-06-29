@@ -58,12 +58,30 @@ export const ModalProvider = React.memo(({ children }) => {
           closeModal();
         }
       }
-      document.addEventListener('keyup', closeModalByEsc);
-      return () => {
+      function closeModalByClickAway({ target }) {
+        if (state.options.dismissable) {
+          let t = target;
+          while (!t.getAttribute('data-modal-content')) {
+            if (t === document.body) {
+              return closeModal();
+            }
+            t = t.parentElement;
+          }
+        }
+      }
+      function removeListeners() {
         document.removeEventListener('keyup', closeModalByEsc);
-      };
+        document.removeEventListener('click', closeModalByClickAway);
+      }
+      if (openState.shown) {
+        document.addEventListener('keyup', closeModalByEsc);
+        document.addEventListener('click', closeModalByClickAway);
+      } else {
+        removeListeners();
+      }
+      return () => removeListeners();
     },
-    [closeModal, state.options.dismissable]
+    [closeModal, openState.shown, state.options.dismissable]
   );
 
   const value = useMemo(
