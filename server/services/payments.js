@@ -69,7 +69,7 @@ export async function listPaymentsForUser(userId) {
   try {
     const { customerId } = await getUserById(userId);
     if (!customerId) {
-      logger.info(`payments-service: user has no customer ID ${userId}`);
+      logger.debug(`payments-service: cannot list payments for user, user has no customer ID ${userId}`);
       return [];
     }
 

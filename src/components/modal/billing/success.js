@@ -43,7 +43,7 @@ export default function PurchaseSuccess({ credits }) {
             basic
             onClick={() => closeModal()}
           >
-            Go to scan
+            Go to mail
           </Button>
         </ModalActions>
       </ModalFooter>
