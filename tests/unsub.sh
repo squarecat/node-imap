@@ -1,1 +1,1 @@
-BROWSER_DEBUG=true node ./tests/unsubscriber.js "https://zeit.us12.list-manage.com/unsubscribe?u=3c9e9e13d7e6dae8faf375bed&id=c4ef0a1d1c&e=319f302785&c=a334512b27"
+BROWSER_DEBUG=true node ./tests/unsubscriber.js "https://mailchimp.us1.list-manage.com/unsubscribe?u=f7b9ee22124ff6454424dc10c&id=21eda42079&e=631637711f&c=d1544990e8"
