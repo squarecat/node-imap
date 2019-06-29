@@ -115,8 +115,8 @@ export default visProps => (
             <TwitterIcon />
           </TextLink>
         </li>
-        <li title="leavemealone@squarecat.io">
-          <TextLink undecorated href="mailto:leavemealone@squarecat.io">
+        <li title="hello@leavemealone.app">
+          <TextLink undecorated href="mailto:hello@leavemealone.app">
             <MailIcon width="20" height="20" />
           </TextLink>
         </li>

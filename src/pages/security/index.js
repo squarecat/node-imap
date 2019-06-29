@@ -125,8 +125,8 @@ export default function SecurityPage() {
           </p>
           <p>
             If you have any more questions about how we operate then please{' '}
-            <a href="mailto:hello@leavemealone.app">get in touch</a> - we will
-            be happy to help!
+            <a href="mailto:security@leavemealone.app">get in touch</a> - we
+            will be happy to help!
           </p>
           <a
             href="mailto:security@leavemealone.app"

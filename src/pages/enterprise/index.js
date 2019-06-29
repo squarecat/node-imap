@@ -36,7 +36,7 @@ const companies = [
 const EnterprisePage = () => {
   return (
     <SubPageLayout
-      title="Leave Me Alone for Enterprises"
+      title="Leave Me Alone for Enterprise"
       description="Boost productivity and get an office that is completely free of unwanted spam and subscription emails with our enterprise plan."
       withContent={false}
     >
@@ -50,7 +50,7 @@ const EnterprisePage = () => {
             </p>
 
             <a
-              href="mailto:hello@leavemealone.app"
+              href="mailto:enterprise@leavemealone.app"
               className={`beam-me-up-cta`}
             >
               Contact Us
@@ -182,8 +182,8 @@ const EnterprisePage = () => {
               <img styleName="gsuite" src={googleLogo} />
             </div>
             <p>
-              <a href="mailto:hello@leavemealone.app">Contact us</a> for more
-              information or to start setting up your account today!
+              <a href="mailto:enterprise@leavemealone.app">Contact us</a> for
+              more information or to start setting up your account today!
             </p>
 
             <Testimonial
@@ -202,7 +202,7 @@ const EnterprisePage = () => {
         <div styleName="end-stuff">
           <h2>Find out more about Leave Me Alone for your company</h2>
           <a
-            href="mailto:hello@leavemealone.app"
+            href="mailto:enterprise@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ marginTop: 50 }}
           >

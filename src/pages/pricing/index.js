@@ -144,8 +144,13 @@ export default () => {
           <p>Each successful unsubscribe costs one credit.</p>
 
           <p>Check out how many unsubscribe credits you might need below.</p>
+          <br />
           <p>
-            Or interested in our <Link to="/enterprise">enterprise plans</Link>?
+            Or learn more about{' '}
+            <TextLink href="/enterprise">
+              Leave Me Alone for Enterprise
+            </TextLink>
+            .
           </p>
         </div>
         <Packages />
@@ -207,7 +212,7 @@ export default () => {
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
           power our Subscriber Score algorithm. You can read more about this and
-          how we manage all our data <Link to="/security">here</Link>.
+          how we manage all our data <TextLink href="/security">here</TextLink>.
         </p>
 
         <br />

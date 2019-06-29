@@ -14,7 +14,7 @@
 }
 
 .landing-header-inverted {
-  padding: 0 20px;
+  padding: 0;
   border-bottom: 1px solid rgba(231, 58, 48, 0.1);
   background-color: $color-secondary-bg;
 }
@@ -27,12 +27,17 @@
   width: 1050px;
   margin: 0 auto;
 
-  .landing-header-inverted & {
-    height: 50px;
-  }
-
   @media (max-width: 960px) {
     height: 60px;
+  }
+
+  .landing-header-inverted & {
+    height: 50px;
+    padding: 0 40px;
+
+    @media (max-width: 400px) {
+      padding: 0 20px;
+    }
   }
 }
 
@@ -83,11 +88,8 @@
   a {
     padding: 10px;
 
-    @media (max-width: 760px) {
+    @media (max-width: 768px) {
       padding: 7px;
-    }
-
-    @media (max-width: 700px) {
       font-size: 14px;
     }
 

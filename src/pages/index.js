@@ -102,13 +102,13 @@ const IndexPage = () => {
                 </p>
 
                 <div className="join-container">
-                  <Link
-                    to="/signup"
+                  <a
+                    href="/signup?source=hero"
                     className={`beam-me-up-cta`}
-                    state={{ register: true }}
+                    // state={{ register: true }}
                   >
                     Get Started For Free!
-                  </Link>
+                  </a>
                   {statsContent}
                 </div>
               </div>
@@ -259,7 +259,7 @@ const IndexPage = () => {
                 </Browser>
               </div> */}
             <a
-              href="/signup"
+              href="/signup?source=providers"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
               Start Unsubscribing!
@@ -303,7 +303,7 @@ const IndexPage = () => {
             <WallOfLove colLimit={1} />
             <p>What are you waiting for?</p>
             <a
-              href="/signup"
+              href="/signup?source=footer"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
               Get Started For Free
