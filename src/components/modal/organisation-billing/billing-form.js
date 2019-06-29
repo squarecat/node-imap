@@ -8,11 +8,13 @@ import {
 import React, { useContext, useReducer } from 'react';
 import reducer, { initialState } from './reducer';
 
+import { ENTERPRISE } from '../../../../shared/prices';
 import { ModalContext } from '../../../providers/modal-provider';
 import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 // import PaymentCompanyDetails from '../../payments/company-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
+import { TextImportant } from '../../../components/text';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
 
@@ -23,8 +25,10 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const { state: stripeState } = useContext(StripeStateContext);
   const { close: closeModal } = useContext(ModalContext);
 
-  const { id, billing = {} } = organisation;
+  const { id, billing = {}, currentUsers } = organisation;
   const { subscriptionId } = billing;
+
+  const seats = currentUsers.length;
 
   const onPaymentSuccess = organisation => {
     closeModal();
@@ -146,7 +150,23 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
           Add Organisation Payment Method
           <ModalCloseIcon />
         </ModalHeader>
-        <p>Provide your company details for invoicing.</p>
+        <p>
+          You are signing up for the{' '}
+          <TextImportant>Enterprise plan</TextImportant> billed at{' '}
+          <TextImportant>
+            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
+          </TextImportant>
+          .
+        </p>
+        <p>
+          You currently have{' '}
+          <TextImportant>
+            {`${seats} member${seats > 1 ? 's' : ''}`}
+          </TextImportant>{' '}
+          . You will be billed $
+          {((ENTERPRISE.pricePerSeat * seats) / 100).toFixed(2)} monthly
+          starting today.
+        </p>
         <PaymentAddressDetails
           addressDetails={state.addressDetails}
           loading={state.loading}

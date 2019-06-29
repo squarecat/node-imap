@@ -238,7 +238,7 @@ function Billing({ organisation }) {
 
   const [, { setOrganisationLastUpdated }] = useUser();
 
-  const { id, active, billing = {} } = organisation;
+  const { id, active, billing = {}, currentUsers } = organisation;
   const {
     card,
     company = {},
@@ -246,6 +246,8 @@ function Billing({ organisation }) {
     subscriptionStatus,
     delinquent
   } = billing;
+
+  const seats = currentUsers.length;
 
   // const onClickRemoveCard = useCallback(
   //   () => {
@@ -335,6 +337,13 @@ function Billing({ organisation }) {
             <p>
               You need to add a payment method to activate your organisation.
             </p>
+            <p>
+              You currently have{' '}
+              <TextImportant>
+                {`${seats} member${seats > 1 ? 's' : ''}`}
+              </TextImportant>
+              .
+            </p>
             <Button basic compact stretch onClick={onClickAddBilling}>
               Add Payment Method
             </Button>
@@ -416,6 +425,12 @@ function BillingInformation({ organisationId }) {
           {`${quantity} seat${quantity > 1 ? 's' : ''}`}
         </TextImportant>
         .
+      </p>
+      <p>
+        Change to the number of members will be pro-rated until the end of the
+        billing period. This means you will only be charged for the remaining
+        time in the month for new members, and will receive credit for removed
+        members.
       </p>
     </div>
   );
