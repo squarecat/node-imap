@@ -1,7 +1,7 @@
 import {
   connectUserOutlookAccount,
   createOrUpdateUserFromOutlook,
-  updateUserToken
+  updateUserAccountToken
 } from '../services/user';
 import { isBetaUser, setRememberMeCookie } from './access';
 
@@ -111,7 +111,10 @@ export const ConnectAccountStrategy = new OutlookStrategy(
   }
 );
 
-export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
+export function refreshAccessToken(
+  { userId, account },
+  { refreshToken, expiresIn }
+) {
   return new Promise((resolve, reject) => {
     refresh.requestNewAccessToken(
       'outlook-login',
@@ -123,12 +126,15 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           return reject(err);
         }
         try {
-          await updateUserToken(userId, {
-            refreshToken,
-            accessToken,
-            expires: addSeconds(new Date(), expiresIn),
-            expiresIn
-          });
+          await updateUserAccountToken(
+            { userId, accountEmail: account.email },
+            {
+              refreshToken,
+              accessToken,
+              expires: addSeconds(new Date(), expiresIn),
+              expiresIn
+            }
+          );
           resolve(accessToken);
         } catch (err) {
           logger.error('outlook-auth: error updating user refresh token');

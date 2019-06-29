@@ -1,5 +1,5 @@
 import {
-  addEstimateToStats,
+  // addEstimateToStats,
   addFailedUnsubscriptionToStats,
   addNumberofEmailsToStats,
   addUnsubscriptionToStats
@@ -9,12 +9,12 @@ import {
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
 import {
-  fetchMail as fetchMailFromGmail,
-  getEstimates as getMailEstimatesFromGmail
+  fetchMail as fetchMailFromGmail
+  // getEstimates as getMailEstimatesFromGmail
 } from './mail/gmail';
 import {
-  fetchMail as fetchMailFromOutlook,
-  getEstimates as getMailEstimatesFromOutlook
+  fetchMail as fetchMailFromOutlook
+  // getEstimates as getMailEstimatesFromOutlook
 } from './mail/outlook';
 
 import { addOrUpdateOccurrences } from './occurrences';
@@ -23,9 +23,7 @@ import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
-import {
-  resolveUnsubscription as resolveUserUnsubscription
-} from '../dao/user';
+import { resolveUnsubscription as resolveUserUnsubscription } from '../dao/user';
 import subMonths from 'date-fns/sub_months';
 
 export async function* fetchMail({ userId, accountFilters = [] }) {
@@ -193,25 +191,25 @@ export async function addUnsubscribeErrorResponse(
   }
 }
 
-export async function getMailEstimates(userId) {
-  const user = await getUserById(userId);
-  const { provider } = user;
-  let estimates;
-  try {
-    if (provider === 'google') {
-      estimates = await getMailEstimatesFromGmail(user);
-    } else if (provider === 'outlook') {
-      estimates = await getMailEstimatesFromOutlook(user);
-    } else {
-      throw new Error('mail-service unknown provider');
-    }
-    addEstimateToStats();
-    return estimates;
-  } catch (err) {
-    logger.error(
-      `mail-service: error getting mail estimates for user ${userId}`
-    );
-    logger.error(err);
-    throw err;
-  }
-}
+// export async function getMailEstimates(userId) {
+//   const user = await getUserById(userId);
+//   const { provider } = user;
+//   let estimates;
+//   try {
+//     if (provider === 'google') {
+//       estimates = await getMailEstimatesFromGmail(user);
+//     } else if (provider === 'outlook') {
+//       estimates = await getMailEstimatesFromOutlook(user);
+//     } else {
+//       throw new Error('mail-service unknown provider');
+//     }
+//     addEstimateToStats();
+//     return estimates;
+//   } catch (err) {
+//     logger.error(
+//       `mail-service: error getting mail estimates for user ${userId}`
+//     );
+//     logger.error(err);
+//     throw err;
+//   }
+// }

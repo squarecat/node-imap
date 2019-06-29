@@ -1,4 +1,4 @@
-import { doRequest, getAccessToken } from './access';
+import { doRequest, getOutlookAccessToken } from './access';
 import { getSearchString, getTimeRange } from './utils';
 
 import logger from '../../../utils/logger';
@@ -16,21 +16,25 @@ export async function getMailEstimates(account, { from } = {}) {
   };
 }
 
-export async function getEstimateForTimeframe(account, { from }) {
+export async function getEstimateForTimeframe(userId, account, { from }) {
   try {
     const query = getSearchString({
       from
     });
-    return requestCount(account, { filter: query });
+    return requestCount(account, { filter: query }, userId);
   } catch (err) {
     logger.error(err);
     throw err;
   }
 }
 
-async function requestCount(account, { filter, folder = 'AllItems' } = {}) {
+async function requestCount(
+  account,
+  { filter, folder = 'AllItems' } = {},
+  userId
+) {
   try {
-    const accessToken = await getAccessToken(account);
+    const accessToken = await getOutlookAccessToken(userId, account);
     return doRequest(getCountUrl({ filter, folder }), accessToken);
   } catch (err) {
     logger.error('outlook-access: failed to send request to api');

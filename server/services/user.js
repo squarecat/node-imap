@@ -529,15 +529,20 @@ function addConnectAccountActivity(updatedUser, account) {
   addConnectedAccountToStats(account.provider);
 }
 
-export async function updateUserToken(id, keys) {
+export async function updateUserAccountToken({ userId, accountEmail }, keys) {
   try {
-    const user = await updateUser(id, {
+    const user = await updateUserWithAccount(
+      { userId, accountEmail },
+      {},
       keys
-    });
+    );
+    // const user = await updateUser(id, {
+    //   keys
+    // });
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error updating user refresh token ${id ||
+      `user-service: error updating user refresh token ${userId ||
         'no userData id'}`
     );
     logger.error(err);

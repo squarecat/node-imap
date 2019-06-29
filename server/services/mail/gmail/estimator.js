@@ -24,17 +24,31 @@ export async function getMailEstimates(
 // due to issues with the Gmail API, to do
 // an estimate for 1m or 6m, we have to
 // estimate the estimate by multiplying it
-export async function getEstimateForTimeframe(account, { includeTrash, from }) {
+export async function getEstimateForTimeframe(
+  userId,
+  account,
+  { includeTrash, from }
+) {
   const searchStr = getSearchString({
     from
   });
-  let total = await getEstimatedEmails(searchStr, includeTrash, account);
+  let total = await getEstimatedEmails(
+    searchStr,
+    includeTrash,
+    account,
+    userId
+  );
   return total;
 }
 
-export async function getEstimatedEmails(query, includeTrash = true, account) {
+export async function getEstimatedEmails(
+  query,
+  includeTrash = true,
+  account,
+  userId
+) {
   try {
-    const client = await getMailClient(account);
+    const client = await getMailClient(userId, account);
     const { data } = await client.users.messages.list({
       userId: 'me',
       q: query,

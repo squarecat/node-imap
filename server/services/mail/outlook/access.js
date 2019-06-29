@@ -6,12 +6,12 @@ import subMinutes from 'date-fns/sub_minutes';
 
 export const apiRootUrl = 'https://outlook.office.com/api/v2.0/me/MailFolders';
 
-export async function getAccessToken(account) {
-  const { id, keys } = account;
+export async function getOutlookAccessToken(userId, account) {
+  const { keys } = account;
   const { accessToken, refreshToken, expires, expiresIn } = keys;
 
   if (isBefore(subMinutes(expires, 5), new Date())) {
-    return refreshAccessToken(id, { refreshToken, expiresIn });
+    return refreshAccessToken({ userId, account }, { refreshToken, expiresIn });
   }
   return accessToken;
 }

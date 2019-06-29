@@ -177,38 +177,33 @@ export async function updateUserWithAccount(
 ) {
   try {
     const col = await db().collection(COL_NAME);
-    logger.debug('user-dao: updating user with account');
     let updatedKeys;
     if (keys.refreshToken) {
-      logger.debug('user-dao: updating user refresh token');
       updatedKeys = {
         'accounts.$.keys': encryptKeys(keys)
       };
     } else {
-      logger.debug('user-dao: not updating user refresh token');
       updatedKeys = {
         'accounts.$.keys.accessToken': encrypt(keys.accessToken),
         'accounts.$.keys.expiresIn': keys.expiresIn,
         'accounts.$.keys.expires': keys.expires
       };
     }
-    await col.updateOne(
-      {
-        id: userId,
-        'accounts.email': accountEmail
-      },
-      {
-        $set: {
-          ...updatedKeys,
-          ...accountData,
-          lastUpdatedAt: isoDate()
-        }
+    let query = {
+      id: userId,
+      'accounts.email': accountEmail
+    };
+    await col.updateOne(query, {
+      $set: {
+        ...accountData,
+        ...updatedKeys,
+        lastUpdatedAt: isoDate()
       }
-    );
+    });
     const user = await getUser(userId);
     return user;
   } catch (err) {
-    logger.error(`users-dao: error updating user ${userId}`);
+    logger.error(`users-dao: error updating user with account ${userId}`);
     logger.error(err);
     throw err;
   }
