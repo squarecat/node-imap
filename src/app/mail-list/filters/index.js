@@ -211,7 +211,7 @@ function getRecipientValues(recipients) {
             ...(existing.options || []),
             {
               value: to,
-              label: to
+              label: to || '(none)'
             }
           ]
         }
@@ -229,7 +229,7 @@ function getRecipientValues(recipients) {
           },
           {
             value: to,
-            label: to
+            label: to || '(none)'
           }
         ]
       }
