@@ -128,17 +128,21 @@ const Notifications = () => {
           </li>
         );
       }
-      return notifications.map(n => (
-        <li key={n.id} styleName="notification-item">
-          <span
-            styleName={cx('notification', {
-              unread: !n.notificationSeen
-            })}
-          >
-            {parseActivity(n)}
-          </span>
-        </li>
-      ));
+      return notifications.map(n => {
+        const parsedActivity = parseActivity(n);
+        if (!parsedActivity) return null;
+        return (
+          <li key={n.id} styleName="notification-item">
+            <span
+              styleName={cx('notification', {
+                unread: !n.notificationSeen
+              })}
+            >
+              {parsedActivity}
+            </span>
+          </li>
+        );
+      });
     },
     [notifications]
   );

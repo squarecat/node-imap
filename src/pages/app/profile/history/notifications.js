@@ -38,10 +38,12 @@ function Notifications() {
         <Table>
           <tbody>
             {notifications.map(activity => {
+              const parsedActivity = parseActivity(activity);
+              if (!parsedActivity) return null;
               return (
                 <TableRow key={activity.timestamp}>
                   <TableCell>{relative(activity.timestamp)}</TableCell>
-                  <TableCell>{parseActivity(activity)}</TableCell>
+                  <TableCell>{parsedActivity}</TableCell>
                 </TableRow>
               );
             })}
