@@ -605,9 +605,7 @@ async function handleSubscriptionSuccess(response, { organisationId }) {
   }
 }
 
-export async function handleInvoicePaymentSuccess({
-  subscription: subscriptionId
-}) {
+export async function handleInvoicePaymentSuccess({ subscriptionId }) {
   try {
     logger.info(
       `payment-service: handling invoice payment success for subscription ${subscriptionId}`
@@ -640,9 +638,7 @@ export async function handleInvoicePaymentSuccess({
 // When an automatic payment on a subscription fails, a charge.failed and an invoice.payment_failed event are sent, and the subscription state becomes past_due. Stripe attempts to recover payment according to your configured retry rules.
 
 // After Stripe completes the configured recovery process, the subscription status remains past_due, or transitions to one of canceled or unpaid, depending upon your settings:
-export async function handleInvoicePaymentFailed({
-  subscription: subscriptionId
-}) {
+export async function handleInvoicePaymentFailed({ subscriptionId }) {
   try {
     // TODO do we need to handlet his or do we only need to know when the customer subscription was deleted?
     // after stripe has retried 3 times
@@ -704,10 +700,7 @@ export async function handleInvoicePaymentFailed({
 // to by your request—if the customer.subscription.deleted event's request property is null.) Since the subscription has been
 // deleted, it cannot be reactivated. Instead, collect updated billing details from your customer, update their default payment
 // method in Stripe, and create a new subscription for their customer record.
-export async function handleSubscriptionDeleted({
-  subscription: subscriptionId,
-  request
-}) {
+export async function handleSubscriptionDeleted({ subscriptionId, request }) {
   try {
     logger.info(
       `payment-service: handling invoice payment failed for subscription ${subscriptionId}`

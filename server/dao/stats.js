@@ -33,9 +33,9 @@ async function addUnsubscription(type, count = 1) {
   }
 }
 
-export function addScan(count = 1) {
-  return updateSingleStat('scans', count);
-}
+// export function addScan(count = 1) {
+//   return updateSingleStat('scans', count);
+// }
 
 export function addFailedUnsubscription(count = 1) {
   return updateSingleStat('unsubscriptionsFailed', count);
@@ -263,7 +263,7 @@ export async function getStats() {
 
 const recordedStats = [
   'users',
-  'scans',
+  // 'scans',
   'estimates',
   'unsubscriptions',
   'emails',

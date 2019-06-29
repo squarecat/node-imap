@@ -166,15 +166,24 @@ export default app => {
         type === 'invoice.payment_succeeded' &&
         data.billing_reason === 'subscription_create'
       ) {
-        return PaymentService.handleInvoicePaymentSuccess(data);
+        const { object } = data;
+        const { subscription: subscriptionId } = object;
+        return PaymentService.handleInvoicePaymentSuccess({ subscriptionId });
       }
 
       if (type === 'invoice.payment_failed') {
-        return PaymentService.handleInvoicePaymentFailed(data);
+        const { object } = data;
+        const { subscription: subscriptionId } = object;
+        return PaymentService.handleInvoicePaymentFailed({ subscriptionId });
       }
 
       if (type === 'customer.subscription.deleted') {
-        return PaymentService.handleSubscriptionDeleted(data);
+        const { request, object } = data;
+        const { subscription: subscriptionId } = object;
+        return PaymentService.handleSubscriptionDeleted({
+          subscriptionId,
+          request
+        });
       }
     } catch (err) {
       logger.error('payments-rest: error with invoice webhook');

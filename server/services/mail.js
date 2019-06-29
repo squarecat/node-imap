@@ -9,10 +9,6 @@ import {
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
 import {
-  addScan as addScanToUser,
-  resolveUnsubscription as resolveUserUnsubscription
-} from '../dao/user';
-import {
   fetchMail as fetchMailFromGmail,
   getEstimates as getMailEstimatesFromGmail
 } from './mail/gmail';
@@ -27,6 +23,9 @@ import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
+import {
+  resolveUnsubscription as resolveUserUnsubscription
+} from '../dao/user';
 import subMonths from 'date-fns/sub_months';
 
 export async function* fetchMail({ userId, accountFilters = [] }) {
@@ -68,7 +67,7 @@ export async function* fetchMail({ userId, accountFilters = [] }) {
     }
 
     // addOrUpdateOccurrences(userId, dupes);
-    addScanToUser(user.id, accountScanData);
+    // addScanToUser(user.id, accountScanData);
     return {
       occurrences: accountOccurrences
     };

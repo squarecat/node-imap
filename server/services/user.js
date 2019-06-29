@@ -5,7 +5,6 @@ import {
   addPackage,
   addPaidScan,
   addReminder,
-  addScan,
   addTotpSecret,
   addUnsubscription,
   authenticate,
@@ -571,10 +570,10 @@ export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
   });
 }
 
-// TODO will be legacy
-export function addScanToUser(userId, scanData) {
-  return addScan(userId, scanData);
-}
+// // TODO will be legacy
+// export function addScanToUser(userId, scanData) {
+//   return addScan(userId, scanData);
+// }
 
 export async function resolveUserUnsubscription(userId, mailId) {
   return resolveUnsubscription(userId, mailId);

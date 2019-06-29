@@ -197,8 +197,8 @@ function monthlyProfitChart(ctx, stats, expenses) {
   });
 }
 
-function scanChart(ctx, stats) {
-  return simpleLineChart(ctx, stats, 'scans');
+function emailsChart(ctx, stats) {
+  return simpleLineChart(ctx, stats, 'emails');
 }
 function referralChart(ctx, stats) {
   return simpleLineChart(ctx, stats, 'referralSignup');
@@ -354,7 +354,7 @@ export default function OpenPage() {
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const monthlyProfitRef = useRef(null);
-  const scanRef = useRef(null);
+  const emailsRef = useRef(null);
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
   const usersRef = useRef(null);
@@ -375,8 +375,8 @@ export default function OpenPage() {
           monthly
         );
       }
-      if (scanRef.current) {
-        scanChart(scanRef.current.getContext('2d'), stats);
+      if (emailsRef.current) {
+        emailsChart(emailsRef.current.getContext('2d'), stats);
       }
       if (referralRef.current) {
         referralChart(referralRef.current.getContext('2d'), stats);
@@ -391,17 +391,7 @@ export default function OpenPage() {
         providerBarChart(providersRef.current.getContext('2d'), stats);
       }
     },
-    [
-      stats,
-      subscriptionRef.current,
-      dailyRevRef.current,
-      monthlyProfitRef.current,
-      scanRef.current,
-      referralRef.current,
-      mailtoLinkRef.current,
-      usersRef.current,
-      providersRef.current
-    ]
+    [stats, monthly]
   );
   if (loading) {
     return null;
@@ -648,14 +638,14 @@ export default function OpenPage() {
             </div>
             <div styleName="scans">
               <div styleName="chart box">
-                <h2>Scans</h2>
-                <canvas ref={scanRef} />
+                <h2>Emails Scanned</h2>
+                <canvas ref={emailsRef} />
               </div>
               <div styleName="boxes">
-                <div styleName="big-stat box">
+                {/* <div styleName="big-stat box">
                   <span styleName="label">Total number of scans</span>
                   <span styleName="value">{format(stats.scans)}</span>
-                </div>
+                </div> */}
                 <div styleName="big-stat box">
                   <span styleName="label">Total emails scanned</span>
                   <span styleName="value">{format(stats.emails)}</span>
