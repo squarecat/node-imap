@@ -137,7 +137,6 @@ export function refreshAccessToken(
           await updateUserAccountToken(
             { userId, accountEmail: account.email },
             {
-              refreshToken,
               accessToken,
               expires: addSeconds(new Date(), expiresIn),
               expiresIn

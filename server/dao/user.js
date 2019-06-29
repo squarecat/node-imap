@@ -172,17 +172,26 @@ export async function updateUser(id, userData) {
 
 export async function updateUserWithAccount(
   { userId, accountEmail },
-  accountData,
+  accountData = {},
   keys
 ) {
   try {
     const col = await db().collection(COL_NAME);
     let updatedKeys;
+
+    logger.debug(`user-dao: updating user with account ${userId}`);
+
     if (keys.refreshToken) {
+      logger.debug(
+        `user-dao: keys has a refresh token, setting all keys ${userId}`
+      );
       updatedKeys = {
         'accounts.$.keys': encryptKeys(keys)
       };
     } else {
+      logger.debug(
+        `user-dao: keys does not have refresh token, setting access token only ${userId}`
+      );
       updatedKeys = {
         'accounts.$.keys.accessToken': encrypt(keys.accessToken),
         'accounts.$.keys.expiresIn': keys.expiresIn,
@@ -193,6 +202,7 @@ export async function updateUserWithAccount(
       id: userId,
       'accounts.email': accountEmail
     };
+    logger.debug(`user-dao: updating user account ${accountEmail}`);
     await col.updateOne(query, {
       $set: {
         ...accountData,
