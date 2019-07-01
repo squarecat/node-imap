@@ -1,1 +1,1 @@
-BROWSER_DEBUG=true node ./tests/unsubscriber.js "https://mailchimp.us1.list-manage.com/unsubscribe?u=f7b9ee22124ff6454424dc10c&id=21eda42079&e=631637711f&c=d1544990e8"
+BROWSER_DEBUG=true node --inspect-brk ./tests/unsubscriber.js "file:///Users/james/squarecat/code/leaveme/tests/metaredirect.html"
