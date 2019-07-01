@@ -47,13 +47,13 @@ function dailyRevChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: getGraphStats(stats, 'totalRevenue')
-        },
-        {
-          fill: false,
-          backgroundColor: lineColor2,
-          borderColor: lineColor2,
-          data: getGraphStats(stats, 'giftRevenue')
         }
+        // {
+        //   fill: false,
+        //   backgroundColor: lineColor2,
+        //   borderColor: lineColor2,
+        //   data: getGraphStats(stats, 'giftRevenue')
+        // }
       ]
     },
     type: 'line',
@@ -427,9 +427,7 @@ export default function OpenPage() {
             <div styleName="revenue">
               <div styleName="chart box">
                 <h2>
-                  Daily Revenue -{' '}
-                  <span style={{ color: lineColor }}>Sales</span> vs{' '}
-                  <span style={{ color: lineColor2 }}>Gift Sales</span>
+                  Daily Revenue
                 </h2>
                 <canvas ref={dailyRevRef} />
               </div>
