@@ -172,9 +172,9 @@ export default function SecurityPage() {
               Alone account or email address.
             </p>
             <p>
-              This system improves the quanlity of Leave Me Alone for all users.
+              This system improves the quality of Leave Me Alone for all users.
               If you don't want to contribute your data to this algorithm for
-              whatever you can opt-out at any time from your account
+              whatever reason you can opt-out at any time from your account
               preferences.
             </p>
           </div>
