@@ -19,12 +19,12 @@ export async function* fetchMail(
   try {
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, client, accessToken] = await Promise.all([
-      getEstimateForTimeframe(account, {
+      getEstimateForTimeframe(user.id, account, {
         from,
         includeTrash: true
       }),
-      getMailClient(account, strategy),
-      getGmailAccessToken(account)
+      getMailClient(user.id, account, strategy),
+      getGmailAccessToken(user.id, account)
     ]);
     logger.info(
       `gmail-fetcher: checking for new mail after ${new Date(from)} (${

@@ -99,11 +99,11 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
       if (response.error.message) {
         message = response.error.message;
       }
-      dispatch({ type: 'set-error', error: message });
+      dispatch({ type: 'set-error', data: message });
     } else if (response.requires_payment_method) {
       dispatch({
         type: 'set-error',
-        error:
+        data:
           'An error occured charging your card, please enter different card details.'
       });
     } else if (response.requires_action) {
@@ -129,7 +129,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
     if (errorAction) {
       // Display error.message in your UI.
-      dispatch({ type: 'set-error', error: errorAction.message });
+      dispatch({ type: 'set-error', data: errorAction.message });
     } else {
       // The payment has succeeded. Display a success message.
       const updatedResponse = await confirmSubscription(id);

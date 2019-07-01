@@ -5,22 +5,23 @@ import { refreshAccessToken } from '../../../auth/google';
 import subMinutes from 'date-fns/sub_minutes';
 
 const { google: googleConfig } = auth;
-export async function getGmailAccessToken(account) {
-  const { keys, id } = account;
+
+export async function getGmailAccessToken(userId, account) {
+  const { keys } = account;
   const { accessToken, refreshToken, expires, expiresIn } = keys;
 
   if (isBefore(subMinutes(expires, 5), new Date())) {
-    return refreshAccessToken(id, { refreshToken, expiresIn });
+    return refreshAccessToken({ userId, account }, { refreshToken, expiresIn });
   }
   return accessToken;
 }
 
-export async function getMailClient(account) {
-  return getApiClient(account);
+export async function getMailClient(userId, account) {
+  return getApiClient(userId, account);
 }
 
-async function getApiClient(userOrUserId) {
-  const accessToken = await getGmailAccessToken(userOrUserId);
+async function getApiClient(userId, account) {
+  const accessToken = await getGmailAccessToken(userId, account);
   const oauth2Client = new google.auth.OAuth2(
     googleConfig.clientId,
     googleConfig.clientSecret,

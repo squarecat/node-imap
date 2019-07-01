@@ -17,7 +17,7 @@ import {
   getUserByHashedEmail,
   getUserByReferralCode,
   incrementCredits,
-  incrementUserReferralBalance,
+  incrementCreditsUsed,
   removeAccount,
   removeBillingCard,
   removeReminder,
@@ -529,15 +529,20 @@ function addConnectAccountActivity(updatedUser, account) {
   addConnectedAccountToStats(account.provider);
 }
 
-export async function updateUserToken(id, keys) {
+export async function updateUserAccountToken({ userId, accountEmail }, keys) {
   try {
-    const user = await updateUser(id, {
+    const user = await updateUserWithAccount(
+      { userId, accountEmail },
+      {},
       keys
-    });
+    );
+    // const user = await updateUser(id, {
+    //   keys
+    // });
     return user;
   } catch (err) {
     logger.error(
-      `user-service: error updating user refresh token ${id ||
+      `user-service: error updating user refresh token ${userId ||
         'no userData id'}`
     );
     logger.error(err);
@@ -605,7 +610,7 @@ export async function addPackageToUser(userId, { productId, credits, price }) {
         price
       });
       // add activity for the referral user too
-      addActivityForUser(referredBy, 'referralPurchase', {
+      addActivityForUser(referredBy.id, 'referralPurchase', {
         id: user.id,
         email: user.email,
         productId,
@@ -667,10 +672,6 @@ export async function addUserReminder(id, timeframe) {
 
 export function removeUserReminder(id) {
   return removeReminder(id);
-}
-
-export async function creditUserAccount(id, { amount }) {
-  return incrementUserReferralBalance(id, amount);
 }
 
 export async function getUserPayments(id) {
@@ -1018,6 +1019,10 @@ export async function addActivityForUser(userId, name, data = {}) {
 export function incrementUserCredits(id, credits) {
   logger.debug(`user-service: incrementing credits by ${credits}`);
   return incrementCredits(id, credits);
+}
+
+export function incrementCreditsUsedForUser(id, credits) {
+  return incrementCreditsUsed(id, credits);
 }
 
 function getReward({ userActivity, name, milestone, activityData }) {

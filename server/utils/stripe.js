@@ -335,6 +335,11 @@ export async function detachPaymentMethod(paymentMethodId) {
 }
 
 export const generatePaymentResponse = intent => {
+  logger.info(
+    `stripe: generating payment response from intent - ${intent.status}`
+  );
+  logger.debug(intent);
+
   if (
     intent.status === 'last_payment_error' ||
     intent.status === 'requires_payment_method'

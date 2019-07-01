@@ -33,8 +33,10 @@
 
 .subpage h2 {
   font-size: 25px;
+  line-height: 32px;
   @media (max-width: 768px) {
     font-size: 20px;
+    line-height: 28px;
   }
 }
 

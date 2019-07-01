@@ -214,7 +214,7 @@ function slide1(
             {title}
             <ModalCloseIcon />
           </ModalHeader>
-          <p>{lead}</p>
+          {lead}
           <p>
             If the provider is behaving themselves, then you shouldn't get any
             more subscription emails from them!
@@ -322,7 +322,7 @@ function slide2({
   return (
     <>
       <ModalBody compact>
-        <p>{lead}</p>
+        {lead}
         <a
           styleName="manual-unsubscribe-btn"
           target="_"

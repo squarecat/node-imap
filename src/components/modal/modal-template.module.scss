@@ -80,6 +80,7 @@
   height: calc(100% - 75px);
   max-height: 100%;
   overflow-y: auto;
+  position: relative;
 
   p,
   li {
@@ -152,9 +153,6 @@
   a {
     margin-left: 10px;
   }
-  // @media (max-width: 500px) {
-  //   flex-direction: column-reverse;
-  // }
 }
 
 .close {
@@ -162,7 +160,7 @@
   color: $color-input-label;
   opacity: 0.8;
   transition: opacity 200ms ease-in-out;
-  z-index: 9;
+  z-index: 11; // higher than overlay so modal is closable
   font-size: 12px;
 
   &:hover {

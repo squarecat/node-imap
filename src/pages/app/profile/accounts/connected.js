@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 
+const targetOrigin = process.env.BASE_URL;
+
 export default () => {
   useEffect(() => {
     if (window.opener) {
@@ -7,15 +9,27 @@ export default () => {
       const error = urlParams.get('error');
       if (error) {
         const reason = urlParams.get('reason');
-        window.opener.postMessage({
-          error: reason,
-          success: false
-        });
+        window.opener.postMessage(
+          {
+            source: 'lma-connect-redirect',
+            payload: {
+              error: reason,
+              success: false
+            }
+          },
+          targetOrigin
+        );
       } else {
-        window.opener.postMessage({
-          error: null,
-          success: true
-        });
+        window.opener.postMessage(
+          {
+            source: 'lma-connect-redirect',
+            payload: {
+              error: null,
+              success: true
+            }
+          },
+          targetOrigin
+        );
       }
       window.close();
     }

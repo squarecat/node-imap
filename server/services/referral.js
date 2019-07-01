@@ -88,9 +88,9 @@ export async function addReferralToBothUsers({ user, referredBy }) {
     }
   } catch (err) {
     logger.error(
-      `referral-service: error adding referral activity for user ${
+      `referral-service: error adding referral to user ${
         user.id
-      }, referral user ${referredBy.id}`
+      }, referred by ${referredBy.id}`
     );
     throw err;
   }

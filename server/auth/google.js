@@ -1,7 +1,7 @@
 import {
   connectUserGoogleAccount,
   createOrUpdateUserFromGoogle,
-  updateUserToken
+  updateUserAccountToken
 } from '../services/user';
 import { isBetaUser, setRememberMeCookie } from './access';
 
@@ -115,7 +115,10 @@ export const ConnectAccountStrategy = new GoogleStrategy(
   }
 );
 
-export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
+export function refreshAccessToken(
+  { userId, account },
+  { refreshToken, expiresIn }
+) {
   return new Promise((resolve, reject) => {
     refresh.requestNewAccessToken(
       'google-login',
@@ -131,12 +134,14 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           );
         }
         try {
-          await updateUserToken(userId, {
-            refreshToken,
-            accessToken,
-            expires: addSeconds(new Date(), expiresIn),
-            expiresIn
-          });
+          await updateUserAccountToken(
+            { userId, accountEmail: account.email },
+            {
+              accessToken,
+              expires: addSeconds(new Date(), expiresIn),
+              expiresIn
+            }
+          );
           resolve(accessToken);
         } catch (err) {
           logger.error('google-auth: error updating user refresh token');
@@ -186,6 +191,7 @@ export default app => {
       const baseErrUrl = `/login?error=true`;
       if (err) {
         logger.error('google-auth: passport authentication error');
+        logger.error(err);
         const { id: errId, data } = err.toJSON();
         const errUrl = `${baseErrUrl}&id=${errId}&reason=${data.errKey ||
           'unknown'}`;

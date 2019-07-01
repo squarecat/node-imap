@@ -1,7 +1,7 @@
 import {
   addUnsubscribeErrorResponse,
-  fetchMail,
-  getMailEstimates
+  fetchMail
+  // getMailEstimates
 } from '../services/mail';
 
 import { RestError } from '../utils/errors';
@@ -34,10 +34,10 @@ export default function(app, socket) {
     }
   });
 
-  app.get('/api/mail/estimates', auth, async (req, res) => {
-    const estimates = await getMailEstimates(req.user.id);
-    res.send(estimates);
-  });
+  // app.get('/api/mail/estimates', auth, async (req, res) => {
+  //   const estimates = await getMailEstimates(req.user.id);
+  //   res.send(estimates);
+  // });
 
   socket.on('fetch', async (userId, data = {}) => {
     const { onMail, onError, onEnd, onProgress } = getSocketFunctions(

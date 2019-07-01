@@ -47,13 +47,13 @@ function dailyRevChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: getGraphStats(stats, 'totalRevenue')
-        },
-        {
-          fill: false,
-          backgroundColor: lineColor2,
-          borderColor: lineColor2,
-          data: getGraphStats(stats, 'giftRevenue')
         }
+        // {
+        //   fill: false,
+        //   backgroundColor: lineColor2,
+        //   borderColor: lineColor2,
+        //   data: getGraphStats(stats, 'giftRevenue')
+        // }
       ]
     },
     type: 'line',
@@ -400,6 +400,9 @@ export default function OpenPage() {
   const totalRevenueStats = getBoxStats(stats, 'totalRevenue');
   const salesStats = getBoxStats(stats, 'totalSales');
   const usersStats = getBoxStats(stats, 'users');
+  console.log('totalRevenueStats', totalRevenueStats);
+  console.log('salesStats', salesStats);
+  console.log('usersStats', usersStats);
 
   return (
     <SubPageLayout
@@ -424,9 +427,7 @@ export default function OpenPage() {
             <div styleName="revenue">
               <div styleName="chart box">
                 <h2>
-                  Daily Revenue -{' '}
-                  <span style={{ color: lineColor }}>Sales</span> vs{' '}
-                  <span style={{ color: lineColor2 }}>Gift Sales</span>
+                  Daily Revenue
                 </h2>
                 <canvas ref={dailyRevRef} />
               </div>
@@ -753,9 +754,8 @@ function getGraphStats(stats, stat) {
 
   // only show data from the last month and this month to date
   return histogram.reduce((out, d) => {
-    // stats are run at just past midnight so we actually want to show the day before
+    const date = getStatDate(d.timestamp);
 
-    const date = subDays(startOfDay(d.timestamp), 1);
     if (isAfter(date, lastDayToShow)) {
       return [
         ...out,
@@ -769,7 +769,7 @@ function getGraphStats(stats, stat) {
   }, []);
 }
 
-function getMonthlyRevenueGraphStats(stats, expenses) {
+function getMonthlyRevenueGraphStats(stats) {
   if (!stats) return null;
   const { daily } = stats;
   const { histogram } = daily;
@@ -780,7 +780,8 @@ function getMonthlyRevenueGraphStats(stats, expenses) {
   const lastMonthToShow = endOfMonth(addMonths(today, -1));
 
   const byMonth = histogram.reduce((out, d) => {
-    const date = startOfMonth(subDays(startOfDay(d.timestamp), 1));
+    const date = startOfMonth(getStatDate(d.timestamp));
+
     if (isAfter(date, lastMonthToShow)) return out;
 
     const formatted = formatDate(date, 'YYYY-MM');
@@ -831,12 +832,15 @@ function getPreviousMonthValues(stats, stat, timeframe = 0) {
   const { daily } = stats;
   const { histogram } = daily;
 
-  const today = new Date();
+  const today = startOfDay(new Date());
+
+  // start & end of the previous month
   const start = startOfMonth(addMonths(today, timeframe));
   const end = endOfMonth(addMonths(today, timeframe));
 
   return histogram.reduce((out, d) => {
-    if (isWithinRange(d.timestamp, start, end)) return out + d[stat] || 0;
+    const date = getStatDate(d.timestamp);
+    if (isWithinRange(date, start, end)) return out + d[stat] || 0;
     return out;
   }, 0);
 }
@@ -846,11 +850,12 @@ function getThisMonthToDate(stats, stat) {
   const { daily } = stats;
   const { histogram, previousDayTotals } = daily;
 
-  const today = new Date();
+  const today = startOfDay(new Date());
   const start = startOfMonth(today);
 
   const cumulative = histogram.reduce((out, d) => {
-    if (isAfter(d.timestamp, start)) return out + d[stat] || 0;
+    const date = getStatDate(d.timestamp);
+    if (isAfter(date, start)) return out + d[stat] || 0;
     return out;
   }, 0);
 
@@ -987,4 +992,9 @@ function calculateWithRefunds(stats, stat) {
   if (stat === 'totalSales')
     return stats.totalSales - (stats.totalSalesRefunded || 0);
   return 0;
+}
+
+function getStatDate(timestamp) {
+  // stats are run at just past midnight so we actually want to show the day before
+  return subDays(startOfDay(timestamp), 1);
 }

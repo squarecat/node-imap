@@ -103,6 +103,7 @@ export default ({ credits }) => {
       try {
         setSendingInvite(true);
         await sendReferralInvite(email);
+        setEmail('');
         alertActions.setAlert({
           id: 'referral-invite-success',
           level: 'success',

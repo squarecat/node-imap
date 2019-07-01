@@ -1,4 +1,4 @@
-import { doRequest, getAccessToken } from './access';
+import { doRequest, getOutlookAccessToken } from './access';
 
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
@@ -11,11 +11,11 @@ export async function* fetchMail({ user, account, from }) {
   try {
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, accessToken] = await Promise.all([
-      getEstimateForTimeframe(account, {
+      getEstimateForTimeframe(user.id, account, {
         from,
         includeTrash: true
       }),
-      getAccessToken(account)
+      getOutlookAccessToken(user.id, account)
     ]);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;

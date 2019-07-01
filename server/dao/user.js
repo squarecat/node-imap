@@ -172,43 +172,48 @@ export async function updateUser(id, userData) {
 
 export async function updateUserWithAccount(
   { userId, accountEmail },
-  accountData,
+  accountData = {},
   keys
 ) {
   try {
     const col = await db().collection(COL_NAME);
-    logger.debug('user-dao: updating user with account');
     let updatedKeys;
+
+    logger.debug(`user-dao: updating user with account ${userId}`);
+
     if (keys.refreshToken) {
-      logger.debug('user-dao: updating user refresh token');
+      logger.debug(
+        `user-dao: keys has a refresh token, setting all keys ${userId}`
+      );
       updatedKeys = {
         'accounts.$.keys': encryptKeys(keys)
       };
     } else {
-      logger.debug('user-dao: not updating user refresh token');
+      logger.debug(
+        `user-dao: keys does not have refresh token, setting access token only ${userId}`
+      );
       updatedKeys = {
         'accounts.$.keys.accessToken': encrypt(keys.accessToken),
         'accounts.$.keys.expiresIn': keys.expiresIn,
         'accounts.$.keys.expires': keys.expires
       };
     }
-    await col.updateOne(
-      {
-        id: userId,
-        'accounts.email': accountEmail
-      },
-      {
-        $set: {
-          ...updatedKeys,
-          ...accountData,
-          lastUpdatedAt: isoDate()
-        }
+    let query = {
+      id: userId,
+      'accounts.email': accountEmail
+    };
+    logger.debug(`user-dao: updating user account ${accountEmail}`);
+    await col.updateOne(query, {
+      $set: {
+        ...accountData,
+        ...updatedKeys,
+        lastUpdatedAt: isoDate()
       }
-    );
+    });
     const user = await getUser(userId);
     return user;
   } catch (err) {
-    logger.error(`users-dao: error updating user ${userId}`);
+    logger.error(`users-dao: error updating user with account ${userId}`);
     logger.error(err);
     throw err;
   }
@@ -345,6 +350,31 @@ export async function incrementCredits(id, credits) {
         },
         $inc: {
           'billing.credits': credits
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error(
+      `users-dao: error incrementing user ${id} credits by ${credits}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function incrementCreditsUsed(id, credits = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          lastUpdatedAt: isoDate()
+        },
+        $inc: {
+          'billing.creditsUsed': credits
         }
       }
     );
@@ -499,24 +529,6 @@ export async function updateUsersReminded(ids) {
       { multi: true }
     );
     return users;
-  } catch (err) {
-    logger.error(`users-dao: error updating reminded users`);
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function incrementUserReferralBalance(id, amount) {
-  try {
-    const col = await db().collection(COL_NAME);
-    await col.updateOne(
-      { id },
-      {
-        $inc: { referralBalance: amount }
-      }
-    );
-    const user = await getUser(id);
-    return user;
   } catch (err) {
     logger.error(`users-dao: error updating reminded users`);
     logger.error(err);

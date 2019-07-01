@@ -1,13 +1,18 @@
 import React, { useEffect } from 'react';
 
+const targetOrigin = process.env.BASE_URL;
+
 export default () => {
   useEffect(() => {
     const params = window.location.search;
     if (window.opener) {
-      window.opener.postMessage({
-        source: 'lma-login-redirect',
-        payload: params
-      });
+      window.opener.postMessage(
+        {
+          source: 'lma-login-redirect',
+          payload: params
+        },
+        targetOrigin
+      );
       window.close();
     }
   });

@@ -38,6 +38,7 @@ function ActivityHistory() {
           <tbody>
             {sorted.map(activity => {
               const parsedActivity = parseActivity(activity, { accounts });
+              if (!parsedActivity) return null;
               return (
                 <TableRow key={activity.timestamp}>
                   <TableCell>{relative(activity.timestamp)}</TableCell>
