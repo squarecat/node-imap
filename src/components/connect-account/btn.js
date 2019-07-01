@@ -44,11 +44,14 @@ export default ({
     }
     const { data } = event;
 
-    if (data.error) {
-      return onError(data.error);
-    }
+    if (data.source === 'lma-connect-redirect') {
+      const { payload } = data;
+      if (payload.error) {
+        return onError(payload.error);
+      }
 
-    return onSuccess();
+      return onSuccess();
+    }
   };
 
   const openSignInWindow = (url, name) => {
