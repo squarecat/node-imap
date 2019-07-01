@@ -12,7 +12,7 @@ import React from 'react';
 import Testimonial from '../../components/landing/testimonial';
 import connectAccountsImg from '../../assets/accounts.png';
 import creditsImg from '../../assets/learn/credits.png';
-import { div } from '../../components/text';
+import { TextLink } from '../../components/text';
 import frequencyImg from '../../assets/learn/frequency2.png';
 import heartGif from '../../assets/heart.gif';
 import mailImg from '../../assets/example-spam-2.png';
@@ -160,6 +160,12 @@ export default function Learn() {
               emails spam you the most and how many other people chose to
               unsubscribe!
             </p>
+            <p>
+              <TextLink href="/security">
+                Learn more about how we power Subscriber Score{' '}
+                <ArrowIcon width="16" height="16" />
+              </TextLink>
+            </p>
           </div>
           <div styleName="feature-img">
             <img
@@ -232,8 +238,8 @@ export default function Learn() {
           <div styleName="feature-text">
             <h3 styleName="feature-title">Set a reminder</h3>
             <p>
-              Those subscriptions will start creeping up again and we can't
-              clean up emails from the future.
+              Those subscriptions will start creeping up again and unfortunately
+              we can't clean up emails from the future.
             </p>
             <p>Set a reminder to clean your inbox again whenever suits you!</p>
           </div>
