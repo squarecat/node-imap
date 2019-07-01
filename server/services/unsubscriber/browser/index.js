@@ -1,7 +1,9 @@
+import { doBespokeUnsubscribe, doUnsubscribeActions } from './actions';
+
 import config from 'getconfig';
-import { doUnsubscribeActions } from './actions';
 import { goToPage } from './navigate';
 import io from '@pm2/io';
+import { isBespoke } from './checks';
 import logger from '../../../utils/logger';
 import puppeteer from 'puppeteer';
 
@@ -34,7 +36,12 @@ export async function unsubscribeWithLink(unsubUrl) {
     currentTabsOpen.inc();
     await goToPage(page, unsubUrl);
     image = await takeScreenshot(page);
-    const isSuccessful = await doUnsubscribeActions(page);
+    let isSuccessful;
+    if (isBespoke(unsubUrl)) {
+      isSuccessful = await doBespokeUnsubscribe(page, unsubUrl);
+    } else {
+      isSuccessful = await doUnsubscribeActions(page);
+    }
     image = await takeScreenshot(page);
     return { estimatedSuccess: isSuccessful, image };
   } catch (err) {

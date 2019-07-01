@@ -1,0 +1,14 @@
+{
+  "success": [
+    "have been updated",
+    "has been updated",
+    "completed",
+    "Success",
+    "Unsubscribe Successful",
+    "Successfully",
+    "Unsubscribed",
+    "has been removed"
+  ],
+  "buttonActions": ["confirm", "unsubscribe"],
+  "bespokeDomains": ["quora.com"]
+}

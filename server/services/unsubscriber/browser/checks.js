@@ -1,24 +1,24 @@
-import config from 'getconfig';
+import keywords from './keywords.json';
 import logger from '../../../utils/logger';
 
 // get lowercase, uppercase and capitalized versions of all keywords too
-const unsubSuccessKeywords = config.unsubscribeKeywords.reduce(
+const unsubSuccessKeywords = keywords.success.reduce(
   (words, keyword) => [...words, keyword, keyword.toLowerCase()],
   []
 );
 
-export async function checkForKeywords(page) {
+export async function checkForKeywords(page, words = unsubSuccessKeywords) {
   logger.info('browser: checking for keywords');
   const bodyText = await page.evaluate(() =>
     document.body.innerText.toLowerCase()
   );
   logger.info('browser: got page text');
-  return unsubSuccessKeywords.some(word => {
+  return words.some(word => {
     return bodyText.includes(word);
   });
 }
 
-const confirmButtonKeywords = ['confirm', 'unsubscribe'];
+const confirmButtonKeywords = keywords.buttonActions;
 
 export async function checkForButton(page) {
   const links = await page.$$('a, input[type=submit], button');
@@ -101,4 +101,8 @@ export async function checkPageIsStable(page) {
     ).test(functionContent);
     return !hasHrefChange;
   });
+}
+
+export async function isBespoke(url) {
+  return keywords.bespokeDomains.some(d => url.includes(d));
 }
