@@ -51,7 +51,8 @@ function getUserDefaults({ email }) {
     unsubscriptions: [],
     activity: [],
     preferences: {
-      marketingConsent: true
+      marketingConsent: true,
+      occurrencesConsent: true
     },
     milestones: {},
     billing: {

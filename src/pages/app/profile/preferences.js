@@ -1,6 +1,7 @@
 import './preferences.module.scss';
 
 import { FormCheckbox } from '../../../components/form';
+import { TextLink } from '../../../components/text';
 import ProfileLayout from '../../../app/profile/layout';
 import React from 'react';
 import request from '../../../utils/request';
@@ -19,13 +20,15 @@ export async function savePreferences(data) {
 }
 
 const DEFAULTS = {
-  marketingConsent: true
+  marketingConsent: true,
+  occurrencesConsent: true
 };
 
 export default () => {
   const [user, { setPreferences }] = useUser();
   const preferences = {
-    marketingConsent: getPref(user.preferences, 'marketingConsent')
+    marketingConsent: getPref(user.preferences, 'marketingConsent'),
+    occurrencesConsent: getPref(user.preferences, 'occurrencesConsent')
   };
 
   const onChange = (key, value) => {
@@ -36,6 +39,29 @@ export default () => {
 
   return (
     <ProfileLayout pageName="Preferences">
+      <div styleName="preferences-section">
+        <h2>Data Collection</h2>
+        <p>
+          We will collect completely anonymous data about the emails you receive
+          to power our Subscriber Score algorithm. This information improves the
+          quality of Leave Me Alone for all users. If you don't want to
+          contribute your data to this algorithm for whatever reason you can
+          opt-out below.
+        </p>
+        <p>
+          <TextLink href="/security" target="_">
+            Read more about security, the data we collect, and how we use it.
+          </TextLink>
+        </p>
+
+        <FormCheckbox
+          onChange={() =>
+            onChange('occurrencesConsent', !preferences.occurrencesConsent)
+          }
+          checked={getPref(preferences, 'occurrencesConsent')}
+          label="Consent to anonymous data collection to help improve our service"
+        />
+      </div>
       <div styleName="preferences-section">
         <h2>Marketing</h2>
         <p>
