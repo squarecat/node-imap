@@ -1,1 +1,1 @@
-BROWSER_DEBUG=true node ./tests/unsubscriber.js "https://mailchimp.us1.list-manage.com/unsubscribe?u=f7b9ee22124ff6454424dc10c&id=21eda42079&e=631637711f&c=d1544990e8"
+BROWSER_DEBUG=true node --inspect-brk ./tests/unsubscriber.js "http://approve.acemlna.com/box.php?nl=23&c=57&m=110&s=9a170f3b65aa660a2e1e3f4f50d31225&funcml=unsub2&luha=1"

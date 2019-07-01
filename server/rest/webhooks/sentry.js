@@ -13,12 +13,10 @@ export default app => {
   app.post('/api/webhooks/sentry', async (req, res) => {
     logger.info(JSON.stringify(req.body, null, 2));
     const { body } = req;
-    const { url, environment, metadata } = body;
+    const { url, environment } = body;
     try {
       sendMessage(
-        `🚨 New Sentry issue on ${environment}: <b>${metadata.type}: ${
-          metadata.value
-        }</b>
+        `🚨 New Sentry issue on ${environment}:
 ${url}
 `
       );
