@@ -7,7 +7,7 @@ import EmailForm from './email';
 import { FormNotification } from '../../components/form';
 import Layout from '../../layouts/layout';
 import PasswordForm from './password';
-import { TextImportant } from '../../components/text';
+import { TextImportant, TextLink } from '../../components/text';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
 import { getAuthError } from '../../utils/errors';
@@ -205,9 +205,13 @@ const LoginPage = React.memo(
 
               {getError(error)}
               <p styleName="notice">
-                We will use your email to very occassionally send you product
-                updates. You can opt-out at any time. We will NEVER share it
-                with anyone, for any reason, EVER.
+                We only ask for the permissions we need to operate - read more{' '}
+                <TextLink href="/security" target="_">
+                  here
+                </TextLink>
+                . We will use your email to very occassionally send you product
+                updates. You can opt-out at any time. We will NEVER share your
+                data with anyone, for any reason, EVER.
               </p>
             </>
           );
