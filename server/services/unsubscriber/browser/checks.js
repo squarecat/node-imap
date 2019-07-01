@@ -83,7 +83,6 @@ const hrefChangeActions = [
 ];
 
 export async function checkPageIsStable(page) {
-  logger.info('is page stable?');
   // check if there are any timers and if
   // they have the capability to refresh
   // the page in any way
@@ -103,6 +102,6 @@ export async function checkPageIsStable(page) {
   });
 }
 
-export async function isBespoke(url) {
+export function isBespoke(url) {
   return keywords.bespokeDomains.some(d => url.includes(d));
 }

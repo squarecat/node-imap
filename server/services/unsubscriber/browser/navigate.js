@@ -7,13 +7,6 @@ import monkeyPatches from './patches';
 const stabilityTimeout = 5000;
 
 export async function goToPage(page, url) {
-  page.on('close', () => {
-    logger.info('close');
-  });
-  page.on('domcontentloaded', () => {
-    logger.info('domcontentloaded');
-  });
-
   try {
     await page.evaluateOnNewDocument(monkeyPatches);
     await page.goto(url, {
