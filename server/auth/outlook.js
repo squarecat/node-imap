@@ -177,6 +177,7 @@ export default app => {
       const baseErrUrl = `/login?error=true`;
       if (err) {
         logger.error('outlook-auth: passport authentication error');
+        logger.error(err);
         const { id: errId, data } = err.toJSON();
         const errUrl = `${baseErrUrl}&id=${errId}&reason=${data.errKey ||
           'unknown'}`;
