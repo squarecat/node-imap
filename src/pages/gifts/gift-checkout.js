@@ -116,7 +116,7 @@ function priceFormat(price) {
     : numeral(price / 100).format('$0,0');
 }
 function calculatePrice(price, quantity) {
-  let discount = (price / 100) * 40;
+  let discount = 0;
   if (quantity > 50) {
     discount = (price / 100) * 40;
   }
