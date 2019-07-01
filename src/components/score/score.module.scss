@@ -80,6 +80,7 @@ $normal-scale: (
   font-size: 14px;
   padding: 10px 5px;
 
+  max-width: calc(100vw - 200px);
   p:last-child {
     margin-bottom: 0;
   }
