@@ -7,6 +7,19 @@ import { ModalContext } from '../../../providers/modal-provider';
 import { TextImportant } from '../../text';
 import styles from './unsub.module.scss';
 
+const imageUseQuestion = (
+  <>
+    <p>
+      Is it okay if we use that image so that next time we don't make the same
+      mistake?
+    </p>
+    <p>
+      The image will only be used for internal use so our algorithm can learn
+      from it. No other users will have access to it.
+    </p>
+  </>
+);
+
 const UnsubModal = ({ onSubmit, mail }) => {
   const error = !mail.estimatedSuccess;
   const { close } = useContext(ModalContext);
@@ -371,18 +384,22 @@ function slide2({
             The link didn't work
           </li>
           <li
+            onClick={() => setSelected('blank')}
+            data-selected={selected === 'blank'}
+          >
+            The image was blank
+          </li>
+          <li
             onClick={() => setSelected('other')}
             data-selected={selected === 'other'}
           >
             Other
           </li>
         </ul>
-        <p className={!selected ? styles.hidden : ''}>
-          Thanks!{' '}
-          {hasImage
-            ? "Is it okay if we use that image so that next time we don't make the same mistake?"
-            : ''}
-        </p>
+        <div className={!selected ? styles.hidden : ''}>
+          <p>Thanks!</p>
+          {hasImage ? { imageUseQuestion } : null}
+        </div>
       </ModalBody>
       <ModalFooter>
         <Button basic compact muted outlined onClick={onClickBack}>
@@ -398,10 +415,8 @@ function slide3(onSubmit) {
   return (
     <>
       <ModalBody compact>
-        <p>
-          Awesome! Is it okay if we use that image so that next time we don't
-          make the same mistake?
-        </p>
+        <p>Awesome!</p>
+        {imageUseQuestion}
       </ModalBody>
       <ModalFooter>
         <Button

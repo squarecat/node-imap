@@ -2,10 +2,21 @@ import './security.module.scss';
 
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
-import { TextImportant } from '../../components/text';
+import { TextImportant, TextLink } from '../../components/text';
 import lockImg from '../../assets/lock.png';
 import securityImg from '../../assets/security.png';
 import subscriberScoreImg from '../../assets/subscriber-score.png';
+import gmailScopesImg from '../../assets/security-gmail-scopes.png';
+import outlookScopesImg from '../../assets/security-outlook-scopes.png';
+
+const scopesUrlForGoogle =
+  'https://developers.google.com/gmail/api/auth/scopes';
+const scopesUrlForOutlook =
+  'https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#scopes-and-permissions';
+
+const revokeUrlForGoogle =
+  'https://security.google.com/settings/security/permissions';
+const revokeUrlForOutlook = 'https://account.live.com/consent/Manage';
 
 export default function SecurityPage() {
   return (
@@ -21,6 +32,79 @@ export default function SecurityPage() {
           We take security and data privacy very seriously at Leave Me Alone,
           and we are proud to be open and transparent about how we operate.
         </p>
+
+        <div styleName="permissions">
+          <h2>What permissions do we ask for?</h2>
+          <p>We only ask for the permissions we need to operate.</p>
+          <div styleName="image-section scopes">
+            <div styleName="image-section-text">
+              <h3>Google</h3>
+              <ul styleName="list">
+                <li>
+                  <TextImportant>gmail.readonly</TextImportant> - View your
+                  email messages and settings. We use this to identify
+                  subscription emails and display them to you.
+                </li>
+                <li>
+                  <TextImportant>profile</TextImportant> - View your basic
+                  profile info. We use this to show your name and display
+                  picture when you log in with Google.
+                </li>
+                <li>
+                  <TextImportant>email</TextImportant> - View your email
+                  address. We use this to identify your account and to display
+                  which account you are logged in with or have connected.
+                </li>
+              </ul>
+
+              <p>
+                Read more about the{' '}
+                <TextLink href={scopesUrlForGoogle}>Gmail</TextLink> OAuth
+                scopes.
+              </p>
+              <p>
+                You can view your Google App permissions or revoke access to
+                Leave Me Alone at any time{' '}
+                <TextLink href={revokeUrlForGoogle}>here</TextLink>.
+              </p>
+            </div>
+            <div styleName="image-section-img bordered">
+              <img alt="Gmail permissions requested" src={gmailScopesImg} />
+            </div>
+          </div>
+
+          <div styleName="image-section scopes">
+            <div styleName="image-section-text">
+              <h3>Microsoft</h3>
+              <ul styleName="list">
+                <li>
+                  <TextImportant>Mail.Read</TextImportant> - Read your emails.
+                  We use this to identify subscription emails and display them
+                  to you.
+                </li>
+                <li>
+                  <TextImportant>profile</TextImportant> - View your basic
+                  profile. We use this to show your name when you log in with
+                  Microsoft.
+                </li>
+              </ul>
+
+              <p>
+                Read more about the{' '}
+                <TextLink href={scopesUrlForOutlook}>Microsoft</TextLink> OAuth
+                scopes.
+              </p>
+              <p>
+                You can view your Microsoft App permissions or revoke access to
+                Leave Me Alone at any time{' '}
+                <TextLink href={revokeUrlForOutlook}>here</TextLink>.
+              </p>
+            </div>
+            <div styleName="image-section-img bordered">
+              <img alt="Outlook permissions requested" src={outlookScopesImg} />
+            </div>
+          </div>
+        </div>
 
         <div styleName="image-section image-right">
           <div styleName="image-section-text">
@@ -65,32 +149,33 @@ export default function SecurityPage() {
             />
           </div>
           <div styleName="image-section-text">
-            <h2>Subscriber Score</h2>
+            <h2>How do we power Subscriber Score?</h2>
             <p>
-              The metadata powering Subscriber Score is sender based. A sender
-              is who an email has come from.
+              The metadata powering Subscriber Score is derived from the sender
+              of the email.
             </p>
-            <p>
-              So that we can provide you with a ranking for each sender we
-              record:
-            </p>
+            <p>So that we can generate the score we record:</p>
             <ul styleName="list">
-              <li>How often a sender is seen</li>
-              <li>How often a sender is unsubscribed from</li>
+              <li>The frequency of emails from a specific sender</li>
+              <li>The quantity of addresses that sender uses</li>
+              <li>How often users unsubscribe from emails from that sender</li>
+              <li>
+                How frequently emails from that sender are seen as spam or trash
+              </li>
             </ul>
             <p>
-              A senders ranking is calculated using some secret sauce
-              mathematics, which grades each sender based on the stats above.
-            </p>
-            <br />
-            <p>
-              We only store specific counts such as how frequently a sender is
-              seen, how often an email is in spam or trash, and how many people
-              choose to unsubscribe.
+              We then calculate a ranking using some secret sauce mathematics,
+              which grades each sender using the stats above.
             </p>
             <p>
-              As it is anonymous, it is not possible for this data to be
-              associated with a Leave Me Alone account or email address.
+              It is not possible for this data to be associated with a Leave Me
+              Alone account or email address.
+            </p>
+            <p>
+              This system improves the quanlity of Leave Me Alone for all users.
+              If you don't want to contribute your data to this algorithm for
+              whatever you can opt-out at any time from your account
+              preferences.
             </p>
           </div>
         </div>
