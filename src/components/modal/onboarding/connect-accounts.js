@@ -68,12 +68,7 @@ export default ({ onboarding = false }) => {
         />
       ) : null}
 
-      {error ? (
-        <FormNotification error>
-          Something went wrong connecting your account. Please try again or send
-          us a message.
-        </FormNotification>
-      ) : null}
+      {error ? <FormNotification error>{error}</FormNotification> : null}
     </>
   );
 };
