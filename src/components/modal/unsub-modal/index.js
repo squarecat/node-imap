@@ -9,13 +9,9 @@ import styles from './unsub.module.scss';
 
 const imageUseQuestion = (
   <>
-    <p>
+    <p style={{ margin: 0 }}>
       Is it okay if we use that image so that next time we don't make the same
-      mistake?
-    </p>
-    <p>
-      The image will only be used for internal use so our algorithm can learn
-      from it. No other users will have access to it.
+      mistake? The image will only be used by us to improve our algorithm.
     </p>
   </>
 );
@@ -397,8 +393,7 @@ function slide2({
           </li>
         </ul>
         <div className={!selected ? styles.hidden : ''}>
-          <p>Thanks!</p>
-          {hasImage ? { imageUseQuestion } : null}
+          {hasImage ? imageUseQuestion : null}
         </div>
       </ModalBody>
       <ModalFooter>
