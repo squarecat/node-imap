@@ -23,7 +23,7 @@ import numeral from 'numeral';
 import request from '../utils/request';
 import subscriberScore from '../assets/subscriber-score.png';
 
-const faker = require('faker');
+const faker = require('../vendor/faker/locale/en');
 
 const news = [
   {
