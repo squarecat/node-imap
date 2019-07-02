@@ -15,7 +15,7 @@ import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
 import OrganisationOnboardingModal from './modal/organisation-onboarding';
 import { fetchLoggedInUser } from '../utils/auth';
-import { useAsync } from 'react-use';
+import useAsync from 'react-use/lib/useAsync';
 import useUser from '../utils/hooks/use-user';
 
 function Auth({ children }) {

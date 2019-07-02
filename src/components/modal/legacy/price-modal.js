@@ -15,7 +15,7 @@
 // import subDays from 'date-fns/sub_days';
 // import subMonths from 'date-fns/sub_months';
 // import subWeeks from 'date-fns/sub_weeks';
-// import { useAsync } from 'react-use';
+// import useAsync from 'react-use/lib/useAsync';
 
 // export default ({ onClose, onPurchase }) => {
 //   const [isShown, setShown] = useState(false);

@@ -5,6 +5,7 @@ import React, { useContext } from 'react';
 import { AlertContext } from '../../../../providers/alert-provider';
 import ConnectButton from '../../../../components/connect-account/btn';
 import ConnectedAccountList from '../../../../components/connect-account/list';
+import { DatabaseContext } from '../../../../providers/db-provider';
 import { ExternalIcon } from '../../../../components/icons';
 import { ModalContext } from '../../../../providers/modal-provider';
 import ProfileLayout from '../../../../app/profile/layout';
@@ -21,6 +22,7 @@ const revokeUrlForOutlook = 'https://account.live.com/consent/Manage';
 
 const Accounts = () => {
   const { actions: alertActions } = useContext(AlertContext);
+  const db = useContext(DatabaseContext);
   const [
     { accounts = [], primaryEmail, loginProvider },
     { update: updateUser, load: loadUser }
@@ -47,6 +49,7 @@ const Accounts = () => {
   const onClickWarningConfirm = async ({ email }) => {
     try {
       const updatedUser = await removeAccount(email);
+      db.clear({ account: email });
       updateUser(updatedUser);
       alertActions.setAlert({
         id: 'remove-account-success',

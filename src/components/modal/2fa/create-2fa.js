@@ -13,7 +13,7 @@ import Button from '../../btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import TwoFactorInput from '../../2fa';
 import request from '../../../utils/request';
-import { useAsync } from 'react-use';
+import useAsync from 'react-use/lib/useAsync';
 
 export default () => {
   const { close } = useContext(ModalContext);
@@ -26,7 +26,7 @@ export default () => {
     },
     [close, isVerified]
   );
-  const { value, loading } = useAsync(fetchTotpData);
+  const { value, loading, error } = useAsync(fetchTotpData);
 
   useEffect(
     () => {
@@ -39,7 +39,7 @@ export default () => {
 
   const content = useMemo(
     () => {
-      if (loading) return null;
+      if (loading || error) return null;
       const { qrData, base32 } = value;
       return (
         <>

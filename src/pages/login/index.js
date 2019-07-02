@@ -1,13 +1,13 @@
 import '../login/login.module.scss';
 
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import { TextImportant, TextLink } from '../../components/text';
 
 import AuthButton from './auth-btn';
 import EmailForm from './email';
 import { FormNotification } from '../../components/form';
 import Layout from '../../layouts/layout';
 import PasswordForm from './password';
-import { TextImportant, TextLink } from '../../components/text';
 import TwoFactorForm from './2fa';
 import cx from 'classnames';
 import { getAuthError } from '../../utils/errors';
@@ -53,7 +53,7 @@ const loginEmailCardHeight = 480;
 const loginWithPasswordHeight = 550;
 const loginNewUserHeight = 580;
 const existingStratHeight = 460;
-const twoFactorAuthHeight = 410;
+const twoFactorAuthHeight = 520;
 const forgotPasswordHeight = 480;
 const resetPasswordHeight = 640;
 
