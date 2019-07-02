@@ -237,6 +237,7 @@ const LoginPage = React.memo(
                 confirm={true}
                 checkPwned={true}
                 submitAction="/auth/signup"
+                submitText="Sign up"
               />
             </>
           );

@@ -59,6 +59,17 @@ export default () => {
       ) : null}
       <div styleName="signup-buttons">
         <Button
+          type="submit"
+          as="button"
+          loading={isLoading}
+          style={{ width: 150 }}
+          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
+          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
+          styleName="signup-btn"
+        >
+          <span styleName="text">Verify</span>
+        </Button>
+        <Button
           onClick={() => {
             dispatch({ type: 'set-step', data: 'enter-email' });
           }}
@@ -71,17 +82,6 @@ export default () => {
           disabled={isLoading}
         >
           <span styleName="text">Back</span>
-        </Button>
-        <Button
-          type="submit"
-          as="button"
-          loading={isLoading}
-          style={{ width: 150 }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
-          styleName="signup-btn"
-        >
-          <span styleName="text">Verify</span>
         </Button>
       </div>
     </form>

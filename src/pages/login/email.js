@@ -69,6 +69,18 @@ export default ({ nextText = 'Next' }) => {
       <div styleName="signup-buttons">
         <Button
           as="button"
+          type="submit"
+          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
+          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
+          styleName="signup-btn"
+          loading={state.loading}
+          style={{ width: 150 }}
+        >
+          <span styleName="text">{nextText}</span>
+        </Button>
+
+        <Button
+          as="button"
           onClick={() => {
             dispatch({ type: 'set-step', data: 'select' });
           }}
@@ -81,18 +93,6 @@ export default ({ nextText = 'Next' }) => {
           disabled={state.loading}
         >
           <span styleName="text">Back</span>
-        </Button>
-
-        <Button
-          as="button"
-          type="submit"
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
-          styleName="signup-btn"
-          loading={state.loading}
-          style={{ width: 150 }}
-        >
-          <span styleName="text">{nextText}</span>
         </Button>
       </div>
     </form>

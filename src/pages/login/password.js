@@ -142,7 +142,20 @@ export default ({
           {state.error}
         </FormNotification>
       ) : null}
+
       <div styleName="signup-buttons">
+        <Button
+          type="submit"
+          as="button"
+          style={{ width: 150 }}
+          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
+          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
+          styleName="signup-btn"
+          loading={state.loading}
+        >
+          <span styleName="text">{submitText}</span>
+        </Button>
+
         <Button
           onClick={() => {
             dispatch({ type: 'set-step', data: 'enter-email' });
@@ -156,17 +169,6 @@ export default ({
           disabled={state.loading}
         >
           <span styleName="text">Back</span>
-        </Button>
-        <Button
-          type="submit"
-          as="button"
-          style={{ width: 150 }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
-          styleName="signup-btn"
-          loading={state.loading}
-        >
-          <span styleName="text">{submitText}</span>
         </Button>
       </div>
     </form>
