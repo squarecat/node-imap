@@ -26,7 +26,7 @@ export default () => {
     },
     [close, isVerified]
   );
-  const { value, loading } = useAsync(fetchTotpData);
+  const { value, loading, error } = useAsync(fetchTotpData);
 
   useEffect(
     () => {
@@ -39,7 +39,7 @@ export default () => {
 
   const content = useMemo(
     () => {
-      if (loading) return null;
+      if (loading || error) return null;
       const { qrData, base32 } = value;
       return (
         <>

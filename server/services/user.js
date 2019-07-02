@@ -893,7 +893,7 @@ export async function createUserTotpToken(user) {
   const { base32, ascii } = speakeasy.generateSecret();
   const otpauth_url = speakeasy.otpauthURL({
     secret: ascii,
-    label: `Leave Me Alone:${user.email}`
+    label: `LeaveMeAlone:${user.email}`
   });
   try {
     await addTotpSecret(user.id, { secret: base32, unverified: true });
