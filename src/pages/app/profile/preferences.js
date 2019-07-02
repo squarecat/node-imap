@@ -1,9 +1,9 @@
 import './preferences.module.scss';
 
 import { FormCheckbox } from '../../../components/form';
-import { TextLink } from '../../../components/text';
 import ProfileLayout from '../../../app/profile/layout';
 import React from 'react';
+import { TextLink } from '../../../components/text';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -40,13 +40,16 @@ export default () => {
   return (
     <ProfileLayout pageName="Preferences">
       <div styleName="preferences-section">
-        <h2>Data Collection</h2>
+        <h2>Help other Leave Me Alone users</h2>
         <p>
-          We will collect completely anonymous data about the emails you receive
-          to power our Subscriber Score algorithm. This information improves the
-          quality of Leave Me Alone for all users. If you don't want to
-          contribute your data to this algorithm for whatever reason you can
-          opt-out below.
+          We collect completely anonymous data about the senders of emails you
+          receive to power our Subscriber Score algorithm. This information
+          improves the quality of Leave Me Alone for all users. If you don't
+          want to contribute your data to this algorithm for whatever reason you
+          can opt-out below.
+        </p>
+        <p>
+          Your data will NEVER be sold and cannot be de-anonymised in any way.
         </p>
         <p>
           <TextLink href="/security" target="_">
@@ -59,7 +62,7 @@ export default () => {
             onChange('occurrencesConsent', !preferences.occurrencesConsent)
           }
           checked={getPref(preferences, 'occurrencesConsent')}
-          label="Consent to anonymous data collection to help improve our service"
+          label="Consent to us using your data anonymously to help improve our service"
         />
       </div>
       <div styleName="preferences-section">

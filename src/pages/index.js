@@ -4,7 +4,6 @@ import './home.scss';
 import { GoogleIcon, OutlookIcon } from '../components/icons';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 import { TextImportant, TextLink } from '../components/text';
-import { useAsync, useWindowSize } from 'react-use';
 
 import { Arrow as ArrowIcon } from '../components/icons';
 import Footer from '../components/footer';
@@ -22,6 +21,8 @@ import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
 import request from '../utils/request';
 import subscriberScore from '../assets/subscriber-score.png';
+import useAsync from 'react-use/lib/useAsync';
+import useWindowSize from 'react-use/lib/useWindowSize';
 
 const faker = require('../vendor/faker/locale/en');
 

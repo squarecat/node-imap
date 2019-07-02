@@ -13,7 +13,7 @@ import Button from '../../btn';
 import { ModalContext } from '../../../providers/modal-provider';
 import TwoFactorInput from '../../2fa';
 import request from '../../../utils/request';
-import { useAsync } from 'react-use';
+import useAsync from 'react-use/lib/useAsync';
 
 export default () => {
   const { close } = useContext(ModalContext);

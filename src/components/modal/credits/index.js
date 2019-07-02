@@ -12,7 +12,7 @@ import { TextImportant } from '../../text';
 import { TwitterIcon } from '../../icons';
 import { getSocialContent } from './tweets';
 import request from '../../../utils/request';
-import { useAsync } from 'react-use';
+import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
 
 async function getRewards() {

@@ -78,7 +78,7 @@
     "react-on-screen": "^2.1.0",
     "react-paginate": "^6.3.0",
     "react-stripe-elements": "^2.0.1",
-    "react-use": "^4.10.0",
+    "react-use": "^9.8.0",
     "react-virtualized": "^9.21.0",
     "scriptjs": "^2.5.9",
     "shortid": "^2.2.14",
