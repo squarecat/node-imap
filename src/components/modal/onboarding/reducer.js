@@ -35,7 +35,7 @@ const steps = [
         <GiftIcon height={22} width={22} amount={10} filled />
       </span>
     ),
-    isHidden: ({ organisationMember }) => organisationMember
+    isHidden: organisationMember => organisationMember
   },
   {
     value: 'organisation',
@@ -46,7 +46,7 @@ const steps = [
         <ArrowIcon direction="right" />
       </span>
     ),
-    isHidden: ({ organisationMember }) => !organisationMember
+    isHidden: organisationMember => !organisationMember
   },
   {
     value: 'finish',

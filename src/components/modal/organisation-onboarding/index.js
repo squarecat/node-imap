@@ -124,7 +124,10 @@ function Content({
                 <span styleName="separator" />
               </>
             ) : null}
-            <p>Or you can invite anyone by email address:</p>
+            <p>
+              Or you can invite anyone inside or outside your organisation by
+              email address:
+            </p>
             <InviteForm organisationId={organisationId} onSuccess={onInvite} />
             {invitedUsersCount ? (
               <p>

@@ -1,5 +1,6 @@
 @import '../../../styles/common/colors.scss';
 @import '../layout.module.scss';
+@import '../../../components/btn/btn.module.scss';
 
 .organisation-section {
   @extend .profile-section;
@@ -28,4 +29,56 @@
 
 .table-text-content {
   @extend .profile-unpadded-content;
+}
+
+.admin {
+  margin: 0 5px 0 0;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  background-color: $color-bg-success;
+
+  @media (max-width: 400px) {
+    padding: 5px;
+  }
+}
+
+.separator {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+  padding-top: 30px;
+  display: block;
+}
+
+.email {
+  display: block;
+  max-width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.email-desc {
+  display: block;
+  opacity: 0.6;
+}
+
+.invoice-price {
+  font-weight: bold;
+}
+
+.invoice-btn {
+  font-size: 14px;
+  @extend .btn;
+  @extend .muted;
+  @extend .compact;
+  @extend .basic;
+
+  @media (max-width: 600px) {
+    padding: 5px;
+  }
+  @media (max-width: 400px) {
+    font-size: 12px;
+  }
 }

@@ -54,7 +54,7 @@ import {
   getOrganisationById,
   getOrganisationByInviteCode,
   getOrganisationByInvitedEmailOrValidDomain,
-  removeUserFromOrganisation
+  removeUserAccountFromOrganisation
 } from './organisation';
 import { getMilestone, updateMilestoneCompletions } from './milestones';
 
@@ -768,17 +768,8 @@ export async function deactivateUserAccount(userId) {
 
     logger.debug(`user-service: removing user accounts...`);
     await Promise.all(
-      user.accounts.map(async a => {
-        removeUserAccount(user.id, a.email);
-      })
+      user.accounts.map(async a => removeUserAccount(user.id, a.email))
     );
-
-    if (organisationId) {
-      logger.debug(
-        `user-service: removing user from organisation ${organisationId}...`
-      );
-      await removeUserFromOrganisation({ email });
-    }
 
     logger.debug(`user-service: removing user ${id}...`);
     await removeUser(id);
@@ -847,7 +838,7 @@ export async function removeUserAccount(userId, accountEmail) {
       logger.debug(
         `user-service: removed user account belonging to an organisation ${organisationId}`
       );
-      const organisation = await removeUserFromOrganisation({
+      const organisation = await removeUserAccountFromOrganisation({
         email: account.email
       });
       addActivityForUser(userId, 'removedAccountFromOrganisation', {

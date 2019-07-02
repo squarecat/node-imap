@@ -167,26 +167,13 @@ function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
               <span styleName="onboarding-position">{positionLabel}</span>
             </ModalHeader>
             <p>
-              As a member of the {organisation.name} organisation you can
-              unsubscribe from as many unwanted subscription emails as you like.
+              You have joined the{' '}
+              <TextImportant>{organisation.name} organisation</TextImportant>!
             </p>
-            {organisation.allowAnyUserWithCompanyEmail ? (
-              <p>
-                You can connect accounts which have been{' '}
-                <TextImportant>invited</TextImportant> by your organisation
-                administrator or have a{' '}
-                <TextImportant>
-                  {organisation.domain} email address
-                </TextImportant>
-                .
-              </p>
-            ) : (
-              <p>
-                You can only connect accounts which have been{' '}
-                <TextImportant>invited</TextImportant> by your organisation
-                administrator.
-              </p>
-            )}
+            <p>
+              As a member of {organisation.name} you can unsubscribe from as
+              many unwanted subscription emails as you like.
+            </p>
           </>
         );
       }
@@ -204,7 +191,6 @@ function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
             <div styleName="animations">
               <img src={unsubscribeGif} alt="tutorial animation" />
             </div>
-            {/* <img src={heartGif} alt="tutorial animation" /> */}
           </>
         );
       }

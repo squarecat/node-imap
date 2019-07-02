@@ -31,7 +31,7 @@ function ActivityHistory() {
     <div styleName="section">
       <p styleName="content">
         Showing <TextImportant>{activity.length}</TextImportant> previous
-        actions.
+        {`${activity.length} action${activity.length === 1 ? '' : 's'}`}.
       </p>
       <ErrorBoundary>
         <Table>

@@ -127,12 +127,12 @@ export const InviteForm = React.memo(function InviteForm({
 
 function sendOrganisationInvite(id, email) {
   return request(`/api/organisation/${id}/invite`, {
-    method: 'POST',
+    method: 'PATCH',
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     },
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ op: 'add', value: email })
   });
 }

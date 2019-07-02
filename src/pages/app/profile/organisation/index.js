@@ -1,17 +1,18 @@
 import './organisation.module.scss';
 
 import React, { useCallback, useContext, useMemo, useState } from 'react';
-import Table, { TableCell, TableRow } from '../../../../components/table';
 
 import { AlertContext } from '../../../../providers/alert-provider';
+import BillingHistory from '../../../../app/profile/organisation/billing-history';
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
-import CurrentUsers from '../../../../app/profile/organisation/users';
+import CurrentUsers from '../../../../app/profile/organisation/current-users';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { FormCheckbox } from '../../../../components/form';
 import InviteForm from '../../../../app/profile/organisation/invite';
 import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
+import PendingInvites from '../../../../app/profile/organisation/invited-users';
 import ProfileLayout from '../../../../app/profile/layout';
 import { TextImportant } from '../../../../components/text';
 import cx from 'classnames';
@@ -41,11 +42,10 @@ function Organisation() {
     };
   });
 
-  console.log('before fetch organisation', organisationId);
-  const { value: organisation, loading } = useAsync(fetchOrganisation, [
-    organisationId,
-    organisationLastUpdated
-  ]);
+  const { value: organisation, loading } = useAsync(
+    () => fetchOrganisation(organisationId),
+    [organisationId, organisationLastUpdated]
+  );
 
   const content = useMemo(
     () => {
@@ -62,7 +62,6 @@ function Organisation() {
         billing
       } = organisation;
 
-      const isInvitingEnabled = organisationAdmin && active;
       return (
         <>
           <div styleName="organisation-section">
@@ -93,34 +92,24 @@ function Organisation() {
 
           <Settings loading={loading} organisation={organisation} />
 
-          {isInvitingEnabled ? (
-            <InviteForm organisation={organisation} />
-          ) : null}
-
           <CurrentUsers
             organisationId={organisationId}
             adminUserEmail={adminUserEmail}
           />
 
-          {isInvitingEnabled ? (
-            <div styleName="organisation-section tabled">
-              <div styleName="table-text-content">
-                <h2>Pending Invites</h2>
-              </div>
-              {invitedUsers.length ? (
-                <Table>
-                  <tbody>
-                    {invitedUsers.map(email => (
-                      <TableRow key={email}>
-                        <TableCell>{email}</TableCell>
-                      </TableRow>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <p>There are no invites pending.</p>
-              )}
-            </div>
+          {organisationAdmin ? (
+            <InviteForm organisation={organisation} />
+          ) : null}
+
+          {organisationAdmin ? (
+            <PendingInvites
+              organisationId={organisationId}
+              invitedUsers={invitedUsers}
+            />
+          ) : null}
+
+          {organisationAdmin ? (
+            <BillingHistory organisationId={organisationId} />
           ) : null}
         </>
       );
@@ -130,7 +119,7 @@ function Organisation() {
   return content;
 }
 
-const OrganisationStatus = React.memo(({ active }) => {
+const OrganisationStatus = React.memo(({ active, billing = {} }) => {
   if (active) {
     return (
       <p>
@@ -139,15 +128,22 @@ const OrganisationStatus = React.memo(({ active }) => {
       </p>
     );
   }
+
+  let reason;
+  if (!billing.card) {
+    reason = 'you have not added a payment method';
+  } else if (billing.subscriptionStatus === 'canceled') {
+    reason = 'you have canceled your subscription';
+  }
   return (
     <>
       <p>
-        Your account is <TextImportant>inactive</TextImportant> because you have
-        not added a payment method or you have deactivated your organisation.
+        Your account is <TextImportant>inactive</TextImportant> because {reason}
+        .
       </p>
       <p>
-        You cannot invite new members, and existing members cannot unsubscribe
-        while your account is inactive.
+        Members <TextImportant>cannot unsubscribe</TextImportant> while your
+        account is inactive.
       </p>
     </>
   );
@@ -239,7 +235,7 @@ function Billing({ organisation }) {
 
   const [, { setOrganisationLastUpdated }] = useUser();
 
-  const { id, active, billing = {}, currentUsers } = organisation;
+  const { id, active, billing = {} } = organisation;
   const {
     card,
     company = {},
@@ -247,8 +243,6 @@ function Billing({ organisation }) {
     subscriptionStatus,
     delinquent
   } = billing;
-
-  const seats = currentUsers.length;
 
   // const onClickRemoveCard = useCallback(
   //   () => {
@@ -282,10 +276,8 @@ function Billing({ organisation }) {
   const onClickAddBilling = useCallback(
     () => {
       const addPaymentMethodSuccess = () => {
-        console.log('success adding organisation payment method!');
         setOrganisationLastUpdated(Date.now());
       };
-      console.log('opening modal');
       openModal(
         <OrganisationBillingModal
           organisation={organisation}
@@ -324,12 +316,12 @@ function Billing({ organisation }) {
         {infoText}
 
         {card ? (
-          <>
+          <div style={{ marginTop: 20 }}>
             <CardDetails card={billing.card} padded />
             <Button basic compact stretch onClick={onClickAddBilling}>
               Change Payment Method
             </Button>
-          </>
+          </div>
         ) : null}
 
         {!card && !active ? (
@@ -337,13 +329,6 @@ function Billing({ organisation }) {
             <p>No payment method stored.</p>
             <p>
               You need to add a payment method to activate your organisation.
-            </p>
-            <p>
-              You currently have{' '}
-              <TextImportant>
-                {`${seats} member${seats > 1 ? 's' : ''}`}
-              </TextImportant>
-              .
             </p>
             <Button basic compact stretch onClick={onClickAddBilling}>
               Add Payment Method
@@ -375,70 +360,83 @@ function Billing({ organisation }) {
 }
 
 function BillingInformation({ organisationId }) {
-  const { value: subscription = {}, loading } = useAsync(fetchSubscription, [
-    organisationId
-  ]);
-
-  if (loading) return 'Loading...';
-
-  const {
-    canceled_at,
-    current_period_end,
-    ended_at,
-    quantity,
-    plan = {}
-  } = subscription;
+  const { value: subscription = {}, loading } = useAsync(
+    () => fetchSubscription(organisationId),
+    [organisationId]
+  );
 
   const dateFormat = 'Do MMMM YYYY';
 
-  return (
-    <div>
-      <p>
-        You'll next be billed on the{' '}
-        <TextImportant>
-          {formatDate(current_period_end * 1000, dateFormat)}
-        </TextImportant>
-        .
-      </p>
-      {/* If the subscription has been canceled, the date of that cancellation */}
-      {canceled_at ? (
-        <>
-          <p>Cancelled on: {formatDate(canceled_at * 1000, dateFormat)}</p>
-          {ended_at ? (
-            <p>Ended on: {formatDate(ended_at * 1000, dateFormat)}</p>
-          ) : (
-            <p>Ends on: {formatDate(current_period_end * 1000, dateFormat)}</p>
-          )}
-          <p>
-            Subscription ends:{' '}
-            {formatDate(current_period_end * 1000, dateFormat)}
-          </p>
-        </>
-      ) : null}
+  const content = useMemo(
+    () => {
+      if (loading) return <span>Loading...</span>;
 
-      <p>
-        You are signed up for the <TextImportant>Enterprise plan</TextImportant>{' '}
-        billed at <TextImportant>${plan.amount / 100} per seat</TextImportant>.
-      </p>
-      <p>
-        You are currently using{' '}
-        <TextImportant>
-          {`${quantity} seat${quantity > 1 ? 's' : ''}`}
-        </TextImportant>
-        .
-      </p>
-      <p>
-        Change to the number of members will be pro-rated until the end of the
-        billing period. This means you will only be charged for the remaining
-        time in the month for new members, and will receive credit for removed
-        members.
-      </p>
-    </div>
+      const {
+        canceled_at,
+        current_period_end,
+        ended_at,
+        quantity,
+        plan = {},
+        upcomingInvoice
+      } = subscription;
+
+      if (canceled_at) {
+        return (
+          <>
+            <p>Cancelled on: {formatDate(canceled_at * 1000, dateFormat)}</p>
+            {ended_at ? (
+              <p>Ended on: {formatDate(ended_at * 1000, dateFormat)}</p>
+            ) : (
+              <p>
+                Ends on: {formatDate(current_period_end * 1000, dateFormat)}
+              </p>
+            )}
+            <p>
+              Subscription ends:{' '}
+              {formatDate(current_period_end * 1000, dateFormat)}
+            </p>
+          </>
+        );
+      } else {
+        return (
+          <>
+            <p>
+              You are signed up for the{' '}
+              <TextImportant>Enterprise plan</TextImportant> billed at{' '}
+              <TextImportant>
+                ${(plan.amount / 100).toFixed(2)} per seat
+              </TextImportant>
+              .
+            </p>
+            <p>
+              You are currently using{' '}
+              <TextImportant>
+                {`${quantity} seat${quantity === 1 ? '' : 's'}`}
+              </TextImportant>
+              .
+            </p>
+            <p>
+              You'll next be billed on the{' '}
+              <TextImportant>
+                {formatDate(current_period_end * 1000, dateFormat)}
+              </TextImportant>{' '}
+              for{' '}
+              {`${upcomingInvoice.quantity} seat${
+                upcomingInvoice.quantity === 1 ? '' : 's'
+              }`}
+              .
+            </p>
+          </>
+        );
+      }
+    },
+    [loading, subscription]
   );
+
+  return <div>{content}</div>;
 }
 
 function fetchOrganisation(id) {
-  console.log('fetch organisation', id);
   return request(`/api/organisation/${id}`, {
     credentials: 'same-origin',
     headers: {
