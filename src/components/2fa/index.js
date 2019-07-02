@@ -7,7 +7,21 @@ import { useAsync } from 'react-use';
 
 export default ({ onComplete = () => {}, onLoading = () => {} }) => {
   const [value, setValue] = useState('');
-  const { value: verified, loading } = useAsync(verify, [value]);
+  const [verified, setVerified] = useState('pending');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(
+    () => {
+      if (value.length > 5) {
+        setLoading(true);
+        verify(value)
+          .then(isVerified => setVerified(isVerified))
+          .catch(e => console.error(e))
+          .then(() => setLoading(false));
+      }
+    },
+    [value]
+  );
 
   useEffect(
     () => {
@@ -27,7 +41,10 @@ export default ({ onComplete = () => {}, onLoading = () => {} }) => {
         value={value}
         max="6"
         placeholder="Enter 6-digit code"
-        onChange={({ currentTarget }) => setValue(currentTarget.value)}
+        onChange={({ currentTarget }) => {
+          console.log(currentTarget.value);
+          setValue(currentTarget.value);
+        }}
       />
     </div>
   );
