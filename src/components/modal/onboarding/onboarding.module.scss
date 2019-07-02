@@ -55,26 +55,8 @@
   margin-bottom: 0;
 }
 
-.reward-icon {
-  font-family: 'Gotham-Rounded-Medium';
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+.onboarding-position {
+  margin-left: auto;
   font-size: 16px;
-  line-height: 22px;
-  width: 34px;
-  height: 34px;
-  color: white;
-  background-color: #e9443c;
-  font-weight: bold;
-  position: relative;
-  top: -2px;
-}
-
-.text-column {
-  display: flex;
-  justify-content: center;
-  span {
-    display: inline-block;
-  }
+  opacity: 0.6;
 }

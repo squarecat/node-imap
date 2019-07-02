@@ -79,11 +79,23 @@ export async function getUserById(id, options = {}) {
     let user = await getUser(id, {}, options);
     if (!user) return null;
     if (user.organisationId) {
-      const { name, active } = await getOrganisationById(user.organisationId);
+      const {
+        name,
+        active,
+        domain,
+        inviteCode,
+        allowAnyUserWithCompanyEmail
+      } = await getOrganisationById(user.organisationId);
       user = {
         ...user,
-        organisationName: name,
-        organisationActive: active
+        organisation: {
+          id: user.organisationId,
+          name,
+          active,
+          domain,
+          inviteCode,
+          allowAnyUserWithCompanyEmail
+        }
       };
     }
     return user;
@@ -341,10 +353,10 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
         }, checking if this account can join`
       );
       const organisation = await getOrganisationById(user.organisationId);
-      const { allowed, reason } = canUserJoinOrganisation(
-        accountEmail,
+      const { allowed, reason } = canUserJoinOrganisation({
+        email: accountEmail,
         organisation
-      );
+      });
       if (!allowed) {
         logger.debug(
           `user-service: user cannot connect this account to this organisation ${
@@ -481,7 +493,7 @@ async function getOrganisationForUserEmail(inviteCode, email) {
   logger.debug(`user-service: getting organisation for user email`);
 
   let organisation;
-  // no invite code
+
   if (inviteCode) {
     logger.debug(`user-service: getting by invite code ${inviteCode}`);
     organisation = await getOrganisationByInviteCode(inviteCode);
@@ -499,7 +511,7 @@ async function getOrganisationForUserEmail(inviteCode, email) {
     return null;
   }
 
-  const { allowed, reason } = canUserJoinOrganisation(email, organisation);
+  const { allowed, reason } = canUserJoinOrganisation({ email, organisation });
   if (allowed) {
     logger.debug(
       `user-service: got organisation ${organisation.id}, user email is allowed`

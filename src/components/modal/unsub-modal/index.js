@@ -393,7 +393,7 @@ function slide2({
           </li>
         </ul>
         <div className={!selected ? styles.hidden : ''}>
-          {hasImage ? imageUseQuestion : null}
+          {hasImage ? imageUseQuestion : <p>Thanks!</p>}
         </div>
       </ModalBody>
       <ModalFooter>

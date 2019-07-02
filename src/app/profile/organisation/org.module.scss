@@ -5,17 +5,6 @@
   @extend .profile-section;
 }
 
-.invite {
-  margin-bottom: 2em;
-  input {
-    font-size: 14px;
-  }
-  a,
-  button {
-    min-width: 100px;
-  }
-}
-
 .users {
   @media (max-width: 600px) {
     // hide cells after first 3

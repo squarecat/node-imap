@@ -16,11 +16,12 @@ import useUser from '../../../utils/hooks/use-user';
 export default () => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);
   const [
-    { accounts, organisationId, isBeta },
+    { accounts, organisationId, organisation, isBeta },
     { setMilestoneCompleted }
   ] = useUser(u => ({
     accounts: u.accounts,
     organisationId: u.organisationId,
+    organisation: u.organisation,
     isBeta: u.isBeta
   }));
 
@@ -55,7 +56,13 @@ export default () => {
   return (
     <div styleName="onboarding-modal">
       <ModalBody>
-        <Content step={state.step} accounts={accounts} isBeta={isBeta} />
+        <Content
+          step={state.step}
+          accounts={accounts}
+          isBeta={isBeta}
+          organisation={organisation}
+          positionLabel={state.positionLabel}
+        />
       </ModalBody>
       <ModalWizardActions
         nextLabel={state.nextLabel}
@@ -76,13 +83,16 @@ export default () => {
   );
 };
 
-function Content({ step, accounts, isBeta }) {
+function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
   const content = useMemo(
     () => {
       if (step === 'welcome') {
         return (
           <>
-            <ModalHeader>Welcome to Leave Me Alone!</ModalHeader>
+            <ModalHeader>
+              Welcome to Leave Me Alone!{' '}
+              <span styleName="onboarding-position">{positionLabel}</span>
+            </ModalHeader>
             <p>
               <strong>Leave Me Alone</strong> connects to your email inboxes and
               scans for all your subscription mail. We'll show you which mail is
@@ -103,7 +113,10 @@ function Content({ step, accounts, isBeta }) {
       if (step === 'accounts') {
         return (
           <>
-            <ModalHeader>Connect account</ModalHeader>
+            <ModalHeader>
+              Connect account{' '}
+              <span styleName="onboarding-position">{positionLabel}</span>
+            </ModalHeader>
             <ConnectAccounts accounts={accounts} onboarding />
             {accounts.length ? (
               <p style={{ marginTop: '2em' }}>
@@ -116,7 +129,10 @@ function Content({ step, accounts, isBeta }) {
       if (step === 'rewards') {
         return (
           <>
-            <ModalHeader>Credits</ModalHeader>
+            <ModalHeader>
+              Credits{' '}
+              <span styleName="onboarding-position">{positionLabel}</span>
+            </ModalHeader>
             <p>
               <TextImportant>1 credit = 1 unsubscribe.</TextImportant>
             </p>
@@ -143,10 +159,44 @@ function Content({ step, accounts, isBeta }) {
           </>
         );
       }
+      if (step === 'organisation') {
+        return (
+          <>
+            <ModalHeader>
+              Organisation{' '}
+              <span styleName="onboarding-position">{positionLabel}</span>
+            </ModalHeader>
+            <p>
+              As a member of the {organisation.name} organisation you can
+              unsubscribe from as many unwanted subscription emails as you like.
+            </p>
+            {organisation.allowAnyUserWithCompanyEmail ? (
+              <p>
+                You can connect accounts which have been{' '}
+                <TextImportant>invited</TextImportant> by your organisation
+                administrator or have a{' '}
+                <TextImportant>
+                  {organisation.domain} email address
+                </TextImportant>
+                .
+              </p>
+            ) : (
+              <p>
+                You can only connect accounts which have been{' '}
+                <TextImportant>invited</TextImportant> by your organisation
+                administrator.
+              </p>
+            )}
+          </>
+        );
+      }
       if (step === 'finish') {
         return (
           <>
-            <ModalHeader>Let's start unsubscribing!</ModalHeader>
+            <ModalHeader>
+              Let's start unsubscribing!{' '}
+              <span styleName="onboarding-position">{positionLabel}</span>
+            </ModalHeader>
             <p>
               On the next screen you will see all the mail you are subscribed
               to, just hit the toggle to unsubscribe!
@@ -159,7 +209,15 @@ function Content({ step, accounts, isBeta }) {
         );
       }
     },
-    [step, accounts]
+    [
+      step,
+      accounts,
+      isBeta,
+      positionLabel,
+      organisation.name,
+      organisation.domain,
+      organisation.allowAnyUserWithCompanyEmail
+    ]
   );
 
   return (

@@ -13,6 +13,7 @@ import { DatabaseContext } from '../providers/db-provider';
 import Loading from './loading';
 import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
+import OrganisationOnboardingModal from './modal/organisation-onboarding';
 import { fetchLoggedInUser } from '../utils/auth';
 import { useAsync } from 'react-use';
 import useUser from '../utils/hooks/use-user';
@@ -47,10 +48,20 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     () => checkBrowserSupported(db),
     [db]
   );
-  const [{ id, isUserLoaded, hasCompletedOnboarding }] = useUser(s => ({
+  const [
+    {
+      id,
+      isUserLoaded,
+      hasCompletedOnboarding,
+      organisationAdmin,
+      hasCompletedOrganisationOnboarding
+    }
+  ] = useUser(s => ({
     id: s.id,
     isUserLoaded: s.loaded,
-    hasCompletedOnboarding: s.hasCompletedOnboarding
+    hasCompletedOnboarding: s.hasCompletedOnboarding,
+    organisationAdmin: s.organisationAdmin,
+    hasCompletedOrganisationOnboarding: s.hasCompletedOrganisationOnboarding
   }));
   const [isLoaded, setLoaded] = useState(isUserLoaded);
   const { open: openModal } = useContext(ModalContext);
@@ -91,7 +102,17 @@ const UserAuth = React.memo(function UserAuth({ children }) {
           }
         );
       }
-      if (isUserLoaded && !hasCompletedOnboarding) {
+
+      if (
+        isUserLoaded &&
+        (organisationAdmin && !hasCompletedOrganisationOnboarding)
+      ) {
+        openModal(<OrganisationOnboardingModal />, {
+          dismissable: false,
+          opaque: true
+        });
+      }
+      if (isUserLoaded && (!organisationAdmin && !hasCompletedOnboarding)) {
         openModal(<OnboardingModal />, {
           dismissable: false,
           opaque: true
@@ -105,6 +126,8 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     [
       isUserLoaded,
       hasCompletedOnboarding,
+      organisationAdmin,
+      hasCompletedOrganisationOnboarding,
       openModal,
       checkDb,
       isBrowserSupported
@@ -113,13 +136,25 @@ const UserAuth = React.memo(function UserAuth({ children }) {
 
   const content = useMemo(
     () => {
-      if (isLoaded && hasCompletedOnboarding && isBrowserSupported) {
+      if (
+        isLoaded &&
+        (hasCompletedOnboarding ||
+          (organisationAdmin && hasCompletedOrganisationOnboarding)) &&
+        isBrowserSupported
+      ) {
         return children;
       } else {
         return null;
       }
     },
-    [children, hasCompletedOnboarding, isBrowserSupported, isLoaded]
+    [
+      children,
+      hasCompletedOnboarding,
+      organisationAdmin,
+      hasCompletedOrganisationOnboarding,
+      isBrowserSupported,
+      isLoaded
+    ]
   );
 
   return (

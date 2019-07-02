@@ -49,7 +49,8 @@ export async function create(data) {
       adminUserId,
       adminUserEmail,
       domain,
-      allowAnyUserWithCompanyEmail = false
+      allowAnyUserWithCompanyEmail = false,
+      active = false
     } = data;
 
     await col.insertOne({
@@ -65,7 +66,7 @@ export async function create(data) {
       invitedUsers: [],
       currentUsers: [],
       activity: [],
-      active: false
+      active
     });
     return getById(id);
   } catch (err) {

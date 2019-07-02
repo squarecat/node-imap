@@ -41,6 +41,7 @@ function Organisation() {
     };
   });
 
+  console.log('before fetch organisation', organisationId);
   const { value: organisation, loading } = useAsync(fetchOrganisation, [
     organisationId,
     organisationLastUpdated
@@ -437,6 +438,7 @@ function BillingInformation({ organisationId }) {
 }
 
 function fetchOrganisation(id) {
+  console.log('fetch organisation', id);
   return request(`/api/organisation/${id}`, {
     credentials: 'same-origin',
     headers: {

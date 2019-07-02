@@ -1,8 +1,6 @@
-import './onboarding.module.scss';
+import './organisation-onboarding.module.scss';
 
-import { Arrow as ArrowIcon, SearchIcon } from '../../icons';
-
-import { Gift as GiftIcon } from '../../icons';
+import { Arrow as ArrowIcon } from '../../icons';
 import React from 'react';
 
 const steps = [
@@ -11,13 +9,13 @@ const steps = [
     position: '1',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 10 }}>Connect account</span>
+        <span style={{ marginRight: 10 }}>Next</span>
         <ArrowIcon direction="right" />
       </span>
     )
   },
   {
-    value: 'accounts',
+    value: 'invite',
     position: '2',
     nextLabel: (
       <span styleName="onboarding-btn">
@@ -27,46 +25,35 @@ const steps = [
     )
   },
   {
-    value: 'rewards',
+    value: 'accounts',
     position: '3',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 8 }}>Claim credits</span>
-        <GiftIcon height={22} width={22} amount={10} filled />
-      </span>
-    ),
-    isHidden: ({ organisationMember }) => organisationMember
-  },
-  {
-    value: 'organisation',
-    position: '3',
-    nextLabel: (
-      <span styleName="onboarding-btn">
-        <span style={{ marginRight: 8 }}>Next</span>
+        <span style={{ marginRight: 10 }}>Next</span>
         <ArrowIcon direction="right" />
       </span>
-    ),
-    isHidden: ({ organisationMember }) => !organisationMember
+    )
   },
   {
     value: 'finish',
     position: '4',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 8 }}>Let's do it!</span>
+        <span style={{ marginRight: 10 }}>Let's do this!</span>
         <ArrowIcon direction="right" />
       </span>
     )
   }
 ];
 
+const totalSteps = steps.length;
+
 export const initialState = {
   step: steps[0].value,
   isLoading: false,
-  canProceed: true,
   nextLabel: steps[0].nextLabel,
-  positionLabel: '1 of 4',
-  organisationMember: false
+  positionLabel: `1 of ${totalSteps}`,
+  invitedUsersCount: 0
 };
 
 export default (state, action) => {
@@ -77,7 +64,7 @@ export default (state, action) => {
         ...state,
         step,
         nextLabel,
-        positionLabel: `${position} of 4`
+        positionLabel: `${position} of ${totalSteps}`
       };
     }
     case 'prev-step': {
@@ -86,19 +73,13 @@ export default (state, action) => {
         ...state,
         step,
         nextLabel,
-        positionLabel: `${position} of 4`
+        positionLabel: `${position} of ${totalSteps}`
       };
     }
-    case 'can-proceed': {
+    case 'add-invited-user': {
       return {
         ...state,
-        canProceed: action.data
-      };
-    }
-    case 'organisation-member': {
-      return {
-        ...state,
-        organisationMember: action.data
+        invitedUsersCount: state.invitedUsersCount + 1
       };
     }
     default:
@@ -112,20 +93,10 @@ export function isFirstStep(state) {
 
 function getNextStep(state) {
   const currentStep = steps.findIndex(d => d.value === state.step);
-  let nextStep = steps[currentStep + 1];
-
-  if (nextStep.isHidden && nextStep.isHidden(state.organisationMember)) {
-    nextStep = steps[currentStep + 2];
-  }
-  return nextStep;
+  return steps[currentStep + 1];
 }
 
 function getPrevStep(state) {
   const currentStep = steps.findIndex(d => d.value === state.step);
-  let prevStep = steps[currentStep - 1];
-
-  if (prevStep.isHidden && prevStep.isHidden(state.organisationMember)) {
-    prevStep = steps[currentStep - 2];
-  }
-  return prevStep;
+  return steps[currentStep - 1];
 }

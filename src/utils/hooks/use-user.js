@@ -8,7 +8,9 @@ export default globalReducer(
         ...user,
         loaded: true,
         unsubCount: user.unsubscriptions.length || 0,
-        hasCompletedOnboarding: user.milestones.completedOnboarding
+        hasCompletedOnboarding: user.milestones.completedOnboarding,
+        hasCompletedOrganisationOnboarding:
+          user.milestones.completedOnboardingOrganisation
       };
     },
     update: (state, user) => {
@@ -44,14 +46,19 @@ export default globalReducer(
       ...state,
       requiresTwoFactorAuth: bool
     }),
-    setMilestoneCompleted: (state, milestone) => ({
-      ...state,
-      milestones: {
-        ...state.milestones,
-        [milestone]: true
-      },
-      hasCompletedOnboarding: milestone === 'completedOnboarding'
-    }),
+    setMilestoneCompleted: (state, milestone) => {
+      console.log('setMilestoneCompleted', milestone);
+      return {
+        ...state,
+        milestones: {
+          ...state.milestones,
+          [milestone]: true
+        },
+        hasCompletedOnboarding: milestone === 'completedOnboarding',
+        hasCompletedOrganisationOnboarding:
+          milestone === 'completedOnboardingOrganisation'
+      };
+    },
     setBilling: (state, billing) => {
       return {
         ...state,

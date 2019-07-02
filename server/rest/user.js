@@ -65,8 +65,8 @@ const userProps = [
   'unreadNotifications',
   'organisationId',
   'organisationAdmin',
-  'organisationName',
-  'organisationActive'
+  'organisationActive',
+  'organisation'
 ];
 
 export default app => {

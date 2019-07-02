@@ -27,6 +27,7 @@ import {
   updateSubscription
 } from '../utils/stripe';
 
+import { addActivityForUser } from './user';
 import logger from '../utils/logger';
 import { sendOrganisationInviteMail } from '../utils/emails/transactional';
 
@@ -65,11 +66,24 @@ export async function createOrganisation(email, data) {
 
     await updateUser(user.id, {
       organisationId: organisation.id,
-      organisationAdmin: true
+      organisationAdmin: true,
+      'milestones.completedOnboardingOrganisation': 0
+    });
+
+    // add the joined and added acount activities
+    addActivityForUser(user.id, 'joinedOrganisation', {
+      id: organisation.id,
+      name: organisation.name,
+      email: user.email
     });
 
     if (user.loginProvider !== 'password') {
       await addUserToOrganisation(organisation.id, {
+        email: user.email
+      });
+      addActivityForUser(user.id, 'addedAccountToOrganisation', {
+        id: organisation.id,
+        name: organisation.name,
         email: user.email
       });
     }
@@ -83,11 +97,12 @@ export async function createOrganisation(email, data) {
 export async function inviteUserToOrganisation(id, email) {
   try {
     const organisation = await getById(id);
+    const isAdmin = organisation.adminUserEmail === email;
     const invited = organisation.invitedUsers.includes(email);
 
     logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
-    if (!invited) {
-      // only add the user to the invite list if not already there
+    if (!isAdmin && !invited) {
+      // only add the user to the invite list if not already there and not an admin
       await addInvitedUser(id, email);
     }
 
@@ -258,7 +273,7 @@ export function getOrganisationByInvitedEmailOrValidDomain(email) {
   return getByInvitedEmailOrValidDomain(email);
 }
 
-export function canUserJoinOrganisation(email, organisation) {
+export function canUserJoinOrganisation({ email, organisation }) {
   logger.debug(
     `organisation-service: can user join the organisation ${organisation.id}`
   );

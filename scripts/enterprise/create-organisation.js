@@ -8,11 +8,15 @@ async function run() {
   console.log('connecting...');
   await db.connect();
   console.log('connected...');
-  await OrgService.createOrganisation('james@squarecat.io', {
+  const adminEmail = 'danielle@squarecat.io';
+
+  await OrgService.createOrganisation(adminEmail, {
     name: 'Squarecat',
     domain: 'squarecat.io',
     allowAnyUserWithCompanyEmail: false
+    // active: true
   });
+
   console.log('success');
 }
 
