@@ -16,14 +16,22 @@ db.version(1).stores({
 db.open();
 
 export const DatabaseProvider = ({ children }) => {
-  db.clear = () =>
-    Promise.all([
+  db.clear = ({ account } = {}) => {
+    if (account) {
+      // clear emails associated with
+      // a specific account
+      return db.mail
+        .where('forAccount')
+        .equals(account)
+        .delete();
+    }
+    return Promise.all([
       db.mail.clear(),
       db.scores.clear(),
       db.occurrences.clear(),
       db.prefs.clear()
     ]);
-
+  };
   return (
     <DatabaseContext.Provider value={db}>{children}</DatabaseContext.Provider>
   );
