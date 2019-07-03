@@ -21,7 +21,7 @@ const InTheNewsPage = () => {
   return (
     <SubPageLayout
       title="In The News"
-      description={`Read about Leave Me Alone featured in news articles around the world`}
+      description={`Read about Leave Me Alone featured in news articles around the world.`}
     >
       <h1 styleName="title">In The News</h1>
       <News />
