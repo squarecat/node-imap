@@ -204,10 +204,17 @@ const EnterprisePage = () => {
           <a
             href="mailto:enterprise@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-            style={{ marginTop: 50 }}
+            style={{ margin: '50px auto' }}
           >
             Contact Us
           </a>
+          <p>
+            Part of a charity or non-profit?{' '}
+            <TextLink href="mailto:enterprise@leavemealone.app">
+              Get in touch
+            </TextLink>{' '}
+            - we would love to help you!
+          </p>
         </div>
 
         <div styleName="sources">
