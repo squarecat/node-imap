@@ -838,13 +838,16 @@ export async function removeUserAccount(userId, accountEmail) {
       logger.debug(
         `user-service: removed user account belonging to an organisation ${organisationId}`
       );
-      const organisation = await removeUserAccountFromOrganisation({
-        email: account.email
-      });
+      const organisation = await removeUserAccountFromOrganisation(
+        organisationId,
+        {
+          email: accountEmail
+        }
+      );
       addActivityForUser(userId, 'removedAccountFromOrganisation', {
         id: organisation.id,
         name: organisation.name,
-        email: account.email
+        email: accountEmail
       });
     }
 
