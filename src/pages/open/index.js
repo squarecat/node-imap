@@ -850,12 +850,16 @@ function getThisMonthToDate(stats, stat) {
   const { daily } = stats;
   const { histogram, previousDayTotals } = daily;
 
-  const today = startOfDay(new Date());
-  const start = startOfMonth(today);
+  const today = new Date();
+  // start is end of the previous month
+  const start = endOfMonth(addMonths(today, -1));
 
   const cumulative = histogram.reduce((out, d) => {
     const date = getStatDate(d.timestamp);
-    if (isAfter(date, start)) return out + d[stat] || 0;
+    // if it's after the first of the month we show it in this month
+    if (isAfter(date, start)) {
+      return out + d[stat] || 0;
+    }
     return out;
   }, 0);
 
