@@ -326,10 +326,13 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     displayName
   } = accountData;
   try {
+    logger.debug(`user-service: connecting user account - ${provider}`);
+
     const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
     );
+
 
     if (isAccountAlreadyConnected) {
       logger.debug(
@@ -368,6 +371,7 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
           errKey: reason
         });
       }
+
       await addUserAccountToOrganisation({
         user,
         organisation,

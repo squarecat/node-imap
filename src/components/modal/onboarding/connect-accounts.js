@@ -10,7 +10,7 @@ import { getConnectError } from '../../../utils/errors';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
-export default ({ onboarding = false }) => {
+export default ({ onboarding = false, enterprise = false }) => {
   const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(
     u => ({
       accounts: u.accounts,
@@ -34,7 +34,7 @@ export default ({ onboarding = false }) => {
   const content = useMemo(
     () => {
       if (!accounts.length) {
-        return <NoAccounts />;
+        return <NoAccounts enterprise={enterprise} />;
       } else {
         return (
           <SomeAccounts
@@ -73,7 +73,15 @@ export default ({ onboarding = false }) => {
   );
 };
 
-function NoAccounts() {
+function NoAccounts({ enterprise = false }) {
+  if (enterprise) {
+    return (
+      <p>
+        If you want to start scanning for your subscriptions you can connect
+        your email account.
+      </p>
+    );
+  }
   return (
     <p>
       To start scanning for your subscriptions you need to connect at least one

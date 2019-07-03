@@ -1,6 +1,6 @@
 import './org.module.scss';
 
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
 
 import { AlertContext } from '../../../providers/alert-provider';
@@ -36,46 +36,63 @@ function InvitedUsers({ organisationId, invitedUsers }) {
     [organisationId, setOrganisationLastUpdated, alert.actions]
   );
 
-  return (
-    <div styleName="organisation-section tabled">
-      <div styleName="table-text-content">
-        <h2>Pending Invites</h2>
-        <p>
-          Showing{' '}
-          <TextImportant>
-            {`${invitedUsers.length} pending invite${
-              invitedUsers.length === 1 ? '' : 's'
-            }`}
-          </TextImportant>
-          .
-        </p>
-      </div>
-      {invitedUsers.length ? (
-        <Table>
-          <tbody>
-            {invitedUsers.map(email => (
-              <TableRow key={email}>
-                <TableCell>{email}</TableCell>
-                <TableCell>
-                  <Button
-                    basic
-                    compact
-                    muted
-                    smaller
-                    onClick={() => onRevokeInvite(email)}
-                  >
-                    Revoke
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
-      ) : (
-        <p>There are no invites pending.</p>
-      )}
-    </div>
+  const content = useMemo(
+    () => {
+      let text;
+      if (!invitedUsers.length) {
+        text = (
+          <p>
+            When you invite people to your organisation by email they will show
+            up here until they join.
+          </p>
+        );
+      } else {
+        text = (
+          <p>
+            Showing{' '}
+            <TextImportant>
+              {`${invitedUsers.length} pending invite${
+                invitedUsers.length === 1 ? '' : 's'
+              }`}
+            </TextImportant>
+            .
+          </p>
+        );
+      }
+
+      return (
+        <>
+          <div styleName="table-text-content">
+            <h2>Pending Invites</h2>
+            {text}
+          </div>
+          <Table>
+            <tbody>
+              {invitedUsers.map(email => (
+                <TableRow key={email}>
+                  <TableCell>{email}</TableCell>
+                  <TableCell>
+                    <Button
+                      basic
+                      compact
+                      muted
+                      smaller
+                      onClick={() => onRevokeInvite(email)}
+                    >
+                      Revoke
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      );
+    },
+    [invitedUsers, onRevokeInvite]
   );
+
+  return <div styleName="organisation-section tabled">{content}</div>;
 }
 
 export default InvitedUsers;

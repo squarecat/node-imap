@@ -27,8 +27,11 @@ function OrgBillingHistory({ organisationId }) {
       } else {
         text = (
           <p>
-            Showing <TextImportant>{payments.length}</TextImportant> previous
-            {`${payments.length} invoice${payments.length === 1 ? '' : 's'}`}.
+            Showing{' '}
+            <TextImportant>
+              {`${payments.length} invoice${payments.length === 1 ? '' : 's'}`}
+            </TextImportant>
+            .
           </p>
         );
       }
@@ -75,7 +78,7 @@ function OrgBillingHistory({ organisationId }) {
 }
 
 function getPaymentDate({ date }) {
-  return format(date * 1000, 'DD/MM/YYYY HH:mm');
+  return format(date * 1000, 'DD/MM/YYYY');
 }
 
 function getPrice(price) {

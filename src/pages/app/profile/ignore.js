@@ -30,9 +30,12 @@ export default () => {
         return (
           <>
             <p styleName="content">
-              Showing <TextImportant>{ignoredSenderList.length}</TextImportant>{' '}
-              favorite senders. Emails from these addresses will not show up in
-              any future scans.
+              Showing{' '}
+              <TextImportant>
+                {ignoredSenderList.length} favorite senders
+              </TextImportant>
+              . Emails from these addresses will not show up in any future
+              scans.
             </p>
             <ErrorBoundary>
               <Table>

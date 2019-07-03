@@ -31,8 +31,8 @@ function Notifications() {
   return (
     <div styleName="section">
       <p styleName="content">
-        Showing <TextImportant>{activity.length}</TextImportant> previous
-        notifications.
+        Showing{' '}
+        <TextImportant>{activity.length} previous notifications</TextImportant>.
       </p>
       <ErrorBoundary>
         <Table>

@@ -1,6 +1,6 @@
 import './org.module.scss';
 
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import Table, {
   TableCell,
   TableHead,
@@ -18,7 +18,7 @@ import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
 
-function CurrentUsers({ organisationId, adminUserEmail }) {
+function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
   const alert = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
   const [, { setOrganisationLastUpdated }] = useUser();
@@ -27,11 +27,6 @@ function CurrentUsers({ organisationId, adminUserEmail }) {
     () => fetchStats(organisationId),
     [organisationId]
   );
-
-  const users = stats.length;
-  const totalNumberAccounts = stats.reduce((out, s) => {
-    return out + s.numberOfAccounts;
-  }, 0);
 
   const onRemoveUser = useCallback(
     async ({ email, numberOfAccounts }) => {
@@ -79,77 +74,99 @@ function CurrentUsers({ organisationId, adminUserEmail }) {
     [openModal, onRemoveUser]
   );
 
-  if (loading) return <span>Loading...</span>;
+  const content = useMemo(
+    () => {
+      const users = stats.length;
+      const totalNumberAccounts = stats.reduce((out, s) => {
+        return out + s.numberOfAccounts;
+      }, 0);
 
-  return (
-    <div styleName="organisation-section tabled users">
-      <div styleName="table-text-content">
-        <h2>Current Members</h2>
-        <p>
-          Showing{' '}
-          <TextImportant>
-            {`${users} user${users === 1 ? '' : 's'}`}{' '}
-          </TextImportant>{' '}
-          using{' '}
-          <TextImportant>
-            {`${totalNumberAccounts} seat${
-              totalNumberAccounts === 1 ? '' : 's'
-            }`}
-          </TextImportant>
-          .
-        </p>
-      </div>
+      let text;
+      if (loading) {
+        text = <span>Loading...</span>;
+      } else if (!users.lenth) {
+        text = (
+          <p>When members join your organisation they will show up here.</p>
+        );
+      } else {
+        text = (
+          <p>
+            Showing{' '}
+            <TextImportant>
+              {`${users} user${users === 1 ? '' : 's'}`}{' '}
+            </TextImportant>{' '}
+            using{' '}
+            <TextImportant>
+              {`${totalNumberAccounts} seat${
+                totalNumberAccounts === 1 ? '' : 's'
+              }`}
+            </TextImportant>
+            .
+          </p>
+        );
+      }
 
-      <Table>
-        <TableHead>
-          <TableHeadCell>Email</TableHeadCell>
-          <TableHeadCell />
-          <TableHeadCell>Unsubscribes</TableHeadCell>
-          <TableHeadCell>Joined</TableHeadCell>
-        </TableHead>
-        <tbody>
-          {stats.map(user => (
-            <TableRow key={user.email}>
-              <TableCell>
-                <span styleName="email" title={user.email}>
-                  {user.email}
-                </span>
-                <span styleName="email-desc">
-                  ({user.numberOfAccounts}{' '}
-                  {`${user.numberOfAccounts} seat${
-                    user.numberOfAccounts === 1 ? '' : 's'
-                  }`}
-                  )
-                </span>
-              </TableCell>
-              <TableCell>
-                {user.email === adminUserEmail ? (
-                  <span styleName="admin">Admin</span>
-                ) : null}
-              </TableCell>
+      return (
+        <>
+          <div styleName="table-text-content">
+            <h2>Current Members</h2>
+            {text}
+          </div>
+          <Table>
+            <TableHead>
+              <TableHeadCell>Email</TableHeadCell>
+              <TableHeadCell />
+              <TableHeadCell>Unsubscribes</TableHeadCell>
+              <TableHeadCell>Joined</TableHeadCell>
+            </TableHead>
+            <tbody>
+              {stats.map(user => (
+                <TableRow key={user.email}>
+                  <TableCell>
+                    <span styleName="email" title={user.email}>
+                      {user.email}
+                    </span>
+                    <span styleName="email-desc">
+                      (
+                      {`${user.numberOfAccounts} seat${
+                        user.numberOfAccounts === 1 ? '' : 's'
+                      }`}
+                      )
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {user.email === adminUserEmail ? (
+                      <span styleName="admin">Admin</span>
+                    ) : null}
+                  </TableCell>
 
-              <TableCell>{user.numberOfUnsubscribes}</TableCell>
-              {/* <TableCell>{user.timeSaved} time saved</TableCell> */}
-              <TableCell>{relative(user.joinedAt)}</TableCell>
-              <TableCell>
-                {user.email === adminUserEmail ? null : (
-                  <Button
-                    basic
-                    compact
-                    muted
-                    smaller
-                    onClick={() => onClickRemoveUser(user)}
-                  >
-                    x
-                  </Button>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+                  <TableCell>{user.numberOfUnsubscribes}</TableCell>
+                  {/* <TableCell>{user.timeSaved} time saved</TableCell> */}
+                  <TableCell>{relative(user.joinedAt)}</TableCell>
+                  <TableCell>
+                    {organisationAdmin && user.email !== adminUserEmail ? (
+                      <Button
+                        basic
+                        compact
+                        muted
+                        smaller
+                        onClick={() => onClickRemoveUser(user)}
+                      >
+                        x
+                      </Button>
+                    ) : null}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      );
+    },
+    [adminUserEmail, loading, onClickRemoveUser, organisationAdmin, stats]
   );
+
+  return <div styleName="organisation-section tabled users">{content}</div>;
 }
 
 function fetchStats(id) {

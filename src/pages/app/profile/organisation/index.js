@@ -85,16 +85,23 @@ function Organisation() {
                 </span>
               ) : null}
             </p>
-            <OrganisationStatus active={active} billing={billing} />
+            <OrganisationStatus
+              admin={organisationAdmin}
+              active={active}
+              billing={billing}
+            />
           </div>
 
           {organisationAdmin ? <Billing organisation={organisation} /> : null}
 
-          <Settings loading={loading} organisation={organisation} />
+          {organisationAdmin ? (
+            <Settings loading={loading} organisation={organisation} />
+          ) : null}
 
           <CurrentUsers
             organisationId={organisationId}
             adminUserEmail={adminUserEmail}
+            organisationAdmin={organisationAdmin}
           />
 
           {organisationAdmin ? (
@@ -119,13 +126,25 @@ function Organisation() {
   return content;
 }
 
-const OrganisationStatus = React.memo(({ active, billing = {} }) => {
+const OrganisationStatus = React.memo(({ active, admin, billing = {} }) => {
   if (active) {
     return (
       <p>
-        Your account is <TextImportant>active</TextImportant>. Organisation
-        members can start unsubscribing!
+        Your account is <TextImportant>active</TextImportant>.{' '}
+        {admin ? 'Organisation members' : 'You can'} can start unsubscribing!
       </p>
+    );
+  }
+
+  if (!admin) {
+    return (
+      <>
+        <p>
+          You <TextImportant>cannot unsubscribe</TextImportant> while the
+          organisation is inactive.
+        </p>
+        <p>Please contact your administrator.</p>
+      </>
     );
   }
 
@@ -225,7 +244,7 @@ const Settings = React.memo(({ loading, organisation }) => {
           </span>
         }
       />
-      {state.toggling ? <span>Saving...</span> : null}
+      {state.toggling ? <span styleName="saving">Saving...</span> : null}
     </div>
   );
 });
@@ -235,7 +254,7 @@ function Billing({ organisation }) {
 
   const [, { setOrganisationLastUpdated }] = useUser();
 
-  const { id, active, billing = {} } = organisation;
+  const { id, active, billing = {}, currentUsers } = organisation;
   const {
     card,
     company = {},
@@ -311,7 +330,9 @@ function Billing({ organisation }) {
     <>
       <div styleName="organisation-section">
         <h2>Billing Details</h2>
-        {subscriptionId ? <BillingInformation organisationId={id} /> : null}
+        {subscriptionId ? (
+          <BillingInformation organisationId={id} currentUsers={currentUsers} />
+        ) : null}
 
         {infoText}
 
@@ -359,10 +380,10 @@ function Billing({ organisation }) {
   );
 }
 
-function BillingInformation({ organisationId }) {
+function BillingInformation({ organisationId, currentUsers }) {
   const { value: subscription = {}, loading } = useAsync(
     () => fetchSubscription(organisationId),
-    [organisationId]
+    [organisationId, currentUsers]
   );
 
   const dateFormat = 'Do MMMM YYYY';
@@ -416,14 +437,11 @@ function BillingInformation({ organisationId }) {
               .
             </p>
             <p>
-              You'll next be billed on the{' '}
+              You'll next be billed ${(upcomingInvoice.total / 100).toFixed(2)}{' '}
+              on the{' '}
               <TextImportant>
                 {formatDate(current_period_end * 1000, dateFormat)}
-              </TextImportant>{' '}
-              for{' '}
-              {`${upcomingInvoice.quantity} seat${
-                upcomingInvoice.quantity === 1 ? '' : 's'
-              }`}
+              </TextImportant>
               .
             </p>
           </>

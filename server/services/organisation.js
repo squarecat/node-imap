@@ -163,6 +163,10 @@ export async function addUserToOrganisation(organisationId, { email }) {
   }
 }
 
+// this removes one user account from an organisation
+// check if the user is in the organisation
+// remove the account from current users
+// update the subcription
 export async function removeUserAccountFromOrganisation(
   organisationId,
   { email }
@@ -175,6 +179,8 @@ export async function removeUserAccountFromOrganisation(
     const organisation = await getById(organisationId);
     const existingMember = organisation.currentUsers.includes(email);
 
+    // we need to check this to avoid unnecessary calls to stripe to update the subscription
+    // if the number of seats do not change
     if (!existingMember) {
       logger.debug(
         `organisation-service: account does not belong to this organisation ${organisationId}`
@@ -194,6 +200,10 @@ export async function removeUserAccountFromOrganisation(
   }
 }
 
+// this removes an entire user and associated accounts from an org
+// remove the accounts from the org current users
+// update the subscription to reflet new seats amount
+// update the user to remove the organisationId
 export async function removeUserFromOrganisation(organisationId, { email }) {
   try {
     logger.debug(
@@ -223,13 +233,21 @@ export async function removeUserFromOrganisation(organisationId, { email }) {
         if (!existingMember) {
           return true;
         }
+        await removeUser(organisationId, a.email);
         removeOrganisationUserToStats();
-        return removeUser(organisationId, a.email);
       })
     );
 
-    const updatedOrganisation = await getById(organisationId);
+    await updateUser(user.id, {
+      organisationId: null
+    });
+    addActivityForUser(user.id, 'leftOrganisation', {
+      id: organisationId,
+      name,
+      email: user.email
+    });
 
+    const updatedOrganisation = await getById(organisationId);
     await updateOrganisationSubscription(updatedOrganisation);
 
     return updatedOrganisation;
@@ -324,8 +342,7 @@ export async function getOrganisationSubscription(id) {
       quantity,
       plan,
       upcomingInvoice: {
-        quantity: upcomingInvoice.lines.data[0].quantity,
-        total: upcomingInvoice.total
+        total: upcomingInvoice.total > 0 ? upcomingInvoice.total : 0
       }
     };
   } catch (err) {
