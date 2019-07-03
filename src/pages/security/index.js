@@ -1,13 +1,14 @@
 import './security.module.scss';
 
+import { TextImportant, TextLink } from '../../components/text';
+
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
-import { TextImportant, TextLink } from '../../components/text';
+import gmailScopesImg from '../../assets/security-gmail-scopes.png';
 import lockImg from '../../assets/lock.png';
+import outlookScopesImg from '../../assets/security-outlook-scopes.png';
 import securityImg from '../../assets/security.png';
 import subscriberScoreImg from '../../assets/subscriber-score.png';
-import gmailScopesImg from '../../assets/security-gmail-scopes.png';
-import outlookScopesImg from '../../assets/security-outlook-scopes.png';
 
 const scopesUrlForGoogle =
   'https://developers.google.com/gmail/api/auth/scopes';
@@ -22,7 +23,7 @@ export default function SecurityPage() {
   return (
     <SubPageLayout
       title="Security"
-      description="We take security and data privacy very seriously at Leave Me Alone. We never store the content of your emails, we encrypt sensitive data, and the data powering our algorithms is completely anonymous."
+      description={`We take security and data privacy very seriously at Leave Me Alone. We never store the content of your emails, we encrypt sensitive data, and the data powering our algorithms is completely anonymous.`}
       withContent={false}
     >
       <div styleName="security-inner">

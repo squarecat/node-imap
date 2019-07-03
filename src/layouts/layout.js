@@ -35,14 +35,16 @@ const Layout = ({
       `}
       render={data => {
         const {
-          title,
-          description,
+          title: baseTitle,
+          description: baseDescription,
           baseUrl,
           twitterHandle,
           siteName
         } = data.site.siteMetadata;
-        const metaTitle = pageTitle ? `${pageTitle} - ${siteName}` : title;
-        const metaDescription = pageDescription || description;
+
+        const metaTitle = pageTitle ? `${pageTitle} - ${siteName}` : baseTitle;
+        const metaDescription = pageDescription || baseDescription;
+
         return (
           <>
             <Helmet
@@ -75,7 +77,7 @@ const Layout = ({
                 },
                 {
                   name: 'twitter:description',
-                  value: description
+                  value: metaDescription
                 },
                 {
                   name: 'twitter:image',

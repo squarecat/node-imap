@@ -8,7 +8,7 @@ import SubPageLayout from '../../layouts/subpage-layout';
 const FaqPage = () => (
   <SubPageLayout
     title="FAQ"
-    description="Answers to the most common questions about Leave Me Alone"
+    description={`Answers to the most common questions about Leave Me Alone.`}
   >
     <h1>FAQs</h1>
     <div styleName="faqs">

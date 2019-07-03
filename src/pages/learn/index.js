@@ -10,9 +10,9 @@ import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
 import React from 'react';
 import Testimonial from '../../components/landing/testimonial';
+import { TextLink } from '../../components/text';
 import connectAccountsImg from '../../assets/accounts.png';
 import creditsImg from '../../assets/learn/credits.png';
-import { TextLink } from '../../components/text';
 import frequencyImg from '../../assets/learn/frequency2.png';
 import heartGif from '../../assets/heart.gif';
 import mailImg from '../../assets/example-spam-2.png';
@@ -26,7 +26,7 @@ export default function Learn() {
   return (
     <SubPageLayout
       title="How it works"
-      description="Read more about how Leave Me Alone finds spam subscription emails and makes it easy to unsubscribe from them."
+      description={`Start unsubscribing in 3 simple steps: 1. Connect your account 2. Scan your inbox 3. Unsubscribe from spam.`}
     >
       <div>
         <h1>How does Leave Me Alone work?</h1>

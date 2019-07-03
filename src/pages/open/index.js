@@ -407,7 +407,7 @@ export default function OpenPage() {
   return (
     <SubPageLayout
       title="Open Startup"
-      description="All of our metrics are public. See our sales, revenue, expenses, users, and more"
+      description={`Leave Me Alone is an Open Startup. All of our metrics are public. See our sales, revenue, expenses, users, and more.`}
     >
       <div styleName="open-page">
         <div styleName="open-title box">
@@ -426,9 +426,7 @@ export default function OpenPage() {
           <>
             <div styleName="revenue">
               <div styleName="chart box">
-                <h2>
-                  Daily Revenue
-                </h2>
+                <h2>Daily Revenue</h2>
                 <canvas ref={dailyRevRef} />
               </div>
               <div styleName="boxes">

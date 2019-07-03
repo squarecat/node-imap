@@ -37,7 +37,7 @@ const EnterprisePage = () => {
   return (
     <SubPageLayout
       title="Leave Me Alone for Enterprise"
-      description="Boost productivity and get an office that is completely free of unwanted spam and subscription emails with our enterprise plan."
+      description={`The most efficient businesses work without interruption. Take back control of your office from unwanted spam email.`}
       withContent={false}
     >
       <div styleName="enterprise-inner">

@@ -5,7 +5,7 @@ export default function Terms() {
   return (
     <SubPageLayout
       title="Privacy Policy"
-      description="Our privacy policy explains what information we collect and why. We do not store the content of any of your emails in any form. We do store metadata of your emails in order to identify if you have unsubscribed from a subscription in a previous scan."
+      description={`Our privacy policy explains what information we collect and why. We do not store the content of any of your emails in any form.`}
     >
       <h2>Privacy Policy</h2>
       <p>
