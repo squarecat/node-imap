@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import Table, { TableCell, TableRow } from '../../components/table';
 
 import Chart from 'chart.js';
+import ErrorBoundary from '../../components/error-boundary';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 import addMonths from 'date-fns/add_months';
@@ -407,7 +408,7 @@ export default function OpenPage() {
   return (
     <SubPageLayout
       title="Open Startup"
-      description="All of our metrics are public. See our sales, revenue, expenses, users, and more"
+      description={`Leave Me Alone is an Open Startup. All of our metrics are public. See our sales, revenue, expenses, users, and more.`}
     >
       <div styleName="open-page">
         <div styleName="open-title box">
@@ -423,12 +424,10 @@ export default function OpenPage() {
             <h2>Loading stats...</h2>
           </div>
         ) : (
-          <>
+          <ErrorBoundary>
             <div styleName="revenue">
               <div styleName="chart box">
-                <h2>
-                  Daily Revenue
-                </h2>
+                <h2>Daily Revenue</h2>
                 <canvas ref={dailyRevRef} />
               </div>
               <div styleName="boxes">
@@ -736,7 +735,7 @@ export default function OpenPage() {
                 </div>
               )}
             </div>
-          </>
+          </ErrorBoundary>
         )}
       </div>
     </SubPageLayout>
@@ -850,12 +849,16 @@ function getThisMonthToDate(stats, stat) {
   const { daily } = stats;
   const { histogram, previousDayTotals } = daily;
 
-  const today = startOfDay(new Date());
-  const start = startOfMonth(today);
+  const today = new Date();
+  // start is end of the previous month
+  const start = endOfMonth(addMonths(today, -1));
 
   const cumulative = histogram.reduce((out, d) => {
     const date = getStatDate(d.timestamp);
-    if (isAfter(date, start)) return out + d[stat] || 0;
+    // if it's after the first of the month we show it in this month
+    if (isAfter(date, start)) {
+      return out + d[stat] || 0;
+    }
     return out;
   }, 0);
 
@@ -885,10 +888,7 @@ function getBoxStats(stats, stat) {
       thisMonth
     });
   }
-
-  // Percent increase = ((new value - original value)/original value) * 100
-  const divideBy = twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
-  const growthRate = (lastMonth - twoMonthsAgo) / divideBy;
+  const growthRate = getGrowthRate({ lastMonth, twoMonthsAgo });
 
   return {
     twoMonthsAgo,
@@ -923,7 +923,10 @@ function revenueBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
   const totalLastMonth = lastMonth + lastMonthGifts - lastMonthRevenueRefunds;
   const totalThisMonth = thisMonth + thisMonthGifts - thisMonthRevenueRefunds;
 
-  const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+  const totalGrowth = getGrowthRate({
+    lastMonth: totalLastMonth,
+    twoMonthsAgo: totalTwoMonths
+  });
 
   return {
     twoMonthsAgo: totalTwoMonths,
@@ -949,7 +952,10 @@ function salesBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
   const totalTwoMonths = twoMonthsAgo - twoMonthsAgoRefunds;
   const totalLastMonth = lastMonth - lastMonthRefunds;
   const totalThisMonth = thisMonth - thisMonthRefunds;
-  const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+  const totalGrowth = getGrowthRate({
+    lastMonth: totalLastMonth,
+    twoMonthsAgo: totalTwoMonths
+  });
 
   return {
     twoMonthsAgo: totalTwoMonths,
@@ -997,4 +1003,11 @@ function calculateWithRefunds(stats, stat) {
 function getStatDate(timestamp) {
   // stats are run at just past midnight so we actually want to show the day before
   return subDays(startOfDay(timestamp), 1);
+}
+
+function getGrowthRate({ lastMonth, twoMonthsAgo }) {
+  // Percent increase = ((new value - original value)/original value) * 100
+  const divideBy = twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
+  const growthRate = (lastMonth - twoMonthsAgo) / divideBy;
+  return growthRate;
 }

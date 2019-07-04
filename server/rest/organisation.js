@@ -1,12 +1,15 @@
+import * as PaymentService from '../services/payments';
+
 import {
   getOrganisationById,
+  getOrganisationPayments,
   getOrganisationSubscription,
   getOrganisationUserStats,
   inviteUserToOrganisation,
+  removeUserFromOrganisation,
+  revokeOrganisationInvite,
   updateOrganisation
 } from '../services/organisation';
-
-import * as PaymentService from '../services/payments';
 
 import Joi from 'joi';
 import { RestError } from '../utils/errors';
@@ -76,18 +79,43 @@ export default app => {
     }
   );
 
-  app.post('/api/organisation/:id/invite', auth, async (req, res, next) => {
+  app.get('/api/organisation/:id/billing', auth, async (req, res, next) => {
     const { id } = req.params;
-    const { email } = req.body;
+    try {
+      const payments = await getOrganisationPayments(id);
+      res.send(payments);
+    } catch (err) {
+      next(
+        new RestError('failed to get organisation payments', {
+          organisationId: id,
+          cause: err
+        })
+      );
+    }
+  });
+
+  app.patch('/api/organisation/:id/invite', auth, async (req, res, next) => {
+    const { id } = req.params;
+    const { op, value: email } = req.body;
 
     try {
-      await inviteUserToOrganisation(id, email);
-      return res.send({ success: true });
+      if (op === 'add') {
+        await inviteUserToOrganisation(id, email);
+        return res.send({ success: true });
+      } else if (op === 'remove') {
+        await revokeOrganisationInvite(id, email);
+        return res.send({ success: true });
+      }
+
+      logger.error(
+        `organisations-rest: organisation patch op not supported ${op}`
+      );
+      throw new Error('organisations patch not supported');
     } catch (err) {
       logger.error('organisations-rest: error inviting user to organisation');
       logger.error(err);
       next(
-        new RestError('failed to send invite', {
+        new RestError('failed to patch invite', {
           organisationId: id,
           cause: err
         })
@@ -108,6 +136,8 @@ export default app => {
         let updatedOrg;
         if (op === 'update') {
           updatedOrg = await updateOrganisation(id, value);
+        } else if (op === 'remove-user') {
+          updatedOrg = await removeUserFromOrganisation(id, { email: value });
         } else {
           logger.error(
             `organisations-rest: organisation patch op not supported ${op}`

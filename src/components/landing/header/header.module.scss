@@ -88,19 +88,19 @@
   a {
     padding: 10px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 800px) {
       padding: 7px;
       font-size: 14px;
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 600px) {
       padding: 10px;
     }
   }
 }
 
 .nav-extra {
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     display: none;
   }
 }
@@ -108,7 +108,7 @@
 .learn-more-extras {
   display: none;
 
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     display: block;
   }
 }

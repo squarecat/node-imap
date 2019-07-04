@@ -161,11 +161,14 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         <p>
           You currently have{' '}
           <TextImportant>
-            {`${seats} member${seats > 1 ? 's' : ''}`}
-          </TextImportant>{' '}
-          . You will be billed $
-          {((ENTERPRISE.pricePerSeat * seats) / 100).toFixed(2)} monthly
-          starting today.
+            {`${seats} member${seats === 1 ? '' : 's'}`}
+          </TextImportant>
+          . You will be billed{' '}
+          <TextImportant>
+            ${((ENTERPRISE.pricePerSeat * seats) / 100).toFixed(2)} monthly
+            starting today
+          </TextImportant>
+          .
         </p>
         <PaymentAddressDetails
           addressDetails={state.addressDetails}
@@ -203,6 +206,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         isDisabled={state.loading || !stripeState.isReady}
         isLoading={state.loading}
         onCancel={closeModal}
+        saveText="Save and Pay Now"
       />
     </form>
   );

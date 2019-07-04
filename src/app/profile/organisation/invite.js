@@ -21,12 +21,12 @@ function InviteSection({ organisation }) {
                 them all, you can share this link:
               </p>
               <InviteLink code={inviteCode} />
+              <span styleName="separator" />
             </>
           ) : null}
           <p>
-            You can invite any member inside or outside of your organisation by
-            email address. Members will be able to sign-in or connect an account
-            with this email address.
+            You can invite anyone inside or outside your organisation by email
+            address:
           </p>
           <InviteForm organisationId={id} />
         </div>

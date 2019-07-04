@@ -129,6 +129,43 @@ export async function listPaymentsForUser(userId) {
   }
 }
 
+export async function listPaymentsForOrganisation(organisationId) {
+  try {
+    const { customerId } = await getOrganisationById(organisationId);
+    if (!customerId) {
+      logger.debug(
+        `payments-service: cannot list payments for org, user has no customer ID ${organisationId}`
+      );
+      return [];
+    }
+
+    const response = await listInvoices(customerId);
+
+    return {
+      payments: response.data.map(invoice => {
+        const lineItem = invoice.lines.data[0];
+        return {
+          date: invoice.date,
+          paid: invoice.paid,
+          attempted: invoice.attempted,
+          invoice_pdf: invoice.invoice_pdf,
+          description: lineItem.description,
+          price: lineItem.amount,
+          period_start: lineItem.period.start,
+          period_end: lineItem.period.end
+        };
+      }),
+      has_more: response.has_more
+    };
+  } catch (err) {
+    logger.error(
+      `payments-service: failed to list payments for organisation ${organisationId}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function createPaymentWithExistingCardForUser({
   user,
   productId,
@@ -429,7 +466,7 @@ export async function createPaymentForUser(
 
 async function getOrUpdateCustomerForOrganisation(
   organisationId,
-  { token, name, address, company }
+  { token, name, address }
 ) {
   try {
     let organisation = await getOrganisationById(organisationId);
@@ -455,7 +492,6 @@ async function getOrUpdateCustomerForOrganisation(
         name,
         address
       });
-      customerId = id;
       organisation = await updateOrganisation(organisationId, {
         customerId: newCustomerId
       });

@@ -54,7 +54,7 @@ import {
   getOrganisationById,
   getOrganisationByInviteCode,
   getOrganisationByInvitedEmailOrValidDomain,
-  removeUserFromOrganisation
+  removeUserAccountFromOrganisation
 } from './organisation';
 import { getMilestone, updateMilestoneCompletions } from './milestones';
 
@@ -326,10 +326,13 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     displayName
   } = accountData;
   try {
+    logger.debug(`user-service: connecting user account - ${provider}`);
+
     const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
     );
+
 
     if (isAccountAlreadyConnected) {
       logger.debug(
@@ -368,6 +371,7 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
           errKey: reason
         });
       }
+
       await addUserAccountToOrganisation({
         user,
         organisation,
@@ -768,17 +772,8 @@ export async function deactivateUserAccount(userId) {
 
     logger.debug(`user-service: removing user accounts...`);
     await Promise.all(
-      user.accounts.map(async a => {
-        removeUserAccount(user.id, a.email);
-      })
+      user.accounts.map(async a => removeUserAccount(user.id, a.email))
     );
-
-    if (organisationId) {
-      logger.debug(
-        `user-service: removing user from organisation ${organisationId}...`
-      );
-      await removeUserFromOrganisation({ email });
-    }
 
     logger.debug(`user-service: removing user ${id}...`);
     await removeUser(id);
@@ -847,13 +842,16 @@ export async function removeUserAccount(userId, accountEmail) {
       logger.debug(
         `user-service: removed user account belonging to an organisation ${organisationId}`
       );
-      const organisation = await removeUserFromOrganisation({
-        email: account.email
-      });
+      const organisation = await removeUserAccountFromOrganisation(
+        organisationId,
+        {
+          email: accountEmail
+        }
+      );
       addActivityForUser(userId, 'removedAccountFromOrganisation', {
         id: organisation.id,
         name: organisation.name,
-        email: account.email
+        email: accountEmail
       });
     }
 

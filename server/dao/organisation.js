@@ -66,7 +66,8 @@ export async function create(data) {
       invitedUsers: [],
       currentUsers: [],
       activity: [],
-      active
+      active,
+      billing: {}
     });
     return getById(id);
   } catch (err) {
@@ -199,7 +200,38 @@ export async function addInvitedUser(id, email) {
     );
     return getById(id);
   } catch (err) {
-    logger.error(`organisation-dao: error adding user to organisation ${id}`);
+    logger.error(`organisation-dao: error inviting user to organisation ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function removeInvitedUser(id, email) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $pull: {
+          invitedUsers: email
+        },
+        $push: {
+          activity: {
+            id: v4(),
+            type: 'removedInvitedUser',
+            timestamp: isoDate(),
+            data: {
+              email
+            }
+          }
+        }
+      }
+    );
+    return getById(id);
+  } catch (err) {
+    logger.error(
+      `organisation-dao: error removing invited user from organisation ${id}`
+    );
     logger.error(err);
     throw err;
   }
@@ -212,7 +244,7 @@ export async function addUser(id, email) {
       { id },
       {
         $pull: {
-          invitedUsers: { $in: [email] }
+          invitedUsers: email
         },
         $push: {
           currentUsers: email,
@@ -242,7 +274,7 @@ export async function removeUser(id, email) {
       { id },
       {
         $pull: {
-          currentUsers: { $in: [email] }
+          currentUsers: email
         },
         $push: {
           activity: {

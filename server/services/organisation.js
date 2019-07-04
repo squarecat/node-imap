@@ -7,6 +7,7 @@ import {
   getByInvitedEmailOrValidDomain,
   getBySubscription,
   recordUnsubscribe,
+  removeInvitedUser,
   removeUser,
   update
 } from '../dao/organisation';
@@ -28,6 +29,7 @@ import {
 } from '../utils/stripe';
 
 import { addActivityForUser } from './user';
+import { listPaymentsForOrganisation } from './payments';
 import logger from '../utils/logger';
 import { sendOrganisationInviteMail } from '../utils/emails/transactional';
 
@@ -62,32 +64,44 @@ export async function createOrganisation(email, data) {
       ...data
     });
 
+    const { id, name } = organisation;
+
     addOrganisationToStats();
 
+    logger.debug(`organisation-service: updating admin user record...`);
     await updateUser(user.id, {
-      organisationId: organisation.id,
+      organisationId: id,
       organisationAdmin: true,
       'milestones.completedOnboardingOrganisation': 0
     });
 
     // add the joined and added acount activities
     addActivityForUser(user.id, 'joinedOrganisation', {
-      id: organisation.id,
-      name: organisation.name,
+      id,
+      name,
       email: user.email
     });
 
     if (user.loginProvider !== 'password') {
-      await addUserToOrganisation(organisation.id, {
+      logger.debug(
+        `organisation-service: login provider is not password, adding account ${email} to org ${id}`
+      );
+      await addUserToOrganisation(id, {
         email: user.email
       });
       addActivityForUser(user.id, 'addedAccountToOrganisation', {
-        id: organisation.id,
-        name: organisation.name,
+        id,
+        name,
         email: user.email
       });
+    } else {
+      logger.debug(
+        `organisation-service: login provider is password, inviting account ${email} to org ${id}`
+      );
+      await addInvitedUser(id, email);
     }
 
+    logger.debug(`organisation-service: created organisation ${id}!`);
     return organisation;
   } catch (err) {
     throw err;
@@ -118,6 +132,11 @@ export async function inviteUserToOrganisation(id, email) {
   }
 }
 
+export async function revokeOrganisationInvite(id, email) {
+  logger.debug(`organisation-service: removing invite for ${email}`);
+  return removeInvitedUser(id, email);
+}
+
 export async function addUserToOrganisation(organisationId, { email }) {
   try {
     logger.debug(`organisation-service: adding user to org ${organisationId}`);
@@ -144,18 +163,27 @@ export async function addUserToOrganisation(organisationId, { email }) {
   }
 }
 
-export async function removeUserFromOrganisation(organisationId, { email }) {
+// this removes one user account from an organisation
+// check if the user is in the organisation
+// remove the account from current users
+// update the subcription
+export async function removeUserAccountFromOrganisation(
+  organisationId,
+  { email }
+) {
   try {
     logger.debug(
-      `organisation-service: removing user from org ${organisationId}`
+      `organisation-service: removing user account from org ${organisationId}`
     );
 
     const organisation = await getById(organisationId);
     const existingMember = organisation.currentUsers.includes(email);
 
+    // we need to check this to avoid unnecessary calls to stripe to update the subscription
+    // if the number of seats do not change
     if (!existingMember) {
       logger.debug(
-        `organisation-service: user does not belong to this organisation ${organisationId}`
+        `organisation-service: account does not belong to this organisation ${organisationId}`
       );
       return organisation;
     }
@@ -164,6 +192,62 @@ export async function removeUserFromOrganisation(organisationId, { email }) {
     const updatedOrganisation = await removeUser(organisationId, email);
     removeOrganisationUserToStats();
 
+    await updateOrganisationSubscription(updatedOrganisation);
+
+    return updatedOrganisation;
+  } catch (err) {
+    throw err;
+  }
+}
+
+// this removes an entire user and associated accounts from an org
+// remove the accounts from the org current users
+// update the subscription to reflet new seats amount
+// update the user to remove the organisationId
+export async function removeUserFromOrganisation(organisationId, { email }) {
+  try {
+    logger.debug(
+      `organisation-service: removing user & all accounts from org ${organisationId}`
+    );
+
+    const organisation = await getById(organisationId);
+
+    if (email === organisation.adminUserEmail) {
+      logger.debug(
+        `organisation-service: cannot remove user from organisation - user is an organisation admin`
+      );
+      throw new Error(
+        'cannot remove user from organisation - user is an organisation admin'
+      );
+    }
+
+    const user = await getUserByEmail(email);
+    if (!user) {
+      logger.debug(`organisation-service: user not found`);
+      throw new Error('cannot remove user from organisation - user not found');
+    }
+
+    await Promise.all(
+      user.accounts.map(async a => {
+        const existingMember = organisation.currentUsers.includes(email);
+        if (!existingMember) {
+          return true;
+        }
+        await removeUser(organisationId, a.email);
+        removeOrganisationUserToStats();
+      })
+    );
+
+    await updateUser(user.id, {
+      organisationId: null
+    });
+    addActivityForUser(user.id, 'leftOrganisation', {
+      id: organisationId,
+      name,
+      email: user.email
+    });
+
+    const updatedOrganisation = await getById(organisationId);
     await updateOrganisationSubscription(updatedOrganisation);
 
     return updatedOrganisation;
@@ -258,10 +342,7 @@ export async function getOrganisationSubscription(id) {
       quantity,
       plan,
       upcomingInvoice: {
-        total: upcomingInvoice.total,
-        period_start: upcomingInvoice.period_start,
-        period_end: upcomingInvoice.period_end,
-        status: upcomingInvoice.status
+        total: upcomingInvoice.total > 0 ? upcomingInvoice.total : 0
       }
     };
   } catch (err) {
@@ -348,4 +429,8 @@ export function canUserJoinOrganisation({ email, organisation }) {
 export function recordUnsubscribeForOrganisation(id) {
   addOrganisationUnsubscribeToStats();
   return recordUnsubscribe(id);
+}
+
+export async function getOrganisationPayments(id) {
+  return listPaymentsForOrganisation(id);
 }

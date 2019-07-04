@@ -124,7 +124,10 @@ function Content({
                 <span styleName="separator" />
               </>
             ) : null}
-            <p>Or you can invite anyone by email address:</p>
+            <p>
+              You can invite anyone inside or outside your organisation by email
+              address:
+            </p>
             <InviteForm organisationId={organisationId} onSuccess={onInvite} />
             {invitedUsersCount ? (
               <p>
@@ -147,7 +150,7 @@ function Content({
               Connect account{' '}
               <span styleName="onboarding-position">{positionLabel}</span>
             </ModalHeader>
-            <ConnectAccounts accounts={accounts} onboarding />
+            <ConnectAccounts accounts={accounts} onboarding enterprise />
             {accounts.length ? (
               <p style={{ marginTop: '2em' }}>
                 If you have more accounts then you can connect them later.

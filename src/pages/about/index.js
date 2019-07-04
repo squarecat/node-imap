@@ -13,7 +13,10 @@ import worldImg from '../../assets/geography.png';
 
 export default function About() {
   return (
-    <SubPageLayout title="About" description="">
+    <SubPageLayout
+      title="About"
+      description={`Our mission is helping people keep control of their inbox. We are two independent founders looking to help you, and others like you.`}
+    >
       <div styleName="mission image-section image-right">
         <div styleName="image-section-text">
           <h1>Our mission</h1>
@@ -93,7 +96,7 @@ export default function About() {
             <span role="img" aria-label="wave">
               👋
             </span>{' '}
-            We're Danielle and James, a couple of independent makers.
+            We're Danielle and James, a couple of independent founders.
           </p>
           <p>
             We work on products that help people because it's rewarding and we
