@@ -8,13 +8,6 @@ module.exports = {
     siteName: 'Leave Me Alone'
   },
   plugins: [
-    {
-      resolve: 'gatsby-plugin-webpack-bundle-analyzer',
-      options: {
-        analyzerPort: 8888,
-        production: true
-      }
-    },
     'gatsby-plugin-react-helmet',
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,

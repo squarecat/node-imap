@@ -37,12 +37,12 @@ function Organisation() {
     return {
       organisationId: u.organisationId,
       organisationAdmin: u.organisationAdmin,
-      organisationLastUpdated: u.organisationLastUpdated
+      organisationLastUpdated: u.organisationLastUpdated || 0
     };
   });
 
   console.log('before fetch organisation', organisationId);
-  const { value: organisation, loading } = useAsync(fetchOrganisation, [
+  const { value: organisation, loading } = useAsync(() => fetchOrganisation(organisationId), [
     organisationId,
     organisationLastUpdated
   ]);

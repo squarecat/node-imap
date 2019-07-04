@@ -1,8 +1,4 @@
-import {
-  addUnsubscribeErrorResponse,
-  fetchMail
-  // getMailEstimates
-} from '../services/mail';
+import { addUnsubscribeErrorResponse, fetchMail } from '../services/mail';
 
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
@@ -10,6 +6,7 @@ import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
 import { unsubscribeFromMail } from '../services/unsubscriber';
+import { updateOccurrencesSeenByUser } from '../services/occurrences';
 
 const Sentry = require('@sentry/node');
 
@@ -114,6 +111,18 @@ export default function(app, socket) {
         id: data.mailId,
         err: error.toJSON()
       });
+    }
+  });
+
+  socket.on('occurrences', async (userId, data) => {
+    try {
+      updateOccurrencesSeenByUser(userId, data);
+    } catch (err) {
+      const error = new RestError('Failed to add occurrences', {
+        userId: userId,
+        cause: err
+      });
+      Sentry.captureException(error);
     }
   });
 }

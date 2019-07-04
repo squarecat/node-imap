@@ -209,6 +209,13 @@ export function useMailSync() {
     isFetching,
     unsubData,
     setUnsubData,
+    setOccurrencesSeen: async ({ senders }) => {
+      await db.mail
+        .where('fromEmail')
+        .anyOf(senders)
+        .modify({ seen: true });
+      emit('occurrences', senders);
+    },
     fetch: async () => {
       try {
         setIsFetching(true);

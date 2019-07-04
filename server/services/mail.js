@@ -1,5 +1,4 @@
 import {
-  // addEstimateToStats,
   addFailedUnsubscriptionToStats,
   addNumberofEmailsToStats,
   addUnsubscriptionToStats
@@ -8,17 +7,11 @@ import {
   addResolvedUnsubscription,
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
-import {
-  fetchMail as fetchMailFromGmail
-  // getEstimates as getMailEstimatesFromGmail
-} from './mail/gmail';
-import {
-  fetchMail as fetchMailFromOutlook
-  // getEstimates as getMailEstimatesFromOutlook
-} from './mail/outlook';
 
 import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
+import { fetchMail as fetchMailFromGmail } from './mail/gmail';
+import { fetchMail as fetchMailFromOutlook } from './mail/outlook';
 import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
@@ -28,7 +21,7 @@ import subMonths from 'date-fns/sub_months';
 
 export async function* fetchMail({ userId, accountFilters = [] }) {
   const user = await getUserById(userId, { withAccountKeys: true });
-  let { accounts } = user;
+  let { accounts, preferences } = user;
   let accountScanData = [];
   let accountOccurrences = {};
   let dupes = [];
@@ -61,11 +54,17 @@ export async function* fetchMail({ userId, accountFilters = [] }) {
       const { scanData, occurrences, dupeSenders } = next.value;
       accountScanData = [...accountScanData, scanData];
       accountOccurrences = { ...accountOccurrences, ...occurrences };
-      dupes = [...dupes, dupeSenders];
+      // collect dupe senders if this scan was from data
+      // at least 6 months ago
+      const { type } = scanData;
+      if (type === 'full') {
+        dupes = [...dupes, dupeSenders];
+      }
     }
 
-    // addOrUpdateOccurrences(userId, dupes);
-    // addScanToUser(user.id, accountScanData);
+    if (preferences.occurrencesConsent) {
+      addOrUpdateOccurrences(userId, dupes);
+    }
     return {
       occurrences: accountOccurrences
     };
@@ -127,7 +126,8 @@ export async function* fetchMailByAccount({ user, account, ignore = false }) {
       totalUnsubscribableEmails: totalUnsubscribableMail,
       totalPreviouslyUnsubscribedMail,
       email: account.email,
-      provider: account.provider
+      provider: account.provider,
+      type: sixMonthsAgo === from ? 'full' : 'topup'
     };
     if (!ignore) {
       addNumberofEmailsToStats({

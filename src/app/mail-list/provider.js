@@ -24,7 +24,8 @@ export function MailProvider({ children }) {
     resolveUnsubscribeError,
     isFetching,
     unsubData,
-    setUnsubData
+    setUnsubData,
+    setOccurrencesSeen
   } = useMailSync();
   const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
 
@@ -89,13 +90,27 @@ export function MailProvider({ children }) {
   useEffect(
     () => {
       const filter = async () => {
-        const { mail, count } = await filterMail(state.activeFilters, db, {
-          orderBy: state.sortByValue,
-          sortDirection: state.sortByDirection,
-          page: state.page,
-          perPage: state.perPage
-        });
-        setFilteredMail({ count, mail });
+        const { mail, unseenSenders, count } = await filterMail(
+          state.activeFilters,
+          db,
+          {
+            orderBy: state.sortByValue,
+            sortDirection: state.sortByDirection,
+            page: state.page,
+            perPage: state.perPage
+          }
+        );
+        // if it's diferent then set
+        if (
+          count !== filteredMail.count ||
+          mail.join() !== filteredMail.mail.join()
+        ) {
+          setFilteredMail({ count, mail });
+        }
+        // if there are unseenSenders then emit
+        if (unseenSenders.length) {
+          setOccurrencesSeen({ senders: unseenSenders });
+        }
       };
       if (state.initialized) {
         filter();
@@ -109,7 +124,9 @@ export function MailProvider({ children }) {
       state.perPage,
       state.count,
       state.sortByDirection,
-      db
+      db,
+      setOccurrencesSeen,
+      filteredMail
     ]
   );
 
@@ -207,8 +224,23 @@ async function filterMail(activeFilters, db, options) {
   );
 
   const filtedMailIds = filteredCollection.map(m => m.id);
+  const unseenSenders = Object.keys(
+    filteredCollection.reduce((out, m) => {
+      if (!m.seen) {
+        return {
+          ...out,
+          [m.fromEmail]: 1
+        };
+      }
+      return out;
+    }, {})
+  );
+
   return {
     mail: filtedMailIds,
+    unseenSenders,
     count
   };
 }
+
+MailProvider.whyDidYouRender = true;

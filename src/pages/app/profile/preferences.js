@@ -45,8 +45,8 @@ export default () => {
           We collect completely anonymous data about the senders of emails you
           receive to power our Subscriber Score algorithm. This information
           improves the quality of Leave Me Alone for all users. If you don't
-          want to contribute your data to this algorithm for whatever reason you
-          can opt-out below.
+          want to contribute your data to this algorithm for whatever reason
+          then you can opt-out below.
         </p>
         <p>
           Your data will NEVER be sold and cannot be de-anonymised in any way.

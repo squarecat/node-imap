@@ -35,6 +35,9 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
       occurrences: parsedOccurrences,
       col
     });
+    logger.info(
+      `occurrences-dao: adding ${newOccurrences.length} new occurrences`
+    );
     await addNew({
       occurrences: newOccurrences,
       userId,
@@ -42,6 +45,11 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
       now,
       col
     });
+    logger.info(
+      `occurrences-dao: updating ${
+        existingOccurences.length
+      } existing occurrences`
+    );
     await updateExisting({
       occurrences: existingOccurences,
       userId,
@@ -50,17 +58,75 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
       col
     });
   } catch (err) {
-    logger.error(`stats-dao: error bulk updating occurrences`);
+    logger.error(`occurrences-dao: error bulk updating occurrences`);
     logger.error(err);
     throw err;
   }
 }
 
-export async function addUnsubscribeOccrurence(userId, from) {
+// bulk update a bunch of occurrences that have been seen
+// by a user
+export async function updateOccurrencesSeen(userId, senders) {
   const now = isoDate();
   try {
     const col = await db().collection(COL_NAME);
-    const { senderAddress } = parseSenderEmail(from);
+    const operations = senders.map(senderEmail => {
+      const { senderAddress, friendlyName } = parseSenderEmail(senderEmail);
+      let domain = senderAddress.split('@')[1];
+      if (domain.endsWith('>')) {
+        domain = domain.substr(0, domain.length - 1);
+      }
+      const hashedUser = hash(`${userId}-${senderAddress}`);
+      const hashedAddress = hash(senderAddress);
+      const hashedDomain = hash(domain);
+      return {
+        updateOne: {
+          filter: {
+            hashedSender: hashedDomain,
+            seenBy: { $ne: hashedUser }
+          },
+          update: {
+            $set: {
+              lastSeen: now,
+              sender: domain,
+              hashedSender: hashedDomain
+            },
+            $addToSet: {
+              seenBy: hashedUser,
+              addresses: [senderAddress],
+              hashedAddresses: [hashedAddress],
+              friendlyNames: [friendlyName]
+            },
+            $inc: {
+              [`addressOccurrences.${hashedAddress}`]: 1
+            }
+          },
+          upsert: true
+        }
+      };
+    });
+
+    if (!operations.length) {
+      return null;
+    }
+    logger.info(
+      `occurrences-dao: marking ${operations.length} occurrences as seen`
+    );
+    return col.bulkWrite(operations, {
+      ordered: false
+    });
+  } catch (err) {
+    logger.error(`occurrences-dao: error bulk updating occurrences`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function addUnsubscribeOccurrence(userId, from) {
+  const now = isoDate();
+  try {
+    const col = await db().collection(COL_NAME);
+    const { senderAddress, friendlyName } = parseSenderEmail(from);
     if (!senderAddress.includes('@')) {
       return null;
     }
@@ -73,15 +139,23 @@ export async function addUnsubscribeOccrurence(userId, from) {
         unsubscribedBy: { $ne: hashedUser }
       },
       {
+        $set: {
+          sender: domain,
+          hashedSender: hash(domain),
+          lastUnsubscribed: now
+        },
         $addToSet: {
-          unsubscribedBy: hashedUser
+          unsubscribedBy: hashedUser,
+          addresses: [senderAddress],
+          hashedAddresses: [hashedAddress],
+          friendlyNames: [friendlyName]
         },
         $inc: {
           [`addressUnsubscribes.${hashedAddress}`]: 1
-        },
-        $set: {
-          lastUnsubscribed: now
         }
+      },
+      {
+        upsert: true
       }
     );
   } catch (err) {
@@ -145,9 +219,8 @@ async function partitionOccurrences({ occurrences, col }) {
   return { existingOccurences, newOccurrences };
 }
 
-async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
+async function addNew({ occurrences, frequencyLabel, col }) {
   const documents = occurrences.map(oc => {
-    const hashedUser = hash(`${userId}-${oc.senderAddress}`);
     const hashedAddress = hash(oc.senderAddress);
     return {
       sender: oc.domain,
@@ -161,9 +234,8 @@ async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
       addressUnsubscribes: {
         [hashedAddress]: 0
       },
-      seenBy: [hashedUser],
       addressOccurrences: {
-        [hashedAddress]: 1
+        [hashedAddress]: 0
       },
       addressIsSpam: {
         [hashedAddress]: oc.isSpam ? 1 : 0
@@ -171,8 +243,9 @@ async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
       addressIsTrash: {
         [hashedAddress]: oc.isTrash ? 1 : 0
       },
+      seenBy: [],
       unsubscribedBy: [],
-      lastSeen: now,
+      lastSeen: null,
       lastUnsubscribed: null
     };
   });
@@ -182,13 +255,7 @@ async function addNew({ occurrences, userId, frequencyLabel, now, col }) {
   return col.insertMany(documents);
 }
 
-async function updateExisting({
-  occurrences,
-  userId,
-  frequencyLabel,
-  now,
-  col
-}) {
+async function updateExisting({ occurrences, userId, frequencyLabel, col }) {
   const operations = occurrences.map(oc => {
     const { isSpam, isTrash } = oc;
     // using sender not domain means that we increment
@@ -197,33 +264,37 @@ async function updateExisting({
     // facebook.com domain, but we store each address too
     const hashedUser = hash(`${userId}-${oc.senderAddress}`);
     const hashedAddress = hash(oc.senderAddress);
+    let update = {
+      $addToSet: {
+        addresses: oc.senderAddress,
+        friendlyNames: oc.friendlyName,
+        hashedAddresses: hashedAddress
+      },
+      $set: {
+        sender: oc.domain,
+        hashedSender: hash(oc.domain)
+      },
+      $inc: {
+        [`addressIsSpam.${hashedAddress}`]: isSpam ? 1 : 0,
+        [`addressIsTrash.${hashedAddress}`]: isTrash ? 1 : 0
+      }
+    };
+
+    if (frequencyLabel) {
+      update = {
+        ...update,
+        $push: {
+          [`${frequencyLabel}.${hashedAddress}`]: oc.occurrences
+        }
+      };
+    }
     return {
       updateOne: {
         filter: {
           hashedSender: hash(oc.domain),
           seenBy: { $ne: hashedUser }
         },
-        update: {
-          $push: {
-            [`${frequencyLabel}.${hashedAddress}`]: oc.occurrences
-          },
-          $addToSet: {
-            seenBy: hashedUser,
-            addresses: oc.senderAddress,
-            friendlyNames: oc.friendlyName,
-            hashedAddresses: hashedAddress
-          },
-          $set: {
-            sender: oc.domain,
-            hashedSender: hash(oc.domain),
-            lastSeen: now
-          },
-          $inc: {
-            [`addressOccurrences.${hashedAddress}`]: 1,
-            [`addressIsSpam.${hashedAddress}`]: isSpam ? 1 : 0,
-            [`addressIsTrash.${hashedAddress}`]: isTrash ? 1 : 0
-          }
-        },
+        update: update,
         upsert: false
       }
     };

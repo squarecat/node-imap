@@ -34,6 +34,14 @@ function MailView() {
     fetch();
   }, []);
 
+  // scroll back to the top if the page changes
+  useEffect(
+    () => {
+      window.scrollTo(0, 0);
+    },
+    [page]
+  );
+
   const { offset, totalOnPage, pageCount } = useMemo(
     () => {
       const os = page * perPage;
@@ -44,13 +52,6 @@ function MailView() {
       };
     },
     [perPage, totalCount, page]
-  );
-
-  useEffect(
-    () => {
-      window.scrollTo(0, 0);
-    },
-    [page]
   );
 
   const onSubmit = useCallback(

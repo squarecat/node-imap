@@ -40,6 +40,9 @@ function Faker(opts) {
   var Fake = require('./fake');
   self.fake = new Fake(self).fake;
 
+  var Random = require('./random');
+  self.random = new Random(self);
+
   var Name = require('./name');
   self.name = new Name(self);
 

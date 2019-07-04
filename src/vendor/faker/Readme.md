@@ -102,6 +102,21 @@ This will interpolate the format string with the value of methods `name.lastName
   * jobDescriptor
   * jobArea
   * jobType
+* random
+  * number
+  * float
+  * arrayElement
+  * arrayElements
+  * objectElement
+  * uuid
+  * boolean
+  * word
+  * words
+  * image
+  * locale
+  * alpha
+  * alphaNumeric
+  * hexaDecimal
 
 
 ## Localization

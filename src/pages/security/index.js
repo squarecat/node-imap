@@ -1,13 +1,14 @@
 import './security.module.scss';
 
+import { TextImportant, TextLink } from '../../components/text';
+
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
-import { TextImportant, TextLink } from '../../components/text';
+import gmailScopesImg from '../../assets/security-gmail-scopes.png';
 import lockImg from '../../assets/lock.png';
+import outlookScopesImg from '../../assets/security-outlook-scopes.png';
 import securityImg from '../../assets/security.png';
 import subscriberScoreImg from '../../assets/subscriber-score.png';
-import gmailScopesImg from '../../assets/security-gmail-scopes.png';
-import outlookScopesImg from '../../assets/security-outlook-scopes.png';
 
 const scopesUrlForGoogle =
   'https://developers.google.com/gmail/api/auth/scopes';
@@ -174,7 +175,7 @@ export default function SecurityPage() {
             <p>
               This system improves the quality of Leave Me Alone for all users.
               If you don't want to contribute your data to this algorithm for
-              whatever reason you can opt-out at any time from your account
+              whatever reason then you can opt-out at any time from your account
               preferences.
             </p>
           </div>
