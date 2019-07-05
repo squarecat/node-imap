@@ -8,7 +8,6 @@ const keepKeys = [
   'profileImg',
   'referralCode',
   'referrals',
-  'preferences',
   'name',
   'email',
   'createdAt',
@@ -34,6 +33,14 @@ const migrateUser = oldRecord => {
   newRecord = {
     ...newRecord,
     hashedEmails: [hashEmail(oldRecord.email)]
+  };
+  // add new preferences
+  newRecord = {
+    ...newRecord,
+    preferences: {
+      ...oldRecord.preferences,
+      occurrencesConsent: true
+    }
   };
   // move the keys object to be an account
   // and add a relevant activity
