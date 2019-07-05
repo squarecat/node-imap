@@ -24,7 +24,13 @@ export default async function request(url, params = {}) {
       const err = await response.json();
       throw err;
     }
-    return response.json();
+
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+
+    return response.statusText;
   } catch (err) {
     console.log('request err');
     throw err;

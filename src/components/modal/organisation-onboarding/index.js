@@ -95,8 +95,8 @@ function Content({
               building your business.
             </p>
             <p>
-              Members of the {organisation.name} organisation have unlimited
-              unsubscribes.
+              Members of the {organisation.name} organisation can unsubscribe
+              from as many emails as they like.
             </p>
             <img
               styleName="onboarding-example-img"
@@ -176,22 +176,28 @@ function Content({
                 {organisation.active ? 'Active' : 'Inactive'}
               </span>
             </p>
-            <p>
-              Before your team at {organisation.name} can start unsubscribing
-              you need to{' '}
-              <TextImportant>activate your organisation</TextImportant> by
-              adding a payment method.
-            </p>
-            <p>
-              We'll now take you to your organisation management page to do
-              this.
-            </p>
             {isBeta ? (
-              <p>
-                To say thanks for joining us during our beta period we have
-                activated your organisation for free!
-              </p>
-            ) : null}
+              <>
+                <p>
+                  To say thanks for joining us during our beta period we have
+                  activated your organisation for free!
+                </p>
+                <p>We'll now take you to your organisation management page.</p>
+              </>
+            ) : (
+              <>
+                <p>
+                  Before your team at {organisation.name} can start
+                  unsubscribing you need to{' '}
+                  <TextImportant>activate your organisation</TextImportant> by
+                  adding a payment method.
+                </p>
+                <p>
+                  We'll now take you to your organisation management page to do
+                  this.
+                </p>
+              </>
+            )}
           </>
         );
       }

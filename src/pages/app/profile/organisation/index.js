@@ -94,15 +94,15 @@ function Organisation() {
 
           {organisationAdmin ? <Billing organisation={organisation} /> : null}
 
-          {organisationAdmin ? (
-            <Settings loading={loading} organisation={organisation} />
-          ) : null}
-
           <CurrentUsers
             organisationId={organisationId}
             adminUserEmail={adminUserEmail}
             organisationAdmin={organisationAdmin}
           />
+
+          {organisationAdmin ? (
+            <Settings loading={loading} organisation={organisation} />
+          ) : null}
 
           {organisationAdmin ? (
             <InviteForm organisation={organisation} />
@@ -171,7 +171,7 @@ const OrganisationStatus = React.memo(({ active, admin, billing = {} }) => {
 const Settings = React.memo(({ loading, organisation }) => {
   const { actions: alertActions } = useContext(AlertContext);
   const [state, setState] = useState({
-    setting: organisation.allowAnyUserWithCompanyEmail,
+    allowAnyUserWithCompanyEmail: organisation.allowAnyUserWithCompanyEmail,
     toggling: false
   });
 
@@ -186,7 +186,7 @@ const Settings = React.memo(({ loading, organisation }) => {
 
       setTimeout(async () => {
         setState({
-          setting: toggled,
+          allowAnyUserWithCompanyEmail: toggled,
           toggling: false
         });
       }, 300);
@@ -201,7 +201,8 @@ const Settings = React.memo(({ loading, organisation }) => {
       // revert if error
       setTimeout(() => {
         setState({
-          setting: organisation.allowAnyUserWithCompanyEmail,
+          allowAnyUserWithCompanyEmail:
+            organisation.allowAnyUserWithCompanyEmail,
           toggling: false
         });
       }, 300);
@@ -212,7 +213,7 @@ const Settings = React.memo(({ loading, organisation }) => {
 
   return (
     <div styleName="organisation-section">
-      <h2>Settings</h2>
+      <h2>Invite Settings</h2>
       {state.allowAnyUserWithCompanyEmail ? (
         <>
           <p>
@@ -245,6 +246,12 @@ const Settings = React.memo(({ loading, organisation }) => {
         }
       />
       {state.toggling ? <span styleName="saving">Saving...</span> : null}
+
+      <p styleName="footnote">
+        Only connected email provider accounts are counted as billed seats. When
+        someone logs in with or connects a Google/Microsoft account your plan
+        will be updated and prorated.
+      </p>
     </div>
   );
 });
@@ -252,12 +259,12 @@ const Settings = React.memo(({ loading, organisation }) => {
 function Billing({ organisation }) {
   const { open: openModal } = useContext(ModalContext);
 
-  const [, { setOrganisationLastUpdated }] = useUser();
+  const [isBeta, { setOrganisationLastUpdated }] = useUser(u => u.isBeta);
 
   const { id, active, billing = {}, currentUsers } = organisation;
   const {
     card,
-    company = {},
+    vatNumber,
     subscriptionId,
     subscriptionStatus,
     delinquent
@@ -330,6 +337,9 @@ function Billing({ organisation }) {
     <>
       <div styleName="organisation-section">
         <h2>Billing Details</h2>
+
+        {isBeta ? <p>All usage is free during the beta!</p> : null}
+
         {subscriptionId ? (
           <BillingInformation organisationId={id} currentUsers={currentUsers} />
         ) : null}
@@ -357,25 +367,15 @@ function Billing({ organisation }) {
           </>
         ) : null}
       </div>
-      <div styleName="organisation-section">
-        <h2>Company Details</h2>
-        {company.vatNumber ? (
-          <>
-            <p>Name: {company.name || '-'}</p>
-            <p>VAT Number: {company.vatNumber || '-'}</p>
-            <Button
-              basic
-              compact
-              stretch
-              disabled={true} // not available yet
-              onClick={() => {}}
-            >
-              Update (coming soon)
-            </Button>
-          </>
-        ) : null}
-        <p>Contact us to add or modify your VAT number and company details.</p>
-      </div>
+
+      {card ? (
+        <div styleName="organisation-section">
+          <h2>Invoicing Details</h2>
+          <p>VAT Number: {vatNumber || '-'}</p>
+
+          <p>Contact us to add or modify your VAT number.</p>
+        </div>
+      ) : null}
     </>
   );
 }

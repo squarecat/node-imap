@@ -1,6 +1,6 @@
 import './org.module.scss';
 
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, {
   TableCell,
   TableHead,
@@ -16,23 +16,22 @@ import WarningModal from '../../../components/modal/warning-modal';
 import relative from 'tiny-relative-date';
 import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
-import useUser from '../../../utils/hooks/use-user';
 
 function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
   const alert = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
-  const [, { setOrganisationLastUpdated }] = useUser();
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  const { value: stats = [], loading } = useAsync(
+  const { value: users = [], loading } = useAsync(
     () => fetchStats(organisationId),
-    [organisationId]
+    [lastUpdated]
   );
 
   const onRemoveUser = useCallback(
     async ({ email, numberOfAccounts }) => {
       try {
         await removeUser(organisationId, email);
-        setOrganisationLastUpdated(Date.now());
+        setLastUpdated(Date.now());
         alert.actions.setAlert({
           level: 'success',
           message: `Successfully removed user ${email} & ${numberOfAccounts} connected account${
@@ -50,7 +49,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
         });
       }
     },
-    [alert.actions, organisationId, setOrganisationLastUpdated]
+    [alert.actions, organisationId, setLastUpdated]
   );
 
   const onClickRemoveUser = useCallback(
@@ -76,15 +75,14 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
 
   const content = useMemo(
     () => {
-      const users = stats.length;
-      const totalNumberAccounts = stats.reduce((out, s) => {
+      const totalNumberAccounts = users.reduce((out, s) => {
         return out + s.numberOfAccounts;
       }, 0);
 
       let text;
       if (loading) {
         text = <span>Loading...</span>;
-      } else if (!users.lenth) {
+      } else if (!users.length) {
         text = (
           <p>When members join your organisation they will show up here.</p>
         );
@@ -93,7 +91,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
           <p>
             Showing{' '}
             <TextImportant>
-              {`${users} user${users === 1 ? '' : 's'}`}{' '}
+              {`${users.length} user${users.length === 1 ? '' : 's'}`}{' '}
             </TextImportant>{' '}
             using{' '}
             <TextImportant>
@@ -120,7 +118,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
               <TableHeadCell>Joined</TableHeadCell>
             </TableHead>
             <tbody>
-              {stats.map(user => (
+              {users.map(user => (
                 <TableRow key={user.email}>
                   <TableCell>
                     <span styleName="email" title={user.email}>
@@ -163,7 +161,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
         </>
       );
     },
-    [adminUserEmail, loading, onClickRemoveUser, organisationAdmin, stats]
+    [adminUserEmail, loading, onClickRemoveUser, organisationAdmin, users]
   );
 
   return <div styleName="organisation-section tabled users">{content}</div>;
