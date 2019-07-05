@@ -16,13 +16,23 @@ db.version(1).stores({
 db.open();
 
 export const DatabaseProvider = ({ children }) => {
-  db.clear = ({ account } = {}) => {
-    if (account) {
+  db.clear = async ({ email, id } = {}) => {
+    if (email) {
+      // clear last searched prefs
+      const lastSearch = await db.prefs.get('lastFetchParams');
+      if (lastSearch) {
+        const { value } = lastSearch;
+        const newValue = {
+          ...value,
+          accounts: value.accounts.filter(() => id !== id)
+        };
+        await db.prefs.put({ key: 'lastFetchParams', value: newValue });
+      }
       // clear emails associated with
       // a specific account
       return db.mail
         .where('forAccount')
-        .equals(account)
+        .equals(email)
         .delete();
     }
     return Promise.all([

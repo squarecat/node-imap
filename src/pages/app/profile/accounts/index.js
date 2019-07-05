@@ -39,17 +39,18 @@ const Accounts = () => {
     const warningModalData = { email, provider: account.provider };
     openModal(
       <WarningModal
-        onConfirm={() => onClickWarningConfirm(warningModalData)}
+        onConfirm={() => onClickWarningConfirm(account)}
         content={modalContent(warningModalData)}
         confirmText={'Confirm'}
       />
     );
   };
 
-  const onClickWarningConfirm = async ({ email }) => {
+  const onClickWarningConfirm = async account => {
+    const { email } = account;
     try {
       const updatedUser = await removeAccount(email);
-      db.clear({ account: email });
+      db.clear(account);
       updateUser(updatedUser);
       alertActions.setAlert({
         id: 'remove-account-success',
