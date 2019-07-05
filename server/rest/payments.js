@@ -97,11 +97,11 @@ export default app => {
   });
 
   app.post('/api/payments/subscription', auth, async (req, res) => {
-    const { organisationId, token, name, address, company } = req.body;
+    const { organisationId, token, name, address } = req.body;
     try {
       const subscription = await PaymentService.createSubscriptionForOrganisation(
         organisationId,
-        { token, name, address, company }
+        { token, name, address }
       );
       res.send(subscription);
     } catch (err) {

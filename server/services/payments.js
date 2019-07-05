@@ -509,7 +509,7 @@ async function getOrUpdateCustomerForOrganisation(
 
 export async function createSubscriptionForOrganisation(
   organisationId,
-  { token, name, address, company }
+  { token, name, address }
 ) {
   try {
     logger.info(
@@ -522,8 +522,7 @@ export async function createSubscriptionForOrganisation(
     } = await getOrUpdateCustomerForOrganisation(organisationId, {
       token,
       name,
-      address,
-      company
+      address
     });
     logger.debug(`payments-service: created/updated customer ${customerId}`);
 
@@ -567,7 +566,6 @@ export async function createSubscriptionForOrganisation(
       'billing.subscriptionId': subscriptionId,
       'billing.subscriptionStatus': status,
       'billing.delinquent': false,
-      'billing.company': company,
       'billing.card': {
         last4,
         exp_month,
@@ -802,7 +800,7 @@ export async function handleSubscriptionDeleted({ subscriptionId, request }) {
 
 export async function updateBillingForOrganisation(
   id,
-  { token, name, address, company }
+  { token, name, address }
 ) {
   try {
     logger.debug(`payment-service: updating billing for organisation ${id}`);
@@ -810,13 +808,11 @@ export async function updateBillingForOrganisation(
     await getOrUpdateCustomerForOrganisation(id, {
       token,
       name,
-      address,
-      company
+      address
     });
     // set the new card details
     const { last4, exp_month, exp_year } = token.card;
     await updateOrganisation(id, {
-      'billing.company': company,
       'billing.card': {
         last4,
         exp_month,

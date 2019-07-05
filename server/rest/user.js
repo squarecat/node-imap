@@ -166,8 +166,8 @@ export default app => {
     const { email } = req.body;
 
     try {
-      await inviteReferralUser(id, email);
-      return res.send({ success: true });
+      inviteReferralUser(id, email);
+      return res.status(202).send();
     } catch (err) {
       logger.error('user-rest: error inviting user');
       logger.error(err);
@@ -449,8 +449,8 @@ export default app => {
     async (req, res, next) => {
       const { hashedEmail } = req.params;
       try {
-        await handleUserForgotPassword({ hashedEmail });
-        return res.send({ success: true });
+        handleUserForgotPassword({ hashedEmail });
+        return res.status(202).send();
       } catch (err) {
         next(
           new RestError('failed to handle forgot password', {

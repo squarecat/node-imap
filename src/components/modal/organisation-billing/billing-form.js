@@ -5,7 +5,8 @@ import {
   ModalHeader,
   ModalPaymentSaveAction
 } from '..';
-import React, { useContext, useReducer } from 'react';
+import React, { useContext, useMemo, useReducer } from 'react';
+import { TextFootnote, TextImportant } from '../../../components/text';
 import reducer, { initialState } from './reducer';
 
 import { ENTERPRISE } from '../../../../shared/prices';
@@ -14,7 +15,6 @@ import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 // import PaymentCompanyDetails from '../../payments/company-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
-import { TextImportant } from '../../../components/text';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
 
@@ -27,8 +27,6 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
   const { id, billing = {}, currentUsers } = organisation;
   const { subscriptionId } = billing;
-
-  const seats = currentUsers.length;
 
   const onPaymentSuccess = organisation => {
     closeModal();
@@ -137,6 +135,39 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     }
   }
 
+  const initialPayment = ENTERPRISE.pricePerSeat * currentUsers.length;
+  const infoText = useMemo(
+    () => {
+      if (currentUsers.length) {
+        return (
+          <p>
+            You currently have{' '}
+            <TextImportant>
+              {`${currentUsers.length} member${
+                currentUsers.length === 1 ? '' : 's'
+              }`}
+            </TextImportant>
+            . You will be billed{' '}
+            <TextImportant>
+              ${(initialPayment / 100).toFixed(2)} monthly starting today
+            </TextImportant>
+            . Your plan will be updated automatically and prorated when members
+            join or are removed.
+          </p>
+        );
+      }
+      return (
+        <p>
+          You currently have no members. Your card will be{' '}
+          <TextImportant>authorised but not charged</TextImportant>. Your plan
+          will be updated automatically and prorated when members join or are
+          removed.
+        </p>
+      );
+    },
+    [currentUsers.length, initialPayment]
+  );
+
   return (
     <form
       id="org-payment-form"
@@ -147,29 +178,18 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     >
       <ModalBody loading={!stripeState.isReady} compact>
         <ModalHeader>
-          Add Organisation Payment Method
+          Add Payment Method
           <ModalCloseIcon />
         </ModalHeader>
         <p>
           You are signing up for the{' '}
-          <TextImportant>Enterprise plan</TextImportant> billed at{' '}
+          <TextImportant>Enterprise plan</TextImportant> billed monthly at{' '}
           <TextImportant>
             ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
           </TextImportant>
           .
         </p>
-        <p>
-          You currently have{' '}
-          <TextImportant>
-            {`${seats} member${seats === 1 ? '' : 's'}`}
-          </TextImportant>
-          . You will be billed{' '}
-          <TextImportant>
-            ${((ENTERPRISE.pricePerSeat * seats) / 100).toFixed(2)} monthly
-            starting today
-          </TextImportant>
-          .
-        </p>
+        {infoText}
         <PaymentAddressDetails
           addressDetails={state.addressDetails}
           loading={state.loading}
@@ -201,12 +221,22 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
             </FormNotification>
           </FormGroup>
         ) : null}
+
+        <TextFootnote>
+          I authorise Leave Me Alone to send instructions to the financial
+          institution that issued my card to take payments from my card account
+          in accordance with the terms of my agreement with you.
+        </TextFootnote>
       </ModalBody>
       <ModalPaymentSaveAction
         isDisabled={state.loading || !stripeState.isReady}
         isLoading={state.loading}
         onCancel={closeModal}
-        saveText="Save and Pay Now"
+        saveText={
+          currentUsers.length
+            ? `Save and Pay $${(initialPayment / 100).toFixed(2)}`
+            : `Save Payment Method`
+        }
       />
     </form>
   );
@@ -227,7 +257,7 @@ function validateVatNumber(vatNumber) {
   });
 }
 
-function createSubscription(organisationId, { token, name, address, company }) {
+function createSubscription(organisationId, { token, name, address }) {
   return request('/api/payments/subscription', {
     method: 'POST',
     cache: 'no-cache',
@@ -235,11 +265,11 @@ function createSubscription(organisationId, { token, name, address, company }) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     },
-    body: JSON.stringify({ organisationId, token, name, address, company })
+    body: JSON.stringify({ organisationId, token, name, address })
   });
 }
 
-function updateBilling(organisationId, { token, name, address, company }) {
+function updateBilling(organisationId, { token, name, address }) {
   return request(`/api/organisation/${organisationId}/billing`, {
     method: 'PATCH',
     cache: 'no-cache',
@@ -249,7 +279,7 @@ function updateBilling(organisationId, { token, name, address, company }) {
     },
     body: JSON.stringify({
       op: 'update',
-      value: { token, name, address, company }
+      value: { token, name, address }
     })
   });
 }
@@ -266,7 +296,7 @@ function confirmSubscription(organisationId) {
   });
 }
 
-function getCustomer({ addressDetails, companyDetails }) {
+function getCustomer({ addressDetails }) {
   return {
     name: addressDetails.name,
     address: {
@@ -275,10 +305,6 @@ function getCustomer({ addressDetails, companyDetails }) {
       city: addressDetails.city,
       country: addressDetails.country,
       postal_code: addressDetails.postal_code
-    },
-    company: {
-      name: companyDetails.name,
-      vatNumber: companyDetails.vatNumber
     }
   };
 }

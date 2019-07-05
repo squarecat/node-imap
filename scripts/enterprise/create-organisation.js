@@ -20,8 +20,8 @@ async function run() {
   await OrgService.createOrganisation(email, {
     name,
     domain,
-    allowAnyUserWithCompanyEmail: false
-    // active: true
+    allowAnyUserWithCompanyEmail: false,
+    active: true
   });
   console.log('success');
 }

@@ -6,12 +6,12 @@ export const initialState = {
     city: '',
     country: '',
     postal_code: ''
-  },
-  companyDetails: {
-    name: '',
-    address: '',
-    vatNumber: ''
   }
+  // companyDetails: {
+  //   name: '',
+  //   address: '',
+  //   vatNumber: ''
+  // }
 };
 
 function orgBillingModalReducer(state = initialState, action) {
@@ -25,14 +25,14 @@ function orgBillingModalReducer(state = initialState, action) {
           [data.key]: data.value
         }
       };
-    case 'set-company-detail':
-      return {
-        ...state,
-        companyDetails: {
-          ...state.companyDetails,
-          [data.key]: data.value
-        }
-      };
+    // case 'set-company-detail':
+    //   return {
+    //     ...state,
+    //     companyDetails: {
+    //       ...state.companyDetails,
+    //       [data.key]: data.value
+    //     }
+    //   };
     case 'set-loading':
       return { ...state, loading: data };
     case 'set-error':

@@ -53,9 +53,11 @@ export async function createOrganisation(email, data) {
     const user = await getUserByEmail(email);
     if (!user) {
       logger.error(
-        `organisation-service: cannot create organisation, admin user does not exist`
+        `organisation-service: cannot create organisation, admin user ${email} does not exist`
       );
-      throw new Error('cannot create organisation, admin user does not exist');
+      throw new Error(
+        `cannot create organisation, admin user ${email} does not exist`
+      );
     }
 
     const organisation = await create({

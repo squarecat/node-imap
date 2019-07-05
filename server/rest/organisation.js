@@ -100,11 +100,11 @@ export default app => {
 
     try {
       if (op === 'add') {
-        await inviteUserToOrganisation(id, email);
-        return res.send({ success: true });
+        inviteUserToOrganisation(id, email);
+        return res.status(202).send();
       } else if (op === 'remove') {
-        await revokeOrganisationInvite(id, email);
-        return res.send({ success: true });
+        const updatedOrg = await revokeOrganisationInvite(id, email);
+        return res.send(updatedOrg);
       }
 
       logger.error(
