@@ -88,29 +88,32 @@ export function AlertProvider({ children }) {
   // after a timeout
   useEffect(
     () => {
+      let dismissTimeout;
+      let nextTimeout;
       if (current && current.autoDismiss) {
-        setTimeout(() => {
+        dismissTimeout = setTimeout(() => {
           dispatch({ type: 'dismiss-alert' });
         }, current.dismissAfter);
       }
       if (!current && queue.length) {
-        setTimeout(() => {
+        nextTimeout = setTimeout(() => {
           dispatch({ type: 'set-next' });
         }, 500);
       }
+      return () => {
+        clearTimeout(dismissTimeout);
+        clearTimeout(nextTimeout);
+      };
     },
     [current, queue]
   );
 
-  const onDismiss = useCallback(
-    id => {
-      if (id && (current && current.id === id)) {
-        dispatch({ type: 'dismiss-alert', data: id });
-      }
-      return dispatch({ type: 'dismiss-alert' });
-    },
-    [current]
-  );
+  const onDismiss = useCallback(id => {
+    if (id) {
+      dispatch({ type: 'dismiss-alert', data: id });
+    }
+    return dispatch({ type: 'dismiss-alert' });
+  }, []);
 
   const value = useMemo(
     () => {

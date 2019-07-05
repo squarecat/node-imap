@@ -61,7 +61,6 @@ export async function* fetchMail({ userId, accountFilters = [] }) {
         dupes = [...dupes, dupeSenders];
       }
     }
-
     if (preferences.occurrencesConsent) {
       addOrUpdateOccurrences(userId, dupes);
     }

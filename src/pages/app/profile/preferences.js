@@ -42,11 +42,11 @@ export default () => {
       <div styleName="preferences-section">
         <h2>Help other Leave Me Alone users</h2>
         <p>
-          We collect completely anonymous data about the senders of emails you
-          receive to power our Subscriber Score algorithm. This information
-          improves the quality of Leave Me Alone for all users. If you don't
-          want to contribute your data to this algorithm for whatever reason
-          then you can opt-out below.
+          We collect completely anonymous data about the senders of subscription
+          emails you receive to power our <b>Subscriber Score</b> algorithm.
+          This information improves the quality of Leave Me Alone for all users.
+          If you don't want to contribute your data to this algorithm for
+          whatever reason then you can opt-out below.
         </p>
         <p>
           Your data will NEVER be sold and cannot be de-anonymised in any way.

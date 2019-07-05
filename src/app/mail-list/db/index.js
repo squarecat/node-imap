@@ -13,7 +13,15 @@ export function useMailSync() {
   const { actions } = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
   const [
-    { token, id, credits, organisationId, organisationActive, accountIds },
+    {
+      token,
+      id,
+      credits,
+      organisationId,
+      organisationActive,
+      accountIds,
+      preferences
+    },
     { incrementUnsubCount }
   ] = useUser(u => ({
     id: u.id,
@@ -21,7 +29,8 @@ export function useMailSync() {
     credits: u.billing ? u.billing.credits : 0,
     organisationId: u.organisationId,
     organisationActive: u.organisationActive,
-    accountIds: u.accounts.map(a => a.id)
+    accountIds: u.accounts.map(a => a.id),
+    preferences: u.preferences
   }));
   const { isConnected, socket, error, emit } = useSocket({
     token,
@@ -210,11 +219,13 @@ export function useMailSync() {
     unsubData,
     setUnsubData,
     setOccurrencesSeen: async ({ senders }) => {
-      await db.mail
-        .where('fromEmail')
-        .anyOf(senders)
-        .modify({ seen: true });
-      emit('occurrences', senders);
+      if (preferences.occurrencesConsent) {
+        await db.mail
+          .where('fromEmail')
+          .anyOf(senders)
+          .modify({ seen: true });
+        emit('occurrences', senders);
+      }
     },
     fetch: async () => {
       try {

@@ -25,15 +25,15 @@ const Credits = () => {
 
   const update = useCallback(
     async amount => {
-      try {
-        console.log('update-credits', amount);
-        // remove jank
-        requestAnimationFrame(() => {
-          incrementUserCredits(amount);
-        });
-      } catch (err) {
-        console.error(err);
-      }
+      let frameRequestId;
+
+      console.log('update-credits', amount);
+      // remove jank
+      frameRequestId = requestAnimationFrame(() => {
+        incrementUserCredits(amount);
+      });
+
+      return () => cancelAnimationFrame(frameRequestId);
     },
     [incrementUserCredits]
   );

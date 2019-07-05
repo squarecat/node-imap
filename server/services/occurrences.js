@@ -1,7 +1,7 @@
 import {
-  addUnsubscribeOccurrence,
   getScores,
   refreshScores,
+  updateOccurrenceUnsubscribed,
   updateOccurrences,
   updateOccurrencesSeen
 } from '../dao/occurrences';
@@ -10,7 +10,7 @@ export function addOrUpdateOccurrences(userId, dupeInfo = []) {
   const occurrences = dupeInfo.reduce((out, dupeObject) => {
     return [
       ...out,
-      Object.keys(dupeObject).map(d => ({
+      ...Object.keys(dupeObject).map(d => ({
         sender: dupeObject[d].sender,
         occurrences: dupeObject[d].occurrences,
         isSpam: dupeObject[d].isSpam,
@@ -26,7 +26,7 @@ export function updateOccurrencesSeenByUser(userId, senders) {
 }
 
 export function addNewUnsubscribeOccrurence(userId, from) {
-  return addUnsubscribeOccurrence(userId, from);
+  return updateOccurrenceUnsubscribed(userId, from);
 }
 
 export function getOccurrenceScores({ senders }) {
