@@ -88,6 +88,7 @@ export async function getUserById(id, options = {}) {
       } = await getOrganisationById(user.organisationId);
       user = {
         ...user,
+        organisationActive: active,
         organisation: {
           id: user.organisationId,
           name,
