@@ -20,8 +20,8 @@ export async function checkUserReminders() {
     if (!users.length) return true;
 
     await Promise.all(
-      users.map(async ({ email, name, reminder }) => {
-        logger.info(`reminders-dao: sending mail to ${email}`);
+      users.map(async ({ id, email, name, reminder }) => {
+        logger.info(`reminders-dao: generating reminder coupon for ${id}`);
         const coupon = await generateCoupon(reminder.timeframe);
         sendReminderMail({
           toAddress: email,
