@@ -9,7 +9,7 @@ import { Arrow as ArrowIcon } from '../components/icons';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
-import { Link } from 'gatsby';
+// import { Link } from 'gatsby';
 import { Pricing } from './pricing';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
@@ -19,6 +19,7 @@ import allSubscriptions from '../assets/mail-list-illustration.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
+import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
 import subscriberScore from '../assets/subscriber-score.png';
 import useAsync from 'react-use/lib/useAsync';
@@ -438,6 +439,9 @@ const getMessage = count => {
   if (count < 25) {
     return `Holy moly you're dedicated! Maybe you should actually sign in and do this for real?`;
   }
+  if (count < 50) {
+    return `Hey go easy, we might run out!`;
+  }
   if (count < 100) {
     return `Okay you're pretty serious about this. But I bet you can't get to 100!`;
   }
@@ -635,6 +639,17 @@ function Item({
     },
     [ref, outerRef, onClick, fallLimit, animate]
   );
+
+  const onClickTweet = useCallback(
+    () => {
+      const text = `I'm loving the one-click unsubscribe button on ${
+        window.location.host
+      }... I've clicked it ${count} times! 🙅‍`;
+      openTweetIntent(text);
+    },
+    [count]
+  );
+
   return (
     <Transition timeout={200} appear in={true}>
       {state => {
@@ -662,7 +677,17 @@ function Item({
             {text ? (
               <div className="example-unsub-text" ref={textRef}>
                 <p>{text}</p>
-                {count > 2 && count < 250 ? <p>That's {count} gone!</p> : null}
+                {count > 2 && count < 250 ? (
+                  <>
+                    <p>That's {count} gone!</p>
+                    <a
+                      className="example-unsub-tweet-btn"
+                      onClick={onClickTweet}
+                    >
+                      Tweet progress
+                    </a>
+                  </>
+                ) : null}
               </div>
             ) : null}
           </>

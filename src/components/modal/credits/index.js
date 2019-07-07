@@ -11,6 +11,7 @@ import { Link } from 'gatsby';
 import { TextImportant } from '../../text';
 import { TwitterIcon } from '../../icons';
 import { getSocialContent } from './tweets';
+import { openTweetIntent } from '../../../utils/tweet';
 import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
@@ -352,30 +353,9 @@ function rewardList(rewardItems, socialContent) {
   );
 }
 
-const twitterWindowOpts = [
-  'height=300',
-  'width=700',
-  'top=100',
-  'left=100',
-  // A dependent window closes when its parent window closes.
-  'dependent=yes',
-  // hide menubars and toolbars for the simplest popup
-  'menubar=no',
-  'toolbar=no',
-  'location=yes',
-  // enable for accessibility
-  'resizable=yes',
-  'scrollbars=yes',
-  'status=yes',
-  // chrome specific
-  'chrome=yes',
-  'centerscreen=yes'
-].join(',');
-
 function onClickTweet(tweetText) {
   try {
-    const url = `https://twitter.com/intent/tweet?text=${tweetText}`;
-    window.open(url, 'twitter', twitterWindowOpts);
+    openTweetIntent(tweetText);
     setTimeout(() => {
       setTweeted();
     }, 1000);
