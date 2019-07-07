@@ -51,17 +51,30 @@
   display: block;
 }
 
-.email {
+.email,
+.accounts {
   display: block;
-  max-width: 200px;
+  max-width: 300px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-.email-desc {
-  display: block;
+.seats,
+.accounts {
   opacity: 0.6;
+  font-size: 12px;
+}
+
+.account {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 20px;
+}
+.accounts-title {
+  text-decoration: underline;
 }
 
 .invoice-price {

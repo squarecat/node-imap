@@ -241,7 +241,7 @@ export async function removeUserFromOrganisation(organisationId, { email }) {
     });
     addActivityForUser(user.id, 'leftOrganisation', {
       id: organisationId,
-      name,
+      name: organisation.name,
       email: user.email
     });
 
@@ -296,9 +296,11 @@ export async function getOrganisationUserStats(id) {
       );
       return {
         email: user.email,
-        joinedAt: joinedOrgActivity.timestamp,
+        joinedAt: joinedOrgActivity
+          ? joinedOrgActivity.timestamp
+          : user.createdAt,
         numberOfUnsubscribes: user.unsubscriptions.length,
-        numberOfAccounts: user.accounts.length
+        accounts: user.accounts.map(a => a.email)
       };
     });
     return stats;
