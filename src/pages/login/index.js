@@ -301,22 +301,29 @@ const LoginPage = React.memo(
           existingContent = (
             <>
               <h1 styleName="title">Login to Leave Me Alone</h1>
-
-              <>
+              {state.existingProvider === 'connected-account' ? (
                 <p>
-                  That email address has already been used to sign in with{' '}
-                  <span styleName="provider-label">
-                    {state.existingProvider}
-                  </span>
-                  .
+                  That email address is already attached to another account, if
+                  you want to use it for password login then first remove it
+                  from the other account.
                 </p>
-                <div styleName="existing-provider-btn">
-                  <AuthButton
-                    provider={state.existingProvider}
-                    action={action}
-                  />
-                </div>
-              </>
+              ) : (
+                <>
+                  <p>
+                    That email address has already been used to sign in with{' '}
+                    <span styleName="provider-label">
+                      {state.existingProvider}
+                    </span>
+                    .
+                  </p>
+                  <div styleName="existing-provider-btn">
+                    <AuthButton
+                      provider={state.existingProvider}
+                      action={action}
+                    />
+                  </div>
+                </>
+              )}
 
               <div styleName="signup-buttons">
                 <button

@@ -746,12 +746,13 @@ export async function removeTotpSecret(userId) {
   }
 }
 
-export async function getLoginProvider(hashedEmail) {
+export async function getLoginProvider({ hashedEmail, email }) {
   try {
     const col = await db().collection(COL_NAME);
+
     const users = await col
       .find(
-        { hashedEmails: hashedEmail },
+        { hashedEmails: hashedEmail ? hashedEmail : hashEmail(email) },
         {
           loginProvider: 1,
           email: 1,
@@ -761,9 +762,12 @@ export async function getLoginProvider(hashedEmail) {
       .toArray();
     if (!users.length) return null;
     const userWithLoginEmail = users.find(
-      u => hashEmail(u.email) === hashedEmail
+      u => hashEmail(u.email) === (hashedEmail ? hashedEmail : hashEmail(email))
     );
-    return userWithLoginEmail ? userWithLoginEmail.loginProvider : null;
+
+    return userWithLoginEmail
+      ? userWithLoginEmail.loginProvider
+      : 'connected-account';
   } catch (err) {
     logger.error('user-dao: failed to get user login provider');
     logger.error(err);

@@ -110,12 +110,13 @@ export async function getUserById(id, options = {}) {
 
 export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
   try {
-    const user = await getUserByEmail(userData.email);
-    if (user && user.loginProvider !== 'outlook') {
-      throw new AuthError('user already exists with a different provider', {
-        errKey: 'auth-provider-error'
-      });
-    }
+    // const user = await getUserByEmail(userData.email);
+    // if (user && user.loginProvider !== 'outlook') {
+    //   throw new AuthError('user already exists with a different provider', {
+    //     errKey: 'auth-provider-error'
+    //   });
+    // }
+
     return createOrUpdateUser(userData, keys, 'outlook');
   } catch (err) {
     throw err;
@@ -124,13 +125,58 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
-    const user = await getUserByEmail(userData.email);
-    if (user && user.loginProvider !== 'google') {
+    // const user = await getUserByEmail(userData.email);
+    // if (user && user.loginProvider !== 'google') {
+    //   throw new AuthError('user already exists with a different provider', {
+    //     errKey: 'auth-provider-error'
+    //   });
+    // }
+    return createOrUpdateUser(userData, keys, 'google');
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function validateUserAccountCreateUpdate(email, provider) {
+  try {
+    // we want to know if there is a user already which exists with this email
+    // and login provider or has this account connected to their account
+    //
+    // existing account dinkydani@gmail.com
+    // this user google auths dinkydani@gmail.com
+    // strat will be password - so another account already exists
+    //
+    // existing account dinkydani@gmail.com has connected danielle@squarecat.io
+    // this user google auths danielle@squarecat.io
+    // strat will be 'connected-account' - so this account is already connected
+    logger.debug(
+      `user-service: validating user account create update for ${provider}`
+    );
+    const strat = await getUserLoginProvider({ email });
+    logger.debug(`user-service: strat ${strat}`);
+
+    if (strat === 'connected-account') {
+      logger.debug(
+        `user-service: cannot create user, already connected to a different account`
+      );
+      throw new AuthError(
+        'user account already connected to a different account',
+        {
+          errKey: 'auth-account-error'
+        }
+      );
+    }
+
+    if (strat && strat !== provider) {
+      logger.debug(
+        `user-service: cannot create user, already exists with a different provider`
+      );
       throw new AuthError('user already exists with a different provider', {
         errKey: 'auth-provider-error'
       });
     }
-    return createOrUpdateUser(userData, keys, 'google');
+
+    return true;
   } catch (err) {
     throw err;
   }
@@ -146,6 +192,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     displayName
   } = userData;
   try {
+    await validateUserAccountCreateUpdate(userData.email, provider);
+
     let user = await getUser(id);
     let organisation;
     if (!user) {
@@ -334,6 +382,8 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
   } = accountData;
   try {
     logger.debug(`user-service: connecting user account - ${provider}`);
+
+    await validateUserAccountCreateUpdate(accountEmail, provider);
 
     const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
@@ -904,9 +954,9 @@ export async function authenticateUser({ email, password }) {
   }
 }
 
-export async function getUserLoginProvider({ hashedEmail }) {
+export async function getUserLoginProvider({ hashedEmail, email }) {
   try {
-    return getLoginProvider(hashedEmail);
+    return getLoginProvider({ hashedEmail, email });
   } catch (err) {
     throw err;
   }

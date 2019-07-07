@@ -10,6 +10,21 @@ export function getConnectError(reason) {
       return 'Cannot connect account because it is already in use in your organisation.';
     case 'invalid-domain':
       return 'Cannot connect account because it does not belong to your organisation domain.';
+    case 'auth-provider-error':
+      return (
+        <span>
+          That email address has already been used to sign in. If you want to
+          connect it to this account then first deactivate the other account.
+        </span>
+      );
+    case 'auth-account-error':
+      return (
+        <span>
+          That email address is already attached to another account. If you want
+          to connect it to this account then first remove it from the other
+          account.
+        </span>
+      );
     default:
       return 'Something went wrong connecting your account. Please try again or send us a message.';
   }
@@ -61,6 +76,13 @@ export function getAuthError(err = {}, authType) {
         <span>
           That email address has already been used to sign in with a different
           provider. Maybe you signed in using a password last time?
+        </span>
+      );
+    case 'auth-account-error':
+      return (
+        <span>
+          That email address is already attached to another account. If you want
+          to use it to log in then first remove it from the other account.
         </span>
       );
     case 'beta':
