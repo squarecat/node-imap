@@ -57,7 +57,7 @@ export async function getScores(senderAddresses) {
   }, []);
 }
 
-// total = 50
+// total = 1
 const weights = {
   percentageIsSpam: n => {
     // max 0.2
@@ -102,6 +102,7 @@ export async function refreshScores() {
       _id,
       addressUnsubscribes,
       addressOccurrences,
+      addressHearts,
       addressIsSpam,
       addressIsTrash,
       threeDayFrequencies,
@@ -142,6 +143,11 @@ export async function refreshScores() {
 
       const timesUnsubscribed = addressUnsubscribes[address] || 0;
       score -= weights.percentageUnsubscribed(timesUnsubscribed / timesSeen);
+
+      // const timesHearted = addressHearts[address];
+      // the more hearts they have, the less the
+      // other things should count
+      // const heartPercentage = timesHearted / timesSeen;
 
       allAddressScores = [...allAddressScores, score];
       return {

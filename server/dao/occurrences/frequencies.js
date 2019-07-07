@@ -37,7 +37,6 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
         newOccurrences.length
       } new occurrences <frequency>`
     );
-
     await addNew({
       occurrences: newOccurrences,
       userId,

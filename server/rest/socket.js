@@ -96,7 +96,7 @@ export default function(server) {
 
 function checkBuffer(socket, userId) {
   if (buffer[userId]) {
-    console.log(`sending ${buffer[userId].length} buffered events`);
+    console.log(`socket: sending ${buffer[userId].length} buffered events`);
     buffer[userId].forEach(({ event, data }) => {
       socket.emit(event, data);
     });
