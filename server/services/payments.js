@@ -69,9 +69,6 @@ export async function listPaymentsForUser(userId) {
   try {
     const { customerId } = await getUserById(userId);
     if (!customerId) {
-      logger.debug(
-        `payments-service: cannot list payments for user, user has no customer ID ${userId}`
-      );
       return [];
     }
 
@@ -133,9 +130,6 @@ export async function listPaymentsForOrganisation(organisationId) {
   try {
     const { customerId } = await getOrganisationById(organisationId);
     if (!customerId) {
-      logger.debug(
-        `payments-service: cannot list payments for org, user has no customer ID ${organisationId}`
-      );
       return [];
     }
 
