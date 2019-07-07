@@ -54,14 +54,16 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       isUserLoaded,
       hasCompletedOnboarding,
       organisationAdmin,
-      hasCompletedOrganisationOnboarding
+      hasCompletedOrganisationOnboarding,
+      accounts
     }
   ] = useUser(s => ({
     id: s.id,
     isUserLoaded: s.loaded,
     hasCompletedOnboarding: s.hasCompletedOnboarding,
     organisationAdmin: s.organisationAdmin,
-    hasCompletedOrganisationOnboarding: s.hasCompletedOrganisationOnboarding
+    hasCompletedOrganisationOnboarding: s.hasCompletedOrganisationOnboarding,
+    accounts: s.accounts
   }));
   const [isLoaded, setLoaded] = useState(isUserLoaded);
   const { open: openModal } = useContext(ModalContext);
@@ -111,11 +113,21 @@ const UserAuth = React.memo(function UserAuth({ children }) {
           dismissable: false,
           opaque: true
         });
-      }
-      if (isUserLoaded && (!organisationAdmin && !hasCompletedOnboarding)) {
+      } else if (isUserLoaded && !hasCompletedOnboarding) {
         openModal(<OnboardingModal />, {
           dismissable: false,
           opaque: true
+        });
+      }
+      if (isUserLoaded && !hasCompletedOnboarding && accounts.length) {
+        // clear old data from v1
+        console.log('removing old v1 data');
+        Object.keys(localStorage).forEach(key => {
+          if (/^leavemealone/.test(key)) {
+            localStorage.removeItem(key);
+          }
+          localStorage.removeItem('user');
+          localStorage.removeItem('userId');
         });
       }
       if (isUserLoaded && isBrowserSupported) {
@@ -130,7 +142,8 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       hasCompletedOrganisationOnboarding,
       openModal,
       checkDb,
-      isBrowserSupported
+      isBrowserSupported,
+      accounts
     ]
   );
 

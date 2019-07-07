@@ -1,5 +1,8 @@
 const Hashes = require('jshashes');
 const db = require('./db');
+const crypto = require('crypto');
+
+const key = process.env.DB_ENCRYPT_PW;
 
 // straight up copy these props
 // to the new object
@@ -102,6 +105,7 @@ function hashEmail(email) {
 (async () => {
   const conn = await db.connect();
   const col = await conn.collection('users');
+  const occCol = await conn.collection('occurrences');
   const cur = await col.find({ __version: { $ne: '2.0' } });
   const count = await cur.countDocuments();
   console.log(`migrating ${count} users...`);
@@ -117,6 +121,31 @@ function hashEmail(email) {
     const newUser = migrateUser(user);
     try {
       await col.replaceOne({ id: user.id }, newUser);
+      // put their ignored senders into occurrences hearts if
+      // they have some
+      if (newUser.ignoredSenderList.length) {
+        newUser.ignoredSenderList.forEach(sender => {
+          const { senderAddress } = parseSenderEmail(sender);
+          if (!senderAddress.includes('@')) {
+            return null;
+          }
+          const hashedAddress = hash(senderAddress);
+          const domain = parseDomain(senderAddress);
+          occCol.updateOne(
+            {
+              hashedSender: hash(domain)
+            },
+            {
+              $inc: {
+                [`addressHearts.${hashedAddress}`]: 1
+              }
+            },
+            {
+              upsert: false
+            }
+          );
+        });
+      }
     } catch (err) {
       console.log(`failed on user ${user.id}`);
       console.error(err);
@@ -125,3 +154,62 @@ function hashEmail(email) {
     }
   });
 })();
+
+export function parseEmail(str = '') {
+  if (!str) {
+    return {
+      fromName: 'Unknown',
+      fromEmail: '<unknown>'
+    };
+  }
+  let fromName;
+  let fromEmail;
+  if (str.match(/^.*<.*>/)) {
+    const [, name, email] = /^(.*)(<.*>)/.exec(str);
+    fromName = name;
+    fromEmail = email;
+  } else if (str.match(/<?.*@/)) {
+    const [, name] = /<?(.*)@/.exec(str);
+    fromName = name || str;
+    fromEmail = str;
+  } else {
+    fromName = str;
+    fromEmail = str;
+  }
+  return { fromName, fromEmail };
+}
+
+function parseSenderEmail(email) {
+  const { fromEmail, fromName } = parseEmail(email);
+  let senderAddress = fromEmail.trim();
+  if (senderAddress.startsWith('<')) {
+    senderAddress = senderAddress.substr(1, senderAddress.length);
+  }
+  if (senderAddress.endsWith('>')) {
+    senderAddress = senderAddress.substr(0, senderAddress.length - 1);
+  }
+  return {
+    senderAddress,
+    friendlyName: fromName.trim()
+  };
+}
+
+function hash(value, k = key) {
+  try {
+    if (!value) return value;
+    return crypto
+      .createHmac('sha256', k)
+      .update(value)
+      .digest('hex');
+  } catch (err) {
+    return value;
+  }
+}
+
+export function parseDomain(senderAddress) {
+  let domain = senderAddress.split('@')[1];
+  if (domain.endsWith('>')) {
+    domain = domain.substr(0, domain.length - 1);
+  }
+  return domain;
+}

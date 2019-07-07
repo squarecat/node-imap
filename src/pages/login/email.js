@@ -116,7 +116,7 @@ async function sendPasswordReset(username) {
   const resp = await fetch(`/api/user/${userDigest}/forgot`);
   if (resp.status === 404) {
     return null;
-  } else if (resp.status === 200) {
+  } else if (resp.status === 202) {
     return true;
   }
   throw new Error('Request failed');

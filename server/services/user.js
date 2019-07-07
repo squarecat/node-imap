@@ -72,6 +72,7 @@ import { sendToUser } from '../rest/socket';
 // import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
+import { updateOccurrenceHearted } from './occurrences';
 import { v4 } from 'node-uuid';
 
 export async function getUserById(id, options = {}) {
@@ -333,7 +334,6 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
     );
-
 
     if (isAccountAlreadyConnected) {
       logger.debug(
@@ -651,6 +651,7 @@ export async function addPackageToUser(userId, { productId, credits, price }) {
 
 export async function addToUserIgnoreList(id, email) {
   try {
+    await updateOccurrenceHearted(email, true);
     return updateIgnoreList(id, { action: 'add', value: email });
   } catch (err) {
     throw err;
@@ -658,6 +659,7 @@ export async function addToUserIgnoreList(id, email) {
 }
 export async function removeFromUserIgnoreList(id, email) {
   try {
+    await updateOccurrenceHearted(email, false);
     return updateIgnoreList(id, { action: 'remove', value: email });
   } catch (err) {
     throw err;
