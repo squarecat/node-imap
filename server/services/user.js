@@ -842,7 +842,7 @@ export async function removeUserAccount(userId, accountEmail) {
     const { refreshToken } = keys;
 
     await revokeToken({ provider, refreshToken });
-    const updatedUser = await removeAccount(userId, {
+    const updatedUser = await removeAccount(user, {
       accountId,
       email: accountEmail
     });

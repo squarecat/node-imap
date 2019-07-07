@@ -622,26 +622,39 @@ export async function updateUnsubStatus(
   }
 }
 
-export async function removeAccount(userId, { accountId, email }) {
+export async function removeAccount(user, { accountId, email }) {
   try {
     const col = await db().collection(COL_NAME);
-    await col.updateOne(
-      { id: userId },
-      {
-        $set: {
-          lastUpdatedAt: isoDate()
-        },
+    let query = {
+      $set: {
+        lastUpdatedAt: isoDate()
+      }
+    };
+    // if a user logs in with Password - danielle@squarecat.io & connects Google - danielle@squarecat.io
+    // the same email will be in the hashed array twice and we don't want to remove the login account
+    // So only remove the hashed email if this is not the case
+    if (user.email !== email) {
+      query = {
+        ...query,
         $pull: {
           accounts: { id: accountId },
           hashedEmails: hashEmail(email)
         }
-      }
-    );
-    const user = await getUser(userId);
+      };
+    } else {
+      query = {
+        ...query,
+        $pull: {
+          accounts: { id: accountId }
+        }
+      };
+    }
+    await col.updateOne({ id: user.id }, query);
+    const user = await getUser(user.id);
     return user;
   } catch (err) {
-    throw new Error(`failed to disconnect user account for user`, {
-      userId,
+    throw new Error(`failed to disconnect user account for user ${user.id}`, {
+      userId: user.id,
       accountId,
       cause: err
     });
