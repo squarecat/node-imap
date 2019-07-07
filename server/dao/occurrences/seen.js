@@ -95,10 +95,6 @@ async function updateExisting({ occurrences, userId, col }) {
         hashedAddresses: hashedAddress,
         seenBy: hashedUser
       },
-      $set: {
-        sender: oc.domain,
-        hashedSender: hash(oc.domain)
-      },
       $inc: {
         [`addressOccurrences.${hashedAddress}`]: 1
       }

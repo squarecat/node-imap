@@ -113,7 +113,10 @@ const UserAuth = React.memo(function UserAuth({ children }) {
           dismissable: false,
           opaque: true
         });
-      } else if (isUserLoaded && !hasCompletedOnboarding) {
+      } else if (
+        isUserLoaded &&
+        (!organisationAdmin && !hasCompletedOnboarding)
+      ) {
         openModal(<OnboardingModal />, {
           dismissable: false,
           opaque: true

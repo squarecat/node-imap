@@ -39,7 +39,7 @@
     "gatsby-plugin-webpack-bundle-analyzer": "^1.0.5",
     "gatsby-transformer-sharp": "^2.1.12",
     "getconfig": "^4.5.0",
-    "googleapis": "^37.1.0",
+    "googleapis": "^40.0.1",
     "host-validation": "^2.0.1",
     "http-message-parser": "^0.0.34",
     "isomorphic-fetch": "^2.2.1",
