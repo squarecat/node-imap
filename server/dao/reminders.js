@@ -3,8 +3,14 @@ import { findUsersNeedReminders, updateUsersReminded } from './user';
 import { addReminderSentToStats } from '../services/stats';
 import { createCoupon } from '../utils/stripe';
 import logger from '../utils/logger';
-import { products } from '../services/payments';
 import { sendReminderMail } from '../utils/emails/transactional';
+
+const timeframes = {
+  '1w': '1 week',
+  '1m': '1 month',
+  '3m': '3 months',
+  '6m': '6 months'
+};
 
 export async function checkUserReminders() {
   try {
@@ -20,7 +26,7 @@ export async function checkUserReminders() {
         sendReminderMail({
           toAddress: email,
           toName: name,
-          reminderPeriod: getTimeframeText(reminder.timeframe, email),
+          reminderPeriod: getTimeframeText(reminder.timeframe),
           coupon
         });
       })
@@ -43,6 +49,5 @@ async function generateCoupon(timeframe, email) {
 }
 
 function getTimeframeText(timeframe) {
-  const product = products.find(p => p.value === timeframe);
-  return product.label;
+  return timeframes[timeframe];
 }
