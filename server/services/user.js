@@ -274,21 +274,26 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
   }
 }
 
-async function addUserAccountToOrganisation({ user, account, organisation }) {
+async function addUserAccountToOrganisation({
+  user,
+  account,
+  organisationId,
+  organisationName
+}) {
   try {
     logger.debug(
-      `user-service: adding user account ${account.id} to organisation ${
-        organisation.id
-      }`
+      `user-service: adding user account ${
+        account.id
+      } to organisation ${organisationId}`
     );
 
-    await addUserToOrganisation(organisation.id, {
+    await addUserToOrganisation(organisationId, {
       email: account.email
     });
 
     addActivityForUser(user.id, 'addedAccountToOrganisation', {
-      id: organisation.id,
-      name: organisation.name,
+      id: organisationId,
+      name: organisationName,
       email: account.email
     });
   } catch (err) {
@@ -334,7 +339,6 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
       acc => acc.id === accountId
     );
 
-
     if (isAccountAlreadyConnected) {
       logger.debug(
         `user-service: ${provider} account already connected, updating...`
@@ -352,30 +356,39 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     // check if the user is part of an organisation
     if (user.organisationId) {
       logger.debug(
-        `user-service: user belongs to organisation ${
-          user.organisationId
-        }, checking if this account can join`
+        `user-service: user belongs to organisation ${user.organisationId}`
       );
       const organisation = await getOrganisationById(user.organisationId);
-      const { allowed, reason } = canUserJoinOrganisation({
-        email: accountEmail,
-        organisation
-      });
-      if (!allowed) {
+
+      if (!user.organisationAdmin) {
         logger.debug(
-          `user-service: user cannot connect this account to this organisation ${
-            user.organisationId
-          }`
+          `user-service: user is not the organisation admin, checking if this account can join...`
         );
-        // TODO throw warning
-        throw new ConnectAccountError('user cannot join organisation', {
-          errKey: reason
+
+        const { allowed, reason } = canUserJoinOrganisation({
+          email: accountEmail,
+          organisation
         });
+        if (!allowed) {
+          logger.debug(
+            `user-service: user cannot connect this account to this organisation ${
+              user.organisationId
+            }`
+          );
+          throw new ConnectAccountError('user cannot join organisation', {
+            errKey: reason
+          });
+        }
+      } else {
+        logger.debug(
+          `user-service: user is the organisation admin, allowing account to join`
+        );
       }
 
       await addUserAccountToOrganisation({
         user,
-        organisation,
+        organisationId: user.organisationId,
+        organisationName: organisation.name,
         account: { id: accountId, email: accountEmail }
       });
     }

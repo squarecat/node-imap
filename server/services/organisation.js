@@ -46,18 +46,14 @@ export function getOrganisationBySubscription(subscriptionId) {
 }
 
 export async function createOrganisation(email, data) {
-  logger.info(
-    `organisation-service: creating an organisation - admin ${email}`
-  );
+  logger.info(`organisation-service: creating an organisation...`);
   try {
     const user = await getUserByEmail(email);
     if (!user) {
       logger.error(
-        `organisation-service: cannot create organisation, admin user ${email} does not exist`
+        `organisation-service: cannot create organisation, admin user does not exist`
       );
-      throw new Error(
-        `cannot create organisation, admin user ${email} does not exist`
-      );
+      throw new Error(`cannot create organisation, admin user does not exist`);
     }
 
     const organisation = await create({
@@ -86,7 +82,7 @@ export async function createOrganisation(email, data) {
 
     if (user.loginProvider !== 'password') {
       logger.debug(
-        `organisation-service: login provider is not password, adding account ${email} to org ${id}`
+        `organisation-service: login provider is not password, adding account to organisation ${id}`
       );
       await addUserToOrganisation(id, {
         email: user.email
@@ -98,7 +94,7 @@ export async function createOrganisation(email, data) {
       });
     } else {
       logger.debug(
-        `organisation-service: login provider is password, inviting account ${email} to org ${id}`
+        `organisation-service: login provider is password, inviting account to organisation ${id}`
       );
       await addInvitedUser(id, email);
     }
@@ -116,7 +112,7 @@ export async function inviteUserToOrganisation(id, email) {
     const isAdmin = organisation.adminUserEmail === email;
     const invited = organisation.invitedUsers.includes(email);
 
-    logger.debug(`organisation-service: inviting user ${email} to org ${id}`);
+    logger.debug(`organisation-service: inviting user to org ${id}`);
     if (!isAdmin && !invited) {
       // only add the user to the invite list if not already there and not an admin
       await addInvitedUser(id, email);
@@ -135,7 +131,7 @@ export async function inviteUserToOrganisation(id, email) {
 }
 
 export async function revokeOrganisationInvite(id, email) {
-  logger.debug(`organisation-service: removing invite for ${email}`);
+  logger.debug(`organisation-service: revoking invite for organisation ${id}`);
   return removeInvitedUser(id, email);
 }
 
@@ -358,7 +354,9 @@ export function getOrganisationByInvitedEmailOrValidDomain(email) {
 
 export function canUserJoinOrganisation({ email, organisation }) {
   logger.debug(
-    `organisation-service: can user join the organisation ${organisation.id}`
+    `organisation-service: checking if user can user join the organisation ${
+      organisation.id
+    }`
   );
   const {
     allowAnyUserWithCompanyEmail,
@@ -371,7 +369,7 @@ export function canUserJoinOrganisation({ email, organisation }) {
   const existingMember = currentUsers.includes(email);
   if (existingMember) {
     logger.info(
-      `organisation-service: user cannot join - is already a member ${
+      `organisation-service: user cannot join - is already a member of organisation ${
         organisation.id
       }`
     );
@@ -407,7 +405,7 @@ export function canUserJoinOrganisation({ email, organisation }) {
       };
     } else {
       logger.info(
-        `organisation-service: user cannot join - email domain does not match organisation ${
+        `organisation-service: user cannot join - email domain ${userEmailDomain} does not match organisation ${
           organisation.id
         }`
       );
