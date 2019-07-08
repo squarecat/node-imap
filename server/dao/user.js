@@ -622,26 +622,39 @@ export async function updateUnsubStatus(
   }
 }
 
-export async function removeAccount(userId, { accountId, email }) {
+export async function removeAccount(user, { accountId, email }) {
   try {
     const col = await db().collection(COL_NAME);
-    await col.updateOne(
-      { id: userId },
-      {
-        $set: {
-          lastUpdatedAt: isoDate()
-        },
+    let query = {
+      $set: {
+        lastUpdatedAt: isoDate()
+      }
+    };
+    // if a user logs in with Password - danielle@squarecat.io & connects Google - danielle@squarecat.io
+    // the same email will be in the hashed array twice and we don't want to remove the login account
+    // So only remove the hashed email if this is not the case
+    if (user.email !== email) {
+      query = {
+        ...query,
         $pull: {
           accounts: { id: accountId },
           hashedEmails: hashEmail(email)
         }
-      }
-    );
-    const user = await getUser(userId);
+      };
+    } else {
+      query = {
+        ...query,
+        $pull: {
+          accounts: { id: accountId }
+        }
+      };
+    }
+    await col.updateOne({ id: user.id }, query);
+    const user = await getUser(user.id);
     return user;
   } catch (err) {
-    throw new Error(`failed to disconnect user account for user`, {
-      userId,
+    throw new Error(`failed to disconnect user account for user ${user.id}`, {
+      userId: user.id,
       accountId,
       cause: err
     });
@@ -733,12 +746,13 @@ export async function removeTotpSecret(userId) {
   }
 }
 
-export async function getLoginProvider(hashedEmail) {
+export async function getLoginProvider({ hashedEmail, email }) {
   try {
     const col = await db().collection(COL_NAME);
+
     const users = await col
       .find(
-        { hashedEmails: hashedEmail },
+        { hashedEmails: hashedEmail ? hashedEmail : hashEmail(email) },
         {
           loginProvider: 1,
           email: 1,
@@ -748,9 +762,12 @@ export async function getLoginProvider(hashedEmail) {
       .toArray();
     if (!users.length) return null;
     const userWithLoginEmail = users.find(
-      u => hashEmail(u.email) === hashedEmail
+      u => hashEmail(u.email) === (hashedEmail ? hashedEmail : hashEmail(email))
     );
-    return userWithLoginEmail ? userWithLoginEmail.loginProvider : null;
+
+    return userWithLoginEmail
+      ? userWithLoginEmail.loginProvider
+      : 'connected-account';
   } catch (err) {
     logger.error('user-dao: failed to get user login provider');
     logger.error(err);

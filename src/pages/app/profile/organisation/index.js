@@ -437,7 +437,10 @@ function BillingInformation({ organisationId, currentUsers }) {
               .
             </p>
             <p>
-              You'll next be billed ${(upcomingInvoice.total / 100).toFixed(2)}{' '}
+              You'll next be billed{' '}
+              <TextImportant>
+                ${(upcomingInvoice.total / 100).toFixed(2)}
+              </TextImportant>{' '}
               on the{' '}
               <TextImportant>
                 {formatDate(current_period_end * 1000, dateFormat)}

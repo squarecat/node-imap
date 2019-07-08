@@ -154,7 +154,7 @@ export default app => {
     '/auth/outlook',
     passport.authenticate('outlook-login', {
       scope: outlook.scopes,
-      prompt: PROMPT_TYPE
+      prompt: 'select_account'
     })
   );
 
@@ -162,7 +162,7 @@ export default app => {
     '/auth/outlook/connect',
     passport.authenticate('connect-account-outlook', {
       scope: outlook.scopes,
-      prompt: PROMPT_TYPE
+      prompt: 'login'
     })
   );
 

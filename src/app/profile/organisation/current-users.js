@@ -28,15 +28,15 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
   );
 
   const onRemoveUser = useCallback(
-    async ({ email, numberOfAccounts }) => {
+    async ({ email, accounts }) => {
       try {
         await removeUser(organisationId, email);
         setLastUpdated(Date.now());
         alert.actions.setAlert({
           level: 'success',
-          message: `Successfully removed user ${email} & ${numberOfAccounts} connected account${
-            numberOfAccounts === 1 ? '' : 's'
-          }`,
+          message: `Successfully removed user ${email} & ${
+            accounts.length
+          } connected account${accounts.length === 1 ? '' : 's'}`,
           isDismissable: true,
           autoDismiss: true
         });
@@ -75,8 +75,8 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
 
   const content = useMemo(
     () => {
-      const totalNumberAccounts = users.reduce((out, s) => {
-        return out + s.numberOfAccounts;
+      const seatsUsed = users.reduce((out, u) => {
+        return out + u.accounts.length;
       }, 0);
 
       let text;
@@ -93,11 +93,11 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
             <TextImportant>
               {`${users.length} user${users.length === 1 ? '' : 's'}`}{' '}
             </TextImportant>{' '}
-            using{' '}
+            with{' '}
             <TextImportant>
-              {`${totalNumberAccounts} seat${
-                totalNumberAccounts === 1 ? '' : 's'
-              }`}
+              {`${seatsUsed} connected account${
+                seatsUsed === 1 ? '' : 's'
+              } (seats)`}
             </TextImportant>
             .
           </p>
@@ -112,7 +112,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
           </div>
           <Table>
             <TableHead>
-              <TableHeadCell>Email</TableHeadCell>
+              <TableHeadCell>User</TableHeadCell>
               <TableHeadCell />
               <TableHeadCell>Unsubscribes</TableHeadCell>
               <TableHeadCell>Joined</TableHeadCell>
@@ -122,15 +122,18 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
                 <TableRow key={user.email}>
                   <TableCell>
                     <span styleName="email" title={user.email}>
-                      {user.email}
+                      {user.email}{' '}
+                      <span styleName="seats">{`(${user.accounts.length} seat${
+                        user.accounts.length === 1 ? '' : 's'
+                      })`}</span>
                     </span>
-                    <span styleName="email-desc">
-                      (
-                      {`${user.numberOfAccounts} seat${
-                        user.numberOfAccounts === 1 ? '' : 's'
-                      }`}
-                      )
-                    </span>
+                    <div styleName="accounts">
+                      {user.accounts.map(email => (
+                        <span key={email} styleName="account">
+                          {email}
+                        </span>
+                      ))}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {user.email === adminUserEmail ? (

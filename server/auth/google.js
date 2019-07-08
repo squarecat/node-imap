@@ -162,7 +162,7 @@ export default app => {
     '/auth/google',
     passport.authenticate('google-login', {
       scope: google.scopes,
-      prompt: PROMPT_TYPE,
+      prompt: 'select_account',
       accessType: 'offline'
     })
   );
@@ -171,7 +171,7 @@ export default app => {
     '/auth/google/connect',
     passport.authenticate('connect-account-google', {
       scope: google.scopes,
-      prompt: PROMPT_TYPE,
+      prompt: 'login',
       accessType: 'offline'
     })
   );

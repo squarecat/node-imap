@@ -110,12 +110,13 @@ export async function getUserById(id, options = {}) {
 
 export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
   try {
-    const user = await getUserByEmail(userData.email);
-    if (user && user.loginProvider !== 'outlook') {
-      throw new AuthError('user already exists with a different provider', {
-        errKey: 'auth-provider-error'
-      });
-    }
+    // const user = await getUserByEmail(userData.email);
+    // if (user && user.loginProvider !== 'outlook') {
+    //   throw new AuthError('user already exists with a different provider', {
+    //     errKey: 'auth-provider-error'
+    //   });
+    // }
+
     return createOrUpdateUser(userData, keys, 'outlook');
   } catch (err) {
     throw err;
@@ -124,13 +125,58 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
-    const user = await getUserByEmail(userData.email);
-    if (user && user.loginProvider !== 'google') {
+    // const user = await getUserByEmail(userData.email);
+    // if (user && user.loginProvider !== 'google') {
+    //   throw new AuthError('user already exists with a different provider', {
+    //     errKey: 'auth-provider-error'
+    //   });
+    // }
+    return createOrUpdateUser(userData, keys, 'google');
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function validateUserAccountCreateUpdate(email, provider) {
+  try {
+    // we want to know if there is a user already which exists with this email
+    // and login provider or has this account connected to their account
+    //
+    // existing account dinkydani@gmail.com
+    // this user google auths dinkydani@gmail.com
+    // strat will be password - so another account already exists
+    //
+    // existing account dinkydani@gmail.com has connected danielle@squarecat.io
+    // this user google auths danielle@squarecat.io
+    // strat will be 'connected-account' - so this account is already connected
+    logger.debug(
+      `user-service: validating user account create update for ${provider}`
+    );
+    const strat = await getUserLoginProvider({ email });
+    logger.debug(`user-service: strat ${strat}`);
+
+    if (strat === 'connected-account') {
+      logger.debug(
+        `user-service: cannot create user, already connected to a different account`
+      );
+      throw new AuthError(
+        'user account already connected to a different account',
+        {
+          errKey: 'auth-account-error'
+        }
+      );
+    }
+
+    if (strat && strat !== provider) {
+      logger.debug(
+        `user-service: cannot create user, already exists with a different provider`
+      );
       throw new AuthError('user already exists with a different provider', {
         errKey: 'auth-provider-error'
       });
     }
-    return createOrUpdateUser(userData, keys, 'google');
+
+    return true;
   } catch (err) {
     throw err;
   }
@@ -146,6 +192,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     displayName
   } = userData;
   try {
+    await validateUserAccountCreateUpdate(userData.email, provider);
+
     let user = await getUser(id);
     let organisation;
     if (!user) {
@@ -275,21 +323,26 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
   }
 }
 
-async function addUserAccountToOrganisation({ user, account, organisation }) {
+async function addUserAccountToOrganisation({
+  user,
+  account,
+  organisationId,
+  organisationName
+}) {
   try {
     logger.debug(
-      `user-service: adding user account ${account.id} to organisation ${
-        organisation.id
-      }`
+      `user-service: adding user account ${
+        account.id
+      } to organisation ${organisationId}`
     );
 
-    await addUserToOrganisation(organisation.id, {
+    await addUserToOrganisation(organisationId, {
       email: account.email
     });
 
     addActivityForUser(user.id, 'addedAccountToOrganisation', {
-      id: organisation.id,
-      name: organisation.name,
+      id: organisationId,
+      name: organisationName,
       email: account.email
     });
   } catch (err) {
@@ -330,6 +383,8 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
   try {
     logger.debug(`user-service: connecting user account - ${provider}`);
 
+    await validateUserAccountCreateUpdate(accountEmail, provider);
+
     const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
@@ -352,30 +407,39 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     // check if the user is part of an organisation
     if (user.organisationId) {
       logger.debug(
-        `user-service: user belongs to organisation ${
-          user.organisationId
-        }, checking if this account can join`
+        `user-service: user belongs to organisation ${user.organisationId}`
       );
       const organisation = await getOrganisationById(user.organisationId);
-      const { allowed, reason } = canUserJoinOrganisation({
-        email: accountEmail,
-        organisation
-      });
-      if (!allowed) {
+
+      if (!user.organisationAdmin) {
         logger.debug(
-          `user-service: user cannot connect this account to this organisation ${
-            user.organisationId
-          }`
+          `user-service: user is not the organisation admin, checking if this account can join...`
         );
-        // TODO throw warning
-        throw new ConnectAccountError('user cannot join organisation', {
-          errKey: reason
+
+        const { allowed, reason } = canUserJoinOrganisation({
+          email: accountEmail,
+          organisation
         });
+        if (!allowed) {
+          logger.debug(
+            `user-service: user cannot connect this account to this organisation ${
+              user.organisationId
+            }`
+          );
+          throw new ConnectAccountError('user cannot join organisation', {
+            errKey: reason
+          });
+        }
+      } else {
+        logger.debug(
+          `user-service: user is the organisation admin, allowing account to join`
+        );
       }
 
       await addUserAccountToOrganisation({
         user,
-        organisation,
+        organisationId: user.organisationId,
+        organisationName: organisation.name,
         account: { id: accountId, email: accountEmail }
       });
     }
@@ -831,7 +895,7 @@ export async function removeUserAccount(userId, accountEmail) {
     const { refreshToken } = keys;
 
     await revokeToken({ provider, refreshToken });
-    const updatedUser = await removeAccount(userId, {
+    const updatedUser = await removeAccount(user, {
       accountId,
       email: accountEmail
     });
@@ -890,9 +954,9 @@ export async function authenticateUser({ email, password }) {
   }
 }
 
-export async function getUserLoginProvider({ hashedEmail }) {
+export async function getUserLoginProvider({ hashedEmail, email }) {
   try {
-    return getLoginProvider(hashedEmail);
+    return getLoginProvider({ hashedEmail, email });
   } catch (err) {
     throw err;
   }
