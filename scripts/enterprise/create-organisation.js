@@ -13,17 +13,24 @@ async function run() {
     console.error('usage: create-organisation.js <email> <name> <domain>');
     process.exit(0);
   }
-  console.log('connecting...');
-  await db.connect();
-  console.log('connected...');
+  console.log('creating organisation...');
 
-  await OrgService.createOrganisation(email, {
+  console.log('db connecting...');
+  await db.connect();
+  console.log('db connected...');
+
+  const organisation = await OrgService.createOrganisation(email, {
     name,
     domain,
     allowAnyUserWithCompanyEmail: false,
     active: true
   });
-  console.log('success');
+  console.log('success!');
+
+  console.log(`id: ${organisation.id}`);
+  console.log(`invite code: ${organisation.inviteCode}`);
+
+  console.log('done');
 }
 
 run();
