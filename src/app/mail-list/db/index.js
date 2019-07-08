@@ -108,6 +108,10 @@ export function useMailSync() {
                 count: occurrences[d]
               }))
             );
+            await db.prefs.put({
+              key: 'lastFetchResult',
+              value: { ...scan, finishedAt: Date.now() }
+            });
           } catch (err) {
             console.error(`[db]: failed setting new occurrences`);
             console.error(err);
@@ -231,12 +235,12 @@ export function useMailSync() {
       try {
         setIsFetching(true);
         const pref = await db.prefs.get('lastFetchParams');
-
+        const lastScan = await db.prefs.get('lastFetchResult');
         let fetchParams = {
           accounts: []
         };
         const now = Date.now();
-        if (pref) {
+        if (pref && lastScan) {
           const { value: lastFetchParams } = pref;
           const { accounts: lastFetchAccounts } = lastFetchParams;
           // if there are accounts that we haven't searched for yet
@@ -287,6 +291,7 @@ export function useMailSync() {
             accounts: fetchParams.accounts.map(a => ({ ...a, from: now }))
           }
         });
+        await db.prefs.delete('lastFetchResult');
         return emit('fetch', fetchParams);
       } catch (err) {
         console.error('[db]: failed to fetch mail');

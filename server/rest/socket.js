@@ -73,6 +73,7 @@ export default function(server) {
       delete connectedClients[userId];
     });
     socket.on('reconnect_attempt', () => {
+      logger.info('socket: socket reconnected');
       checkBuffer(socket, userId);
     });
     // send buffered events

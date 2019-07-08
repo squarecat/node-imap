@@ -31,17 +31,76 @@ export default function(app, socket) {
     }
   });
 
-  // app.get('/api/mail/estimates', auth, async (req, res) => {
-  //   const estimates = await getMailEstimates(req.user.id);
-  //   res.send(estimates);
-  // });
+  function getSocketFunctions(userId) {
+    return {
+      onMail: async m => {
+        return new Promise(ack => {
+          socket.emit(userId, 'mail', m, {
+            buffer: true,
+            onSuccess: () => {
+              ack();
+            }
+          });
+        });
+      },
+      onError: err => {
+        socket.emit(userId, 'mail:err', err, { buffer: true });
+        return true;
+      },
+      onEnd: stats => {
+        const { occurrences } = stats;
+        const filteredoccurrences = Object.keys(occurrences).reduce(
+          (out, k) => {
+            if (occurrences[k] > 1) {
+              return {
+                ...out,
+                [k]: occurrences[k]
+              };
+            }
+            return out;
+          },
+          {}
+        );
+        socket.emit(
+          userId,
+          'mail:end',
+          { ...stats, occurrences: filteredoccurrences },
+          { buffer: true }
+        );
+        return true;
+      },
+      onProgress: async progress => {
+        return new Promise(ack => {
+          socket.emit(userId, 'mail:progress', progress, {
+            buffer: true,
+            onSuccess: () => {
+              ack();
+            }
+          });
+        });
+      }
+    };
+  }
 
   socket.on('fetch', async (userId, data = {}) => {
-    const { onMail, onError, onEnd, onProgress } = getSocketFunctions(
-      userId,
-      socket
-    );
-    const { accounts: accountFilters } = data;
+    const { onMail, onError, onEnd, onProgress } = getSocketFunctions(userId);
+    let { accounts: accountFilters } = data;
+    // if we're already running a scan for an account then
+    // DO NOT run another one. Client should be waiting on
+    // the results of this scan already
+    // const alreadyRunning = runningScans.filter(rs =>
+    //   accountFilters.some(af => af.id === rs)
+    // );
+    // accountFilters = accountFilters.filter(af => !runningScans.includes(af.id));
+    // runningScans = [...runningScans, ...accountFilters.map(af => af.id)];
+    // if (alreadyRunning.length) {
+    //   logger.info(
+    //     `mail-rest: already running scans for accounts ${alreadyRunning.join()}, not running again`
+    //   );
+    // }
+    if (!accountFilters.length) {
+      return;
+    }
     try {
       // get mail data for user
       const it = await fetchMail({
@@ -59,6 +118,9 @@ export default function(app, socket) {
         }
         next = await it.next();
       }
+      // runningScans = runningScans.filter(rs =>
+      //   accountFilters.every(af => af.id !== rs)
+      // );
       onEnd(next.value);
     } catch (err) {
       Sentry.captureException(err);
@@ -125,52 +187,4 @@ export default function(app, socket) {
       Sentry.captureException(error);
     }
   });
-}
-
-function getSocketFunctions(userId, socket) {
-  return {
-    onMail: async m => {
-      return new Promise(ack => {
-        socket.emit(userId, 'mail', m, {
-          buffer: true,
-          onSuccess: () => {
-            ack();
-          }
-        });
-      });
-    },
-    onError: err => {
-      socket.emit(userId, 'mail:err', err, { buffer: true });
-      return true;
-    },
-    onEnd: stats => {
-      const { occurrences } = stats;
-      const filteredoccurrences = Object.keys(occurrences).reduce((out, k) => {
-        if (occurrences[k] > 1) {
-          return {
-            ...out,
-            [k]: occurrences[k]
-          };
-        }
-        return out;
-      }, {});
-      socket.emit(
-        userId,
-        'mail:end',
-        { ...stats, occurrences: filteredoccurrences },
-        { buffer: true }
-      );
-      return true;
-    },
-    onProgress: async progress => {
-      return new Promise(ack => {
-        socket.emit(userId, 'mail:progress', progress, {
-          buffer: true,
-          onSuccess: () => {
-            ack();
-          }
-        });
-      });
-    }
-  };
 }
