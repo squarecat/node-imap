@@ -700,6 +700,17 @@ a.more-info:visited {
   width: 100%;
   height: 70px;
 
+  p:not(:first-child),
+  a {
+    transition: opacity 150ms ease-in-out;
+    &[data-state='entered'] {
+      opacity: 1;
+    }
+    &[data-state='exited'] {
+      opacity: 0;
+    }
+  }
+
   @media (max-width: 960px) {
     bottom: -30px;
   }

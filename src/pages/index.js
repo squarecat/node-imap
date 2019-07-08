@@ -674,22 +674,26 @@ function Item({
                 </div>
               </div>
             </div>
-            {text ? (
-              <div className="example-unsub-text" ref={textRef}>
-                <p>{text}</p>
-                {count > 2 && count < 250 ? (
-                  <>
-                    <p>That's {count} gone!</p>
-                    <a
-                      className="example-unsub-tweet-btn"
-                      onClick={onClickTweet}
-                    >
-                      Tweet progress
-                    </a>
-                  </>
-                ) : null}
-              </div>
-            ) : null}
+
+            <div className="example-unsub-text" ref={textRef}>
+              <p>{text}</p>
+              <Transition timeout={200} appear in={count > 2 && count < 250}>
+                {state => {
+                  return (
+                    <>
+                      <p data-state={state}>That's {count} gone!</p>
+                      <a
+                        className="example-unsub-tweet-btn"
+                        data-state={state}
+                        onClick={onClickTweet}
+                      >
+                        Tweet progress
+                      </a>
+                    </>
+                  );
+                }}
+              </Transition>
+            </div>
           </>
         );
       }}
