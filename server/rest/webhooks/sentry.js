@@ -11,7 +11,6 @@ export default app => {
     }
   });
   app.post('/api/webhooks/sentry', async (req, res) => {
-    logger.info(JSON.stringify(req.body, null, 2));
     const { body } = req;
     const { url, environment } = body;
     try {
