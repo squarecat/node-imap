@@ -1,14 +1,15 @@
 import './state.module.scss';
 
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
 import Button from '../../../components/btn';
 import { MailContext } from '../provider';
 import stateImg from '../../../assets/envelope-logo.png';
+import useUser from '../../../utils/hooks/use-user';
 
 export const Empty = ({ hasFilters } = {}) => {
   const { dispatch } = useContext(MailContext);
-
+  const [accounts] = useUser(u => u.accounts);
   const clearFilters = useCallback(
     () =>
       dispatch({
@@ -16,7 +17,28 @@ export const Empty = ({ hasFilters } = {}) => {
       }),
     [dispatch]
   );
-
+  const buttons = useMemo(
+    () => {
+      if (hasFilters) {
+        return (
+          <Button key="" compact basic onClick={clearFilters}>
+            Clear filters
+          </Button>
+        );
+      } else if (!accounts.length) {
+        return (
+          <Button
+            compact
+            basic
+            onClick={() => navigator('/app/profile/accounts')}
+          >
+            Connect an account
+          </Button>
+        );
+      }
+    },
+    [accounts, clearFilters, hasFilters]
+  );
   return (
     <div styleName="state-wrapper">
       <div styleName="state">
@@ -27,11 +49,7 @@ export const Empty = ({ hasFilters } = {}) => {
             🎉
           </span>
         </div>
-        {hasFilters ? (
-          <Button compact basic onClick={clearFilters}>
-            Clear filters
-          </Button>
-        ) : null}
+        {buttons}
       </div>
     </div>
   );
