@@ -17,8 +17,9 @@ export async function revokeToken(token) {
     ) {
       logger.error('google-utils: token already revoked');
       return true;
+    } else {
+      logger.error(err);
+      throw err;
     }
-    logger.error(err);
-    throw err;
   }
 }

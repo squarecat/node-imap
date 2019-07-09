@@ -624,7 +624,10 @@ export async function updateUnsubStatus(
   }
 }
 
-export async function removeAccount(user, { accountId, email }) {
+export async function removeAccount(
+  userId,
+  { email, accountId, accountEmail }
+) {
   try {
     const col = await db().collection(COL_NAME);
     let query = {
@@ -635,7 +638,7 @@ export async function removeAccount(user, { accountId, email }) {
     // if a user logs in with Password - danielle@squarecat.io & connects Google - danielle@squarecat.io
     // the same email will be in the hashed array twice and we don't want to remove the login account
     // So only remove the hashed email if this is not the case
-    if (user.email !== email) {
+    if (accountEmail !== email) {
       query = {
         ...query,
         $pull: {
@@ -651,15 +654,13 @@ export async function removeAccount(user, { accountId, email }) {
         }
       };
     }
-    await col.updateOne({ id: user.id }, query);
-    const user = await getUser(user.id);
+    await col.updateOne({ id: userId }, query);
+    const user = await getUser(userId);
     return user;
   } catch (err) {
-    throw new Error(`failed to disconnect user account for user ${user.id}`, {
-      userId: user.id,
-      accountId,
-      cause: err
-    });
+    logger.error(`user-dao: failed to remove account for user`);
+    logger.error(err);
+    throw err;
   }
 }
 
