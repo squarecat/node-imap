@@ -20,12 +20,14 @@ let username = '';
 let defaultStep = 'select';
 let previousProvider;
 let previousUsername;
+let isAdmin;
 
 if (typeof window !== 'undefined') {
   const urlParams = new URLSearchParams(window.location.search);
   error = urlParams.get('error');
   strategy = urlParams.get('strategy');
   username = urlParams.get('username');
+  isAdmin = urlParams.get('admin');
   previousProvider = getCookie('remember-me-provider');
   previousUsername = getCookie('remember-me-username');
   if (previousUsername) {
@@ -70,7 +72,6 @@ function loginReducer(state, action) {
       return { ...state, loading: data };
     case 'set-step': {
       resetUrlParams(state.register ? 'signup' : 'login');
-
       return {
         ...state,
         step: action.data,
@@ -121,7 +122,9 @@ const LoginPage = React.memo(
     const windowHeight = useMemo(
       () => {
         let height;
-        if (state.step === 'signup') {
+        if (!isAdmin) {
+          height = 420;
+        } else if (state.step === 'signup') {
           height = loginNewUserHeight;
         } else if (state.step === 'enter-password') {
           height = loginWithPasswordHeight;
@@ -168,7 +171,24 @@ const LoginPage = React.memo(
         let resetPasswordContent = null;
         let twofaContent = null;
         let existingContent = null;
-        if (state.step === 'select') {
+        if (!isAdmin) {
+          selectContent = (
+            <>
+              <h1 styleName="title">Down for maintenance</h1>
+              <p>
+                We're currently upgrading the Leave Me Alone system, check back
+                in a little while for the updates!
+              </p>
+              <p>
+                We'll post about our progress and updates on our Twitter page{' '}
+                <a href="https://twitter.com/LeaveMeAloneApp">
+                  https://twitter.com/LeaveMeAloneApp
+                </a>
+                .
+              </p>
+            </>
+          );
+        } else if (state.step === 'select') {
           selectContent = (
             <>
               <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
