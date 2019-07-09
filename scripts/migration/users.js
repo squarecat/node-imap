@@ -10,7 +10,6 @@ const keepKeys = [
   'id',
   'profileImg',
   'referralCode',
-  'referrals',
   'name',
   'email',
   'createdAt',
@@ -47,6 +46,7 @@ const migrateUser = oldRecord => {
   };
   // move the keys object to be an account
   // and add a relevant activity
+  const referralCredits = oldRecord.referrals * 15;
   newRecord = {
     ...newRecord,
     accounts: [
@@ -73,7 +73,7 @@ const migrateUser = oldRecord => {
       }
     ],
     billing: {
-      credits: 100
+      credits: 10 + referralCredits
     }
   };
   // migrate referrals
@@ -106,9 +106,10 @@ function hashEmail(email) {
   const conn = await db.connect();
   const col = await conn.collection('users');
   const occCol = await conn.collection('occurrences');
-  const cur = await col.find({ __version: { $ne: '2.0' } });
-  const count = await cur.countDocuments();
-  console.log(`migrating ${count} users...`);
+  const cur = await col.find({ id: '116477163028920794979' });
+  // const cur = await col.find({ __version: { $ne: '2.0' } });
+  const count = await cur.count();
+  console.log(`migrating ~${count} users...`);
   let currentCount = 1;
   cur.forEach(async user => {
     // double check this hasn't been updated yet
