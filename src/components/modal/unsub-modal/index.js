@@ -76,7 +76,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
           title
         });
       } else if (slide === 'positive') {
-        return slide3(onClickSubmit, title);
+        return slide3(onClickSubmit);
       }
     },
     [close, error, imageLoading, mail, onClickSubmit, selected, slide]
@@ -255,25 +255,26 @@ function slide2({
   onClickBack,
   selected,
   setSelected,
-  hasImage
+  hasImage,
+  title
 }) {
   let lead;
   let actions;
 
   if (type === 'link') {
     lead = (
-      <span>
+      <p>
         Oh snap! Sorry about that. This one you'll have to do manually. Just
         click or copy the following link to unsubscribe:
-      </span>
+      </p>
     );
   } else {
     lead = (
-      <span>
+      <p>
         Oh snap! Sorry about that. This one you'll have to do manually. This
         particular service only accepts email unsubscribes, just click the
         following link or send an email to the address in order to unsubscribe:
-      </span>
+      </p>
     );
   }
 
@@ -330,6 +331,10 @@ function slide2({
 
   return (
     <>
+      <ModalHeader>
+        {title}
+        <ModalCloseIcon />
+      </ModalHeader>
       <ModalBody compact>
         {lead}
         <a
@@ -409,10 +414,11 @@ function slide2({
 function slide3(onSubmit) {
   return (
     <>
-      <ModalBody compact>
-        <p>Awesome!</p>
-        {imageUseQuestion}
-      </ModalBody>
+      <ModalHeader>
+        Awesome!
+        <ModalCloseIcon />
+      </ModalHeader>
+      <ModalBody compact>{imageUseQuestion}</ModalBody>
       <ModalFooter>
         <Button
           basic
