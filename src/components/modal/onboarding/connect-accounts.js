@@ -27,8 +27,8 @@ export default ({ onboarding = false, enterprise = false }) => {
   };
 
   const onConnectError = err => {
-    const msg = getConnectError(err);
-    setError(msg);
+    const { message, level } = getConnectError(err);
+    setError({ message, level });
   };
 
   const content = useMemo(
@@ -46,7 +46,7 @@ export default ({ onboarding = false, enterprise = false }) => {
         );
       }
     },
-    [accounts, email, loginProvider, onboarding]
+    [accounts, email, enterprise, loginProvider, onboarding]
   );
   // show the provider buttons if user has yet
   // to add an account during onboarding, or if
@@ -56,6 +56,21 @@ export default ({ onboarding = false, enterprise = false }) => {
       return !onboarding || !accounts.length;
     },
     [accounts.length, onboarding]
+  );
+
+  const errorContent = useMemo(
+    () => {
+      if (!error) return null;
+      return (
+        <FormNotification
+          error={error.level === 'error'}
+          warning={error.level === 'warning'}
+        >
+          {error.message}
+        </FormNotification>
+      );
+    },
+    [error]
   );
 
   return (
@@ -68,7 +83,7 @@ export default ({ onboarding = false, enterprise = false }) => {
         />
       ) : null}
 
-      {error ? <FormNotification error>{error}</FormNotification> : null}
+      {errorContent}
     </>
   );
 };
@@ -100,11 +115,28 @@ function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
       const updatedUser = await removeAccount(email);
       updateUser(updatedUser);
     } catch (err) {
-      setError(
-        `Something went wrong removing your account. Please try again or send us a message.`
-      );
+      setError({
+        message: `Something went wrong removing your account. Please try again or send us a message.`,
+        level: 'error'
+      });
     }
   };
+
+  const errorContent = useMemo(
+    () => {
+      if (!error) return null;
+      return (
+        <FormNotification
+          error={error.level === 'error'}
+          warning={error.level === 'warning'}
+        >
+          {error.message}
+        </FormNotification>
+      );
+    },
+    [error]
+  );
+
   return (
     <>
       {onboarding ? null : (
@@ -132,7 +164,7 @@ function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
         loginProvider={loginProvider}
         onClickRemove={email => onClickRemoveAccount(email)}
       />
-      {error ? <FormNotification error>{error}</FormNotification> : null}
+      {errorContent}
     </>
   );
 }

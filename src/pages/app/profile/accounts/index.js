@@ -82,14 +82,15 @@ const Accounts = () => {
     });
   };
 
-  const onConnectError = err => {
-    const message = getConnectError(err);
+  const onConnectError = reason => {
+    const { message, level, actions } = getConnectError(reason);
     alertActions.setAlert({
       id: 'connect-account-error',
-      level: 'error',
+      level,
       message,
       isDismissable: true,
-      autoDismiss: true
+      autoDismiss: false,
+      actions
     });
   };
 

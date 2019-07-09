@@ -46,10 +46,20 @@ function DangerZone({ organisationAdmin }) {
   const { actions: alertActions } = useContext(AlertContext);
 
   const onClickClear = useCallback(
-    () =>
+    () => {
+      function onConfirm() {
+        db.clear();
+        alertActions.setAlert({
+          id: 'deactivate-account-success',
+          level: 'success',
+          message: `Your local email data has been cleared!`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      }
       openModal(
         <WarningModal
-          onConfirm={() => db.clear()}
+          onConfirm={onConfirm}
           content={
             <>
               <p>
@@ -69,7 +79,8 @@ function DangerZone({ organisationAdmin }) {
         {
           dismissable: true
         }
-      ),
+      );
+    },
     [openModal, db]
   );
 

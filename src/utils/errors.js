@@ -1,32 +1,66 @@
 import CreditModal from '../components/modal/credits';
 import React from 'react';
 import { TextLink } from '../components/text';
+import { openChat } from '../utils/chat';
 
 export function getConnectError(reason) {
   switch (reason) {
     case 'not-invited':
-      return 'Cannot connect account because it is not invited to your organisation.';
+      return {
+        message:
+          'Cannot connect account because it is not invited to your organisation.',
+        level: 'warning'
+      };
     case 'existing-member':
-      return 'Cannot connect account because it is already in use in your organisation.';
+      return {
+        message:
+          'Cannot connect account because it is already in use in your organisation.',
+        level: 'warning'
+      };
     case 'invalid-domain':
-      return 'Cannot connect account because it does not belong to your organisation domain.';
+      return {
+        message:
+          'Cannot connect account because it does not belong to your organisation domain.',
+        level: 'warning'
+      };
     case 'auth-provider-error':
-      return (
-        <span>
-          That email address has already been used to sign in. If you want to
-          connect it to this account then first deactivate the other account.
-        </span>
-      );
+      return {
+        message: (
+          <span>
+            That email address has already been used to sign in.{' '}
+            <TextLink undecorated inverted onClick={() => openChat()}>
+              Contact us
+            </TextLink>{' '}
+            if you would like us to merge your accounts.
+          </span>
+        ),
+        level: 'warning',
+        actions: [
+          {
+            label: 'Contact us',
+            onClick: () => {
+              openChat();
+            }
+          }
+        ]
+      };
     case 'auth-account-error':
-      return (
-        <span>
-          That email address is already attached to another account. If you want
-          to connect it to this account then first remove it from the other
-          account.
-        </span>
-      );
+      return {
+        message: (
+          <span>
+            That email address is already attached to another account. If you
+            want to connect it to this account then first remove it from the
+            other account.
+          </span>
+        ),
+        level: 'warning'
+      };
     default:
-      return 'Something went wrong connecting your account. Please try again or send us a message.';
+      return {
+        message:
+          'Something went wrong connecting your account. Please try again or send us a message.',
+        level: 'error'
+      };
   }
 }
 
