@@ -121,7 +121,14 @@ function MailItem({ id, onLoad }) {
           mail={m}
           isIgnored={isIgnored}
           onUnsubscribe={actions.onUnsubscribe}
-          setUnsubModal={() => actions.setUnsubData(m)}
+          setUnsubModal={() => {
+            // defensive code against an old bug where unsubStrategy can be null
+            let strat = m.unsubStrategy;
+            if (!strat) {
+              strat = m.unsubscribeLink ? 'link' : 'mailto';
+            }
+            actions.setUnsubData({ ...m, unsubStrategy: strat });
+          }}
         />
       </td>
     </>

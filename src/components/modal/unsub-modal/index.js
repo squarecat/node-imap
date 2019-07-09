@@ -4,7 +4,8 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Button from '../../btn';
 import { ExternalIcon } from '../../icons';
 import { ModalContext } from '../../../providers/modal-provider';
-import { TextImportant } from '../../text';
+import { TextImportant, TextLink } from '../../text';
+import { openChat } from '../../../utils/chat';
 import styles from './unsub.module.scss';
 
 const imageUseQuestion = (
@@ -50,6 +51,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
         unsubStrategy,
         resolved
       } = mail;
+
       if (slide === 'first') {
         return slide1(
           mailId,
@@ -337,24 +339,34 @@ function slide2({
       </ModalHeader>
       <ModalBody compact>
         {lead}
-        <a
-          styleName="manual-unsubscribe-btn"
-          target="_"
-          href={type === 'link' ? link : mailTo}
-        >
-          Unsubscribe manually
-          <ExternalIcon padleft />
-        </a>
-        <p styleName="unsubscribe-link-alt">
-          <span>Or use this link:</span>
-          <a
-            styleName="unsubscribe-link"
-            target="_"
-            href={type === 'link' ? link : mailTo}
-          >
-            {type === 'link' ? link : mailTo}
-          </a>
-        </p>
+        {link || mailTo ? (
+          <>
+            <a
+              styleName="manual-unsubscribe-btn"
+              target="_"
+              href={type === 'link' ? link : mailTo}
+            >
+              Unsubscribe manually
+              <ExternalIcon padleft />
+            </a>
+            <p styleName="unsubscribe-link-alt">
+              <span>Or use this link:</span>
+              <a
+                styleName="unsubscribe-link"
+                target="_"
+                href={type === 'link' ? link : mailTo}
+              >
+                {type === 'link' ? link : mailTo}
+              </a>
+            </p>
+          </>
+        ) : (
+          <p>
+            We don't have an unsubscribe link or mailto for this sender. This
+            shouldn't happen so something unexpected went wrong. Please{' '}
+            <TextLink onClick={() => openChat()}>let us know</TextLink>.
+          </p>
+        )}
         <p>
           Can you tell us what you think went wrong this time? We'll use the
           information to improve our service. Here are some common reasons;
