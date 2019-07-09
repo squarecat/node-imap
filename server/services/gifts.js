@@ -31,7 +31,7 @@
 //     await createPayment({
 //       address,
 //       customerId: customerId,
-//       productPrice: price,
+//       productPrice: totalAmount,
 //       productLabel: label,
 //       quantity,
 //       gift: true
