@@ -14,20 +14,19 @@ import { getAuthError } from '../../utils/errors';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
+const isMaintenanceMode = false;
 let error;
 let strategy;
 let username = '';
 let defaultStep = 'select';
 let previousProvider;
 let previousUsername;
-let isAdmin;
 
 if (typeof window !== 'undefined') {
   const urlParams = new URLSearchParams(window.location.search);
   error = urlParams.get('error');
   strategy = urlParams.get('strategy');
   username = urlParams.get('username');
-  isAdmin = urlParams.get('admin');
   previousProvider = getCookie('remember-me-provider');
   previousUsername = getCookie('remember-me-username');
   if (previousUsername) {
@@ -122,9 +121,7 @@ const LoginPage = React.memo(
     const windowHeight = useMemo(
       () => {
         let height;
-        if (!isAdmin) {
-          height = 420;
-        } else if (state.step === 'signup') {
+        if (state.step === 'signup') {
           height = loginNewUserHeight;
         } else if (state.step === 'enter-password') {
           height = loginWithPasswordHeight;
@@ -171,7 +168,7 @@ const LoginPage = React.memo(
         let resetPasswordContent = null;
         let twofaContent = null;
         let existingContent = null;
-        if (!isAdmin) {
+        if (isMaintenanceMode) {
           selectContent = (
             <>
               <h1 styleName="title">Down for maintenance</h1>

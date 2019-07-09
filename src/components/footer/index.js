@@ -22,7 +22,7 @@ export default visProps => (
         </Link>
         <ul styleName="footer-nav-intro">
           <li>
-            <TextLink href="/login">Log in</TextLink>
+            <TextLink href="/app">Log in</TextLink>
           </li>
           <li>
             <TextLink href="/signup">Sign up</TextLink>
