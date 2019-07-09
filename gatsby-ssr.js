@@ -75,8 +75,16 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
       dangerouslySetInnerHTML={{
         __html: `(function () { let i = setInterval(function() { window.injectChat && (clearInterval(i) || window.injectChat())}, 3000) })()`
       }}
-    />
+    />,
+    <script
+      key="simple"
+      type="text/x-metomic"
+      data-micropolicy="analytics"
+      src="https://cdn.simpleanalytics.io/hello.js"
+    />,
+    <noscript key="simple-noscript" data-micropolicy="analytics">
+      <img src="https://api.simpleanalytics.io/hello.gif" alt="" />
+    </noscript>
   ];
-
   setPostBodyComponents(components);
 };
