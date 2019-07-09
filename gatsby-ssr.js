@@ -80,10 +80,10 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
       key="simple"
       type="text/x-metomic"
       data-micropolicy="analytics"
-      src="https://cdn.simpleanalytics.io/hello.js"
+      src="https://stats.leavemealone.app/app.js"
     />,
     <noscript key="simple-noscript" data-micropolicy="analytics">
-      <img src="https://api.simpleanalytics.io/hello.gif" alt="" />
+      <img src="https://stats.leavemealone.app/image.gif" alt="" />
     </noscript>
   ];
   setPostBodyComponents(components);
