@@ -1,42 +1,59 @@
 import {
+  connectUserOutlookAccount,
   createOrUpdateUserFromOutlook,
-  updateUserToken
+  updateUserAccountToken
 } from '../services/user';
+import { isBetaUser, setRememberMeCookie } from './access';
 
+import { AuthError } from '../utils/errors';
 import { Strategy as OutlookStrategy } from 'passport-outlook';
+import { URLSearchParams } from 'url';
 import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
-import { isBetaUser } from './access';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
 
 const { outlook } = auth;
-logger.info(`outlook-auth: redirecting to ${outlook.redirect}`);
+logger.info(`outlook-auth: redirecting to ${outlook.loginRedirect}`);
+
+// https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow
+// login: The user should be prompted to reauthenticate.
+// select_account:
+// The user is prompted to select an account, interrupting single sign on.
+// The user may select an existing signed-in account, enter their credentials
+// for a remembered account, or choose to use a different account altogether.
+const PROMPT_TYPE = 'select_account';
 
 export const Strategy = new OutlookStrategy(
   {
     clientID: outlook.clientId,
     clientSecret: outlook.clientSecret,
-    callbackURL: outlook.redirect,
+    callbackURL: outlook.loginRedirect,
     passReqToCallback: true
   },
   async (req, accessToken, refreshToken, profile, done) => {
     try {
       const { cookies } = req;
-      const { referrer } = cookies;
-      const email = getEmail(profile);
+      const { referrer, invite } = cookies;
+      const parsedProfile = await parseProfile(profile);
 
       if (process.env.NODE_ENV === 'beta') {
-        const allowed = await isBetaUser({ email });
+        const allowed = await isBetaUser({ email: parsedProfile.email });
         if (!allowed) {
-          logger.debug('outlook-auth: user does not have access to the beta');
-          return done({ type: 'beta' }, null);
+          const error = new AuthError('user does not have access to the beta', {
+            errKey: 'beta'
+          });
+          return done(error, null);
         }
       }
 
       const user = await createOrUpdateUserFromOutlook(
-        { ...profile, email, referralCode: referrer },
+        {
+          ...parsedProfile,
+          referralCode: referrer,
+          inviteCode: invite
+        },
         {
           refreshToken,
           accessToken,
@@ -46,19 +63,61 @@ export const Strategy = new OutlookStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error(
-        'outlook-auth: failed to create or update user from Outlook'
-      );
+      logger.error('outlook-auth: error authenticating');
       logger.error(err);
-      done(err);
+      if (err.data && err.data.errKey) {
+        done(err);
+      } else {
+        done(
+          new AuthError('failed to connect account from Outlook', {
+            cause: err
+          })
+        );
+      }
     }
   }
 );
 
-export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
+export const ConnectAccountStrategy = new OutlookStrategy(
+  {
+    clientID: outlook.clientId,
+    clientSecret: outlook.clientSecret,
+    callbackURL: outlook.connectRedirect,
+    passReqToCallback: true
+  },
+  async (req, accessToken, refreshToken, profile, done) => {
+    try {
+      const parsedProfile = await parseProfile(profile);
+      const user = await connectUserOutlookAccount(req.user.id, parsedProfile, {
+        refreshToken,
+        accessToken,
+        expires: addSeconds(new Date(), 3600),
+        expiresIn: 3600
+      });
+      done(null, { ...user });
+    } catch (err) {
+      logger.error('outlook-auth: error connecting account');
+      logger.error(err);
+      if (err.data && err.data.errKey) {
+        done(err);
+      } else {
+        done(
+          new AuthError('failed to connect account from Outlook', {
+            cause: err
+          })
+        );
+      }
+    }
+  }
+);
+
+export function refreshAccessToken(
+  { userId, account },
+  { refreshToken, expiresIn }
+) {
   return new Promise((resolve, reject) => {
     refresh.requestNewAccessToken(
-      'windowslive',
+      'outlook-login',
       refreshToken,
       async (err, accessToken) => {
         if (err) {
@@ -67,17 +126,23 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
           return reject(err);
         }
         try {
-          await updateUserToken(userId, {
-            refreshToken,
-            accessToken,
-            expires: addSeconds(new Date(), expiresIn),
-            expiresIn
-          });
+          await updateUserAccountToken(
+            { userId, accountEmail: account.email },
+            {
+              accessToken,
+              expires: addSeconds(new Date(), expiresIn),
+              expiresIn
+            }
+          );
           resolve(accessToken);
         } catch (err) {
           logger.error('outlook-auth: error updating user refresh token');
           logger.error(err);
-          reject(err);
+          reject(
+            new AuthError('failed to update Outlook access token', {
+              cause: err
+            })
+          );
         }
       }
     );
@@ -87,20 +152,35 @@ export function refreshAccessToken(userId, { refreshToken, expiresIn }) {
 export default app => {
   app.get(
     '/auth/outlook',
-    passport.authenticate('windowslive', {
-      scope: outlook.scopes
+    passport.authenticate('outlook-login', {
+      scope: outlook.scopes,
+      prompt: 'select_account'
     })
   );
 
-  app.get('/auth/outlook/callback', (req, res, next) => {
-    return passport.authenticate('windowslive', (err, user) => {
-      const baseUrl = `/login?error=true`;
+  app.get(
+    '/auth/outlook/connect',
+    passport.authenticate('connect-account-outlook', {
+      scope: outlook.scopes,
+      prompt: 'login'
+    })
+  );
+
+  app.get('/auth/outlook/callback*', (req, res, next) => {
+    const params = new URLSearchParams(req.params[0]);
+    const query = {
+      code: params.get('code')
+    };
+    req.query = query;
+
+    return passport.authenticate('outlook-login', (err, user) => {
+      const baseErrUrl = `/login?error=true`;
       if (err) {
-        let errUrl = baseUrl;
-        const { type } = err;
-        if (type) errUrl += `&type=${type}`;
-        logger.error(`outlook-auth: passport authentication error ${type}`);
+        logger.error('outlook-auth: passport authentication error');
         logger.error(err);
+        const { id: errId, data } = err.toJSON();
+        const errUrl = `${baseErrUrl}&id=${errId}&reason=${data.errKey ||
+          'unknown'}`;
         return res.redirect(errUrl);
       }
 
@@ -108,15 +188,44 @@ export default app => {
         if (loginErr) {
           logger.error('outlook-auth: login error');
           logger.error(loginErr);
-          return res.redirect(baseUrl);
+          return res.redirect(baseErrUrl);
         }
+        setRememberMeCookie(res, {
+          username: user.email,
+          provider: 'outlook'
+        });
         return res.redirect('/app');
       });
     })(req, res, next);
   });
+
+  app.get('/auth/outlook/connect/callback', (req, res, next) => {
+    logger.debug('outlook-auth: /auth/outlook/connect/callback');
+    return passport.authenticate('connect-account-outlook', err => {
+      const baseUrl = `/app/profile/accounts/connected`;
+      let errUrl = `${baseUrl}?error=true`;
+      if (err) {
+        logger.error(
+          'outlook-auth: passport authentication error connecting account'
+        );
+        logger.error(err);
+        if (err.data && err.data.errKey) {
+          errUrl = `${errUrl}&reason=${err.data.errKey}`;
+        }
+        return res.redirect(errUrl);
+      }
+
+      return res.redirect(baseUrl);
+    })(req, res, next);
+  });
 };
 
-function getEmail(profile) {
-  const { emails } = profile;
-  return emails.length ? emails[0].value : null;
+async function parseProfile(profile) {
+  const { id, emails, displayName } = profile;
+  return {
+    id,
+    email: emails.length ? emails[0].value : null,
+    profileImg: null, // TODO use the photos API to get the image
+    displayName
+  };
 }

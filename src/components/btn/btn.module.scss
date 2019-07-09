@@ -2,13 +2,14 @@
 
 $color-btn-text: $color-red-darker;
 $color-btn-bg: $color-red-light;
-$color-btn-border-focus: $color-input-border-focus;
+$color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
 
 @mixin muted() {
   background-color: transparent;
   color: $color-red;
 
-  &:hover {
+  &:hover,
+  &:focus {
     color: $color-red;
     background-color: $color-red-lighter;
   }
@@ -16,13 +17,15 @@ $color-btn-border-focus: $color-input-border-focus;
 
 @mixin on-dark-bg() {
   background-color: rgba(255, 251, 251, 0.45);
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: $color-red-darker;
   }
 }
 
 @mixin basic() {
-  &:hover {
+  &:hover,
+  &:focus {
     box-shadow: none;
     transform: translateY(0);
   }
@@ -47,11 +50,20 @@ $color-btn-border-focus: $color-input-border-focus;
   user-select: none;
   outline: none;
 
-  &:hover {
+  [data-icon='gift'] path {
+    transition: fill 200ms ease-in-out;
+  }
+
+  &:hover,
+  &:focus {
     transform: translateY(-2px);
     box-shadow: 0 7px 1em $color-btn-border-focus;
     background-color: $color-red-darker;
     color: white;
+
+    [data-icon='gift'] path {
+      fill: #e9443c;
+    }
   }
 }
 
@@ -61,16 +73,30 @@ $color-btn-border-focus: $color-input-border-focus;
   cursor: no-drop;
 }
 
+.inline {
+  display: inline-block;
+  margin: 0;
+
+  &.disabled {
+    opacity: 1;
+    background-color: $color-btn-disabled-bg;
+    color: $color-btn-disabled;
+  }
+}
+
 .compact {
   width: auto;
   padding: 5px 15px;
   font-size: 16px;
+  height: 36px;
 }
 
 .smaller {
   font-size: 14px;
   height: 30px;
   padding: 0 15px;
+  line-height: 30px;
+
   @media (max-width: 400px) {
     padding: 0 8px;
     .btn-content {
@@ -82,6 +108,7 @@ $color-btn-border-focus: $color-input-border-focus;
 .fill {
   margin: 0;
   height: 100%;
+  display: flex;
 }
 
 .on-dark-bg {
@@ -98,6 +125,10 @@ $color-btn-border-focus: $color-input-border-focus;
 
 .outlined {
   border: 1px solid $color-red-light;
+  &:hover,
+  &:focus {
+    border-bottom: 1px solid $color-red-light;
+  }
 }
 
 .stretch {

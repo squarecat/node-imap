@@ -1,0 +1,1 @@
+BROWSER_DEBUG=true node --inspect-brk ./tests/unsubscriber.js "http://approve.acemlna.com/box.php?nl=23&c=57&m=110&s=9a170f3b65aa660a2e1e3f4f50d31225&funcml=unsub2&luha=1"

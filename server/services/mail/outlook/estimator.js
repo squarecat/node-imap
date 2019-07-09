@@ -1,61 +1,40 @@
-import { doRequest, getAccessToken } from './access';
+import { doRequest, getOutlookAccessToken } from './access';
 import { getSearchString, getTimeRange } from './utils';
 
 import logger from '../../../utils/logger';
 
-const estimateTimeframes = ['3d', '1w'];
-
 const SPAM_REGULARITY = 0.48;
 
-export async function getMailEstimates(user, { timeframe } = {}) {
+export async function getMailEstimates(account, { from } = {}) {
   // addEstimateToStats();
-  if (timeframe) {
-    const estimate = await getEstimateForTimeframe(user, {
-      timeframe
-    });
-    return {
-      ...estimate,
-      totalSpam: (estimate.total * SPAM_REGULARITY).toFixed()
-    };
-  } else {
-    let estimates = await Promise.all(
-      estimateTimeframes.map(async tf => {
-        const total = await getEstimateForTimeframe(user, {
-          timeframe: tf
-        });
-        return {
-          timeframe: tf,
-          total
-        };
-      })
-    );
-    estimates = [
-      ...estimates,
-      { timeframe: '1m', total: estimates[1].total * 4 },
-      { timeframe: '6m', total: estimates[1].total * 4 * 6 }
-    ].map(e => ({ ...e, totalSpam: (e.total * SPAM_REGULARITY).toFixed() }));
-
-    return estimates;
-  }
+  const estimate = await getEstimateForTimeframe(account, {
+    from
+  });
+  return {
+    ...estimate,
+    totalSpam: (estimate.total * SPAM_REGULARITY).toFixed()
+  };
 }
 
-export async function getEstimateForTimeframe(user, { timeframe }) {
+export async function getEstimateForTimeframe(userId, account, { from }) {
   try {
-    const { then, now } = getTimeRange(timeframe);
     const query = getSearchString({
-      then,
-      now
+      from
     });
-    return requestCount(user, { filter: query });
+    return requestCount(account, { filter: query }, userId);
   } catch (err) {
     logger.error(err);
     throw err;
   }
 }
 
-async function requestCount(user, { filter, folder = 'AllItems' } = {}) {
+async function requestCount(
+  account,
+  { filter, folder = 'AllItems' } = {},
+  userId
+) {
   try {
-    const accessToken = await getAccessToken(user);
+    const accessToken = await getOutlookAccessToken(userId, account);
     return doRequest(getCountUrl({ filter, folder }), accessToken);
   } catch (err) {
     logger.error('outlook-access: failed to send request to api');

@@ -1,0 +1,73 @@
+{
+  "name": null,
+  "email": "james@squarecat.io",
+  "password": {
+    "salt": "856aeec93a422d865ec2a87a673d77b8",
+    "hash": "861d07378cfbad8e16de8dd951463267d61b66344f61b9713d02c4f8deac227019b8305829b2810aa407b070f3d22dbd0cbb12bc99fc983c410be90fa07ba7f7"
+  },
+  "referredBy": null,
+  "organisationId": null,
+  "loginProvider": "password",
+  "token": "29d31d18-7b8f-4d61-a0f1-c203f7e393f8",
+  "accounts": [
+    {
+      "id": "115125309554940155283",
+      "provider": "google",
+      "email": "james@squarecat.io",
+      "keys": {
+        "accessToken": "hwvphz82rbWPe1fuQIbVscGyb+bsijP0vLm+acw0VvSWMn/qKXwsr4AoDh1RnhWOia2qq7yVmLsECpW3ch9eEfDsprb8kaEzeFAyNX/R2UzgTQ5JGtRiXKRupg0tuTMX/y+u9ft5/0NLkhkyTMnjSQO/+JYErldIC0wl++sgis6WF8wm4YeksT4BMCAlK3pQzQ==",
+        "refreshToken": "E2Cre92ZIVdP3ZrwgLW3vyuaAZ8qc3ILB/Y14BS0tYMvMUJuyPX8SQxRh0YaUIvFTZoj+aiT7Aymp/VaZ8gTJLtQqFHquuvIt3o8USqyz20LEA=="
+      },
+      "addedAt": 1561012130942
+    }
+  ],
+  "id": "ed4c2578-fd01-4081-863f-fd02d11c2960",
+  "createdAt": 1561012107182,
+  "lastUpdatedAt": 1561013594815,
+  "hashedEmails": [
+    "3386f00d9adf8b5d0bc9d75ed09b91c4a1049463",
+    "3386f00d9adf8b5d0bc9d75ed09b91c4a1049463"
+  ],
+  "referralCode": "FUTReBsk_",
+  "referrals": [],
+  "unsubscriptions": [
+    {
+      "to": "8dAlaTdz5NDp3eE67U9y8JEM96STawS5pc3VzL1AkR4Qyw==",
+      "from": "rWJSyWf4bu3362x6a6kQ1HqL+W4okvDXEJIvSfHg7QlqaA/q8FnH2Ym1dCm68cVfLmuVLgZD4oeKWLE=",
+      "id": "16b72ac153687e93",
+      "date": 1560997007000.0,
+      "unsubscribeStrategy": "link",
+      "unsubscribeLink": "YpKgZtwp7xgoqW/Jc3sqRiqWHs06dUdtjNvQfzyFTqNaC0jXa63yiljDewMVkQtFDJ/zNQztkPXY/7jGhrhbUtWjd4YCbIFZhMaiImgP",
+      "unsubscribeMailTo": null,
+      "hasImage": true,
+      "estimatedSuccess": true,
+      "unsubscribedAt": 1561013601050
+    }
+  ],
+  "activity": [
+    {
+      "type": "connectedFirstAccount",
+      "data": {
+        "id": "115125309554940155283",
+        "provider": "google",
+        "email": "james@squarecat.io"
+      },
+      "credits": 100,
+      "notificationSeen": false,
+      "id": "601fae9d-72ab-4757-aae5-0d5933c17f53",
+      "timestamp": 1561012131011
+    }
+  ],
+  "preferences": {
+    "hideUnsubscribedMails": false,
+    "marketingConsent": true
+  },
+  "milestones": {
+    "connectedFirstAccount": 1,
+    "completedOnboarding": 1
+  },
+  "billing": {
+    "credits": 99
+  },
+  "verificationCode": "EAsh1SgMRT"
+}

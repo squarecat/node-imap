@@ -1,38 +1,33 @@
 import { getGmailAccessToken, getMailClient } from './access';
-import { getSearchString, getTimeRange, hasPaidScanAvailable } from './utils';
 
+import { MailError } from '../../../utils/errors';
 import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
+import { getSearchString } from './utils';
 import httpMessageParser from 'http-message-parser';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
 // todo convert to generator?
 export async function* fetchMail(
-  { user, timeframe },
+  { user, account, from },
   { strategy = 'api', batch = false } = {}
 ) {
   const start = Date.now();
   try {
-    if (!hasPaidScanAvailable(user, timeframe)) {
-      logger.warn(
-        'mail-service: User attempted search that has not been paid for'
-      );
-      throw new Error('Not paid');
-    }
     const { unsubscriptions, ignoredSenderList } = user;
     const [totalEstimate, client, accessToken] = await Promise.all([
-      getEstimateForTimeframe(user, {
-        timeframe,
+      getEstimateForTimeframe(user.id, account, {
+        from,
         includeTrash: true
       }),
-      getMailClient(user, strategy),
-      getGmailAccessToken(user)
+      getMailClient(user.id, account, strategy),
+      getGmailAccessToken(user.id, account)
     ]);
     logger.info(
-      `gmail-fetcher: started ${timeframe} scan (${
+      `gmail-fetcher: checking for new mail after ${new Date(from)} (${
         user.id
       }) [estimated ${totalEstimate} mail]`
     );
@@ -42,56 +37,40 @@ export async function* fetchMail(
     let progress = 0;
     let dupeCache = {};
     let dupeSenders = [];
-    if (strategy === 'api') {
-      for await (let mail of fetchMailApi(client, {
-        accessToken,
-        timeframe,
-        batch
-      })) {
-        totalEmailsCount = totalEmailsCount + mail.length;
-        progress = progress + mail.length;
-        const unsubscribableMail = parseMailList(mail, {
-          ignoredSenderList,
-          unsubscriptions
-        });
-        const previouslyUnsubbedCount = unsubscribableMail.filter(
-          sm => !sm.subscribed
-        ).length;
-        totalPrevUnsubbedCount =
-          totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
-        if (unsubscribableMail.length) {
-          const {
-            dupes: newDupeCache,
-            deduped,
-            dupeSenders: newDupeSenders
-          } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
-          totalUnsubCount = totalUnsubCount + deduped.length;
-          dupeCache = newDupeCache;
-          dupeSenders = newDupeSenders;
-          yield { type: 'mail', data: deduped };
-        }
-        yield { type: 'progress', data: { progress, total: totalEstimate } };
+    for await (let mail of fetchMailApi(client, {
+      accessToken,
+      from,
+      batch
+    })) {
+      totalEmailsCount = totalEmailsCount + mail.length;
+      progress = progress + mail.length;
+      const unsubscribableMail = parseMailList(mail, {
+        ignoredSenderList,
+        unsubscriptions
+      });
+      const previouslyUnsubbedCount = unsubscribableMail.filter(
+        sm => !sm.subscribed
+      ).length;
+      totalPrevUnsubbedCount = totalPrevUnsubbedCount + previouslyUnsubbedCount;
+
+      if (unsubscribableMail.length) {
+        const {
+          dupes: newDupeCache,
+          deduped,
+          dupeSenders: newDupeSenders
+        } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
+        totalUnsubCount = totalUnsubCount + deduped.length;
+        dupeCache = newDupeCache;
+        dupeSenders = newDupeSenders;
+        yield { type: 'mail', data: deduped };
       }
-    } else if (strategy === 'imap') {
-      for await (let mail of fetchMailImap(client, { timeframe })) {
-        totalEmailsCount = totalEmailsCount + mail.length;
-        progress = progress + mail.length;
-        const unsubscribableMail = parseMailList(mail, {
-          ignoredSenderList,
-          unsubscriptions
-        });
-        if (unsubscribableMail.length) {
-          yield { type: 'mail', data: unsubscribableMail };
-        }
-        yield { type: 'progress', data: totalEstimate };
-      }
+      yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
 
     logger.info(
-      `gmail-fetcher: finished ${timeframe} scan (${
-        user.id
-      }) [took ${(Date.now() - start) / 1000}s, ${totalEmailsCount} results]`
+      `gmail-fetcher: finished scan (${user.id}) [took ${(Date.now() - start) /
+        1000}s, ${totalEmailsCount} results]`
     );
     return {
       totalMail: totalEmailsCount,
@@ -101,15 +80,15 @@ export async function* fetchMail(
       dupeSenders
     };
   } catch (err) {
-    logger.error('gmail-fetcher: failed to fetch mail');
-    logger.error(err);
-    throw err;
+    throw new MailError('failed to fetch mail', {
+      provider: 'gmail',
+      cause: err
+    });
   }
 }
 
-export async function* fetchMailImap(client, { timeframe }) {
+export async function* fetchMailImap(client, { from }) {
   try {
-    const { then } = getTimeRange(timeframe);
     client.onerror = err => console.error(err);
     console.log('authenticating with imap');
     await client.connect();
@@ -119,7 +98,7 @@ export async function* fetchMailImap(client, { timeframe }) {
       'BODY.PEEK[HEADER.FIELDS (From To Subject List-Unsubscribe)]'
     ];
     const resultUUIDs = await client.search('INBOX', {
-      since: then
+      since: from
     });
     let results = await client.listMessages(
       'INBOX',
@@ -147,14 +126,12 @@ export async function* fetchMailImap(client, { timeframe }) {
 
 async function* fetchMailApi(
   client,
-  { accessToken, timeframe, batch = true, perPage = 100 }
+  { accessToken, from, batch = true, perPage = 100 }
 ) {
   let pageToken;
   try {
-    const { then, now } = getTimeRange(timeframe);
     const query = getSearchString({
-      then,
-      now
+      from
     });
     const fields = 'nextPageToken';
     do {

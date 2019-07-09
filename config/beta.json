@@ -10,22 +10,25 @@
     "port": "$PORT"
   },
   "urls": {
-    "referral": "https://beta.leavemealone.xyz/r/"
+    "referral": "https://beta.leavemealone.app/r/",
+    "base": "https://beta.leavemealone.app"
   },
   "auth": {
     "google": {
-      "redirect": "https://beta.leavemealone.xyz/auth/google/callback"
+      "loginRedirect": "https://beta.leavemealone.app/login/google/redirect",
+      "connectRedirect": "https://beta.leavemealone.app/auth/google/connect/callback"
     },
     "outlook": {
-      "redirect": "https://beta.leavemealone.xyz/auth/outlook/callback"
+      "loginRedirect": "https://beta.leavemealone.app/login/outlook/redirect",
+      "connectRedirect": "https://beta.leavemealone.app/auth/outlook/connect/callback"
     }
   },
   "mailgun": {
     "apiKey": "$MAILGUN_API_KEY",
     "domains": {
-      "unsubscribe": "beta.mail.leavemealone.xyz",
-      "transactional": "beta.info.leavemealone.xyz",
-      "newsletter": "beta.news.leavemealone.xyz"
+      "unsubscribe": "beta.mail.leavemealone.app",
+      "transactional": "beta.info.leavemealone.app",
+      "newsletter": "beta.news.leavemealone.app"
     }
   },
   "puppeteer": {

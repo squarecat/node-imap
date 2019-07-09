@@ -1,24 +1,29 @@
 import {
+  addConnectedAccount,
+  addCreditsRewarded,
   addEstimate,
   addFailedUnsubscription,
   addGiftPayment,
   addGiftRedemption,
   addNewsletterUnsubscription,
   addNumberofEmails,
+  addOrganisation,
+  addOrganisationUnsubscribe,
+  addOrganisationUser,
+  addPackage,
   addPayment,
-  addReferralCredit,
-  addReferralPaidScan,
+  addReferralPurchase,
   addReferralSignup,
   addRefund,
   addReminderRequest,
   addReminderSent,
-  addScan,
   addUnsubStatus,
   addUnsubscriptionByEmail,
   addUnsubscriptionByLink,
   addUser,
   addUserAccountDeactivated,
-  getStats
+  getStats,
+  removeOrganisationUser
 } from '../dao/stats';
 
 import { getUnsubscriptionsLeaderboard } from '../dao/user';
@@ -28,9 +33,9 @@ export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
   if (unsubStrategy === 'mailto') return addUnsubscriptionByEmail();
   return false;
 }
-export function addScanToStats(count) {
-  return addScan(count);
-}
+// export function addScanToStats(count) {
+//   return addScan(count);
+// }
 export function addFailedUnsubscriptionToStats(count) {
   return addFailedUnsubscription(count);
 }
@@ -42,6 +47,9 @@ export function addUserToStats(count) {
 }
 export function addPaymentToStats({ price }) {
   return addPayment({ price });
+}
+export function addPackageToStats({ credits }) {
+  return addPackage({ credits });
 }
 export function addRefundToStats({ price }) {
   return addRefund({ price });
@@ -64,11 +72,8 @@ export function addReminderSentToStats(count) {
 export function addReferralSignupToStats() {
   return addReferralSignup();
 }
-export function addReferralPaidScanToStats() {
-  return addReferralPaidScan();
-}
-export function addReferralCreditToStats({ amount }) {
-  return addReferralCredit({ amount });
+export function addReferralPurchaseToStats() {
+  return addReferralPurchase();
 }
 export function addUserAccountDeactivatedToStats(count) {
   return addUserAccountDeactivated(count);
@@ -77,8 +82,27 @@ export function addNewsletterUnsubscriptionToStats(count) {
   return addNewsletterUnsubscription(count);
 }
 export function addUnsubStatusToStats(status) {
-  addUnsubStatus(status);
+  return addUnsubStatus(status);
 }
+export function addCreditsRewardedToStats(credits) {
+  return addCreditsRewarded(credits);
+}
+export function addOrganisationToStats(count) {
+  return addOrganisation(count);
+}
+export function addOrganisationUserToStats(count) {
+  return addOrganisationUser(count);
+}
+export function removeOrganisationUserToStats(count) {
+  return removeOrganisationUser(count);
+}
+export function addOrganisationUnsubscribeToStats(count) {
+  return addOrganisationUnsubscribe(count);
+}
+export function addConnectedAccountToStats(provider) {
+  return addConnectedAccount(provider);
+}
+
 export function getAllStats() {
   return getStats();
 }

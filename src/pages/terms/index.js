@@ -9,7 +9,7 @@ export default function Terms() {
       <h3>1. Terms</h3>
       <p>
         By accessing the website at{' '}
-        <a href="https://leavemealone.xyz">https://leavemealone.xyz</a>, you are
+        <a href="https://leavemealone.app">https://leavemealone.app</a>, you are
         agreeing to be bound by these terms of service, all applicable laws and
         regulations, and agree that you are responsible for compliance with any
         applicable local laws. If you do not agree with any of these terms, you

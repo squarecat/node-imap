@@ -1,0 +1,17 @@
+@import '../header-btn.module.scss';
+
+.btn {
+  @extend .header-btn;
+  &:hover {
+    background-color: $color-red-darker;
+  }
+}
+
+.btn-text {
+  @extend .header-btn-text;
+}
+
+.long {
+  @extend .header-btn-text--long;
+  margin-left: 7px;
+}

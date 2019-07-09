@@ -1,0 +1,97 @@
+@import '../../../styles/common/colors.scss';
+@import '../layout.module.scss';
+@import '../../../components/btn/btn.module.scss';
+
+.organisation-section {
+  @extend .profile-section;
+}
+
+.users {
+  @media (max-width: 600px) {
+    // hide cells after first 3
+    th:nth-child(1n + 4),
+    td:nth-child(1n + 4) {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    // hide cells after first 2
+    th:nth-child(1n + 3),
+    td:nth-child(1n + 3) {
+      display: none;
+    }
+  }
+}
+
+.tabled {
+  @extend .profile-section--unpadded;
+}
+
+.table-text-content {
+  @extend .profile-unpadded-content;
+}
+
+.admin {
+  margin: 0 5px 0 0;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  background-color: $color-bg-success;
+
+  @media (max-width: 400px) {
+    padding: 5px;
+  }
+}
+
+.separator {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+  padding-top: 30px;
+  display: block;
+}
+
+.email,
+.accounts {
+  display: block;
+  max-width: 300px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.seats,
+.accounts {
+  opacity: 0.6;
+  font-size: 12px;
+}
+
+.account {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 20px;
+}
+.accounts-title {
+  text-decoration: underline;
+}
+
+.invoice-price {
+  font-weight: bold;
+}
+
+.invoice-btn {
+  font-size: 14px;
+  @extend .btn;
+  @extend .muted;
+  @extend .compact;
+  @extend .basic;
+
+  @media (max-width: 600px) {
+    padding: 5px;
+  }
+  @media (max-width: 400px) {
+    font-size: 12px;
+  }
+}

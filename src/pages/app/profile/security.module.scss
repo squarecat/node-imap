@@ -1,0 +1,32 @@
+@import '../../../styles/common/colors.scss';
+@import './../../app/profile/profile.module.scss';
+@import '../../../components/btn/btn.module.scss';
+@import '../../../components/text/text.module.scss';
+
+.security-section {
+  @extend .profile-section;
+}
+
+.security-section.two-factor-auth {
+  @extend .profile-section--unpadded;
+}
+
+.two-factor-auth-content {
+  @extend .profile-unpadded-content;
+}
+.two-factor-auth-table {
+  text-align: center;
+}
+
+.unconfigured {
+  font-style: italic;
+}
+
+.change-password-form {
+  text-align: left;
+  max-width: 300px;
+
+  @media (max-width: 800px) {
+    max-width: auto;
+  }
+}

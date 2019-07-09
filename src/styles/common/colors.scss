@@ -7,26 +7,43 @@ $color-red-light: #fddbd7;
 $color-red-lighter: rgba(231, 57, 48, 0.1);
 $color-red-lightest: rgba(255, 217, 214, 0.1);
 
+$color-dark-background: rgb(29, 25, 25);
+
 $color-grey: #f2edec;
 $color-grey-darker: #e9e1e1;
 
-$color-primary-font: hsla(0, 0%, 0%, 0.8);
+// $color-primary-font: hsla(0, 0%, 0%, 0.8);
+$color-primary-font: #333333;
 
 $color-text-important: $color-red;
 
 $color-link: $color-red;
 $color-link-hover: $color-red-darker;
 
-$color-input-border: rgba(231, 57, 48, 0.4);
-$color-input-border-focus: hsla(18, 100%, 38%, 0.25);
+$color-input-border: $color-grey-darker;
+$color-input-border-focus: $color-primary-font;
+$color-input-border-success: $color-red-darker;
+$color-weak-border: $color-secondary-bg;
+
 $color-input-label: #999;
+$color-input-placeholder: #bfbfbf;
 $color-input-bg: #fff;
-$color-input-disabled: #999;
+$color-input-disabled: #9a9393;
+$color-input-disabled-bg: $color-grey;
 
 $color-border-red: #ffc9c5;
 
 $color-text-error: $color-red-darker;
+$color-text-warning: #f55a13;
 $color-text-success: #2fbc2f;
 
 $color-bg-error: #f1645f;
+$color-bg-warning: #f86724;
 $color-bg-success: #37d288;
+$color-bg-info: #4293c8;
+
+$color-modal-bg: rgba(252, 219, 216, 0.75);
+$color-modal-bg-opaque: rgb(252, 219, 216);
+
+$color-btn-disabled-bg: #fdecea;
+$color-btn-disabled: #f6bebc;

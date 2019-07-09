@@ -24,8 +24,7 @@ async function addUnsubscription(type, count = 1) {
           unsubscriptions: count,
           [type]: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting stat unsubscription type ${type}`);
@@ -34,9 +33,9 @@ async function addUnsubscription(type, count = 1) {
   }
 }
 
-export function addScan(count = 1) {
-  return updateSingleStat('scans', count);
-}
+// export function addScan(count = 1) {
+//   return updateSingleStat('scans', count);
+// }
 
 export function addFailedUnsubscription(count = 1) {
   return updateSingleStat('unsubscriptionsFailed', count);
@@ -67,13 +66,13 @@ export function addReminderSent(count = 1) {
 }
 
 export function addReferralSignup(count = 1) {
-  return updateSingleStat('referralSignup', count);
+  return updateSingleStat('referralSignupV2', count);
+}
+export function addReferralPurchase(count = 1) {
+  return updateSingleStat('referralPurchaseV2', count);
 }
 export function addReferralPaidScan(count = 1) {
   return updateSingleStat('referralPaidScan', count);
-}
-export function addReferralCredit({ amount = 5 }) {
-  return updateSingleStat('referralCredit', amount);
 }
 export function addNewsletterUnsubscription(count = 1) {
   return updateSingleStat('newsletterUnsubscription', count);
@@ -84,6 +83,26 @@ export function addUnsubStatus(status) {
   }
   if (status === 'delivered') {
     return updateSingleStat('successfulEmailUnsubscribes');
+  }
+}
+export function addOrganisation(count = 1) {
+  return updateSingleStat('organisations', count);
+}
+export function addOrganisationUser(count = 1) {
+  return updateSingleStat('organisationUsers', count);
+}
+export function removeOrganisationUser(count = -1) {
+  return updateSingleStat('organisationUsers', count);
+}
+export function addOrganisationUnsubscribe(count = 1) {
+  return updateSingleStat('organisationUnsubscribes', count);
+}
+export function addConnectedAccount(provider, count = 1) {
+  if (provider === 'google') {
+    return updateSingleStat('connectedAccountGoogle', count);
+  }
+  if (provider === 'outlook') {
+    return updateSingleStat('connectedAccountOutlook', count);
   }
 }
 
@@ -97,8 +116,7 @@ export async function updateSingleStat(statName, count = 1) {
         $inc: {
           [statName]: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting stat ${statName}`);
@@ -122,8 +140,7 @@ export async function addNumberofEmails({
           unsubscribableEmails: totalUnsubscribableEmails,
           previouslyUnsubscribedEmails: totalPreviouslyUnsubscribedEmails
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(
@@ -144,11 +161,29 @@ export async function addPayment({ price }, count = 1) {
           totalRevenue: price,
           totalSales: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting payment stat ${price}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function addPackage({ credits }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          creditsPurchased: credits,
+          packagesPurchased: count
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting package stat ${credits}`);
     logger.error(err);
     throw err;
   }
@@ -164,8 +199,7 @@ export async function addRefund({ price }, count = 1) {
           totalRevenueRefunded: price,
           totalSalesRefunded: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting refund stat ${price}`);
@@ -184,11 +218,28 @@ export async function addGiftPayment({ price }, count = 1) {
           giftRevenue: price,
           giftSales: count
         }
-      },
-      { upsert: true }
+      }
     );
   } catch (err) {
     logger.error(`stats-dao: error inserting payment stat ${price}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function addCreditsRewarded(credits) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          creditsRewarded: credits
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting reward ${credits}`);
     logger.error(err);
     throw err;
   }
@@ -212,7 +263,7 @@ export async function getStats() {
 
 const recordedStats = [
   'users',
-  'scans',
+  // 'scans',
   'estimates',
   'unsubscriptions',
   'emails',
@@ -231,12 +282,20 @@ const recordedStats = [
   'usersDeactivated',
   'remindersRequested',
   'remindersSent',
-  'referralSignup',
+  'referralSignupV2',
   'referralPaidScan',
-  'referralCredit',
+  'referralPurchaseV2',
   'newsletterUnsubscription',
   'failedEmailUnsubscribes',
-  'successfulEmailUnsubscribes'
+  'successfulEmailUnsubscribes',
+  'organisations',
+  'organisationUsers',
+  'organisationUnsubscribes',
+  'creditsRewarded',
+  'creditsPurchased',
+  'packagesPurchased',
+  'connectedAccountGoogle',
+  'connectedAccountOutlook'
 ];
 
 export async function recordStats() {

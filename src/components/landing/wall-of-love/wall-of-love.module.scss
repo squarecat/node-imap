@@ -1,0 +1,59 @@
+.tweet-wall {
+}
+
+.tweet-box {
+  margin: 45px auto 6em auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 15px;
+  align-items: flex-start;
+  padding-top: 0;
+}
+
+.twitter-tweet {
+  display: block;
+}
+
+.twitter-tweet > div {
+  margin: 0 auto 10px auto;
+}
+
+.header {
+  width: 600px;
+  margin: 0 auto 160px auto;
+  text-align: center;
+  max-width: 100%;
+  padding: 0 20px;
+}
+
+.ph-badge {
+  margin: 0 5px;
+  display: inline-block;
+}
+
+@media (max-width: 800px) {
+  /* hide everything after the 3rd column */
+  .col:nth-child(n + 3) {
+    display: none;
+  }
+
+  .tweet-box {
+    grid-template-columns: 50% 50%;
+  }
+}
+
+@media (max-width: 450px) {
+  /* hide everything after the 2nd column */
+  .col:nth-child(n + 2) {
+    display: none;
+  }
+
+  .tweet-box {
+    margin-top: 45px;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 15px;
+    align-items: flex-start;
+    padding-top: 0;
+  }
+}

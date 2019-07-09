@@ -3,12 +3,19 @@ import {
   updateUserUnsubStatus
 } from '../../services/user';
 
+import config from 'getconfig';
+import crypto from 'crypto';
 import logger from '../../utils/logger';
+
+const signingKey = config.mailgun.apiKey;
 
 export default app => {
   app.post('/webhooks/mailgun/unsubs', async (req, res) => {
     try {
       const { body } = req;
+      if (!verify(body)) {
+        throw new Error('mailgun: webhook failed to verify');
+      }
       const eventData = body['event-data'];
       const { event: eventType } = eventData;
       const variables = eventData['user-variables'];
@@ -84,14 +91,40 @@ export default app => {
     }
   });
 
+  app.post('/webhooks/mailgun/message', async (req, res) => {
+    const { body } = req;
+    const { sender, recipient, subject, ['body-plain']: bodyPlain } = body;
+
+    try {
+      if (!verify(body)) {
+        throw new Error('mailgun: webhook failed to verify');
+      }
+      // get the user and mail that this is in reference to
+      const [, userId, mailId] = recipient.match(/^(.+)\.(.+)-bot@.*$/);
+      updateUserUnsubStatus(userId, {
+        mailId,
+        status: 'replied',
+        sender,
+        subject,
+        bodyPlain
+      });
+    } catch (err) {
+      logger.error('mailgun-webhook: failed to parse message reply');
+      logger.error(err);
+      res.sendStatus(500);
+    }
+  });
   app.post('/webhooks/mailgun/newsletter', async (req, res) => {
     try {
       const { body } = req;
+      if (!verify(body)) {
+        throw new Error('mailgun: webhook failed to verify');
+      }
       const eventData = body['event-data'];
       const { event: eventType } = eventData;
       switch (eventType) {
         // Mailgun accepted the request to send/forward the email and the
-        // message has been placed in queue."
+        // message has been placed in queue.
         case 'accepted':
           break;
         // Mailgun rejected the request to send/forward the email.
@@ -146,3 +179,12 @@ export default app => {
     }
   });
 };
+
+function verify({ signature: mailSig }) {
+  const { token, timestamp, signature } = mailSig;
+  const digest = crypto
+    .createHmac('sha256', signingKey)
+    .update(`${timestamp}${token}`)
+    .digest('hex');
+  return digest === signature;
+}

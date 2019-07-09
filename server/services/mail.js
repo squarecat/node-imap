@@ -1,49 +1,94 @@
 import {
-  addEstimateToStats,
   addFailedUnsubscriptionToStats,
   addNumberofEmailsToStats,
-  addScanToStats,
   addUnsubscriptionToStats
 } from './stats';
 import {
   addResolvedUnsubscription,
   addUnresolvedUnsubscription
 } from '../dao/subscriptions';
-import {
-  addScan as addScanToUser,
-  resolveUnsubscription as resolveUserUnsubscription,
-  updatePaidScan as updatePaidScanForUser
-} from '../dao/user';
-import {
-  fetchMail as fetchMailFromGmail,
-  getEstimates as getMailEstimatesFromGmail
-} from './mail/gmail';
-import {
-  fetchMail as fetchMailFromOutlook,
-  getEstimates as getMailEstimatesFromOutlook
-} from './mail/outlook';
 
 import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
+import { fetchMail as fetchMailFromGmail } from './mail/gmail';
+import { fetchMail as fetchMailFromOutlook } from './mail/outlook';
 import fs from 'fs';
 import { getUserById } from './user';
 import { imageStoragePath } from 'getconfig';
 import logger from '../utils/logger';
+import { resolveUnsubscription as resolveUserUnsubscription } from '../dao/user';
+import subMonths from 'date-fns/sub_months';
 
-// todo convert to generator?
-export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
-  const user = await getUserById(userId);
-  const scannedAt = Date.now();
-  const { provider } = user;
+export async function* fetchMail({ userId, accountFilters = [] }) {
+  const user = await getUserById(userId, { withAccountKeys: true });
+  let { accounts, preferences } = user;
+  let accountScanData = [];
+  let accountOccurrences = {};
+  let dupes = [];
+  // if account filters are provided then only fetch from those accounts
+  // otherwise search from all accounts
+  if (accountFilters.length) {
+    accounts = accounts.reduce((out, ac) => {
+      const filter = accountFilters.find(af => ac.id === af.id);
+      if (!filter) return out;
+      return [
+        ...out,
+        {
+          ...ac,
+          filter
+        }
+      ];
+    }, []);
+  }
+  try {
+    const iterators = await Promise.all(
+      accounts.map(account => fetchMailByAccount({ account, user }))
+    );
+    for (let iter of iterators) {
+      let next = await iter.next();
+      while (!next.done) {
+        const { value } = next;
+        yield value;
+        next = await iter.next();
+      }
+      const { scanData, occurrences, dupeSenders } = next.value;
+      accountScanData = [...accountScanData, scanData];
+      accountOccurrences = { ...accountOccurrences, ...occurrences };
+      // collect dupe senders if this scan was from data
+      // at least 6 months ago
+      const { type } = scanData;
+      if (type === 'full') {
+        dupes = [...dupes, dupeSenders];
+      }
+    }
+    if (preferences.occurrencesConsent) {
+      addOrUpdateOccurrences(userId, dupes);
+    }
+    return {
+      occurrences: accountOccurrences
+    };
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function* fetchMailByAccount({ user, account, ignore = false }) {
+  const { provider, filter } = account;
+  let { from } = filter;
+  // from should be max 6 months
+  const sixMonthsAgo = subMonths(Date.now(), 6);
+  if (!from || sixMonthsAgo > from) {
+    from = sixMonthsAgo;
+  }
   let it;
   try {
     if (provider === 'google') {
       it = await fetchMailFromGmail(
-        { user, timeframe },
+        { user, account, from },
         { strategy: 'api', batch: true }
       );
     } else if (provider === 'outlook') {
-      it = await fetchMailFromOutlook({ user, timeframe });
+      it = await fetchMailFromOutlook({ user, account, from });
     } else {
       throw new Error('mail-service unknown provider');
     }
@@ -51,7 +96,19 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
     let next = await it.next();
     while (!next.done) {
       const { value } = next;
-      yield value;
+      if (value.type === 'mail') {
+        yield {
+          type: value.type,
+          data: value.data.map(v => ({
+            forAccount: account.email,
+            provider,
+            ...v
+          }))
+        };
+      } else {
+        yield value;
+      }
+
       next = await it.next();
     }
     const {
@@ -63,30 +120,24 @@ export async function* fetchMail({ userId, timeframe = '3d', ignore = false }) {
     } = next.value;
 
     const scanData = {
-      scannedAt,
-      timeframe,
+      from,
       totalEmails: totalMail,
       totalUnsubscribableEmails: totalUnsubscribableMail,
-      totalPreviouslyUnsubscribedMail
+      totalPreviouslyUnsubscribedMail,
+      email: account.email,
+      provider: account.provider,
+      type: sixMonthsAgo === from ? 'full' : 'topup'
     };
     if (!ignore) {
-      addScanToStats();
       addNumberofEmailsToStats({
         totalEmails: totalMail,
         totalUnsubscribableEmails: totalUnsubscribableMail,
         totalPreviouslyUnsubscribedEmails: totalPreviouslyUnsubscribedMail
       });
-      addScanToUser(user.id, scanData);
-      if (timeframe !== '3d') {
-        updatePaidScanForUser(userId, timeframe);
-      }
     }
-    addOrUpdateOccurrences(userId, dupeSenders, timeframe);
 
-    return { ...scanData, occurrences };
+    return { scanData, occurrences, dupeSenders };
   } catch (err) {
-    console.error('mail-service: failed to fetch mail for user', user.id);
-    console.error(err);
     throw err;
   }
 }
@@ -139,25 +190,25 @@ export async function addUnsubscribeErrorResponse(
   }
 }
 
-export async function getMailEstimates(userId) {
-  const user = await getUserById(userId);
-  const { provider } = user;
-  let estimates;
-  try {
-    if (provider === 'google') {
-      estimates = await getMailEstimatesFromGmail(user);
-    } else if (provider === 'outlook') {
-      estimates = await getMailEstimatesFromOutlook(user);
-    } else {
-      throw new Error('mail-service unknown provider');
-    }
-    addEstimateToStats();
-    return estimates;
-  } catch (err) {
-    logger.error(
-      `mail-service: error getting mail estimates for user ${userId}`
-    );
-    logger.error(err);
-    throw err;
-  }
-}
+// export async function getMailEstimates(userId) {
+//   const user = await getUserById(userId);
+//   const { provider } = user;
+//   let estimates;
+//   try {
+//     if (provider === 'google') {
+//       estimates = await getMailEstimatesFromGmail(user);
+//     } else if (provider === 'outlook') {
+//       estimates = await getMailEstimatesFromOutlook(user);
+//     } else {
+//       throw new Error('mail-service unknown provider');
+//     }
+//     addEstimateToStats();
+//     return estimates;
+//   } catch (err) {
+//     logger.error(
+//       `mail-service: error getting mail estimates for user ${userId}`
+//     );
+//     logger.error(err);
+//     throw err;
+//   }
+// }

@@ -25,8 +25,8 @@ export async function unsubscribeWithMailTo({ userId, mailId, unsubMailto }) {
     }, {});
     const sent = await sendUnsubscribeMail({
       toAddress,
-      'v:user-id': userId,
-      'v:email-id': mailId,
+      userId,
+      mailId,
       ...params
     });
     return { estimatedSuccess: !!sent };

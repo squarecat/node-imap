@@ -1,31 +1,89 @@
 @import '../../styles/common/colors.scss';
+@import '../header/header.module.scss';
 
 .footer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 60px 30px;
+  background-color: #1d1919;
+  margin-top: 10em;
+
+  a {
+    opacity: 0.9;
+  }
+  a,
+  a:hover {
+    color: #eae8e8;
+    border-bottom-color: transparent;
+  }
+
+  a:hover {
+    opacity: 1;
+    border-bottom-color: #eae8e8;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 5em;
+  }
+
+  @media (max-width: 500px) {
+    padding: 50px 10px;
+  }
+}
+
+.footer-inner {
+  width: 1050px;
+  max-width: 100%;
+}
+
+.footer-intro {
+  display: flex;
   width: 100%;
-  padding: 100px 0;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eae8e8;
 }
 
-.subpage {
-  padding-bottom: 0;
+.footer-links {
+  display: flex;
+  width: 100%;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+  }
 }
 
-@media (max-width: 500px) {
-  .footer {
-    padding: 50px 0;
+.footer-logo {
+  @extend .header-logo;
+  margin-left: 15px;
+}
+
+.footer-title {
+  @extend .header-title;
+  color: #eae8e8;
+
+  &:hover {
+    color: #eae8e8;
   }
 }
 
 .footer-nav,
-.footer-social {
+.footer-nav-intro {
   margin: 0;
   padding: 0;
+}
+
+.footer-nav {
+  flex: 1;
+  margin-bottom: 2rem;
+}
+
+.footer-nav-intro {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 .footer li {
@@ -33,9 +91,38 @@
   margin: 0 5px;
 }
 
+.footer-social {
+  margin: 2em 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
 .footer-social li svg {
-  color: $color-link;
+  color: #eae8e8;
 }
 .footer-social li:hover svg {
-  color: $color-red;
+  color: #eae8e8;
+}
+
+.subpage {
+}
+
+.made-by,
+p.made-by {
+  text-align: center;
+  color: #eae8e8;
+  a {
+    opacity: 0.9;
+  }
+  a,
+  a:hover {
+    color: #eae8e8;
+    border-bottom-color: transparent;
+  }
+
+  a:hover {
+    opacity: 1;
+    border-bottom-color: #eae8e8;
+  }
 }

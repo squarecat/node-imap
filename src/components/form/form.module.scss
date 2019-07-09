@@ -1,19 +1,127 @@
 @import '../../styles/common/colors.scss';
+@import '../../styles/common/forms.scss';
 
 .form-input {
   border-radius: 5px;
-  padding: 20px 25px;
-  margin-bottom: 1rem;
+  padding: 0 25px;
+  line-height: 66px;
+  height: 68px;
+  margin-bottom: 0;
   width: 100%;
-  max-width: 300px;
-  font-size: 16px;
+  font-size: $input-font-size;
   box-sizing: border-box;
   border: 1px solid $color-input-border;
+  background: white;
+  outline: 0;
+
+  &:focus {
+    border-color: $color-input-border-focus;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    color: $color-input-disabled;
+    background-color: $color-input-disabled-bg;
+  }
 }
 
-.form-input:focus {
-  outline: 0;
-  box-shadow: 0 7px 1em $color-input-border-focus;
+.inline-input {
+  display: flex;
+  flex-direction: row;
+  height: 38px;
+
+  > *:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+    height: 38px;
+  }
+
+  > *:nth-child(2) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+    line-height: 38px;
+    flex: 1;
+    border: 1px solid $color-input-border;
+    border-left: none;
+  }
+
+  input:focus + a,
+  input:focus + button {
+    border: 1px solid $color-input-border-focus;
+    border-left: none;
+  }
+
+  ::-webkit-input-placeholder {
+    font-size: 14px;
+  }
+  :-moz-placeholder {
+    font-size: 14px;
+  }
+  ::-moz-placeholder {
+    font-size: 14px;
+  }
+  :-ms-input-placeholder {
+    font-size: 14px;
+  }
+}
+
+.input-compactt {
+  padding: 0 20px;
+  line-height: 56px;
+  height: 58px;
+}
+
+.input-smaller {
+  padding: 0 10px;
+  line-height: 46px;
+  height: 48px;
+}
+
+.input-basic {
+  border-color: transparent;
+  border-radius: 0;
+  -webkit-appearance: none;
+  border-bottom-color: $color-input-border;
+
+  &:focus {
+    border-color: transparent;
+    border-bottom-color: $color-input-border-focus;
+    .container & {
+      border-bottom-color: $color-input-border;
+    }
+  }
+
+  &:last-child:not(.form-select-dropdown) {
+    .container & {
+      border-bottom-color: transparent;
+    }
+  }
+}
+
+.pill {
+  display: inline-block;
+  line-height: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 0;
+  background: $color-red-light;
+  width: auto;
+  max-width: 160px;
+  font-size: 12px;
+  font-weight: bolder;
+  padding: 0 18px 0 10px;
+}
+
+.container {
+  border: 1px solid $color-input-border;
+  border-radius: 5px;
+  padding: 0 5px;
+
+  &:focus-within {
+    border-color: $color-input-border-focus;
+  }
 }
 
 .form-input:focus + .form-label,
@@ -22,16 +130,116 @@
   font-size: 0.75em;
 }
 
+.form-select-dropdown {
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+
+  &:after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-style: solid;
+    pointer-events: none;
+    border-width: 8px 6px 0 6px;
+    border-color: $color-primary-font transparent transparent transparent;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &:invalid {
+    color: $color-input-placeholder;
+  }
+
+  &.basic:after {
+    display: none;
+  }
+
+  &.pill:after {
+    border-width: 4px 4px 0 4px;
+    right: 7px;
+  }
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+
+  &.inline {
+    width: auto;
+  }
+}
+
+.select {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+
+  &:focus + .form-select-dropdown:not(.input-basic) {
+    border-color: $color-input-border-focus;
+
+    .container & {
+      border-color: $color-input-border;
+    }
+  }
+
+  &:focus + .form-select-dropdown.input-basic {
+    border-bottom-color: $color-input-border-focus;
+    .container & {
+      border-bottom-color: $color-input-border;
+    }
+  }
+
+  &:disabled + .form-select-dropdown {
+    pointer-events: none;
+    color: $color-input-disabled;
+    background-color: $color-input-disabled-bg;
+  }
+}
+
+.placeholder {
+  color: $color-input-placeholder;
+  font-size: 16px;
+
+  &.pill {
+    color: $color-primary-font;
+    font-size: 12px;
+  }
+}
+
 .form-group {
   position: relative;
   flex: 1;
-  max-width: 300px;
   margin: 0 auto;
+  margin-bottom: 1rem;
+  width: 100%;
+
+  &.fluid {
+    max-width: 90%;
+    margin: auto;
+  }
+  &.column {
+    display: flex;
+    flex-direction: column;
+  }
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .form-label {
   color: $color-input-label;
   background-color: $color-input-bg;
+  padding-left: 5px;
+  font-size: 14px;
 
   &.animated {
     position: absolute;
@@ -41,10 +249,14 @@
     padding: 0 5px;
     transition: transform 150ms ease-out, font-size 150ms ease-out;
   }
+
+  &.inline {
+    padding: 0;
+  }
 }
 
 .form-checkbox {
-  display: block;
+  display: inline-block;
   margin-bottom: 10px;
 
   &:last-child {
@@ -99,8 +311,8 @@
       color: $color-input-disabled;
     }
     + .checkbox-label:before {
-      border-color: $color-input-disabled;
-      background-color: $color-input-disabled;
+      border-color: $color-input-disabled-bg;
+      background-color: $color-input-disabled-bg;
     }
   }
 }
@@ -110,6 +322,45 @@
   padding-left: 24px;
   position: relative;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
+  user-select: none;
+}
+
+.form-notification {
+  background: white;
+  color: $color-primary-font;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid $color-primary-font;
+  margin: 0 auto;
+
+  &.fluid {
+    width: 90%;
+    margin: 10px auto;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  &.error {
+    color: white;
+    background: $color-bg-error;
+    border: 1px solid $color-text-error;
+  }
+  &.warning {
+    color: white;
+    background: $color-bg-warning;
+    border: 1px solid $color-text-warning;
+  }
+  &.success {
+    color: white;
+    background: $color-bg-success;
+    border: 1px solid $color-text-success;
+  }
 }

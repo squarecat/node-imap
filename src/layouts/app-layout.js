@@ -1,9 +1,13 @@
-import 'babel-polyfill';
+import '@babel/polyfill';
 import '../common.scss';
 import './layout.css';
 
+import React, { useEffect } from 'react';
+
+import { AlertProvider } from '../providers/alert-provider';
+import { DatabaseProvider } from '../providers/db-provider';
 import Helmet from 'react-helmet';
-import React from 'react';
+import { ModalProvider } from '../providers/modal-provider';
 import { setConfig } from 'react-hot-loader';
 
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
@@ -11,6 +15,11 @@ const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
 setConfig({ pureSFC: true });
 
 const AppLayout = ({ pageName, children }) => {
+  useEffect(() => {
+    if (window.intergram && window.intergram.hide) {
+      window.intergram.hide();
+    }
+  }, []);
   return (
     <>
       <Helmet
@@ -28,7 +37,12 @@ const AppLayout = ({ pageName, children }) => {
         ]}
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
       />
-      {children}
+
+      <DatabaseProvider>
+        <AlertProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </AlertProvider>
+      </DatabaseProvider>
     </>
   );
 };

@@ -1,0 +1,42 @@
+@import '../../../styles/common/colors.scss';
+
+.coupon {
+  display: flex;
+}
+
+.coupon-btn {
+  margin: 0 0 0 10px;
+}
+
+.coupon-container {
+  display: flex;
+}
+
+.coupon-input {
+  position: relative;
+  width: 100%;
+}
+
+.coupon-input:after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.coupon-input.valid:after {
+  content: '✔';
+  color: $color-text-success;
+}
+.coupon-input.invalid:after {
+  content: '✘';
+  color: $color-text-error;
+}
+
+.coupon input:focus {
+  box-shadow: none;
+}
+
+.coupon-form {
+  padding-top: 15px;
+  max-with: 200px;
+}

@@ -10,14 +10,15 @@
     color: $color-link-hover;
     border-bottom-color: $color-link-hover;
   }
-}
 
-.link-inverted {
-  color: white;
-  border-color: white;
-  &:hover {
-    color: rgba(white, 0.8);
-    border-bottom-color: rgba(white, 0.8);
+  &.inverted {
+    color: white !important;
+    border-color: white !important;
+
+    &:hover {
+      color: rgba(white, 0.8) !important;
+      border-bottom-color: rgba(white, 0.8) !important;
+    }
   }
 }
 
@@ -28,12 +29,31 @@
 .important {
   color: $color-text-important;
   font-weight: bold;
+
+  &.inverted {
+    color: white;
+  }
 }
 
 .bold {
   font-weight: bold;
+  font-family: 'Gotham-Rounded-Medium';
 }
 
 .undecorated {
   border-bottom: 0;
+}
+
+.footnote {
+  display: block;
+  font-size: 12px;
+  line-height: 18px;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.lead {
+  font-weight: bold;
+  opacity: 0.5;
+  font-size: 18px;
 }

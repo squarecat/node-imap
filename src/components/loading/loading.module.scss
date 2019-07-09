@@ -6,6 +6,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1000;
 }
 
 .loading-pane {
@@ -48,6 +49,8 @@
 
 .loaded {
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 @keyframes dice {

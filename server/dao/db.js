@@ -13,11 +13,11 @@ export function connect() {
     client.connect(
       err => {
         if (err) {
-          logger.error('db: error connecting');
+          logger.error(`db: error connecting to ${url}`);
           logger.error(err);
           return reject(err);
         }
-        logger.info('db: connected');
+        logger.info(`db: connected to ${url}`);
         connection = client.db(config.db.name);
         return resolve(connection);
       },

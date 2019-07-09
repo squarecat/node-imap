@@ -1,0 +1,78 @@
+@import '../../../styles/common/colors.scss';
+
+.org-onboarding-modal {
+  width: 600px;
+  max-width: 100%;
+}
+
+.preload {
+  visibility: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.onboarding-btn {
+  display: flex;
+  align-items: center;
+
+  svg {
+    top: 0;
+  }
+}
+
+.onboarding-example-img {
+  max-width: 100%;
+  margin-bottom: 1.5em;
+
+  @media (max-width: 400px) {
+    max-width: calc(100% + 40px);
+    margin: auto -20px 1.5em -20px;
+  }
+}
+
+.onboarding-position {
+  margin-left: auto;
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.wizard-content-wrapper {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.wizard-content-wrapper-entered {
+  opacity: 1;
+}
+
+.wizardContentWrapper > *:last-child {
+  margin-bottom: 0;
+}
+
+.separator {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+  padding-top: 30px;
+  display: block;
+}
+
+.org-status {
+  margin: 0 5px 0 0;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  background-color: $color-grey-darker;
+
+  &.inactive {
+    background-color: $color-bg-error;
+  }
+
+  &.active {
+    background-color: $color-bg-success;
+  }
+
+  @media (max-width: 400px) {
+    padding: 5px;
+  }
+}

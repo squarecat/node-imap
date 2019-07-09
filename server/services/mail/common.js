@@ -1,8 +1,6 @@
 import { getDupeKey } from '../../utils/parsers';
-import isAfter from 'date-fns/is_after';
 import logger from '../../utils/logger';
 import subDays from 'date-fns/sub_days';
-import subHours from 'date-fns/sub_hours';
 import subMonths from 'date-fns/sub_months';
 import subWeeks from 'date-fns/sub_weeks';
 import url from 'url';
@@ -78,27 +76,18 @@ export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
   if (!unsubInfo) {
     return null;
   }
-  const { unsubscribeStrategy, estimatedSuccess, resolved } = unsubInfo;
+  const {
+    unsubscribeStrategy,
+    estimatedSuccess,
+    resolved,
+    hasImage
+  } = unsubInfo;
   return {
     unsubStrategy: unsubscribeStrategy,
     estimatedSuccess,
-    resolved
+    resolved,
+    hasImage
   };
-}
-
-// a scan is available if it has not yet been
-// completed, or it was completed in the last
-// 24 hours
-export function hasPaidScanAvailable(user, scanType) {
-  const yesterday = subHours(Date.now(), 24);
-  if (scanType === '3d' || user.beta) return true;
-  return (user.paidScans || []).some(s => {
-    if (s.scanType === scanType) {
-      const performedWithin24Hrs = isAfter(s.paidAt, yesterday);
-      return !s.performed || performedWithin24Hrs;
-    }
-    return false;
-  });
 }
 
 /**

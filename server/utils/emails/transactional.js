@@ -5,106 +5,101 @@ import { sendMail } from './index';
 
 const apiKey = config.mailgun.apiKey;
 const domains = config.mailgun.domains;
+const baseUrl = config.urls.base;
+
+export const SIGN_OFF = `Thanks!\nJames & Danielle\nFounders of Leave Me Alone`;
+
+const FROM_NAME = `Leave Me Alone <noreply@${domains.transactional}>`;
 
 const transactionalTransport = mailgun({
   apiKey,
   domain: domains.transactional
 });
 
-const giftMailOptions = {
-  from: `Leave Me Alone <purchases@${domains.transactional}>`,
-  subject: 'Thank you for purchasing a gift scan'
-};
-
-const reminderMailOptions = {
-  from: `Leave Me Alone <reminders@${domains.transactional}>`
-};
-
-const referralMailOptions = {
-  from: `Leave Me Alone <referrals@${domains.transactional}>`
-};
-
-export function sendGiftCouponMultiMail({
+export function sendOrganisationInviteMail({
   toAddress,
-  scanPeriod,
-  coupons,
-  quantity = 1
+  organisationName,
+  inviteCode
 }) {
-  logger.info('email-utils: sending gift coupon multi mail');
+  logger.info('email-utils: sending org invite mail');
   return sendTransactionalMail({
-    ...giftMailOptions,
-    subject: 'Thank you for purchasing gift scans',
+    from: FROM_NAME,
+    subject: `${organisationName} has invited you to use Leave Me Alone`,
     to: toAddress,
-    text: `Thank you for purchasing ${quantity} gift scans for ${scanPeriod}. Your coupon codes are:\n\n${coupons
-      .map(c => c)
-      .join('\n')}\n\nJames & Danielle\n\nLeave Me Alone`
+    text: `You have been invited to use Leave Me Alone by ${organisationName}.\n\nLeave Me Alone is a service to easily unsubscribe from subscription emails. As a member of the ${organisationName} organisation you can unsubscribe from as many unwanted subscription emails as you like. Simply sign-up or log-in using the following invite link and this email address to start unsubscribing now.\n\nAccept this invite:\n\n${baseUrl}/i/${inviteCode}\n\n${SIGN_OFF}`
   });
 }
 
-export function sendGiftCouponMail({ toAddress, scanPeriod, coupon }) {
-  logger.info('email-utils: sending gift coupon mail');
+export function sendReferralInviteMail({
+  toAddress,
+  referrerName,
+  referralCode,
+  reward
+}) {
+  logger.info('email-utils: sending invite mail');
+  let subject;
+  let intro;
+  if (referrerName) {
+    subject = `${referrerName} has invited you to use Leave Me Alone`;
+    intro = `You have been invited to use Leave Me Alone by ${referrerName}`;
+  } else {
+    subject = `You have been invited to use Leave Me Alone`;
+    intro = `You have been invited to use Leave Me Alone`;
+  }
+
   return sendTransactionalMail({
-    ...giftMailOptions,
+    from: FROM_NAME,
+    subject,
     to: toAddress,
-    text: `Thank you for purchasing a gift scan for ${scanPeriod}. Your coupon code is:\n\n${coupon}\n\nJames & Danielle\n\nLeave Me Alone`
+    text: `${intro}.\n\nLeave Me Alone is a service to easily unsubscribe from subscription emails. With this referral link you will get ${reward} free credits to get started! Simply sign-up using the following referral link to start unsubscribing.\n\nSign-up now:\n\n${baseUrl}/r/${referralCode}\n\n${SIGN_OFF}`
   });
 }
 
-export function sendReminderMail({ toAddress, reminderPeriod, coupon }) {
+export function sendReferralSignUpMail({
+  toAddress,
+  toName,
+  referralUrl,
+  refereeName,
+  reward
+}) {
+  logger.info('email-utils: sending referral signup mail');
+  return sendTransactionalMail({
+    from: FROM_NAME,
+    subject: `${refereeName ||
+      'Someone'} just signed up through your referral link!`,
+    to: toAddress,
+    text: getPersonalisedText(
+      `${refereeName ||
+        'Someone'} just signed up to Leave Me Alone using your referral link. You have earned ${reward} credits!\n\nLog in now and use your credits: ${baseUrl}/login\n\nKeep sharing your referral link to earn more credits: ${referralUrl}\n\nThank you for supporting Leave Me Alone and helping us grow.\n\n${SIGN_OFF}\n\n\n\nWe will stop notifying you by email when you reach 3 referrals.`,
+      { toName }
+    )
+  });
+}
+
+export function sendReminderMail({
+  toAddress,
+  toName,
+  reminderPeriod,
+  coupon
+}) {
   logger.info('email-utils: sending reminder mail');
   return sendTransactionalMail({
-    ...reminderMailOptions,
-    subject: `Reminder 🕐 - it's been ${reminderPeriod} since your last scan`,
+    from: FROM_NAME,
+    subject: `Reminder: it's been ${reminderPeriod} since your last scan`,
     to: toAddress,
-    text: `You asked us to remind you to use Leave Me Alone again.\n\nIt's been ${reminderPeriod} since your last scan.\n\nKeep your inbox clean by scanning again now. Use the coupon ${coupon} for 10% off your next purchase.\n\nJames & Danielle\n\nLeave Me Alone`
+    text: getPersonalisedText(
+      `You set a reminder for your account (${toAddress}) on (${baseUrl}). It's been ${reminderPeriod} since you last unsubscribed from unwanted subscription emails.\n\nKeep your inbox clean by scanning again now. Use the coupon ${coupon} for 10% off your next purchase.\n\nHappy unsubscribing!\n\n${SIGN_OFF}`,
+      { toName }
+    )
   });
 }
 
-export function sendReferralLinkUsedMail({
-  toAddress,
-  referralCount,
-  referralUrl
-}) {
-  logger.info('email-utils: sending referral link used mail');
-
-  let subject = 'Yay! 🎉 - someone used your referral link';
-  let text = `Just a little email to tell you that you're on your way to earning $5! 👏 Someone bought a scan using your referral link for the first time.\n\nKeep sharing to get rewarded!\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\nYou're receiving this email because you shared your referral link for Leave Me Alone. We will only send you an email when you get another referrer and when you earn a reward.`;
-
-  if (referralCount === 2) {
-    subject = "You've referred 2 people 🙌 - just one more until payday!";
-    text = `Another person just purchased a scan using your referral link 🎉.\n\nYou're one ONE referral away from earning $5! Keep sharing your link.\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\nYou're receiving this email because you shared your referral link for Leave Me Alone. We will only send you an email to let you know when you earn a reward.`;
+export function getPersonalisedText(content, { toName }) {
+  let text;
+  if (toName) {
+    text = `${toName},\n\n`;
   }
-
-  return sendTransactionalMail({
-    ...referralMailOptions,
-    to: toAddress,
-    subject,
-    text
-  });
-}
-
-export function sendReferralRewardMail({
-  toAddress,
-  rewardCount,
-  referralUrl
-}) {
-  logger.info('email-utils: sending referral reward mail');
-
-  let subject = "You've earned your first $5! 🎁";
-  let text = `Congratulations! You've just earned your first $5. Cash out at https://leavemealone.xyz/app\n\n3 people have cleaner inboxes because of you ❤️. Keep sharing your link to earn more $$$ and help more people.\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\nYou're receiving this email because you earned a reward from the Leave Me Alone referral program.`;
-
-  if (rewardCount > 1) {
-    subject = "You've earned another $5! 🎁";
-    text = `Congratulations! You've just earned another $5. Cash out at https://leavemealone.xyz/app\n\nThis brings your total to $${rewardCount *
-      5} earned and ${rewardCount *
-      3} people have cleaner inboxes because of you ❤️. Keep sharing your link to earn more $$$ and help more people.\n\nYour referral URL is...\n\n${referralUrl}\n\nJames & Danielle\n\nLeave Me Alone\n\n.You're receiving this email because you earned a reward from the Leave Me Alone referral program.`;
-  }
-  return sendTransactionalMail({
-    ...referralMailOptions,
-    to: toAddress,
-    subject,
-    text
-  });
+  return `${text}${content}`;
 }
 
 export function sendTransactionalMail(options) {

@@ -1,0 +1,40 @@
+@import '../../styles/common/colors.scss';
+
+.spinner,
+.spinner:after {
+  display: inline-block;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+
+.spinner {
+  position: relative;
+  border: 3px solid $color-secondary-bg;
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+
+  &:after {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    transform: translateZ(0);
+    border: 3px solid transparent;
+    border-left-color: $color-red;
+    animation: spin 1.1s infinite linear;
+  }
+
+  &.shown {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,5 +1,4 @@
 .subpage {
-  padding: 80px 44px;
   background-color: #fff;
   min-height: calc(100% - 50px);
   display: flex;
@@ -7,14 +6,38 @@
 }
 
 .subpage-content {
-  width: 990px;
-  max-width: 100%;
+  padding: 80px 40px 0 40px;
+  max-width: 1050px;
   margin: 0 auto;
+  width: 100%;
   flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 40px;
+  }
+
+  @media (max-width: 400px) {
+    padding: 20px;
+  }
 }
 
 .subpage h1 {
-  font-size: 50px;
+  font-size: 30px;
+  line-height: 42px;
+
+  @media (max-width: 768px) {
+    font-size: 25px;
+    line-height: 36px;
+  }
+}
+
+.subpage h2 {
+  font-size: 25px;
+  line-height: 32px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+    line-height: 28px;
+  }
 }
 
 .centered {
@@ -23,16 +46,23 @@
 
 .centered .subpage-content {
   max-width: 600px;
-}
-
-@media (max-width: 768px) {
-  .subpage {
-    padding: 40px 20px;
+  @media (max-width: 600px) {
+    max-width: 100%;
   }
 }
 
-@media (max-width: 600px) {
-  .centered .subpage-content {
-    max-width: 100%;
+.subpage-section {
+  margin-top: 100px;
+}
+
+.subpage-tagline {
+  font-size: 22px;
+  line-height: 30px;
+  margin-bottom: 2rem;
+  opacity: 0.6;
+  font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
   }
 }

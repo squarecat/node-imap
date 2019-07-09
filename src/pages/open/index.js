@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import Table, { TableCell, TableRow } from '../../components/table';
 
 import Chart from 'chart.js';
+import ErrorBoundary from '../../components/error-boundary';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 import addMonths from 'date-fns/add_months';
@@ -16,7 +17,7 @@ import request from '../../utils/request';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
-import { useAsync } from '../../utils/hooks';
+import useAsync from 'react-use/lib/useAsync';
 
 const lineColor = '#EB6C69';
 const lineColorLight = '#fedbd5';
@@ -47,13 +48,13 @@ function dailyRevChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: getGraphStats(stats, 'totalRevenue')
-        },
-        {
-          fill: false,
-          backgroundColor: lineColor2,
-          borderColor: lineColor2,
-          data: getGraphStats(stats, 'giftRevenue')
         }
+        // {
+        //   fill: false,
+        //   backgroundColor: lineColor2,
+        //   borderColor: lineColor2,
+        //   data: getGraphStats(stats, 'giftRevenue')
+        // }
       ]
     },
     type: 'line',
@@ -197,8 +198,8 @@ function monthlyProfitChart(ctx, stats, expenses) {
   });
 }
 
-function scanChart(ctx, stats) {
-  return simpleLineChart(ctx, stats, 'scans');
+function emailsChart(ctx, stats) {
+  return simpleLineChart(ctx, stats, 'emails');
 }
 function referralChart(ctx, stats) {
   return simpleLineChart(ctx, stats, 'referralSignup');
@@ -354,7 +355,7 @@ export default function OpenPage() {
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const monthlyProfitRef = useRef(null);
-  const scanRef = useRef(null);
+  const emailsRef = useRef(null);
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
   const usersRef = useRef(null);
@@ -375,8 +376,8 @@ export default function OpenPage() {
           monthly
         );
       }
-      if (scanRef.current) {
-        scanChart(scanRef.current.getContext('2d'), stats);
+      if (emailsRef.current) {
+        emailsChart(emailsRef.current.getContext('2d'), stats);
       }
       if (referralRef.current) {
         referralChart(referralRef.current.getContext('2d'), stats);
@@ -391,17 +392,7 @@ export default function OpenPage() {
         providerBarChart(providersRef.current.getContext('2d'), stats);
       }
     },
-    [
-      stats,
-      subscriptionRef.current,
-      dailyRevRef.current,
-      monthlyProfitRef.current,
-      scanRef.current,
-      referralRef.current,
-      mailtoLinkRef.current,
-      usersRef.current,
-      providersRef.current
-    ]
+    [stats, monthly]
   );
   if (loading) {
     return null;
@@ -417,10 +408,10 @@ export default function OpenPage() {
   return (
     <SubPageLayout
       title="Open Startup"
-      description="All of our metrics are public. See our sales, revenue, expenses, users, and more"
+      description={`Leave Me Alone is an Open Startup. All of our metrics are public. See our sales, revenue, expenses, users, and more.`}
     >
       <div styleName="open-page">
-        <div styleName="open-title box box--centered">
+        <div styleName="open-title box">
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
@@ -429,21 +420,17 @@ export default function OpenPage() {
           </h2>
         </div>
         {loading ? (
-          <div styleName="box box--centered">
+          <div styleName="box">
             <h2>Loading stats...</h2>
           </div>
         ) : (
-          <>
+          <ErrorBoundary>
             <div styleName="revenue">
               <div styleName="chart box">
-                <h2>
-                  Daily Revenue -{' '}
-                  <span style={{ color: lineColor }}>Sales</span> vs{' '}
-                  <span style={{ color: lineColor2 }}>Gift Sales</span>
-                </h2>
+                <h2>Daily Revenue</h2>
                 <canvas ref={dailyRevRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's revenue</span>
                   <span styleName="value">
@@ -476,8 +463,7 @@ export default function OpenPage() {
                     )}
                   </span>
                 </div>
-              </div>
-              <div styleName="totals">
+
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's sales</span>
                   <span styleName="value">{format(salesStats.lastMonth)}</span>
@@ -503,8 +489,7 @@ export default function OpenPage() {
                     {format(calculateWithRefunds(stats, 'totalSales'))}
                   </span>
                 </div>
-              </div>
-              <div styleName="totals">
+
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue per user</span>
                   <span styleName="value">
@@ -514,6 +499,22 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
+                  <span styleName="label">Total packages purchased</span>
+                  <span styleName="value">
+                    {format(stats.packagesPurchased)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total credits purchased</span>
+                  <span styleName="value">
+                    {format(stats.creditsPurchased)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total credits rewarded</span>
+                  <span styleName="value">{format(stats.creditsRewarded)}</span>
+                </div>
+                {/* <div styleName="big-stat box">
                   <span styleName="label">Revenue from gifts</span>
                   <span styleName="value">
                     {`${percentageRevenueFromGifts(stats)}%`}
@@ -526,7 +527,7 @@ export default function OpenPage() {
                 <div styleName="big-stat box">
                   <span styleName="label">Gifts redeemed</span>
                   <span styleName="value">{format(stats.giftRedemptions)}</span>
-                </div>
+                </div> */}
               </div>
 
               <div styleName="chart box">
@@ -549,7 +550,7 @@ export default function OpenPage() {
                 <h2>New Signups</h2>
                 <canvas ref={usersRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Last month's new signups</span>
                   <span styleName="value">{format(usersStats.lastMonth)}</span>
@@ -575,21 +576,44 @@ export default function OpenPage() {
                   <span styleName="label">Total users</span>
                   <span styleName="value">{format(stats.users)}</span>
                 </div>
+
+                <div styleName="big-stat box">
+                  <span styleName="label">Enterprise customers</span>
+                  <span styleName="value">{format(stats.organisations)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Organisation members</span>
+                  <span styleName="value">
+                    {format(stats.organisationUsers)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Google accounts connected</span>
+                  <span styleName="value">
+                    {format(stats.connectedAccountGoogle)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Microsoft accounts connected</span>
+                  <span styleName="value">
+                    {format(stats.connectedAccountOutlook)}
+                  </span>
+                </div>
               </div>
-              <div styleName="chart box">
+              {/* <div styleName="chart box">
                 <h2>
                   Users - <span style={{ color: lineColor }}>Google</span> vs{' '}
                   <span style={{ color: lineColor2 }}>Outlook</span>
                 </h2>
                 <canvas ref={providersRef} />
-              </div>
+              </div> */}
             </div>
             <div styleName="subscriptions">
               <div styleName="chart box">
                 <h2>Daily Spam Email Unsubscriptions</h2>
                 <canvas ref={subscriptionRef} />
               </div>
-              <div styleName="totals">
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Total Spam Emails</span>
                   <span styleName="value">
@@ -614,20 +638,18 @@ export default function OpenPage() {
             </div>
             <div styleName="scans">
               <div styleName="chart box">
-                <h2>Scans</h2>
-                <canvas ref={scanRef} />
+                <h2>Emails Scanned</h2>
+                <canvas ref={emailsRef} />
               </div>
-              <div styleName="totals">
-                <div styleName="big-stat box">
+              <div styleName="boxes">
+                {/* <div styleName="big-stat box">
                   <span styleName="label">Total number of scans</span>
                   <span styleName="value">{format(stats.scans)}</span>
-                </div>
+                </div> */}
                 <div styleName="big-stat box">
                   <span styleName="label">Total emails scanned</span>
                   <span styleName="value">{format(stats.emails)}</span>
                 </div>
-              </div>
-              <div styleName="totals">
                 <div styleName="big-stat box">
                   <span styleName="label">Total reminders requested</span>
                   <span styleName="value">
@@ -642,11 +664,8 @@ export default function OpenPage() {
             </div>
 
             <div styleName="referrals">
-              {/* <div styleName="chart box">
-                <h2>Referrals</h2>
-                <canvas ref={referralRef} />
-              </div> */}
-              <div styleName="totals">
+              <h2>v1.0 Referrals</h2>
+              <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Total referral signups</span>
                   <span styleName="value">{format(stats.referralSignup)}</span>
@@ -657,50 +676,66 @@ export default function OpenPage() {
                     {percent(stats.referralPaidScan / stats.referralSignup)}
                   </span>
                 </div>
-                {/* <div styleName="big-stat box">
-                  <span styleName="label">Total referral payouts</span>
-                  <span styleName="value">{currency(stats.referralCredit)}</span>
-                </div> */}
+              </div>
+            </div>
+
+            <div styleName="referrals">
+              <h2>v2.0 Referrals</h2>
+              <div styleName="boxes">
+                <div styleName="big-stat box">
+                  <span styleName="label">Total referral signups</span>
+                  <span styleName="value">
+                    {format(stats.referralSignupV2)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Referral conversion rate</span>
+                  <span styleName="value">
+                    {percent(stats.referralPurchaseV2 / stats.referralSignupV2)}
+                  </span>
+                </div>
               </div>
             </div>
             <div styleName="expenses">
               {loadingExpenses ? (
-                <div styleName="box box--unpadded">
+                <div styleName="box">
                   <h2>Loading expenses...</h2>
                 </div>
               ) : (
-                <div styleName="box box--unpadded">
+                <div styleName="box">
                   <h2>Last Month's Expenses</h2>
                   <Table>
-                    {itemised.map((expense, i) => {
-                      return (
-                        <TableRow key={i}>
-                          <TableCell>{expense.type}</TableCell>
-                          <TableCell>
-                            <TextLink href={expense.url}>
-                              {expense.service}
-                            </TextLink>
-                          </TableCell>
-                          <TableCell>{currency(expense.cost)}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                    <TableRow inverted>
-                      <TableCell />
-                      <TableCell>Total</TableCell>
-                      <TableCell>
-                        <span>
-                          {currency(
-                            itemised.reduce((out, e) => out + e.cost, 0)
-                          )}
-                        </span>
-                      </TableCell>
-                    </TableRow>
+                    <tbody>
+                      {itemised.map((expense, i) => {
+                        return (
+                          <TableRow key={i}>
+                            <TableCell>{expense.type}</TableCell>
+                            <TableCell>
+                              <TextLink href={expense.url}>
+                                {expense.service}
+                              </TextLink>
+                            </TableCell>
+                            <TableCell>{currency(expense.cost)}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      <TableRow inverted>
+                        <TableCell />
+                        <TableCell>Total</TableCell>
+                        <TableCell>
+                          <span>
+                            {currency(
+                              itemised.reduce((out, e) => out + e.cost, 0)
+                            )}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    </tbody>
                   </Table>
                 </div>
               )}
             </div>
-          </>
+          </ErrorBoundary>
         )}
       </div>
     </SubPageLayout>
@@ -853,10 +888,7 @@ function getBoxStats(stats, stat) {
       thisMonth
     });
   }
-
-  // Percent increase = ((new value - original value)/original value) * 100
-  const divideBy = twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
-  const growthRate = (lastMonth - twoMonthsAgo) / divideBy;
+  const growthRate = getGrowthRate({ lastMonth, twoMonthsAgo });
 
   return {
     twoMonthsAgo,
@@ -891,7 +923,10 @@ function revenueBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
   const totalLastMonth = lastMonth + lastMonthGifts - lastMonthRevenueRefunds;
   const totalThisMonth = thisMonth + thisMonthGifts - thisMonthRevenueRefunds;
 
-  const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+  const totalGrowth = getGrowthRate({
+    lastMonth: totalLastMonth,
+    twoMonthsAgo: totalTwoMonths
+  });
 
   return {
     twoMonthsAgo: totalTwoMonths,
@@ -917,7 +952,10 @@ function salesBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
   const totalTwoMonths = twoMonthsAgo - twoMonthsAgoRefunds;
   const totalLastMonth = lastMonth - lastMonthRefunds;
   const totalThisMonth = thisMonth - thisMonthRefunds;
-  const totalGrowth = (totalLastMonth - totalTwoMonths) / totalTwoMonths;
+  const totalGrowth = getGrowthRate({
+    lastMonth: totalLastMonth,
+    twoMonthsAgo: totalTwoMonths
+  });
 
   return {
     twoMonthsAgo: totalTwoMonths,
@@ -965,4 +1003,11 @@ function calculateWithRefunds(stats, stat) {
 function getStatDate(timestamp) {
   // stats are run at just past midnight so we actually want to show the day before
   return subDays(startOfDay(timestamp), 1);
+}
+
+function getGrowthRate({ lastMonth, twoMonthsAgo }) {
+  // Percent increase = ((new value - original value)/original value) * 100
+  const divideBy = twoMonthsAgo === 0 ? 1 : twoMonthsAgo;
+  const growthRate = (lastMonth - twoMonthsAgo) / divideBy;
+  return growthRate;
 }

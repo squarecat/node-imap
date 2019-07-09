@@ -1,11 +1,17 @@
 import './toggle.module.scss';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import cx from 'classnames';
 
-export default ({ status, loading, disabled, onChange }) => {
+export default React.memo(({ status, loading, disabled, onChange }) => {
   const [isOn, setStatus] = useState(status);
+  useEffect(
+    () => {
+      setStatus(status);
+    },
+    [status]
+  );
   // can only toggle off! Can't resubscribe
   const classes = cx('toggle', {
     on: isOn,
@@ -16,11 +22,15 @@ export default ({ status, loading, disabled, onChange }) => {
   return (
     <span
       styleName={classes}
-      onClick={() => {
+      onClick={async () => {
         if (disabled) return false;
         if (isOn) {
           setStatus(false);
-          onChange(false);
+          const allowed = await onChange(false);
+          if (!allowed) {
+            // allow time for animation
+            setTimeout(() => setStatus(true), 300);
+          }
         }
       }}
     >
@@ -28,4 +38,4 @@ export default ({ status, loading, disabled, onChange }) => {
       <span styleName="toggle-loader" />
     </span>
   );
-};
+});

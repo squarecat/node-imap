@@ -1,0 +1,47 @@
+@import '../../../../styles/common/colors.scss';
+@import '../profile.module.scss';
+
+.organisation-section {
+  @extend .profile-section;
+}
+
+.tabled {
+  @extend .profile-section--unpadded;
+}
+
+.table-text-content {
+  @extend .profile-unpadded-content;
+}
+
+.org-status {
+  margin: 0 5px 0 0;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  background-color: $color-grey-darker;
+
+  &.inactive {
+    background-color: $color-bg-error;
+  }
+
+  &.active {
+    background-color: $color-bg-success;
+  }
+
+  @media (max-width: 400px) {
+    padding: 5px;
+  }
+}
+
+.saving {
+  display: block;
+}
+
+.footnote {
+  font-size: 12px;
+  line-height: 18px;
+  opacity: 0.6;
+  font-weight: bold;
+  padding-top: 20px;
+}

@@ -93,9 +93,9 @@ export default CheckoutForm;
 export async function sendPayment({ token, productId, coupon, address, name }) {
   let url;
   if (coupon) {
-    url = `/api/checkout/${productId}/${coupon}`;
+    url = `/api/payments/checkout/${productId}/${coupon}`;
   } else {
-    url = `/api/checkout/${productId}`;
+    url = `/api/payments/checkout/${productId}`;
   }
   try {
     const data = await request(url, {
@@ -116,7 +116,7 @@ export async function sendPayment({ token, productId, coupon, address, name }) {
 
 export async function getCoupon(coupon) {
   try {
-    const data = await request(`/api/checkout/${coupon}`);
+    const data = await request(`/api/payments/checkout/${coupon}`);
     return data;
   } catch (err) {
     console.log('coupon err');

@@ -1,6 +1,274 @@
 @import '../../components/btn/btn.module.scss';
+@import '../../layouts/subpage-layout.module.scss';
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-gap: 70px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 0;
+
+    a {
+      margin: 0 auto;
+    }
+  }
+}
+
+.enterprise-inner {
+  @extend .subpage-content;
+}
+
+.container-text {
+  @media (max-width: 768px) {
+    margin-bottom: 70px;
+  }
+}
+
+.container-image {
+  display: flex;
+  align-items: center;
+}
+
+.intro-header {
+  .container-image {
+    text-align: right;
+
+    @media (max-width: 768px) {
+      max-width: 500px;
+    }
+  }
+}
+
+h1.tagline {
+  font-size: 42px;
+  line-height: 52px;
+  margin-bottom: 35px;
+  max-width: 450px;
+
+  @media (max-width: 1050px) {
+    font-size: 38px;
+    max-width: 410px;
+  }
+
+  @media (max-width: 1000px) {
+    font-size: 32px;
+    line-height: 45px;
+    margin-bottom: 30px;
+    max-width: 340px;
+  }
+
+  @media (max-width: 768px) {
+    margin: 0 auto 30px auto;
+  }
+
+  @media (max-width: 500px) {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 22px;
+    line-height: 30px;
+    margin: 0 auto 20px auto;
+  }
+}
+
+.description {
+  margin-bottom: 45px;
+  font-size: 20px;
+  line-height: 28px;
+
+  @media (max-width: 400px) {
+    margin-bottom: 15px;
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+.features,
+.savings {
+  margin-top: 150px;
+}
+
+.security,
+.pricing {
+  margin-top: 90px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-column-gap: 50px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+  }
+}
+
+.feature {
+  p {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.feature-title {
+  font-size: 20px;
+}
+
+.feature-img {
+  max-width: 150px;
+  margin-left: -15px;
+}
+
+.feature-text {
+}
+
+.security {
+  background-color: $color-dark-background;
+  color: white;
+  padding: 90px 0 170px 0;
+
+  .image-section {
+    margin-bottom: 0;
+  }
+  .image-section-img {
+    width: 450px;
+    max-width: 100%;
+  }
+}
+
+.end-stuff {
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 100px;
+}
+
+.image-section {
+  display: grid;
+  grid-column-gap: 50px;
+  margin: 0 auto 100px auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &.image-left {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+.image-section-text,
+.image-section-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  p:last-child {
+    margin: 0;
+  }
+}
+
+.image-section-img {
+  img {
+    border-radius: 5px;
+    max-height: 400px;
+  }
+
+  @media (max-width: 768px) {
+    width: 300px;
+    max-width: 100%;
+    margin: 50px auto 0;
+  }
+}
+
+.trustbar {
+}
+.trustbar-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+.trustbar-logo {
+}
+
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column-gap: 30px;
+  grid-row-gap: 10px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pricing-description {
+  width: 100%;
+  max-width: 500px;
+}
 
 .subscribe-btn {
   @extend .btn;
   @extend .centered;
+}
+
+.provider-logos {
+  margin: 30px 0;
+
+  img {
+    max-height: 50px;
+  }
+
+  .gsuite {
+    padding: 10px 20px 10px 10px;
+  }
+}
+
+.more {
+  margin-top: 100px;
+  padding-top: 100px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sources {
+  margin: 100px 0 -100px 0;
+  font-size: 10px;
+  line-height: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 100px;
+
+  ul {
+    margin: 0;
+  }
+
+  sup {
+    margin-right: 4px;
+  }
+
+  li:target {
+    background-color: rgba(yellow, 0.25);
+  }
+}
+
+.cite-link {
+  border-bottom: 0;
 }

@@ -2,8 +2,8 @@ module.exports = {
   siteMetadata: {
     title: 'Easily unsubscribe from spam emails - Leave Me Alone',
     description: `See all of your spam, newsletters, and subscription emails in one place and unsubscribe from them with a single click. Take back control of your Gmail and Outlook inbox.`,
-    baseUrl: 'https://leavemealone.xyz',
-    siteUrl: 'https://leavemealone.xyz',
+    baseUrl: 'https://leavemealone.app',
+    siteUrl: 'https://leavemealone.app',
     twitterHandle: '@LeaveMeAloneApp',
     siteName: 'Leave Me Alone'
   },
@@ -11,17 +11,15 @@ module.exports = {
     'gatsby-plugin-react-helmet',
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    // `gatsby-plugin-transition-link`,
     `gatsby-plugin-sass`,
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
         exclude: [
           `/maintenance`,
+          `/login/**/*`,
           `/goodbye`,
-          `/wall-of-love`,
-          `/header`,
-          `/gifts/gift-checkout`,
-          `/gifts/gifts-prices`,
           `/app`,
           `/app/**/*`
         ]
@@ -56,32 +54,6 @@ module.exports = {
         exclude: `\/global\/`
         // For all the options check babel-plugin-react-css-modules README link provided above
       }
-    },
-    {
-      resolve: `gatsby-plugin-google-gtag`,
-      options: {
-        trackingIds: ['UA-129815670-1'],
-        gtagConfig: {
-          anonymize_ip: true
-        },
-        pluginConfig: {
-          head: false,
-          respectDNT: true
-        }
-      }
-    },
-    {
-      resolve: `gatsby-plugin-countly`,
-      options: {
-        respectDNT: false,
-        app_key: '5db45d43896e6ab2da8e5f50f39dd9a07b35e953',
-        url: 'https://analytics.squarecat.io',
-        script_url: 'https://analytics.squarecat.io/sdk/web/countly.min.js',
-        track_sessions: true,
-        exclude: ['/app', '/app/*']
-      }
-    },
-    'gatsby-plugin-twitter',
-    `gatsby-plugin-stripe-elements`
+    }
   ]
 };

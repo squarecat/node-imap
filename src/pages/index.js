@@ -2,59 +2,91 @@ import 'isomorphic-fetch';
 import './home.scss';
 
 import { GoogleIcon, OutlookIcon } from '../components/icons';
-import React, { useRef } from 'react';
+import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
-import Browser from '../components/browser';
-import Colin from '../components/squarecat';
+import { Arrow as ArrowIcon } from '../components/icons';
 import Footer from '../components/footer';
-import Header from './header';
+import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
-import WallOfLove from './wall-of-love';
-import dogs from '../assets/dogs.jpg';
-import envelope from '../assets/envelope.png';
-import girlLogo from '../assets/leavemealonegirl.png';
-import heartGif from '../assets/heart.gif';
-import iphoneUnsub from '../assets/iphone-unsub.png';
+// import { Link } from 'gatsby';
+import { Pricing } from './pricing';
+import Toggle from '../components/toggle';
+import { Transition } from 'react-transition-group';
+import WallOfLove from '../components/landing/wall-of-love';
+import _capitalize from 'lodash.capitalize';
+import allSubscriptions from '../assets/mail-list-illustration.png';
+import connectAccounts from '../assets/accounts.png';
+import envelope from '../assets/open-envelope-love.png';
 import numeral from 'numeral';
-import onePlace from '../assets/in-one-place.png';
-import { PRICES as prices } from '../utils/prices';
+import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
-import unsubGif from '../assets/unsub-btn.gif';
-import unsubListGif from '../assets/unsubscribe-new.gif';
-import { useAsync } from '../utils/hooks';
+import subscriberScore from '../assets/subscriber-score.png';
+import useAsync from 'react-use/lib/useAsync';
+import useWindowSize from 'react-use/lib/useWindowSize';
 
-const PRICES = prices.map(p =>
-  p.price === 800 ? { ...p, recommended: true } : p
-);
+const faker = require('../vendor/faker/locale/en');
 
-function getFeaturedNews() {
-  return request('/api/news').then(data => data.filter(d => d.featured));
-}
+const news = [
+  {
+    name: 'Fast Company',
+    quote:
+      'No more junk. Although it’s not the first service that promises to unsubscribe you from junk emails, Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
+    shortQuote:
+      'Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
+    url:
+      'https://www.fastcompany.com/90326825/the-25-best-new-productivity-apps-for-2019',
+    logoUrl: 'https://cdn.leavemealone.app/images/news/fast-company-logo.png'
+  },
+  {
+    name: '.xyz',
+    quote:
+      'Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?',
+    url: 'https://gen.xyz/blog/leavemealonexyz',
+    logoUrl: 'https://cdn.leavemealone.app/images/news/xyz.png'
+  },
+  {
+    name: 'The Register',
+    quote:
+      'Leave Me Alone make significantly stronger privacy commitments than companies in the data collection business.',
+    url: 'https://www.theregister.co.uk/2019/02/11/google_gmail_developer/',
+    logoUrl: 'https://cdn.leavemealone.app/images/news/the-register-logo.png'
+  }
+];
 
 const IndexPage = () => {
-  const activeRef = useRef(null);
-  const setActive = isActive => {
-    activeRef.current.classList[isActive ? 'add' : 'remove']('active');
-  };
+  const trashPileRef = useRef(null);
+  const {
+    error: statsError,
+    loading: statsLoading,
+    value: statsData
+  } = useAsync(fetchStats, []);
 
-  const { error: statsError, loading: statsLoading, value } = useAsync(
-    fetchStats
+  const statsContent = useMemo(
+    () => {
+      if (statsError) {
+        return null;
+      }
+      const userCount = statsData ? formatNumber(statsData.users) : 0;
+      const unsubCount = statsData
+        ? formatNumber(statsData.unsubscriptions)
+        : 0;
+      return (
+        <p className={`join-text ${statsLoading ? 'join-text-loading' : ''}`}>
+          Join <span className="join-stat">{userCount} users</span> who have
+          unsubscribed from a total of{' '}
+          <span className="join-stat">{unsubCount} spam</span> emails
+        </p>
+      );
+    },
+    [statsData, statsError, statsLoading]
   );
-  let statsData = { users: 0, unsubscriptions: 0 };
-  if (!statsLoading) {
-    statsData = value;
-  }
-
-  const { value: featuredNews = [] } = useAsync(getFeaturedNews);
-
   const bannerShown = false;
 
   return (
     <Layout>
-      <Colin />
       <div id="main">
-        <Header setActive={setActive} />
+        <Header setActive={() => {}} />
         <div
           className={`friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
@@ -62,29 +94,10 @@ const IndexPage = () => {
         >
           <div className="hero-inner">
             <div className="hero-box hero-left">
-              <div className="leave-me-alone-logo" ref={activeRef}>
-                <span className="logo-envelope">
-                  <img
-                    src={envelope}
-                    alt="Envelope logo"
-                    className="gmail-logo"
-                  />
-                </span>
-                <span className="logo-emoji">
-                  <img
-                    src={girlLogo}
-                    alt="Girl gesturing no logo"
-                    className="girl-logo"
-                  />
-                </span>
-              </div>
-              <h1 className="title">Leave Me Alone</h1>
-            </div>
-            <div className="hero-box hero-right">
               <div className="hero-right-inner">
-                <p className="catchy-tagline">
+                <h1 className="catchy-tagline">
                   Easily unsubscribe from spam emails
-                </p>
+                </h1>
                 <p className="informative-description">
                   See all of your subscription emails in one place and
                   unsubscribe from them with a single click.
@@ -92,99 +105,140 @@ const IndexPage = () => {
 
                 <div className="join-container">
                   <a
-                    href="/login"
-                    onMouseEnter={() => setActive(true)}
-                    onMouseLeave={() => setActive(false)}
+                    href="/signup?source=hero"
                     className={`beam-me-up-cta`}
+                    // state={{ register: true }}
                   >
                     Get Started For Free!
                   </a>
-                  {!statsError ? (
-                    <p
-                      className={`join-text ${
-                        statsLoading ? 'join-text-loading' : ''
-                      }`}
-                    >
-                      Join{' '}
-                      <span className="join-stat">
-                        {formatNumber(statsData.users)} users
-                      </span>{' '}
-                      who have unsubscribed from a total of{' '}
-                      <span className="join-stat">
-                        {formatNumber(statsData.unsubscriptions)} spam
-                      </span>{' '}
-                      emails
-                    </p>
-                  ) : null}
+                  {statsContent}
                 </div>
+              </div>
+            </div>
+            <div className="hero-box hero-right">
+              <UnsubscribeDemo trashPileRef={trashPileRef.current} />
+            </div>
+          </div>
+        </div>
+
+        <div className="home-container">
+          <div className="home-container-inner" id="learn">
+            <div className="image-section image-right">
+              <div className="image-section-text">
+                <h3>All of your subscription emails together</h3>
+                <p>
+                  Too much noise in your inbox? We show you all the mailing
+                  lists you're subscribed to and let you unsubscribe with one
+                  click.
+                </p>
+              </div>
+              <div className="image-section-img">
+                <img
+                  src={allSubscriptions}
+                  alt="list of subscription emails image"
+                />
+              </div>
+            </div>
+
+            <div className="image-section image-left">
+              <div className="image-section-img">
+                <img src={subscriberScore} alt="subscriber score image" />
+              </div>
+              <div className="image-section-text">
+                <h3>Quickly see the worst spammers</h3>
+                <p>
+                  We rank each of your subscriptions based on our unique
+                  Subscriber Score, so you can quickly tell if it's worth
+                  hanging on to.
+                </p>
+                <p>
+                  <TextLink href="/learn">
+                    <span>View all features of Leave Me Alone</span>{' '}
+                    <ArrowIcon />
+                  </TextLink>
+                </p>
+              </div>
+            </div>
+
+            <div className="image-section image-right">
+              <div className="image-section-text">
+                <h3>Clean all of your inboxes at once</h3>
+                <p>
+                  Connect all of your email accounts and scan them together.
+                  Clear out all of your subscription emails from all of your
+                  email addresses in one go.
+                </p>
+              </div>
+              <div className="image-section-img bordered">
+                <img src={connectAccounts} alt="connected accounts image" />
+              </div>
+            </div>
+
+            <div className="image-section image-left privacy">
+              <div className="image-section-img">
+                <img src={envelope} alt="private envelope image" />
+              </div>
+              <div className="image-section-text">
+                <h3>Privacy first</h3>
+                <p>
+                  We're committed to privacy. We don't store any email content
+                  so you don't have to worry about us losing or selling your
+                  data.
+                </p>
+                <p>
+                  <TextLink href="/security">
+                    <span>Learn more about security and data management</span>{' '}
+                    <ArrowIcon />
+                  </TextLink>
+                </p>
               </div>
             </div>
           </div>
-          <a className="more-info" href="#learn">
-            Read more{' '}
-            <span role="img" aria-label="Point down">
-              👇
-            </span>
-          </a>
         </div>
 
-        <div className="learn home-container">
-          <div className="home-container-inner" id="learn">
-            <h2 className="feature-header">
-              See all of your spam, newsletters and subscription emails in one
-              place.
-            </h2>
-            <div className="example-img">
-              <img
-                src={onePlace}
-                className="unsub-desktop-img"
-                alt="List of spam and subscription emails in Leave Me Alone on desktop"
-              />
-              <img
-                src={iphoneUnsub}
-                className="unsub-iphone-img"
-                alt="List of spam and subscription emails in Leave Me Alone on mobile"
-              />
-            </div>
-            <div className="features">
-              <div className="feature-a">
-                <h3 className="feature-title">
-                  Unsubscribe with a single click
-                </h3>
-                <div className="feature-img unsub">
-                  <img
-                    src={unsubGif}
-                    alt="Unsubscribing from a subscription list by clicking the toggle"
-                  />
-                </div>
-              </div>
-              <div className="feature-b">
-                <h3 className="feature-title">Keep your favorite senders</h3>
-                <div className="feature-img favorite">
-                  <img
-                    src={heartGif}
-                    alt="Adding a sender to favorites by clicking the heart"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="learn-providers" id="providers">
-              <h2 className="providers-header">
-                Unsubscribe from unwanted emails in Gmail and Outlook
-              </h2>
+        <div className="trash-pile" id="trash-pile">
+          <div className="home-container">
+            <div className="text-box text-box-centered">
+              <h3>Say goodbye to subscriptions forever</h3>
               <p>
-                We support Google and Microsoft email accounts including Gmail,
-                G Suite, Outlook, Live, and Hotmail.
+                When you hit the unsubscribe button we don't just move your mail
+                into a folder or to trash, instead we actually unsubscribe you
+                from the list.
               </p>
-              <div className="provider-logos">
-                <span className="provider-logo">
-                  <GoogleIcon width="60" height="60" />
-                </span>
-                <span className="provider-logo">
-                  <OutlookIcon width="60" height="60" />
-                </span>
-              </div>
-              <div className="provider-stats">
+              <p>
+                This means the subscriptions are{' '}
+                <TextImportant>gone forever</TextImportant>, even if you decide
+                to stop using our service.
+              </p>
+              <a
+                href="/learn"
+                className={`beam-me-up-cta beam-me-up-cta-center`}
+              >
+                Learn More
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="learn-providers" ref={trashPileRef} id="providers">
+          <div className="text-box text-box-centered">
+            <h3 className="providers-header">
+              We support both Gmail and Outlook
+            </h3>
+            <p>
+              If you have a Google or Microsoft email account then we have you
+              covered. This includes Gmail, G Suite, Outlook, Live, and Hotmail.
+            </p>
+            <div className="provider-logos">
+              <span className="provider-logo">
+                <GoogleIcon width="60" height="60" />
+              </span>
+              <span className="provider-logo">
+                <OutlookIcon width="60" height="60" />
+              </span>
+            </div>
+
+            {/* <div className="provider-stats">
                 <p>
                   <span className="provider-stats-num">
                     {formatNumber(statsData.users)}
@@ -205,185 +259,36 @@ const IndexPage = () => {
                     alt="Clicking the toggle to unsubscribe from a mailing list"
                   />
                 </Browser>
-              </div>
-              <a
-                href="/login"
-                onMouseEnter={() => setActive(true)}
-                onMouseLeave={() => setActive(false)}
-                className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-              >
-                Start unsubscribing
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* <div className="providers home-container">
-          <div className="home-container-inner" id="providers">
-            <h2>Where it works</h2>
-            <div className="provider-logos">
-              <span>
-                <GoogleIcon />
-              </span>
-              <span>
-                <OutlookIcon />
-              </span>
-            </div>
-            <p>{formatNumber(statsData.users)} users worldwide.</p>
-            <p>
-              {formatNumber(statsData.unsubscriptions)} spam and subscription
-              emails gone forever.
-            </p>
-          </div>
-        </div> */}
-
-        <div className="privacy home-container">
-          <div className="home-container-inner" id="learn">
-            {/* <p>
-              Did you know that in 2018, spam messages account for 48.16% of all
-              e-mail traffic worldwide?{' '}
-              <sub className="privacy-source-ref">[1]</sub>
-            </p>
-            <p>
-              Leave Me Alone lets you see all of your subscription emails in one
-              place and unsubscribe from them easily.
-            </p>
-            <cite className="privacy-source">
-              [1]:{' '}
-              <a href="https://www.statista.com/statistics/420391/spam-email-traffic-share/">
-                Global spam volume as percentage of total e-mail traffic from
-                January 2014 to March 2018, by month
-              </a>
-            </cite>
-            <div className="example-img">
-              <img src={gif} alt="unsubscribe list" />
-            </div> */}
-
-            <h2 className="privacy-title">Why us?</h2>
-            {/* <span className="privacy-padlock">🕵️‍♀️</span> */}
-            <p>
-              Other unsubscription services have existed for years, however they
-              make money by selling and marketing your information. You can read
-              more about this on{' '}
-              <a href="https://www.nytimes.com/2017/04/24/technology/personal-data-firm-slice-unroll-me-backlash-uber.html">
-                The New York Times
-              </a>
-              ,{' '}
-              <a href="https://lifehacker.com/unroll-me-the-email-unsubscription-service-has-been-c-1794593445">
-                Life Hacker
-              </a>
-              ,{' '}
-              <a href="https://www.wired.com/2017/04/stop-services-like-unroll-snooping-gmail/">
-                Wired
-              </a>
-              ,{' '}
-              <a href="https://techcrunch.com/2018/05/05/unroll-me-to-close-to-eu-users-saying-it-cant-comply-with-gdpr/">
-                TechCrunch
-              </a>
-              ,{' '}
-              <a href="https://www.cnet.com/how-to/how-to-remove-unroll-me-from-your-gmail-account/">
-                CNET
-              </a>
-              , and{' '}
-              <a href="https://www.theguardian.com/technology/2017/apr/24/unrollme-mail-unsubscription-service-heartbroken-sells-user-inbox-data-slice">
-                The Guardian
-              </a>
-              .
-            </p>
-            <p className="privacy-padlock">🕵️‍♀️</p>
-            <p>
-              We won't EVER sell your data (in fact we don't even store any
-              email content). We actually unsubscribe you from emails rather
-              than just moving them to trash, so those subscriptions are gone
-              forever, even if you decide to stop using our service.
-            </p>
-            <p>No hidden fees. No lock-in.</p>
-          </div>
-        </div>
-        <div className="love home-container">
-          <div className="home-container-inner" id="wall-of-love">
-            <WallOfLove />
-          </div>
-        </div>
-        <div className="pricing home-container">
-          <div className="home-container-inner" id="pricing">
-            <h2>Let's talk money</h2>
-            <p>
-              So that we can <TextImportant>keep your data safe</TextImportant>{' '}
-              Leave Me Alone is a paid service.
-            </p>
-            <p>
-              You <TextImportant>pay once</TextImportant> for how far back in
-              time you want search your inbox for subscription emails.
-            </p>
-          </div>
-
-          <div className="pricing-list-of-boxes-that-say-how-much">
-            <p className="pricing-scan-text">
-              Search your inbox for subscriptions received in the last...
-            </p>
-            <div className="a-load-of-boxes-with-prices">
-              <a className="pricing-box" href="/login">
-                <h3 className="pricing-title">3 days</h3>
-                <p className="pricing-price">Free</p>
-                <span className="pricing-text">no credit card required</span>
-              </a>
-              {PRICES.map(p => (
-                <a
-                  key={p.value}
-                  className={`pricing-box ${
-                    p.recommended ? 'pricing-box-recommended' : ''
-                  }`}
-                  href="/login"
-                >
-                  <h3 className="pricing-title">{p.label}</h3>
-                  <p className="pricing-price">
-                    {p.price ? `$${p.price / 100}` : 'Free'}
-                  </p>
-                  <span className="pricing-text">one-time payment</span>
-                </a>
-              ))}
-            </div>
-            <a className="pricing-enterprise" href="/enterprise">
-              Looking for an enterprise plan?
+              </div> */}
+            <a
+              href="/signup?source=providers"
+              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+            >
+              Start Unsubscribing!
             </a>
           </div>
-
-          <div className="home-container-inner">
-            <div className="pricing-cta">
-              <ul className="bullets">
-                <li>
-                  See all of your subscription emails in{' '}
-                  <TextImportant>one place</TextImportant>
-                </li>
-                <li>
-                  Unsubscribe from spam with a{' '}
-                  <TextImportant>single click</TextImportant>
-                </li>
-                <li>
-                  Know your data is in <TextImportant>safe hands</TextImportant>
-                </li>
-                <li>
-                  Enjoy a <TextImportant>cleaner inbox</TextImportant>
-                </li>
-              </ul>
-              <a
-                href="/login"
-                onMouseEnter={() => setActive(true)}
-                onMouseLeave={() => setActive(false)}
-                className={`beam-me-up-cta beam-me-up-cta-center`}
-              >
-                Try for Free
-              </a>
-            </div>
-          </div>
         </div>
 
-        <div className="news home-container">
+        <div className="pricing home-container section-padded">
+          <div className="home-container-inner" id="pricing">
+            <h3>Let's talk money</h3>
+            <p>
+              So that we can <a href="/pricing#why">keep your data safe</a>{' '}
+              Leave Me Alone is a paid service. Each email you unsubscribe from
+              costs one credit.
+            </p>
+          </div>
+          <Pricing />
+        </div>
+
+        <div className="news home-container section-padded">
           <div className="home-container-inner" id="news">
-            <h2>In The News</h2>
+            <h3>In the news</h3>
+            <p>
+              Don't take our word for it, read what people are saying about us.
+            </p>
             <div className="in-the-news">
-              {featuredNews.map(({ quote, shortQuote, logoUrl, url }) => (
+              {news.map(({ quote, shortQuote, logoUrl, url }) => (
                 <div key={url} className="news-item">
                   <p>"{shortQuote || quote}"</p>
                   <a target="_" className="news-logo" href={url}>
@@ -392,58 +297,30 @@ const IndexPage = () => {
                 </div>
               ))}
             </div>
-            <TextLink href="/news">Read more...</TextLink>
           </div>
         </div>
 
-        <div className="makers home-container">
-          <div className="home-container-inner" id="about">
-            <h2>Created by Independent Makers</h2>
-            <p className="maker-stuff">
-              Hey!{' '}
-              <span role="img" aria-label="Wave">
-                👋
-              </span>{' '}
-              We're Danielle and James. We work on products that help people
-              because it's rewarding and we love it, which we think is a good
-              reason to do just about anything!{' '}
-              <span role="img" aria-label="Heart">
-                ❤️
-              </span>
-            </p>
-            <div className="huskos">
-              <img
-                alt="The two creators Danielle and James with two husky dogs"
-                id="emoji-button"
-                src={dogs}
-              />
-            </div>
-
-            <p className="maker-stuff">
-              We're building <strong>Leave Me Alone</strong> on our own without
-              funding or outside support. We're real people (not the huskies!),
-              we're not a soulless corporation out to steal your money!
-            </p>
-            <a href="/login" className={`beam-me-up-cta beam-me-up-cta-center`}>
-              Clean My Inbox!
+        <div className="home-container">
+          <div className="home-container-inner">
+            <WallOfLove colLimit={1} />
+            <p>What are you waiting for?</p>
+            <a
+              href="/signup?source=footer"
+              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+            >
+              Get Started For Free
             </a>
           </div>
         </div>
+
         <Footer />
-        <div className="makerads-container">
-          <p>Other indie made products we support</p>
-          <iframe
-            style={{ border: 0, width: '320px', height: '144px' }}
-            src="https://makerads.xyz/ad"
-          />
-        </div>
       </div>
     </Layout>
   );
 };
 
 function fetchStats() {
-  return request('/api/stats');
+  return request('/api/stats?summary=true');
 }
 
 // function Stats({ isLoading, data, isVisible }) {
@@ -505,8 +382,321 @@ function fetchStats() {
 //   );
 // }
 
+IndexPage.whyDidYouRender = true;
+
 export default IndexPage;
 
 function formatNumber(n) {
   return n > 999999 ? numeral(n).format('0a') : numeral(n).format('0,0');
+}
+
+const items = [
+  {
+    name: 'Black Friday Cacti',
+    email: '<marketing@cact.us>',
+    subject: `🌵 One day only, 80% off your next cactus!`,
+    text: "It's as simple as a single click. Go on, try it! ☝️"
+  },
+  {
+    name: 'Mars Travel 🌝',
+    email: '<marketing@travel.com>',
+    subject: 'New price alert for your flight outta here - Book!',
+    text: 'Wohoo, that subscription is gone forever! How about this one?'
+  },
+  {
+    name: `Stanley's Snakes`,
+    email: '<stanley@shadey.snake>',
+    subject: `🐍 Big Snake Sale. Come on down to Snakes 'R' Us`,
+    text: "Wow, that felt good! Don't worry there's always more!"
+  },
+  {
+    name: 'Big Business',
+    email: '<clark@business.com>',
+    subject: `We know you don't care but we email you anyway`,
+    text: 'Maybe we want to keep this one? Nahhhh only kidding! Ditch it!'
+  },
+  {
+    name: 'Dull Time Tracker',
+    email: '<noreply@tracker.co>',
+    subject: `What have you been doing today? Probably nothing.`,
+    text: 'Maybe we want to keep this one? Nahhhh only kidding! Ditch it!'
+  },
+  {
+    name: 'Business Stuff',
+    email: '<noti@fications.gov>',
+    subject: `🚨 You have new notifications! Don't forget!`,
+    text: 'Maybe we want to keep this one? Nahhhh only kidding! Ditch it!'
+  }
+];
+
+const getMessage = count => {
+  if (count < 10) {
+    return 'Maybe we want to keep this one? Nahhhh only kidding! Ditch it!';
+  }
+  if (count < 15) {
+    return 'Keep it up! Get rid of all of them!';
+  }
+  if (count < 25) {
+    return `Holy moly you're dedicated! Maybe you should actually sign in and do this for real?`;
+  }
+  if (count < 50) {
+    return `Hey go easy, we might run out!`;
+  }
+  if (count < 100) {
+    return `Okay you're pretty serious about this. But I bet you can't get to 100!`;
+  }
+  if (count < 120) {
+    return `Okay, okay, you win, please stop clicking.`;
+  }
+  if (count < 125) {
+    return `Okay, okay, you win, PLEASE stop clicking!`;
+  }
+  if (count < 130) {
+    return `Seriously, this is getting annoying now.`;
+  }
+  if (count < 140) {
+    return `How about if I give you a discount? Then will you stop bothering me?`;
+  }
+  if (count < 150) {
+    return (
+      <span>
+        Fine I will! Use the coupon{' '}
+        <TextImportant>I_HATE_SUBSCRIPTIONS</TextImportant> for 5% off 💌
+      </span>
+    );
+  }
+  if (count < 175) {
+    return `I hope you're happy. You wasted a whole bunch of time for a measly 5%.`;
+  }
+  if (count < 200) {
+    return `Seriously, there's nothing more to gain now.`;
+  }
+  if (count < 225) {
+    return `Nothing at all. Nope, definitely nothing left.`;
+  }
+  if (count < 250) {
+    return `Okay I lied.... Or did I?`;
+  }
+  if (count < 320) {
+    return (
+      <span>
+        ...Psst, you're awesome. Use the coupon{' '}
+        <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a huge
+        10% off 😍. Our little secret OK?
+      </span>
+    );
+  }
+};
+function nodes(state, action) {
+  switch (action.type) {
+    case 'next': {
+      const { count } = state;
+      const newCount = count + 1;
+      let newNode = items[newCount];
+      if (!newNode) {
+        const email = `noreply@${faker.internet.domainName()}`;
+        newNode = {
+          name: faker.name.findName(),
+          email,
+          subject: _capitalize(faker.company.bs()),
+          text: getMessage(newCount)
+        };
+      }
+      let nodes = state.nodes;
+      // maximum of 50 nodes
+      if (state.nodes.length > 100) {
+        nodes = state.nodes.slice(1, state.nodes.length);
+      }
+      return {
+        count: newCount,
+        nodes: [...nodes, newNode]
+      };
+    }
+    default:
+      return state;
+  }
+}
+
+function UnsubscribeDemo({ trashPileRef }) {
+  const { width } = useWindowSize();
+  const ref = useRef(null);
+  const [state, dispatch] = useReducer(nodes, {
+    count: 0,
+    nodes: [items[0]]
+  });
+
+  const onClick = useCallback(
+    () => {
+      dispatch({ type: 'next' });
+    },
+    [dispatch]
+  );
+
+  const fallLimit = useMemo(
+    () => {
+      if (ref.current && trashPileRef) {
+        console.log(width);
+        const top = trashPileRef.offsetTop;
+        const elTop = ref.current.getBoundingClientRect().y;
+        return top - elTop - 50;
+      }
+    },
+    [trashPileRef, width]
+  );
+
+  return (
+    <div className="example-container" ref={ref}>
+      {state.nodes.map(item => {
+        return (
+          <Item
+            fallLimit={fallLimit}
+            key={item.name}
+            {...item}
+            onClick={onClick}
+            count={state.count}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function rand(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function Item({
+  animate = true,
+  name,
+  email,
+  text = '',
+  onClick = () => {},
+  fallLimit,
+  subject,
+  count = 0
+}) {
+  const ref = useRef(null);
+  const outerRef = useRef(null);
+  const textRef = useRef(null);
+
+  const onChange = useCallback(
+    () => {
+      onClick();
+      if (!animate) {
+        return false;
+      }
+      textRef.current.style.opacity = 0;
+      const v = 100;
+      const angle = rand(50, 90); // The angle of projection is a number between 80 and 89 degrees.
+      const theta = (angle * Math.PI) / 180; // Theta is the angle in radians
+      const g = -9.8; // And gravity is -9.8. If you live on another planet feel free to change
+
+      // time is initially zero, also set some random variables. It's higher than the total time for the projectile motion
+      // because we want the squares to go off screen.
+      let t = 0;
+      let nx;
+      let ny;
+
+      // The direction can either be left (1), right (-1) or center (0). This is the horizontal direction.
+      const negate = [1, -1, 1, -1, 0];
+      const direction = negate[Math.floor(Math.random() * negate.length)];
+
+      // Some random numbers for altering the shapes position
+      const randScale = Math.random().toFixed(2);
+      let randDeg2 = rand(360, 60);
+      if (direction !== 0) randDeg2 = randDeg2 * direction;
+      // And apply those
+      const baseTransform = `scale(${randScale}) rotateZ(${randDeg2}deg)`;
+      // console.log(`direction(${direction}) ${baseTransform}`);
+      ref.current.style.transform = baseTransform;
+
+      const frame = function() {
+        // Horizontal speed is constant (no wind resistance on the internet)
+        var ux = Math.cos(theta) * v * direction;
+        // Vertical speed decreases as time increases before reaching 0 at its peak
+        var uy = Math.sin(theta) * v - -g * t;
+        // The horizontal position
+        nx = ux * t;
+        // s = ut + 0.5at^2
+        ny = uy * t + 0.5 * g * Math.pow(t, 2);
+        // Apply the positions
+        outerRef.current.style.transform = `translate(${nx}px, ${-ny}px)`;
+        // Increase the time by 0.10
+        t = t + 0.15;
+
+        if (ny > -fallLimit) {
+          window.requestAnimationFrame(frame);
+        } else {
+          // remove will-change
+          ref.current.style.willChange = 'auto';
+          outerRef.current.style.willChange = 'auto';
+        }
+      };
+      // add will-change
+      ref.current.style.willChange = 'transform, opacity';
+      outerRef.current.style.willChange = 'transform';
+      window.requestAnimationFrame(frame);
+    },
+    [ref, outerRef, onClick, fallLimit, animate]
+  );
+
+  const onClickTweet = useCallback(
+    () => {
+      const text = `I'm loving the one-click unsubscribe button on ${
+        window.location.host
+      }... I've clicked it ${count} times! 🙅‍`;
+      openTweetIntent(text);
+    },
+    [count]
+  );
+
+  return (
+    <Transition timeout={200} appear in={true}>
+      {state => {
+        return (
+          <>
+            <div
+              data-state={state}
+              ref={outerRef}
+              className="example-unsubscribe-container"
+              key={name}
+            >
+              <div ref={ref} className="example-unsubscribe" data-state={state}>
+                <div className="example-from-column">
+                  <div className="example-from-name-container">
+                    <span className="example-from-name">{name}</span>
+                  </div>
+                  <span className="example-from-email">{email}</span>
+                </div>
+                <div className="example-subject-column">{subject}</div>
+                <div className="example-toggle">
+                  <Toggle status={true} onChange={onChange} />
+                </div>
+              </div>
+            </div>
+
+            <div className="example-unsub-text" ref={textRef}>
+              <p>{text}</p>
+              <Transition timeout={200} appear in={count > 2 && count < 250}>
+                {state => {
+                  return (
+                    <>
+                      <p data-state={state}>That's {count} gone!</p>
+                      <a
+                        className="example-unsub-tweet-btn"
+                        data-state={state}
+                        onClick={onClickTweet}
+                      >
+                        Tweet progress
+                      </a>
+                    </>
+                  );
+                }}
+              </Transition>
+            </div>
+          </>
+        );
+      }}
+    </Transition>
+  );
 }
