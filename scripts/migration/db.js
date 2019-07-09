@@ -13,7 +13,7 @@ module.exports.connect = function connect() {
         if (err) {
           return reject(err);
         }
-        connection = client.db(process.env. );
+        connection = client.db(process.env.DB_NAME);
         return resolve(connection);
       },
       { useNewUrlParser: true }

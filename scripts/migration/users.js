@@ -27,12 +27,14 @@ const migrateUser = oldRecord => {
       [k]: oldRecord[k]
     };
   }, {});
+  debugger;
   // convert provider to loginProvider
   newRecord = {
     ...newRecord,
     loginProvider: oldRecord.provider
   };
   newRecord = {
+    ...newRecord,
     ignoredSenderList: newRecord.ignoredSenderList
       ? newRecord.ignoredSenderList
       : []
@@ -112,8 +114,8 @@ function hashEmail(email) {
   const conn = await db.connect();
   const col = await conn.collection('users');
   const occCol = await conn.collection('occurrences');
-  const cur = await col.find({ id: '116477163028920794979' });
-  // const cur = await col.find({ __version: { $ne: '2.0' } });
+  // const cur = await col.find({ id: '116477163028920794979' });
+  const cur = await col.find({ __version: { $ne: '2.0' } });
   const count = await cur.count();
   console.log(`migrating ~${count} users...`);
   let currentCount = 1;
