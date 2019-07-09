@@ -7,7 +7,7 @@ export const DatabaseContext = createContext(null);
 const db = new Dexie('leavemealone');
 
 db.version(1).stores({
-  mail: `&id, fromEmail, date, *labels, score, to, status, [status+to], forAccount, [to+forAccount+provider]`,
+  mail: `&id, fromEmail, date, *labels, score, to, status, [status+to], [forAccount+status], forAccount, [to+forAccount+provider]`,
   scores: `&address, score`,
   occurrences: `key, count`,
   prefs: `key`,
