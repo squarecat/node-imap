@@ -62,7 +62,7 @@ function getUserDefaults({ email }) {
     billing: {
       credits: 0
     },
-    _version: '2.0'
+    __version: '2.0'
   };
 }
 
