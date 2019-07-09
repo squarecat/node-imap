@@ -1,7 +1,7 @@
 import {
   getScores,
   refreshScores,
-  updateHearted,
+  updateOccurrenceHearts,
   updateOccurrenceUnsubscribed,
   updateOccurrences,
   updateOccurrencesSeen
@@ -23,7 +23,7 @@ export function addOrUpdateOccurrences(userId, dupeInfo = []) {
 }
 
 export function updateOccurrenceHearted(sender, isHearted) {
-  return updateHearted(sender, isHearted);
+  return updateOccurrenceHearts(sender, isHearted);
 }
 
 export function updateOccurrencesSeenByUser(userId, senders) {

@@ -171,7 +171,7 @@ export default app => {
     '/auth/google/connect',
     passport.authenticate('connect-account-google', {
       scope: google.scopes,
-      prompt: 'login',
+      prompt: 'select_account consent',
       accessType: 'offline'
     })
   );

@@ -897,30 +897,33 @@ export async function updateUserUnsubStatus(
 export async function removeUserAccount(userId, accountEmail) {
   try {
     const user = await getUserById(userId, { withAccountKeys: true });
-    const { accounts, organisationId } = user;
-
-    const account = accounts.find(e => e.email === accountEmail);
+    const account = user.accounts.find(e => e.email === accountEmail);
 
     const { id: accountId, provider, keys } = account;
     const { refreshToken } = keys;
 
     await revokeToken({ provider, refreshToken });
-    const updatedUser = await removeAccount(user, {
+
+    const updatedUser = await removeAccount(userId, {
+      email: user.email,
       accountId,
-      email: accountEmail
+      accountEmail
     });
+
     addActivityForUser(userId, 'removeAdditionalAccount', {
       id: accountId,
       provider,
       email: accountEmail
     });
 
-    if (organisationId) {
+    if (user.organisationId) {
       logger.debug(
-        `user-service: removed user account belonging to an organisation ${organisationId}`
+        `user-service: removed user account belonging to an organisation ${
+          user.organisationId
+        }`
       );
       const organisation = await removeUserAccountFromOrganisation(
-        organisationId,
+        user.organisationId,
         {
           email: accountEmail
         }
@@ -934,7 +937,6 @@ export async function removeUserAccount(userId, accountEmail) {
 
     return updatedUser;
   } catch (err) {
-    console.log(err);
     throw new Error('failed to disconnect user account', {
       userId: userId,
       cause: err
@@ -943,10 +945,14 @@ export async function removeUserAccount(userId, accountEmail) {
 }
 
 async function revokeToken({ provider, refreshToken }) {
-  if (provider === 'google') {
-    await revokeTokenFromGoogle(refreshToken);
-  } else if (provider === 'outlook') {
-    await revokeTokenFromOutlook(refreshToken);
+  try {
+    if (provider === 'google') {
+      await revokeTokenFromGoogle(refreshToken);
+    } else if (provider === 'outlook') {
+      await revokeTokenFromOutlook(refreshToken);
+    }
+  } catch (err) {
+    return true;
   }
 }
 
