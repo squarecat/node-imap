@@ -60,3 +60,24 @@
   font-size: 16px;
   opacity: 0.6;
 }
+
+.v2-logo-img {
+  max-width: 140px;
+  margin: 20px auto;
+  display: block;
+}
+
+.feature-list {
+  list-style: disc;
+  margin-top: 10px;
+
+  li {
+    margin-bottom: 5px;
+  }
+}
+
+.credit-text {
+  text-align: center;
+  margin: 1.2rem 0 1.5rem 0;
+  text-shadow: 0px 0px 0px rgba(231, 57, 48, 0.749);
+}
