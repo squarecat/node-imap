@@ -10,17 +10,17 @@
     "port": "$PORT"
   },
   "urls": {
-    "referral": "https://leavemealone.xyz/r/",
-    "base": "https://leavemealone.xyz"
+    "referral": "https://leavemealone.app/r/",
+    "base": "https://leavemealone.app"
   },
   "auth": {
     "google": {
-      "loginRedirect": "https://leavemealone.xyz/login/google/redirect",
-      "connectRedirect": "https://leavemealone.xyz/auth/google/connect/callback"
+      "loginRedirect": "https://leavemealone.app/login/google/redirect",
+      "connectRedirect": "https://leavemealone.app/auth/google/connect/callback"
     },
     "outlook": {
-      "loginRedirect": "https://leavemealone.xyz/login/outlook/redirect",
-      "connectRedirect": "https://leavemealone.xyz/auth/outlook/connect/callback"
+      "loginRedirect": "https://leavemealone.app/login/outlook/redirect",
+      "connectRedirect": "https://leavemealone.app/auth/outlook/connect/callback"
     }
   },
   "puppeteer": {
