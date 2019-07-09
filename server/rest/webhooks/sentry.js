@@ -12,11 +12,10 @@ export default app => {
   });
   app.post('/api/webhooks/sentry', async (req, res) => {
     const { body } = req;
-    const { url, message, event } = body;
-    const { environment } = event;
+    const { url, message } = body;
     try {
       sendMessage(
-        `🚨 New Sentry issue on ${environment}:
+        `🚨 New Sentry issue:
 ${message}
 ${url}
 `

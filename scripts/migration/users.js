@@ -72,7 +72,7 @@ const migrateUser = oldRecord => {
           provider: oldRecord.provider,
           email: oldRecord.email
         },
-        rewardCredits: 100,
+        rewardCredits: 10,
         notificationSeen: true,
         id: '0',
         timestamp: now
