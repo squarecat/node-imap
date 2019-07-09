@@ -110,13 +110,6 @@ export async function getUserById(id, options = {}) {
 
 export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
   try {
-    // const user = await getUserByEmail(userData.email);
-    // if (user && user.loginProvider !== 'outlook') {
-    //   throw new AuthError('user already exists with a different provider', {
-    //     errKey: 'auth-provider-error'
-    //   });
-    // }
-
     return createOrUpdateUser(userData, keys, 'outlook');
   } catch (err) {
     throw err;
@@ -125,19 +118,13 @@ export async function createOrUpdateUserFromOutlook(userData = {}, keys) {
 
 export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   try {
-    // const user = await getUserByEmail(userData.email);
-    // if (user && user.loginProvider !== 'google') {
-    //   throw new AuthError('user already exists with a different provider', {
-    //     errKey: 'auth-provider-error'
-    //   });
-    // }
     return createOrUpdateUser(userData, keys, 'google');
   } catch (err) {
     throw err;
   }
 }
 
-async function validateUserAccountCreateUpdate(email, provider) {
+async function validateUserAccountCreateUpdate({ id, email, provider }) {
   try {
     // we want to know if there is a user already which exists with this email
     // and login provider or has this account connected to their account
@@ -152,12 +139,13 @@ async function validateUserAccountCreateUpdate(email, provider) {
     logger.debug(
       `user-service: validating user account create update for ${provider}`
     );
-    const strat = await getUserLoginProvider({ email });
-    logger.debug(`user-service: strat ${strat}`);
 
-    if (strat === 'connected-account') {
+    const loginStrat = await getUserLoginProvider({ email });
+    logger.debug(`user-service: loginStrat ${loginStrat}`);
+
+    if (loginStrat === 'connected-account') {
       logger.debug(
-        `user-service: cannot create user, already connected to a different account`
+        `user-service: cannot create/update user, already connected to a different account`
       );
       throw new AuthError(
         'user account already connected to a different account',
@@ -167,16 +155,34 @@ async function validateUserAccountCreateUpdate(email, provider) {
       );
     }
 
-    if (strat && strat !== provider) {
+    if (loginStrat === 'password') {
       logger.debug(
-        `user-service: cannot create user, already exists with a different provider`
+        `user-service: trying to connect an account which is used for password login... checking the user is allowed`
+      );
+      // a user trying to signup would have been prompted for their password
+      // a user trying to connect an account we need to check they are connecting their own account
+      const user = await getUserById(id);
+
+      // if the user email is the same as the one connecting allow
+      // otherwise it will be caught by existing with a different provider
+      if (user && user.email === email) {
+        logger.debug(
+          `user-service: user connecting this account is the owner of the login account, allowing...`
+        );
+        return true;
+      }
+    }
+
+    if (loginStrat && loginStrat !== provider) {
+      logger.debug(
+        `user-service: cannot create/update user, already exists with a different provider`
       );
       throw new AuthError('user already exists with a different provider', {
         errKey: 'auth-provider-error'
       });
     }
 
-    return true;
+    return loginStrat;
   } catch (err) {
     throw err;
   }
@@ -192,7 +198,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     displayName
   } = userData;
   try {
-    await validateUserAccountCreateUpdate(userData.email, provider);
+    await validateUserAccountCreateUpdate({ id, email, provider });
 
     let user = await getUser(id);
     let organisation;
@@ -383,7 +389,11 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
   try {
     logger.debug(`user-service: connecting user account - ${provider}`);
 
-    await validateUserAccountCreateUpdate(accountEmail, provider);
+    await validateUserAccountCreateUpdate({
+      id: userId,
+      email: accountEmail,
+      provider
+    });
 
     const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
