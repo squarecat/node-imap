@@ -69,7 +69,7 @@ const EnterprisePage = () => {
             <div styleName="feature-text">
               <h3 styleName="feature-title">Inbox sanity for happy teams</h3>
               <p>
-                Recieving unwanted subscription emails is a source of annoyance,
+                Receiving unwanted subscription emails is a source of annoyance,
                 frustration and interruption. Leave Me Alone makes it quick and
                 easy to unsubscribe so that your team can focus on building your
                 business.
