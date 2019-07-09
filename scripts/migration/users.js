@@ -14,7 +14,8 @@ const keepKeys = [
   'email',
   'createdAt',
   'unsubscriptions',
-  'token'
+  'token',
+  'ignoredSenderList'
 ];
 
 const migrateUser = oldRecord => {
@@ -30,6 +31,11 @@ const migrateUser = oldRecord => {
   newRecord = {
     ...newRecord,
     loginProvider: oldRecord.provider
+  };
+  newRecord = {
+    ignoredSenderList: newRecord.ignoredSenderList
+      ? newRecord.ignoredSenderList
+      : []
   };
   // create hashed emails array
   newRecord = {
@@ -89,7 +95,7 @@ const migrateUser = oldRecord => {
     ...newRecord,
     lastUpdatedAt: now,
     milestones: {
-      connectedFirstAccount: true
+      connectedFirstAccount: 1
     },
     __migratedFrom: '1.0',
     __version: '2.0'
@@ -124,7 +130,7 @@ function hashEmail(email) {
       await col.replaceOne({ id: user.id }, newUser);
       // put their ignored senders into occurrences hearts if
       // they have some
-      if (newUser.ignoredSenderList.length) {
+      if (newUser.ignoredSenderList && newUser.ignoredSenderList.length) {
         newUser.ignoredSenderList.forEach(sender => {
           const { senderAddress } = parseSenderEmail(sender);
           if (!senderAddress.includes('@')) {
@@ -156,7 +162,7 @@ function hashEmail(email) {
   });
 })();
 
-export function parseEmail(str = '') {
+function parseEmail(str = '') {
   if (!str) {
     return {
       fromName: 'Unknown',
@@ -207,7 +213,7 @@ function hash(value, k = key) {
   }
 }
 
-export function parseDomain(senderAddress) {
+function parseDomain(senderAddress) {
   let domain = senderAddress.split('@')[1];
   if (domain.endsWith('>')) {
     domain = domain.substr(0, domain.length - 1);

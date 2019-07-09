@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+const MongoClient = require('mongodb').MongoClient;
 
 const client = new MongoClient(process.env.MONGO_URL, {
   useNewUrlParser: true
@@ -13,7 +13,7 @@ module.exports.connect = function connect() {
         if (err) {
           return reject(err);
         }
-        connection = client.db(process.env.DB_NAME);
+        connection = client.db(process.env. );
         return resolve(connection);
       },
       { useNewUrlParser: true }
