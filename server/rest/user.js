@@ -66,7 +66,9 @@ const userProps = [
   'organisationId',
   'organisationAdmin',
   'organisationActive',
-  'organisation'
+  'organisation',
+  'isBeta',
+  '__migratedFrom'
 ];
 
 export default app => {

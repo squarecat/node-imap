@@ -64,7 +64,7 @@ function MailView() {
         useImage,
         from: from,
         reason: failReason,
-        unsubStrategy: unsubStrategy
+        unsubStrategy
       });
     },
     [actions, unsubData]

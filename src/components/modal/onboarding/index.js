@@ -1,12 +1,14 @@
 import { ModalBody, ModalHeader, ModalWizardActions } from '..';
 import OnboardingReducer, { initialState } from './reducer';
 import React, { useEffect, useMemo, useReducer } from 'react';
+import { TextImportant, TextLink } from '../../text';
 
 import ConnectAccounts from './connect-accounts';
-import { TextImportant } from '../../text';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
+import logoV2 from '../../../assets/v2-logo-big.png';
+import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
@@ -16,13 +18,14 @@ import useUser from '../../../utils/hooks/use-user';
 export default () => {
   const [state, dispatch] = useReducer(OnboardingReducer, initialState);
   const [
-    { accounts, organisationId, organisation, isBeta },
+    { accounts, organisationId, organisation, isBeta, isMigrated },
     { setMilestoneCompleted }
   ] = useUser(u => ({
     accounts: u.accounts,
     organisationId: u.organisationId,
     organisation: u.organisation,
-    isBeta: u.isBeta
+    isBeta: u.isBeta,
+    isMigrated: u.__migratedFrom
   }));
 
   useEffect(
@@ -60,6 +63,7 @@ export default () => {
           step={state.step}
           accounts={accounts}
           isBeta={isBeta}
+          isMigrated={isMigrated}
           organisation={organisation}
           positionLabel={state.positionLabel}
         />
@@ -79,35 +83,27 @@ export default () => {
       />
       <img styleName="preload" src={unsubscribeSpamImage} />
       <img styleName="preload" src={unsubscribeGif} />
+      <img styleName="preload" src={logoV2} />
     </div>
   );
 };
 
-function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
+function Content({
+  step,
+  positionLabel,
+  accounts,
+  isBeta,
+  isMigrated,
+  organisation = {}
+}) {
   const content = useMemo(
     () => {
       if (step === 'welcome') {
         return (
-          <>
-            <ModalHeader>
-              Welcome to Leave Me Alone!{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            <p>
-              <strong>Leave Me Alone</strong> connects to your email inboxes and
-              scans for all your subscription mail. We'll show you which mail is
-              the most spammy and you can unsubscribe from it easily!
-            </p>
-            <img
-              styleName="onboarding-example-img"
-              src={unsubscribeSpamImage}
-              alt="example-image"
-            />
-            <p>
-              Let's start by{' '}
-              <TextImportant>connecting your email account</TextImportant>.
-            </p>
-          </>
+          <WelcomeContent
+            isMigrated={isMigrated}
+            positionLabel={positionLabel}
+          />
         );
       }
       if (step === 'accounts') {
@@ -128,35 +124,11 @@ function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
       }
       if (step === 'rewards') {
         return (
-          <>
-            <ModalHeader>
-              Credits{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            <p>
-              <TextImportant>1 credit = 1 unsubscribe.</TextImportant>
-            </p>
-            <p>
-              Each time you unsubscribe from a mailing list it will cost 1
-              credit.
-            </p>
-            {isBeta ? (
-              <p>
-                To say thanks for joining us during our beta period here are{' '}
-                <TextImportant>100 free credits</TextImportant> to get you
-                started!
-              </p>
-            ) : (
-              <p>
-                Here are <TextImportant>10 free credits</TextImportant> to get
-                you started!
-              </p>
-            )}
-
-            <p>
-              More credits can be purchased or earned for free if you run out.
-            </p>
-          </>
+          <RewardsContent
+            positionLabel={positionLabel}
+            isBeta={isBeta}
+            isMigrated={isMigrated}
+          />
         );
       }
       if (step === 'organisation') {
@@ -179,31 +151,14 @@ function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
       }
       if (step === 'finish') {
         return (
-          <>
-            <ModalHeader>
-              Let's start unsubscribing!{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            <p>
-              On the next screen you will see all the mail you are subscribed
-              to, just hit the toggle to unsubscribe!
-            </p>
-            <div styleName="animations">
-              <img src={unsubscribeGif} alt="tutorial animation" />
-            </div>
-          </>
+          <FinishContent
+            positionLabel={positionLabel}
+            isMigrated={isMigrated}
+          />
         );
       }
     },
-    [
-      step,
-      accounts,
-      isBeta,
-      positionLabel,
-      organisation.name,
-      organisation.domain,
-      organisation.allowAnyUserWithCompanyEmail
-    ]
+    [step, isMigrated, positionLabel, accounts, isBeta, organisation.name]
   );
 
   return (
@@ -221,6 +176,165 @@ function Content({ step, positionLabel, accounts, isBeta, organisation = {} }) {
         );
       }}
     </Transition>
+  );
+}
+
+function WelcomeContent({ isMigrated, positionLabel }) {
+  if (isMigrated) {
+    return (
+      <>
+        <ModalHeader>
+          Welcome to Leave Me Alone v2!{' '}
+          <span styleName="onboarding-position">{positionLabel}</span>
+        </ModalHeader>
+        <img
+          styleName="v2-logo-img"
+          src={logoV2}
+          alt="Leave Me Alone logo version 2"
+        />
+        <p>
+          We have added lots of features to make unsubscribing easier and faster
+          than before:
+          <ul styleName="feature-list">
+            <li>
+              <TextImportant>Connect multiple email accounts</TextImportant> and
+              scan them all at once
+            </li>
+            <li>
+              <TextImportant>Improved mail list</TextImportant> with sorting,
+              filtering, and pagination
+            </li>
+            <li>
+              <TextImportant>Password login + 2FA</TextImportant> for better
+              privacy & increased security
+            </li>
+            <li>
+              <TextImportant>Credit-based pricing</TextImportant> to only pay
+              for what you unsubscribe from
+            </li>
+            <li>
+              <TextImportant>Subscriber Score</TextImportant> showing you a
+              brand new ranking for senders
+            </li>
+          </ul>
+        </p>
+        <p>
+          If you have previously used Leave Me Alone with multiple email
+          addresses and would like us to merge them into a single account please{' '}
+          <TextLink onClick={() => openChat()}>let us know</TextLink>!
+        </p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ModalHeader>
+        Welcome to Leave Me Alone!{' '}
+        <span styleName="onboarding-position">{positionLabel}</span>
+      </ModalHeader>
+      <p>
+        <strong>Leave Me Alone</strong> connects to your email inboxes and scans
+        for all your subscription mail so that you can unsubscribe easily! We'll
+        periodically check for new emails so that we stay up-to-date with your
+        inbox.
+      </p>
+      <img
+        styleName="onboarding-example-img"
+        src={unsubscribeSpamImage}
+        alt="Example mail item which can be unsubscribed from"
+      />
+      <p>
+        Let's start by{' '}
+        <TextImportant>connecting your email account</TextImportant>.
+      </p>
+    </>
+  );
+}
+
+function RewardsContent({ positionLabel, isBeta, isMigrated }) {
+  if (isMigrated) {
+    return (
+      <>
+        <ModalHeader>
+          Credits <span styleName="onboarding-position">{positionLabel}</span>
+        </ModalHeader>
+        <p>
+          We have moved to{' '}
+          <TextImportant>
+            credit-based pricing and charge a small amount for each unsubscribe
+          </TextImportant>
+          . We show your subscription emails immediately and periodically check
+          for new emails so that{' '}
+          <TextImportant>we stay up-to-date</TextImportant> with your inbox.
+        </p>
+        <p styleName="credit-text">
+          <TextImportant>1 credit = 1 unsubscribe</TextImportant>
+        </p>
+        <p>
+          To say thanks for being a loyal customer here are{' '}
+          <TextImportant>10 free credits</TextImportant> to get you started!
+        </p>
+        <p>More credits can be purchased or earned for free if you run out.</p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ModalHeader>
+        Credits <span styleName="onboarding-position">{positionLabel}</span>
+      </ModalHeader>
+      <p styleName="credit-text">
+        <TextImportant>1 credit = 1 unsubscribe</TextImportant>
+      </p>
+      <p>
+        Each time you unsubscribe from a mailing list it will cost 1 credit.
+      </p>
+      {isBeta ? (
+        <p>
+          To say thanks for joining us during our beta period here are{' '}
+          <TextImportant>100 free credits</TextImportant> to get you started!
+        </p>
+      ) : (
+        <p>
+          Here are <TextImportant>10 free credits</TextImportant> to get you
+          started!
+        </p>
+      )}
+
+      <p>More credits can be purchased or earned for free if you run out.</p>
+    </>
+  );
+}
+
+function FinishContent({ positionLabel, isMigrated }) {
+  return (
+    <>
+      <ModalHeader>
+        Let's start unsubscribing!{' '}
+        <span styleName="onboarding-position">{positionLabel}</span>
+      </ModalHeader>
+      {isMigrated ? (
+        <>
+          <p>You're almost ready to use the new and improved mail list.</p>
+          <p>
+            The basics haven't changed - just hit the toggle to unsubscribe!
+          </p>
+        </>
+      ) : (
+        <p>
+          On the next screen you will see all the mail you are subscribed to,
+          just hit the toggle to unsubscribe!
+        </p>
+      )}
+      <div styleName="animations">
+        <img
+          src={unsubscribeGif}
+          alt="tutorial animation showing the unsubscribe button clicked"
+        />
+      </div>
+    </>
   );
 }
 

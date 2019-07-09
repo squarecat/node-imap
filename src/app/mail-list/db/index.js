@@ -162,7 +162,14 @@ export function useMailSync() {
                 actions: [
                   {
                     label: 'See details',
-                    onClick: () => setUnsubData(mail)
+                    onClick: () => {
+                      // defensive code against an old bug where unsubStrategy can be null
+                      let strat = mail.unsubStrategy;
+                      if (!strat) {
+                        strat = mail.unsubscribeLink ? 'link' : 'mailto';
+                      }
+                      setUnsubData({ ...mail, unsubStrategy: strat });
+                    }
                   }
                 ],
                 isDismissable: true,

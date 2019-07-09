@@ -40,10 +40,12 @@ function ActivityHistory() {
       } else {
         text = (
           <p>
-            Showing <TextImportant>{activity.length}</TextImportant> previous
-            {`${activity.length} ${
-              activity.length === 1 ? 'activity' : 'activites'
-            }`}
+            Showing{' '}
+            <TextImportant>
+              {`${activity.length} ${
+                activity.length === 1 ? 'activity' : 'activites'
+              }`}
+            </TextImportant>
             .
           </p>
         );
