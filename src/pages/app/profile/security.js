@@ -111,7 +111,7 @@ function TwoFactorAuth() {
           Two-factor authentication adds an additional layer of security to your
           account by requiring more than just a password to log in. We support
           two-facor authentication via the use of an app such as Authy or Google
-          Authenticaor
+          Authenticator.
         </p>
       </div>
       <div styleName="two-factor-auth-table">
