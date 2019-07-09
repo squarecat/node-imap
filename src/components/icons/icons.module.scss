@@ -87,3 +87,11 @@
   font-size: 8px;
   font-weight: bolder;
 }
+
+.pointy-arrow {
+  transform: scaleX(-1);
+  margin-left: 5px;
+  position: relative;
+  top: -2px;
+  opacity: 0.85;
+}
