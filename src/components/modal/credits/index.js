@@ -137,8 +137,11 @@ export default ({ credits }) => {
         <div styleName="balance">
           <p styleName="balance-text">
             Your current credit balance is{' '}
-            <span styleName="credit-balance">{credits}</span>
+            <span styleName="credit-balance">{credits}</span>.<br />
+            You have unsubscribed from a total of{' '}
+            <span styleName="credit-balance">{unsubCount}</span> emails.
           </p>
+
           <span styleName="action">
             <Button
               as="link"

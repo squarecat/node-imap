@@ -15,11 +15,14 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
-  const [{ email, organisationAdmin, loginProvider }] = useUser(u => ({
-    email: u.email,
-    organisationAdmin: u.organisationAdmin,
-    loginProvider: u.loginProvider
-  }));
+  const [{ email, unsubCount, organisationAdmin, loginProvider }] = useUser(
+    u => ({
+      email: u.email,
+      organisationAdmin: u.organisationAdmin,
+      loginProvider: u.loginProvider,
+      unsubCount: u.unsubCount
+    })
+  );
   return (
     <ProfileLayout pageName="Profile">
       <div styleName="section">
@@ -31,6 +34,10 @@ export default () => {
           <span styleName="email">
             <TextImportant>{email}</TextImportant>
           </span>
+        </p>
+        <p>
+          You have unsubscribed from a total of{' '}
+          <TextImportant>{unsubCount}</TextImportant> emails.
         </p>
       </div>
       <DangerZone organisationAdmin={organisationAdmin} />
