@@ -66,6 +66,9 @@ function LearnMoreDropdown() {
             <Link to="/security">Security</Link>
           </DropdownItem>
           <DropdownItem>
+            <Link to="/wall-of-love">Wall of Love</Link>
+          </DropdownItem>
+          <DropdownItem>
             <Link to="/about">About us</Link>
           </DropdownItem>
           <DropdownItem>

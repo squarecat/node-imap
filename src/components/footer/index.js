@@ -81,6 +81,9 @@ export default visProps => (
             <TextLink href="/open">Open stats</TextLink>
           </li>
           <li>
+            <TextLink href="/wall-of-love">Wall of Love</TextLink>
+          </li>
+          <li>
             <TextLink
               target="_blank"
               rel="noopener noreferrer"

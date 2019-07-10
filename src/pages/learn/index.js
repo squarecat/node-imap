@@ -157,7 +157,7 @@ export default function Learn() {
             </p>
             <p>
               There's some clever math behind the scenes so you can see which
-              emails spam you the most and how many other people chose to
+              emails spam you the most and how many other people decided to
               unsubscribe!
             </p>
             <p>
@@ -251,13 +251,12 @@ export default function Learn() {
           </div>
         </div>
 
-        <div styleName="cta-testimonial">
-          <Testimonial
-            text={`I must admit I'm lazy at unsubscribing to subscription emails, so my email inbox grows at an alarming rate every day. I just used Leave Me Alone and unsubscribed to 15 emails in 3 minutes. What a great idea!`}
-            author="Tom Haworth, Managing Director - B13 Technology"
-            image={tom}
-          />
-        </div>
+        <Testimonial
+          text={`I must admit I'm lazy at unsubscribing to subscription emails, so my email inbox grows at an alarming rate every day. I just used Leave Me Alone and unsubscribed to 15 emails in 3 minutes. What a great idea!`}
+          author="Tom Haworth, Managing Director - B13 Technology"
+          image={tom}
+          centered
+        />
 
         <a
           href="/signup"

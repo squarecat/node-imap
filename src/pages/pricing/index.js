@@ -40,7 +40,7 @@ export function Enterprise({ readMore = false }) {
       </div>
       <ul styleName="pricing-features">
         {/* <li>Rid your office of useless email</li> */}
-        <li>Gmail and Outlook support</li>
+        <li>Google and Microsoft support</li>
         <li>Unlimited unsubscribes</li>
         <li styleName="coming-soon">
           Unlimited API access <span>(coming soon)</span>
@@ -91,7 +91,7 @@ function Packages({ readMore = false }) {
         />
       </span>
       <ul styleName="pricing-features">
-        <li>Gmail and Outlook support</li>
+        <li>Google and Microsoft support</li>
         <li>1 credit = 1 unsubscribe</li>
         <li styleName="coming-soon">
           Limited API access <span>(coming soon)</span>

@@ -11,13 +11,14 @@ import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 // import { Link } from 'gatsby';
 import { Pricing } from './pricing';
+import Testimonial from '../components/landing/testimonial';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
-import WallOfLove from '../components/landing/wall-of-love';
 import _capitalize from 'lodash.capitalize';
 import allSubscriptions from '../assets/mail-list-illustration.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
+import luke from '../assets/luke.jpeg';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
@@ -81,6 +82,7 @@ const IndexPage = () => {
     },
     [statsData, statsError, statsLoading]
   );
+
   const bannerShown = false;
 
   return (
@@ -301,12 +303,30 @@ const IndexPage = () => {
         </div>
 
         <div className="home-container">
-          <div className="home-container-inner">
-            <WallOfLove colLimit={1} />
-            <p>What are you waiting for?</p>
+          <div
+            className="home-container-inner"
+            style={{ maxWidth: '550px', textAlign: 'left' }}
+          >
+            <Testimonial
+              text={`Using Leave Me Alone has resulted in a 17% reduction in my
+                emails, saving me hours of time each month.`}
+              author="Luke Chadwick, Founder - GraphQL360"
+              image={luke}
+              centered
+            />
+            <TextLink href="/wall-of-love">
+              <span>See all of our customer testimonials</span> <ArrowIcon />
+            </TextLink>
+          </div>
+        </div>
+
+        <div className="home-container">
+          <div className="home-container-inner end-stuff">
+            {statsContent}
             <a
               href="/signup?source=footer"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+              style={{ margin: '50px auto' }}
             >
               Get Started For Free
             </a>

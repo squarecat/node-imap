@@ -746,3 +746,17 @@ a.more-info:visited {
   max-width: 100%;
   overflow: hidden;
 }
+
+.end-stuff {
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 100px;
+  margin-top: 100px;
+
+  .join-text {
+    font-size: 25px;
+    line-height: 32px;
+    max-width: 610px;
+    margin: 0 auto;
+  }
+}

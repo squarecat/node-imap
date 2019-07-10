@@ -33,9 +33,9 @@ export default ({ rowLimit, colLimit }) => {
           <StaticQuery
             query={query}
             render={data => {
-              const colOne = data.tweetImages.edges.slice(0, 2);
-              const colTwo = data.tweetImages.edges.slice(2, 4);
-              const colThree = data.tweetImages.edges.slice(4, 6);
+              const colOne = data.tweetImages.edges.slice(0, 3);
+              const colTwo = data.tweetImages.edges.slice(3, 6);
+              const colThree = data.tweetImages.edges.slice(6, 9);
               return (
                 <>
                   <Col tweets={colOne} />
@@ -46,41 +46,6 @@ export default ({ rowLimit, colLimit }) => {
             }}
           />
         </div>
-      </div>
-      <div styleName="header">
-        {/* <h2>Wall of love</h2>
-        <p>
-          Our users are awesome and they think we're awesome too. Take a look at
-          all the nice things they've said about us!
-        </p> */}
-        <a
-          styleName="ph-badge"
-          href="https://www.producthunt.com/posts/leave-me-alone-3?utm_source=badge-top-post-badge"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=143797&theme=light"
-            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | #1 Product of the Day Product Hunt Embed"
-            style={{ width: 250, height: 54 }}
-            width="250px"
-            height="54px"
-          />
-        </a>
-        <a
-          styleName="ph-badge"
-          href="https://www.producthunt.com/posts/leave-me-alone-3?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-leave-me-alone-3"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=143797&theme=light&period=weekly"
-            alt="Leave Me Alone - Easily unsubscribe from spam emails 💌 | #1 Product of the Week Product Hunt Embed"
-            style={{ width: 250, height: 54 }}
-            width="250px"
-            height="54px"
-          />
-        </a>
       </div>
     </>
   );
