@@ -382,7 +382,7 @@ async function handlePaymentSuccess(
     }
 
     logger.debug(`payments-service: sending credits to socket ${credits}`);
-    sendToUser(user.id, 'update-credits', credits);
+    // sendToUser(user.id, 'update-credits', credits);
     return {
       ...response,
       user: updatedUser
