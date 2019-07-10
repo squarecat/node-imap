@@ -1,10 +1,11 @@
 import { ModalBody, ModalCloseIcon, ModalFooter, ModalHeader } from '..';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { TextImportant, TextLink } from '../../text';
 
 import Button from '../../btn';
 import { ExternalIcon } from '../../icons';
 import { ModalContext } from '../../../providers/modal-provider';
-import { TextImportant, TextLink } from '../../text';
+import UnsubImage from './unsub-image';
 import { openChat } from '../../../utils/chat';
 import styles from './unsub.module.scss';
 
@@ -22,7 +23,6 @@ const UnsubModal = ({ onSubmit, mail }) => {
   const { close } = useContext(ModalContext);
   const [slide, changeSlide] = useState('first');
   const [selected, setSelected] = useState(null);
-  const [imageLoading, setImageLoading] = useState(mail.hasImage);
 
   const onClickSubmit = useCallback(
     details => {
@@ -61,8 +61,6 @@ const UnsubModal = ({ onSubmit, mail }) => {
           hasImage,
           unsubStrategy,
           resolved,
-          imageLoading,
-          setImageLoading,
           title
         );
       } else if (slide === 'negative') {
@@ -81,7 +79,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
         return slide3(onClickSubmit);
       }
     },
-    [close, error, imageLoading, mail, onClickSubmit, selected, slide]
+    [close, error, mail, onClickSubmit, selected, slide]
   );
   return <div styleName="unsub-modal">{slideContent}</div>;
 };
@@ -94,8 +92,6 @@ function slide1(
   hasImage,
   unsubStrategy,
   resolved,
-  imageLoading,
-  setImageLoading,
   title
 ) {
   let lead;
@@ -188,17 +184,7 @@ function slide1(
           {lead}
           {hasImage || imageLoading ? (
             <div styleName="unsub-img-container">
-              <>
-                <img
-                  alt="Screenshot of the page response after unsubscribing"
-                  styleName={`unsub-img ${
-                    imageLoading ? 'unsub-img--loading' : ''
-                  }`}
-                  src={`/api/mail/image/${mailId}`}
-                  onLoad={() => setImageLoading(false)}
-                />
-                {imageLoading ? <div styleName="image-loading" /> : null}
-              </>
+              <UnsubImage mailId={mailId} />
             </div>
           ) : null}
           {resolved ? (
