@@ -1,6 +1,7 @@
 import {
   unsubscribeUserFromNewsletter,
-  updateUserUnsubStatus
+  updateUserUnsubStatus,
+  updateUserUnsubStatusById
 } from '../../services/user';
 
 import config from 'getconfig';
@@ -100,9 +101,8 @@ export default app => {
         throw new Error('mailgun: webhook failed to verify');
       }
       // get the user and mail that this is in reference to
-      const [, userId, mailId] = recipient.match(/^(.+)\.(.+)-bot@.*$/);
-      updateUserUnsubStatus(userId, {
-        mailId,
+      const [, unsubscribeId] = recipient.match(/^(.+)-bot@.*$/);
+      updateUserUnsubStatusById(unsubscribeId, {
         status: 'replied',
         sender,
         subject,

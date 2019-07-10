@@ -15,6 +15,7 @@ import { imageStoragePath } from 'getconfig';
 import logger from '../../utils/logger';
 import { recordUnsubscribeForOrganisation } from '../organisation';
 import { sendToUser } from '../../rest/socket';
+import uuid from 'node-uuid';
 
 export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
@@ -47,6 +48,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
   let unsubStrategy;
   let output;
   let hasImage = false;
+  const unsubscribeId = uuid.v1();
   try {
     const mailData = {
       mail,
@@ -64,6 +66,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       addUnsubscriptionToUser(userId, {
         ...mailData,
         hasImage,
+        unsubscribeId,
         estimatedSuccess: output.estimatedSuccess
       });
     } else {
@@ -73,13 +76,15 @@ export const unsubscribeFromMail = async (userId, mail) => {
       // and then do the mailto unsubscribe
       await addUnsubscriptionToUser(userId, {
         ...mailData,
+        unsubscribeId,
         hasImage,
         estimatedSuccess: true
       });
       output = await unsubscribeByMailTo({
         mailId: mail.id,
         userId,
-        unsubMailto: unsubscribeMailTo
+        unsubMailto: unsubscribeMailTo,
+        unsubscribeId
       });
     }
 

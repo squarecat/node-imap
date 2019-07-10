@@ -11,8 +11,8 @@ const unsubscribeTransport = mailgun({
 });
 
 export function sendUnsubscribeMail(options) {
-  const { userId, mailId } = options;
-  const address = `${userId}.${mailId}-bot@${domains.unsubscribe}`;
+  const { userId, mailId, unsubscribeId } = options;
+  const address = `${unsubscribeId}-bot@${domains.unsubscribe}`;
   const unsubOptions = {
     from: `Leave Me Alone <${address}>`,
     text: 'UNSUBSCRIBE',

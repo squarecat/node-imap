@@ -110,11 +110,12 @@ export default function SecurityPage() {
         <div styleName="image-section image-right">
           <div styleName="image-section-text">
             <h2>What data do we store?</h2>
-            <p>We never store the content of your emails in any form.</p>
+            <TextImportant>
+              We never store the content of your emails in any form.
+            </TextImportant>
             <p>
-              We do store some{' '}
-              <TextImportant>completely anonymous</TextImportant> data which
-              falls into two categories:
+              We do store some completely anonymous data which falls into two
+              categories:
             </p>
 
             <ul styleName="list">
