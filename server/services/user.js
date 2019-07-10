@@ -866,6 +866,37 @@ export async function deactivateUserAccount(userId) {
   }
 }
 
+export async function updateUserUnsubStatusById(
+  unsubId,
+  { status, message, ...data }
+) {
+  try {
+    addUnsubStatusToStats(status);
+    const { userId, mailId } = await updateUnsubStatusById(unsubId, {
+      status,
+      message,
+      ...data
+    });
+    if (status === 'rejected' || status === 'failed') {
+      incrementUserCredits(userId, 1);
+    }
+    const estimatedSuccess = status === 'delivered';
+    sendToUser(userId, 'unsubscribe:success', {
+      id: mailId,
+      data: {
+        estimatedSuccess,
+        unsubStrategy: 'mailto',
+        emailStatus: status,
+        emailData: data
+      }
+    });
+  } catch (err) {
+    logger.error(
+      `user-service: failed to update unsub status for user ${userId} and mail ${mailId}`
+    );
+    throw err;
+  }
+}
 export async function updateUserUnsubStatus(
   userId,
   { mailId, status, message, ...data }

@@ -624,6 +624,33 @@ export async function updateUnsubStatus(
   }
 }
 
+export async function updateUnsubStatusById(
+  unsubId,
+  { status, message = '', ...data } = {}
+) {
+  try {
+    const col = await db().collection(COL_NAME);
+    // okay so this is going to be SLOoOoOoW
+    // doing a find on this unindexed field,
+    // and we can't really index it because the
+    // index will be massive.... FIXME later?
+    await col.updateOne(
+      { 'unsubscriptions.unsubscribeId': unsubId },
+      {
+        $set: {
+          'unsubscriptions.$.status': status,
+          'unsubscriptions.$.message': message,
+          'unsubscriptions.$.data': data
+        }
+      }
+    );
+  } catch (err) {
+    logger.error('user-dao: failed to update unsub status');
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function removeAccount(
   userId,
   { email, accountId, accountEmail }

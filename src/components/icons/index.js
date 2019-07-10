@@ -2,6 +2,21 @@ import React from 'react';
 import cx from 'classnames';
 import styles from './icons.module.scss';
 
+export function PointyArrow({ width = 32, height = 32 }) {
+  return (
+    <svg
+      className={styles.pointyArrow}
+      width={width}
+      height={height}
+      fill="currentcolor"
+      stroke="currentcolor"
+      viewBox="0 0 26 26"
+    >
+      <path d="M 7.9824219 1 C 7.8184219 1 7.5722344 1.0801562 7.4902344 1.1601562 C 7.3262344 1.2401563 3.467875 4.280625 1.171875 7.640625 C 1.006875 7.960625 0.92584375 8.2795313 1.0898438 8.5195312 C 1.2538437 8.8395313 1.4981719 9 1.8261719 9 L 4.9765625 9 L 6.1074219 9 C 7.1113597 18.534627 15.205593 26 25 26 L 25 22 C 17.37218 22 11.123409 16.353534 10.148438 9 L 10.976562 9 L 14.126953 9 C 14.454953 9 14.699312 8.8395313 14.945312 8.5195312 C 15.027313 8.1995312 15.027281 7.880625 14.863281 7.640625 C 12.567281 4.360625 8.7206406 1.2401562 8.5566406 1.1601562 C 8.3986406 1.0821563 8.164 1.0089062 8 1.0039062 C 7.995 1.0039062 7.9874219 1 7.9824219 1 z" />
+    </svg>
+  );
+}
+
 export function Refresh({ width = 32, height = 32, ...visProps }) {
   return (
     <svg

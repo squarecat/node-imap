@@ -14,7 +14,12 @@ function sendUnsubscribeMail({
   });
 }
 
-export async function unsubscribeWithMailTo({ userId, mailId, unsubMailto }) {
+export async function unsubscribeWithMailTo({
+  userId,
+  mailId,
+  unsubMailto,
+  unsubscribeId
+}) {
   try {
     const [mailto, paramsString = ''] = unsubMailto.split('?');
     const toAddress = mailto.replace('mailto:', '');
@@ -27,6 +32,7 @@ export async function unsubscribeWithMailTo({ userId, mailId, unsubMailto }) {
       toAddress,
       userId,
       mailId,
+      unsubscribeId,
       ...params
     });
     return { estimatedSuccess: !!sent };

@@ -1,11 +1,15 @@
 import 'isomorphic-fetch';
 import './home.scss';
 
-import { GoogleIcon, OutlookIcon } from '../components/icons';
+import {
+  Arrow as ArrowIcon,
+  GoogleIcon,
+  OutlookIcon,
+  PointyArrow
+} from '../components/icons';
 import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
-import { Arrow as ArrowIcon } from '../components/icons';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
@@ -415,7 +419,12 @@ const items = [
     name: 'Black Friday Cacti',
     email: '<marketing@cact.us>',
     subject: `🌵 One day only, 80% off your next cactus!`,
-    text: "It's as simple as a single click. Go on, try it! ☝️"
+    text: (
+      <span>
+        It's as simple as a single click. Go on, click me!{' '}
+        <PointyArrow width="15" height="15" />
+      </span>
+    )
   },
   {
     name: 'Mars Travel 🌝',

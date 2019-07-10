@@ -13,7 +13,7 @@ export function getSearchString({ from }) {
 export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
   const { Id, InternetMessageHeaders: headers, From } = mail;
   if (!headers) {
-    logger.warn(
+    logger.debug(
       `outlook-utils: cannot check if unsubscribable, mail object has no headers ${Id}`
     );
     return false;
