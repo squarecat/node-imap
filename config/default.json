@@ -56,7 +56,7 @@
     "domains": {
       "unsubscribe": "mail.leavemealone.app",
       "transactional": "info.leavemealone.app",
-      "newsletter": "news.leavemealone.app"
+      "newsletter": "leavemealone.app"
     }
   },
   "puppeteer": {
