@@ -182,7 +182,7 @@ function slide1(
             <ModalCloseIcon />
           </ModalHeader>
           {lead}
-          {hasImage || imageLoading ? (
+          {hasImage ? (
             <div styleName="unsub-img-container">
               <UnsubImage mailId={mailId} />
             </div>
@@ -319,11 +319,11 @@ function slide2({
 
   return (
     <>
-      <ModalHeader>
-        {title}
-        <ModalCloseIcon />
-      </ModalHeader>
       <ModalBody compact>
+        <ModalHeader>
+          {title}
+          <ModalCloseIcon />
+        </ModalHeader>
         {lead}
         {link || mailTo ? (
           <>
@@ -412,11 +412,13 @@ function slide2({
 function slide3(onSubmit) {
   return (
     <>
-      <ModalHeader>
-        Awesome!
-        <ModalCloseIcon />
-      </ModalHeader>
-      <ModalBody compact>{imageUseQuestion}</ModalBody>
+      <ModalBody compact>
+        <ModalHeader>
+          Awesome!
+          <ModalCloseIcon />
+        </ModalHeader>
+        {imageUseQuestion}
+      </ModalBody>
       <ModalFooter>
         <Button
           basic
