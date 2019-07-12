@@ -52,7 +52,6 @@ export const unsubscribeFromMail = async (userId, mail) => {
   try {
     const mailData = {
       mail,
-      unsubscribeStrategy: unsubStrategy,
       unsubscribeLink,
       unsubscribeMailTo
     };
@@ -67,6 +66,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
         ...mailData,
         hasImage,
         unsubscribeId,
+        unsubscribeStrategy: unsubStrategy,
         estimatedSuccess: output.estimatedSuccess
       });
     } else {
@@ -78,13 +78,15 @@ export const unsubscribeFromMail = async (userId, mail) => {
         ...mailData,
         unsubscribeId,
         hasImage,
+        unsubscribeStrategy: unsubStrategy,
         estimatedSuccess: true
       });
       output = await unsubscribeByMailTo({
         mailId: mail.id,
         userId,
         unsubMailto: unsubscribeMailTo,
-        unsubscribeId
+        unsubscribeId,
+        unsubscribeStrategy: unsubStrategy
       });
     }
 

@@ -6,6 +6,8 @@ import {
 } from './utils';
 
 import logger from '../../../utils/logger';
+import { parseEmail } from '../../../utils/parsers';
+import { parseSenderEmail } from '../../../dao/occurrences/utils';
 
 export function parseMailList(
   mailList = [],
@@ -51,12 +53,14 @@ function mapMail(mail) {
     }
     const isTrash = labelIds.includes('TRASH');
     const isSpam = labelIds.includes('SPAM');
+    const toHeader = getHeader(payload, 'to') || '';
+    const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
     return {
       id,
       snippet,
       date: +internalDate,
       from: getHeader(payload, 'from') || '',
-      to: getHeader(payload, 'to') || '',
+      to,
       subject: getHeader(payload, 'subject'),
       unsubscribeLink,
       unsubscribeMailTo,

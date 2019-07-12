@@ -1,4 +1,4 @@
-export function parseEmail(str = '') {
+export function parseEmail(str = '', { unwrap = false } = {}) {
   if (!str) {
     return {
       fromName: 'Unknown',
@@ -18,6 +18,15 @@ export function parseEmail(str = '') {
   } else {
     fromName = str;
     fromEmail = str;
+  }
+  fromEmail = fromEmail.trim();
+  if (unwrap) {
+    if (fromEmail.startsWith('<')) {
+      fromEmail = fromEmail.substr(1, fromEmail.length);
+    }
+    if (fromEmail.endsWith('>')) {
+      fromEmail = fromEmail.substr(0, fromEmail.length - 1);
+    }
   }
   return { fromName, fromEmail };
 }

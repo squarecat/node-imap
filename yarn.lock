@@ -1599,17 +1599,6 @@ after@0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/after/-/after-0.8.2.tgz#fedb394f9f0e02aa9768e702bda23b505fae7e1f"
 
-agenda@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/agenda/-/agenda-2.0.2.tgz#d0571a63da613c960c69a63cc15530d78d59a069"
-  dependencies:
-    cron "~1.3.0"
-    date.js "~0.3.2"
-    debug "~3.1.0"
-    human-interval "~0.1.3"
-    moment-timezone "~0.5.0"
-    mongodb "~3.1"
-
 agent-base@4, agent-base@^4.1.0, agent-base@^4.2.0, agent-base@~4.2.0:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-4.2.1.tgz#d89e5999f797875674c07d87f260fc41e83e8ca9"
@@ -3667,12 +3656,6 @@ cron@^1.3:
   dependencies:
     moment-timezone "^0.5.x"
 
-cron@~1.3.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/cron/-/cron-1.3.1.tgz#9dd9c1c72b894df835715aad32cab62d13cf0fd8"
-  dependencies:
-    moment-timezone "^0.5.x"
-
 cross-env@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-5.2.0.tgz#6ecd4c015d5773e614039ee529076669b9d126f2"
@@ -3976,12 +3959,6 @@ date-fns@^1.29.0:
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
-
-date.js@~0.3.2:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/date.js/-/date.js-0.3.3.tgz#ef1e92332f507a638795dbb985e951882e50bbda"
-  dependencies:
-    debug "~3.1.0"
 
 debug@2, debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.3, debug@^2.6.6, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
@@ -7008,10 +6985,6 @@ https-proxy-agent@^2.2.1:
     agent-base "^4.1.0"
     debug "^3.1.0"
 
-human-interval@~0.1.3:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/human-interval/-/human-interval-0.1.6.tgz#0057973454764c3abcbeb2aed612fc9644e68488"
-
 hyphenate-style-name@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.2.tgz#31160a36930adaf1fc04c6074f7eb41465d4ec4b"
@@ -8817,7 +8790,7 @@ module-details-from-path@^1.0.3:
   resolved "https://registry.yarnpkg.com/module-details-from-path/-/module-details-from-path-1.0.3.tgz#114c949673e2a8a35e9d35788527aa37b679da2b"
   integrity sha1-EUyUlnPiqKNenTV4hSeqN7Z52is=
 
-moment-timezone@^0.5.x, moment-timezone@~0.5.0:
+moment-timezone@^0.5.x:
   version "0.5.23"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.23.tgz#7cbb00db2c14c71b19303cb47b0fb0a6d8651463"
   dependencies:
@@ -8857,7 +8830,7 @@ mongodb@^2.0.36:
     mongodb-core "2.1.20"
     readable-stream "2.2.7"
 
-mongodb@^3.1.10, mongodb@~3.1:
+mongodb@^3.1.10:
   version "3.1.10"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.1.10.tgz#45ad9b74ea376f4122d0881b75e5489b9e504ed7"
   dependencies:
