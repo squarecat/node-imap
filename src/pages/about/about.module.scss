@@ -10,10 +10,10 @@
   margin: 0 auto 100px auto;
 
   &.image-left {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns: minmax(300px, 1fr) minmax(0, 2fr);
   }
   &.image-right {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
   }
 
   &:last-child {
@@ -55,13 +55,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  min-height: 260px;
   height: 300px;
   width: 300px;
   overflow: hidden;
 
   img {
-    height: 300px;
     max-width: none;
     margin: 0;
   }
@@ -105,4 +103,23 @@
 .team-name {
   font-size: 18px;
   margin: 10px 0;
+}
+
+.beta-text {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  margin-top: 1.45rem;
+
+  @media (max-width: 768px) {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 50px 0 0 0;
+    padding-top: 50px;
+    text-align: center;
+  }
+}
+
+.beta-testers {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  margin-top: 40px;
 }

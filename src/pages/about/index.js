@@ -2,10 +2,11 @@ import './about.module.scss';
 
 import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
+import BetaTesters from '../../components/landing/beta-testers';
 import React from 'react';
 import { TextLink } from '../../components/text';
 import danImg from '../../assets/about/dan_klammer.jpg';
-import huskoImg from '../../assets/dogs.jpg';
+import huskoImg from '../../assets/dogs-square.jpg';
 import rocketImg from '../../assets/rocket.png';
 import worldImg from '../../assets/geography.png';
 
@@ -108,11 +109,13 @@ export default function About() {
             and others like you.
           </p>
         </div>
-        <div styleName="image-section-img huskos">
-          <img
-            alt="The two creators Danielle and James with two husky dogs"
-            src={huskoImg}
-          />
+        <div styleName="image-section-img">
+          <div styleName="huskos">
+            <img
+              alt="The two creators Danielle and James with two husky dogs"
+              src={huskoImg}
+            />
+          </div>
         </div>
       </div>
 
@@ -123,10 +126,6 @@ export default function About() {
             We are strong advocates of open source, and in this section we
             wanted to give special mention to the open source libraries that we
             couldn't do without. Keep up the good work everyone!
-          </p>
-          <p>
-            We also want to thank our beta testers, who help make Leave Me Alone
-            better every day!
           </p>
         </div>
         <div styleName="image-section-img">
@@ -144,40 +143,14 @@ export default function About() {
             </li>
           </ul>
         </div>
-        {/* <BetaTesters /> */}
+        <p styleName="beta-text">
+          We also want to thank our beta testers, who help make Leave Me Alone
+          better every day!
+        </p>
+        <div styleName="beta-testers">
+          <BetaTesters />
+        </div>
       </div>
     </SubPageLayout>
   );
 }
-
-// function BetaTesters() {
-//   const { value: betaTesters = [], loading } = useAsync(getBetaTesters);
-
-//   if (loading) return <p>Fetching awesome beta testers...</p>;
-//   return (
-//     <ul styleName="team-list">
-//       {betaTesters.map(b => (
-//         <li styleName="team-member" key={b.name}>
-//           <img
-//             styleName="team-img"
-//             src={b.imageUrl}
-//             alt={`profile picture of ${b.name}`}
-//           />
-//           <h4 styleName="team-name">{b.name}</h4>
-//           <TextLink undecorated href={`https://twitter.com/${b.twitter}`}>
-//             <TwitterIcon />
-//           </TextLink>
-//         </li>
-//       ))}
-//     </ul>
-//   );
-// }
-
-// async function getBetaTesters() {
-//   return request('/api/beta-testers', {
-//     credentials: 'same-origin',
-//     headers: {
-//       'Content-Type': 'application/json; charset=utf-8'
-//     }
-//   });
-// }

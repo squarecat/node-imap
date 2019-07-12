@@ -1,0 +1,42 @@
+@import '../../../styles/common/colors.scss';
+
+.beta-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  position: relative;
+  justify-content: center;
+}
+
+.beta-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: -11px;
+  z-index: 1;
+  opacity: 0.9;
+  transform: scale(0.9);
+  transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:hover {
+    z-index: 2;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+}
+
+.beta-img {
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid $color-grey;
+  width: 60px;
+  height: 60px;
+}
