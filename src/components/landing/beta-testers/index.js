@@ -35,7 +35,7 @@ export default function BetaTesters() {
       {BETA_TESTERS.map(name => (
         <a
           key={name}
-          href={`https:/twitter.com/${name}`}
+          href={`https://twitter.com/${name}`}
           target="_"
           styleName="beta-member"
         >
