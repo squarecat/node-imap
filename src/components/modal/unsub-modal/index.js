@@ -423,6 +423,8 @@ function slide3(onSubmit) {
         <Button
           basic
           compact
+          muted
+          outlined
           onClick={() => onSubmit({ success: true, useImage: false })}
         >
           Nope

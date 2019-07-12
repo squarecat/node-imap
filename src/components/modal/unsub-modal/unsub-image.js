@@ -1,5 +1,6 @@
 import React, { useMemo, useReducer } from 'react';
 
+import Browser from '../../browser';
 import cx from 'classnames';
 import styles from './unsub-image.module.scss';
 
@@ -45,7 +46,7 @@ export default React.memo(({ mailId }) => {
     [error, loading, mailId]
   );
   return (
-    <>
+    <Browser>
       {image}
       {loading ? <div styleName="image-loading" /> : null}
       {error ? (
@@ -56,6 +57,6 @@ export default React.memo(({ mailId }) => {
           </p>
         </div>
       ) : null}
-    </>
+    </Browser>
   );
 });
