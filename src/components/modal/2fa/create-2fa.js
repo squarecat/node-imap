@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 
 import Button from '../../btn';
+import { FormGroup, FormNotification } from '../../form';
 import { ModalContext } from '../../../providers/modal-provider';
 import TwoFactorInput from '../../2fa';
 import request from '../../../utils/request';
@@ -42,7 +43,7 @@ export default () => {
       if (loading || error) return null;
       const { qrData, base32 } = value;
       return (
-        <>
+        <div styleName="two-factor-modal">
           <ModalBody compact>
             <ModalHeader>Setup Two-factor Authentication</ModalHeader>
             <p>Secure your account by setting up two-factor authentication.</p>
@@ -65,17 +66,17 @@ export default () => {
               After scanning the barcode image, the app will display a six-digit
               code that you can enter below.
             </p>
-            <TwoFactorInput
-              onComplete={isVer => setVerified(isVer)}
-              onLoading={is2faLoading => setLoading(is2faLoading)}
-            />
+            <FormGroup>
+              <TwoFactorInput
+                onComplete={isVer => setVerified(isVer)}
+                onLoading={is2faLoading => setLoading(is2faLoading)}
+              />
+            </FormGroup>
             {isVerified === false ? (
-              <div styleName="error">
-                <p>
-                  Verification failed. Please check you have entered the correct
-                  code
-                </p>
-              </div>
+              <FormNotification error>
+                Verification failed. Please check you have entered the correct
+                code
+              </FormNotification>
             ) : null}
           </ModalBody>
           <ModalFooter>
@@ -98,7 +99,7 @@ export default () => {
               Confirm
             </Button>
           </ModalFooter>
-        </>
+        </div>
       );
     },
     [close, isLoading, isVerified, loading, method, value]
