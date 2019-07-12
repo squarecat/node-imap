@@ -808,14 +808,15 @@ export async function updateUserPassword({ id, email, password }, newPassword) {
   }
 }
 
-export async function unsubscribeUserFromNewsletter(email) {
+export async function unsubscribeUserFromNewsletter(email, reason) {
   addNewsletterUnsubscriptionToStats();
-  return updateUserMarketingConsent(email, false);
+  return updateUserMarketingConsent(email, false, reason);
 }
 
 export async function updateUserMarketingConsent(
   email,
-  marketingConsent = true
+  marketingConsent = true,
+  reason = 'userPreference'
 ) {
   try {
     const user = await getUserByEmail(email);
@@ -824,7 +825,8 @@ export async function updateUserMarketingConsent(
     const { id } = user;
 
     return updateUserPreferences(id, {
-      marketingConsent
+      marketingConsent,
+      unsubscribeReason: reason
     });
   } catch (err) {
     logger.error(`user-service: failed to update user prefs by email`);

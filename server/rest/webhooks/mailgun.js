@@ -114,6 +114,7 @@ export default app => {
       res.sendStatus(500);
     }
   });
+
   app.post('/webhooks/mailgun/newsletter', async (req, res) => {
     try {
       const { body } = req;
@@ -136,6 +137,11 @@ export default app => {
           break;
         // Mailgun could not deliver the email to the recipient email server.
         case 'failed': {
+          const { recipient, reason } = eventData;
+          logger.debug(
+            `mailgun-webhook: newsletter failed request reason - ${reason}`
+          );
+          unsubscribeUserFromNewsletter(recipient, reason);
           break;
         }
         // The email recipient opened the email and enabled image viewing.

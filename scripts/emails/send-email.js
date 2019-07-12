@@ -1,11 +1,10 @@
 const newsletterEmails = require('../../server/utils/emails/newsletter');
 
-const templates = require('./templates/release-outlook');
+const templates = require('./templates/release-v2');
 const { html, text } = templates;
 
 const options = {
-  subject: 'Leave Me Alone now supports Outlook!',
-  // pretext: 'Clean your Outlook inbox of spam subscriptions',
+  subject: 'Keeping a clean inbox with Leave Me Alone just got easier!',
   html,
   text
 };

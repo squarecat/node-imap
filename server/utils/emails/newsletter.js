@@ -6,10 +6,13 @@ const apiKey = config.mailgun.apiKey;
 const domains = config.mailgun.domains;
 
 const listDomain = config.mailgun.domains.newsletter;
-export const address = `newsletter@${listDomain}`;
+
+const mailingListAddress = `newsletter@${listDomain}`;
+const fromAddress = `Danielle from Leave Me Alone <danielle@${listDomain}>`;
+
 const newsletterOptions = {
-  from: `Leave Me Alone <newsletter@${listDomain}>`,
-  to: address
+  from: fromAddress,
+  to: mailingListAddress
 };
 
 const newsletterTransport = mailgun({
@@ -17,7 +20,7 @@ const newsletterTransport = mailgun({
   domain: domains.newsletter
 });
 
-const list = newsletterTransport.lists(address);
+const list = newsletterTransport.lists(mailingListAddress);
 
 export async function addUpdateSubscriber(email, { subscribed = true } = {}) {
   if (process.env.NODE_ENV === 'development') return true;
@@ -59,7 +62,10 @@ export async function sendNewsletterMail(options) {
     ...newsletterOptions,
     ...options
   };
-  logger.debug('emails-newsletter: sending newsletter mail');
+  logger.info(`emails-newsletter: sending newsletter mail...`);
+  logger.info(`emails-newsletter: to ${opts.to}`);
+  logger.info(`emails-newsletter: from ${opts.from}`);
+
   return new Promise((resolve, reject) => {
     newsletterTransport.messages().send(opts, err => {
       if (err) {
