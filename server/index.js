@@ -17,11 +17,11 @@ import orgApi from './rest/organisation';
 import path from 'path';
 import paymentsApi from './rest/payments';
 import { refreshScores } from './dao/occurrences';
+import schedule from './utils/scheduler';
 import scoresApi from './rest/scores';
 import sentryWebhooks from './rest/webhooks/sentry';
 import session from 'express-session';
 import socketApi from './rest/socket';
-import { startScheduler } from './utils/scheduler';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
 
@@ -118,11 +118,19 @@ const App = {
     logger.info('server starting');
     await connectDb();
     server.listen(2345);
-    await startScheduler();
     logger.info('server started');
     // tell pm2 that the server is ready
     // to start receiving requests
-    if (process.send) process.send('ready');
+    if (process.send) {
+      process.send('ready');
+      console.log('listening for pm2 msg');
+      process.on('message', function(packet) {
+        if (packet.type === 'cron') {
+          schedule(packet.data.timeframe);
+        }
+      });
+    }
+
     refreshScores();
   },
   async stop() {
