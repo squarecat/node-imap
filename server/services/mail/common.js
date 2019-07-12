@@ -82,6 +82,7 @@ export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
     resolved,
     hasImage
   } = unsubInfo;
+
   return {
     unsubStrategy: unsubscribeStrategy,
     estimatedSuccess,
