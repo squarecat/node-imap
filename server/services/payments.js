@@ -381,8 +381,8 @@ async function handlePaymentSuccess(
       updateCoupon(coupon);
     }
 
-    logger.debug(`payments-service: sending credits to socket ${credits}`);
-    sendToUser(user.id, 'update-credits', credits);
+    // logger.debug(`payments-service: sending credits to socket ${credits}`);
+    // sendToUser(user.id, 'update-credits', credits);
     return {
       ...response,
       user: updatedUser

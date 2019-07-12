@@ -86,8 +86,8 @@ const FaqPage = () => (
       <div styleName="faq-box">
         <h2 styleName="faq-title">What mail providers do you support?</h2>
         <p>
-          We currently support Gmail and Outlook. We have plans to support more
-          providers.
+          If you have a Google or Microsoft email account then we have you
+          covered. This includes Gmail, G Suite, Outlook, Live, and Hotmail.
         </p>
         <p>
           <a href="mailto:hello@leavemalone">Let us know</a> which services

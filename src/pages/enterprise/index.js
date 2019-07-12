@@ -69,7 +69,7 @@ const EnterprisePage = () => {
             <div styleName="feature-text">
               <h3 styleName="feature-title">Inbox sanity for happy teams</h3>
               <p>
-                Recieving unwanted subscription emails is a source of annoyance,
+                Receiving unwanted subscription emails is a source of annoyance,
                 frustration and interruption. Leave Me Alone makes it quick and
                 easy to unsubscribe so that your team can focus on building your
                 business.
@@ -83,7 +83,7 @@ const EnterprisePage = () => {
             <div styleName="feature-text">
               <h3 styleName="feature-title">Clean all accounts together</h3>
               <p>
-                Email is neccessary for company communication. Each team member
+                Email is necessary for company communication. Each team member
                 can connect all of their email accounts and see all of their
                 subscription emails in one go. Make email a productive tool
                 again.

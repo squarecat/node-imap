@@ -18,19 +18,6 @@
   margin: 0 auto 10px auto;
 }
 
-.header {
-  width: 600px;
-  margin: 0 auto 160px auto;
-  text-align: center;
-  max-width: 100%;
-  padding: 0 20px;
-}
-
-.ph-badge {
-  margin: 0 5px;
-  display: inline-block;
-}
-
 @media (max-width: 800px) {
   /* hide everything after the 3rd column */
   .col:nth-child(n + 3) {

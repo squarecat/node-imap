@@ -88,6 +88,9 @@ app.get('/roadmap', (req, res) => res.redirect(config.urls.roadmap));
 app.get('/feedback', (req, res) => res.redirect(config.urls.feedback));
 app.get('/bugs', (req, res) => res.redirect(config.urls.bugs));
 app.get('/join-beta', (req, res) => res.redirect(config.urls.requestBeta));
+app.get('/submit-testimonial', (req, res) =>
+  res.redirect(config.urls.submitTestimonial)
+);
 app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
