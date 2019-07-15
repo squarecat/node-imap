@@ -1,78 +1,68 @@
 import './wall-of-love.module.scss';
 
-import { StaticQuery, graphql } from 'gatsby';
-
-import Img from 'gatsby-image';
 import React from 'react';
+import TESTIMONIALS from './testimonials';
+import _shuffle from 'lodash.shuffle';
 
-const query = graphql`
-  query TweetImagesQuery {
-    tweetImages: allFile(
-      filter: { sourceInstanceName: { eq: "tweetImages" } }
-      sort: { fields: [relativePath], order: ASC }
-    ) {
-      edges {
-        node {
-          childImageSharp {
-            sizes(maxWidth: 407) {
-              ...GatsbyImageSharpSizes
-            }
-          }
-          relativePath
-        }
-      }
-    }
-  }
-`;
+const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
 
-export default ({ rowLimit, colLimit }) => {
+export default () => {
   return (
-    <>
-      <div styleName="tweet-wall">
-        <div styleName="tweet-box">
-          <StaticQuery
-            query={query}
-            render={data => {
-              const colOne = data.tweetImages.edges.slice(0, 3);
-              const colTwo = data.tweetImages.edges.slice(3, 6);
-              const colThree = data.tweetImages.edges.slice(6, 9);
-              return (
-                <>
-                  <Col tweets={colOne} />
-                  <Col tweets={colTwo} />
-                  <Col tweets={colThree} />
-                </>
-              );
-            }}
-          />
-        </div>
-      </div>
-    </>
+    <div styleName="testimonials">
+      {_shuffle(TESTIMONIALS).map((testimonial, index) => {
+        return <Box key={index} testimonial={testimonial} />;
+      })}
+    </div>
   );
 };
 
-const Col = ({ tweets }) => (
-  <div styleName="col">
-    {tweets.map(({ node }, index) => {
-      const handle = /\d+-(.*).png$/.exec(node.relativePath)[1];
-      return (
-        node.childImageSharp && ( // have to filter out null fields from bad data
-          <a
-            key={handle}
-            styleName="twitter-tweet"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://twitter.com/${handle}`}
-          >
-            <Img
-              key={`tweet-${index}`}
-              sizes={node.childImageSharp.sizes}
-              alt={`Testimonial for Leave Me Alone from @${handle}`}
-              title={`Leave Me Alone testimonial on Twitter by @${handle}`}
-            />
-          </a>
-        )
-      );
-    })}
-  </div>
-);
+function Box({ testimonial }) {
+  const { name, text, twitter, avatarPath } = testimonial;
+  const avatarUrl = `${BASE_IMG_URL}/${avatarPath}.jpg`;
+
+  return (
+    <div styleName="wrapper">
+      <div styleName="box">
+        <div styleName="img">
+          <img src={avatarUrl} />
+        </div>
+        <div styleName="content">
+          <p styleName="text">{text}</p>
+          {twitter ? (
+            <a href={`https://twitter.com/${twitter}`} styleName="twitter-link">
+              <span styleName="name">{name}</span>
+            </a>
+          ) : (
+            <span styleName="name">{name}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// const Col = ({ tweets }) => (
+//   <div styleName="col">
+//     {tweets.map(({ node }, index) => {
+//       const handle = /\d+-(.*).png$/.exec(node.relativePath)[1];
+//       return (
+//         node.childImageSharp && ( // have to filter out null fields from bad data
+//           <a
+//             key={handle}
+//             styleName="twitter-tweet"
+//             target="_blank"
+//             rel="noopener noreferrer"
+//             href={`https://twitter.com/${handle}`}
+//           >
+//             <Img
+//               key={`tweet-${index}`}
+//               sizes={node.childImageSharp.sizes}
+//               alt={`Testimonial for Leave Me Alone from @${handle}`}
+//               title={`Leave Me Alone testimonial on Twitter by @${handle}`}
+//             />
+//           </a>
+//         )
+//       );
+//     })}
+//   </div>
+// );
