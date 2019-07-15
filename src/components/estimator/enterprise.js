@@ -33,7 +33,7 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
   );
   const distancePerYear = distanceInWordsStrict(
     now,
-    addMinutes(now, minutesSavedPerYear)
+    addMinutes(now, minutesSavedPerYear * 3)
   );
   return (
     <div styleName="pricing-estimates">
@@ -70,7 +70,7 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
             </div>
             <div styleName="count-description">
               <p style={{ margin: 0 }}>
-                Your offices receives approximately this many emails per month
+                Your offices receives approximately this many emails per month{' '}
                 <a styleName="cite-link" href="#cite-3">
                   <sup>[3]</sup>
                 </a>
@@ -111,8 +111,12 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
       </div>
       <div styleName="recommendation">
         <div styleName="recommendation-description">
+          <h2>
+            Save <TextImportant>{distancePerYear} of work time</TextImportant>{' '}
+            each year!
+          </h2>
           <p>
-            We estimate your company receives around{' '}
+            We estimate your company of {numEmployees} employees receives around{' '}
             <TextImportant>
               {`${numeral(unsubsPerMonth).format(
                 '0,00'
@@ -125,16 +129,17 @@ export default function EnterpriseEstimator({ title, startFrom = 20 }) {
             <p>
               Collectively you could save{' '}
               <TextImportant>{`${distance}`} of time</TextImportant> otherwise
-              spent reading email each month if these were gone{' '}
+              spent reading email each month if these were gone.{' '}
               <a styleName="cite-link" href="#cite-4">
                 <sup>[4]</sup>
               </a>
-              .
             </p>
             <p>
               That's{' '}
-              <TextImportant>{distancePerYear} of time savings</TextImportant>{' '}
-              each year!
+              <TextImportant>
+                {distancePerYear} of work time savings
+              </TextImportant>{' '}
+              each year based on an 8-hour workday.
             </p>
           </>
 
