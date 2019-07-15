@@ -162,7 +162,7 @@ export default app => {
     '/auth/outlook/connect',
     passport.authenticate('connect-account-outlook', {
       scope: outlook.scopes,
-      prompt: 'select_account consent'
+      prompt: 'select_account'
     })
   );
 
