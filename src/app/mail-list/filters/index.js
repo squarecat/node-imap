@@ -234,7 +234,7 @@ function OptionsDropdown() {
   const { state, dispatch } = useContext(MailContext);
   const dropdownList = useMemo(
     () => {
-      const { showSpam, showTrash } = state.options;
+      const { showSpam, showTrash } = state.options || {};
       return (
         <DropdownList>
           <DropdownItem>
