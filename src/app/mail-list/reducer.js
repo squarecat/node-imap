@@ -7,6 +7,10 @@ export const initialState = {
   filterValues: {
     recipients: []
   },
+  options: {
+    showSpam: true,
+    showTrash: true
+  },
   activeFilters: [],
   sortByValue: 'date',
   sortByDirection: 'desc'
@@ -22,6 +26,24 @@ const mailReducer = (state = initialState, action) => {
       return {
         initialized: true,
         ...data
+      };
+    }
+    case 'set-show-trash-option': {
+      return {
+        ...state,
+        options: {
+          ...state.options,
+          showTrash: action.data
+        }
+      };
+    }
+    case 'set-show-spam-option': {
+      return {
+        ...state,
+        options: {
+          ...state.options,
+          showSpam: action.data
+        }
       };
     }
     case 'remove-active-filters': {

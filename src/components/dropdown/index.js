@@ -4,19 +4,27 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import cx from 'classnames';
 
-export default ({ toggleBtn, toggleEvent = 'click', children }) => {
+export default ({ toggleBtn, toggleEvent = 'click', children, style }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const onClickBody = useCallback(({ target }) => {
-    let { parentElement } = target;
-    if (!parentElement) return;
+  const onClickBody = useCallback(e => {
+    let { parentElement } = e.target;
+    if (e.target.getAttribute('data-dropdown-container')) {
+      // click on the toggle that showned it
+      // means close it
+      setShowDropdown(false);
+      e.stopPropagation();
+    } else if (e.target.tagName === 'INPUT' || !parentElement) {
+      return;
+    }
     while (parentElement && parentElement !== document.body) {
-      if (parentElement.classList.contains('dropdown-toggle')) {
-        return;
+      if (parentElement.getAttribute('data-dropdown-content')) {
+        return e.stopPropagation();
       }
       parentElement = parentElement.parentElement;
     }
     setShowDropdown(false);
+    e.stopPropagation();
   }, []);
 
   useEffect(
@@ -47,15 +55,26 @@ export default ({ toggleBtn, toggleEvent = 'click', children }) => {
   }
 
   return (
-    <div styleName="dropdown" {...props} data-dropdown>
-      <div styleName={`dropdown-toggle ${showDropdown ? 'shown' : ''}`}>
+    <div
+      styleName="dropdown"
+      {...props}
+      data-dropdown
+      data-shown={showDropdown}
+    >
+      <div
+        data-dropdown-toggle
+        styleName={`dropdown-toggle ${showDropdown ? 'shown' : ''}`}
+      >
         {toggleBtn}
       </div>
       <div
         {...props}
+        data-dropdown-container
         styleName={`dropdown-box-container ${showDropdown ? 'shown' : ''}`}
       >
-        <div styleName="dropdown-box">{children}</div>
+        <div styleName="dropdown-box" data-dropdown-content style={style}>
+          {children}
+        </div>
       </div>
     </div>
   );
