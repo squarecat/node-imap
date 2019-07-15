@@ -1,17 +1,33 @@
 import './wall-of-love.module.scss';
 
 import React from 'react';
-import TESTIMONIALS from './testimonials';
 import _shuffle from 'lodash.shuffle';
+import testimonialData from './testimonials';
 
 const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
 
 export default () => {
+  const columns = _shuffle(testimonialData).reduce(
+    (out, testimonial, index) => {
+      if (index % 3 === 0) {
+        return [out[0], out[1], [...out[2], testimonial]];
+      }
+      if (index % 2 === 0) {
+        return [out[0], [...out[1], testimonial], out[2]];
+      }
+      return [[...out[0], testimonial], out[1], out[2]];
+    },
+    [[], [], []]
+  );
   return (
     <div styleName="testimonials">
-      {_shuffle(TESTIMONIALS).map((testimonial, index) => {
-        return <Box key={index} testimonial={testimonial} />;
-      })}
+      {columns.map((col, index) => (
+        <div styleName="col" key={`col-${index}`}>
+          {col.map(testimonial => (
+            <Box key={testimonial.name} testimonial={testimonial} />
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
