@@ -160,7 +160,7 @@ const IndexPage = () => {
                 <p>
                   <TextLink href="/learn">
                     <span>View all features of Leave Me Alone</span>{' '}
-                    <ArrowIcon />
+                    <ArrowIcon inline />
                   </TextLink>
                 </p>
               </div>
@@ -194,7 +194,7 @@ const IndexPage = () => {
                 <p>
                   <TextLink href="/security">
                     <span>Learn more about security and data management</span>{' '}
-                    <ArrowIcon />
+                    <ArrowIcon inline />
                   </TextLink>
                 </p>
               </div>
@@ -233,7 +233,8 @@ const IndexPage = () => {
             </h3>
             <p>
               If you have a Google or Microsoft email account then we have you
-              covered. This includes Gmail, G Suite, Outlook, Live, and Hotmail.
+              covered. This includes Gmail, G Suite, Outlook, Office 365, Live,
+              and Hotmail.
             </p>
             <div className="provider-logos">
               <span className="provider-logo">
@@ -319,7 +320,8 @@ const IndexPage = () => {
               centered
             />
             <TextLink href="/wall-of-love">
-              <span>See all of our customer testimonials</span> <ArrowIcon />
+              <span>See all of our customer testimonials</span>{' '}
+              <ArrowIcon inline />
             </TextLink>
           </div>
         </div>

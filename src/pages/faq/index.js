@@ -1,6 +1,7 @@
 import './faq.module.scss';
 
 import { TextImportant, TextLink } from '../../components/text';
+import { Arrow as ArrowIcon } from '../../components/icons';
 
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
@@ -62,9 +63,9 @@ const FaqPage = () => (
         </p>
         <p>
           <TextLink href="/learn">
-            Find out more about how Leave Me Alone works
+            Read how Leave Me Alone works{' '}
+            <ArrowIcon inline width="14" height="14" />
           </TextLink>
-          .
         </p>
       </div>
       <div styleName="faq-box">
@@ -81,14 +82,18 @@ const FaqPage = () => (
           our lights on.
         </p>
         <p>
-          <TextLink href="/pricing">View Leave Me Alone pricing</TextLink>.
+          <TextLink href="/pricing">
+            View Leave Me Alone pricing{' '}
+            <ArrowIcon inline width="14" height="14" />
+          </TextLink>
         </p>
       </div>
       <div styleName="faq-box">
         <h2 styleName="faq-title">What mail providers do you support?</h2>
         <p>
           If you have a Google or Microsoft email account then we have you
-          covered. This includes Gmail, G Suite, Outlook, Live, and Hotmail.
+          covered. This includes Gmail, G Suite, Outlook, Office 365, Live, and
+          Hotmail.
         </p>
         <p>
           <a href="mailto:hello@leavemalone">Let us know</a> which services
@@ -117,14 +122,14 @@ const FaqPage = () => (
         </p>
         <p>
           <TextLink href="/security">
-            Read more about security at Leave Me Alone
+            Read more about security at Leave Me Alone{' '}
+            <ArrowIcon inline width="14" height="14" />
           </TextLink>
-          .
         </p>
       </div>
       <div styleName="faq-box">
         <h2 styleName="faq-title">Can I delete my account?</h2>
-        <p>Yes!</p>
+        <p>Of course!</p>
         <p>
           You can deactivate your account in your{' '}
           <TextLink href="/app/profile">account settings</TextLink>. This will
@@ -144,9 +149,9 @@ const FaqPage = () => (
         </p>
         <p>
           <TextLink href="/enterprise">
-            Find out more about Leave Me Alone for Enterprise
+            Discover Leave Me Alone for Enterprise{' '}
+            <ArrowIcon inline width="14" height="14" />
           </TextLink>
-          .
         </p>
       </div>
       <div styleName="faq-box">

@@ -102,6 +102,11 @@ export default visProps => (
               Manage cookies
             </TextLink>
           </li>
+          <li>
+            <TextLink href="https://clearbit.com" target="_">
+              Logos from Clearbit
+            </TextLink>
+          </li>
         </ul>
         {/* <ul styleName="footer-nav">
         <li>

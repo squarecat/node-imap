@@ -125,7 +125,8 @@ const EnterprisePage = () => {
               </p>
               <p>
                 <TextLink inverted href="/security">
-                  Learn more about security <ArrowIcon width="16" height="16" />
+                  Learn more about security{' '}
+                  <ArrowIcon inline width="14" height="14" />
                 </TextLink>
               </p>
             </div>

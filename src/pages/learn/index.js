@@ -164,7 +164,7 @@ export default function Learn() {
             <p>
               <TextLink href="/security">
                 Learn more about how we power Subscriber Score{' '}
-                <ArrowIcon width="16" height="16" />
+                <ArrowIcon inline width="14" height="14" />
               </TextLink>
             </p>
           </div>
