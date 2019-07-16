@@ -20,25 +20,43 @@ async function run() {
       }
     },
     { $sort: { seenCount: -1 } },
-    { $limit: 200 }
+    { $limit: 500 }
   ]);
   const oc = await results.toArray();
-  const counts = oc.map(o => {
+  // remove duplicates
+  let output = oc.reduce((out, o) => {
     const { sender, seenCount, unsubscribedCount, addresses, score } = o;
     const parsed = psl.parse(sender);
-    const name = parsed.sld;
+    let name = parsed.sld;
+    if (name === 'facebookmail') {
+      name = 'facebook';
+    }
+    if (out[name]) {
+      return {
+        ...out,
+        [out[name]]: {
+          ...out[name],
+          seen: seenCount + out[name].seen,
+          unsubscribes: unsubscribedCount + out[name].unsubscribes
+        }
+      };
+    }
     return {
-      name,
-      score,
-      sender,
-      domain: parsed.domain,
-      seen: seenCount,
-      unsubscribes: unsubscribedCount,
-      addresses,
-      slug: `/how-to-unsubscribe-from-${name.toLowerCase()}-emails`
+      ...out,
+      [name]: {
+        name,
+        score,
+        sender,
+        domain: parsed.domain,
+        seen: seenCount,
+        unsubscribes: unsubscribedCount,
+        addresses,
+        slug: `/how-to-unsubscribe-from-${name.toLowerCase()}-emails`
+      }
     };
-  });
-  console.log(JSON.stringify(counts, null, 2));
+  }, {});
+  output = Object.keys(output).map(k => output[k]);
+  console.log(JSON.stringify(output, null, 2));
 }
 
 run();

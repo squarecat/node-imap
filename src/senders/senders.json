@@ -1,3 +1,5 @@
+db: connected to mongodb://127.0.0.1:27017/leavemealone
+db: connected to mongodb://127.0.0.1:27017/leavemealone
 [
   {
     "name": "codestream",
@@ -513,15 +515,15 @@
     "slug": "/how-to-unsubscribe-from-rakuten-emails"
   },
   {
-    "name": "leavemealone",
-    "sender": "leavemealone.app",
-    "domain": "leavemealone.app",
-    "seen": 1,
+    "name": "brewdog",
+    "sender": "brewdog.com",
+    "domain": "brewdog.com",
+    "seen": 0,
     "unsubscribes": 0,
     "addresses": [
-      "danielle@leavemealone.app"
+      "noreply@brewdog.com"
     ],
-    "slug": "/how-to-unsubscribe-from-leavemealone-emails"
+    "slug": "/how-to-unsubscribe-from-brewdog-emails"
   },
   {
     "name": "fixathon",
@@ -690,17 +692,6 @@
     "slug": "/how-to-unsubscribe-from-mollie-emails"
   },
   {
-    "name": "leavemealone",
-    "sender": "mail.leavemealone.xyz",
-    "domain": "leavemealone.xyz",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "newsletter@mail.leavemealone.xyz"
-    ],
-    "slug": "/how-to-unsubscribe-from-leavemealone-emails"
-  },
-  {
     "name": "meedle",
     "sender": "meedle.io",
     "domain": "meedle.io",
@@ -777,17 +768,6 @@
       "admin@biteable.com"
     ],
     "slug": "/how-to-unsubscribe-from-biteable-emails"
-  },
-  {
-    "name": "paypal",
-    "sender": "mail.paypal.de",
-    "domain": "paypal.de",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "paypal@mail.paypal.de"
-    ],
-    "slug": "/how-to-unsubscribe-from-paypal-emails"
   },
   {
     "name": "implicit",
@@ -922,17 +902,6 @@
       "stack-feedback@heroku.com"
     ],
     "slug": "/how-to-unsubscribe-from-heroku-emails"
-  },
-  {
-    "name": "crisp",
-    "sender": "leavemealone.on.crisp.email",
-    "domain": "crisp.email",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "messages@leavemealone.on.crisp.email"
-    ],
-    "slug": "/how-to-unsubscribe-from-crisp-emails"
   },
   {
     "name": "logrocket",
@@ -1183,17 +1152,6 @@
     "slug": "/how-to-unsubscribe-from-fbmta-emails"
   },
   {
-    "name": "producthunt",
-    "sender": "digest.producthunt.com",
-    "domain": "producthunt.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "hello@digest.producthunt.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-producthunt-emails"
-  },
-  {
     "name": "inmomentfeedback",
     "sender": "inmomentfeedback.com",
     "domain": "inmomentfeedback.com",
@@ -1351,17 +1309,6 @@
     "slug": "/how-to-unsubscribe-from-cryptokitties-emails"
   },
   {
-    "name": "ieee",
-    "sender": "listserv.ieee.org",
-    "domain": "ieee.org",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@listserv.ieee.org"
-    ],
-    "slug": "/how-to-unsubscribe-from-ieee-emails"
-  },
-  {
     "name": "princeton",
     "sender": "lists.princeton.edu",
     "domain": "princeton.edu",
@@ -1396,17 +1343,6 @@
       "noresponse@beer52.com"
     ],
     "slug": "/how-to-unsubscribe-from-beer52-emails"
-  },
-  {
-    "name": "digitalocean",
-    "sender": "news.digitalocean.com",
-    "domain": "digitalocean.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "product@news.digitalocean.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-digitalocean-emails"
   },
   {
     "name": "quora",
@@ -1506,17 +1442,6 @@
       "newsletter@purechat.com"
     ],
     "slug": "/how-to-unsubscribe-from-purechat-emails"
-  },
-  {
-    "name": "zeit",
-    "sender": "zeit.co",
-    "domain": "zeit.co",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "support@zeit.co"
-    ],
-    "slug": "/how-to-unsubscribe-from-zeit-emails"
   },
   {
     "name": "gog",
@@ -1642,17 +1567,6 @@
     "slug": "/how-to-unsubscribe-from-cushionapp-emails"
   },
   {
-    "name": "producthunt",
-    "sender": "team.producthunt.com",
-    "domain": "producthunt.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "hello@team.producthunt.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-producthunt-emails"
-  },
-  {
     "name": "revealbot",
     "sender": "revealbot.com",
     "domain": "revealbot.com",
@@ -1662,17 +1576,6 @@
       "iskander@revealbot.com"
     ],
     "slug": "/how-to-unsubscribe-from-revealbot-emails"
-  },
-  {
-    "name": "padidiver",
-    "sender": "newsletter.padidiver.com",
-    "domain": "padidiver.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "emea@newsletter.padidiver.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-padidiver-emails"
   },
   {
     "name": "dhpfamily",
@@ -1728,18 +1631,6 @@
       "adam.smith@kite.com"
     ],
     "slug": "/how-to-unsubscribe-from-kite-emails"
-  },
-  {
-    "name": "producthunt",
-    "sender": "ship.producthunt.com",
-    "domain": "producthunt.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "hope-s-valley@ship.producthunt.com",
-      "shots@ship.producthunt.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-producthunt-emails"
   },
   {
     "name": "moonlightwork",
@@ -1798,28 +1689,6 @@
       "marcob@creolabs.com"
     ],
     "slug": "/how-to-unsubscribe-from-creolabs-emails"
-  },
-  {
-    "name": "gog",
-    "sender": "email2.gog.com",
-    "domain": "gog.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "newsletter@email2.gog.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-gog-emails"
-  },
-  {
-    "name": "brewdog",
-    "sender": "mailer.brewdog.com",
-    "domain": "brewdog.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "noreply@mailer.brewdog.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-brewdog-emails"
   },
   {
     "name": "improvmx",
