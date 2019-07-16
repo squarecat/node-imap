@@ -295,3 +295,40 @@ h1.tagline {
   max-width: 280px;
   margin-top: 20px;
 }
+
+.unsubscribe-illustation {
+  background-image: url(../assets/mail-list-illustration-twitter-walmart.png);
+  background-image: url(../assets/mail-list-illustration-facebook-amazon.png);
+  width: 410px;
+  height: 300px;
+  background-size: 410px auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.unsubscribe-example-block {
+  position: relative;
+}
+
+.unsubscribe-illustation-addendum {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  padding: 0 20px;
+}
+
+.company-image {
+  height: 36px;
+  width: 36px;
+  overflow: hidden;
+  border-radius: 2px;
+  img {
+    max-width: 100%;
+  }
+}
+.company-description {
+  margin-left: 14px;
+}

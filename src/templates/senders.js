@@ -78,7 +78,15 @@ function SendersPage({ data }) {
             </p>
           </div>
           <div styleName="container-image">
-            <img src={imageUrl} />
+            <div styleName="unsubscribe-example-block">
+              <div styleName="unsubscribe-illustation" />
+              <div styleName="unsubscribe-illustation-addendum">
+                <span styleName="company-image">
+                  <img src={imageUrl} />
+                </span>
+                <span styleName="company-description">{`${name} emails`}</span>
+              </div>
+            </div>
           </div>
         </div>
 
