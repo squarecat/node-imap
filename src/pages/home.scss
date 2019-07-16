@@ -312,12 +312,17 @@ a.more-info:visited {
 .trash-pile {
   margin: 0 auto -1px auto;
   padding-bottom: 300px;
-  // https://www.iconfinder.com/icons/2202473/dump_dumping_garbage_illegal_pollution_waste_water_icon
-  background-image: url('../assets/garbage-truck.png');
-  background-position: bottom -20px left;
+
+  background-position: bottom -200px left;
 
   background-size: 200px;
   background-repeat: no-repeat;
+  // https://www.iconfinder.com/icons/2202473/dump_dumping_garbage_illegal_pollution_waste_water_icon
+  background-image: url('../assets/garbage-truck.png');
+
+  &[data-show-truck='true'] {
+    background-position: bottom -20px left;
+  }
 
   .text-box {
     border-top: 1px solid rgba(0, 0, 0, 0.1);
