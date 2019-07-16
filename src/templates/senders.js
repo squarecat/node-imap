@@ -12,6 +12,7 @@ import envelope from '../assets/open-envelope-love.png';
 import { graphql } from 'gatsby';
 import happy from '../assets/enterprise/happy.png';
 import suggestions from '../senders/highest-occurrences.json';
+import SenderImage from './sender-image';
 
 const ranks = {
   F: 0,
@@ -22,8 +23,6 @@ const ranks = {
   A: 70,
   'A+': 90
 };
-
-const iconUrl = process.env.ICON_URL;
 
 function SendersPage({ data }) {
   const { sendersJson } = data;
@@ -43,7 +42,6 @@ function SendersPage({ data }) {
     rank
   });
 
-  const imageUrl = `${iconUrl}/${domain}`;
   const name = _capitalize(senderName);
 
   const senderAddresses = joinArrayToSentence(addresses, 3);
@@ -66,22 +64,24 @@ function SendersPage({ data }) {
               Leave Me Alone makes it easy to unsubscribe from unwanted spam and
               subscription emails like ones from {name}.
             </p>
-            <a href="/signup" className={`beam-me-up-cta`}>
-              Get started for FREE
-            </a>
-            <p styleName="join-text">
-              Join <TextImportant>{percentage}%</TextImportant> of users that
-              unsubscribe from <TextImportant>{name}</TextImportant> emails.
-            </p>
+            <div styleName="join-container">
+              <a href="/signup" className={`beam-me-up-cta`}>
+                Get started for FREE
+              </a>
+              <p styleName="join-text">
+                Join <TextImportant>{percentage}%</TextImportant> of users that
+                unsubscribe from <TextImportant>{name}</TextImportant> emails.
+              </p>
+            </div>
           </div>
           <div styleName="container-image">
             <div styleName="unsubscribe-example-block">
               <div styleName="unsubscribe-illustation" />
               <div styleName="unsubscribe-illustation-addendum">
                 <span styleName="company-image">
-                  <img src={imageUrl} />
+                  <SenderImage name={name} domain={domain} />
                 </span>
-                <span styleName="company-description">{`${name} emails`}</span>
+                <span styleName="company-description">{`${name} Emails`}</span>
               </div>
             </div>
           </div>

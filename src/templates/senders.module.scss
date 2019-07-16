@@ -155,13 +155,6 @@ h1.tagline {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 100px;
   margin-top: 100px;
-
-  .join-text {
-    font-size: 25px;
-    line-height: 32px;
-    max-width: 610px;
-    margin: 0 auto;
-  }
 }
 
 .suggestion {
@@ -208,12 +201,19 @@ h1.tagline {
   }
 }
 
+.join-container {
+}
+
 .join-text {
   padding: 0 5px;
   font-size: 12px;
   line-height: 18px;
   max-width: 280px;
   margin-top: 20px;
+
+  @media (max-width: 768px) {
+    margin: 20px auto 0 auto;
+  }
 }
 
 .unsubscribe-illustation {
@@ -245,6 +245,9 @@ h1.tagline {
   width: 36px;
   overflow: hidden;
   border-radius: 2px;
+  display: flex;
+  align-items: center;
+
   img {
     max-width: 100%;
   }
