@@ -69,8 +69,9 @@ function SendersPage({ data }) {
                 Get started for FREE
               </a>
               <p styleName="join-text">
-                Join <TextImportant>{percentage}%</TextImportant> of users that
-                unsubscribe from <TextImportant>{name}</TextImportant> emails.
+                Join <TextImportant>{unsubscribes}</TextImportant> of our users
+                that have unsubscribed from{' '}
+                <TextImportant>{name}</TextImportant> emails.
               </p>
             </div>
           </div>
@@ -78,7 +79,7 @@ function SendersPage({ data }) {
             <div styleName="unsubscribe-example-block">
               <div styleName="unsubscribe-illustation" />
               <div styleName="unsubscribe-illustation-addendum">
-                <span styleName="company-image">
+                <span styleName="company-image" data-name={senderName}>
                   <SenderImage name={name} domain={domain} />
                 </span>
                 <span styleName="company-description">{`${name} Emails`}</span>
