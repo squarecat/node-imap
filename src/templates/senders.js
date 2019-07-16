@@ -150,8 +150,8 @@ function SendersPage({ data }) {
               <p>
                 Quickly determine the quality of emails and see which senders
                 spam you the most using our ranking system - Subscriber Score.{' '}
-                <TextImportant>{(percentage * 100).toFixed(0)}%</TextImportant>{' '}
-                of Leave Me Alone users unsubscribe from {name} emails.
+                <TextImportant>{percentage}%</TextImportant> of Leave Me Alone
+                users unsubscribe from {name} emails.
               </p>
               <p>
                 <TextLink href="/security">
