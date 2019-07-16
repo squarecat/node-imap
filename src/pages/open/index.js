@@ -409,6 +409,7 @@ export default function OpenPage() {
     <SubPageLayout
       title="Open Startup"
       description={`Leave Me Alone is an Open Startup. All of our metrics are public. See our sales, revenue, expenses, users, and more.`}
+      slug="/open"
     >
       <div styleName="open-page">
         <div styleName="open-title box">

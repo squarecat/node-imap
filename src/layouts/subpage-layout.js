@@ -8,6 +8,7 @@ import styles from './subpage-layout.module.scss';
 export default ({
   title,
   description,
+  slug,
   children,
   withContent = true,
   ...visProps
@@ -16,7 +17,7 @@ export default ({
     [styles.centered]: visProps.centered
   });
   return (
-    <Layout title={title} description={description}>
+    <Layout title={title} description={description} slug={slug}>
       <Header inverted />
       <div className={classes}>
         {withContent ? (

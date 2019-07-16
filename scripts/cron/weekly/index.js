@@ -6,13 +6,13 @@ if (new Date().getHours() !== 0) {
 }
 
 pm2.connect(function() {
-  console.log('running daily cron');
+  console.log('running weekly cron');
   pm2.sendDataToProcessId(
     {
       type: 'cron',
       id: 0,
       data: {
-        timeframe: 'daily'
+        timeframe: 'weekly'
       },
       topic: 'cron'
     },

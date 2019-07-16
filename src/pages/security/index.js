@@ -25,6 +25,7 @@ export default function SecurityPage() {
       title="Security"
       description={`We take security and data privacy very seriously at Leave Me Alone. We never store the content of your emails, we encrypt sensitive data, and the data powering our algorithms is completely anonymous.`}
       withContent={false}
+      slug="/security"
     >
       <div styleName="security-inner">
         <h1>Security at Leave Me Alone</h1>

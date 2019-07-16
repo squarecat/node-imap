@@ -18,6 +18,15 @@ module.exports = {
       listen_timeout: 3000,
       // wait max 30 seconds for scans and stuff to finish
       kill_timeout: 30000
+    },
+    {
+      name: 'daily-cron',
+      script: 'scripts/cron/daily/index.js',
+      instances: 1,
+      exec_mode: 'fork',
+      cron_restart: '0 0 * * *',
+      watch: false,
+      autorestart: false
     }
   ],
   deploy: {
