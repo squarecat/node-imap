@@ -4,6 +4,7 @@ import { TextImportant, TextLink } from '../components/text';
 
 import { Arrow as ArrowIcon } from '../components/icons';
 import React from 'react';
+import SenderImage from './sender-image';
 import SubpageLayout from '../layouts/subpage-layout';
 import _capitalize from 'lodash.capitalize';
 import _shuffle from 'lodash.shuffle';
@@ -12,7 +13,6 @@ import envelope from '../assets/open-envelope-love.png';
 import { graphql } from 'gatsby';
 import happy from '../assets/enterprise/happy.png';
 import suggestions from '../senders/highest-occurrences.json';
-import SenderImage from './sender-image';
 
 const ranks = {
   F: 0,
@@ -95,8 +95,8 @@ function SendersPage({ data }) {
             </div>
             <div styleName="feature-text">
               <h3 styleName="feature-title">
-                Unsubscribe from all{' '}
-                <span styleName="highlight inline">{name}</span> emails
+                Unsubscribe from all <span styleName="highlight">{name}</span>{' '}
+                emails
               </h3>
               <p>
                 {name} sends emails from{' '}
@@ -121,8 +121,8 @@ function SendersPage({ data }) {
             </div>
             <div styleName="feature-text">
               <h3 styleName="feature-title">
-                Clear <span styleName="highlight inline">{name}</span> from all
-                of your inboxes
+                Clear <span styleName="highlight">{name}</span> from all of your
+                inboxes
               </h3>
               <p>
                 Connect all of your email accounts to unsubscribe from {name}{' '}
@@ -144,9 +144,8 @@ function SendersPage({ data }) {
             </div>
             <div styleName="feature-text">
               <h3 styleName="feature-title">
-                See if emails from{' '}
-                <span styleName="highlight inline">{name}</span> are worth
-                keeping
+                See if emails from <span styleName="highlight">{name}</span> are
+                worth keeping
               </h3>
               <p>
                 Quickly determine the quality of emails using our revolutionary
@@ -235,20 +234,39 @@ function getStats({ unsubscribes, seen, rank }) {
   };
 }
 
-function joinArrayToSentence(addresses, limit) {
+function joinArrayToSentence(addresses, limit, end) {
   let show = addresses;
   if (limit) {
     show = addresses.slice(0, limit);
   }
   if (show.length === 1) {
-    return `${show[0]}`;
+    return <span styleName="email-address">{show[0]}</span>;
   }
   if (show.length === 2) {
-    return `${show[0]} and ${show[1]}`;
+    return (
+      <>
+        <span styleName="email-address">{show[0]}</span> and{' '}
+        <span styleName="email-address">{show[1]}</span>
+      </>
+    );
   }
 
-  const last = show.pop();
-  return `${show.join(', ')}, and ${last}`;
+  let last;
+  if (end) {
+    last = end;
+  } else {
+    last = <span styleName="email-address">{show.pop()}</span>;
+  }
+  return (
+    <>
+      {show.map(s => (
+        <>
+          <span styleName="email-address">{s}</span>,{' '}
+        </>
+      ))}
+      and {last}
+    </>
+  );
 }
 
 function getSuggestions(senderName) {
@@ -256,5 +274,5 @@ function getSuggestions(senderName) {
     suggestions.filter(s => s !== senderName).map(s => _capitalize(s))
   );
   const show = filtered.slice(0, 4);
-  return joinArrayToSentence([...show, 'many more']);
+  return joinArrayToSentence(show, 4, 'many more');
 }
