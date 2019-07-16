@@ -36,13 +36,9 @@
 }
 
 .highlight {
-  padding: 0px 3px;
+  padding: 2px 3px;
   margin: 0 -3px;
   line-height: 20px;
-
-  &.inline {
-    margin: 0;
-  }
 }
 
 .sender-inner {
@@ -148,6 +144,7 @@ h1.tagline {
 
 .feature-title {
   font-size: 20px;
+  line-height: 24px;
 }
 
 .feature-img {
@@ -283,4 +280,10 @@ h1.tagline {
 
 .company-description {
   margin-left: 14px;
+}
+
+.email-address {
+  color: rgba(231, 57, 48, 0.749);
+  font-weight: bolder;
+  word-break: break-all;
 }
