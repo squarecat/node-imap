@@ -1,24 +1,32 @@
 import './wall-of-love.module.scss';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import _shuffle from 'lodash.shuffle';
 import testimonialData from './testimonials';
+import useMedia from 'react-use/lib/useMedia';
 
 const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
 
 export default () => {
-  const columns = _shuffle(testimonialData).reduce(
-    (out, testimonial, index) => {
-      if (index % 3 === 0) {
-        return [out[0], out[1], [...out[2], testimonial]];
+  const isMobile = useMedia('(max-width: 768px)');
+  const isTablet = useMedia('(max-width: 900px)');
+  const isDesktop = useMedia('(max-width: 1024px)');
+
+  const data = _shuffle(testimonialData);
+
+  const columns = useMemo(
+    () => {
+      if (isMobile) {
+        return getCols(data, 1);
       }
-      if (index % 2 === 0) {
-        return [out[0], [...out[1], testimonial], out[2]];
+      if (isTablet) {
+        return getCols(data, 2);
       }
-      return [[...out[0], testimonial], out[1], out[2]];
+      return getCols(data);
     },
-    [[], [], []]
+    [isMobile, isTablet, isDesktop]
   );
+
   return (
     <div styleName="testimonials">
       {columns.map((col, index) => (
@@ -57,28 +65,33 @@ function Box({ testimonial }) {
   );
 }
 
-// const Col = ({ tweets }) => (
-//   <div styleName="col">
-//     {tweets.map(({ node }, index) => {
-//       const handle = /\d+-(.*).png$/.exec(node.relativePath)[1];
-//       return (
-//         node.childImageSharp && ( // have to filter out null fields from bad data
-//           <a
-//             key={handle}
-//             styleName="twitter-tweet"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//             href={`https://twitter.com/${handle}`}
-//           >
-//             <Img
-//               key={`tweet-${index}`}
-//               sizes={node.childImageSharp.sizes}
-//               alt={`Testimonial for Leave Me Alone from @${handle}`}
-//               title={`Leave Me Alone testimonial on Twitter by @${handle}`}
-//             />
-//           </a>
-//         )
-//       );
-//     })}
-//   </div>
-// );
+function getCols(data, limit = 3) {
+  if (limit === 1) {
+    return [[...data]];
+  }
+
+  if (limit === 2) {
+    return data.reduce(
+      (out, testimonial, index) => {
+        if (index % 2 === 0) {
+          return [out[0], [...out[1], testimonial]];
+        }
+        return [[...out[0], testimonial], out[1]];
+      },
+      [[], []]
+    );
+  }
+
+  return data.reduce(
+    (out, testimonial, index) => {
+      if (index % 3 === 0) {
+        return [out[0], out[1], [...out[2], testimonial]];
+      }
+      if (index % 2 === 0) {
+        return [out[0], [...out[1], testimonial], out[2]];
+      }
+      return [[...out[0], testimonial], out[1], out[2]];
+    },
+    [[], [], []]
+  );
+}
