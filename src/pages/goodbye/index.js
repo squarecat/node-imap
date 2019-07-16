@@ -4,7 +4,12 @@ import { TextImportant } from '../../components/text';
 
 const GoodbyePage = () => {
   return (
-    <SubPageLayout title="Goodbye" centered>
+    <SubPageLayout
+      title="Goodbye"
+      slug="/goodbye"
+      description={`Thank you for using Leave Me Alone. We have deleted all of your data and revoked any API keys attached to your account. `}
+      centered
+    >
       <h1>Goodbye 👋</h1>
       <p>Thank you for using Leave Me Alone!</p>
       <p>

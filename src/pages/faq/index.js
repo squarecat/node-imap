@@ -9,6 +9,7 @@ const FaqPage = () => (
   <SubPageLayout
     title="FAQ"
     description={`Answers to the most common questions about Leave Me Alone.`}
+    slug="/faq"
   >
     <h1>FAQs</h1>
     <div styleName="faqs">

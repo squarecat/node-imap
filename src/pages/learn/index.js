@@ -27,6 +27,7 @@ export default function Learn() {
     <SubPageLayout
       title="How it works"
       description={`Start unsubscribing in 3 simple steps: 1. Connect your account 2. Scan your inbox 3. Unsubscribe from spam.`}
+      slug="/learn"
     >
       <div>
         <h1>How does Leave Me Alone work?</h1>

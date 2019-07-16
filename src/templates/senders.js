@@ -33,7 +33,8 @@ const iconUrl = process.env.ICON_URL;
 
 function SendersPage({ data }) {
   const { sendersJson } = data;
-  const { name: senderName, unsubscribes, seen, rank } = sendersJson;
+  const { name: senderName, unsubscribes, seen, rank, addresses } = sendersJson;
+
   let percentage = 0;
   if (unsubscribes === 0) {
     percentage = 0;
@@ -44,24 +45,28 @@ function SendersPage({ data }) {
   const asArray = Object.keys(ranks);
   const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
   const name = _capitalize(senderName);
+
+  const metaAddresses = addresses.slice(0, 3).join(', ');
+
   return (
     <SubpageLayout
       title={`Unsubscribe from ${name} with a single click`}
-      description={''}
+      description={`${percentage} of people unsubscribe from ${name} emails from domains like ${metaAddresses}`}
+      // slug={slug}
     >
       <div styleName="enterprise-inner">
         <div styleName="container intro-header">
           <div styleName="container-text">
             <h1 styleName="tagline">
               Unsubscribe easily from{' '}
-              <span styleName="header-highlight"> {name}</span> emails
+              <span styleName="header-highlight">{name}</span> emails
             </h1>
             <p styleName="description">
               Leave Me Alone lets you see all of your subscription emails in one
-              place and unsubscribe from them with a single click.
+              place and unsubscribe from ones like {name} with a single click.
             </p>
 
-            <a href="/login" className={`beam-me-up-cta`}>
+            <a href="/signup" className={`beam-me-up-cta`}>
               Sign up for free
             </a>
             <p styleName="join-text">

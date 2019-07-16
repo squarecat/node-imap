@@ -16,6 +16,7 @@ setConfig({ pureSFC: true });
 const Layout = ({
   title: pageTitle,
   description: pageDescription,
+  slug: pageSlug,
   children
 }) => {
   return (
@@ -44,6 +45,7 @@ const Layout = ({
 
         const metaTitle = pageTitle ? `${pageTitle} - ${siteName}` : baseTitle;
         const metaDescription = pageDescription || baseDescription;
+        const metaFullUrl = pageSlug ? `${baseUrl}${pageSlug}` : baseUrl;
 
         return (
           <>
@@ -64,12 +66,12 @@ const Layout = ({
                   content: metaDescription
                 },
                 {
-                  name: 'twitter:card',
-                  content: 'summary_large_image'
+                  name: 'url',
+                  content: baseUrl
                 },
                 {
-                  name: 'twitter:domain',
-                  value: baseUrl
+                  name: 'twitter:card',
+                  content: 'summary_large_image'
                 },
                 {
                   name: 'twitter:title',
@@ -84,8 +86,12 @@ const Layout = ({
                   content: metaImgUrl
                 },
                 {
+                  name: 'twitter:image:alt',
+                  content: `Stylized image of Leave Me Alone listing subscription emails with buttons to unsubscribe`
+                },
+                {
                   name: 'twitter:url',
-                  value: baseUrl
+                  value: metaFullUrl
                 },
                 {
                   name: 'twitter:site',
@@ -93,7 +99,7 @@ const Layout = ({
                 },
                 {
                   name: 'twitter:creator',
-                  value: '@SquarecatWebDev'
+                  value: twitterHandle
                 },
                 {
                   name: 'X-UA-Compatible',
@@ -125,7 +131,7 @@ const Layout = ({
                 },
                 {
                   name: 'og:url',
-                  content: baseUrl
+                  content: metaFullUrl
                 },
                 {
                   name: 'og:title',
