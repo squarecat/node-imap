@@ -188,6 +188,11 @@ a.more-info:visited {
   color: white;
 }
 
+.beam-me-up-fit-long-stuff-please {
+  white-space: nowrap;
+  max-width: fit-content;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;

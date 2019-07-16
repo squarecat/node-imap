@@ -38,7 +38,7 @@ function LongTailKeywords({ data }) {
       title={`Unsubscribe from ${name} with a single click`}
       description={''}
     >
-      <div styleName="enterprise-inner">
+      <div styleName="sender-inner">
         <div styleName="container intro-header">
           <div styleName="container-text">
             <h1 styleName="tagline">{title}</h1>

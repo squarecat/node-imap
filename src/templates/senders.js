@@ -3,21 +3,16 @@ import './senders.module.scss';
 import { TextImportant, TextLink } from '../components/text';
 
 import { Arrow as ArrowIcon } from '../components/icons';
-import { Enterprise } from '../pages/pricing';
-import EnterpriseEstimator from '../components/estimator/enterprise';
 import React from 'react';
 import SubpageLayout from '../layouts/subpage-layout';
-import Testimonial from '../components/landing/testimonial';
 import _capitalize from 'lodash.capitalize';
-import allSubscriptions from '../assets/mail-list-illustration.png';
+import _shuffle from 'lodash.shuffle';
 import broom from '../assets/enterprise/broom.png';
 import envelope from '../assets/open-envelope-love.png';
-import googleLogo from '../assets/gsuite-logo.png';
 import { graphql } from 'gatsby';
 import happy from '../assets/enterprise/happy.png';
-import luke from '../assets/luke.jpeg';
-import officeLogo from '../assets/office-365-logo.png';
-import securityImg from '../assets/security.png';
+import suggestions from '../senders/highest-occurrences.json';
+import SenderImage from './sender-image';
 
 const ranks = {
   F: 0,
@@ -29,8 +24,6 @@ const ranks = {
   'A+': 90
 };
 
-const iconUrl = process.env.ICON_URL;
-
 function SendersPage({ data }) {
   const { sendersJson } = data;
   const {
@@ -39,53 +32,57 @@ function SendersPage({ data }) {
     unsubscribes,
     seen,
     rank,
+    addresses,
     slug
   } = sendersJson;
-  let percentage = 0;
-  if (unsubscribes === 0) {
-    percentage = 0;
-  } else {
-    percentage = ((unsubscribes / seen) * 100).toFixed(2);
-  }
-  const imageUrl = `${iconUrl}${domain}`;
-  const percentile = ranks[rank];
-  const asArray = Object.keys(ranks);
-  const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
+
+  const { percentage, percentile, negativePercentile } = getStats({
+    unsubscribes,
+    seen,
+    rank
+  });
+
   const name = _capitalize(senderName);
+
+  const senderAddresses = joinArrayToSentence(addresses, 3);
+  const suggestionNames = getSuggestions(senderName);
+
   return (
     <SubpageLayout
-      title={`Unsubscribe from ${name} with a single click`}
-      description={''}
+      title={`Unsubscribe from ${name} emails`}
+      description={`Leave Me Alone makes it easy to unsubscribe from unwanted spam and subscription emails like ones from ${name}.`}
+      slug={slug}
     >
-      <div styleName="enterprise-inner">
+      <div styleName="sender-inner">
         <div styleName="container intro-header">
           <div styleName="container-text">
             <h1 styleName="tagline">
-              Unsubscribe easily from{' '}
-              <span styleName="header-highlight"> {name}</span> emails
+              Easily unsubscribe from{' '}
+              <span styleName="header-highlight">{name}</span> emails
             </h1>
             <p styleName="description">
-              Leave Me Alone lets you see all of your subscription emails in one
-              place and unsubscribe from them with a single click.
+              Leave Me Alone makes it easy to unsubscribe from unwanted spam and
+              subscription emails like ones from {name}.
             </p>
-
-            <a href="/login" className={`beam-me-up-cta`}>
-              Sign up for free
-            </a>
-            <p styleName="join-text">
-              Join <TextImportant>{unsubscribes}</TextImportant> of our users
-              that have unsubscribed from <TextImportant>{name}</TextImportant>{' '}
-              emails
-            </p>
+            <div styleName="join-container">
+              <a href="/signup" className={`beam-me-up-cta`}>
+                Get started for FREE
+              </a>
+              <p styleName="join-text">
+                Join <TextImportant>{unsubscribes}</TextImportant> of our users
+                that have unsubscribed from{' '}
+                <TextImportant>{name}</TextImportant> emails.
+              </p>
+            </div>
           </div>
           <div styleName="container-image">
             <div styleName="unsubscribe-example-block">
               <div styleName="unsubscribe-illustation" />
               <div styleName="unsubscribe-illustation-addendum">
                 <span styleName="company-image" data-name={senderName}>
-                  <img src={imageUrl} />
+                  <SenderImage name={name} domain={domain} />
                 </span>
-                <span styleName="company-description">{`${name} emails`}</span>
+                <span styleName="company-description">{`${name} Emails`}</span>
               </div>
             </div>
           </div>
@@ -98,13 +95,23 @@ function SendersPage({ data }) {
             </div>
             <div styleName="feature-text">
               <h3 styleName="feature-title">
-                Get rid of the emails you don't want
+                Unsubscribe from all{' '}
+                <span styleName="highlight inline">{name}</span> emails
               </h3>
               <p>
-                Receiving unwanted subscription emails, like the ones from{' '}
-                <span styleName="highlight">{name}</span>, is a source of
-                annoyance, frustration and interruption. Leave Me Alone makes it
-                quick and easy to unsubscribe!
+                {name} sends emails from{' '}
+                {`${addresses.length} ${
+                  addresses.length === 1 ? 'address' : 'addresses'
+                }`}{' '}
+                like {senderAddresses}. Stop {name} being a source of annoyance,
+                frustration and interruption. Leave Me Alone makes it quick and
+                easy to unsubscribe!
+              </p>
+              <p>
+                <TextLink href="/learn">
+                  Read how Leave Me Alone works{' '}
+                  <ArrowIcon inline width="12" height="12" />
+                </TextLink>
               </p>
             </div>
           </div>
@@ -114,14 +121,20 @@ function SendersPage({ data }) {
             </div>
             <div styleName="feature-text">
               <h3 styleName="feature-title">
-                Clean all of your email accounts
+                Clear <span styleName="highlight inline">{name}</span> from all
+                of your inboxes
               </h3>
               <p>
-                If you have have emails from{' '}
-                <span styleName="highlight">{name}</span> or any other unwanted
-                subscriptons in your other accounts then you can connect all of
-                them and clean all your inboxes in one go. Make email a
-                productive tool again.
+                Connect all of your email accounts to unsubscribe from {name}{' '}
+                and any other unwanted subscription emails in one go. Leave Me
+                Alone supports Gmail, G Suite, Outlook, Office 365, Live, and
+                Hotmail.
+              </p>
+              <p>
+                <TextLink href="/learn">
+                  See all Leave Me Alone features{' '}
+                  <ArrowIcon inline width="12" height="12" />
+                </TextLink>
               </p>
             </div>
           </div>
@@ -130,33 +143,59 @@ function SendersPage({ data }) {
               <img src={envelope} alt="private envelope image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Quickly see the worst spammers</h3>
+              <h3 styleName="feature-title">
+                See if emails from{' '}
+                <span styleName="highlight inline">{name}</span> are worth
+                keeping
+              </h3>
               <p>
-                <p>
-                  <TextImportant>{name}</TextImportant> is{' '}
-                  <TextImportant>
-                    {percentile < 50 ? 'worse' : 'better'}
-                  </TextImportant>{' '}
-                  than{' '}
-                  <TextImportant>
-                    {percentile < 50 ? 100 - negativePercentile : percentile}%
-                  </TextImportant>{' '}
-                  of known senders, based on email frequency and reputation.
-                </p>
-                <p>
-                  <TextImportant>
-                    {(percentage * 100).toFixed(0)}%
-                  </TextImportant>{' '}
-                  of users unsubscribe from these emails.
-                </p>
+                Quickly determine the quality of emails using our revolutionary
+                ranking system. {name} is{' '}
+                <TextImportant>
+                  {percentile < 50 ? 'worse' : 'better'}
+                </TextImportant>{' '}
+                than{' '}
+                <TextImportant>
+                  {percentile < 50
+                    ? 100 - (negativePercentile || 0)
+                    : percentile || 0}
+                  %
+                </TextImportant>{' '}
+                of known senders, based on email frequency and reputation.{' '}
+                <TextImportant>{(percentage * 100).toFixed(0)}%</TextImportant>{' '}
+                of users unsubscribe from {name} emails.
+              </p>
+              <p>
+                <TextLink href="/security">
+                  Learn how we power these stats{' '}
+                  <ArrowIcon inline width="12" height="12" />
+                </TextLink>
               </p>
             </div>
           </div>
         </div>
+
+        <div styleName="end-stuff">
+          <h2>
+            Start unsubscribing from{' '}
+            <TextImportant>{suggestionNames}</TextImportant> emails today.
+          </h2>
+          <a
+            href={`/signup?ref=landing-${senderName}`}
+            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
+            style={{ margin: '50px auto' }}
+          >
+            Unsubscribe from {name} emails now!
+          </a>
+          <p>Or...</p>
+          <p>
+            Check out <TextLink href="/learn">how it works</TextLink>, read
+            about our <TextLink href="/security">security</TextLink>, and find
+            out more <TextLink href="/about">about us and our mission</TextLink>
+            .
+          </p>
+        </div>
       </div>
-      <p>
-        <a href="https://clearbit.com">Logos provided by Clearbit</a>
-      </p>
     </SubpageLayout>
   );
 }
@@ -173,6 +212,49 @@ export const query = graphql`
       sender
       domain
       slug
+      addresses
     }
   }
 `;
+
+function getStats({ unsubscribes, seen, rank }) {
+  let percentage = 0;
+  if (unsubscribes === 0) {
+    percentage = 0;
+  } else {
+    percentage = ((unsubscribes / seen) * 100).toFixed(2);
+  }
+  const percentile = ranks[rank];
+  const asArray = Object.keys(ranks);
+  const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
+
+  return {
+    percentage,
+    percentile,
+    negativePercentile
+  };
+}
+
+function joinArrayToSentence(addresses, limit) {
+  let show = addresses;
+  if (limit) {
+    show = addresses.slice(0, limit);
+  }
+  if (show.length === 1) {
+    return `${show[0]}`;
+  }
+  if (show.length === 2) {
+    return `${show[0]} and ${show[1]}`;
+  }
+
+  const last = show.pop();
+  return `${show.join(', ')}, and ${last}`;
+}
+
+function getSuggestions(senderName) {
+  const filtered = _shuffle(
+    suggestions.filter(s => s !== senderName).map(s => _capitalize(s))
+  );
+  const show = filtered.slice(0, 4);
+  return joinArrayToSentence([...show, 'many more']);
+}

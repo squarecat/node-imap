@@ -1,0 +1,12 @@
+.sender-img {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+
+.loading {
+  opacity: 0;
+}
+
+.errored {
+  display: none;
+}

@@ -39,9 +39,13 @@
   padding: 0px 3px;
   margin: 0 -3px;
   line-height: 20px;
+
+  &.inline {
+    margin: 0;
+  }
 }
 
-.enterprise-inner {
+.sender-inner {
   @extend .subpage-content;
 }
 
@@ -116,14 +120,8 @@ h1.tagline {
   }
 }
 
-.features,
-.savings {
+.features {
   margin-top: 150px;
-}
-
-.security,
-.pricing {
-  margin-top: 90px;
 }
 
 .features {
@@ -160,24 +158,14 @@ h1.tagline {
 .feature-text {
 }
 
-.security {
-  background-color: $color-dark-background;
-  color: white;
-  padding: 90px 0 170px 0;
-
-  .image-section {
-    margin-bottom: 0;
-  }
-  .image-section-img {
-    width: 450px;
-    max-width: 100%;
-  }
-}
-
 .end-stuff {
   text-align: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 100px;
+  margin-top: 100px;
+}
+
+.suggestion {
 }
 
 .image-section {
@@ -221,79 +209,7 @@ h1.tagline {
   }
 }
 
-.trustbar {
-}
-.trustbar-logos {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  filter: grayscale(1);
-  opacity: 0.6;
-}
-.trustbar-logo {
-}
-
-.pricing {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-column-gap: 30px;
-  grid-row-gap: 10px;
-
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.pricing-description {
-  width: 100%;
-  max-width: 500px;
-}
-
-.subscribe-btn {
-  @extend .btn;
-  @extend .centered;
-}
-
-.provider-logos {
-  margin: 30px 0;
-
-  img {
-    max-height: 50px;
-  }
-
-  .gsuite {
-    padding: 10px 20px 10px 10px;
-  }
-}
-
-.more {
-  margin-top: 100px;
-  padding-top: 100px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.sources {
-  margin: 100px 0 -100px 0;
-  font-size: 10px;
-  line-height: 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 100px;
-
-  ul {
-    margin: 0;
-  }
-
-  sup {
-    margin-right: 4px;
-  }
-
-  li:target {
-    background-color: rgba(yellow, 0.25);
-  }
-}
-
-.cite-link {
-  border-bottom: 0;
+.join-container {
 }
 
 .join-text {
@@ -302,6 +218,10 @@ h1.tagline {
   line-height: 18px;
   max-width: 280px;
   margin-top: 20px;
+
+  @media (max-width: 768px) {
+    margin: 20px auto 0 auto;
+  }
 }
 
 .unsubscribe-illustation {
@@ -348,6 +268,9 @@ h1.tagline {
   width: 36px;
   overflow: hidden;
   border-radius: 2px;
+  display: flex;
+  align-items: center;
+
   img {
     max-width: 100%;
   }
@@ -357,6 +280,7 @@ h1.tagline {
     width: 30px;
   }
 }
+
 .company-description {
   margin-left: 14px;
 }

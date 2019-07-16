@@ -27,6 +27,7 @@ export default function Learn() {
     <SubPageLayout
       title="How it works"
       description={`Start unsubscribing in 3 simple steps: 1. Connect your account 2. Scan your inbox 3. Unsubscribe from spam.`}
+      slug="/learn"
     >
       <div>
         <h1>How does Leave Me Alone work?</h1>
@@ -163,7 +164,7 @@ export default function Learn() {
             <p>
               <TextLink href="/security">
                 Learn more about how we power Subscriber Score{' '}
-                <ArrowIcon width="16" height="16" />
+                <ArrowIcon inline width="14" height="14" />
               </TextLink>
             </p>
           </div>
