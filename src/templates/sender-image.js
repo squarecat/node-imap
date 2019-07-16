@@ -1,8 +1,8 @@
 import React, { useMemo, useReducer } from 'react';
 
 import cx from 'classnames';
-import styles from './sender-image.module.scss';
 import spamImg from '../assets/mail-list-illustration-spam.png';
+import styles from './sender-image.module.scss';
 
 const iconUrl = process.env.ICON_URL;
 
@@ -23,7 +23,8 @@ const ImageReducer = (state, action) => {
   }
   return state;
 };
-export default React.memo(({ name, domain }) => {
+
+export default ({ name, domain }) => {
   const [state, dispatch] = useReducer(ImageReducer, {
     loading: true,
     error: null
@@ -62,4 +63,4 @@ export default React.memo(({ name, domain }) => {
       ) : null}
     </>
   );
-});
+};

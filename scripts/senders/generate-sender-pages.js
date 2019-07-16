@@ -4,6 +4,41 @@ const psl = require('./psl');
 
 const db = require('../../server/dao/db');
 
+const nameChanges = [
+  {
+    name: 'facebookmail',
+    newName: 'facebook'
+  },
+  {
+    name: 'intercom-mail',
+    newName: 'intercom'
+  },
+  {
+    name: 'expediamail',
+    newName: 'expedia'
+  },
+  {
+    name: 'buffermail',
+    newName: 'buffer'
+  },
+  {
+    name: 'discoursemail',
+    newName: 'discourse'
+  },
+  {
+    name: 'makenotion',
+    newName: 'notion'
+  }
+];
+
+function getName(name) {
+  const changed = nameChanges.find(n => n.name === name);
+  if (changed) {
+    return changed.newName;
+  }
+  return name;
+}
+
 async function run() {
   await db.connect();
 
@@ -27,10 +62,15 @@ async function run() {
   let output = oc.reduce((out, o) => {
     const { sender, seenCount, unsubscribedCount, addresses, score } = o;
     const parsed = psl.parse(sender);
-    let name = parsed.sld;
-    if (name === 'facebookmail') {
-      name = 'facebook';
+    let name = getName(parsed.sld);
+    let domain = parsed.domain;
+    if (name === 'facebook') {
+      domain = 'facebook.com';
     }
+    if (name === 'leavemealone') {
+      return out;
+    }
+
     if (out[name]) {
       return {
         ...out,
@@ -47,7 +87,7 @@ async function run() {
         name,
         score,
         sender,
-        domain: parsed.domain,
+        domain,
         seen: seenCount,
         unsubscribes: unsubscribedCount,
         addresses,
