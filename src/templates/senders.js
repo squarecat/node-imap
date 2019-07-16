@@ -53,136 +53,131 @@ function SendersPage({ data }) {
       description={`Leave Me Alone makes it easy to unsubscribe from unwanted spam and subscription emails like ones from ${name}.`}
       slug={slug}
     >
-      <div styleName="sender-inner">
-        <div styleName="container intro-header">
-          <div styleName="container-text">
-            <h1 styleName="tagline">
-              Easily unsubscribe from{' '}
-              <span styleName="header-highlight">{name}</span> emails
-            </h1>
-            <p styleName="description">
-              Leave Me Alone makes it easy to unsubscribe from unwanted spam and
-              subscription emails like ones from {name}.
-            </p>
-            <div styleName="join-container">
-              <a href="/signup" className={`beam-me-up-cta`}>
-                Get started for FREE
-              </a>
-              <p styleName="join-text">
-                Join <TextImportant>{unsubscribes}</TextImportant> of our users
-                that have unsubscribed from{' '}
-                <TextImportant>{name}</TextImportant> emails.
-              </p>
-            </div>
-          </div>
-          <div styleName="container-image">
-            <div styleName="unsubscribe-example-block">
-              <div styleName="unsubscribe-illustation" data-name={senderName} />
-              <div styleName="unsubscribe-illustation-addendum">
-                <span styleName="company-image">
-                  <SenderImage name={name} domain={domain} />
-                </span>
-                <span styleName="company-description">{`${name} Emails`}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div styleName="features">
-          <div styleName="feature">
-            <div styleName="feature-img">
-              <img src={happy} alt="happy face image" />
-            </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Unsubscribe from all <span styleName="highlight">{name}</span>{' '}
-                emails
-              </h3>
-              <p>
-                {name} sends emails from{' '}
-                {`${addresses.length} ${
-                  addresses.length === 1 ? 'address' : 'addresses'
-                }`}{' '}
-                like {senderAddresses}. Stop {name} being a source of annoyance,
-                frustration and interruption. Leave Me Alone makes it quick and
-                easy to unsubscribe!
-              </p>
-              <p>
-                <TextLink href="/learn">
-                  Read how Leave Me Alone works{' '}
-                  <ArrowIcon inline width="12" height="12" />
-                </TextLink>
-              </p>
-            </div>
-          </div>
-          <div styleName="feature">
-            <div styleName="feature-img">
-              <img src={broom} alt="broom sweeping image" />
-            </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Clear <span styleName="highlight">{name}</span> from all of your
-                inboxes
-              </h3>
-              <p>
-                Connect all of your email accounts to unsubscribe from {name}{' '}
-                and any other unwanted subscription emails in one go. Leave Me
-                Alone supports Gmail, G Suite, Outlook, Office 365, Live, and
-                Hotmail.
-              </p>
-              <p>
-                <TextLink href="/learn">
-                  See all Leave Me Alone features{' '}
-                  <ArrowIcon inline width="12" height="12" />
-                </TextLink>
-              </p>
-            </div>
-          </div>
-          <div styleName="feature">
-            <div styleName="feature-img">
-              <img src={envelope} alt="private envelope image" />
-            </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                See if <span styleName="highlight">{name}</span> emails are
-                worth keeping
-              </h3>
-              <p>
-                Quickly determine the quality of emails and see which senders
-                spam you the most using our ranking system - Subscriber Score.{' '}
-                <TextImportant>{percentage}%</TextImportant> of Leave Me Alone
-                users unsubscribe from {name} emails.
-              </p>
-              <p>
-                <TextLink href="/security">
-                  Learn how we power these stats{' '}
-                  <ArrowIcon inline width="12" height="12" />
-                </TextLink>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div styleName="end-stuff">
-          <h2>
-            Start unsubscribing from <span>{suggestionNames}</span> emails
-            today.
-          </h2>
-          <a
-            href={`/signup?ref=landing-${senderName}`}
-            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
-            style={{ margin: '50px auto' }}
-          >
-            Unsubscribe from {name} emails now!
-          </a>
-          <p>Or...</p>
-          <p>
-            Check out <TextLink href="/learn">how it works</TextLink>, read
-            about our <TextLink href="/security">security</TextLink>, and find
-            out more <TextLink href="/about">about us and our mission</TextLink>
-            .
+      <div styleName="container intro-header">
+        <div styleName="container-text">
+          <h1 styleName="tagline">
+            Easily unsubscribe from{' '}
+            <span styleName="header-highlight">{name}</span> emails
+          </h1>
+          <p styleName="description">
+            Leave Me Alone makes it easy to unsubscribe from unwanted spam and
+            subscription emails like ones from {name}.
           </p>
+          <div styleName="join-container">
+            <a href="/signup" className={`beam-me-up-cta`}>
+              Get started for FREE
+            </a>
+            <p styleName="join-text">
+              Join <TextImportant>{unsubscribes}</TextImportant> of our users
+              that have unsubscribed from <TextImportant>{name}</TextImportant>{' '}
+              emails.
+            </p>
+          </div>
         </div>
+        <div styleName="container-image">
+          <div styleName="unsubscribe-example-block">
+            <div styleName="unsubscribe-illustation" data-name={senderName} />
+            <div styleName="unsubscribe-illustation-addendum">
+              <span styleName="company-image">
+                <SenderImage name={name} domain={domain} />
+              </span>
+              <span styleName="company-description">{`${name} Emails`}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div styleName="features">
+        <div styleName="feature">
+          <div styleName="feature-img">
+            <img src={happy} alt="happy face image" />
+          </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">
+              Unsubscribe from all <span styleName="highlight">{name}</span>{' '}
+              emails
+            </h3>
+            <p>
+              {name} sends emails from{' '}
+              {`${addresses.length} ${
+                addresses.length === 1 ? 'address' : 'addresses'
+              }`}{' '}
+              like {senderAddresses}. Stop {name} being a source of annoyance,
+              frustration and interruption. Leave Me Alone makes it quick and
+              easy to unsubscribe!
+            </p>
+            <p>
+              <TextLink href="/learn">
+                Read how Leave Me Alone works{' '}
+                <ArrowIcon inline width="12" height="12" />
+              </TextLink>
+            </p>
+          </div>
+        </div>
+        <div styleName="feature">
+          <div styleName="feature-img">
+            <img src={broom} alt="broom sweeping image" />
+          </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">
+              Clear <span styleName="highlight">{name}</span> from all of your
+              inboxes
+            </h3>
+            <p>
+              Connect all of your email accounts to unsubscribe from {name} and
+              any other unwanted subscription emails in one go. Leave Me Alone
+              supports Gmail, G Suite, Outlook, Office 365, Live, and Hotmail.
+            </p>
+            <p>
+              <TextLink href="/learn">
+                See all Leave Me Alone features{' '}
+                <ArrowIcon inline width="12" height="12" />
+              </TextLink>
+            </p>
+          </div>
+        </div>
+        <div styleName="feature">
+          <div styleName="feature-img">
+            <img src={envelope} alt="private envelope image" />
+          </div>
+          <div styleName="feature-text">
+            <h3 styleName="feature-title">
+              See if <span styleName="highlight">{name}</span> emails are worth
+              keeping
+            </h3>
+            <p>
+              Quickly determine the quality of emails and see which senders spam
+              you the most using our ranking system - Subscriber Score.{' '}
+              <TextImportant>{percentage}%</TextImportant> of Leave Me Alone
+              users unsubscribe from {name} emails.
+            </p>
+            <p>
+              <TextLink href="/security">
+                Learn how we power these stats{' '}
+                <ArrowIcon inline width="12" height="12" />
+              </TextLink>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div styleName="end-stuff">
+        <h2>
+          Start unsubscribing from <span>{suggestionNames}</span> emails today.
+        </h2>
+        <a
+          href={`/signup?ref=landing-${senderName}`}
+          className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
+          style={{ margin: '50px auto' }}
+        >
+          Unsubscribe from {name} emails now!
+        </a>
+        <p>Or...</p>
+        <p>
+          Check out <TextLink href="/learn">how it works</TextLink>, read about
+          our <TextLink href="/security">security</TextLink>, and find out more{' '}
+          <TextLink href="/about">about us and our mission</TextLink>.
+        </p>
       </div>
     </SubpageLayout>
   );

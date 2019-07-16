@@ -41,13 +41,13 @@
   line-height: 20px;
 }
 
-.sender-inner {
-  @extend .subpage-content;
-}
+// .sender-inner {
+//   @extend .subpage-content;
+// }
 
 .container-text {
   @media (max-width: 900px) {
-    margin-bottom: 0;
+    margin-bottom: 70px;
   }
 }
 
