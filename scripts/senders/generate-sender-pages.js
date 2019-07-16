@@ -1,6 +1,6 @@
 require('@babel/register');
 require('@babel/polyfill');
-const url = require('url');
+const psl = require('./psl');
 
 const db = require('../../server/dao/db');
 
@@ -25,31 +25,20 @@ async function run() {
   const oc = await results.toArray();
   const counts = oc.map(o => {
     const { sender, seenCount, unsubscribedCount, addresses, score } = o;
-    //const parts = sender.split('.');
-    const name = getName(sender); //parts[parts.length - 2];
-
+    const parsed = psl.parse(sender);
+    const name = parsed.sld;
     return {
       name,
       score,
       sender,
+      domain: parsed.domain,
       seen: seenCount,
       unsubscribes: unsubscribedCount,
-      addresses
+      addresses,
+      slug: `/how-to-unsubscribe-from-${name.toLowerCase()}-emails`
     };
   });
   console.log(JSON.stringify(counts, null, 2));
 }
 
 run();
-
-function getName(url) {
-  var regex_var = new RegExp(
-    /(\.[^.]{0,2})(\.[^.]{0,2})(\.*$)|(\.[^.]*)(\.*$)/
-  );
-
-  return url
-    .replace(regex_var, '')
-    .replace(/.org$/, '')
-    .split('.')
-    .pop();
-}

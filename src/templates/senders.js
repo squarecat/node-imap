@@ -33,26 +33,34 @@ const iconUrl = process.env.ICON_URL;
 
 function SendersPage({ data }) {
   const { sendersJson } = data;
-  const { name: senderName, unsubscribes, seen, rank, addresses } = sendersJson;
-
+  const {
+    domain,
+    name: senderName,
+    unsubscribes,
+    seen,
+    rank,
+    addresses,
+    slug
+  } = sendersJson;
   let percentage = 0;
   if (unsubscribes === 0) {
     percentage = 0;
   } else {
     percentage = ((unsubscribes / seen) * 100).toFixed(2);
   }
+  const imageUrl = `${iconUrl}${domain}`;
   const percentile = ranks[rank];
   const asArray = Object.keys(ranks);
   const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
   const name = _capitalize(senderName);
 
-  const metaAddresses = addresses.slice(0, 3).join(', ');
+  const senderAddresses = getAddressSentence(addresses);
 
   return (
     <SubpageLayout
-      title={`Unsubscribe from ${name} with a single click`}
-      description={`${percentage} of people unsubscribe from ${name} emails from domains like ${metaAddresses}`}
-      // slug={slug}
+      title={`Unsubscribe easily from ${name} emails`}
+      description={`${percentage}% of people unsubscribe from ${name} emails from domains like ${senderAddresses}`}
+      slug={slug}
     >
       <div styleName="enterprise-inner">
         <div styleName="container intro-header">
@@ -62,9 +70,12 @@ function SendersPage({ data }) {
               <span styleName="header-highlight">{name}</span> emails
             </h1>
             <p styleName="description">
-              Leave Me Alone lets you see all of your subscription emails in one
-              place and unsubscribe from ones like {name} with a single click.
+              {percentage}% of people unsubscribe from{' '}
+              <span styleName="highlight">{name}</span> emails from domains like{' '}
+              {senderAddresses}
             </p>
+            {/* Leave Me Alone lets you see all of your subscription emails in one
+              place and unsubscribe from ones like {name} with a single click. */}
 
             <a href="/signup" className={`beam-me-up-cta`}>
               Sign up for free
@@ -75,7 +86,7 @@ function SendersPage({ data }) {
             </p>
           </div>
           <div styleName="container-image">
-            <img src={iconUrl} />
+            <img src={imageUrl} />
           </div>
         </div>
 
@@ -142,6 +153,9 @@ function SendersPage({ data }) {
           </div>
         </div>
       </div>
+      <p>
+        <a href="https://clearbit.com">Logos provided by Clearbit</a>
+      </p>
     </SubpageLayout>
   );
 }
@@ -149,13 +163,21 @@ function SendersPage({ data }) {
 export default SendersPage;
 
 export const query = graphql`
-  query($name: String!) {
-    sendersJson(name: { eq: $name }) {
+  query($id: String!) {
+    sendersJson(id: { eq: $id }) {
       name
       score
       unsubscribes
       seen
       sender
+      domain
+      slug
     }
   }
 `;
+
+function getAddressSentence(addresses) {
+  const show = addresses.slice(0, 3);
+  const last = show.pop();
+  return `${show.join(', ')} and ${last}`;
+}
