@@ -8,16 +8,9 @@ const iconUrl = process.env.ICON_URL;
 
 const ImageReducer = (state, action) => {
   const { type, data } = action;
-  if (type === 'set-loading') {
-    return {
-      ...state,
-      loading: data
-    };
-  }
   if (type === 'set-error') {
     return {
       ...state,
-      loading: false,
       error: data
     };
   }
@@ -26,16 +19,14 @@ const ImageReducer = (state, action) => {
 
 export default ({ name, domain }) => {
   const [state, dispatch] = useReducer(ImageReducer, {
-    loading: true,
     error: null
   });
-  const { loading, error } = state;
+  const { error } = state;
   const imageUrl = `${iconUrl}/${domain}`;
 
   const image = useMemo(
     () => {
       const classes = cx('sender-img', {
-        [styles.loading]: loading,
         [styles.errored]: error
       });
       return (
@@ -43,12 +34,11 @@ export default ({ name, domain }) => {
           alt={`${name} logo`}
           src={imageUrl}
           className={classes}
-          onLoad={() => dispatch({ type: 'set-loading', data: false })}
           onError={e => dispatch({ type: 'set-error', data: e })}
         />
       );
     },
-    [error, loading, name, imageUrl]
+    [error, name, imageUrl]
   );
   return (
     <>
@@ -57,7 +47,6 @@ export default ({ name, domain }) => {
         <img
           alt="Image of can of spam"
           src={spamImg}
-          onLoad={() => dispatch({ type: 'set-loading', data: false })}
           onError={e => dispatch({ type: 'set-error', data: e })}
         />
       ) : null}
