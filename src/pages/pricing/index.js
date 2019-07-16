@@ -125,6 +125,7 @@ export default () => {
     <SubPageLayout
       title="Pricing"
       description={`Whatever the size of your inbox our pricing has you covered.`}
+      slug="/pricing"
     >
       <div styleName="pricing-page">
         <div styleName="pricing-description">

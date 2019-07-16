@@ -97,7 +97,8 @@ export function MailProvider({ children }) {
             orderBy: state.sortByValue,
             sortDirection: state.sortByDirection,
             page: state.page,
-            perPage: state.perPage
+            perPage: state.perPage,
+            ...state.options
           }
         );
         // if it's diferent then set
@@ -124,6 +125,7 @@ export function MailProvider({ children }) {
       state.perPage,
       state.count,
       state.sortByDirection,
+      state.options,
       db,
       setOccurrencesSeen,
       filteredMail
@@ -154,6 +156,7 @@ export function MailProvider({ children }) {
     sortValues: sortByValues,
     sortByValue: state.sortByValue,
     sortByDirection: state.sortByDirection,
+    options: state.options,
     unsubData
   };
 
@@ -216,6 +219,13 @@ async function filterMail(activeFilters, db, options) {
     filteredCollection = [...scored, ...unscored];
   }
 
+  // filter options
+  if (!options.showSpam) {
+    filteredCollection = filteredCollection.filter(f => !f.isSpam);
+  }
+  if (!options.showTrash) {
+    filteredCollection = filteredCollection.filter(f => !f.isTrash);
+  }
   // filter by pagination
   const startIndex = options.page * options.perPage;
   filteredCollection = await filteredCollection.slice(

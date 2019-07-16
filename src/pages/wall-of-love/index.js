@@ -9,6 +9,7 @@ export default function WallOfLovePage() {
     <SubPageLayout
       title="Wall of Love"
       description={`Our customers love Leave Me Alone. Here are some of the lovely things they've said about us!`}
+      slug="/wall-of-love"
     >
       <h1>Wall of Love</h1>
       <SubpageTagline>

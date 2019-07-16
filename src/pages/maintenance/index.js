@@ -3,7 +3,7 @@ import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
 
 const NotFoundPage = () => (
-  <SubPageLayout title="Maintenance" centered>
+  <SubPageLayout title="Maintenance" slug="/maintenance" centered>
     <h1>Down for maintenance</h1>
     <h2>We're working hard on some improvments.</h2>
     <p>

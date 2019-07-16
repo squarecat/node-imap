@@ -7,7 +7,13 @@ import {
   OutlookIcon,
   PointyArrow
 } from '../components/icons';
-import React, { useCallback, useMemo, useReducer, useRef } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { TextImportant, TextLink } from '../components/text';
 
 import Footer from '../components/footer';
@@ -66,6 +72,7 @@ const IndexPage = () => {
     loading: statsLoading,
     value: statsData
   } = useAsync(fetchStats, []);
+  const [isTruckShown, showTruck] = useState(false);
 
   const statsContent = useMemo(
     () => {
@@ -122,7 +129,10 @@ const IndexPage = () => {
               </div>
             </div>
             <div className="hero-box hero-right">
-              <UnsubscribeDemo trashPileRef={trashPileRef.current} />
+              <UnsubscribeDemo
+                onFirstClick={() => showTruck(true)}
+                trashPileRef={trashPileRef.current}
+              />
             </div>
           </div>
         </div>
@@ -160,7 +170,7 @@ const IndexPage = () => {
                 <p>
                   <TextLink href="/learn">
                     <span>View all features of Leave Me Alone</span>{' '}
-                    <ArrowIcon />
+                    <ArrowIcon inline />
                   </TextLink>
                 </p>
               </div>
@@ -194,7 +204,7 @@ const IndexPage = () => {
                 <p>
                   <TextLink href="/security">
                     <span>Learn more about security and data management</span>{' '}
-                    <ArrowIcon />
+                    <ArrowIcon inline />
                   </TextLink>
                 </p>
               </div>
@@ -202,7 +212,11 @@ const IndexPage = () => {
           </div>
         </div>
 
-        <div className="trash-pile" id="trash-pile">
+        <div
+          className="trash-pile"
+          id="trash-pile"
+          data-show-truck={isTruckShown}
+        >
           <div className="home-container">
             <div className="text-box text-box-centered">
               <h3>Say goodbye to subscriptions forever</h3>
@@ -233,7 +247,8 @@ const IndexPage = () => {
             </h3>
             <p>
               If you have a Google or Microsoft email account then we have you
-              covered. This includes Gmail, G Suite, Outlook, Live, and Hotmail.
+              covered. This includes Gmail, G Suite, Outlook, Office 365, Live,
+              and Hotmail.
             </p>
             <div className="provider-logos">
               <span className="provider-logo">
@@ -319,7 +334,8 @@ const IndexPage = () => {
               centered
             />
             <TextLink href="/wall-of-love">
-              <span>See all of our customer testimonials</span> <ArrowIcon />
+              <span>See all of our customer testimonials</span>{' '}
+              <ArrowIcon inline />
             </TextLink>
           </div>
         </div>
@@ -546,7 +562,7 @@ function nodes(state, action) {
   }
 }
 
-function UnsubscribeDemo({ trashPileRef }) {
+function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
   const { width } = useWindowSize();
   const ref = useRef(null);
   const [state, dispatch] = useReducer(nodes, {
@@ -556,6 +572,9 @@ function UnsubscribeDemo({ trashPileRef }) {
 
   const onClick = useCallback(
     () => {
+      if (state.count === 0) {
+        onFirstClick();
+      }
       dispatch({ type: 'next' });
     },
     [dispatch]

@@ -144,6 +144,27 @@ export const SettingsIcon = ({ width = 15, height = 15, ...visProps }) => (
   </svg>
 );
 
+export const GearIcon = ({ width = 15, height = 15 }) => (
+  <svg aria-label="gear" viewBox="0 0 24 24" width={width} height={height}>
+    <path d="M22.51,14.46l-1.59-1.31A8.77,8.77,0,0,0,21,12h0a8.77,8.77,0,0,0-.08-1.15l1.59-1.31A2,2,0,0,0,23,7L21.82,5a2,2,0,0,0-2.44-.87l-1.93.72a9.17,9.17,0,0,0-2-1.16l-.33-2a2,2,0,0,0-2-1.67h-2.3a2,2,0,0,0-2,1.67l-.33,2a9.17,9.17,0,0,0-2,1.16L4.62,4.13A2,2,0,0,0,2.18,5L1,7a2,2,0,0,0,.46,2.54l1.59,1.31A8.77,8.77,0,0,0,3,12H3a8.77,8.77,0,0,0,.08,1.15L1.49,14.46A2,2,0,0,0,1,17l1.15,2a2,2,0,0,0,2.44.87l1.93-.72a9.17,9.17,0,0,0,2,1.16l.33,2a2,2,0,0,0,2,1.67h2.3a2,2,0,0,0,2-1.67l.33-2a9.17,9.17,0,0,0,2-1.16l1.93.72A2,2,0,0,0,21.82,19L23,17A2,2,0,0,0,22.51,14.46ZM12,16a4,4,0,1,1,4-4A4,4,0,0,1,12,16Z" />
+  </svg>
+);
+
+export const OptionsIcon = ({ width = 15, height = 15 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 32 32"
+    width={width}
+    height={height}
+    fill="none"
+    stroke="currentcolor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path d="M28 6 L4 6 M28 16 L4 16 M28 26 L4 26 M24 3 L24 9 M8 13 L8 19 M20 23 L20 29" />
+  </svg>
+);
 export const MailIcon = ({ width = 15, height = 15, ...visProps }) => (
   <svg
     className={getClasses('mail', visProps)}

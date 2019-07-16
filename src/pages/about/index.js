@@ -17,6 +17,7 @@ export default function About() {
     <SubPageLayout
       title="About"
       description={`Our mission is helping people keep control of their inbox. We are two independent founders looking to help you, and others like you.`}
+      slug="/about"
     >
       <div styleName="mission image-section image-right">
         <div styleName="image-section-text">

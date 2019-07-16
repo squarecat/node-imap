@@ -6,6 +6,7 @@ export default function Terms() {
     <SubPageLayout
       title="Privacy Policy"
       description={`Our privacy policy explains what information we collect and why. We do not store the content of any of your emails in any form.`}
+      slug="/privacy"
     >
       <h2>Privacy Policy</h2>
       <p>

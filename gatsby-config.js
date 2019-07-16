@@ -1,3 +1,4 @@
+const sitemapOptions = require('./sitemap.js');
 module.exports = {
   siteMetadata: {
     title: 'Easily unsubscribe from spam emails - Leave Me Alone',
@@ -8,22 +9,14 @@ module.exports = {
     siteName: 'Leave Me Alone'
   },
   plugins: [
+    `gatsby-transformer-json`,
     'gatsby-plugin-react-helmet',
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
-    // `gatsby-plugin-transition-link`,
     `gatsby-plugin-sass`,
     {
       resolve: `gatsby-plugin-sitemap`,
-      options: {
-        exclude: [
-          `/maintenance`,
-          `/login/**/*`,
-          `/goodbye`,
-          `/app`,
-          `/app/**/*`
-        ]
-      }
+      options: sitemapOptions
     },
     {
       resolve: `gatsby-source-filesystem`,
@@ -37,6 +30,13 @@ module.exports = {
       options: {
         name: `images`,
         path: `${__dirname}/src/assets`
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `senders`,
+        path: `./src/senders/`
       }
     },
     {
