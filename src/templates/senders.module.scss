@@ -282,8 +282,12 @@ h1.tagline {
   margin-left: 14px;
 }
 
-.email-address {
-  color: rgba(231, 57, 48, 0.749);
+.email-address,
+.suggestion {
+  color: $color-red;
   font-weight: bolder;
+}
+
+.email-address {
   word-break: break-all;
 }

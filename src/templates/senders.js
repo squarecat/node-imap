@@ -36,7 +36,7 @@ function SendersPage({ data }) {
     slug
   } = sendersJson;
 
-  const { percentage, percentile, negativePercentile } = getStats({
+  const { percentage } = getStats({
     unsubscribes,
     seen,
     rank
@@ -44,7 +44,7 @@ function SendersPage({ data }) {
 
   const name = _capitalize(senderName);
 
-  const senderAddresses = joinArrayToSentence(addresses, 3);
+  const senderAddresses = getSenders(addresses, 2);
   const suggestionNames = getSuggestions(senderName);
 
   return (
@@ -144,25 +144,14 @@ function SendersPage({ data }) {
             </div>
             <div styleName="feature-text">
               <h3 styleName="feature-title">
-                See if emails from <span styleName="highlight">{name}</span> are
+                See if <span styleName="highlight">{name}</span> emails are
                 worth keeping
               </h3>
               <p>
-                Quickly determine the quality of emails using our revolutionary
-                ranking system. {name} is{' '}
-                <TextImportant>
-                  {percentile < 50 ? 'worse' : 'better'}
-                </TextImportant>{' '}
-                than{' '}
-                <TextImportant>
-                  {percentile < 50
-                    ? 100 - (negativePercentile || 0)
-                    : percentile || 0}
-                  %
-                </TextImportant>{' '}
-                of known senders, based on email frequency and reputation.{' '}
+                Quickly determine the quality of emails and see which senders
+                spam you the most using our ranking system - Subscriber Score.{' '}
                 <TextImportant>{(percentage * 100).toFixed(0)}%</TextImportant>{' '}
-                of users unsubscribe from {name} emails.
+                of Leave Me Alone users unsubscribe from {name} emails.
               </p>
               <p>
                 <TextLink href="/security">
@@ -223,18 +212,19 @@ function getStats({ unsubscribes, seen, rank }) {
   } else {
     percentage = ((unsubscribes / seen) * 100).toFixed(2);
   }
-  const percentile = ranks[rank];
-  const asArray = Object.keys(ranks);
-  const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
+  return { percentage };
+  // const percentile = ranks[rank];
+  // const asArray = Object.keys(ranks);
+  // const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
 
-  return {
-    percentage,
-    percentile,
-    negativePercentile
-  };
+  // return {
+  //   percentage,
+  //   percentile,
+  //   negativePercentile
+  // };
 }
 
-function joinArrayToSentence(addresses, limit, end) {
+function getSenders(addresses, limit) {
   let show = addresses;
   if (limit) {
     show = addresses.slice(0, limit);
@@ -251,12 +241,8 @@ function joinArrayToSentence(addresses, limit, end) {
     );
   }
 
-  let last;
-  if (end) {
-    last = end;
-  } else {
-    last = <span styleName="email-address">{show.pop()}</span>;
-  }
+  const last = <span styleName="email-address">{show.pop()}</span>;
+
   return (
     <>
       {show.map(s => (
@@ -273,10 +259,15 @@ function getSuggestions(senderName) {
   const filtered = _shuffle(
     suggestions.filter(s => s !== senderName).map(s => _capitalize(s))
   );
-  const show = filtered.slice(0, 4);
-  return joinArrayToSentence(
-    [_capitalize(senderName), ...show],
-    5,
-    'many more'
+  const show = [_capitalize(senderName), ...filtered.slice(0, 4)];
+  return (
+    <>
+      {show.map(s => (
+        <span key={s}>
+          <span styleName="suggestion">{s}</span>,{' '}
+        </span>
+      ))}
+      and many more
+    </>
   );
 }
