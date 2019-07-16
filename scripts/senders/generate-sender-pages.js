@@ -20,7 +20,7 @@ async function run() {
       }
     },
     { $sort: { seenCount: -1 } },
-    { $limit: 500 }
+    { $limit: 100 }
   ]);
   const oc = await results.toArray();
   // remove duplicates

@@ -44,18 +44,18 @@ exports.createPages = ({ graphql, actions }) => {
         });
         pages = [...pages, slug];
       });
-      console.log('Creating keyword pages...');
-      result.data.allLongTailJson.edges.forEach(({ node }) => {
-        const { id, slug } = node;
-        createPage({
-          path: slug,
-          component: path.resolve(`./src/templates/long-tail-keyword.js`),
-          context: {
-            id
-          }
-        });
-        pages = [...pages, slug];
-      });
+      // console.log('Creating keyword pages...');
+      // result.data.allLongTailJson.edges.forEach(({ node }) => {
+      //   const { id, slug } = node;
+      //   createPage({
+      //     path: slug,
+      //     component: path.resolve(`./src/templates/long-tail-keyword.js`),
+      //     context: {
+      //       id
+      //     }
+      //   });
+      //   pages = [...pages, slug];
+      // });
       console.log(pages.join('\n'));
     })
     .catch(e => console.error(e));

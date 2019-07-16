@@ -1,5 +1,3 @@
-db: connected to mongodb://127.0.0.1:27017/leavemealone
-db: connected to mongodb://127.0.0.1:27017/leavemealone
 [
   {
     "name": "codestream",
@@ -22,10 +20,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "approveme.com",
     "seen": 4,
     "unsubscribes": 0,
-    "addresses": [
-      "krystle@approveme.com",
-      "krsytle@approveme.com"
-    ],
+    "addresses": ["krystle@approveme.com", "krsytle@approveme.com"],
     "slug": "/how-to-unsubscribe-from-approveme-emails"
   },
   {
@@ -35,10 +30,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "opensource.org",
     "seen": 4,
     "unsubscribes": 0,
-    "addresses": [
-      "masson@opensource.org",
-      "do-not-reply@opensource.org"
-    ],
+    "addresses": ["masson@opensource.org", "do-not-reply@opensource.org"],
     "slug": "/how-to-unsubscribe-from-opensource-emails"
   },
   {
@@ -62,10 +54,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "typeform.com",
     "seen": 3,
     "unsubscribes": 0,
-    "addresses": [
-      "sebastien@typeform.com",
-      "no-reply@typeform.com"
-    ],
+    "addresses": ["sebastien@typeform.com", "no-reply@typeform.com"],
     "slug": "/how-to-unsubscribe-from-typeform-emails"
   },
   {
@@ -75,9 +64,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "letsencrypt.org",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "expiry@letsencrypt.org"
-    ],
+    "addresses": ["expiry@letsencrypt.org"],
     "slug": "/how-to-unsubscribe-from-letsencrypt-emails"
   },
   {
@@ -87,10 +74,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "gsu.edu",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "listserv@listserv.gsu.edu",
-      "LISTSERV@listserv.gsu.edu"
-    ],
+    "addresses": ["listserv@listserv.gsu.edu", "LISTSERV@listserv.gsu.edu"],
     "slug": "/how-to-unsubscribe-from-gsu-emails"
   },
   {
@@ -100,10 +84,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "house.gov",
     "seen": 2,
     "unsubscribes": 1,
-    "addresses": [
-      "listserv@ls1.house.gov",
-      "LISTSERV@ls1.house.gov"
-    ],
+    "addresses": ["listserv@ls1.house.gov", "LISTSERV@ls1.house.gov"],
     "slug": "/how-to-unsubscribe-from-house-emails"
   },
   {
@@ -113,9 +94,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "timemator.com",
     "seen": 2,
     "unsubscribes": 1,
-    "addresses": [
-      "contact@timemator.com"
-    ],
+    "addresses": ["contact@timemator.com"],
     "slug": "/how-to-unsubscribe-from-timemator-emails"
   },
   {
@@ -125,9 +104,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "businesscontact360.com",
     "seen": 2,
     "unsubscribes": 1,
-    "addresses": [
-      "newsletter@businesscontact360.com"
-    ],
+    "addresses": ["newsletter@businesscontact360.com"],
     "slug": "/how-to-unsubscribe-from-businesscontact360-emails"
   },
   {
@@ -137,9 +114,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "getmakerlog.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@getmakerlog.com"
-    ],
+    "addresses": ["hello@getmakerlog.com"],
     "slug": "/how-to-unsubscribe-from-getmakerlog-emails"
   },
   {
@@ -149,9 +124,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "mapbox.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletter@mapbox.com"
-    ],
+    "addresses": ["newsletter@mapbox.com"],
     "slug": "/how-to-unsubscribe-from-mapbox-emails"
   },
   {
@@ -161,10 +134,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "figma.com",
     "seen": 2,
     "unsubscribes": 1,
-    "addresses": [
-      "josh@figma.com",
-      "support@figma.com"
-    ],
+    "addresses": ["josh@figma.com", "support@figma.com"],
     "slug": "/how-to-unsubscribe-from-figma-emails"
   },
   {
@@ -174,9 +144,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "bitbucket.org",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@mailer.bitbucket.org"
-    ],
+    "addresses": ["noreply@mailer.bitbucket.org"],
     "slug": "/how-to-unsubscribe-from-bitbucket-emails"
   },
   {
@@ -186,10 +154,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "delighted.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "mongodb-cloud@delighted.com",
-      "paddle@delighted.com"
-    ],
+    "addresses": ["mongodb-cloud@delighted.com", "paddle@delighted.com"],
     "slug": "/how-to-unsubscribe-from-delighted-emails"
   },
   {
@@ -199,10 +164,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "google.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "sc-noreply@google.com",
-      "noreply-photos@google.com"
-    ],
+    "addresses": ["sc-noreply@google.com", "noreply-photos@google.com"],
     "slug": "/how-to-unsubscribe-from-google-emails"
   },
   {
@@ -212,9 +174,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cursedcrypt.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "finley@cursedcrypt.com"
-    ],
+    "addresses": ["finley@cursedcrypt.com"],
     "slug": "/how-to-unsubscribe-from-cursedcrypt-emails"
   },
   {
@@ -224,9 +184,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "drift.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "cbernard@hey.drift.com"
-    ],
+    "addresses": ["cbernard@hey.drift.com"],
     "slug": "/how-to-unsubscribe-from-drift-emails"
   },
   {
@@ -236,10 +194,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "ieee.org",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@ieee.org",
-      "listserv@ieee.org"
-    ],
+    "addresses": ["LISTSERV@ieee.org", "listserv@ieee.org"],
     "slug": "/how-to-unsubscribe-from-ieee-emails"
   },
   {
@@ -249,9 +204,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "salesmachine.io",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": [
-      "team@salesmachine.io"
-    ],
+    "addresses": ["team@salesmachine.io"],
     "slug": "/how-to-unsubscribe-from-salesmachine-emails"
   },
   {
@@ -260,10 +213,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "unm.edu",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@list.unm.edu",
-      "listserv@list.unm.edu"
-    ],
+    "addresses": ["LISTSERV@list.unm.edu", "listserv@list.unm.edu"],
     "slug": "/how-to-unsubscribe-from-unm-emails"
   },
   {
@@ -272,9 +222,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "auxesisinfotech.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "admin@auxesisinfotech.com"
-    ],
+    "addresses": ["admin@auxesisinfotech.com"],
     "slug": "/how-to-unsubscribe-from-auxesisinfotech-emails"
   },
   {
@@ -283,10 +231,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "squarecat.io",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@squarecat.io",
-      "leavemealone@squarecat.io"
-    ],
+    "addresses": ["hello@squarecat.io", "leavemealone@squarecat.io"],
     "slug": "/how-to-unsubscribe-from-squarecat-emails"
   },
   {
@@ -295,10 +240,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "isoc.org.il",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@list.isoc.org.il",
-      "listserv@list.isoc.org.il"
-    ],
+    "addresses": ["LISTSERV@list.isoc.org.il", "listserv@list.isoc.org.il"],
     "slug": "/how-to-unsubscribe-from-isoc-emails"
   },
   {
@@ -319,10 +261,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "stripe.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "updates@stripe.com",
-      "no-reply@stripe.com"
-    ],
+    "addresses": ["updates@stripe.com", "no-reply@stripe.com"],
     "slug": "/how-to-unsubscribe-from-stripe-emails"
   },
   {
@@ -331,9 +270,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cloudflare.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "no-reply@cloudflare.com"
-    ],
+    "addresses": ["no-reply@cloudflare.com"],
     "slug": "/how-to-unsubscribe-from-cloudflare-emails"
   },
   {
@@ -342,9 +279,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "gmail.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "joeytawadrous@gmail.com"
-    ],
+    "addresses": ["joeytawadrous@gmail.com"],
     "slug": "/how-to-unsubscribe-from-gmail-emails"
   },
   {
@@ -353,9 +288,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "mailchimp.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "alerts@mailchimp.com"
-    ],
+    "addresses": ["alerts@mailchimp.com"],
     "slug": "/how-to-unsubscribe-from-mailchimp-emails"
   },
   {
@@ -364,9 +297,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "leavemealone.xyz",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletter@beta.mail.leavemealone.xyz"
-    ],
+    "addresses": ["newsletter@beta.mail.leavemealone.xyz"],
     "slug": "/how-to-unsubscribe-from-leavemealone-emails"
   },
   {
@@ -375,11 +306,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "eff.org",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "membership@eff.org",
-      "action@eff.org",
-      "editor@eff.org"
-    ],
+    "addresses": ["membership@eff.org", "action@eff.org", "editor@eff.org"],
     "slug": "/how-to-unsubscribe-from-eff-emails"
   },
   {
@@ -388,9 +315,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "zeplin.io",
     "seen": 1,
     "unsubscribes": 1,
-    "addresses": [
-      "hi@zeplin.io"
-    ],
+    "addresses": ["hi@zeplin.io"],
     "slug": "/how-to-unsubscribe-from-zeplin-emails"
   },
   {
@@ -399,9 +324,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "producthunt.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@producthunt.com"
-    ],
+    "addresses": ["hello@producthunt.com"],
     "slug": "/how-to-unsubscribe-from-producthunt-emails"
   },
   {
@@ -410,9 +333,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "deliveroo.co.uk",
     "seen": 1,
     "unsubscribes": 1,
-    "addresses": [
-      "hello@announce.deliveroo.co.uk"
-    ],
+    "addresses": ["hello@announce.deliveroo.co.uk"],
     "slug": "/how-to-unsubscribe-from-deliveroo-emails"
   },
   {
@@ -421,9 +342,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "crystalknows.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "no-reply@crystalknows.com"
-    ],
+    "addresses": ["no-reply@crystalknows.com"],
     "slug": "/how-to-unsubscribe-from-crystalknows-emails"
   },
   {
@@ -460,9 +379,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "emailholidays.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletters@emailholidays.com"
-    ],
+    "addresses": ["newsletters@emailholidays.com"],
     "slug": "/how-to-unsubscribe-from-emailholidays-emails"
   },
   {
@@ -471,9 +388,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cointracker.io",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "updates@cointracker.io"
-    ],
+    "addresses": ["updates@cointracker.io"],
     "slug": "/how-to-unsubscribe-from-cointracker-emails"
   },
   {
@@ -498,9 +413,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "adobe.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "mail@mail.adobe.com"
-    ],
+    "addresses": ["mail@mail.adobe.com"],
     "slug": "/how-to-unsubscribe-from-adobe-emails"
   },
   {
@@ -509,9 +422,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "rakuten.com",
     "seen": 1,
     "unsubscribes": 1,
-    "addresses": [
-      "chigusa.nakano@rakuten.com"
-    ],
+    "addresses": ["chigusa.nakano@rakuten.com"],
     "slug": "/how-to-unsubscribe-from-rakuten-emails"
   },
   {
@@ -520,9 +431,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "brewdog.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@brewdog.com"
-    ],
+    "addresses": ["noreply@brewdog.com"],
     "slug": "/how-to-unsubscribe-from-brewdog-emails"
   },
   {
@@ -531,9 +440,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "fixathon.io",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "steve@fixathon.io"
-    ],
+    "addresses": ["steve@fixathon.io"],
     "slug": "/how-to-unsubscribe-from-fixathon-emails"
   },
   {
@@ -542,9 +449,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "baremetrics.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "corey@baremetrics.com"
-    ],
+    "addresses": ["corey@baremetrics.com"],
     "slug": "/how-to-unsubscribe-from-baremetrics-emails"
   },
   {
@@ -553,9 +458,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "fizbuz.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "carter@fizbuz.com"
-    ],
+    "addresses": ["carter@fizbuz.com"],
     "slug": "/how-to-unsubscribe-from-fizbuz-emails"
   },
   {
@@ -564,10 +467,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "makersup.xyz",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "apps@makersup.xyz",
-      "newsletter@makersup.xyz"
-    ],
+    "addresses": ["apps@makersup.xyz", "newsletter@makersup.xyz"],
     "slug": "/how-to-unsubscribe-from-makersup-emails"
   },
   {
@@ -576,9 +476,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "crisp.chat",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "transcripts@mail.support.crisp.chat"
-    ],
+    "addresses": ["transcripts@mail.support.crisp.chat"],
     "slug": "/how-to-unsubscribe-from-crisp-emails"
   },
   {
@@ -587,9 +485,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "earnestcapital.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "tyler@earnestcapital.com"
-    ],
+    "addresses": ["tyler@earnestcapital.com"],
     "slug": "/how-to-unsubscribe-from-earnestcapital-emails"
   },
   {
@@ -598,9 +494,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "klokki.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "stas@klokki.com"
-    ],
+    "addresses": ["stas@klokki.com"],
     "slug": "/how-to-unsubscribe-from-klokki-emails"
   },
   {
@@ -609,9 +503,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "zeit.email",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "news@zeit.email"
-    ],
+    "addresses": ["news@zeit.email"],
     "slug": "/how-to-unsubscribe-from-zeit-emails"
   },
   {
@@ -620,9 +512,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "tau.ac.il",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@listserv.tau.ac.il"
-    ],
+    "addresses": ["LISTSERV@listserv.tau.ac.il"],
     "slug": "/how-to-unsubscribe-from-tau-emails"
   },
   {
@@ -631,9 +521,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "polypane.rocks",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "kilian@polypane.rocks"
-    ],
+    "addresses": ["kilian@polypane.rocks"],
     "slug": "/how-to-unsubscribe-from-polypane-emails"
   },
   {
@@ -642,9 +530,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "clockify.me",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletter@clockify.me"
-    ],
+    "addresses": ["newsletter@clockify.me"],
     "slug": "/how-to-unsubscribe-from-clockify-emails"
   },
   {
@@ -653,9 +539,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "tamu.edu",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@listserv.tamu.edu"
-    ],
+    "addresses": ["LISTSERV@listserv.tamu.edu"],
     "slug": "/how-to-unsubscribe-from-tamu-emails"
   },
   {
@@ -664,9 +548,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "asana.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "learn@email1.asana.com"
-    ],
+    "addresses": ["learn@email1.asana.com"],
     "slug": "/how-to-unsubscribe-from-asana-emails"
   },
   {
@@ -675,9 +557,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "loom.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "shahed@loom.com"
-    ],
+    "addresses": ["shahed@loom.com"],
     "slug": "/how-to-unsubscribe-from-loom-emails"
   },
   {
@@ -686,9 +566,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "mollie.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "info@mollie.com"
-    ],
+    "addresses": ["info@mollie.com"],
     "slug": "/how-to-unsubscribe-from-mollie-emails"
   },
   {
@@ -697,10 +575,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "meedle.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@meedle.io",
-      "rockets@meedle.io"
-    ],
+    "addresses": ["hello@meedle.io", "rockets@meedle.io"],
     "slug": "/how-to-unsubscribe-from-meedle-emails"
   },
   {
@@ -709,9 +584,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "leapin.eu",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "info@leapin.eu"
-    ],
+    "addresses": ["info@leapin.eu"],
     "slug": "/how-to-unsubscribe-from-leapin-emails"
   },
   {
@@ -720,9 +593,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "tylertringas.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "tyler@tylertringas.com"
-    ],
+    "addresses": ["tyler@tylertringas.com"],
     "slug": "/how-to-unsubscribe-from-tylertringas-emails"
   },
   {
@@ -731,9 +602,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "sentry.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "learn@sentry.io"
-    ],
+    "addresses": ["learn@sentry.io"],
     "slug": "/how-to-unsubscribe-from-sentry-emails"
   },
   {
@@ -742,9 +611,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "ihatemailto.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@ihatemailto.com"
-    ],
+    "addresses": ["noreply@ihatemailto.com"],
     "slug": "/how-to-unsubscribe-from-ihatemailto-emails"
   },
   {
@@ -753,9 +620,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "paypal.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "paypal@mail.paypal.com"
-    ],
+    "addresses": ["paypal@mail.paypal.com"],
     "slug": "/how-to-unsubscribe-from-paypal-emails"
   },
   {
@@ -764,9 +629,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "biteable.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "admin@biteable.com"
-    ],
+    "addresses": ["admin@biteable.com"],
     "slug": "/how-to-unsubscribe-from-biteable-emails"
   },
   {
@@ -775,9 +638,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "implicit.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "vineet.sinha@implicit.io"
-    ],
+    "addresses": ["vineet.sinha@implicit.io"],
     "slug": "/how-to-unsubscribe-from-implicit-emails"
   },
   {
@@ -786,9 +647,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "zoom.us",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "teamzoom@zoom.us"
-    ],
+    "addresses": ["teamzoom@zoom.us"],
     "slug": "/how-to-unsubscribe-from-zoom-emails"
   },
   {
@@ -797,9 +656,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "webcreate.nl",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "jeroen@webcreate.nl"
-    ],
+    "addresses": ["jeroen@webcreate.nl"],
     "slug": "/how-to-unsubscribe-from-webcreate-emails"
   },
   {
@@ -808,9 +665,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "getrewardful.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@getrewardful.com"
-    ],
+    "addresses": ["hello@getrewardful.com"],
     "slug": "/how-to-unsubscribe-from-getrewardful-emails"
   },
   {
@@ -819,9 +674,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "indiehackers.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "community@indiehackers.com"
-    ],
+    "addresses": ["community@indiehackers.com"],
     "slug": "/how-to-unsubscribe-from-indiehackers-emails"
   },
   {
@@ -830,9 +683,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "messages4.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "email@techsmith.messages4.com"
-    ],
+    "addresses": ["email@techsmith.messages4.com"],
     "slug": "/how-to-unsubscribe-from-messages4-emails"
   },
   {
@@ -841,9 +692,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "intercom-mail.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "emily.howman@biteable.intercom-mail.com"
-    ],
+    "addresses": ["emily.howman@biteable.intercom-mail.com"],
     "slug": "/how-to-unsubscribe-from-intercom-mail-emails"
   },
   {
@@ -852,9 +701,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "makermag.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "annelaure@makermag.com"
-    ],
+    "addresses": ["annelaure@makermag.com"],
     "slug": "/how-to-unsubscribe-from-makermag-emails"
   },
   {
@@ -863,9 +710,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "twitter.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "notify@twitter.com"
-    ],
+    "addresses": ["notify@twitter.com"],
     "slug": "/how-to-unsubscribe-from-twitter-emails"
   },
   {
@@ -874,10 +719,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "gretchenrubin.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "course@gretchenrubin.com",
-      "info@gretchenrubin.com"
-    ],
+    "addresses": ["course@gretchenrubin.com", "info@gretchenrubin.com"],
     "slug": "/how-to-unsubscribe-from-gretchenrubin-emails"
   },
   {
@@ -886,9 +728,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "betapage.co",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletters@betapage.co"
-    ],
+    "addresses": ["newsletters@betapage.co"],
     "slug": "/how-to-unsubscribe-from-betapage-emails"
   },
   {
@@ -897,10 +737,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "heroku.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "no-reply@heroku.com",
-      "stack-feedback@heroku.com"
-    ],
+    "addresses": ["no-reply@heroku.com", "stack-feedback@heroku.com"],
     "slug": "/how-to-unsubscribe-from-heroku-emails"
   },
   {
@@ -909,10 +746,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "logrocket.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "jeff@logrocket.com",
-      "mata@logrocket.com"
-    ],
+    "addresses": ["jeff@logrocket.com", "mata@logrocket.com"],
     "slug": "/how-to-unsubscribe-from-logrocket-emails"
   },
   {
@@ -921,9 +755,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "angel.co",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "talent@angel.co"
-    ],
+    "addresses": ["talent@angel.co"],
     "slug": "/how-to-unsubscribe-from-angel-emails"
   },
   {
@@ -932,9 +764,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "nomadgate.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "thomas@nomadgate.com"
-    ],
+    "addresses": ["thomas@nomadgate.com"],
     "slug": "/how-to-unsubscribe-from-nomadgate-emails"
   },
   {
@@ -943,9 +773,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "skyairline.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hola@skyairline.com"
-    ],
+    "addresses": ["hola@skyairline.com"],
     "slug": "/how-to-unsubscribe-from-skyairline-emails"
   },
   {
@@ -954,9 +782,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "slc.co.uk",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "webmaster@slc.co.uk"
-    ],
+    "addresses": ["webmaster@slc.co.uk"],
     "slug": "/how-to-unsubscribe-from-slc-emails"
   },
   {
@@ -965,9 +791,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cruip.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@cruip.com"
-    ],
+    "addresses": ["hello@cruip.com"],
     "slug": "/how-to-unsubscribe-from-cruip-emails"
   },
   {
@@ -976,10 +800,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "statuspage.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "marketing@statuspage.com",
-      "hi@statuspage.com"
-    ],
+    "addresses": ["marketing@statuspage.com", "hi@statuspage.com"],
     "slug": "/how-to-unsubscribe-from-statuspage-emails"
   },
   {
@@ -988,9 +809,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "bugbyte.fi",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "contact@bugbyte.fi"
-    ],
+    "addresses": ["contact@bugbyte.fi"],
     "slug": "/how-to-unsubscribe-from-bugbyte-emails"
   },
   {
@@ -999,9 +818,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "speakly.me",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "ott@speakly.me"
-    ],
+    "addresses": ["ott@speakly.me"],
     "slug": "/how-to-unsubscribe-from-speakly-emails"
   },
   {
@@ -1010,9 +827,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "nomadhouse.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "arthur@nomadhouse.io"
-    ],
+    "addresses": ["arthur@nomadhouse.io"],
     "slug": "/how-to-unsubscribe-from-nomadhouse-emails"
   },
   {
@@ -1021,10 +836,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "wildbeerco.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "staywild@wildbeerco.com",
-      "events@wildbeerco.com"
-    ],
+    "addresses": ["staywild@wildbeerco.com", "events@wildbeerco.com"],
     "slug": "/how-to-unsubscribe-from-wildbeerco-emails"
   },
   {
@@ -1033,9 +845,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "binance.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "do_not_reply@mailer.binance.com"
-    ],
+    "addresses": ["do_not_reply@mailer.binance.com"],
     "slug": "/how-to-unsubscribe-from-binance-emails"
   },
   {
@@ -1044,9 +854,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "atari.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "helloVCS@atari.com"
-    ],
+    "addresses": ["helloVCS@atari.com"],
     "slug": "/how-to-unsubscribe-from-atari-emails"
   },
   {
@@ -1080,9 +888,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "nytimes.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "nytdirect@nytimes.com"
-    ],
+    "addresses": ["nytdirect@nytimes.com"],
     "slug": "/how-to-unsubscribe-from-nytimes-emails"
   },
   {
@@ -1091,9 +897,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "kraken.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@email.kraken.com"
-    ],
+    "addresses": ["noreply@email.kraken.com"],
     "slug": "/how-to-unsubscribe-from-kraken-emails"
   },
   {
@@ -1102,9 +906,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cbyge.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@cbyge.com"
-    ],
+    "addresses": ["noreply@cbyge.com"],
     "slug": "/how-to-unsubscribe-from-cbyge-emails"
   },
   {
@@ -1113,9 +915,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "mssg.me",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hey@mssg.me"
-    ],
+    "addresses": ["hey@mssg.me"],
     "slug": "/how-to-unsubscribe-from-mssg-emails"
   },
   {
@@ -1124,9 +924,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "yorck.de",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "ticket@yorck.de"
-    ],
+    "addresses": ["ticket@yorck.de"],
     "slug": "/how-to-unsubscribe-from-yorck-emails"
   },
   {
@@ -1135,9 +933,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "opentoyoga.co.uk",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "info@opentoyoga.co.uk"
-    ],
+    "addresses": ["info@opentoyoga.co.uk"],
     "slug": "/how-to-unsubscribe-from-opentoyoga-emails"
   },
   {
@@ -1146,9 +942,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "fbmta.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "ppubs@ppubs.fbmta.com"
-    ],
+    "addresses": ["ppubs@ppubs.fbmta.com"],
     "slug": "/how-to-unsubscribe-from-fbmta-emails"
   },
   {
@@ -1157,9 +951,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "inmomentfeedback.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hertz@inmomentfeedback.com"
-    ],
+    "addresses": ["hertz@inmomentfeedback.com"],
     "slug": "/how-to-unsubscribe-from-inmomentfeedback-emails"
   },
   {
@@ -1168,9 +960,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cex.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "web@cex.io"
-    ],
+    "addresses": ["web@cex.io"],
     "slug": "/how-to-unsubscribe-from-cex-emails"
   },
   {
@@ -1179,9 +969,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "apple.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "AppleSupport@insideapple.apple.com"
-    ],
+    "addresses": ["AppleSupport@insideapple.apple.com"],
     "slug": "/how-to-unsubscribe-from-apple-emails"
   },
   {
@@ -1190,10 +978,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "revolut.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@revolut.com",
-      "no-reply@revolut.com"
-    ],
+    "addresses": ["noreply@revolut.com", "no-reply@revolut.com"],
     "slug": "/how-to-unsubscribe-from-revolut-emails"
   },
   {
@@ -1215,9 +1000,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "starlingbank.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@updates.starlingbank.com"
-    ],
+    "addresses": ["hello@updates.starlingbank.com"],
     "slug": "/how-to-unsubscribe-from-starlingbank-emails"
   },
   {
@@ -1226,9 +1009,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "torre.co",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "andres@torre.co"
-    ],
+    "addresses": ["andres@torre.co"],
     "slug": "/how-to-unsubscribe-from-torre-emails"
   },
   {
@@ -1237,9 +1018,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "n26.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletter@email.n26.com"
-    ],
+    "addresses": ["newsletter@email.n26.com"],
     "slug": "/how-to-unsubscribe-from-n26-emails"
   },
   {
@@ -1248,9 +1027,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "github.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "support@github.com"
-    ],
+    "addresses": ["support@github.com"],
     "slug": "/how-to-unsubscribe-from-github-emails"
   },
   {
@@ -1259,9 +1036,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "reasons.to",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "john@reasons.to"
-    ],
+    "addresses": ["john@reasons.to"],
     "slug": "/how-to-unsubscribe-from-reasons-emails"
   },
   {
@@ -1270,9 +1045,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "yourparkingspace.co.uk",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "info@yourparkingspace.co.uk"
-    ],
+    "addresses": ["info@yourparkingspace.co.uk"],
     "slug": "/how-to-unsubscribe-from-yourparkingspace-emails"
   },
   {
@@ -1281,9 +1054,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "finimize.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@e.finimize.com"
-    ],
+    "addresses": ["hello@e.finimize.com"],
     "slug": "/how-to-unsubscribe-from-finimize-emails"
   },
   {
@@ -1292,9 +1063,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "heybloom.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "contact@heybloom.com"
-    ],
+    "addresses": ["contact@heybloom.com"],
     "slug": "/how-to-unsubscribe-from-heybloom-emails"
   },
   {
@@ -1303,9 +1072,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cryptokitties.co",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "meow@cryptokitties.co"
-    ],
+    "addresses": ["meow@cryptokitties.co"],
     "slug": "/how-to-unsubscribe-from-cryptokitties-emails"
   },
   {
@@ -1314,9 +1081,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "princeton.edu",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@lists.princeton.edu"
-    ],
+    "addresses": ["LISTSERV@lists.princeton.edu"],
     "slug": "/how-to-unsubscribe-from-princeton-emails"
   },
   {
@@ -1325,9 +1090,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "state.gov",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@calist.state.gov"
-    ],
+    "addresses": ["LISTSERV@calist.state.gov"],
     "slug": "/how-to-unsubscribe-from-state-emails"
   },
   {
@@ -1350,9 +1113,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "quora.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "sessions-noreply@quora.com"
-    ],
+    "addresses": ["sessions-noreply@quora.com"],
     "slug": "/how-to-unsubscribe-from-quora-emails"
   },
   {
@@ -1361,9 +1122,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "sendbird.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@sendbird.com"
-    ],
+    "addresses": ["noreply@sendbird.com"],
     "slug": "/how-to-unsubscribe-from-sendbird-emails"
   },
   {
@@ -1372,9 +1131,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "seedrs.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "support@seedrs.com"
-    ],
+    "addresses": ["support@seedrs.com"],
     "slug": "/how-to-unsubscribe-from-seedrs-emails"
   },
   {
@@ -1383,9 +1140,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "rainway.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "community@rainway.com"
-    ],
+    "addresses": ["community@rainway.com"],
     "slug": "/how-to-unsubscribe-from-rainway-emails"
   },
   {
@@ -1394,9 +1149,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "triphop.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "marketing@mail.triphop.com"
-    ],
+    "addresses": ["marketing@mail.triphop.com"],
     "slug": "/how-to-unsubscribe-from-triphop-emails"
   },
   {
@@ -1405,9 +1158,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "sierraclub.org",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "LISTSERV@lists.sierraclub.org"
-    ],
+    "addresses": ["LISTSERV@lists.sierraclub.org"],
     "slug": "/how-to-unsubscribe-from-sierraclub-emails"
   },
   {
@@ -1416,9 +1167,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "previewhunt.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "andrey@previewhunt.com"
-    ],
+    "addresses": ["andrey@previewhunt.com"],
     "slug": "/how-to-unsubscribe-from-previewhunt-emails"
   },
   {
@@ -1427,9 +1176,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "readme.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "marc@readme.io"
-    ],
+    "addresses": ["marc@readme.io"],
     "slug": "/how-to-unsubscribe-from-readme-emails"
   },
   {
@@ -1438,9 +1185,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "purechat.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletter@purechat.com"
-    ],
+    "addresses": ["newsletter@purechat.com"],
     "slug": "/how-to-unsubscribe-from-purechat-emails"
   },
   {
@@ -1449,9 +1194,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "gog.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "newsletter@email.gog.com"
-    ],
+    "addresses": ["newsletter@email.gog.com"],
     "slug": "/how-to-unsubscribe-from-gog-emails"
   },
   {
@@ -1460,9 +1203,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "padidiver.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "news@news.padidiver.com"
-    ],
+    "addresses": ["news@news.padidiver.com"],
     "slug": "/how-to-unsubscribe-from-padidiver-emails"
   },
   {
@@ -1471,10 +1212,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "framer.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@framer.com",
-      "support@framer.com"
-    ],
+    "addresses": ["noreply@framer.com", "support@framer.com"],
     "slug": "/how-to-unsubscribe-from-framer-emails"
   },
   {
@@ -1483,10 +1221,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "clubhouse.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "housemates@clubhouse.io",
-      "KSchrader@clubhouse.io"
-    ],
+    "addresses": ["housemates@clubhouse.io", "KSchrader@clubhouse.io"],
     "slug": "/how-to-unsubscribe-from-clubhouse-emails"
   },
   {
@@ -1495,9 +1230,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "snyk.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "contact@snyk.io"
-    ],
+    "addresses": ["contact@snyk.io"],
     "slug": "/how-to-unsubscribe-from-snyk-emails"
   },
   {
@@ -1506,9 +1239,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "brewdog.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@brewdog.com"
-    ],
+    "addresses": ["noreply@brewdog.com"],
     "slug": "/how-to-unsubscribe-from-brewdog-emails"
   },
   {
@@ -1517,9 +1248,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "tiket.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "noreply@tiket.com"
-    ],
+    "addresses": ["noreply@tiket.com"],
     "slug": "/how-to-unsubscribe-from-tiket-emails"
   },
   {
@@ -1528,9 +1257,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "bittrex.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "no-reply@bittrex.com"
-    ],
+    "addresses": ["no-reply@bittrex.com"],
     "slug": "/how-to-unsubscribe-from-bittrex-emails"
   },
   {
@@ -1539,9 +1266,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "spacetime.am",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "updates@spacetime.am"
-    ],
+    "addresses": ["updates@spacetime.am"],
     "slug": "/how-to-unsubscribe-from-spacetime-emails"
   },
   {
@@ -1550,9 +1275,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "npmjs.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "isaacs@npmjs.com"
-    ],
+    "addresses": ["isaacs@npmjs.com"],
     "slug": "/how-to-unsubscribe-from-npmjs-emails"
   },
   {
@@ -1561,9 +1284,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cushionapp.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "jonnie@cushionapp.com"
-    ],
+    "addresses": ["jonnie@cushionapp.com"],
     "slug": "/how-to-unsubscribe-from-cushionapp-emails"
   },
   {
@@ -1572,9 +1293,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "revealbot.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "iskander@revealbot.com"
-    ],
+    "addresses": ["iskander@revealbot.com"],
     "slug": "/how-to-unsubscribe-from-revealbot-emails"
   },
   {
@@ -1583,9 +1302,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "dhpfamily.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "AltTickets@mail.dhpfamily.com"
-    ],
+    "addresses": ["AltTickets@mail.dhpfamily.com"],
     "slug": "/how-to-unsubscribe-from-dhpfamily-emails"
   },
   {
@@ -1594,9 +1311,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "transferwise.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@transferwise.com"
-    ],
+    "addresses": ["hello@transferwise.com"],
     "slug": "/how-to-unsubscribe-from-transferwise-emails"
   },
   {
@@ -1605,9 +1320,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "ledger.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "katie@ledger.com"
-    ],
+    "addresses": ["katie@ledger.com"],
     "slug": "/how-to-unsubscribe-from-ledger-emails"
   },
   {
@@ -1616,9 +1329,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "mixpanel.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "pat.nelix@mixpanel.com"
-    ],
+    "addresses": ["pat.nelix@mixpanel.com"],
     "slug": "/how-to-unsubscribe-from-mixpanel-emails"
   },
   {
@@ -1627,9 +1338,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "kite.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "adam.smith@kite.com"
-    ],
+    "addresses": ["adam.smith@kite.com"],
     "slug": "/how-to-unsubscribe-from-kite-emails"
   },
   {
@@ -1638,9 +1347,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "moonlightwork.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "emma@moonlightwork.com"
-    ],
+    "addresses": ["emma@moonlightwork.com"],
     "slug": "/how-to-unsubscribe-from-moonlightwork-emails"
   },
   {
@@ -1674,9 +1381,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "buddy.works",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "alexk@buddy.works"
-    ],
+    "addresses": ["alexk@buddy.works"],
     "slug": "/how-to-unsubscribe-from-buddy-emails"
   },
   {
@@ -1685,9 +1390,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "creolabs.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "marcob@creolabs.com"
-    ],
+    "addresses": ["marcob@creolabs.com"],
     "slug": "/how-to-unsubscribe-from-creolabs-emails"
   },
   {
@@ -1696,9 +1399,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "improvmx.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "antoine@emails.improvmx.com"
-    ],
+    "addresses": ["antoine@emails.improvmx.com"],
     "slug": "/how-to-unsubscribe-from-improvmx-emails"
   },
   {
@@ -1707,9 +1408,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "cryptomenow.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "wilson@cryptomenow.com"
-    ],
+    "addresses": ["wilson@cryptomenow.com"],
     "slug": "/how-to-unsubscribe-from-cryptomenow-emails"
   },
   {
@@ -1718,9 +1417,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "overstand.co.th",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "rodney@overstand.co.th"
-    ],
+    "addresses": ["rodney@overstand.co.th"],
     "slug": "/how-to-unsubscribe-from-overstand-emails"
   },
   {
@@ -1729,9 +1426,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "rescuetime.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "robby+rtnews@rescuetime.com"
-    ],
+    "addresses": ["robby+rtnews@rescuetime.com"],
     "slug": "/how-to-unsubscribe-from-rescuetime-emails"
   },
   {
@@ -1740,9 +1435,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "levels.io",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "hello@levels.io"
-    ],
+    "addresses": ["hello@levels.io"],
     "slug": "/how-to-unsubscribe-from-levels-emails"
   },
   {
@@ -1751,9 +1444,7 @@ db: connected to mongodb://127.0.0.1:27017/leavemealone
     "domain": "gitguardian.com",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": [
-      "security@mail.gitguardian.com"
-    ],
+    "addresses": ["security@mail.gitguardian.com"],
     "slug": "/how-to-unsubscribe-from-gitguardian-emails"
   }
 ]
