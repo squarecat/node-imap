@@ -77,9 +77,9 @@ function SendersPage({ data }) {
           </div>
           <div styleName="container-image">
             <div styleName="unsubscribe-example-block">
-              <div styleName="unsubscribe-illustation" />
+              <div styleName="unsubscribe-illustation" data-name={senderName} />
               <div styleName="unsubscribe-illustation-addendum">
-                <span styleName="company-image" data-name={senderName}>
+                <span styleName="company-image">
                   <SenderImage name={name} domain={domain} />
                 </span>
                 <span styleName="company-description">{`${name} Emails`}</span>
@@ -176,8 +176,8 @@ function SendersPage({ data }) {
 
         <div styleName="end-stuff">
           <h2>
-            Start unsubscribing from{' '}
-            <TextImportant>{suggestionNames}</TextImportant> emails today.
+            Start unsubscribing from <span>{suggestionNames}</span> emails
+            today.
           </h2>
           <a
             href={`/signup?ref=landing-${senderName}`}
@@ -274,5 +274,9 @@ function getSuggestions(senderName) {
     suggestions.filter(s => s !== senderName).map(s => _capitalize(s))
   );
   const show = filtered.slice(0, 4);
-  return joinArrayToSentence(show, 4, 'many more');
+  return joinArrayToSentence(
+    [_capitalize(senderName), ...show],
+    5,
+    'many more'
+  );
 }

@@ -125,7 +125,7 @@ h1.tagline {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   grid-column-gap: 50px;
 
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
     margin-top: 90px;
@@ -137,7 +137,7 @@ h1.tagline {
     font-size: 14px;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     font-size: 16px;
   }
 }
@@ -216,7 +216,7 @@ h1.tagline {
   max-width: 280px;
   margin-top: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     margin: 20px auto 0 auto;
   }
 }
@@ -229,8 +229,8 @@ h1.tagline {
   background-repeat: no-repeat;
   background-position: center center;
 
-  [data-name='facebook'],
-  [data-name='amazon'] {
+  &[data-name='facebook'],
+  &[data-name='amazon'] {
     background-image: url(../assets/mail-list-illustration-twitter-walmart.png);
   }
 
