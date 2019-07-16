@@ -63,7 +63,10 @@ async function run() {
     const { sender, seenCount, unsubscribedCount, addresses, score } = o;
     const parsed = psl.parse(sender);
     let name = getName(parsed.sld);
-
+    let domain = parsed.domain;
+    if (name === 'facebook') {
+      domain = 'facebook.com';
+    }
     if (name === 'leavemealone') {
       return out;
     }
@@ -84,7 +87,7 @@ async function run() {
         name,
         score,
         sender,
-        domain: parsed.domain,
+        domain,
         seen: seenCount,
         unsubscribes: unsubscribedCount,
         addresses,
