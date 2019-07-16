@@ -124,8 +124,9 @@ export default [
         inbox. By getting rid of all of those marketing emails, email is a much
         more enjoyable experience.{' '}
         <span styleName="highlight">
-          Definitely a great investment for my future sanity!
+          Definitely a great investment for my future sanity
         </span>
+        !
       </span>
     ),
     twitter: `unindie`,
