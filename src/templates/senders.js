@@ -43,7 +43,7 @@ function SendersPage({ data }) {
     rank
   });
 
-  const imageUrl = `${iconUrl}${domain}`;
+  const imageUrl = `${iconUrl}/${domain}`;
   const name = _capitalize(senderName);
 
   const senderAddresses = joinArrayToSentence(addresses, 3);
@@ -75,7 +75,15 @@ function SendersPage({ data }) {
             </p>
           </div>
           <div styleName="container-image">
-            <img src={imageUrl} />
+            <div styleName="unsubscribe-example-block">
+              <div styleName="unsubscribe-illustation" />
+              <div styleName="unsubscribe-illustation-addendum">
+                <span styleName="company-image">
+                  <img src={imageUrl} />
+                </span>
+                <span styleName="company-description">{`${name} emails`}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -173,8 +181,7 @@ function SendersPage({ data }) {
           </h2>
           <a
             href={`/signup?ref=landing-${senderName}`}
-            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-            styleName="sender-cta"
+            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
             style={{ margin: '50px auto' }}
           >
             Unsubscribe from {name} emails now!
