@@ -33,13 +33,21 @@ const iconUrl = process.env.ICON_URL;
 
 function SendersPage({ data }) {
   const { sendersJson } = data;
-  const { name: senderName, unsubscribes, seen, rank } = sendersJson;
+  const {
+    domain,
+    name: senderName,
+    unsubscribes,
+    seen,
+    rank,
+    slug
+  } = sendersJson;
   let percentage = 0;
   if (unsubscribes === 0) {
     percentage = 0;
   } else {
     percentage = ((unsubscribes / seen) * 100).toFixed(2);
   }
+  const imageUrl = `${iconUrl}${domain}`;
   const percentile = ranks[rank];
   const asArray = Object.keys(ranks);
   const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
@@ -70,7 +78,7 @@ function SendersPage({ data }) {
             </p>
           </div>
           <div styleName="container-image">
-            <img src={iconUrl} />
+            <img src={imageUrl} />
           </div>
         </div>
 
@@ -137,6 +145,9 @@ function SendersPage({ data }) {
           </div>
         </div>
       </div>
+      <p>
+        <a href="https://clearbit.com">Logos provided by Clearbit</a>
+      </p>
     </SubpageLayout>
   );
 }
@@ -144,13 +155,15 @@ function SendersPage({ data }) {
 export default SendersPage;
 
 export const query = graphql`
-  query($name: String!) {
-    sendersJson(name: { eq: $name }) {
+  query($id: String!) {
+    sendersJson(id: { eq: $id }) {
       name
       score
       unsubscribes
       seen
       sender
+      domain
+      slug
     }
   }
 `;

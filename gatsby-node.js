@@ -16,7 +16,7 @@ exports.createPages = ({ graphql, actions }) => {
         edges {
           node {
             id
-            name
+            slug
           }
         }
       }
@@ -34,16 +34,15 @@ exports.createPages = ({ graphql, actions }) => {
       let pages = [];
       console.log('Creating occurrence pages...');
       result.data.allSendersJson.edges.forEach(({ node }) => {
-        const { name } = node;
-        const p = `/how-to-unsubscribe-from-${name.toLowerCase()}-emails`;
+        const { id, slug } = node;
         createPage({
-          path: p,
+          path: slug,
           component: path.resolve(`./src/templates/senders.js`),
           context: {
-            name
+            id
           }
         });
-        pages = [...pages, p];
+        pages = [...pages, slug];
       });
       console.log('Creating keyword pages...');
       result.data.allLongTailJson.edges.forEach(({ node }) => {
