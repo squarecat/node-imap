@@ -1,0 +1,46 @@
+@import '../../../styles/common/colors.scss';
+
+.illustration {
+  background-color: #fffbfb;
+  border: 1px solid #fddbd7;
+  border-radius: 8px;
+  min-width: 390px;
+  max-width: 500px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 30px 1fr 68px;
+  border-bottom: 1px solid #fddbd7;
+  align-items: center;
+  padding: 15px 20px;
+  grid-gap: 25px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 25px 20px;
+  }
+}
+
+.img {
+  height: 30px;
+}
+
+.subject {
+  font-size: 16px;
+  text-align: left;
+  user-select: none;
+
+  // @media (max-width: 768px) {
+  //   font-size: 14px;
+  // }
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
