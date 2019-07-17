@@ -36,7 +36,7 @@ const companies = [
 const EnterprisePage = () => {
   return (
     <SubPageLayout
-      title="Leave Me Alone for Enterprise"
+      title="Leave Me Alone for Teams"
       description={`The most efficient businesses work without interruption. Take back control of your office from unwanted spam email.`}
       withContent={false}
       slug="/enterprise"
@@ -51,7 +51,7 @@ const EnterprisePage = () => {
             </p>
 
             <a
-              href="mailto:enterprise@leavemealone.app"
+              href="mailto:teams@leavemealone.app"
               className={`beam-me-up-cta`}
             >
               Contact Us
@@ -171,7 +171,7 @@ const EnterprisePage = () => {
               useless!
             </p>
             <p>
-              Our Enterprise prices let every one of your employees completely
+              Our prices for teams let every one of your employees completely
               clean their inbox of all unwanted subscriptions for a fixed price
               per user.
             </p>
@@ -184,8 +184,8 @@ const EnterprisePage = () => {
               <img styleName="gsuite" src={googleLogo} />
             </div>
             <p>
-              <a href="mailto:enterprise@leavemealone.app">Contact us</a> for
-              more information or to start setting up your account today!
+              <a href="mailto:teams@leavemealone.app">Contact us</a> for more
+              information or to start setting up your account today!
             </p>
 
             <Testimonial
@@ -204,7 +204,7 @@ const EnterprisePage = () => {
         <div styleName="end-stuff">
           <h2>Find out more about Leave Me Alone for your company</h2>
           <a
-            href="mailto:enterprise@leavemealone.app"
+            href="mailto:teams@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ margin: '50px auto' }}
           >
@@ -212,7 +212,7 @@ const EnterprisePage = () => {
           </a>
           <p>
             Part of a charity or non-profit?{' '}
-            <TextLink href="mailto:enterprise@leavemealone.app">
+            <TextLink href="mailto:teams@leavemealone.app">
               Get in touch
             </TextLink>{' '}
             - we would love to help you!
