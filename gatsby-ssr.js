@@ -76,12 +76,12 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
         __html: `(function () { let i = setInterval(function() { window.injectChat && (clearInterval(i) || window.injectChat())}, 3000) })()`
       }}
     />,
-    <script
-      key="simple"
-      type="text/x-metomic"
-      data-micropolicy="analytics"
-      src="https://stats.leavemealone.app/app.js"
-    />,
+    // <script
+    //   key="simple"
+    //   type="text/x-metomic"
+    //   data-micropolicy="analytics"
+    //   src="https://stats.leavemealone.app/app.js"
+    // />,
     <noscript key="simple-noscript" data-micropolicy="analytics">
       <img src="https://stats.leavemealone.app/image.gif" alt="" />
     </noscript>
