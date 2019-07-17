@@ -1,65 +1,68 @@
 [
   {
-    "name": "codestream",
-    "score": 0.8739853896103895,
-    "sender": "codestream.com",
-    "domain": "codestream.com",
-    "seen": 4,
-    "unsubscribes": 1,
-    "addresses": [
-      "dave@codestream.com",
-      "team@codestream.com",
-      "pez@codestream.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-codestream-emails"
-  },
-  {
-    "name": "approveme",
-    "score": 0.9985795454545454,
-    "sender": "approveme.com",
-    "domain": "approveme.com",
-    "seen": 4,
+    "name": "721",
+    "label": "721",
+    "sender": "721.ca",
+    "domain": "721.ca",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["krystle@approveme.com", "krsytle@approveme.com"],
-    "slug": "/how-to-unsubscribe-from-approveme-emails"
+    "addresses": ["naoqavody@721.ca"],
+    "slug": "/how-to-unsubscribe-from-721-emails"
   },
   {
-    "name": "opensource",
-    "score": 0.9976325757575757,
-    "sender": "opensource.org",
-    "domain": "opensource.org",
-    "seen": 4,
-    "unsubscribes": 0,
-    "addresses": ["masson@opensource.org", "do-not-reply@opensource.org"],
-    "slug": "/how-to-unsubscribe-from-opensource-emails"
-  },
-  {
-    "name": "backblaze",
-    "score": 1,
-    "sender": "backblaze.com",
-    "domain": "backblaze.com",
-    "seen": 3,
-    "unsubscribes": 1,
-    "addresses": [
-      "b2newsletter@backblaze.com",
-      "B2newsletter@backblaze.com",
-      "b2contact@backblaze.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-backblaze-emails"
-  },
-  {
-    "name": "typeform",
+    "name": "figma",
+    "label": "Figma",
     "score": 0.9990530303030303,
-    "sender": "typeform.com",
-    "domain": "typeform.com",
+    "sender": "figma.com",
+    "domain": "figma.com",
     "seen": 3,
     "unsubscribes": 0,
-    "addresses": ["sebastien@typeform.com", "no-reply@typeform.com"],
-    "slug": "/how-to-unsubscribe-from-typeform-emails"
+    "addresses": ["support@figma.com", "josh@figma.com"],
+    "slug": "/how-to-unsubscribe-from-figma-emails"
+  },
+  {
+    "name": "squarecat",
+    "label": "Squarecat",
+    "score": 0.9990530303030303,
+    "sender": "squarecat.io",
+    "domain": "squarecat.io",
+    "seen": 3,
+    "unsubscribes": 0,
+    "addresses": ["hello@squarecat.io", "leavemealone@squarecat.io"],
+    "slug": "/how-to-unsubscribe-from-squarecat-emails"
+  },
+  {
+    "name": "producthunt",
+    "label": "Product Hunt",
+    "sender": "ship.producthunt.com",
+    "domain": "producthunt.com",
+    "seen": 3,
+    "unsubscribes": 1,
+    "addresses": [
+      "maker-goals@ship.producthunt.com",
+      "maker-report@ship.producthunt.com",
+      "bloom-3@ship.producthunt.com"
+    ],
+    "slug": "/how-to-unsubscribe-from-producthunt-emails"
+  },
+  {
+    "name": "gmail",
+    "label": "Gmail",
+    "sender": "gmail.com",
+    "domain": "gmail.com",
+    "seen": 3,
+    "unsubscribes": 0,
+    "addresses": [
+      "je.barjonet@gmail.com",
+      "alecunff@gmail.com",
+      "patrickswalls@gmail.com"
+    ],
+    "slug": "/how-to-unsubscribe-from-gmail-emails"
   },
   {
     "name": "letsencrypt",
-    "score": 0.9966179653679653,
+    "label": "Letsencrypt",
+    "score": 0.9990530303030303,
     "sender": "letsencrypt.org",
     "domain": "letsencrypt.org",
     "seen": 2,
@@ -68,156 +71,280 @@
     "slug": "/how-to-unsubscribe-from-letsencrypt-emails"
   },
   {
-    "name": "gsu",
-    "score": 1,
-    "sender": "listserv.gsu.edu",
-    "domain": "gsu.edu",
+    "name": "makersup",
+    "label": "Makersup",
+    "sender": "makersup.xyz",
+    "domain": "makersup.xyz",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": ["listserv@listserv.gsu.edu", "LISTSERV@listserv.gsu.edu"],
-    "slug": "/how-to-unsubscribe-from-gsu-emails"
+    "addresses": ["newsletter@makersup.xyz", "apps@makersup.xyz"],
+    "slug": "/how-to-unsubscribe-from-makersup-emails"
   },
   {
-    "name": "house",
-    "score": 1,
-    "sender": "ls1.house.gov",
-    "domain": "house.gov",
-    "seen": 2,
-    "unsubscribes": 1,
-    "addresses": ["listserv@ls1.house.gov", "LISTSERV@ls1.house.gov"],
-    "slug": "/how-to-unsubscribe-from-house-emails"
-  },
-  {
-    "name": "timemator",
-    "score": 0.7481060606060606,
-    "sender": "timemator.com",
-    "domain": "timemator.com",
-    "seen": 2,
-    "unsubscribes": 1,
-    "addresses": ["contact@timemator.com"],
-    "slug": "/how-to-unsubscribe-from-timemator-emails"
-  },
-  {
-    "name": "businesscontact360",
-    "score": 0.1490530303030303,
-    "sender": "businesscontact360.com",
-    "domain": "businesscontact360.com",
-    "seen": 2,
-    "unsubscribes": 1,
-    "addresses": ["newsletter@businesscontact360.com"],
-    "slug": "/how-to-unsubscribe-from-businesscontact360-emails"
-  },
-  {
-    "name": "getmakerlog",
-    "score": 0.9835858585858586,
-    "sender": "getmakerlog.com",
-    "domain": "getmakerlog.com",
+    "name": "morningbrew",
+    "label": "Morning Brew",
+    "sender": "morningbrew.com",
+    "domain": "morningbrew.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": ["hello@getmakerlog.com"],
-    "slug": "/how-to-unsubscribe-from-getmakerlog-emails"
+    "addresses": ["alex@morningbrew.com", "crew@morningbrew.com"],
+    "slug": "/how-to-unsubscribe-from-morningbrew-emails"
   },
   {
-    "name": "mapbox",
-    "score": 0.9978693181818182,
-    "sender": "mapbox.com",
-    "domain": "mapbox.com",
+    "name": "cashnotify",
+    "label": "Cashnotify",
+    "sender": "cashnotify.com",
+    "domain": "cashnotify.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": ["newsletter@mapbox.com"],
-    "slug": "/how-to-unsubscribe-from-mapbox-emails"
+    "addresses": ["julien@cashnotify.com", "hello@cashnotify.com"],
+    "slug": "/how-to-unsubscribe-from-cashnotify-emails"
   },
   {
-    "name": "figma",
-    "score": 0.7462121212121212,
-    "sender": "figma.com",
-    "domain": "figma.com",
+    "name": "overreacted",
+    "label": "Overreacted",
+    "score": 0.9886363636363636,
+    "sender": "overreacted.io",
+    "domain": "overreacted.io",
     "seen": 2,
-    "unsubscribes": 1,
-    "addresses": ["josh@figma.com", "support@figma.com"],
-    "slug": "/how-to-unsubscribe-from-figma-emails"
+    "unsubscribes": 0,
+    "addresses": ["dan@overreacted.io"],
+    "slug": "/how-to-unsubscribe-from-overreacted-emails"
   },
   {
-    "name": "bitbucket",
+    "name": "paypal",
+    "label": "PayPal",
     "score": 0.9981060606060606,
-    "sender": "mailer.bitbucket.org",
-    "domain": "bitbucket.org",
+    "sender": "mail.paypal.com",
+    "domain": "paypal.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": ["noreply@mailer.bitbucket.org"],
-    "slug": "/how-to-unsubscribe-from-bitbucket-emails"
+    "addresses": ["paypal@mail.paypal.com"],
+    "slug": "/how-to-unsubscribe-from-paypal-emails"
   },
   {
-    "name": "delighted",
-    "score": 0.9990530303030303,
-    "sender": "delighted.com",
-    "domain": "delighted.com",
+    "name": "mydns",
+    "label": "Mydns",
+    "sender": "anytimeup.mydns.jp",
+    "domain": "mydns.jp",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": ["mongodb-cloud@delighted.com", "paddle@delighted.com"],
-    "slug": "/how-to-unsubscribe-from-delighted-emails"
+    "addresses": [
+      "02m4x4knstyh6nu@anytimeup.mydns.jp",
+      "r3393vfbfme4vblgok@anytimeup.mydns.jp"
+    ],
+    "slug": "/how-to-unsubscribe-from-mydns-emails"
   },
   {
-    "name": "google",
-    "score": 0.9981060606060606,
-    "sender": "google.com",
-    "domain": "google.com",
+    "name": "stripe",
+    "label": "Stripe",
+    "sender": "stripe.com",
+    "domain": "stripe.com",
     "seen": 2,
     "unsubscribes": 0,
-    "addresses": ["sc-noreply@google.com", "noreply-photos@google.com"],
-    "slug": "/how-to-unsubscribe-from-google-emails"
+    "addresses": [
+      "strong-customer-authentication@stripe.com",
+      "no-reply@stripe.com"
+    ],
+    "slug": "/how-to-unsubscribe-from-stripe-emails"
   },
   {
-    "name": "cursedcrypt",
-    "score": 0.3990530303030303,
-    "sender": "cursedcrypt.com",
-    "domain": "cursedcrypt.com",
+    "name": "codestream",
+    "label": "Codestream",
+    "sender": "codestream.com",
+    "domain": "codestream.com",
     "seen": 2,
+    "unsubscribes": 2,
+    "addresses": ["dave@codestream.com", "team@codestream.com"],
+    "slug": "/how-to-unsubscribe-from-codestream-emails"
+  },
+  {
+    "name": "approveme",
+    "label": "Approveme",
+    "sender": "approveme.com",
+    "domain": "approveme.com",
+    "seen": 2,
+    "unsubscribes": 2,
+    "addresses": ["krystle@approveme.com", "krsytle@approveme.com"],
+    "slug": "/how-to-unsubscribe-from-approveme-emails"
+  },
+  {
+    "name": "coderstory",
+    "label": "Coderstory",
+    "sender": "coderstory.io",
+    "domain": "coderstory.io",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["finley@cursedcrypt.com"],
-    "slug": "/how-to-unsubscribe-from-cursedcrypt-emails"
+    "addresses": ["hello@coderstory.io"],
+    "slug": "/how-to-unsubscribe-from-coderstory-emails"
+  },
+  {
+    "name": "ihatemailto",
+    "label": "Ihatemailto",
+    "sender": "ihatemailto.com",
+    "domain": "ihatemailto.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["noreply@ihatemailto.com"],
+    "slug": "/how-to-unsubscribe-from-ihatemailto-emails"
+  },
+  {
+    "name": "sentry",
+    "label": "Sentry",
+    "sender": "sentry.io",
+    "domain": "sentry.io",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["learn@sentry.io"],
+    "slug": "/how-to-unsubscribe-from-sentry-emails"
+  },
+  {
+    "name": "triphop",
+    "label": "Triphop",
+    "sender": "mail.triphop.com",
+    "domain": "triphop.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["marketing@mail.triphop.com"],
+    "slug": "/how-to-unsubscribe-from-triphop-emails"
+  },
+  {
+    "name": "photocontestnow",
+    "label": "Photocontestnow",
+    "sender": "photocontestnow.com",
+    "domain": "photocontestnow.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["info@photocontestnow.com"],
+    "slug": "/how-to-unsubscribe-from-photocontestnow-emails"
+  },
+  {
+    "name": "mozilla",
+    "label": "Mozilla",
+    "sender": "e.mozilla.org",
+    "domain": "mozilla.org",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["mozilla@e.mozilla.org", "Mozilla@e.mozilla.org"],
+    "slug": "/how-to-unsubscribe-from-mozilla-emails"
+  },
+  {
+    "name": "instagram",
+    "label": "Instagram",
+    "sender": "mail.instagram.com",
+    "domain": "instagram.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["security@mail.instagram.com"],
+    "slug": "/how-to-unsubscribe-from-instagram-emails"
+  },
+  {
+    "name": "asana",
+    "label": "Asana",
+    "sender": "email1.asana.com",
+    "domain": "asana.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["learn@email1.asana.com"],
+    "slug": "/how-to-unsubscribe-from-asana-emails"
+  },
+  {
+    "name": "finimize",
+    "label": "Finimize",
+    "sender": "finimize.com",
+    "domain": "finimize.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["hello@finimize.com"],
+    "slug": "/how-to-unsubscribe-from-finimize-emails"
+  },
+  {
+    "name": "producthunt",
+    "label": "Product Hunt",
+    "sender": "ship.producthunt.com",
+    "domain": "producthunt.com",
+    "seen": 3,
+    "unsubscribes": 1,
+    "addresses": [
+      "maker-goals@ship.producthunt.com",
+      "maker-report@ship.producthunt.com",
+      "bloom-3@ship.producthunt.com"
+    ],
+    "slug": "/how-to-unsubscribe-from-producthunt-emails"
+  },
+  {
+    "name": "heybloom",
+    "label": "Heybloom",
+    "sender": "heybloom.com",
+    "domain": "heybloom.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["contact@heybloom.com"],
+    "slug": "/how-to-unsubscribe-from-heybloom-emails"
+  },
+  {
+    "name": "tehila",
+    "label": "Tehila",
+    "sender": "list.tehila.gov.il",
+    "domain": "tehila.gov.il",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["listserv@list.tehila.gov.il", "LISTSERV@list.tehila.gov.il"],
+    "slug": "/how-to-unsubscribe-from-tehila-emails"
+  },
+  {
+    "name": "tamu",
+    "label": "Tamu",
+    "sender": "listserv.tamu.edu",
+    "domain": "tamu.edu",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["listserv@listserv.tamu.edu", "LISTSERV@listserv.tamu.edu"],
+    "slug": "/how-to-unsubscribe-from-tamu-emails"
+  },
+  {
+    "name": "stephsmith",
+    "label": "Stephsmith",
+    "sender": "stephsmith.io",
+    "domain": "stephsmith.io",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["hello@stephsmith.io"],
+    "slug": "/how-to-unsubscribe-from-stephsmith-emails"
+  },
+  {
+    "name": "twitch",
+    "label": "Twitch",
+    "sender": "sfmarketing.twitch.tv",
+    "domain": "twitch.tv",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["twitch@sfmarketing.twitch.tv"],
+    "slug": "/how-to-unsubscribe-from-twitch-emails"
+  },
+  {
+    "name": "unm",
+    "label": "Unm",
+    "sender": "list.unm.edu",
+    "domain": "unm.edu",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["LISTSERV@list.unm.edu", "listserv@list.unm.edu"],
+    "slug": "/how-to-unsubscribe-from-unm-emails"
   },
   {
     "name": "drift",
-    "score": 0.9990530303030303,
+    "label": "Drift",
     "sender": "hey.drift.com",
     "domain": "drift.com",
-    "seen": 2,
+    "seen": 1,
     "unsubscribes": 0,
     "addresses": ["cbernard@hey.drift.com"],
     "slug": "/how-to-unsubscribe-from-drift-emails"
   },
   {
-    "name": "ieee",
-    "score": 1,
-    "sender": "ieee.org",
-    "domain": "ieee.org",
-    "seen": 2,
-    "unsubscribes": 0,
-    "addresses": ["LISTSERV@ieee.org", "listserv@ieee.org"],
-    "slug": "/how-to-unsubscribe-from-ieee-emails"
-  },
-  {
-    "name": "salesmachine",
-    "score": 0.9990530303030303,
-    "sender": "salesmachine.io",
-    "domain": "salesmachine.io",
-    "seen": 2,
-    "unsubscribes": 0,
-    "addresses": ["team@salesmachine.io"],
-    "slug": "/how-to-unsubscribe-from-salesmachine-emails"
-  },
-  {
-    "name": "unm",
-    "sender": "list.unm.edu",
-    "domain": "unm.edu",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["LISTSERV@list.unm.edu", "listserv@list.unm.edu"],
-    "slug": "/how-to-unsubscribe-from-unm-emails"
-  },
-  {
     "name": "auxesisinfotech",
+    "label": "Auxesisinfotech",
     "sender": "auxesisinfotech.com",
     "domain": "auxesisinfotech.com",
     "seen": 1,
@@ -226,16 +353,28 @@
     "slug": "/how-to-unsubscribe-from-auxesisinfotech-emails"
   },
   {
-    "name": "squarecat",
-    "sender": "squarecat.io",
-    "domain": "squarecat.io",
+    "name": "ieee",
+    "label": "Ieee",
+    "sender": "ieee.org",
+    "domain": "ieee.org",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["hello@squarecat.io", "leavemealone@squarecat.io"],
-    "slug": "/how-to-unsubscribe-from-squarecat-emails"
+    "addresses": ["LISTSERV@ieee.org", "listserv@ieee.org"],
+    "slug": "/how-to-unsubscribe-from-ieee-emails"
+  },
+  {
+    "name": "salesmachine",
+    "label": "Salesmachine",
+    "sender": "salesmachine.io",
+    "domain": "salesmachine.io",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["team@salesmachine.io"],
+    "slug": "/how-to-unsubscribe-from-salesmachine-emails"
   },
   {
     "name": "isoc",
+    "label": "Isoc",
     "sender": "list.isoc.org.il",
     "domain": "isoc.org.il",
     "seen": 1,
@@ -245,6 +384,7 @@
   },
   {
     "name": "northwestern",
+    "label": "Northwestern",
     "sender": "listserv.it.northwestern.edu",
     "domain": "northwestern.edu",
     "seen": 1,
@@ -256,1195 +396,515 @@
     "slug": "/how-to-unsubscribe-from-northwestern-emails"
   },
   {
-    "name": "stripe",
-    "sender": "stripe.com",
-    "domain": "stripe.com",
+    "name": "gmelius",
+    "label": "Gmelius",
+    "sender": "gmelius.com",
+    "domain": "gmelius.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["updates@stripe.com", "no-reply@stripe.com"],
-    "slug": "/how-to-unsubscribe-from-stripe-emails"
+    "addresses": ["partners@gmelius.com"],
+    "slug": "/how-to-unsubscribe-from-gmelius-emails"
   },
   {
-    "name": "cloudflare",
-    "sender": "cloudflare.com",
-    "domain": "cloudflare.com",
+    "name": "trendystartups",
+    "label": "Trendystartups",
+    "sender": "trendystartups.com",
+    "domain": "trendystartups.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["no-reply@cloudflare.com"],
-    "slug": "/how-to-unsubscribe-from-cloudflare-emails"
+    "addresses": ["newsletter@trendystartups.com"],
+    "slug": "/how-to-unsubscribe-from-trendystartups-emails"
   },
   {
-    "name": "gmail",
-    "sender": "gmail.com",
-    "domain": "gmail.com",
+    "name": "jesswallace",
+    "label": "Jesswallace",
+    "sender": "jesswallace.co",
+    "domain": "jesswallace.co",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["joeytawadrous@gmail.com"],
-    "slug": "/how-to-unsubscribe-from-gmail-emails"
-  },
-  {
-    "name": "mailchimp",
-    "sender": "mailchimp.com",
-    "domain": "mailchimp.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["alerts@mailchimp.com"],
-    "slug": "/how-to-unsubscribe-from-mailchimp-emails"
-  },
-  {
-    "name": "leavemealone",
-    "sender": "beta.mail.leavemealone.xyz",
-    "domain": "leavemealone.xyz",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["newsletter@beta.mail.leavemealone.xyz"],
-    "slug": "/how-to-unsubscribe-from-leavemealone-emails"
-  },
-  {
-    "name": "eff",
-    "sender": "eff.org",
-    "domain": "eff.org",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["membership@eff.org", "action@eff.org", "editor@eff.org"],
-    "slug": "/how-to-unsubscribe-from-eff-emails"
-  },
-  {
-    "name": "zeplin",
-    "sender": "zeplin.io",
-    "domain": "zeplin.io",
-    "seen": 1,
-    "unsubscribes": 1,
-    "addresses": ["hi@zeplin.io"],
-    "slug": "/how-to-unsubscribe-from-zeplin-emails"
-  },
-  {
-    "name": "producthunt",
-    "sender": "producthunt.com",
-    "domain": "producthunt.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["hello@producthunt.com"],
-    "slug": "/how-to-unsubscribe-from-producthunt-emails"
-  },
-  {
-    "name": "deliveroo",
-    "sender": "announce.deliveroo.co.uk",
-    "domain": "deliveroo.co.uk",
-    "seen": 1,
-    "unsubscribes": 1,
-    "addresses": ["hello@announce.deliveroo.co.uk"],
-    "slug": "/how-to-unsubscribe-from-deliveroo-emails"
-  },
-  {
-    "name": "crystalknows",
-    "sender": "crystalknows.com",
-    "domain": "crystalknows.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["no-reply@crystalknows.com"],
-    "slug": "/how-to-unsubscribe-from-crystalknows-emails"
-  },
-  {
-    "name": "dev",
-    "sender": "dev.to",
-    "domain": "dev.to",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": [
-      "michael@dev.to",
-      "jess@dev.to",
-      "yo@dev.to",
-      "peter@dev.to",
-      "ben@dev.to"
-    ],
-    "slug": "/how-to-unsubscribe-from-dev-emails"
-  },
-  {
-    "name": "neondistrict",
-    "sender": "neondistrict.io",
-    "domain": "neondistrict.io",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": [
-      "newsletter@neondistrict.io",
-      "admin@neondistrict.io",
-      "coin_artist@neondistrict.io"
-    ],
-    "slug": "/how-to-unsubscribe-from-neondistrict-emails"
-  },
-  {
-    "name": "emailholidays",
-    "sender": "emailholidays.com",
-    "domain": "emailholidays.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["newsletters@emailholidays.com"],
-    "slug": "/how-to-unsubscribe-from-emailholidays-emails"
-  },
-  {
-    "name": "cointracker",
-    "sender": "cointracker.io",
-    "domain": "cointracker.io",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["updates@cointracker.io"],
-    "slug": "/how-to-unsubscribe-from-cointracker-emails"
-  },
-  {
-    "name": "mailgun",
-    "sender": "mailgun.com",
-    "domain": "mailgun.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": [
-      "thomas@mailgun.com",
-      "nhays@mailgun.com",
-      "cfarmer@mailgun.com",
-      "eaguirre@mailgun.com",
-      "josh@mailgun.com",
-      "william@mailgun.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-mailgun-emails"
-  },
-  {
-    "name": "adobe",
-    "sender": "mail.adobe.com",
-    "domain": "adobe.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["mail@mail.adobe.com"],
-    "slug": "/how-to-unsubscribe-from-adobe-emails"
-  },
-  {
-    "name": "rakuten",
-    "sender": "rakuten.com",
-    "domain": "rakuten.com",
-    "seen": 1,
-    "unsubscribes": 1,
-    "addresses": ["chigusa.nakano@rakuten.com"],
-    "slug": "/how-to-unsubscribe-from-rakuten-emails"
-  },
-  {
-    "name": "brewdog",
-    "sender": "brewdog.com",
-    "domain": "brewdog.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@brewdog.com"],
-    "slug": "/how-to-unsubscribe-from-brewdog-emails"
-  },
-  {
-    "name": "fixathon",
-    "sender": "fixathon.io",
-    "domain": "fixathon.io",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["steve@fixathon.io"],
-    "slug": "/how-to-unsubscribe-from-fixathon-emails"
-  },
-  {
-    "name": "baremetrics",
-    "sender": "baremetrics.com",
-    "domain": "baremetrics.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["corey@baremetrics.com"],
-    "slug": "/how-to-unsubscribe-from-baremetrics-emails"
-  },
-  {
-    "name": "fizbuz",
-    "sender": "fizbuz.com",
-    "domain": "fizbuz.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["carter@fizbuz.com"],
-    "slug": "/how-to-unsubscribe-from-fizbuz-emails"
-  },
-  {
-    "name": "makersup",
-    "sender": "makersup.xyz",
-    "domain": "makersup.xyz",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["apps@makersup.xyz", "newsletter@makersup.xyz"],
-    "slug": "/how-to-unsubscribe-from-makersup-emails"
+    "addresses": ["jw@jesswallace.co"],
+    "slug": "/how-to-unsubscribe-from-jesswallace-emails"
   },
   {
     "name": "crisp",
+    "label": "Crisp",
     "sender": "mail.support.crisp.chat",
     "domain": "crisp.chat",
-    "seen": 0,
+    "seen": 1,
     "unsubscribes": 0,
     "addresses": ["transcripts@mail.support.crisp.chat"],
     "slug": "/how-to-unsubscribe-from-crisp-emails"
   },
   {
-    "name": "earnestcapital",
-    "sender": "earnestcapital.com",
-    "domain": "earnestcapital.com",
-    "seen": 0,
+    "name": "buymeacoffee",
+    "label": "Buymeacoffee",
+    "sender": "buymeacoffee.com",
+    "domain": "buymeacoffee.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["tyler@earnestcapital.com"],
-    "slug": "/how-to-unsubscribe-from-earnestcapital-emails"
-  },
-  {
-    "name": "klokki",
-    "sender": "klokki.com",
-    "domain": "klokki.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["stas@klokki.com"],
-    "slug": "/how-to-unsubscribe-from-klokki-emails"
+    "addresses": ["hello@buymeacoffee.com"],
+    "slug": "/how-to-unsubscribe-from-buymeacoffee-emails"
   },
   {
     "name": "zeit",
+    "label": "Zeit",
     "sender": "zeit.email",
     "domain": "zeit.email",
-    "seen": 0,
+    "seen": 1,
     "unsubscribes": 0,
     "addresses": ["news@zeit.email"],
     "slug": "/how-to-unsubscribe-from-zeit-emails"
   },
   {
     "name": "tau",
+    "label": "Tau",
     "sender": "listserv.tau.ac.il",
     "domain": "tau.ac.il",
-    "seen": 0,
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["LISTSERV@listserv.tau.ac.il"],
+    "addresses": ["LISTSERV@listserv.tau.ac.il", "listserv@listserv.tau.ac.il"],
     "slug": "/how-to-unsubscribe-from-tau-emails"
   },
   {
     "name": "polypane",
+    "label": "Polypane",
     "sender": "polypane.rocks",
     "domain": "polypane.rocks",
-    "seen": 0,
+    "seen": 1,
     "unsubscribes": 0,
     "addresses": ["kilian@polypane.rocks"],
     "slug": "/how-to-unsubscribe-from-polypane-emails"
   },
   {
-    "name": "clockify",
-    "sender": "clockify.me",
-    "domain": "clockify.me",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["newsletter@clockify.me"],
-    "slug": "/how-to-unsubscribe-from-clockify-emails"
-  },
-  {
-    "name": "tamu",
-    "sender": "listserv.tamu.edu",
-    "domain": "tamu.edu",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["LISTSERV@listserv.tamu.edu"],
-    "slug": "/how-to-unsubscribe-from-tamu-emails"
-  },
-  {
-    "name": "asana",
-    "sender": "email1.asana.com",
-    "domain": "asana.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["learn@email1.asana.com"],
-    "slug": "/how-to-unsubscribe-from-asana-emails"
-  },
-  {
-    "name": "loom",
-    "sender": "loom.com",
-    "domain": "loom.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["shahed@loom.com"],
-    "slug": "/how-to-unsubscribe-from-loom-emails"
-  },
-  {
-    "name": "mollie",
-    "sender": "mollie.com",
-    "domain": "mollie.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["info@mollie.com"],
-    "slug": "/how-to-unsubscribe-from-mollie-emails"
-  },
-  {
-    "name": "meedle",
-    "sender": "meedle.io",
-    "domain": "meedle.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hello@meedle.io", "rockets@meedle.io"],
-    "slug": "/how-to-unsubscribe-from-meedle-emails"
-  },
-  {
-    "name": "leapin",
-    "sender": "leapin.eu",
-    "domain": "leapin.eu",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["info@leapin.eu"],
-    "slug": "/how-to-unsubscribe-from-leapin-emails"
-  },
-  {
-    "name": "tylertringas",
-    "sender": "tylertringas.com",
-    "domain": "tylertringas.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["tyler@tylertringas.com"],
-    "slug": "/how-to-unsubscribe-from-tylertringas-emails"
-  },
-  {
-    "name": "sentry",
-    "sender": "sentry.io",
-    "domain": "sentry.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["learn@sentry.io"],
-    "slug": "/how-to-unsubscribe-from-sentry-emails"
-  },
-  {
-    "name": "ihatemailto",
-    "sender": "ihatemailto.com",
-    "domain": "ihatemailto.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@ihatemailto.com"],
-    "slug": "/how-to-unsubscribe-from-ihatemailto-emails"
-  },
-  {
-    "name": "paypal",
-    "sender": "mail.paypal.com",
-    "domain": "paypal.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["paypal@mail.paypal.com"],
-    "slug": "/how-to-unsubscribe-from-paypal-emails"
-  },
-  {
-    "name": "biteable",
-    "sender": "biteable.com",
-    "domain": "biteable.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["admin@biteable.com"],
-    "slug": "/how-to-unsubscribe-from-biteable-emails"
-  },
-  {
-    "name": "implicit",
-    "sender": "implicit.io",
-    "domain": "implicit.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["vineet.sinha@implicit.io"],
-    "slug": "/how-to-unsubscribe-from-implicit-emails"
-  },
-  {
-    "name": "zoom",
-    "sender": "zoom.us",
-    "domain": "zoom.us",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["teamzoom@zoom.us"],
-    "slug": "/how-to-unsubscribe-from-zoom-emails"
-  },
-  {
-    "name": "webcreate",
-    "sender": "webcreate.nl",
-    "domain": "webcreate.nl",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["jeroen@webcreate.nl"],
-    "slug": "/how-to-unsubscribe-from-webcreate-emails"
-  },
-  {
-    "name": "getrewardful",
-    "sender": "getrewardful.com",
-    "domain": "getrewardful.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hello@getrewardful.com"],
-    "slug": "/how-to-unsubscribe-from-getrewardful-emails"
-  },
-  {
-    "name": "indiehackers",
-    "sender": "indiehackers.com",
-    "domain": "indiehackers.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["community@indiehackers.com"],
-    "slug": "/how-to-unsubscribe-from-indiehackers-emails"
-  },
-  {
-    "name": "messages4",
-    "sender": "techsmith.messages4.com",
-    "domain": "messages4.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["email@techsmith.messages4.com"],
-    "slug": "/how-to-unsubscribe-from-messages4-emails"
-  },
-  {
-    "name": "intercom-mail",
-    "sender": "biteable.intercom-mail.com",
-    "domain": "intercom-mail.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["emily.howman@biteable.intercom-mail.com"],
-    "slug": "/how-to-unsubscribe-from-intercom-mail-emails"
-  },
-  {
-    "name": "makermag",
-    "sender": "makermag.com",
-    "domain": "makermag.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["annelaure@makermag.com"],
-    "slug": "/how-to-unsubscribe-from-makermag-emails"
-  },
-  {
-    "name": "twitter",
-    "sender": "twitter.com",
-    "domain": "twitter.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["notify@twitter.com"],
-    "slug": "/how-to-unsubscribe-from-twitter-emails"
-  },
-  {
-    "name": "gretchenrubin",
-    "sender": "gretchenrubin.com",
-    "domain": "gretchenrubin.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["course@gretchenrubin.com", "info@gretchenrubin.com"],
-    "slug": "/how-to-unsubscribe-from-gretchenrubin-emails"
-  },
-  {
-    "name": "betapage",
-    "sender": "betapage.co",
-    "domain": "betapage.co",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["newsletters@betapage.co"],
-    "slug": "/how-to-unsubscribe-from-betapage-emails"
-  },
-  {
-    "name": "heroku",
-    "sender": "heroku.com",
-    "domain": "heroku.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["no-reply@heroku.com", "stack-feedback@heroku.com"],
-    "slug": "/how-to-unsubscribe-from-heroku-emails"
-  },
-  {
-    "name": "logrocket",
-    "sender": "logrocket.com",
-    "domain": "logrocket.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["jeff@logrocket.com", "mata@logrocket.com"],
-    "slug": "/how-to-unsubscribe-from-logrocket-emails"
-  },
-  {
-    "name": "angel",
-    "sender": "angel.co",
-    "domain": "angel.co",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["talent@angel.co"],
-    "slug": "/how-to-unsubscribe-from-angel-emails"
-  },
-  {
-    "name": "nomadgate",
-    "sender": "nomadgate.com",
-    "domain": "nomadgate.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["thomas@nomadgate.com"],
-    "slug": "/how-to-unsubscribe-from-nomadgate-emails"
-  },
-  {
-    "name": "skyairline",
-    "sender": "skyairline.com",
-    "domain": "skyairline.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hola@skyairline.com"],
-    "slug": "/how-to-unsubscribe-from-skyairline-emails"
-  },
-  {
-    "name": "slc",
-    "sender": "slc.co.uk",
-    "domain": "slc.co.uk",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["webmaster@slc.co.uk"],
-    "slug": "/how-to-unsubscribe-from-slc-emails"
-  },
-  {
-    "name": "cruip",
-    "sender": "cruip.com",
-    "domain": "cruip.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hello@cruip.com"],
-    "slug": "/how-to-unsubscribe-from-cruip-emails"
-  },
-  {
-    "name": "statuspage",
-    "sender": "statuspage.com",
-    "domain": "statuspage.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["marketing@statuspage.com", "hi@statuspage.com"],
-    "slug": "/how-to-unsubscribe-from-statuspage-emails"
-  },
-  {
-    "name": "bugbyte",
-    "sender": "bugbyte.fi",
-    "domain": "bugbyte.fi",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["contact@bugbyte.fi"],
-    "slug": "/how-to-unsubscribe-from-bugbyte-emails"
-  },
-  {
-    "name": "speakly",
-    "sender": "speakly.me",
-    "domain": "speakly.me",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["ott@speakly.me"],
-    "slug": "/how-to-unsubscribe-from-speakly-emails"
-  },
-  {
-    "name": "nomadhouse",
-    "sender": "nomadhouse.io",
-    "domain": "nomadhouse.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["arthur@nomadhouse.io"],
-    "slug": "/how-to-unsubscribe-from-nomadhouse-emails"
-  },
-  {
-    "name": "wildbeerco",
-    "sender": "wildbeerco.com",
-    "domain": "wildbeerco.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["staywild@wildbeerco.com", "events@wildbeerco.com"],
-    "slug": "/how-to-unsubscribe-from-wildbeerco-emails"
-  },
-  {
-    "name": "binance",
-    "sender": "mailer.binance.com",
-    "domain": "binance.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["do_not_reply@mailer.binance.com"],
-    "slug": "/how-to-unsubscribe-from-binance-emails"
-  },
-  {
-    "name": "atari",
-    "sender": "atari.com",
-    "domain": "atari.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["helloVCS@atari.com"],
-    "slug": "/how-to-unsubscribe-from-atari-emails"
-  },
-  {
-    "name": "digitalocean",
-    "sender": "info.digitalocean.com",
-    "domain": "digitalocean.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "product@info.digitalocean.com",
-      "abearfield@info.digitalocean.com",
-      "feedback@info.digitalocean.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-digitalocean-emails"
-  },
-  {
-    "name": "wealthsimple",
-    "sender": "email.wealthsimple.com",
-    "domain": "wealthsimple.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "invest@email.wealthsimple.com",
-      "support@email.wealthsimple.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-wealthsimple-emails"
-  },
-  {
-    "name": "nytimes",
-    "sender": "nytimes.com",
-    "domain": "nytimes.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["nytdirect@nytimes.com"],
-    "slug": "/how-to-unsubscribe-from-nytimes-emails"
-  },
-  {
-    "name": "kraken",
-    "sender": "email.kraken.com",
-    "domain": "kraken.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@email.kraken.com"],
-    "slug": "/how-to-unsubscribe-from-kraken-emails"
-  },
-  {
-    "name": "cbyge",
-    "sender": "cbyge.com",
-    "domain": "cbyge.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@cbyge.com"],
-    "slug": "/how-to-unsubscribe-from-cbyge-emails"
-  },
-  {
     "name": "mssg",
+    "label": "Mssg",
     "sender": "mssg.me",
     "domain": "mssg.me",
-    "seen": 0,
+    "seen": 1,
     "unsubscribes": 0,
     "addresses": ["hey@mssg.me"],
     "slug": "/how-to-unsubscribe-from-mssg-emails"
   },
   {
-    "name": "yorck",
-    "sender": "yorck.de",
-    "domain": "yorck.de",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["ticket@yorck.de"],
-    "slug": "/how-to-unsubscribe-from-yorck-emails"
+    "name": "creativespirit",
+    "label": "Creativespirit",
+    "sender": "creativespirit.co",
+    "domain": "creativespirit.co",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["hello@creativespirit.co"],
+    "slug": "/how-to-unsubscribe-from-creativespirit-emails"
   },
   {
-    "name": "opentoyoga",
-    "sender": "opentoyoga.co.uk",
-    "domain": "opentoyoga.co.uk",
-    "seen": 0,
+    "name": "makerupdates",
+    "label": "Makerupdates",
+    "sender": "makerupdates.com",
+    "domain": "makerupdates.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["info@opentoyoga.co.uk"],
-    "slug": "/how-to-unsubscribe-from-opentoyoga-emails"
+    "addresses": ["digest@makerupdates.com"],
+    "slug": "/how-to-unsubscribe-from-makerupdates-emails"
   },
   {
-    "name": "fbmta",
-    "sender": "ppubs.fbmta.com",
-    "domain": "fbmta.com",
-    "seen": 0,
+    "name": "startuptracker",
+    "label": "Startuptracker",
+    "sender": "startuptracker.io",
+    "domain": "startuptracker.io",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["ppubs@ppubs.fbmta.com"],
-    "slug": "/how-to-unsubscribe-from-fbmta-emails"
+    "addresses": ["jeremiah@startuptracker.io"],
+    "slug": "/how-to-unsubscribe-from-startuptracker-emails"
   },
   {
-    "name": "inmomentfeedback",
-    "sender": "inmomentfeedback.com",
-    "domain": "inmomentfeedback.com",
-    "seen": 0,
+    "name": "francescaelisia",
+    "label": "Francescaelisia",
+    "sender": "francescaelisia.com",
+    "domain": "francescaelisia.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["hertz@inmomentfeedback.com"],
-    "slug": "/how-to-unsubscribe-from-inmomentfeedback-emails"
-  },
-  {
-    "name": "cex",
-    "sender": "cex.io",
-    "domain": "cex.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["web@cex.io"],
-    "slug": "/how-to-unsubscribe-from-cex-emails"
-  },
-  {
-    "name": "apple",
-    "sender": "insideapple.apple.com",
-    "domain": "apple.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["AppleSupport@insideapple.apple.com"],
-    "slug": "/how-to-unsubscribe-from-apple-emails"
-  },
-  {
-    "name": "revolut",
-    "sender": "revolut.com",
-    "domain": "revolut.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@revolut.com", "no-reply@revolut.com"],
-    "slug": "/how-to-unsubscribe-from-revolut-emails"
-  },
-  {
-    "name": "outsite",
-    "sender": "outsite.co",
-    "domain": "outsite.co",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "rebecca@outsite.co",
-      "emmanuel@outsite.co",
-      "info@outsite.co"
-    ],
-    "slug": "/how-to-unsubscribe-from-outsite-emails"
-  },
-  {
-    "name": "starlingbank",
-    "sender": "updates.starlingbank.com",
-    "domain": "starlingbank.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hello@updates.starlingbank.com"],
-    "slug": "/how-to-unsubscribe-from-starlingbank-emails"
-  },
-  {
-    "name": "torre",
-    "sender": "torre.co",
-    "domain": "torre.co",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["andres@torre.co"],
-    "slug": "/how-to-unsubscribe-from-torre-emails"
-  },
-  {
-    "name": "n26",
-    "sender": "email.n26.com",
-    "domain": "n26.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["newsletter@email.n26.com"],
-    "slug": "/how-to-unsubscribe-from-n26-emails"
-  },
-  {
-    "name": "github",
-    "sender": "github.com",
-    "domain": "github.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["support@github.com"],
-    "slug": "/how-to-unsubscribe-from-github-emails"
-  },
-  {
-    "name": "reasons",
-    "sender": "reasons.to",
-    "domain": "reasons.to",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["john@reasons.to"],
-    "slug": "/how-to-unsubscribe-from-reasons-emails"
-  },
-  {
-    "name": "yourparkingspace",
-    "sender": "yourparkingspace.co.uk",
-    "domain": "yourparkingspace.co.uk",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["info@yourparkingspace.co.uk"],
-    "slug": "/how-to-unsubscribe-from-yourparkingspace-emails"
-  },
-  {
-    "name": "finimize",
-    "sender": "e.finimize.com",
-    "domain": "finimize.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hello@e.finimize.com"],
-    "slug": "/how-to-unsubscribe-from-finimize-emails"
-  },
-  {
-    "name": "heybloom",
-    "sender": "heybloom.com",
-    "domain": "heybloom.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["contact@heybloom.com"],
-    "slug": "/how-to-unsubscribe-from-heybloom-emails"
-  },
-  {
-    "name": "cryptokitties",
-    "sender": "cryptokitties.co",
-    "domain": "cryptokitties.co",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["meow@cryptokitties.co"],
-    "slug": "/how-to-unsubscribe-from-cryptokitties-emails"
-  },
-  {
-    "name": "princeton",
-    "sender": "lists.princeton.edu",
-    "domain": "princeton.edu",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["LISTSERV@lists.princeton.edu"],
-    "slug": "/how-to-unsubscribe-from-princeton-emails"
-  },
-  {
-    "name": "state",
-    "sender": "calist.state.gov",
-    "domain": "state.gov",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["LISTSERV@calist.state.gov"],
-    "slug": "/how-to-unsubscribe-from-state-emails"
-  },
-  {
-    "name": "beer52",
-    "sender": "beer52.com",
-    "domain": "beer52.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": [
-      "james.brown@beer52.com",
-      "bottleshop@beer52.com",
-      "annabelle@beer52.com",
-      "noresponse@beer52.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-beer52-emails"
-  },
-  {
-    "name": "quora",
-    "sender": "quora.com",
-    "domain": "quora.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["sessions-noreply@quora.com"],
-    "slug": "/how-to-unsubscribe-from-quora-emails"
-  },
-  {
-    "name": "sendbird",
-    "sender": "sendbird.com",
-    "domain": "sendbird.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@sendbird.com"],
-    "slug": "/how-to-unsubscribe-from-sendbird-emails"
-  },
-  {
-    "name": "seedrs",
-    "sender": "seedrs.com",
-    "domain": "seedrs.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["support@seedrs.com"],
-    "slug": "/how-to-unsubscribe-from-seedrs-emails"
-  },
-  {
-    "name": "rainway",
-    "sender": "rainway.com",
-    "domain": "rainway.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["community@rainway.com"],
-    "slug": "/how-to-unsubscribe-from-rainway-emails"
-  },
-  {
-    "name": "triphop",
-    "sender": "mail.triphop.com",
-    "domain": "triphop.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["marketing@mail.triphop.com"],
-    "slug": "/how-to-unsubscribe-from-triphop-emails"
-  },
-  {
-    "name": "sierraclub",
-    "sender": "lists.sierraclub.org",
-    "domain": "sierraclub.org",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["LISTSERV@lists.sierraclub.org"],
-    "slug": "/how-to-unsubscribe-from-sierraclub-emails"
-  },
-  {
-    "name": "previewhunt",
-    "sender": "previewhunt.com",
-    "domain": "previewhunt.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["andrey@previewhunt.com"],
-    "slug": "/how-to-unsubscribe-from-previewhunt-emails"
-  },
-  {
-    "name": "readme",
-    "sender": "readme.io",
-    "domain": "readme.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["marc@readme.io"],
-    "slug": "/how-to-unsubscribe-from-readme-emails"
-  },
-  {
-    "name": "purechat",
-    "sender": "purechat.com",
-    "domain": "purechat.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["newsletter@purechat.com"],
-    "slug": "/how-to-unsubscribe-from-purechat-emails"
-  },
-  {
-    "name": "gog",
-    "sender": "email.gog.com",
-    "domain": "gog.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["newsletter@email.gog.com"],
-    "slug": "/how-to-unsubscribe-from-gog-emails"
-  },
-  {
-    "name": "padidiver",
-    "sender": "news.padidiver.com",
-    "domain": "padidiver.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["news@news.padidiver.com"],
-    "slug": "/how-to-unsubscribe-from-padidiver-emails"
-  },
-  {
-    "name": "framer",
-    "sender": "framer.com",
-    "domain": "framer.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@framer.com", "support@framer.com"],
-    "slug": "/how-to-unsubscribe-from-framer-emails"
-  },
-  {
-    "name": "clubhouse",
-    "sender": "clubhouse.io",
-    "domain": "clubhouse.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["housemates@clubhouse.io", "KSchrader@clubhouse.io"],
-    "slug": "/how-to-unsubscribe-from-clubhouse-emails"
-  },
-  {
-    "name": "snyk",
-    "sender": "snyk.io",
-    "domain": "snyk.io",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["contact@snyk.io"],
-    "slug": "/how-to-unsubscribe-from-snyk-emails"
-  },
-  {
-    "name": "brewdog",
-    "sender": "brewdog.com",
-    "domain": "brewdog.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@brewdog.com"],
-    "slug": "/how-to-unsubscribe-from-brewdog-emails"
-  },
-  {
-    "name": "tiket",
-    "sender": "tiket.com",
-    "domain": "tiket.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["noreply@tiket.com"],
-    "slug": "/how-to-unsubscribe-from-tiket-emails"
-  },
-  {
-    "name": "bittrex",
-    "sender": "bittrex.com",
-    "domain": "bittrex.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["no-reply@bittrex.com"],
-    "slug": "/how-to-unsubscribe-from-bittrex-emails"
-  },
-  {
-    "name": "spacetime",
-    "sender": "spacetime.am",
-    "domain": "spacetime.am",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["updates@spacetime.am"],
-    "slug": "/how-to-unsubscribe-from-spacetime-emails"
-  },
-  {
-    "name": "npmjs",
-    "sender": "npmjs.com",
-    "domain": "npmjs.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["isaacs@npmjs.com"],
-    "slug": "/how-to-unsubscribe-from-npmjs-emails"
-  },
-  {
-    "name": "cushionapp",
-    "sender": "cushionapp.com",
-    "domain": "cushionapp.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["jonnie@cushionapp.com"],
-    "slug": "/how-to-unsubscribe-from-cushionapp-emails"
-  },
-  {
-    "name": "revealbot",
-    "sender": "revealbot.com",
-    "domain": "revealbot.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["iskander@revealbot.com"],
-    "slug": "/how-to-unsubscribe-from-revealbot-emails"
-  },
-  {
-    "name": "dhpfamily",
-    "sender": "mail.dhpfamily.com",
-    "domain": "dhpfamily.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["AltTickets@mail.dhpfamily.com"],
-    "slug": "/how-to-unsubscribe-from-dhpfamily-emails"
-  },
-  {
-    "name": "transferwise",
-    "sender": "transferwise.com",
-    "domain": "transferwise.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["hello@transferwise.com"],
-    "slug": "/how-to-unsubscribe-from-transferwise-emails"
-  },
-  {
-    "name": "ledger",
-    "sender": "ledger.com",
-    "domain": "ledger.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["katie@ledger.com"],
-    "slug": "/how-to-unsubscribe-from-ledger-emails"
-  },
-  {
-    "name": "mixpanel",
-    "sender": "mixpanel.com",
-    "domain": "mixpanel.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["pat.nelix@mixpanel.com"],
-    "slug": "/how-to-unsubscribe-from-mixpanel-emails"
-  },
-  {
-    "name": "kite",
-    "sender": "kite.com",
-    "domain": "kite.com",
-    "seen": 0,
-    "unsubscribes": 0,
-    "addresses": ["adam.smith@kite.com"],
-    "slug": "/how-to-unsubscribe-from-kite-emails"
+    "addresses": ["hello@francescaelisia.com"],
+    "slug": "/how-to-unsubscribe-from-francescaelisia-emails"
   },
   {
     "name": "moonlightwork",
+    "label": "Moonlightwork",
     "sender": "moonlightwork.com",
     "domain": "moonlightwork.com",
-    "seen": 0,
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["emma@moonlightwork.com"],
+    "addresses": ["team@moonlightwork.com"],
     "slug": "/how-to-unsubscribe-from-moonlightwork-emails"
   },
   {
-    "name": "tripadvisor",
-    "sender": "mp1.tripadvisor.com",
-    "domain": "tripadvisor.com",
-    "seen": 0,
+    "name": "twitter",
+    "label": "Twitter",
+    "sender": "twitter.com",
+    "domain": "twitter.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["notify@twitter.com"],
+    "slug": "/how-to-unsubscribe-from-twitter-emails"
+  },
+  {
+    "name": "patreon",
+    "label": "Patreon",
+    "sender": "patreon.com",
+    "domain": "patreon.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["no-reply@patreon.com", "noreply@patreon.com"],
+    "slug": "/how-to-unsubscribe-from-patreon-emails"
+  },
+  {
+    "name": "lloydsbank",
+    "label": "Lloydsbank",
+    "sender": "email01.lloydsbank.co.uk",
+    "domain": "lloydsbank.co.uk",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["donotreply@email01.lloydsbank.co.uk"],
+    "slug": "/how-to-unsubscribe-from-lloydsbank-emails"
+  },
+  {
+    "name": "travelexpanse",
+    "label": "Travelexpanse",
+    "sender": "travelexpanse.com",
+    "domain": "travelexpanse.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["traveldeals@travelexpanse.com"],
+    "slug": "/how-to-unsubscribe-from-travelexpanse-emails"
+  },
+  {
+    "name": "buffer",
+    "label": "Buffer",
+    "sender": "buffermail.com",
+    "domain": "buffermail.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["yourfriends@buffermail.com"],
+    "slug": "/how-to-unsubscribe-from-buffer-emails"
+  },
+  {
+    "name": "grab",
+    "label": "Grab",
+    "sender": "grab.com",
+    "domain": "grab.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["no-reply@grab.com"],
+    "slug": "/how-to-unsubscribe-from-grab-emails"
+  },
+  {
+    "name": "skyairline",
+    "label": "Skyairline",
+    "sender": "skyairline.com",
+    "domain": "skyairline.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["hola@skyairline.com"],
+    "slug": "/how-to-unsubscribe-from-skyairline-emails"
+  },
+  {
+    "name": "world-diving",
+    "label": "World-diving",
+    "sender": "world-diving.com",
+    "domain": "world-diving.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["john@world-diving.com"],
+    "slug": "/how-to-unsubscribe-from-world-diving-emails"
+  },
+  {
+    "name": "expedia",
+    "label": "Expedia",
+    "sender": "expediamail.com",
+    "domain": "expediamail.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["usmail@expediamail.com"],
+    "slug": "/how-to-unsubscribe-from-expedia-emails"
+  },
+  {
+    "name": "mailgun",
+    "label": "Mailgun",
+    "sender": "mailgun.com",
+    "domain": "mailgun.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["cfarmer@mailgun.com"],
+    "slug": "/how-to-unsubscribe-from-mailgun-emails"
+  },
+  {
+    "name": "rf-cheats",
+    "label": "Rf-cheats",
+    "sender": "rf-cheats.ru",
+    "domain": "rf-cheats.ru",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["wiwurp991hf@rf-cheats.ru"],
+    "slug": "/how-to-unsubscribe-from-rf-cheats-emails"
+  },
+  {
+    "name": "frenchhomedecorcatalogs",
+    "label": "Frenchhomedecorcatalogs",
+    "sender": "forall.frenchhomedecorcatalogs.com",
+    "domain": "frenchhomedecorcatalogs.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["info.bzw9k@forall.frenchhomedecorcatalogs.com"],
+    "slug": "/how-to-unsubscribe-from-frenchhomedecorcatalogs-emails"
+  },
+  {
+    "name": "threader",
+    "label": "Threader",
+    "sender": "threader.app",
+    "domain": "threader.app",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["marie@threader.app"],
+    "slug": "/how-to-unsubscribe-from-threader-emails"
+  },
+  {
+    "name": "m5qns470cjghyelp",
+    "label": "M5qns470cjghyelp",
+    "sender": "m5qns470cjghyelp.com",
+    "domain": "m5qns470cjghyelp.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["no-reply@m5qns470cjghyelp.com"],
+    "slug": "/how-to-unsubscribe-from-m5qns470cjghyelp-emails"
+  },
+  {
+    "name": "eurowings",
+    "label": "Eurowings",
+    "sender": "ew.eurowings.com",
+    "domain": "eurowings.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["news@ew.eurowings.com"],
+    "slug": "/how-to-unsubscribe-from-eurowings-emails"
+  },
+  {
+    "name": "moraviian",
+    "label": "Moraviian",
+    "sender": "sunset.moraviian.net",
+    "domain": "moraviian.net",
+    "seen": 1,
     "unsubscribes": 0,
     "addresses": [
-      "TravelFeed@mp1.tripadvisor.com",
-      "MemberUpdate@mp1.tripadvisor.com",
-      "members@mp1.tripadvisor.com"
+      "474n6484n64n644n63554n624n6231084n65337256124n64376954n665@sunset.moraviian.net"
     ],
-    "slug": "/how-to-unsubscribe-from-tripadvisor-emails"
+    "slug": "/how-to-unsubscribe-from-moraviian-emails"
   },
   {
-    "name": "sendgrid",
-    "sender": "sendgrid.com",
-    "domain": "sendgrid.com",
-    "seen": 0,
+    "name": "e-redbus",
+    "label": "E-redbus",
+    "sender": "e-redbus.pe",
+    "domain": "e-redbus.pe",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": [
-      "sendgridteam@sendgrid.com",
-      "customerexperience@sendgrid.com"
-    ],
-    "slug": "/how-to-unsubscribe-from-sendgrid-emails"
+    "addresses": ["ofertas@e-redbus.pe"],
+    "slug": "/how-to-unsubscribe-from-e-redbus-emails"
   },
   {
-    "name": "buddy",
-    "sender": "buddy.works",
-    "domain": "buddy.works",
-    "seen": 0,
+    "name": "github",
+    "label": "Github",
+    "sender": "github.com",
+    "domain": "github.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["alexk@buddy.works"],
-    "slug": "/how-to-unsubscribe-from-buddy-emails"
+    "addresses": ["notifications@github.com"],
+    "slug": "/how-to-unsubscribe-from-github-emails"
   },
   {
-    "name": "creolabs",
-    "sender": "creolabs.com",
-    "domain": "creolabs.com",
-    "seen": 0,
+    "name": "lastpass",
+    "label": "Lastpass",
+    "sender": "lastpass.com",
+    "domain": "lastpass.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["marcob@creolabs.com"],
-    "slug": "/how-to-unsubscribe-from-creolabs-emails"
+    "addresses": ["do-not-reply-support@lastpass.com"],
+    "slug": "/how-to-unsubscribe-from-lastpass-emails"
   },
   {
-    "name": "improvmx",
-    "sender": "emails.improvmx.com",
-    "domain": "improvmx.com",
-    "seen": 0,
+    "name": "bufferapp",
+    "label": "Bufferapp",
+    "sender": "bufferapp.com",
+    "domain": "bufferapp.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["antoine@emails.improvmx.com"],
-    "slug": "/how-to-unsubscribe-from-improvmx-emails"
+    "addresses": ["hello@bufferapp.com"],
+    "slug": "/how-to-unsubscribe-from-bufferapp-emails"
   },
   {
-    "name": "cryptomenow",
-    "sender": "cryptomenow.com",
-    "domain": "cryptomenow.com",
-    "seen": 0,
+    "name": "nytimes",
+    "label": "The New York Times",
+    "sender": "nytimes.com",
+    "domain": "nytimes.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["wilson@cryptomenow.com"],
-    "slug": "/how-to-unsubscribe-from-cryptomenow-emails"
+    "addresses": ["nytdirect@nytimes.com"],
+    "slug": "/how-to-unsubscribe-from-nytimes-emails"
   },
   {
-    "name": "overstand",
-    "sender": "overstand.co.th",
-    "domain": "overstand.co.th",
-    "seen": 0,
+    "name": "makermag",
+    "label": "Makermag",
+    "sender": "makermag.com",
+    "domain": "makermag.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["rodney@overstand.co.th"],
-    "slug": "/how-to-unsubscribe-from-overstand-emails"
+    "addresses": ["editorial@makermag.com"],
+    "slug": "/how-to-unsubscribe-from-makermag-emails"
   },
   {
-    "name": "rescuetime",
-    "sender": "rescuetime.com",
-    "domain": "rescuetime.com",
-    "seen": 0,
+    "name": "nesslabs",
+    "label": "Nesslabs",
+    "sender": "nesslabs.com",
+    "domain": "nesslabs.com",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["robby+rtnews@rescuetime.com"],
-    "slug": "/how-to-unsubscribe-from-rescuetime-emails"
+    "addresses": ["annelaure@nesslabs.com"],
+    "slug": "/how-to-unsubscribe-from-nesslabs-emails"
   },
   {
-    "name": "levels",
-    "sender": "levels.io",
-    "domain": "levels.io",
-    "seen": 0,
+    "name": "makernews",
+    "label": "Makernews",
+    "sender": "makernews.io",
+    "domain": "makernews.io",
+    "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["hello@levels.io"],
-    "slug": "/how-to-unsubscribe-from-levels-emails"
+    "addresses": ["noreply@makernews.io"],
+    "slug": "/how-to-unsubscribe-from-makernews-emails"
   },
   {
-    "name": "gitguardian",
-    "sender": "mail.gitguardian.com",
-    "domain": "gitguardian.com",
+    "name": "indiehackers",
+    "label": "Indie Hackers",
+    "sender": "indiehackers.com",
+    "domain": "indiehackers.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["community@indiehackers.com"],
+    "slug": "/how-to-unsubscribe-from-indiehackers-emails"
+  },
+  {
+    "name": "gsu",
+    "label": "Gsu",
+    "sender": "listserv.gsu.edu",
+    "domain": "gsu.edu",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["listserv@listserv.gsu.edu", "LISTSERV@listserv.gsu.edu"],
+    "slug": "/how-to-unsubscribe-from-gsu-emails"
+  },
+  {
+    "name": "house",
+    "label": "House",
+    "sender": "ls1.house.gov",
+    "domain": "house.gov",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["listserv@ls1.house.gov", "LISTSERV@ls1.house.gov"],
+    "slug": "/how-to-unsubscribe-from-house-emails"
+  },
+  {
+    "name": "businesscontact360",
+    "label": "Businesscontact360",
+    "sender": "businesscontact360.com",
+    "domain": "businesscontact360.com",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["newsletter@businesscontact360.com"],
+    "slug": "/how-to-unsubscribe-from-businesscontact360-emails"
+  },
+  {
+    "name": "womenmake",
+    "label": "Womenmake",
+    "sender": "womenmake.com",
+    "domain": "womenmake.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["marie@womenmake.com"],
+    "slug": "/how-to-unsubscribe-from-womenmake-emails"
+  },
+  {
+    "name": "hintedofficial",
+    "label": "Hintedofficial",
+    "sender": "hintedofficial.com",
+    "domain": "hintedofficial.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["Lucy@hintedofficial.com", "lucy@hintedofficial.com"],
+    "slug": "/how-to-unsubscribe-from-hintedofficial-emails"
+  },
+  {
+    "name": "hinted",
+    "label": "Hinted",
+    "sender": "hinted.com",
+    "domain": "hinted.com",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["Lucy@hinted.com", "lucy@hinted.com"],
+    "slug": "/how-to-unsubscribe-from-hinted-emails"
+  },
+  {
+    "name": "delighted",
+    "label": "Delighted",
+    "sender": "delighted.com",
+    "domain": "delighted.com",
+    "seen": 1,
+    "unsubscribes": 1,
+    "addresses": ["mongodb-cloud@delighted.com"],
+    "slug": "/how-to-unsubscribe-from-delighted-emails"
+  },
+  {
+    "name": "notion",
+    "label": "Notion",
+    "sender": "makenotion.com",
+    "domain": "notion.so",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["ivanzhao@makenotion.com"],
+    "slug": "/how-to-unsubscribe-from-notion-emails"
+  },
+  {
+    "name": "google",
+    "label": "Google",
+    "sender": "google.com",
+    "domain": "google.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["sc-noreply@google.com"],
+    "slug": "/how-to-unsubscribe-from-google-emails"
+  },
+  {
+    "name": "rakuten",
+    "label": "Rakuten",
+    "sender": "rakuten.com",
+    "domain": "rakuten.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["chigusa.nakano@rakuten.com"],
+    "slug": "/how-to-unsubscribe-from-rakuten-emails"
+  },
+  {
+    "name": "strakh-byt-napugannym",
+    "label": "Strakh-byt-napugannym",
+    "sender": "jdoqdz.strakh-byt-napugannym.xyz",
+    "domain": "strakh-byt-napugannym.xyz",
     "seen": 0,
     "unsubscribes": 0,
-    "addresses": ["security@mail.gitguardian.com"],
-    "slug": "/how-to-unsubscribe-from-gitguardian-emails"
+    "addresses": ["shenabeavers@jdoqdz.strakh-byt-napugannym.xyz"],
+    "slug": "/how-to-unsubscribe-from-strakh-byt-napugannym-emails"
+  },
+  {
+    "name": "logrocket",
+    "label": "Logrocket",
+    "sender": "logrocket.com",
+    "domain": "logrocket.com",
+    "seen": 0,
+    "unsubscribes": 0,
+    "addresses": ["jeff@logrocket.com"],
+    "slug": "/how-to-unsubscribe-from-logrocket-emails"
   }
 ]

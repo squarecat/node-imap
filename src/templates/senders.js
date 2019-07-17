@@ -6,7 +6,6 @@ import { Arrow as ArrowIcon } from '../components/icons';
 import React from 'react';
 import SenderImage from './sender-image';
 import SubpageLayout from '../layouts/subpage-layout';
-import _capitalize from 'lodash.capitalize';
 import _shuffle from 'lodash.shuffle';
 import broom from '../assets/enterprise/broom.png';
 import envelope from '../assets/open-envelope-love.png';
@@ -14,21 +13,22 @@ import { graphql } from 'gatsby';
 import happy from '../assets/enterprise/happy.png';
 import suggestions from '../senders/highest-occurrences.json';
 
-const ranks = {
-  F: 0,
-  E: 20,
-  D: 30,
-  C: 40,
-  B: 50,
-  A: 70,
-  'A+': 90
-};
+// const ranks = {
+//   F: 0,
+//   E: 20,
+//   D: 30,
+//   C: 40,
+//   B: 50,
+//   A: 70,
+//   'A+': 90
+// };
 
 function SendersPage({ data }) {
   const { sendersJson } = data;
   const {
     domain,
-    name: senderName,
+    name,
+    label,
     unsubscribes,
     seen,
     rank,
@@ -42,26 +42,24 @@ function SendersPage({ data }) {
     rank
   });
 
-  const name = _capitalize(senderName);
-
   const senderAddresses = getSenders(addresses, 2);
-  const suggestionNames = getSuggestions(senderName);
+  const suggestionNames = getSuggestions(label);
 
   return (
     <SubpageLayout
-      title={`Unsubscribe from ${name} emails`}
-      description={`Leave Me Alone makes it easy to unsubscribe from unwanted spam and subscription emails like ones from ${name}.`}
+      title={`Unsubscribe from ${label} emails`}
+      description={`Leave Me Alone makes it easy to unsubscribe from unwanted spam and subscription emails like ones from ${label}.`}
       slug={slug}
     >
       <div styleName="container intro-header">
         <div styleName="container-text">
           <h1 styleName="tagline">
             Easily unsubscribe from{' '}
-            <span styleName="header-highlight">{name}</span> emails
+            <span styleName="header-highlight">{label}</span> emails
           </h1>
           <p styleName="description">
             Leave Me Alone makes it easy to unsubscribe from unwanted spam and
-            subscription emails like ones from {name}.
+            subscription emails like ones from {label}.
           </p>
           <div styleName="join-container">
             <a href="/signup" className={`beam-me-up-cta`}>
@@ -69,19 +67,19 @@ function SendersPage({ data }) {
             </a>
             <p styleName="join-text">
               Join <TextImportant>{unsubscribes}</TextImportant> of our users
-              that have unsubscribed from <TextImportant>{name}</TextImportant>{' '}
+              that have unsubscribed from <TextImportant>{label}</TextImportant>{' '}
               emails.
             </p>
           </div>
         </div>
         <div styleName="container-image">
           <div styleName="unsubscribe-example-block">
-            <div styleName="unsubscribe-illustation" data-name={senderName} />
+            <div styleName="unsubscribe-illustation" data-name={name} />
             <div styleName="unsubscribe-illustation-addendum">
               <span styleName="company-image">
-                <SenderImage name={name} domain={domain} />
+                <SenderImage name={label} domain={domain} />
               </span>
-              <span styleName="company-description">{`${name} Emails`}</span>
+              <span styleName="company-description">{`${label} Emails`}</span>
             </div>
           </div>
         </div>
@@ -94,15 +92,15 @@ function SendersPage({ data }) {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">
-              Unsubscribe from all <span styleName="highlight">{name}</span>{' '}
+              Unsubscribe from all <span styleName="highlight">{label}</span>{' '}
               emails
             </h3>
             <p>
-              {name} sends emails from{' '}
+              {label} sends emails from{' '}
               {`${addresses.length} ${
                 addresses.length === 1 ? 'address' : 'addresses'
               }`}{' '}
-              like {senderAddresses}. Stop {name} being a source of annoyance,
+              like {senderAddresses}. Stop {label} being a source of annoyance,
               frustration and interruption. Leave Me Alone makes it quick and
               easy to unsubscribe!
             </p>
@@ -120,11 +118,11 @@ function SendersPage({ data }) {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">
-              Clear <span styleName="highlight">{name}</span> from all of your
-              inboxes
+              Clear <span styleName="highlight">{label}</span> from all of your
+              accounts
             </h3>
             <p>
-              Connect all of your email accounts to unsubscribe from {name} and
+              Connect all of your email accounts to unsubscribe from {label} and
               any other unwanted subscription emails in one go. Leave Me Alone
               supports Gmail, G Suite, Outlook, Office 365, Live, and Hotmail.
             </p>
@@ -142,14 +140,14 @@ function SendersPage({ data }) {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">
-              See if <span styleName="highlight">{name}</span> emails are worth
+              See if <span styleName="highlight">{label}</span> emails are worth
               keeping
             </h3>
             <p>
               Quickly determine the quality of emails and see which senders spam
               you the most using our ranking system - Subscriber Score.{' '}
               <TextImportant>{percentage}%</TextImportant> of Leave Me Alone
-              users unsubscribe from {name} emails.
+              users unsubscribe from {label} emails.
             </p>
             <p>
               <TextLink href="/security">
@@ -166,11 +164,11 @@ function SendersPage({ data }) {
           Start unsubscribing from <span>{suggestionNames}</span> emails today.
         </h2>
         <a
-          href={`/signup?ref=landing-${senderName}`}
+          href={`/signup?ref=landing-${name}`}
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
           style={{ margin: '50px auto' }}
         >
-          Unsubscribe from {name} emails now!
+          Unsubscribe from {label} emails now!
         </a>
         <p>Or...</p>
         <p>
@@ -189,6 +187,7 @@ export const query = graphql`
   query($id: String!) {
     sendersJson(id: { eq: $id }) {
       name
+      label
       score
       unsubscribes
       seen
@@ -200,7 +199,7 @@ export const query = graphql`
   }
 `;
 
-function getStats({ unsubscribes, seen, rank }) {
+function getStats({ unsubscribes, seen }) {
   let percentage = 0;
   if (unsubscribes === 0) {
     percentage = 0;
@@ -250,11 +249,9 @@ function getSenders(addresses, limit) {
   );
 }
 
-function getSuggestions(senderName) {
-  const filtered = _shuffle(
-    suggestions.filter(s => s !== senderName).map(s => _capitalize(s))
-  );
-  const show = [_capitalize(senderName), ...filtered.slice(0, 4)];
+function getSuggestions(label) {
+  const filtered = _shuffle(suggestions.filter(s => s !== label));
+  const show = [label, ...filtered.slice(0, 4)];
   return (
     <>
       {show.map(s => (
