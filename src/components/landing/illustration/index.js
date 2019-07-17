@@ -1,13 +1,13 @@
 import './illustration.module.scss';
 
-import React, { useState, useCallback } from 'react';
-import Toggle from '../../toggle';
-
 import {
-  SocialLikeIcon,
   AirplaneIcon,
-  DiscountIcon
+  DiscountIcon,
+  SocialLikeIcon
 } from './illustration-icons';
+import React, { useCallback, useState } from 'react';
+
+import Toggle from '../../toggle';
 
 export default () => {
   const [state, setState] = useState({
@@ -21,11 +21,10 @@ export default () => {
         subscribed: false,
         loading: true
       });
-
       setTimeout(() => {
-        console.log('after 2500', state);
-        setState({ ...state, loading: false });
+        setState({ subscribed: false, loading: false });
       }, 2500);
+      return true;
     },
     [state]
   );
