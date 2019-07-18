@@ -29,6 +29,7 @@ import {
   updateIgnoreList,
   updatePassword,
   updateUnsubStatus,
+  updateUnsubStatusById,
   updateUser,
   updateUserWithAccount,
   verifyEmail,

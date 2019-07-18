@@ -21,11 +21,8 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
   }
 
   try {
-    const { headers = [] } = payload;
-    const hasListUnsubscribe = headers.some(h => h.name === 'List-Unsubscribe');
-    if (!hasListUnsubscribe) {
-      return false;
-    }
+    const { headers = [], parts } = payload;
+    // check if ignored sender
     const fromHeader = headers.find(h => h.name === 'From');
     if (!fromHeader) {
       logger.warn('gmail-utils: email has no from header');
@@ -42,7 +39,13 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
     const isIgnoredSender = ignoredSenderList.some(
       sender => sender === pureFromEmail
     );
-    return !isIgnoredSender;
+    // check list unsubscribe header
+    let isUnsubscribable = headers.some(h => h.name === 'List-Unsubscribe');
+    // check body content for "unsubscribe" if we have fetched the content
+    if (!isUnsubscribable && parts) {
+      isUnsubscribable = isMailContentUnsubscribable(parts);
+    }
+    return !isIgnoredSender && isUnsubscribable;
   } catch (err) {
     logger.error('gmail-utils: failed to determine if email is unsubscribable');
     logger.error(err);
@@ -50,6 +53,15 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
   }
 }
 
+function isMailContentUnsubscribable(mailParts) {
+  const html = mailParts.find(mp => mp.mimeType === 'text/html');
+  if (!html) return false;
+  const buff = new Buffer(html.body.data, 'base64');
+  const content = buff.toString('ascii');
+  return /<a[^>]*?href=["']([^<>]+?)["'][^>]*?>[^<>]*?unsubscribe[^<>]*?<\/a>/gi.test(
+    content
+  );
+}
 export function getHeader(payload, name) {
   const normalizedName = name.toLowerCase();
   const { headers } = payload;

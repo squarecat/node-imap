@@ -55,12 +55,17 @@ export function parseMailList(
 }
 
 function mapMail(mailItem, { isSpam, isTrash }) {
-  const { Id: id, From, Subject, BodyPreview, ToRecipients } = mailItem;
+  const { Id: id, From, Subject, BodyPreview, ToRecipients, Body } = mailItem;
   const { Address: from, Name: name } = From.EmailAddress;
   const unsub = getHeader(mailItem, 'list-unsubscribe');
   const date = getHeader(mailItem, 'date');
   const to = ToRecipients[0] ? ToRecipients[0].EmailAddress.Address : '';
-  const { unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub);
+  let unsubscribeMailTo, unsubscribeLink;
+  if (unsub) {
+    ({ unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub));
+  } else {
+    unsubscribeLink = getUnsubValuesFromContent(Body);
+  }
   if (!unsubscribeMailTo && !unsubscribeLink) {
     return null;
   }
@@ -77,4 +82,14 @@ function mapMail(mailItem, { isSpam, isTrash }) {
     isTrash,
     isSpam
   };
+}
+
+function getUnsubValuesFromContent(body) {
+  const match = /<a[^>]*?href=["']([^<>]+?)["'][^>]*?>[^<>]*?unsubscribe[^<>]*?<\/a>/gi.exec(
+    body.Content
+  );
+  if (match) {
+    return match[1];
+  }
+  return null;
 }
