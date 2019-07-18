@@ -815,7 +815,8 @@ export async function updatePassword(id, newPassword) {
         $set: {
           'password.salt': password.salt,
           'password.hash': password.hash,
-          lastUpdatedAt: isoDate()
+          lastUpdatedAt: isoDate(),
+          passwordLastUpdatedAt: isoDate()
         },
         $unset: {
           resetCode: 1,
