@@ -6,16 +6,28 @@ const unsubSuccessKeywords = keywords.success.reduce(
   (words, keyword) => [...words, keyword, keyword.toLowerCase()],
   []
 );
+const unsubFailKeywords = keywords.fail.reduce(
+  (words, keyword) => [...words, keyword, keyword.toLowerCase()],
+  []
+);
 
-export async function checkForKeywords(page, words = unsubSuccessKeywords) {
+export async function checkForKeywords(
+  page,
+  words = unsubSuccessKeywords,
+  failWords = unsubFailKeywords
+) {
   logger.info('browser: checking for keywords');
   const bodyText = await page.evaluate(() =>
     document.body.innerText.toLowerCase()
   );
   logger.info('browser: got page text');
-  return words.some(word => {
+  const hasSuccessWord = words.some(word => {
     return bodyText.includes(word);
   });
+  const hasFailWord = failWords.some(word => {
+    return bodyText.includes(word);
+  });
+  return hasSuccessWord && !hasFailWord;
 }
 
 const confirmButtonKeywords = keywords.buttonActions;
