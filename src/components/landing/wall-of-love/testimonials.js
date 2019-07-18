@@ -22,7 +22,7 @@ export default [
   },
 
   {
-    name: 'Pradip khakhar',
+    name: 'Pradip Khakhar',
     text: (
       <span>
         Leave Me Alone is a fantastic product to{' '}
@@ -131,5 +131,82 @@ export default [
     ),
     twitter: `unindie`,
     avatarPath: `image-8`
+  },
+
+  {
+    name: 'Marie',
+    text: (
+      <span>
+        <span styleName="highlight">
+          Unsubscribing to spam is really painful. Leave Me Alone makes it
+          effortless.
+        </span>{' '}
+        It's so satisfying to untick all those boxes and unsubscribe so easily.
+      </span>
+    ),
+    twitter: `marie_dm_`,
+    avatarPath: `image-9`
+  },
+
+  {
+    name: 'Luke Chadwick',
+    text: (
+      <span>
+        Using Leave Me Alone has resulted in a{' '}
+        <span styleName="highlight">17% reduction in my emails</span>, saving me
+        hours of time each month.
+      </span>
+    ),
+    twitter: `vertis`,
+    avatarPath: `image-10`
+  },
+
+  {
+    name: 'Tom Haworth',
+    text: (
+      <span>
+        I must admit I'm lazy at unsubscribing to subscription emails, so my
+        email inbox grows at an alarming rate every day. I just used Leave Me
+        Alone and{' '}
+        <span styleName="highlight">
+          unsubscribed to 15 emails in 3 minutes
+        </span>{' '}
+        What a great idea!
+      </span>
+    ),
+    twitter: `tomhaworth_b13`,
+    avatarPath: `image-11`
+  },
+
+  {
+    name: 'Dianna Allen',
+    text: (
+      <span>
+        <span styleName="highlight">
+          Leave Me Alone cleared my inbox from any and all junk.
+        </span>{' '}
+        Not only that, but I was able to easily unsubscribe from past
+        newsletters that I have no interest in receiving anymore. Now, I spend
+        minimal time checking my email every day. And when I do get an email, I
+        know it's important.
+      </span>
+    ),
+    twitter: `diannamallen`,
+    avatarPath: `image-12`
   }
+
+  // {
+  //   name: "",
+  //   text: (
+  //     <span>
+
+  //       <span styleName="highlight">
+
+  //       </span>
+
+  //     </span>
+  //   ),
+  //   twitter: ``,
+  //   avatarPath: ``
+  // }
 ];
