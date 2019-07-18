@@ -1,13 +1,13 @@
 [
   {
-    "name": "721",
-    "label": "721",
-    "sender": "721.ca",
-    "domain": "721.ca",
+    "name": "facebook",
+    "label": "Facebook",
+    "sender": "facebook.com",
+    "domain": "facebook.com",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["naoqavody@721.ca"],
-    "slug": "/how-to-unsubscribe-from-721-emails"
+    "addresses": ["noreply@facebook.ca"],
+    "slug": "/how-to-unsubscribe-from-facebook-emails"
   },
   {
     "name": "figma",

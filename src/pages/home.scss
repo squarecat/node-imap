@@ -46,7 +46,7 @@ a.more-info:visited {
 }
 
 .friendly-neighbourhood-hero {
-  height: calc(100vh - 106px);
+  min-height: calc(100vh - 106px);
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -59,12 +59,12 @@ a.more-info:visited {
 
   @media (max-width: 960px) {
     padding: 0 20px;
-    height: calc(100vh - 60px);
+    min-height: calc(100vh - 60px);
   }
 }
 
 .friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
-  height: calc(100vh - 130px);
+  min-height: calc(100vh - 130px);
 }
 
 .hero-inner {
@@ -229,7 +229,7 @@ a.more-info:visited {
     margin-bottom: 80px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -255,7 +255,8 @@ a.more-info:visited {
     box-shadow: 1px 1px 2px hsla(18, 100%, 38%, 0.1);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
+    max-width: 500px;
     margin: 50px auto 0;
   }
 }
