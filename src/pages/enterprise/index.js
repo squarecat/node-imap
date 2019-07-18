@@ -171,7 +171,7 @@ const EnterprisePage = () => {
               useless!
             </p>
             <p>
-              Our prices for teams let every one of your employees completely
+              Our prices for teams let every member of your team completely
               clean their inbox of all unwanted subscriptions for a fixed price
               per user.
             </p>
