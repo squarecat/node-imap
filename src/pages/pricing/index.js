@@ -27,7 +27,7 @@ export function Pricing() {
 export function Enterprise({ readMore = false }) {
   return (
     <div styleName="pricing-box">
-      <h3 styleName="pricing-title">Enterprise</h3>
+      <h3 styleName="pricing-title">For Teams</h3>
       <img styleName="pricing-image" src={truckImg} />
       <span styleName="pricing-text">Starting at</span>
       <p styleName="pricing-price">
@@ -72,7 +72,7 @@ function Packages({ readMore = false }) {
   let { credits, discount, price } = getPackage(packageValue);
   return (
     <div styleName="pricing-box">
-      <h3 styleName="pricing-title">Packages</h3>
+      <h3 styleName="pricing-title">For Individuals</h3>
       <img styleName="pricing-image" src={packageImg} />
       <span styleName="pricing-text">Starting at</span>
       <p styleName="pricing-price">
