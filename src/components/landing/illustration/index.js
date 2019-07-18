@@ -15,19 +15,16 @@ export default () => {
     loading: false
   });
 
-  const onClickToggle = useCallback(
-    () => {
-      setState({
-        subscribed: false,
-        loading: true
-      });
-      setTimeout(() => {
-        setState({ subscribed: false, loading: false });
-      }, 2500);
-      return true;
-    },
-    [state]
-  );
+  const onClickToggle = useCallback(() => {
+    setState({
+      subscribed: false,
+      loading: true
+    });
+    setTimeout(() => {
+      setState({ subscribed: false, loading: false });
+    }, 2000);
+    return true;
+  }, []);
 
   return (
     <div styleName="illustration">
@@ -47,7 +44,9 @@ export default () => {
         </div>
         <span styleName="subject">
           Cheap Travel Alerts
-          {!state.subscribed && !state.loading ? "it's gone!" : null}
+          {/* {!state.subscribed && !state.loading ? (
+            <span styleName="gone">Gone!</span>
+          ) : null} */}
         </span>
         <div styleName="toggle">
           <Toggle
