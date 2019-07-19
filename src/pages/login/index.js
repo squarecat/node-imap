@@ -110,6 +110,7 @@ export const LoginContext = createContext({ state: initialState });
 
 const LoginPage = React.memo(
   ({ register, transitionStatus, step = defaultStep }) => {
+    resetUrlParams(register ? 'signup' : 'login');
     const activeRef = useRef(null);
     const [state, dispatch] = useReducer(loginReducer, {
       ...initialState,

@@ -118,7 +118,7 @@ const IndexPage = () => {
 
                 <div className="join-container">
                   <a
-                    href="/signup?source=hero"
+                    href="/signup?ref=hero"
                     className={`beam-me-up-cta`}
                     // state={{ register: true }}
                   >
@@ -282,7 +282,7 @@ const IndexPage = () => {
                 </Browser>
               </div> */}
             <a
-              href="/signup?source=providers"
+              href="/signup?ref=providers"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
               Start Unsubscribing!
@@ -344,7 +344,7 @@ const IndexPage = () => {
           <div className="home-container-inner end-stuff">
             {statsContent}
             <a
-              href="/signup?source=footer"
+              href="/signup?ref=footer"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               style={{ margin: '50px auto' }}
             >
