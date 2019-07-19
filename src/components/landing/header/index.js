@@ -34,7 +34,7 @@ export default ({ setActive = () => {}, inverted = false }) => (
           <Link to="/pricing">Pricing</Link>
         </li>
         <li styleName="nav-link nav-extra">
-          <Link to="/enterprise">For Teams</Link>
+          <Link to="/teams">For Teams</Link>
         </li>
         <li styleName="nav-link nav-extra">
           <Link to="/app">Log in</Link>
@@ -80,7 +80,7 @@ function LearnMoreDropdown() {
               <Link to="/pricing">Pricing</Link>
             </DropdownItem>
             <DropdownItem>
-              <Link to="/enterprise">Enterprise</Link>
+              <Link to="/teams">For Teams</Link>
             </DropdownItem>
             <DropdownItem separated>
               <Link to="/app">Log in</Link>

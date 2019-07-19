@@ -116,12 +116,12 @@ export default ({ pageName, children }) => {
               {organisationId ? (
                 <li>
                   <Link
-                    to="/app/profile/organisation"
+                    to="/app/profile/team"
                     styleName="profile-nav-link"
                     activeClassName="profile-nav-link--active"
                   >
                     <WorkIcon width="16" height="16" />
-                    <span>Organisation</span>
+                    <span>Your Team</span>
                   </Link>
                 </li>
               ) : null}
