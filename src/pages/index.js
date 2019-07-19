@@ -522,15 +522,14 @@ const getMessage = count => {
   if (count < 250) {
     return `Okay I lied.... Or did I?`;
   }
-  if (count < 320) {
-    return (
-      <span>
-        ...Psst, you're awesome. Use the coupon{' '}
-        <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a huge
-        10% off 😍. Our little secret OK?
-      </span>
-    );
-  }
+
+  return (
+    <span>
+      ...Psst, you're awesome. Use the coupon{' '}
+      <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a huge 10%
+      off 😍. Our little secret OK?
+    </span>
+  );
 };
 function nodes(state, action) {
   switch (action.type) {
