@@ -142,7 +142,7 @@ export function useMailSync() {
               unsubStrategy,
               hasImage,
               isLoading: false,
-              status: 'unsubscribed'
+              status: estimatedSuccess ? 'unsubscribed' : 'failed'
             };
             if (unsubStrategy === 'mailto') {
               const { emailStatus, emailData } = data;
@@ -201,7 +201,8 @@ export function useMailSync() {
 
             await db.mail.update(id, {
               isLoading: false,
-              subscribed: true
+              subscribed: true,
+              status: 'failed'
             });
             actions.queueAlert(alert);
           } catch (err) {
