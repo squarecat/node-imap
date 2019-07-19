@@ -62,6 +62,10 @@ const Layout = ({
                   content: 'width=device-width, initial-scale=1.0'
                 },
                 {
+                  name: 'theme-color',
+                  content: '#fddbd7' // $color-red-light
+                },
+                {
                   name: 'description',
                   content: metaDescription
                 },
