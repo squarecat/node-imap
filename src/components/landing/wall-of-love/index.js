@@ -46,13 +46,21 @@ export default ({ limit }) => {
 
 function Box({ testimonial }) {
   const { name, text, twitter, avatarPath } = testimonial;
-  const avatarUrl = `${BASE_IMG_URL}/${avatarPath}.jpg`;
+  const avatarLetter = name
+    .split(' ')
+    .map(a => a[0])
+    .slice(0, 2)
+    .join('');
 
   return (
     <div styleName="wrapper">
       <div styleName="box">
         <div styleName="img">
-          <img src={avatarUrl} />
+          {avatarPath ? (
+            <img src={`${BASE_IMG_URL}/${avatarPath}.jpg`} />
+          ) : (
+            <span styleName="avatar-letter">{avatarLetter}</span>
+          )}
         </div>
         <div styleName="content">
           <p styleName="text">{text}</p>

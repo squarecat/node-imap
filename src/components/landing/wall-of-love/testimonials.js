@@ -193,6 +193,20 @@ export default [
     ),
     twitter: `diannamallen`,
     avatarPath: `image-12`
+  },
+
+  {
+    name: 'Ross Kinkade',
+    text: (
+      <span>
+        As an aspiring Consultant I am barraged with offers and spam everyday.
+        It's refreshing to{' '}
+        <span styleName="highlight">finally achieve inbox zero</span> through
+        Leave Me Alone, while also supporting two awesome Indie Founders.
+      </span>
+    ),
+    twitter: `rbossk757`,
+    avatarPath: ``
   }
 
   // {

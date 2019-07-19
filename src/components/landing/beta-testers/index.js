@@ -24,7 +24,8 @@ const BETA_TESTERS = [
   'kerrtrvs',
   'joshbal4',
   'vertis',
-  'MrSimonBennett'
+  'MrSimonBennett',
+  'DesignByKyle'
 ];
 
 const BASE_IMG_URL = `${process.env.CDN_URL}/images/beta-testers`;
