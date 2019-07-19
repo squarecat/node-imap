@@ -3,40 +3,17 @@ require('@babel/polyfill');
 const psl = require('./psl');
 
 const db = require('../../server/dao/db');
+const nameMappings = require('./name-mappings.json');
+const labelMappings = require('./label-mappings.json');
+const domainMappings = require('./domain-mappings.json');
+const _capitalize = require('lodash.capitalize');
 
-const nameChanges = [
-  {
-    name: 'facebookmail',
-    newName: 'facebook'
-  },
-  {
-    name: 'intercom-mail',
-    newName: 'intercom'
-  },
-  {
-    name: 'expediamail',
-    newName: 'expedia'
-  },
-  {
-    name: 'buffermail',
-    newName: 'buffer'
-  },
-  {
-    name: 'discoursemail',
-    newName: 'discourse'
-  },
-  {
-    name: 'makenotion',
-    newName: 'notion'
-  }
-];
+function getName(domain) {
+  return nameMappings[domain] || domain;
+}
 
-function getName(name) {
-  const changed = nameChanges.find(n => n.name === name);
-  if (changed) {
-    return changed.newName;
-  }
-  return name;
+function getLabel(name) {
+  return labelMappings[name] || _capitalize(name);
 }
 
 async function run() {
@@ -62,11 +39,10 @@ async function run() {
   let output = oc.reduce((out, o) => {
     const { sender, seenCount, unsubscribedCount, addresses, score } = o;
     const parsed = psl.parse(sender);
-    let name = getName(parsed.sld);
-    let domain = parsed.domain;
-    if (name === 'facebook') {
-      domain = 'facebook.com';
-    }
+    const name = getName(parsed.sld);
+    const label = getLabel(name);
+    const domain = domainMappings[name] || parsed.domain;
+
     if (name === 'leavemealone') {
       return out;
     }
@@ -85,6 +61,7 @@ async function run() {
       ...out,
       [name]: {
         name,
+        label,
         score,
         sender,
         domain,

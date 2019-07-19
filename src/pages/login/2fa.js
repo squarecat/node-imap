@@ -44,6 +44,7 @@ export default () => {
         style={{ display: 'none' }}
         type="text"
         value={state.email}
+        onChange={() => {}}
         autoComplete="username"
       />
       <FormGroup fluid>

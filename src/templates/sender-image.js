@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import cx from 'classnames';
 import spamImg from '../assets/mail-list-illustration-spam.png';
@@ -6,23 +6,8 @@ import styles from './sender-image.module.scss';
 
 const iconUrl = process.env.ICON_URL;
 
-const ImageReducer = (state, action) => {
-  const { type, data } = action;
-  if (type === 'set-error') {
-    return {
-      ...state,
-      error: data
-    };
-  }
-  return state;
-};
-
 export default ({ name, domain }) => {
-  const [state, dispatch] = useReducer(ImageReducer, {
-    error: null
-  });
-  const { error } = state;
-  const imageUrl = `${iconUrl}/${domain}`;
+  const [error, setError] = useState(false);
 
   const image = useMemo(
     () => {
@@ -32,24 +17,18 @@ export default ({ name, domain }) => {
       return (
         <img
           alt={`${name} logo`}
-          src={imageUrl}
+          src={`${iconUrl}/${domain}`}
           className={classes}
-          onError={e => dispatch({ type: 'set-error', data: e })}
+          onError={() => setError(true)}
         />
       );
     },
-    [error, name, imageUrl]
+    [error, name, domain]
   );
   return (
     <>
       {image}
-      {error ? (
-        <img
-          alt="Image of can of spam"
-          src={spamImg}
-          onError={e => dispatch({ type: 'set-error', data: e })}
-        />
-      ) : null}
+      {error ? <img alt="Image of can of spam" src={spamImg} /> : null}
     </>
   );
 };

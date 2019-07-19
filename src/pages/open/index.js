@@ -583,11 +583,11 @@ export default function OpenPage() {
                 </div>
 
                 <div styleName="big-stat box">
-                  <span styleName="label">Enterprise customers</span>
+                  <span styleName="label">Teams</span>
                   <span styleName="value">{format(stats.organisations)}</span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Organisation members</span>
+                  <span styleName="label">Team members</span>
                   <span styleName="value">
                     {format(stats.organisationUsers)}
                   </span>

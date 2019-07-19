@@ -34,7 +34,7 @@ export default ({ setActive = () => {}, inverted = false }) => (
           <Link to="/pricing">Pricing</Link>
         </li>
         <li styleName="nav-link nav-extra">
-          <Link to="/enterprise">Enterprise</Link>
+          <Link to="/enterprise">For Teams</Link>
         </li>
         <li styleName="nav-link nav-extra">
           <Link to="/app">Log in</Link>

@@ -62,7 +62,7 @@ function MailItem({ id, onLoad }) {
       </td>
       <td styleName="cell from-column">
         <div styleName="from-name-container">
-          <span styleName="from-name">
+          <span styleName="from-name" title={m.fromName}>
             <Tooltip
               overlay={
                 <span>
@@ -82,7 +82,9 @@ function MailItem({ id, onLoad }) {
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
-        <span styleName="from-email">{`<${m.fromEmail}>`}</span>
+        <span styleName="from-email" title={m.fromEmail}>{`<${
+          m.fromEmail
+        }>`}</span>
       </td>
       <td styleName="cell tags-column">
         {m.isTrash ? (
@@ -111,7 +113,9 @@ function MailItem({ id, onLoad }) {
         ) : null}
       </td>
       <td styleName="cell subject-column">
-        <span styleName="subject"> {m.subject}</span>
+        <span styleName="subject" title={m.subject}>
+          {m.subject}
+        </span>
       </td>
       <td styleName="cell score-column">
         <ItemScore sender={m.fromEmail} />
