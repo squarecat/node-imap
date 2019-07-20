@@ -1,4 +1,4 @@
-import { MailIcon, TwitterIcon } from '../icons';
+import { FacebookIcon, MailIcon, TwitterIcon } from '../icons';
 
 import { Link } from 'gatsby';
 import React from 'react';
@@ -121,6 +121,11 @@ export default visProps => (
         <li title="@LeaveMeAloneApp">
           <TextLink undecorated href="https://twitter.com/leavemealoneapp">
             <TwitterIcon />
+          </TextLink>
+        </li>
+        <li title="@LeaveMeAloneApp">
+          <TextLink undecorated href="https://facebook.com/leavemealoneapp">
+            <FacebookIcon />
           </TextLink>
         </li>
         <li title="hello@leavemealone.app">
