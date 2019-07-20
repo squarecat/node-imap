@@ -1,6 +1,6 @@
 import { doRequest, getOutlookAccessToken } from './access';
-import { getSearchString, getTimeRange } from './utils';
 
+import { getFilterString } from './utils';
 import logger from '../../../utils/logger';
 
 const SPAM_REGULARITY = 0.48;
@@ -18,7 +18,7 @@ export async function getMailEstimates(account, { from } = {}) {
 
 export async function getEstimateForTimeframe(userId, account, { from }) {
   try {
-    const query = getSearchString({
+    const query = getFilterString({
       from
     });
     return requestCount(account, { filter: query }, userId);

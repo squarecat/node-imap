@@ -38,34 +38,46 @@ export async function* fetchMail(
     let dupeCache = {};
     let dupeSenders = [];
 
-    for await (let mail of fetchMailApi(client, {
-      accessToken,
-      from,
-      batch
-    })) {
-      totalEmailsCount = totalEmailsCount + mail.length;
-      progress = progress + mail.length;
-      const unsubscribableMail = parseMailList(mail, {
-        ignoredSenderList,
-        unsubscriptions
-      });
-      const previouslyUnsubbedCount = unsubscribableMail.filter(
-        sm => !sm.subscribed
-      ).length;
-      totalPrevUnsubbedCount = totalPrevUnsubbedCount + previouslyUnsubbedCount;
+    const iterators = [
+      fetchMailApi(client, { accessToken, from, batch }),
+      fetchMailApi(client, {
+        accessToken,
+        from,
+        batch,
+        withContent: true,
+        query: 'unsubscribe'
+      })
+    ];
+    for (let iter of iterators) {
+      let next = await iter.next();
+      while (!next.done) {
+        const mail = next.value;
+        totalEmailsCount = totalEmailsCount + mail.length;
+        progress = progress + mail.length;
+        const unsubscribableMail = parseMailList(mail, {
+          ignoredSenderList,
+          unsubscriptions
+        });
+        const previouslyUnsubbedCount = unsubscribableMail.filter(
+          sm => !sm.subscribed
+        ).length;
+        totalPrevUnsubbedCount =
+          totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
-      if (unsubscribableMail.length) {
-        const {
-          dupes: newDupeCache,
-          deduped,
-          dupeSenders: newDupeSenders
-        } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
-        totalUnsubCount = totalUnsubCount + deduped.length;
-        dupeCache = newDupeCache;
-        dupeSenders = newDupeSenders;
-        yield { type: 'mail', data: deduped };
+        if (unsubscribableMail.length) {
+          const {
+            dupes: newDupeCache,
+            deduped,
+            dupeSenders: newDupeSenders
+          } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
+          totalUnsubCount = totalUnsubCount + deduped.length;
+          dupeCache = newDupeCache;
+          dupeSenders = newDupeSenders;
+          yield { type: 'mail', data: deduped };
+        }
+        yield { type: 'progress', data: { progress, total: totalEstimate } };
+        next = await iter.next();
       }
-      yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
 
     logger.info(
@@ -126,18 +138,26 @@ export async function* fetchMailImap(client, { from }) {
 
 async function* fetchMailApi(
   client,
-  { accessToken, from, batch = true, perPage = 100 }
+  {
+    accessToken,
+    from,
+    batch = true,
+    perPage = 100,
+    withContent = false,
+    query = ''
+  }
 ) {
   let pageToken;
   try {
-    const query = getSearchString({
-      from
+    const q = getSearchString({
+      from,
+      query
     });
     const fields = 'nextPageToken';
     do {
       const response = await fetchPage(client, {
         fields,
-        query,
+        query: q,
         perPage,
         pageToken
       });
@@ -153,9 +173,11 @@ async function* fetchMailApi(
       if (batch) {
         populatedMessages = await fetchMessagesBatch(
           accessToken,
-          messages.map(m => m.id)
+          messages.map(m => m.id),
+          withContent
         );
       } else {
+        // NOT USED, batch is currently always true
         populatedMessages = await Promise.all(
           messages.map(m => fetchMessageById(client, { id: m.id }))
         );
@@ -174,7 +196,6 @@ async function fetchPage(client, { fields, query, perPage, pageToken }) {
     userId: 'me',
     includeSpamTrash: true,
     q: query,
-    // labelIds: ['INBOX'],
     pageToken,
     qs: {
       fields,
@@ -185,12 +206,13 @@ async function fetchPage(client, { fields, query, perPage, pageToken }) {
   return { data, nextPageToken };
 }
 
+// NOT USED
 async function fetchMessageById(client, { id }) {
   const fields = 'id,internalDate,labelIds,payload/headers,snippet';
   const { data } = await client.users.messages.get({
     userId: 'me',
     id,
-    format: 'METADATA',
+    format: 'full',
     metadataHeaders: ['from', 'to', 'list-unsubscribe', 'subject'],
     fields
   });
@@ -199,12 +221,21 @@ async function fetchMessageById(client, { id }) {
 
 const batchUrl = 'https://www.googleapis.com/batch/gmail/v1';
 
-async function fetchMessagesBatch(accessToken, messageIds) {
+async function fetchMessagesBatch(
+  accessToken,
+  messageIds,
+  withContent = false
+) {
   const boundary = 'leave-me-alone';
 
+  const format = withContent ? 'full' : 'metadata';
+  let fields = 'id,internalDate,labelIds,snippet,payload/headers';
+  if (withContent) {
+    fields = `${fields},payload/parts`;
+  }
   let queryParams = new URLSearchParams({
-    format: 'metadata',
-    fields: 'id,internalDate,labelIds,payload/headers,snippet',
+    format,
+    fields,
     metadataHeaders: 'from'
   }).toString();
   // google accepts metadataHeaders in a weird fucking way,

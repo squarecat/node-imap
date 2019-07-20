@@ -7,7 +7,6 @@ import {
 
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
-import { parseSenderEmail } from '../../../dao/occurrences/utils';
 
 export function parseMailList(
   mailList = [],
@@ -45,9 +44,18 @@ function mapMail(mail) {
     if (!payload) {
       throw new Error('mail object has no payload', id);
     }
-    const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
-      .value;
-    const { unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub);
+    const { parts, headers } = payload;
+    // check headers first
+    const unsubHeader = headers.find(h => h.name === 'List-Unsubscribe');
+    let unsubscribeMailTo, unsubscribeLink;
+    if (unsubHeader) {
+      ({ unsubscribeMailTo, unsubscribeLink } = getUnsubValuesFromHeader(
+        unsubHeader
+      ));
+    } else {
+      unsubscribeLink = getUnsubValuesFromContent(parts);
+    }
+
     if (!unsubscribeMailTo && !unsubscribeLink) {
       return null;
     }
@@ -72,4 +80,22 @@ function mapMail(mail) {
     logger.error(err);
     return null;
   }
+}
+
+function getUnsubValuesFromHeader(header) {
+  return getUnsubValues(header.value);
+}
+
+function getUnsubValuesFromContent(mailParts) {
+  const html = mailParts.find(mp => mp.mimeType === 'text/html');
+  if (!html) return false;
+  const buff = new Buffer.from(html.body.data, 'base64');
+  const content = buff.toString('ascii');
+  const match = /<a[^>]*?href=["']([^<>]+?)["'][^>]*?>[^<>]*?unsubscribe[^<>]*?<\/a>/gi.exec(
+    content
+  );
+  if (match) {
+    return match[1];
+  }
+  return null;
 }
