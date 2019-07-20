@@ -74,15 +74,6 @@ function SendersPage({ data }) {
         </div>
         <div styleName="container-image">
           <MailListIllustration sender={{ name, label, domain }} />
-          {/* <div styleName="unsubscribe-example-block">
-            <div styleName="unsubscribe-illustation" data-name={name} />
-            <div styleName="unsubscribe-illustation-addendum">
-              <span styleName="company-image">
-                <SenderImage name={label} domain={domain} />
-              </span>
-              <span styleName="company-description">{`${label} Emails`}</span>
-            </div>
-          </div> */}
         </div>
       </div>
 
