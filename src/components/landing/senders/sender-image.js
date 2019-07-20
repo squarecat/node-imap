@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
 import cx from 'classnames';
-import spamImg from '../assets/mail-list-illustration-spam.png';
+import spamImg from '../../../assets/mail-list-illustration-spam.png';
 import styles from './sender-image.module.scss';
 
 const iconUrl = process.env.ICON_URL;
