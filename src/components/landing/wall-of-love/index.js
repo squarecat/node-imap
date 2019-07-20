@@ -96,10 +96,10 @@ function getCols(data, limit = 3) {
 
   return data.reduce(
     (out, testimonial, index) => {
-      if (index % 3 === 0) {
+      if (index % 3 === 2) {
         return [out[0], out[1], [...out[2], testimonial]];
       }
-      if (index % 2 === 0) {
+      if (index % 2 === 1) {
         return [out[0], [...out[1], testimonial], out[2]];
       }
       return [[...out[0], testimonial], out[1], out[2]];

@@ -48,7 +48,8 @@ export default [
       </span>
     ),
     twitter: `kerrtrvs`,
-    avatarPath: `image-3`
+    avatarPath: `image-3`,
+    isShort: true
   },
   {
     name: 'Josh Manders',
@@ -71,9 +72,9 @@ export default [
     text: (
       <span>
         Until recently, my personal emails were garbage dumps of old
-        subscriptions I've gathered over a decade.{' '}
+        subscriptions I've gathered over a decade. Now,{' '}
         <span styleName="highlight">
-          Now, my inbox only receives the emails that matter most
+          my inbox only receives the emails that matter most
         </span>
         . Leave Me Alone gave me something I didn't even know I wanted: inbox
         sanity!
@@ -104,12 +105,13 @@ export default [
     name: 'Fermin Rodriguez',
     text: (
       <span>
-        If it wasn't for Leave Me Alone I would never have been able to{' '}
+        If it wasn't for Leave Me Alone I would never have been able to
+        unsubscribe from more than 250 subscriptions taking over my inbox. I can
+        now{' '}
         <span styleName="highlight">
-          unsubscribe from more than 250 subscriptions
-        </span>{' '}
-        taking over my inbox. I can now take care of the really important emails
-        without all the noise.
+          take care of the really important emails without all the noise
+        </span>
+        .
       </span>
     ),
     twitter: `Ferminrp`,
@@ -121,12 +123,12 @@ export default [
     text: (
       <span>
         Since using Leave Me Alone months ago, I have had a much less noisy
-        inbox. By getting rid of all of those marketing emails, email is a much
-        more enjoyable experience.{' '}
+        inbox. By{' '}
         <span styleName="highlight">
-          Definitely a great investment for my future sanity
+          getting rid of all of those marketing emails
         </span>
-        !
+        , email is a much more enjoyable experience. Definitely a great
+        investment for my future sanity!
       </span>
     ),
     twitter: `unindie`,
@@ -158,7 +160,8 @@ export default [
       </span>
     ),
     twitter: `vertis`,
-    avatarPath: `image-10`
+    avatarPath: `image-10`,
+    isShort: true
   },
 
   {
@@ -182,13 +185,14 @@ export default [
     name: 'Dianna Allen',
     text: (
       <span>
+        Leave Me Alone cleared my inbox from any and all junk. Not only that,
+        but I was able to{' '}
         <span styleName="highlight">
-          Leave Me Alone cleared my inbox from any and all junk.
-        </span>{' '}
-        Not only that, but I was able to easily unsubscribe from past
-        newsletters that I have no interest in receiving anymore. Now, I spend
-        minimal time checking my email every day. And when I do get an email, I
-        know it's important.
+          easily unsubscribe from past newsletters that I have no interest in
+          receiving anymore
+        </span>
+        . Now, I spend minimal time checking my email every day. And when I do
+        get an email, I know it's important.
       </span>
     ),
     twitter: `diannamallen`,
@@ -206,7 +210,25 @@ export default [
       </span>
     ),
     twitter: `rbossk757`,
-    avatarPath: ``
+    avatarPath: `image-13`
+  },
+
+  {
+    name: 'Steph Smith',
+    text: (
+      <span>
+        I love how Leave Me Alone{' '}
+        <span styleName="highlight">
+          seamlessly allows you to visualize your inbox and then remove the junk
+          - permanently
+        </span>
+        ! I found the product so valuable that I ended up buying scans for my
+        entire team. In the age of constant distraction, it's nice to have a
+        tool helping me have a clearer mind (and inbox!).
+      </span>
+    ),
+    twitter: `stephsmithio`,
+    avatarPath: `image-14`
   }
 
   // {
