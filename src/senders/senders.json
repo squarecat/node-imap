@@ -1,13 +1,13 @@
 [
   {
-    "name": "facebook",
-    "label": "Facebook",
-    "sender": "facebook.com",
-    "domain": "facebook.com",
+    "name": "721",
+    "label": "721",
+    "sender": "721.ca",
+    "domain": "721.ca",
     "seen": 1,
     "unsubscribes": 0,
-    "addresses": ["noreply@facebook.ca"],
-    "slug": "/how-to-unsubscribe-from-facebook-emails"
+    "addresses": ["naoqavody@721.ca"],
+    "slug": "/how-to-unsubscribe-from-721-emails"
   },
   {
     "name": "figma",
@@ -62,7 +62,7 @@
   {
     "name": "letsencrypt",
     "label": "Letsencrypt",
-    "score": 0.9990530303030303,
+    "score": 0.998895202020202,
     "sender": "letsencrypt.org",
     "domain": "letsencrypt.org",
     "seen": 2,
@@ -121,6 +121,16 @@
     "unsubscribes": 0,
     "addresses": ["paypal@mail.paypal.com"],
     "slug": "/how-to-unsubscribe-from-paypal-emails"
+  },
+  {
+    "name": "buffer",
+    "label": "Buffer",
+    "sender": "buffermail.com",
+    "domain": "buffermail.com",
+    "seen": 2,
+    "unsubscribes": 0,
+    "addresses": ["yourfriends@buffermail.com", "hello@buffermail.com"],
+    "slug": "/how-to-unsubscribe-from-buffer-emails"
   },
   {
     "name": "mydns",
@@ -576,16 +586,6 @@
     "slug": "/how-to-unsubscribe-from-travelexpanse-emails"
   },
   {
-    "name": "buffer",
-    "label": "Buffer",
-    "sender": "buffermail.com",
-    "domain": "buffermail.com",
-    "seen": 1,
-    "unsubscribes": 0,
-    "addresses": ["yourfriends@buffermail.com"],
-    "slug": "/how-to-unsubscribe-from-buffer-emails"
-  },
-  {
     "name": "grab",
     "label": "Grab",
     "sender": "grab.com",
@@ -619,7 +619,7 @@
     "name": "expedia",
     "label": "Expedia",
     "sender": "expediamail.com",
-    "domain": "expediamail.com",
+    "domain": "expedia.com",
     "seen": 1,
     "unsubscribes": 0,
     "addresses": ["usmail@expediamail.com"],
@@ -886,6 +886,36 @@
     "unsubscribes": 0,
     "addresses": ["chigusa.nakano@rakuten.com"],
     "slug": "/how-to-unsubscribe-from-rakuten-emails"
+  },
+  {
+    "name": "fiveminutefounder",
+    "label": "Fiveminutefounder",
+    "sender": "fiveminutefounder.com",
+    "domain": "fiveminutefounder.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["louis@fiveminutefounder.com"],
+    "slug": "/how-to-unsubscribe-from-fiveminutefounder-emails"
+  },
+  {
+    "name": "facebook",
+    "label": "Facebook",
+    "sender": "facebookmail.com",
+    "domain": "facebook.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["notification@facebookmail.com"],
+    "slug": "/how-to-unsubscribe-from-facebook-emails"
+  },
+  {
+    "name": "fundamaker",
+    "label": "Fundamaker",
+    "sender": "fundamaker.com",
+    "domain": "fundamaker.com",
+    "seen": 1,
+    "unsubscribes": 0,
+    "addresses": ["jj@fundamaker.com"],
+    "slug": "/how-to-unsubscribe-from-fundamaker-emails"
   },
   {
     "name": "strakh-byt-napugannym",
