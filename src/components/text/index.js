@@ -53,3 +53,7 @@ export const TextLead = ({ prose, children }) => {
   }
   return <span styleName="lead">{children}</span>;
 };
+
+export const TextHighlight = ({ children }) => (
+  <span styleName="highlight">{children}</span>
+);

@@ -39,7 +39,7 @@ const EnterprisePage = () => {
       title="Leave Me Alone for Teams"
       description={`The most efficient businesses work without interruption. Take back control of your office from unwanted spam email.`}
       withContent={false}
-      slug="/enterprise"
+      slug="/teams"
     >
       <div styleName="enterprise-inner">
         <div styleName="container intro-header">
@@ -105,6 +105,20 @@ const EnterprisePage = () => {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div styleName="trustbar">
+        <div styleName="enterprise-inner trustbar-images">
+          {companies.map((company, index) => (
+            <a
+              key={`company-${index}`}
+              styleName="trustbar-img"
+              href={company.url}
+            >
+              <img src={company.logoUrl} />
+            </a>
+          ))}
         </div>
       </div>
 

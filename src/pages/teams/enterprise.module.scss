@@ -98,9 +98,12 @@ h1.tagline {
   margin-top: 150px;
 }
 
-.security,
 .pricing {
   margin-top: 90px;
+}
+
+.security {
+  margin-top: 0;
 }
 
 .features {
@@ -199,18 +202,6 @@ h1.tagline {
   }
 }
 
-.trustbar {
-}
-.trustbar-logos {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  filter: grayscale(1);
-  opacity: 0.6;
-}
-.trustbar-logo {
-}
-
 .pricing {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -272,4 +263,30 @@ h1.tagline {
 
 .cite-link {
   border-bottom: 0;
+}
+
+.trustbar {
+  margin-top: 90px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: #eee;
+}
+
+.trustbar-images {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  filter: grayscale(1);
+  opacity: 0.6;
+
+  > a {
+    display: flex;
+    margin-right: 10px;
+    &:last-child {
+      margin: 0;
+    }
+  }
+}
+.trustbar-img {
 }
