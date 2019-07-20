@@ -44,7 +44,7 @@ export default visProps => (
             <TextLink href="/news">News</TextLink>
           </li>
           <li>
-            <TextLink href="/enterprise">Enterprise</TextLink>
+            <TextLink href="/teams">For Teams</TextLink>
           </li>
           <li>
             <TextLink href="/faq">FAQ</TextLink>

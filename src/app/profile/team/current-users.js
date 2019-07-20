@@ -129,7 +129,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
                     </span>
                     <div styleName="accounts">
                       {user.accounts.map(email => (
-                        <span key={email} styleName="account">
+                        <span key={email} styleName="account" title={email}>
                           {email}
                         </span>
                       ))}

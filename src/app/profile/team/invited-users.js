@@ -42,8 +42,8 @@ function InvitedUsers({ organisationId, invitedUsers }) {
       if (!invitedUsers.length) {
         text = (
           <p>
-            When you invite people to your organisation by email they will show
-            up here until they join.
+            When you invite people to your team by email they will show up here
+            until they join.
           </p>
         );
       } else {

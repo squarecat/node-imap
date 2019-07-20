@@ -30,10 +30,10 @@ export default () => {
     try {
       setMilestoneCompleted('completedOnboardingOrganisation');
       await updateMilestone('completedOnboardingOrganisation');
-      navigate('/app/profile/organisation');
+      navigate('/app/profile/team');
       return false;
     } catch (err) {
-      console.error('failed to complete onboarding organisation');
+      console.error('failed to complete onboarding team');
     }
   };
 
@@ -86,7 +86,7 @@ function Content({
         return (
           <>
             <ModalHeader>
-              Welcome to Leave Me Alone for Enterprise!{' '}
+              Welcome to Leave Me Alone for Teams!{' '}
               <span styleName="onboarding-position">{positionLabel}</span>
             </ModalHeader>
             <p>
@@ -95,15 +95,15 @@ function Content({
               building your business.
             </p>
             <p>
-              Members of the {organisation.name} organisation can unsubscribe
-              from as many emails as they like.
+              Members of the {organisation.name} team can unsubscribe from as
+              many emails as they like.
             </p>
             <img
               styleName="onboarding-example-img"
               src={unsubscribeSpamImage}
               alt="example-image"
             />
-            <p>Let's get started.</p>
+            <p>Let's get started!</p>
           </>
         );
       }
@@ -111,7 +111,7 @@ function Content({
         return (
           <>
             <ModalHeader>
-              Invite your team{' '}
+              Invite your team members{' '}
               <span styleName="onboarding-position">{positionLabel}</span>
             </ModalHeader>
             {organisation.allowAnyUserWithCompanyEmail ? (
@@ -125,7 +125,7 @@ function Content({
               </>
             ) : null}
             <p>
-              You can invite anyone inside or outside your organisation by email
+              You can invite anyone inside or outside your company by email
               address:
             </p>
             <InviteForm organisationId={organisationId} onSuccess={onInvite} />
@@ -147,7 +147,7 @@ function Content({
         return (
           <>
             <ModalHeader>
-              Connect account{' '}
+              Connect your account{' '}
               <span styleName="onboarding-position">{positionLabel}</span>
             </ModalHeader>
             <ConnectAccounts accounts={accounts} onboarding enterprise />
@@ -160,10 +160,44 @@ function Content({
         );
       }
       if (step === 'finish') {
+        let finishContent;
+        if (isBeta) {
+          finishContent = (
+            <>
+              <p>
+                To say thanks for joining us during our beta period we have
+                activated your team for free!
+              </p>
+              <p>We'll now take you to your team management page.</p>
+            </>
+          );
+        }
+        if (organisation.active) {
+          finishContent = (
+            <>
+              <p>
+                Your team has been activated! Members can start unsubscribing
+                and saving time right away.
+              </p>
+              <p>We'll now take you to your team management page.</p>
+            </>
+          );
+        } else {
+          finishContent = (
+            <>
+              <p>
+                Before your team at {organisation.name} can start unsubscribing
+                you need to <TextImportant>activate your team</TextImportant> by
+                adding a payment method.
+              </p>
+              <p>We'll now take you to your team management page to do this.</p>
+            </>
+          );
+        }
         return (
           <>
             <ModalHeader>
-              Activate your organisation{' '}
+              Activate your team{' '}
               <span styleName="onboarding-position">{positionLabel}</span>
             </ModalHeader>
             <p>
@@ -176,28 +210,7 @@ function Content({
                 {organisation.active ? 'Active' : 'Inactive'}
               </span>
             </p>
-            {isBeta ? (
-              <>
-                <p>
-                  To say thanks for joining us during our beta period we have
-                  activated your organisation for free!
-                </p>
-                <p>We'll now take you to your organisation management page.</p>
-              </>
-            ) : (
-              <>
-                <p>
-                  Before your team at {organisation.name} can start
-                  unsubscribing you need to{' '}
-                  <TextImportant>activate your organisation</TextImportant> by
-                  adding a payment method.
-                </p>
-                <p>
-                  We'll now take you to your organisation management page to do
-                  this.
-                </p>
-              </>
-            )}
+            {finishContent}
           </>
         );
       }

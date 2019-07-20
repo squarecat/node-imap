@@ -67,7 +67,6 @@ const userProps = [
   'organisationAdmin',
   'organisationActive',
   'organisation',
-  'isBeta',
   '__migratedFrom'
 ];
 
