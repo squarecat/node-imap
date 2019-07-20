@@ -15,23 +15,9 @@ import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
 import { getAuthError } from '../../../utils/errors';
 import { openChat } from '../../../utils/chat';
+import relativeDate from 'tiny-relative-date';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
-
-export async function updatePassword(oldPassword, password) {
-  return request('/api/me/password', {
-    method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
-    body: JSON.stringify({
-      op: 'update',
-      value: { oldPassword, password }
-    })
-  });
-}
 
 export default () => {
   const [{ loginProvider }] = useUser(u => ({
@@ -157,12 +143,16 @@ function TwoFactorAuth() {
 
 function ChangePassword() {
   const { actions: alertActions } = useContext(AlertContext);
+  const [{ passwordLastUpdatedAt }, { update: updateUser }] = useUser(u => ({
+    passwordLastUpdatedAt: u.passwordLastUpdatedAt
+  }));
 
   async function onSubmit() {
     setState({ ...state, loading: true });
 
     try {
       await updatePassword(state.oldPassword, state.password);
+      updateUser({ passwordLastUpdatedAt: Date.now() });
       setState({
         oldPassword: '',
         password: '',
@@ -202,6 +192,9 @@ function ChangePassword() {
   return (
     <div styleName="security-section">
       <h2>Change password</h2>
+      {passwordLastUpdatedAt ? (
+        <p>Last changed: {relativeDate(passwordLastUpdatedAt)}</p>
+      ) : null}
       <form
         id="change-password-form"
         styleName="change-password-form"
@@ -212,14 +205,14 @@ function ChangePassword() {
         method="post"
       >
         <FormGroup>
-          <FormLabel htmlFor="password">Old Password</FormLabel>
+          <FormLabel htmlFor="oldPassword">Old Password</FormLabel>
           <FormInput
+            name="oldPassword"
             autoFocus={false}
             autoComplete="current-password"
             compact
             value={state.oldPassword}
             type="password"
-            name="oldPassword"
             onChange={e => {
               setState({
                 ...state,
@@ -229,8 +222,9 @@ function ChangePassword() {
           />
         </FormGroup>
         <FormGroup>
-          <FormLabel htmlFor="password">New Password</FormLabel>
+          <FormLabel htmlFor="newPassword">New Password</FormLabel>
           <PasswordInput
+            name="newPassword"
             autoComplete="new-password"
             autoFocus={false}
             checkIfPwned={true}
@@ -244,14 +238,14 @@ function ChangePassword() {
           />
         </FormGroup>
         <FormGroup>
-          <FormLabel htmlFor="password-confirm">Confirm new password</FormLabel>
+          <FormLabel htmlFor="confirmPassword">Confirm new password</FormLabel>
           <FormInput
+            name="confirmPassword"
             autoFocus={false}
             autoComplete="new-password"
             compact
             value={state.confirmPassword}
             type="password"
-            name="confirmPassword"
             onChange={e => {
               setState({
                 ...state,
@@ -290,5 +284,20 @@ function removeTwoFactorAuth(token) {
       'Content-Type': 'application/json; charset=utf-8'
     },
     body: JSON.stringify({ token })
+  });
+}
+
+function updatePassword(oldPassword, password) {
+  return request('/api/me/password', {
+    method: 'PATCH',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({
+      op: 'update',
+      value: { oldPassword, password }
+    })
   });
 }

@@ -21,9 +21,6 @@ const createUserParams = {
     .min(6)
     .required()
     .label('Password must be a minimum of 6 characters'),
-  ['password-confirm']: Joi.string()
-    .valid(Joi.ref('password'))
-    .label('Passwords must match'),
   resetCode: Joi.string()
 };
 

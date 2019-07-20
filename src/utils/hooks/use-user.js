@@ -14,7 +14,6 @@ export default globalReducer(
       };
     },
     update: (state, user) => {
-      console.log('updated user');
       return {
         ...state,
         ...user
@@ -47,7 +46,6 @@ export default globalReducer(
       requiresTwoFactorAuth: bool
     }),
     setMilestoneCompleted: (state, milestone) => {
-      console.log('setMilestoneCompleted', milestone);
       return {
         ...state,
         milestones: {

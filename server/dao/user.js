@@ -39,7 +39,8 @@ const defaultProjection = {
   billing: 1,
   milestones: 1,
   organisationId: 1,
-  organisationAdmin: 1
+  organisationAdmin: 1,
+  passwordLastUpdatedAt: 1
 };
 
 const COL_NAME = 'users';
