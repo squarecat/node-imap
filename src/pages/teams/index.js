@@ -39,7 +39,7 @@ const EnterprisePage = () => {
       title="Leave Me Alone for Teams"
       description={`The most efficient businesses work without interruption. Take back control of your office from unwanted spam email.`}
       withContent={false}
-      slug="/enterprise"
+      slug="/teams"
     >
       <div styleName="enterprise-inner">
         <div styleName="container intro-header">

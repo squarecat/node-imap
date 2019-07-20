@@ -101,8 +101,8 @@ export default () => {
         </li> */}
         {organisationId ? (
           <li styleName="setting-item">
-            <Link styleName="setting-item-link" to="/app/profile/organisation">
-              Organisation
+            <Link styleName="setting-item-link" to="/app/profile/team">
+              Your Team
             </Link>
           </li>
         ) : null}

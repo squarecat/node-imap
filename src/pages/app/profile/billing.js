@@ -24,6 +24,7 @@ import ProfileLayout from '../../../app/profile/layout';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import { openChat } from '../../../utils/chat';
+import organisation from './team';
 import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
@@ -42,7 +43,8 @@ function Billing() {
   const [{ billing = {}, organisationId }, { setBilling }] = useUser(u => {
     return {
       billing: u.billing,
-      organisationId: u.organisationId
+      organisationId: u.organisationId,
+      organisation: u.organisation
     };
   });
 
@@ -69,7 +71,7 @@ function Billing() {
     return (
       <div styleName="billing-section information">
         <h2>Information</h2>
-        <p>Your account belongs to an organisation.</p>
+        <p>Your account belongs to the {organisation.name} team.</p>
         <p>
           You have <TextImportant>unlimited</TextImportant> credits.
         </p>

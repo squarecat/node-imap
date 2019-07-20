@@ -22,7 +22,6 @@ const encryptedUnsubCols = [
 const defaultProjection = {
   _id: 0,
   __migratedFrom: 1,
-  isBeta: 1,
   id: 1,
   email: 1,
   token: 1,

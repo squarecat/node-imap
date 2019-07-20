@@ -3,16 +3,16 @@ import './organisation.module.scss';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { AlertContext } from '../../../../providers/alert-provider';
-import BillingHistory from '../../../../app/profile/organisation/billing-history';
+import BillingHistory from '../../../../app/profile/team/billing-history';
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
-import CurrentUsers from '../../../../app/profile/organisation/current-users';
+import CurrentUsers from '../../../../app/profile/team/current-users';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { FormCheckbox } from '../../../../components/form';
-import InviteForm from '../../../../app/profile/organisation/invite';
+import InviteForm from '../../../../app/profile/team/invite';
 import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
-import PendingInvites from '../../../../app/profile/organisation/invited-users';
+import PendingInvites from '../../../../app/profile/team/invited-users';
 import ProfileLayout from '../../../../app/profile/layout';
 import { TextImportant } from '../../../../components/text';
 import cx from 'classnames';
@@ -23,7 +23,7 @@ import useUser from '../../../../utils/hooks/use-user';
 
 export default () => {
   return (
-    <ProfileLayout pageName="Organisation">
+    <ProfileLayout pageName="Team">
       <ErrorBoundary>
         <Organisation />
       </ErrorBoundary>
@@ -51,7 +51,7 @@ function Organisation() {
     () => {
       if (loading) return <span>Loading...</span>;
       if (!organisation) {
-        return <span>You are not part of an organisation.</span>;
+        return <span>You are not part of a team.</span>;
       }
 
       const {
@@ -131,7 +131,7 @@ const OrganisationStatus = React.memo(({ active, admin, billing = {} }) => {
     return (
       <p>
         Your account is <TextImportant>active</TextImportant>.{' '}
-        {admin ? 'Organisation members' : 'You can'} can start unsubscribing!
+        {admin ? 'Team members' : 'You can'} can start unsubscribing!
       </p>
     );
   }
@@ -140,8 +140,8 @@ const OrganisationStatus = React.memo(({ active, admin, billing = {} }) => {
     return (
       <>
         <p>
-          You <TextImportant>cannot unsubscribe</TextImportant> while the
-          organisation is inactive.
+          You <TextImportant>cannot unsubscribe</TextImportant> while the team
+          is inactive.
         </p>
         <p>Please contact your administrator.</p>
       </>
@@ -223,13 +223,14 @@ const Settings = React.memo(({ loading, organisation }) => {
             {organisation.domain} email address.
           </p>
           <p>
-            You can also invite users outside of your organisation using the
-            form below.
+            You can also invite users outside of your company using the form
+            below.
           </p>
         </>
       ) : (
         <p>
-          Only users you invite with the form below can join. This means{' '}
+          Only users you invite with the form below can join your team. This
+          means{' '}
           <TextImportant>only email addresses on the invite list</TextImportant>{' '}
           can sign-in and be connected.
         </p>
@@ -423,7 +424,7 @@ function BillingInformation({ organisationId, currentUsers }) {
           <>
             <p>
               You are signed up for the{' '}
-              <TextImportant>Enterprise plan</TextImportant> billed at{' '}
+              <TextImportant>Teams plan</TextImportant> billed at{' '}
               <TextImportant>
                 ${(plan.amount / 100).toFixed(2)} per seat
               </TextImportant>

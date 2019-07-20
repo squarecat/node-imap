@@ -1,8 +1,8 @@
 import './faq.module.scss';
 
 import { TextImportant, TextLink } from '../../components/text';
-import { Arrow as ArrowIcon } from '../../components/icons';
 
+import { Arrow as ArrowIcon } from '../../components/icons';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 
@@ -144,12 +144,12 @@ const FaqPage = () => (
       <div styleName="faq-box">
         <h2 styleName="faq-title">Do you have a monthly plan?</h2>
         <p>
-          We offer a monthly subscription for enterprise customers which are
-          billed per seat so that your entire office can clean their inboxes.
+          We offer a monthly subscription for teams which are billed per seat so
+          that your entire office can clean their inboxes.
         </p>
         <p>
-          <TextLink href="/enterprise">
-            Discover Leave Me Alone for Enterprise{' '}
+          <TextLink href="/teams">
+            Discover Leave Me Alone for Teams{' '}
             <ArrowIcon inline width="14" height="14" />
           </TextLink>
         </p>

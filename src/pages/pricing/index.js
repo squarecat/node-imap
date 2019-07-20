@@ -51,7 +51,7 @@ export function Enterprise({ readMore = false }) {
         <li>Email, chat and phone support</li>
       </ul>
       <a
-        href="mailto:hello@leavemealone.app"
+        href="mailto:teams@leavemealone.app"
         className={`beam-me-up-cta beam-me-up-cta-center`}
       >
         Contact us
@@ -59,7 +59,7 @@ export function Enterprise({ readMore = false }) {
       {readMore ? (
         <div styleName="read-more">
           <p>
-            <a href="/enterprise">or read more</a>
+            <a href="/teams">or read more</a>
           </p>
         </div>
       ) : null}
@@ -148,8 +148,8 @@ export default () => {
           <br />
           <p>
             Or learn more about{' '}
-            <TextLink href="/enterprise">
-              Leave Me Alone for Enterprise
+            <TextLink href="/teams">
+              Leave Me Alone for Teams
             </TextLink>
             .
           </p>
