@@ -39,14 +39,14 @@ export async function* fetchMail(
     let dupeSenders = [];
 
     const iterators = [
-      fetchMailApi(client, { accessToken, from, batch }),
-      fetchMailApi(client, {
-        accessToken,
-        from,
-        batch,
-        withContent: true,
-        query: 'unsubscribe'
-      })
+      fetchMailApi(client, { accessToken, from, batch })
+      // fetchMailApi(client, {
+      //   accessToken,
+      //   from,
+      //   batch,
+      //   withContent: true,
+      //   query: 'unsubscribe'
+      // })
     ];
     for (let iter of iterators) {
       let next = await iter.next();
