@@ -19,6 +19,7 @@ import { TextHighlight, TextImportant, TextLink } from '../components/text';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
+import MailListIllustration from '../components/landing/illustration';
 // import { Link } from 'gatsby';
 import { Pricing } from './pricing';
 import Testimonial from '../components/landing/testimonial';
@@ -162,11 +163,15 @@ const IndexPage = () => {
                   click.
                 </p>
               </div>
-              <div className="image-section-img">
-                <img
+              <div
+                className="image-section-img"
+                style={{ flexDirection: 'column' }}
+              >
+                {/* <img
                   src={allSubscriptions}
                   alt="list of subscription emails image"
-                />
+                /> */}
+                <MailListIllustration />
               </div>
             </div>
 
@@ -460,7 +465,7 @@ const items = [
     name: 'Mars Travel 🌝',
     email: '<marketing@travel.com>',
     subject: 'New price alert for your flight outta here - Book!',
-    text: 'Wohoo, that subscription is gone forever! How about this one?'
+    text: 'Woohoo, that subscription is gone forever! How about this one?'
   },
   {
     name: `Stanley's Snakes`,

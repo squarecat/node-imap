@@ -3,8 +3,8 @@ import './senders.module.scss';
 import { TextImportant, TextLink } from '../components/text';
 
 import { Arrow as ArrowIcon } from '../components/icons';
+import MailListIllustration from '../components/landing/illustration';
 import React from 'react';
-import SenderImage from './sender-image';
 import SubpageLayout from '../layouts/subpage-layout';
 import _shuffle from 'lodash.shuffle';
 import broom from '../assets/enterprise/broom.png';
@@ -73,15 +73,7 @@ function SendersPage({ data }) {
           </div>
         </div>
         <div styleName="container-image">
-          <div styleName="unsubscribe-example-block">
-            <div styleName="unsubscribe-illustation" data-name={name} />
-            <div styleName="unsubscribe-illustation-addendum">
-              <span styleName="company-image">
-                <SenderImage name={label} domain={domain} />
-              </span>
-              <span styleName="company-description">{`${label} Emails`}</span>
-            </div>
-          </div>
+          <MailListIllustration sender={{ name, label, domain }} />
         </div>
       </div>
 
