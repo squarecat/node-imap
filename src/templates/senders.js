@@ -105,7 +105,7 @@ function SendersPage({ data }) {
               easy to unsubscribe!
             </p>
             <p>
-              <TextLink href="/learn">
+              <TextLink as="link" linkTo="/learn">
                 Read how Leave Me Alone works{' '}
                 <ArrowIcon inline width="12" height="12" />
               </TextLink>
@@ -127,7 +127,7 @@ function SendersPage({ data }) {
               supports Gmail, G Suite, Outlook, Office 365, Live, and Hotmail.
             </p>
             <p>
-              <TextLink href="/learn">
+              <TextLink as="link" linkTo="/learn">
                 See all Leave Me Alone features{' '}
                 <ArrowIcon inline width="12" height="12" />
               </TextLink>
@@ -150,7 +150,7 @@ function SendersPage({ data }) {
               users unsubscribe from {label} emails.
             </p>
             <p>
-              <TextLink href="/security">
+              <TextLink as="link" linkTo="/security">
                 Learn how we power these stats{' '}
                 <ArrowIcon inline width="12" height="12" />
               </TextLink>
@@ -172,9 +172,19 @@ function SendersPage({ data }) {
         </a>
         <p>Or...</p>
         <p>
-          Check out <TextLink href="/learn">how it works</TextLink>, read about
-          our <TextLink href="/security">security</TextLink>, and find out more{' '}
-          <TextLink href="/about">about us and our mission</TextLink>.
+          Check out{' '}
+          <TextLink as="link" linkTo="/learn">
+            how it works
+          </TextLink>
+          , read about our{' '}
+          <TextLink as="link" linkTo="/security">
+            security
+          </TextLink>
+          , and find out more{' '}
+          <TextLink as="link" linkTo="/about">
+            about us and our mission
+          </TextLink>
+          .
         </p>
       </div>
     </SubpageLayout>

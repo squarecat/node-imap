@@ -148,7 +148,7 @@ export default () => {
           <br />
           <p>
             Or learn more about{' '}
-            <TextLink href="/teams">
+            <TextLink as="link" linkTo="/teams">
               Leave Me Alone for Teams
             </TextLink>
             .
@@ -213,7 +213,11 @@ export default () => {
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
           power our Subscriber Score algorithm. You can read more about this and
-          how we manage all our data <TextLink href="/security">here</TextLink>.
+          how we manage all our data{' '}
+          <TextLink as="link" linkTo="/security">
+            here
+          </TextLink>
+          .
         </p>
 
         <br />
@@ -225,9 +229,19 @@ export default () => {
       <div styleName="more">
         <h2>Want to know more?</h2>
         <p>
-          Check out <TextLink href="/learn">how it works</TextLink>, read about
-          our <TextLink href="/security">security</TextLink>, and find out more{' '}
-          <TextLink href="/about">about us and our mission</TextLink>.
+          Check out{' '}
+          <TextLink as="link" linkTo="/learn">
+            how it works
+          </TextLink>
+          , read about our{' '}
+          <TextLink as="link" linkTo="/security">
+            security
+          </TextLink>
+          , and find out more{' '}
+          <TextLink as="link" linkTo="/about">
+            about us and our mission
+          </TextLink>
+          .
         </p>
       </div>
     </SubPageLayout>

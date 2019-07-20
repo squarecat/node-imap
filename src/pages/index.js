@@ -182,7 +182,7 @@ const IndexPage = () => {
                   hanging on to.
                 </p>
                 <p>
-                  <TextLink href="/learn">
+                  <TextLink as="link" linkTo="/learn">
                     <span>View all features of Leave Me Alone</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
@@ -216,7 +216,7 @@ const IndexPage = () => {
                   data.
                 </p>
                 <p>
-                  <TextLink href="/security">
+                  <TextLink as="link" linkTo="/security">
                     <span>Learn more about security and data management</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
@@ -347,7 +347,7 @@ const IndexPage = () => {
               image={luke}
               centered
             />
-            <TextLink href="/wall-of-love">
+            <TextLink as="link" linkTo="/wall-of-love">
               <span>See all of our customer testimonials</span>{' '}
               <ArrowIcon inline />
             </TextLink>
