@@ -108,6 +108,20 @@ const EnterprisePage = () => {
         </div>
       </div>
 
+      <div styleName="trustbar">
+        <div styleName="enterprise-inner trustbar-images">
+          {companies.map((company, index) => (
+            <a
+              key={`company-${index}`}
+              styleName="trustbar-img"
+              href={company.url}
+            >
+              <img src={company.logoUrl} />
+            </a>
+          ))}
+        </div>
+      </div>
+
       <div styleName="security">
         <div styleName="enterprise-inner">
           <div styleName="image-section">
