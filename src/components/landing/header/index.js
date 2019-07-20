@@ -74,6 +74,9 @@ function LearnMoreDropdown() {
           <DropdownItem>
             <Link to="/faq">FAQ</Link>
           </DropdownItem>
+          <DropdownItem>
+            <Link to="/open">Open Startup</Link>
+          </DropdownItem>
 
           <div styleName="learn-more-extras">
             <DropdownItem>
