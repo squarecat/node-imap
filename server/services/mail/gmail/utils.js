@@ -53,6 +53,7 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
   }
 }
 
+// todo support non-HTML emails also
 function isMailContentUnsubscribable(mailParts) {
   const html = mailParts.find(mp => mp.mimeType === 'text/html');
   if (!html) return false;

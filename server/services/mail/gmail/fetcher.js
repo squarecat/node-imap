@@ -177,6 +177,7 @@ async function* fetchMailApi(
           withContent
         );
       } else {
+        // NOT USED, batch is currently always true
         populatedMessages = await Promise.all(
           messages.map(m => fetchMessageById(client, { id: m.id }))
         );
@@ -205,6 +206,7 @@ async function fetchPage(client, { fields, query, perPage, pageToken }) {
   return { data, nextPageToken };
 }
 
+// NOT USED
 async function fetchMessageById(client, { id }) {
   const fields = 'id,internalDate,labelIds,payload/headers,snippet';
   const { data } = await client.users.messages.get({
