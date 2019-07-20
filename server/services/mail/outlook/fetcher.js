@@ -34,13 +34,13 @@ export async function* fetchMail({ user, account, from }) {
       requestMail({
         accessToken,
         from
-      }),
-      requestMail({
-        accessToken,
-        from,
-        query: 'unsubscribe',
-        withContent: true
       })
+      // requestMail({
+      //   accessToken,
+      //   from,
+      //   query: 'unsubscribe',
+      //   withContent: true
+      // })
     ];
     for (let iter of iterators) {
       let next = await iter.next();
