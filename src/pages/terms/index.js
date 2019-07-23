@@ -5,6 +5,10 @@ export default function Terms() {
   return (
     <SubPageLayout title="Terms of Service" slug="/terms">
       <h1>Terms of Service</h1>
+      <p>
+        Leave Me Alone is owned and operated by{' '}
+        <a href="https://squarecat.io">Squarecat OÜ</a>.
+      </p>
       <h2>Squarecat Terms of Service</h2>
       <h3>1. Terms</h3>
       <p>
@@ -21,10 +25,9 @@ export default function Terms() {
       <ol type="a">
         <li>
           Permission is granted to temporarily download one copy of the
-          materials (information or software) on Squarecat's website for
-          personal, non-commercial transitory viewing only. This is the grant of
-          a license, not a transfer of title, and under this license you may
-          not:
+          materials (information or software) on the website for personal,
+          non-commercial transitory viewing only. This is the grant of a
+          license, not a transfer of title, and under this license you may not:
           <ol type="i">
             <li>modify or copy the materials;</li>
             <li>
@@ -33,7 +36,7 @@ export default function Terms() {
             </li>
             <li>
               attempt to decompile or reverse engineer any software contained on
-              Squarecat's website;
+              the website;
             </li>
             <li>
               remove any copyright or other proprietary notations from the
