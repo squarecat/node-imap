@@ -17,6 +17,7 @@ export async function checkForKeywords(
   failWords = unsubFailKeywords
 ) {
   logger.info('browser: checking for keywords');
+
   const bodyText = await page.evaluate(() =>
     document.body.innerText.toLowerCase()
   );
