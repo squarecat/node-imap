@@ -1,78 +1,109 @@
 import './wall-of-love.module.scss';
 
-import { StaticQuery, graphql } from 'gatsby';
+import React, { useMemo, useState } from 'react';
 
-import Img from 'gatsby-image';
-import React from 'react';
+import _shuffle from 'lodash.shuffle';
+import testimonialData from './testimonials';
+import useMedia from 'react-use/lib/useMedia';
 
-const query = graphql`
-  query TweetImagesQuery {
-    tweetImages: allFile(
-      filter: { sourceInstanceName: { eq: "tweetImages" } }
-      sort: { fields: [relativePath], order: ASC }
-    ) {
-      edges {
-        node {
-          childImageSharp {
-            sizes(maxWidth: 407) {
-              ...GatsbyImageSharpSizes
-            }
-          }
-          relativePath
-        }
-      }
-    }
+const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
+
+export default ({ limit }) => {
+  const isMobile = useMedia('(max-width: 768px)');
+  const isTablet = useMedia('(max-width: 900px)');
+  // const isDesktop = useMedia('(max-width: 1024px)');
+
+  let data = _shuffle(testimonialData);
+  if (limit) {
+    data = data.slice(0, limit);
   }
-`;
 
-export default ({ rowLimit, colLimit }) => {
+  const columns = useMemo(
+    () => {
+      if (isMobile) {
+        return getCols(data, 1);
+      }
+      if (isTablet) {
+        return getCols(data, 2);
+      }
+      return getCols(data);
+    },
+    [isMobile, isTablet, data]
+  );
+
   return (
-    <>
-      <div styleName="tweet-wall">
-        <div styleName="tweet-box">
-          <StaticQuery
-            query={query}
-            render={data => {
-              const colOne = data.tweetImages.edges.slice(0, 3);
-              const colTwo = data.tweetImages.edges.slice(3, 6);
-              const colThree = data.tweetImages.edges.slice(6, 9);
-              return (
-                <>
-                  <Col tweets={colOne} />
-                  <Col tweets={colTwo} />
-                  <Col tweets={colThree} />
-                </>
-              );
-            }}
-          />
+    <div styleName="testimonials">
+      {columns.map((col, index) => (
+        <div styleName="col" key={`col-${index}`}>
+          {col.map(testimonial => (
+            <Box key={testimonial.name} testimonial={testimonial} />
+          ))}
         </div>
-      </div>
-    </>
+      ))}
+    </div>
   );
 };
 
-const Col = ({ tweets }) => (
-  <div styleName="col">
-    {tweets.map(({ node }, index) => {
-      const handle = /\d+-(.*).png$/.exec(node.relativePath)[1];
-      return (
-        node.childImageSharp && ( // have to filter out null fields from bad data
-          <a
-            key={handle}
-            styleName="twitter-tweet"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://twitter.com/${handle}`}
-          >
-            <Img
-              key={`tweet-${index}`}
-              sizes={node.childImageSharp.sizes}
-              alt={`Testimonial for Leave Me Alone from @${handle}`}
-              title={`Leave Me Alone testimonial on Twitter by @${handle}`}
-            />
-          </a>
-        )
-      );
-    })}
-  </div>
-);
+function Box({ testimonial }) {
+  const { name, text, twitter, avatarPath } = testimonial;
+  const avatarLetter = name
+    .split(' ')
+    .map(a => a[0])
+    .slice(0, 2)
+    .join('');
+
+  return (
+    <div styleName="wrapper">
+      <div styleName="box">
+        <div styleName="img">
+          {avatarPath ? (
+            <img src={`${BASE_IMG_URL}/${avatarPath}.jpg`} />
+          ) : (
+            <span styleName="avatar-letter">{avatarLetter}</span>
+          )}
+        </div>
+        <div styleName="content">
+          <p styleName="text">{text}</p>
+          {twitter ? (
+            <a href={`https://twitter.com/${twitter}`} styleName="twitter-link">
+              <span styleName="name">{name}</span>
+            </a>
+          ) : (
+            <span styleName="name">{name}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function getCols(data, limit = 3) {
+  if (limit === 1) {
+    return [[...data]];
+  }
+
+  if (limit === 2) {
+    return data.reduce(
+      (out, testimonial, index) => {
+        if (index % 2 === 0) {
+          return [out[0], [...out[1], testimonial]];
+        }
+        return [[...out[0], testimonial], out[1]];
+      },
+      [[], []]
+    );
+  }
+
+  return data.reduce(
+    (out, testimonial, index) => {
+      if (index % 3 === 2) {
+        return [out[0], out[1], [...out[2], testimonial]];
+      }
+      if (index % 2 === 1) {
+        return [out[0], [...out[1], testimonial], out[2]];
+      }
+      return [[...out[0], testimonial], out[1], out[2]];
+    },
+    [[], [], []]
+  );
+}

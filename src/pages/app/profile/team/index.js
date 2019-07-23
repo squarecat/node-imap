@@ -340,6 +340,7 @@ function Billing({ organisation }) {
         <h2>Billing Details</h2>
 
         {isBeta ? <p>All usage is free during the beta!</p> : null}
+        {active && !card ? <p>Your team has been activated for free!</p> : null}
 
         {subscriptionId ? (
           <BillingInformation organisationId={id} currentUsers={currentUsers} />

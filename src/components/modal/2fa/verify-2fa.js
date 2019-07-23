@@ -1,5 +1,6 @@
-import '../modal.module.scss';
+import './2fa.module.scss';
 
+import { FormGroup, FormNotification } from '../../form';
 import { ModalBody, ModalFooter, ModalHeader } from '..';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -36,7 +37,7 @@ export default ({ action }) => {
   );
 
   return (
-    <>
+    <div styleName="two-factor-modal">
       <ModalBody compact>
         <ModalHeader>Two-factor Auth Required</ModalHeader>
 
@@ -44,17 +45,19 @@ export default ({ action }) => {
         <p>
           Open your authentication app and enter the code for Leave Me Alone.
         </p>
-        <TwoFactorInput
-          action={action}
-          onComplete={(isVer, { token }) =>
-            setVerified({ isVerified: isVer, token })
-          }
-          onLoading={is2faLoading => setLoading(is2faLoading)}
-        />
+        <FormGroup>
+          <TwoFactorInput
+            action={action}
+            onComplete={(isVer, { token }) =>
+              setVerified({ isVerified: isVer, token })
+            }
+            onLoading={is2faLoading => setLoading(is2faLoading)}
+          />
+        </FormGroup>
         {isVerified === false ? (
-          <p>
+          <FormNotification error>
             Verification failed. Please check you have entered the correct code
-          </p>
+          </FormNotification>
         ) : null}
       </ModalBody>
       <ModalFooter>
@@ -66,11 +69,11 @@ export default ({ action }) => {
           basic
           loading={isLoading}
           disabled={!isVerified}
-          onClick={() => onClose({ verified: isVerified })}
+          onClick={() => close({ verified: isVerified })}
         >
           Confirm
         </Button>
       </ModalFooter>
-    </>
+    </div>
   );
 };
