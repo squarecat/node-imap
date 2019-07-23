@@ -1,28 +1,18 @@
 import './wall-of-love.module.scss';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
-import _shuffle from 'lodash.shuffle';
 import testimonialData from './testimonials';
 import useMedia from 'react-use/lib/useMedia';
 
 const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
 
-export default ({ limit }) => {
+export default () => {
   const isMobile = useMedia('(max-width: 768px)');
   const isTablet = useMedia('(max-width: 900px)');
   // const isDesktop = useMedia('(max-width: 1024px)');
 
-  const data = useMemo(
-    () => {
-      let d = _shuffle(testimonialData);
-      if (limit) {
-        d = d.slice(0, limit);
-      }
-      return d;
-    },
-    [limit]
-  );
+  const data = testimonialData;
 
   const columns = useMemo(
     () => {
