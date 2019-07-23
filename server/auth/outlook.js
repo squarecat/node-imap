@@ -87,6 +87,9 @@ export const ConnectAccountStrategy = new OutlookStrategy(
   },
   async (req, accessToken, refreshToken, profile, done) => {
     try {
+      if (!req.user) {
+        throw AuthError('not authenticated');
+      }
       const parsedProfile = await parseProfile(profile);
       const user = await connectUserOutlookAccount(req.user.id, parsedProfile, {
         refreshToken,
