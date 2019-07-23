@@ -58,9 +58,11 @@ export default [
         I've signed up for a bunch of newsletters over the years and they flood
         me with emails that I just can't be bothered to handle, so I just delete
         them as they come in. Since using Leave Me Alone I don't have to do that
-        anymore. I can officially{' '}
-        <span styleName="highlight">get off unwanted email lists</span>. I love
-        this service.
+        anymore. I can{' '}
+        <span styleName="highlight">
+          officially get off unwanted email lists
+        </span>
+        . I love this service.
       </span>
     ),
     twitter: `joshmanders`,
@@ -229,6 +231,23 @@ export default [
     ),
     twitter: `stephsmithio`,
     avatarPath: `image-14`
+  },
+
+  {
+    name: 'JJ',
+    text: (
+      <span>
+        If you value your time and really hate having to trawl through junk
+        email to get to the important stuff, then Leave Me Alone is your
+        solution. Added to that,{' '}
+        <span styleName="highlight">
+          it’s privacy-focused, simple and easy to use
+        </span>
+        , and beautifully designed.
+      </span>
+    ),
+    twitter: `jjbuildit`,
+    avatarPath: `image-15`
   }
 
   // {
