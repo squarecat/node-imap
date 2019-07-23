@@ -174,7 +174,7 @@ function DangerZone({ organisationAdmin, organisation }) {
 
         {organisationAdmin ? (
           <TextImportant>
-            You are an admin of a the {organisation.name} team. If you wish to
+            You are an admin of the {organisation.name} team. If you wish to
             deactivate your account please contact us.
           </TextImportant>
         ) : (

@@ -74,6 +74,11 @@ export default () => {
             Profile
           </Link>
         </li>
+        <li styleName="setting-item">
+          <Link styleName="setting-item-link" to="/app/profile/accounts">
+            Accounts
+          </Link>
+        </li>
         {organisationId ? null : (
           <li styleName="setting-item">
             <Link styleName="setting-item-link" to="/app/profile/accounts">
