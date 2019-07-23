@@ -9,9 +9,9 @@ export async function doUnsubscribeActions(page) {
     // find button to press
     const $btn = await checkForButton(page);
     if ($btn) {
-      logger.info('browser: clicking and waiting');
+      logger.info('browser-actions: clicking and waiting');
       await clickButton(page, $btn);
-      logger.info('browser: clicked button');
+      logger.info('browser-actions: clicked button');
       hasSuccessKeywords = await checkForKeywords(page);
     }
   }
@@ -22,19 +22,31 @@ export async function doBespokeUnsubscribe(page, url) {
   if (url.includes('quora.com')) {
     return unsubscribeFromQuora(page);
   }
-  throw new Error(`bespoke unsubscribe from ${url} not implemented`);
+  throw new Error(
+    `browser-actions: bespoke unsubscribe from ${url} not implemented`
+  );
 }
 
 export async function clickButton(page, btn) {
-  return Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle0' }),
-    btn.click()
-  ]);
+  try {
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle0', timeout: 15000 }),
+      btn.click()
+    ]);
+  } catch (err) {
+    // if there's a timeout, it could mean that the button
+    // just did an ajax thing, not a page redirect
+    // so go on to check the page for keywords anyway
+    if (err.name === 'TimeoutError') {
+      return;
+    }
+    throw err;
+  }
 }
 
 // bespoke unsub from quora
 export async function unsubscribeFromQuora(page) {
-  logger.info('browser: doing a bespoke unsub from quora');
+  logger.info('browser-actions: doing a bespoke unsub from quora');
   try {
     await page.click('[name=selected_label][value="Off"]');
     const btn = await page.$('.submit_button');
@@ -42,7 +54,7 @@ export async function unsubscribeFromQuora(page) {
     await page.waitForSelector('.PMsgSuccess.Success');
     return true;
   } catch (err) {
-    logger.error('failed to unsubscribe from quora');
+    logger.error('browser-actions: failed to unsubscribe from quora');
     return false;
   }
 }
