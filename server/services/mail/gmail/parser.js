@@ -8,6 +8,17 @@ import {
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
 
+/**
+ * Parser considerations
+ *
+ * - Every mail item passed in has already been checked to determine
+ *   if it is unsubscribable
+ * - Even though it is unsubscribably, the format of the headers might be
+ *   wrong and we can't do anything with them
+ * - Any property can be undefined, how we parse depends on if any critical parts are missing
+ * - We should always try and continue without errors, catches are swallowed
+ *   so that the parsing as a whole doesn't break
+ */
 export function parseMailList(
   mailList = [],
   { ignoredSenderList, unsubscriptions }
@@ -59,8 +70,8 @@ function mapMail(mail) {
     if (!unsubscribeMailTo && !unsubscribeLink) {
       return null;
     }
-    const isTrash = labelIds.includes('TRASH');
-    const isSpam = labelIds.includes('SPAM');
+    const isTrash = labelIds && labelIds.includes('TRASH');
+    const isSpam = labelIds && labelIds.includes('SPAM');
     const toHeader = getHeader(payload, 'to') || '';
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
     return {
