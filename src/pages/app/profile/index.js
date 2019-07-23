@@ -15,14 +15,15 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
-  const [{ email, unsubCount, organisationAdmin, loginProvider }] = useUser(
-    u => ({
-      email: u.email,
-      organisationAdmin: u.organisationAdmin,
-      loginProvider: u.loginProvider,
-      unsubCount: u.unsubCount
-    })
-  );
+  const [
+    { email, unsubCount, organisationAdmin, loginProvider, organisation }
+  ] = useUser(u => ({
+    email: u.email,
+    organisationAdmin: u.organisationAdmin,
+    loginProvider: u.loginProvider,
+    unsubCount: u.unsubCount,
+    organisation: u.organisation
+  }));
   return (
     <ProfileLayout pageName="Profile">
       <div styleName="section">
@@ -40,12 +41,15 @@ export default () => {
           <TextImportant>{unsubCount}</TextImportant> emails.
         </p>
       </div>
-      <DangerZone organisationAdmin={organisationAdmin} />
+      <DangerZone
+        organisationAdmin={organisationAdmin}
+        organisation={organisation}
+      />
     </ProfileLayout>
   );
 };
 
-function DangerZone({ organisationAdmin }) {
+function DangerZone({ organisationAdmin, organisation }) {
   const [loading, toggleLoading] = useState(false);
 
   const { open: openModal } = useContext(ModalContext);
@@ -170,8 +174,8 @@ function DangerZone({ organisationAdmin }) {
 
         {organisationAdmin ? (
           <TextImportant>
-            You are an admin of an organisation. If you wish to deactivate your
-            account please contact us.
+            You are an admin of the {organisation.name} team. If you wish to
+            deactivate your account please contact us.
           </TextImportant>
         ) : (
           <>

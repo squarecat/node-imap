@@ -14,18 +14,17 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { TextImportant, TextLink } from '../components/text';
+import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
-// import { Link } from 'gatsby';
+import MailListIllustration from '../components/landing/illustration';
 import { Pricing } from './pricing';
 import Testimonial from '../components/landing/testimonial';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
-import allSubscriptions from '../assets/mail-list-illustration.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import luke from '../assets/luke.jpeg';
@@ -41,25 +40,39 @@ const faker = require('../vendor/faker/locale/en');
 const news = [
   {
     name: 'Fast Company',
-    quote:
-      'No more junk. Although it’s not the first service that promises to unsubscribe you from junk emails, Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
-    shortQuote:
-      'Leave Me Alone doesn’t sell your email data to marketers as some other unsubscribe services do.',
+    quote: (
+      <span>
+        Leave Me Alone{' '}
+        <TextHighlight>doesn’t sell your email data</TextHighlight> to marketers
+        as some other unsubscribe services do.
+      </span>
+    ),
     url:
       'https://www.fastcompany.com/90326825/the-25-best-new-productivity-apps-for-2019',
     logoUrl: 'https://cdn.leavemealone.app/images/news/fast-company-logo.png'
   },
   {
     name: '.xyz',
-    quote:
-      'Wish you could take back control of your inbox and declutter it without having to sacrifice your privacy?',
+    quote: (
+      <span>
+        Wish you could take back control of your inbox and declutter it{' '}
+        <TextHighlight>without having to sacrifice your privacy</TextHighlight>?
+      </span>
+    ),
     url: 'https://gen.xyz/blog/leavemealonexyz',
     logoUrl: 'https://cdn.leavemealone.app/images/news/xyz.png'
   },
   {
     name: 'The Register',
-    quote:
-      'Leave Me Alone make significantly stronger privacy commitments than companies in the data collection business.',
+    quote: (
+      <span>
+        Leave Me Alone make{' '}
+        <TextHighlight>
+          significantly stronger privacy commitments
+        </TextHighlight>{' '}
+        than companies in the data collection business.
+      </span>
+    ),
     url: 'https://www.theregister.co.uk/2019/02/11/google_gmail_developer/',
     logoUrl: 'https://cdn.leavemealone.app/images/news/the-register-logo.png'
   }
@@ -118,7 +131,7 @@ const IndexPage = () => {
 
                 <div className="join-container">
                   <a
-                    href="/signup?source=hero"
+                    href="/signup?ref=hero"
                     className={`beam-me-up-cta`}
                     // state={{ register: true }}
                   >
@@ -149,10 +162,7 @@ const IndexPage = () => {
                 </p>
               </div>
               <div className="image-section-img">
-                <img
-                  src={allSubscriptions}
-                  alt="list of subscription emails image"
-                />
+                <MailListIllustration />
               </div>
             </div>
 
@@ -168,7 +178,7 @@ const IndexPage = () => {
                   hanging on to.
                 </p>
                 <p>
-                  <TextLink href="/learn">
+                  <TextLink as="link" linkTo="/learn">
                     <span>View all features of Leave Me Alone</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
@@ -202,7 +212,7 @@ const IndexPage = () => {
                   data.
                 </p>
                 <p>
-                  <TextLink href="/security">
+                  <TextLink as="link" linkTo="/security">
                     <span>Learn more about security and data management</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
@@ -282,7 +292,7 @@ const IndexPage = () => {
                 </Browser>
               </div> */}
             <a
-              href="/signup?source=providers"
+              href="/signup?ref=providers"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
               Start Unsubscribing!
@@ -309,9 +319,9 @@ const IndexPage = () => {
               Don't take our word for it, read what people are saying about us.
             </p>
             <div className="in-the-news">
-              {news.map(({ quote, shortQuote, logoUrl, url }) => (
+              {news.map(({ quote, logoUrl, url }) => (
                 <div key={url} className="news-item">
-                  <p>"{shortQuote || quote}"</p>
+                  <p>"{quote}"</p>
                   <a target="_" className="news-logo" href={url}>
                     <img src={logoUrl} />
                   </a>
@@ -333,7 +343,7 @@ const IndexPage = () => {
               image={luke}
               centered
             />
-            <TextLink href="/wall-of-love">
+            <TextLink as="link" linkTo="/wall-of-love">
               <span>See all of our customer testimonials</span>{' '}
               <ArrowIcon inline />
             </TextLink>
@@ -344,7 +354,7 @@ const IndexPage = () => {
           <div className="home-container-inner end-stuff">
             {statsContent}
             <a
-              href="/signup?source=footer"
+              href="/signup?ref=footer"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               style={{ margin: '50px auto' }}
             >
@@ -446,7 +456,7 @@ const items = [
     name: 'Mars Travel 🌝',
     email: '<marketing@travel.com>',
     subject: 'New price alert for your flight outta here - Book!',
-    text: 'Wohoo, that subscription is gone forever! How about this one?'
+    text: 'Woohoo, that subscription is gone forever! How about this one?'
   },
   {
     name: `Stanley's Snakes`,
@@ -522,15 +532,14 @@ const getMessage = count => {
   if (count < 250) {
     return `Okay I lied.... Or did I?`;
   }
-  if (count < 320) {
-    return (
-      <span>
-        ...Psst, you're awesome. Use the coupon{' '}
-        <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a huge
-        10% off 😍. Our little secret OK?
-      </span>
-    );
-  }
+
+  return (
+    <span>
+      ...Psst, you're awesome. Use the coupon{' '}
+      <TextImportant>I_REALLY_HATE_SUBSCRIPTIONS</TextImportant> for a huge 10%
+      off 😍. Our little secret OK?
+    </span>
+  );
 };
 function nodes(state, action) {
   switch (action.type) {

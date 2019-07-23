@@ -1,8 +1,8 @@
 import './faq.module.scss';
 
 import { TextImportant, TextLink } from '../../components/text';
-import { Arrow as ArrowIcon } from '../../components/icons';
 
+import { Arrow as ArrowIcon } from '../../components/icons';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 
@@ -62,7 +62,7 @@ const FaqPage = () => (
           this should work, and you'll now be unsubscribed.
         </p>
         <p>
-          <TextLink href="/learn">
+          <TextLink as="link" linkTo="/learn">
             Read how Leave Me Alone works{' '}
             <ArrowIcon inline width="14" height="14" />
           </TextLink>
@@ -82,7 +82,7 @@ const FaqPage = () => (
           our lights on.
         </p>
         <p>
-          <TextLink href="/pricing">
+          <TextLink as="link" linkTo="/pricing">
             View Leave Me Alone pricing{' '}
             <ArrowIcon inline width="14" height="14" />
           </TextLink>
@@ -121,7 +121,7 @@ const FaqPage = () => (
           so we can identify subscription emails and display them to you.
         </p>
         <p>
-          <TextLink href="/security">
+          <TextLink as="link" linkTo="/security">
             Read more about security at Leave Me Alone{' '}
             <ArrowIcon inline width="14" height="14" />
           </TextLink>
@@ -132,8 +132,11 @@ const FaqPage = () => (
         <p>Of course!</p>
         <p>
           You can deactivate your account in your{' '}
-          <TextLink href="/app/profile">account settings</TextLink>. This will
-          delete all of your data, revoke your API keys, and sign you out.
+          <TextLink as="link" linkTo="/app/profile">
+            account settings
+          </TextLink>
+          . This will delete all of your data, revoke your API keys, and sign
+          you out.
         </p>
         <p>
           You will still be able to create an account again to clean your inbox
@@ -144,12 +147,12 @@ const FaqPage = () => (
       <div styleName="faq-box">
         <h2 styleName="faq-title">Do you have a monthly plan?</h2>
         <p>
-          We offer a monthly subscription for enterprise customers which are
-          billed per seat so that your entire office can clean their inboxes.
+          We offer a monthly subscription for teams which are billed per seat so
+          that your entire office can clean their inboxes.
         </p>
         <p>
-          <TextLink href="/enterprise">
-            Discover Leave Me Alone for Enterprise{' '}
+          <TextLink as="link" linkTo="/teams">
+            Discover Leave Me Alone for Teams{' '}
             <ArrowIcon inline width="14" height="14" />
           </TextLink>
         </p>
@@ -166,9 +169,19 @@ const FaqPage = () => (
     <div styleName="bottom-bit">
       <h2>Want to know more?</h2>
       <p>
-        Check out <TextLink href="/learn">how it works</TextLink>, read about
-        our <TextLink href="/security">security</TextLink>, and find out more{' '}
-        <TextLink href="/about">about us and our mission</TextLink>.
+        Check out{' '}
+        <TextLink as="link" linkTo="/learn">
+          how it works
+        </TextLink>
+        , read about our{' '}
+        <TextLink as="link" linkTo="/security">
+          security
+        </TextLink>
+        , and find out more{' '}
+        <TextLink as="link" linkTo="/about">
+          about us and our mission
+        </TextLink>
+        .
       </p>
       <p>
         Still have questions?{' '}

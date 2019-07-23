@@ -7,8 +7,18 @@ import {
 
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
-import { parseSenderEmail } from '../../../dao/occurrences/utils';
 
+/**
+ * Parser considerations
+ *
+ * - Every mail item passed in has already been checked to determine
+ *   if it is unsubscribable
+ * - Even though it is unsubscribably, the format of the headers might be
+ *   wrong and we can't do anything with them
+ * - Any property can be undefined, how we parse depends on if any critical parts are missing
+ * - We should always try and continue without errors, catches are swallowed
+ *   so that the parsing as a whole doesn't break
+ */
 export function parseMailList(
   mailList = [],
   { ignoredSenderList, unsubscriptions }
@@ -45,14 +55,23 @@ function mapMail(mail) {
     if (!payload) {
       throw new Error('mail object has no payload', id);
     }
-    const unsub = payload.headers.find(h => h.name === 'List-Unsubscribe')
-      .value;
-    const { unsubscribeMailTo, unsubscribeLink } = getUnsubValues(unsub);
+    const { parts, headers } = payload;
+    // check headers first
+    const unsubHeader = headers.find(h => h.name === 'List-Unsubscribe');
+    let unsubscribeMailTo, unsubscribeLink;
+    if (unsubHeader) {
+      ({ unsubscribeMailTo, unsubscribeLink } = getUnsubValuesFromHeader(
+        unsubHeader
+      ));
+    } else {
+      unsubscribeLink = getUnsubValuesFromContent(parts);
+    }
+
     if (!unsubscribeMailTo && !unsubscribeLink) {
       return null;
     }
-    const isTrash = labelIds.includes('TRASH');
-    const isSpam = labelIds.includes('SPAM');
+    const isTrash = labelIds && labelIds.includes('TRASH');
+    const isSpam = labelIds && labelIds.includes('SPAM');
     const toHeader = getHeader(payload, 'to') || '';
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
     return {
@@ -72,4 +91,22 @@ function mapMail(mail) {
     logger.error(err);
     return null;
   }
+}
+
+function getUnsubValuesFromHeader(header) {
+  return getUnsubValues(header.value);
+}
+
+function getUnsubValuesFromContent(mailParts) {
+  const html = mailParts.find(mp => mp.mimeType === 'text/html');
+  if (!html) return false;
+  const buff = new Buffer.from(html.body.data, 'base64');
+  const content = buff.toString('ascii');
+  const match = /<a[^>]*?href=["']([^<>]+?)["'][^>]*?>[^<>]*?unsubscribe[^<>]*?<\/a>/gi.exec(
+    content
+  );
+  if (match) {
+    return match[1];
+  }
+  return null;
 }

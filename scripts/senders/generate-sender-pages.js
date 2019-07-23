@@ -3,6 +3,18 @@ require('@babel/polyfill');
 const psl = require('./psl');
 
 const db = require('../../server/dao/db');
+const nameMappings = require('./name-mappings.json');
+const labelMappings = require('./label-mappings.json');
+const domainMappings = require('./domain-mappings.json');
+const _capitalize = require('lodash.capitalize');
+
+function getName(domain) {
+  return nameMappings[domain] || domain;
+}
+
+function getLabel(name) {
+  return labelMappings[name] || _capitalize(name);
+}
 
 async function run() {
   await db.connect();
@@ -27,10 +39,14 @@ async function run() {
   let output = oc.reduce((out, o) => {
     const { sender, seenCount, unsubscribedCount, addresses, score } = o;
     const parsed = psl.parse(sender);
-    let name = parsed.sld;
-    if (name === 'facebookmail') {
-      name = 'facebook';
+    const name = getName(parsed.sld);
+    const label = getLabel(name);
+    const domain = domainMappings[name] || parsed.domain;
+
+    if (name === 'leavemealone') {
+      return out;
     }
+
     if (out[name]) {
       return {
         ...out,
@@ -45,9 +61,10 @@ async function run() {
       ...out,
       [name]: {
         name,
+        label,
         score,
         sender,
-        domain: parsed.domain,
+        domain,
         seen: seenCount,
         unsubscribes: unsubscribedCount,
         addresses,

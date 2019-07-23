@@ -42,6 +42,18 @@ export const DatabaseProvider = ({ children }) => {
       db.prefs.clear()
     ]);
   };
+
+  if (db.verno === 1) {
+    // migrate some data that wasn't stored correctly
+    db.mail
+      .where('status')
+      .equals('unsubscribed')
+      .modify(m => {
+        if (!m.estimatedSuccess && !m.resolved) {
+          m.status = 'failed';
+        }
+      });
+  }
   return (
     <DatabaseContext.Provider value={db}>{children}</DatabaseContext.Provider>
   );

@@ -22,7 +22,6 @@ const encryptedUnsubCols = [
 const defaultProjection = {
   _id: 0,
   __migratedFrom: 1,
-  isBeta: 1,
   id: 1,
   email: 1,
   token: 1,
@@ -40,7 +39,8 @@ const defaultProjection = {
   billing: 1,
   milestones: 1,
   organisationId: 1,
-  organisationAdmin: 1
+  organisationAdmin: 1,
+  passwordLastUpdatedAt: 1
 };
 
 const COL_NAME = 'users';
@@ -815,7 +815,8 @@ export async function updatePassword(id, newPassword) {
         $set: {
           'password.salt': password.salt,
           'password.hash': password.hash,
-          lastUpdatedAt: isoDate()
+          lastUpdatedAt: isoDate(),
+          passwordLastUpdatedAt: isoDate()
         },
         $unset: {
           resetCode: 1,

@@ -1,6 +1,6 @@
+import logger from '../utils/logger';
 import { paginationValidation } from './pagination-options';
 import validate from '../utils/validation';
-import logger from '../utils/logger';
 
 export const validateQuery = (type, mappings = {}) => (req, res, next) => {
   if (res.locals.err) return next();
@@ -38,7 +38,7 @@ export const validateBody = (type, { mappings = {}, passthrough = false }) => (
   const { hasError, value, ...error } = validate(type, body);
   if (hasError) {
     logger.error('validation-middleware: body validation error');
-    logger.error(error);
+    logger.error(error.message);
     res.locals.err = error;
     res.locals.body = mapResponse(mappings, body);
     if (passthrough) {

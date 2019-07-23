@@ -7,15 +7,15 @@
 }
 
 .users {
-  @media (max-width: 600px) {
-    // hide cells after first 3
+  @media (max-width: 768px) {
+    // hide last column
     th:nth-child(1n + 4),
     td:nth-child(1n + 4) {
       display: none;
     }
   }
-  @media (max-width: 400px) {
-    // hide cells after first 2
+  @media (max-width: 600px) {
+    // hide last 2 columns
     th:nth-child(1n + 3),
     td:nth-child(1n + 3) {
       display: none;
@@ -58,6 +58,9 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  @media (max-width: 400px) {
+    max-width: 200px;
+  }
 }
 
 .seats,

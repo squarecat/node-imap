@@ -89,8 +89,10 @@ export const ConnectAccountStrategy = new GoogleStrategy(
   },
   async function(req, accessToken, refreshToken, params, profile, done) {
     try {
+      if (!req.user) {
+        throw AuthError('not authenticated');
+      }
       const { expires_in } = params;
-
       const parsedProfile = parseProfile(profile);
       const user = await connectUserGoogleAccount(req.user.id, parsedProfile, {
         refreshToken,

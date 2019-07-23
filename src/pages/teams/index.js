@@ -1,14 +1,14 @@
-import './enterprise.module.scss';
+import './teams.module.scss';
 
 import { TextImportant, TextLink } from '../../components/text';
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import { Enterprise } from '../pricing';
 import EnterpriseEstimator from '../../components/estimator/enterprise';
+import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
-import allSubscriptions from '../../assets/mail-list-illustration.png';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
 import googleLogo from '../../assets/gsuite-logo.png';
@@ -36,13 +36,13 @@ const companies = [
 const EnterprisePage = () => {
   return (
     <SubPageLayout
-      title="Leave Me Alone for Enterprise"
+      title="Leave Me Alone for Teams"
       description={`The most efficient businesses work without interruption. Take back control of your office from unwanted spam email.`}
       withContent={false}
-      slug="/enterprise"
+      slug="/teams"
     >
       <div styleName="enterprise-inner">
-        <div styleName="container intro-header">
+        <div styleName="container">
           <div styleName="container-text">
             <h1 styleName="tagline">Productive Teams Use Leave Me Alone</h1>
             <p styleName="description">
@@ -51,14 +51,14 @@ const EnterprisePage = () => {
             </p>
 
             <a
-              href="mailto:enterprise@leavemealone.app"
+              href="mailto:teams@leavemealone.app"
               className={`beam-me-up-cta`}
             >
               Contact Us
             </a>
           </div>
           <div styleName="container-image">
-            <img src={allSubscriptions} alt="all unsubscriptions" />
+            <MailListIllustration />
           </div>
         </div>
 
@@ -105,6 +105,20 @@ const EnterprisePage = () => {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div styleName="trustbar">
+        <div styleName="enterprise-inner trustbar-images">
+          {companies.map((company, index) => (
+            <a
+              key={`company-${index}`}
+              styleName="trustbar-img"
+              href={company.url}
+            >
+              <img src={company.logoUrl} />
+            </a>
+          ))}
         </div>
       </div>
 
@@ -171,7 +185,7 @@ const EnterprisePage = () => {
               useless!
             </p>
             <p>
-              Our Enterprise prices let every one of your employees completely
+              Our prices for teams let every member of your team completely
               clean their inbox of all unwanted subscriptions for a fixed price
               per user.
             </p>
@@ -184,8 +198,8 @@ const EnterprisePage = () => {
               <img styleName="gsuite" src={googleLogo} />
             </div>
             <p>
-              <a href="mailto:enterprise@leavemealone.app">Contact us</a> for
-              more information or to start setting up your account today!
+              <a href="mailto:teams@leavemealone.app">Contact us</a> for more
+              information or to start setting up your account today!
             </p>
 
             <Testimonial
@@ -204,7 +218,7 @@ const EnterprisePage = () => {
         <div styleName="end-stuff">
           <h2>Find out more about Leave Me Alone for your company</h2>
           <a
-            href="mailto:enterprise@leavemealone.app"
+            href="mailto:teams@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ margin: '50px auto' }}
           >
@@ -212,7 +226,7 @@ const EnterprisePage = () => {
           </a>
           <p>
             Part of a charity or non-profit?{' '}
-            <TextLink href="mailto:enterprise@leavemealone.app">
+            <TextLink href="mailto:teams@leavemealone.app">
               Get in touch
             </TextLink>{' '}
             - we would love to help you!

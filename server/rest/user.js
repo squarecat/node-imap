@@ -33,15 +33,15 @@ import rateLimit from '../middleware/rate-limit';
 import totpAuth from '../middleware/totp-auth';
 import { validateBody } from '../middleware/validation';
 
-const patchPasswordParams = {
-  password: Joi.string()
-    .min(6)
-    .required()
-    .label('Password must be a minimum of 6 characters'),
-  ['password-confirm']: Joi.string()
-    .valid(Joi.ref('password'))
-    .label('Passwords must match')
-};
+// const patchPasswordParams = {
+//   oldPassword: Joi.string()
+//     .required()
+//     .label('Current password is required'),
+//   password: Joi.string()
+//     .min(6)
+//     .required()
+//     .label('Password must be a minimum of 6 characters')
+// };
 
 const isBeta = process.env.NODE_ENV === 'beta';
 const userProps = [
@@ -67,8 +67,8 @@ const userProps = [
   'organisationAdmin',
   'organisationActive',
   'organisation',
-  'isBeta',
-  '__migratedFrom'
+  '__migratedFrom',
+  'passwordLastUpdatedAt'
 ];
 
 export default app => {
@@ -330,9 +330,9 @@ export default app => {
   app.patch(
     '/api/me/password',
     auth,
-    validateBody(patchPasswordParams, {
-      passthrough: false // TODO switch to true and handle here
-    }),
+    // validateBody(patchPasswordParams, {
+    //   passthrough: false // TODO switch to true and handle here
+    // }),
     async (req, res, next) => {
       const { user, body } = req;
       const { id, email } = user;

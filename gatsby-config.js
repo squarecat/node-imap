@@ -15,6 +15,13 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-plugin-sass`,
     {
+      resolve: 'gatsby-plugin-simple-analytics',
+      options: {
+        domain: 'stats.leavemealone.app',
+        metomic: 'analytics'
+      }
+    },
+    {
       resolve: `gatsby-plugin-sitemap`,
       options: sitemapOptions
     },

@@ -4,7 +4,6 @@
 export default () => {
   function patchTimeouts(window) {
     const active = {};
-
     var _setTimeout = window.setTimeout;
     var _clearTimeout = window.clearTimeout;
 
@@ -17,13 +16,14 @@ export default () => {
         // so we have to write it like this
         if (typeof fn === 'string') {
           _setTimeout(fn, 0);
+        } else if (fn.then) {
+          fn.then(deleteT, deleteT);
         } else {
-          if (fn.then) {
-            fn.then(deleteT, deleteT);
-          }
+          fn();
         }
         deleteT();
       }, delay);
+
       active[id] = {
         active: true,
         functionString: fn.toString()

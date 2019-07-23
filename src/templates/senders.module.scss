@@ -41,13 +41,13 @@
   line-height: 20px;
 }
 
-.sender-inner {
-  @extend .subpage-content;
-}
+// .sender-inner {
+//   @extend .subpage-content;
+// }
 
 .container-text {
   @media (max-width: 900px) {
-    margin-bottom: 0;
+    margin-bottom: 70px;
   }
 }
 
@@ -125,7 +125,7 @@ h1.tagline {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   grid-column-gap: 50px;
 
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
     margin-top: 90px;
@@ -137,7 +137,7 @@ h1.tagline {
     font-size: 14px;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     font-size: 16px;
   }
 }
@@ -216,74 +216,17 @@ h1.tagline {
   max-width: 280px;
   margin-top: 20px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     margin: 20px auto 0 auto;
   }
 }
 
-.unsubscribe-illustation {
-  background-image: url(../assets/mail-list-illustration-facebook-amazon.png);
-  width: 410px;
-  height: 300px;
-  background-size: 410px auto;
-  background-repeat: no-repeat;
-  background-position: center center;
-
-  [data-name='facebook'],
-  [data-name='amazon'] {
-    background-image: url(../assets/mail-list-illustration-twitter-walmart.png);
-  }
-
-  @media (max-width: 450px) {
-    width: 350px;
-    height: 180px;
-    background-size: 350px auto;
-  }
-}
-
-.unsubscribe-example-block {
-  position: relative;
-}
-
-.unsubscribe-illustation-addendum {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  padding: 0 20px;
-
-  @media (max-width: 450px) {
-    font-size: 11px;
-    padding: 0 17px;
-  }
-}
-
-.company-image {
-  height: 36px;
-  width: 36px;
-  overflow: hidden;
-  border-radius: 2px;
-  display: flex;
-  align-items: center;
-
-  img {
-    max-width: 100%;
-  }
-
-  @media (max-width: 450px) {
-    height: 30px;
-    width: 30px;
-  }
-}
-
-.company-description {
-  margin-left: 14px;
+.email-address,
+.suggestion {
+  color: $color-red;
+  font-weight: bolder;
 }
 
 .email-address {
-  color: rgba(231, 57, 48, 0.749);
-  font-weight: bolder;
   word-break: break-all;
 }

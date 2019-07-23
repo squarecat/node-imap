@@ -1,8 +1,8 @@
 import { doRequest, getOutlookAccessToken } from './access';
+import { getFilterString, getSearchString } from './utils';
 
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
-import { getSearchString } from './utils';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
@@ -24,40 +24,55 @@ export async function* fetchMail({ user, account, from }) {
     let dupeCache = {};
     let dupeSenders = [];
     logger.info(
-      `outlook-fetcher: checking for new mail after ${getSearchString({
+      `outlook-fetcher: checking for new mail after ${getFilterString({
         from
       })} (${user.id}) [estimated ${totalEstimate} mail]`
     );
     // get the folders so we can associate them later
     const mailFolders = await getMailFolders(accessToken);
-    for await (let mail of requestMail({
-      accessToken,
-      from
-    })) {
-      totalEmailsCount = totalEmailsCount + mail.length;
-      progress = progress + mail.length;
-      let unsubscribableMail = parseMailList(mail, {
-        ignoredSenderList,
-        unsubscriptions,
-        mailFolders
-      });
-      const previouslyUnsubbedCount = unsubscribableMail.filter(
-        sm => !sm.subscribed
-      ).length;
-      totalPrevUnsubbedCount = totalPrevUnsubbedCount + previouslyUnsubbedCount;
+    const iterators = [
+      requestMail({
+        accessToken,
+        from
+      })
+      // requestMail({
+      //   accessToken,
+      //   from,
+      //   query: 'unsubscribe',
+      //   withContent: true
+      // })
+    ];
+    for (let iter of iterators) {
+      let next = await iter.next();
+      while (!next.done) {
+        const mail = next.value;
+        totalEmailsCount = totalEmailsCount + mail.length;
+        progress = progress + mail.length;
+        let unsubscribableMail = parseMailList(mail, {
+          ignoredSenderList,
+          unsubscriptions,
+          mailFolders
+        });
+        const previouslyUnsubbedCount = unsubscribableMail.filter(
+          sm => !sm.subscribed
+        ).length;
+        totalPrevUnsubbedCount =
+          totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
-      if (unsubscribableMail.length) {
-        const {
-          dupes: newDupeCache,
-          deduped,
-          dupeSenders: newDupeSenders
-        } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
-        dupeCache = newDupeCache;
-        dupeSenders = newDupeSenders;
-        totalUnsubCount = totalUnsubCount + deduped.length;
-        yield { type: 'mail', data: deduped };
+        if (unsubscribableMail.length) {
+          const {
+            dupes: newDupeCache,
+            deduped,
+            dupeSenders: newDupeSenders
+          } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
+          dupeCache = newDupeCache;
+          dupeSenders = newDupeSenders;
+          totalUnsubCount = totalUnsubCount + deduped.length;
+          yield { type: 'mail', data: deduped };
+        }
+        yield { type: 'progress', data: { progress, total: totalEstimate } };
+        next = await iter.next();
       }
-      yield { type: 'progress', data: { progress, total: totalEstimate } };
     }
     logger.info(
       `outlook-fetcher: finished scan (${user.id}) [took ${(Date.now() -
@@ -78,16 +93,30 @@ export async function* fetchMail({ user, account, from }) {
   }
 }
 
-async function* requestMail({ accessToken, from }) {
+async function* requestMail({
+  accessToken,
+  from,
+  query = '',
+  withContent = false
+}) {
   try {
-    const query = getSearchString({
+    let search;
+    const filter = getFilterString({
       from
     });
+    if (query) {
+      search = getSearchString({
+        from,
+        query
+      });
+    }
     let page = 0;
     let limit = 100;
     do {
       const { value: data } = await request(accessToken, {
-        filter: query,
+        filter,
+        search,
+        withContent,
         page,
         limit
       });
@@ -95,6 +124,10 @@ async function* requestMail({ accessToken, from }) {
         break;
       }
       yield data;
+      // no pages if withContent, so break after first page
+      if (withContent) {
+        break;
+      }
       page = page + 1;
     } while (true);
   } catch (err) {
@@ -105,25 +138,54 @@ async function* requestMail({ accessToken, from }) {
 
 export async function request(
   accessToken,
-  { filter, folder = 'AllItems', page = 0, limit = 100 } = {}
+  {
+    search = '',
+    filter,
+    folder = 'AllItems',
+    withContent = false,
+    page = 0,
+    limit = 100
+  } = {}
 ) {
   try {
-    return doRequest(getUrl({ filter, folder, page, limit }), accessToken);
+    return doRequest(
+      getUrl({ search, filter, folder, page, limit, withContent }),
+      accessToken
+    );
   } catch (err) {
     logger.error('outlook-access: failed to send request to api', err.message);
     throw err;
   }
 }
 
-function getUrl({ filter, folder = 'AllItems', page = 0, limit = 100 } = {}) {
+function getUrl({
+  search,
+  filter,
+  folder = 'AllItems',
+  page = 0,
+  limit = 100,
+  withContent = false
+} = {}) {
   const url = [folder, 'messages'].join('/');
-  const args = [
-    `$top=${limit}`,
-    `$skip=${limit * page}`,
-    `$select=from,toRecipients,subject,bodyPreview,ParentFolderId,id,internetMessageHeaders`,
-    `$filter=${filter}`
-  ].join('&');
-  return `${url}?${args}`;
+  let select =
+    'from,toRecipients,subject,bodyPreview,ParentFolderId,id,internetMessageHeaders';
+  if (withContent) {
+    select = `${select},body`;
+  }
+  let args = [`$select=${select}`];
+  if (search) {
+    // You cannot use $filter or $orderby in a search request.
+    // You can only get up to 250 results from a $search request.
+    args = [...args, `$search=${search}`];
+  } else {
+    args = [
+      ...args,
+      `$filter=${filter}`,
+      `$top=${limit}`,
+      `$skip=${limit * page}`
+    ];
+  }
+  return `${url}?${args.join('&')}`;
 }
 
 async function getMailFolders(accessToken) {

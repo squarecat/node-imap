@@ -39,7 +39,7 @@ function OrgBillingHistory({ organisationId }) {
       return (
         <>
           <div styleName="table-text-content">
-            <h2>Invoice history</h2>
+            <h2>Invoice History</h2>
             {text}
           </div>
           <ErrorBoundary>

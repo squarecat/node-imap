@@ -8,19 +8,19 @@ export function getConnectError(reason) {
     case 'not-invited':
       return {
         message:
-          'Cannot connect account because it is not invited to your organisation.',
+          'Cannot connect account because it is not invited to your team.',
         level: 'warning'
       };
     case 'existing-member':
       return {
         message:
-          'Cannot connect account because it is already in use in your organisation.',
+          'Cannot connect account because it is already in use in your team.',
         level: 'warning'
       };
     case 'invalid-domain':
       return {
         message:
-          'Cannot connect account because it does not belong to your organisation domain.',
+          'Cannot connect account because it does not belong to your team domain.',
         level: 'warning'
       };
     case 'auth-provider-error':
@@ -158,16 +158,14 @@ export function getUnsubscribeAlert({
     case 'organisation-inactive': {
       return {
         ...options,
-        id: 'organisation-inactive-warning',
         message: `Unsubscribe to ${
           mail.fromEmail
-        } failed because your organisation is inactive, please contact your administrator.`
+        } failed because your team is inactive, please contact your administrator.`
       };
     }
     case 'insufficient-credits': {
       return {
         ...options,
-        id: 'insufficient-credits-warning',
         message: `Unsubscribe to ${
           mail.fromEmail
         } failed because you have insufficient credits`,

@@ -53,7 +53,7 @@ function ActivityHistory() {
 
       return (
         <>
-          <p styleName="content">{text}</p>
+          <div styleName="content">{text}</div>
           <ErrorBoundary>
             <Table>
               <tbody>

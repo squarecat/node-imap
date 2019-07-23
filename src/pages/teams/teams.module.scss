@@ -6,7 +6,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-gap: 70px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     display: flex;
     flex-direction: column;
     max-width: 600px;
@@ -14,7 +14,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 40px 0;
+    // padding: 40px 0;
 
     a {
       margin: 0 auto;
@@ -27,23 +27,19 @@
 }
 
 .container-text {
-  @media (max-width: 768px) {
-    margin-bottom: 70px;
-  }
 }
 
 .container-image {
   display: flex;
   align-items: center;
-}
+  text-align: right;
 
-.intro-header {
-  .container-image {
-    text-align: right;
-
-    @media (max-width: 768px) {
-      max-width: 500px;
-    }
+  @media (max-width: 900px) {
+    max-width: 500px;
+    margin: 70px auto 0;
+  }
+  @media (max-width: 400px) {
+    margin: 40px auto 0;
   }
 }
 
@@ -65,7 +61,7 @@ h1.tagline {
     max-width: 340px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     margin: 0 auto 30px auto;
   }
 
@@ -75,9 +71,8 @@ h1.tagline {
   }
 
   @media (max-width: 400px) {
-    font-size: 22px;
-    line-height: 30px;
-    margin: 0 auto 20px auto;
+    font-size: 25px;
+    line-height: 36px;
   }
 }
 
@@ -87,7 +82,7 @@ h1.tagline {
   line-height: 28px;
 
   @media (max-width: 400px) {
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     font-size: 16px;
     line-height: 22px;
   }
@@ -98,9 +93,12 @@ h1.tagline {
   margin-top: 150px;
 }
 
-.security,
 .pricing {
   margin-top: 90px;
+}
+
+.security {
+  margin-top: 0;
 }
 
 .features {
@@ -199,18 +197,6 @@ h1.tagline {
   }
 }
 
-.trustbar {
-}
-.trustbar-logos {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  filter: grayscale(1);
-  opacity: 0.6;
-}
-.trustbar-logo {
-}
-
 .pricing {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -272,4 +258,38 @@ h1.tagline {
 
 .cite-link {
   border-bottom: 0;
+}
+
+.trustbar {
+  margin-top: 90px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: #eee;
+  height: 84px;
+}
+
+.trustbar-images {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  filter: grayscale(1);
+
+  @media (max-width: 900px) {
+    padding: 20px;
+  }
+}
+.trustbar-img {
+  display: flex;
+  margin-right: 15px;
+  opacity: 0.6;
+  transition: opacity 200ms ease-in-out;
+
+  &:last-child {
+    margin: 0;
+  }
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
