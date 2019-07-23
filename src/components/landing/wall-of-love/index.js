@@ -13,10 +13,16 @@ export default ({ limit }) => {
   const isTablet = useMedia('(max-width: 900px)');
   // const isDesktop = useMedia('(max-width: 1024px)');
 
-  let data = _shuffle(testimonialData);
-  if (limit) {
-    data = data.slice(0, limit);
-  }
+  const data = useMemo(
+    () => {
+      let d = _shuffle(testimonialData);
+      if (limit) {
+        d = d.slice(0, limit);
+      }
+      return d;
+    },
+    [limit]
+  );
 
   const columns = useMemo(
     () => {
@@ -31,17 +37,20 @@ export default ({ limit }) => {
     [isMobile, isTablet, data]
   );
 
-  return (
-    <div styleName="testimonials">
-      {columns.map((col, index) => (
+  const content = useMemo(
+    () => {
+      return columns.map((col, index) => (
         <div styleName="col" key={`col-${index}`}>
           {col.map(testimonial => (
             <Box key={testimonial.name} testimonial={testimonial} />
           ))}
         </div>
-      ))}
-    </div>
+      ));
+    },
+    [columns]
   );
+
+  return <div styleName="testimonials">{content}</div>;
 };
 
 function Box({ testimonial }) {

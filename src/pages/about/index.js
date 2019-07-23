@@ -101,13 +101,23 @@ export default function About() {
             We're Danielle and James, a couple of independent founders.
           </p>
           <p>
-            We work on products that help people because it's rewarding and we
-            love it, which we think is a good reason to do just about anything!
+            Between us we have; <strong>lead front-end teams</strong> for the UK
+            Governments biggest software engineering department, spoken at (and
+            organised!) <strong>international dev conferences</strong>, been
+            among the first employees of <strong>pioneering UK startups</strong>
+            , <strong>taught young students</strong> the basics of programming,
+            and delivered <strong>consistently successful software</strong> as
+            freelancers.
+          </p>
+          <p>
+            Now we work on products that help people because it's rewarding and
+            we love it, which we think is a good reason to do just about
+            anything!
           </p>
           <p>
             We're building Leave Me Alone on our own without funding or outside
             support. We're real people (not the huskies!) looking to help you,
-            and others like you.
+            and others like you. ❤️
           </p>
         </div>
         <div styleName="image-section-img">
