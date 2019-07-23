@@ -1,14 +1,14 @@
-import './enterprise.module.scss';
+import './teams.module.scss';
 
 import { TextImportant, TextLink } from '../../components/text';
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import { Enterprise } from '../pricing';
 import EnterpriseEstimator from '../../components/estimator/enterprise';
+import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
-import allSubscriptions from '../../assets/mail-list-illustration.png';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
 import googleLogo from '../../assets/gsuite-logo.png';
@@ -42,7 +42,7 @@ const EnterprisePage = () => {
       slug="/teams"
     >
       <div styleName="enterprise-inner">
-        <div styleName="container intro-header">
+        <div styleName="container">
           <div styleName="container-text">
             <h1 styleName="tagline">Productive Teams Use Leave Me Alone</h1>
             <p styleName="description">
@@ -58,7 +58,7 @@ const EnterprisePage = () => {
             </a>
           </div>
           <div styleName="container-image">
-            <img src={allSubscriptions} alt="all unsubscriptions" />
+            <MailListIllustration />
           </div>
         </div>
 

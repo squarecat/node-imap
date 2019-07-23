@@ -20,13 +20,11 @@ import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import MailListIllustration from '../components/landing/illustration';
-// import { Link } from 'gatsby';
 import { Pricing } from './pricing';
 import Testimonial from '../components/landing/testimonial';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
-import allSubscriptions from '../assets/mail-list-illustration.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import luke from '../assets/luke.jpeg';
@@ -163,14 +161,7 @@ const IndexPage = () => {
                   click.
                 </p>
               </div>
-              <div
-                className="image-section-img"
-                style={{ flexDirection: 'column' }}
-              >
-                {/* <img
-                  src={allSubscriptions}
-                  alt="list of subscription emails image"
-                /> */}
+              <div className="image-section-img">
                 <MailListIllustration />
               </div>
             </div>
