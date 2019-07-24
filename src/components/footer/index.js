@@ -1,19 +1,15 @@
-import { FacebookIcon, MailIcon, TwitterIcon } from '../icons';
+import './footer.module.scss';
+
+import { FacebookIcon, LinkedInIcon, MailIcon, TwitterIcon } from '../icons';
 
 import { Link } from 'gatsby';
 import React from 'react';
 import { TextLink } from '../text';
-import cx from 'classnames';
-import styles from './footer.module.scss';
 
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
-export default visProps => (
-  <div
-    className={cx(styles.footer, {
-      [styles.subpage]: visProps.subpage
-    })}
-  >
+export default () => (
+  <div styleName="footer">
     <div styleName="footer-inner">
       <div styleName="footer-intro">
         <Link to="/" styleName="footer-logo">
@@ -31,6 +27,7 @@ export default visProps => (
       </div>
       <div styleName="footer-links">
         <ul styleName="footer-nav">
+          <h4 styleName="footer-nav-title">Company</h4>
           <li>
             <TextLink href="/about">About us</TextLink>
           </li>
@@ -41,47 +38,38 @@ export default visProps => (
             <TextLink href="/learn">How it works</TextLink>
           </li>
           <li>
-            <TextLink href="/news">News</TextLink>
+            <TextLink href="/news">In the news</TextLink>
           </li>
           <li>
             <TextLink href="/teams">For Teams</TextLink>
           </li>
           <li>
-            <TextLink href="/faq">FAQ</TextLink>
+            <TextLink undecorated href="mailto:hello@leavemealone.app">
+              Contact
+            </TextLink>
           </li>
         </ul>
         <ul styleName="footer-nav">
-          <li>
-            <TextLink href="/privacy">Privacy</TextLink>
-          </li>
-          <li>
-            <TextLink href="/terms">Terms</TextLink>
-          </li>
+          <h4 styleName="footer-nav-title">Privacy</h4>
           <li>
             <TextLink href="/security">Security</TextLink>
           </li>
           <li>
-            <TextLink target="_" href="http://leavemealone.releasepage.co">
-              Releases
-            </TextLink>
+            <TextLink href="/privacy">Privacy policy</TextLink>
           </li>
           <li>
-            <TextLink target="_blank" rel="noopener noreferrer" href="/roadmap">
-              Roadmap
-            </TextLink>
-          </li>
-          <li>
-            <TextLink target="_" href="https://blog.leavemealone.app">
-              Blog
-            </TextLink>
+            <TextLink href="/terms">Terms of use</TextLink>
           </li>
         </ul>
         <ul styleName="footer-nav">
+          <h4 styleName="footer-nav-title">Support</h4>
           <li>
-            <TextLink href="/open">Open stats</TextLink>
+            <TextLink href="/faq">FAQ</TextLink>
           </li>
           <li>
-            <TextLink href="/wall-of-love">Wall of Love</TextLink>
+            <TextLink target="_" href="https://status.leavemealone.app">
+              Status
+            </TextLink>
           </li>
           <li>
             <TextLink
@@ -89,7 +77,7 @@ export default visProps => (
               rel="noopener noreferrer"
               href="/feedback"
             >
-              Give us feedback
+              Submit feedback
             </TextLink>
           </li>
           <li>
@@ -102,20 +90,37 @@ export default visProps => (
               Manage cookies
             </TextLink>
           </li>
+        </ul>
+        <ul styleName="footer-nav">
+          <h4 styleName="footer-nav-title">Open</h4>
           <li>
-            <TextLink href="https://clearbit.com" target="_">
-              Logos from Clearbit
+            <TextLink href="/open">Open stats</TextLink>
+          </li>
+          <li>
+            <TextLink href="/wall-of-love">Wall of Love</TextLink>
+          </li>
+          <li>
+            <TextLink target="_blank" rel="noopener noreferrer" href="/roadmap">
+              Roadmap
+            </TextLink>
+          </li>
+          <li>
+            <TextLink href="https://blog.leavemealone.app">Blog</TextLink>
+          </li>
+          <li>
+            <TextLink
+              target="_"
+              href="https://simpleanalytics.com/leavemealone.app"
+            >
+              Analytics
+            </TextLink>
+          </li>
+          <li>
+            <TextLink target="_" href="http://leavemealone.releasepage.co">
+              Releases
             </TextLink>
           </li>
         </ul>
-        {/* <ul styleName="footer-nav">
-        <li>
-          <TextLink href="/login">Log in</TextLink>
-        </li>
-        <li>
-          <TextLink href="/signup">Sign up</TextLink>
-        </li>
-      </ul> */}
       </div>
       <ul styleName="footer-social">
         <li title="@LeaveMeAloneApp">
@@ -131,6 +136,14 @@ export default visProps => (
         <li title="hello@leavemealone.app">
           <TextLink undecorated href="mailto:hello@leavemealone.app">
             <MailIcon width="20" height="20" />
+          </TextLink>
+        </li>
+        <li>
+          <TextLink
+            undecorated
+            href="https://linkedin.com/showcase/leave-me-alone-app"
+          >
+            <LinkedInIcon width="20" height="20" />
           </TextLink>
         </li>
       </ul>

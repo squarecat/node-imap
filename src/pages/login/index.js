@@ -47,6 +47,8 @@ if (strategy === 'password') {
   defaultStep = 'reset-password';
 } else if (strategy === 'signup') {
   defaultStep = 'signup';
+} else if (strategy === 'forgot') {
+  defaultStep = 'forgot-password';
 }
 
 const selectCardHeight = 690;

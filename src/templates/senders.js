@@ -179,6 +179,9 @@ function SendersPage({ data }) {
           .
         </p>
       </div>
+      <a styleName="attribution" href="https://clearbit.com" target="_">
+        Logos provided by Clearbit
+      </a>
     </SubpageLayout>
   );
 }

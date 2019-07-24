@@ -230,3 +230,16 @@ h1.tagline {
 .email-address {
   word-break: break-all;
 }
+
+.attribution {
+  margin: 100px 0 -100px 0;
+  font-size: 12px;
+  line-height: 20px;
+  display: block;
+  padding-top: 100px;
+  color: $color-primary-font;
+  opacity: 0.7;
+  &:hover {
+    color: $color-primary-font;
+  }
+}

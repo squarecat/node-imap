@@ -143,9 +143,12 @@ function TwoFactorAuth() {
 
 function ChangePassword() {
   const { actions: alertActions } = useContext(AlertContext);
-  const [{ passwordLastUpdatedAt }, { update: updateUser }] = useUser(u => ({
-    passwordLastUpdatedAt: u.passwordLastUpdatedAt
-  }));
+  const [{ passwordLastUpdatedAt, email }, { update: updateUser }] = useUser(
+    u => ({
+      passwordLastUpdatedAt: u.passwordLastUpdatedAt,
+      email: u.email
+    })
+  );
 
   async function onSubmit() {
     setState({ ...state, loading: true });
@@ -204,6 +207,15 @@ function ChangePassword() {
         }}
         method="post"
       >
+        <input
+          // Password forms should have (optionally hidden) username fields
+          // they need to be type text and hidden with CSS
+          style={{ display: 'none' }}
+          type="text"
+          value={email}
+          onChange={() => {}}
+          autoComplete="username"
+        />
         <FormGroup>
           <FormLabel htmlFor="oldPassword">Old Password</FormLabel>
           <FormInput
