@@ -244,6 +244,37 @@ export const FacebookIcon = ({ width = 20, height = 20, ...visProps }) => (
   </svg>
 );
 
+export const LinkedInIcon = ({ width = 20, height = 20, ...visProps }) => (
+  <svg
+    version="1.1"
+    viewBox="0 0 172 172"
+    width={width}
+    height={height}
+    className={getClasses('linkedin', visProps)}
+  >
+    <g
+      fill="none"
+      fillRule="nonzero"
+      stroke="none"
+      strokeWidth="1"
+      strokeLinecap="butt"
+      strokeLinejoin="miter"
+      strokeMiterlimit="10"
+      strokeDasharray=""
+      strokeDashoffset="0"
+      fontFamily="none"
+      fontWeight="none"
+      fontSize="none"
+      textAnchor="none"
+    >
+      <path d="M0,172v-172h172v172z" fill="none" />
+      <g fill="currentColor">
+        <path d="M136.16667,21.5h-100.33333c-7.91917,0 -14.33333,6.41417 -14.33333,14.33333v100.33333c0,7.91917 6.41417,14.33333 14.33333,14.33333h100.33333c7.91917,0 14.33333,-6.41417 14.33333,-14.33333v-100.33333c0,-7.91917 -6.41417,-14.33333 -14.33333,-14.33333zM64.5,121.83333h-18.0815v-50.16667h18.0815zM55.14033,62.47183c-5.5255,0 -9.21633,-3.68367 -9.21633,-8.6c0,-4.91633 3.68367,-8.6 9.8255,-8.6c5.5255,0 9.21633,3.68367 9.21633,8.6c0,4.91633 -3.68367,8.6 -9.8255,8.6zM129,121.83333h-17.501v-27.41967c0,-7.58233 -4.6655,-9.331 -6.41417,-9.331c-1.74867,0 -7.58233,1.16817 -7.58233,9.331c0,1.16817 0,27.41967 0,27.41967h-18.0815v-50.16667h18.0815v7.00183c2.32917,-4.085 6.99467,-7.00183 15.74517,-7.00183c8.7505,0 15.75233,7.00183 15.75233,22.747z" />
+      </g>
+    </g>
+  </svg>
+);
+
 export const ClockIcon = ({ width = 14, height = 14, ...visProps }) => (
   <svg
     className={getClasses('clock', visProps)}

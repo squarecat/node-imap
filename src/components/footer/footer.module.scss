@@ -51,6 +51,7 @@
 .footer-links {
   display: flex;
   width: 100%;
+  flex-wrap: wrap;
 
   @media (max-width: 500px) {
     flex-direction: column;
@@ -80,6 +81,10 @@
 .footer-nav {
   flex: 1;
   margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    min-width: 50%;
+  }
 }
 
 .footer-nav-intro {
@@ -88,7 +93,7 @@
 
 .footer li {
   padding: 10px;
-  margin: 0 5px;
+  margin: 0;
 }
 
 .footer-social {
@@ -106,6 +111,15 @@
 }
 
 .subpage {
+}
+
+.footer-nav-title {
+  color: #eae8e8;
+  opacity: 0.5;
+  padding: 10px;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  font-size: 14px;
 }
 
 .made-by,
