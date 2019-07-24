@@ -15,6 +15,9 @@ export async function updateOccurrencesSeen(userId, senders) {
     const parsedOccurrences = senders.reduce((out, senderEmail) => {
       const { senderAddress, friendlyName } = parseSenderEmail(senderEmail);
       let domain = senderAddress.split('@')[1];
+      if (!domain) {
+        return out;
+      }
       if (domain.endsWith('>')) {
         domain = domain.substr(0, domain.length - 1);
       }
