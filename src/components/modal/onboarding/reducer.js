@@ -9,7 +9,7 @@ const steps = [
   {
     value: 'welcome',
     position: '1',
-    nextLabel: (
+    nextLabel: () => (
       <span styleName="onboarding-btn">
         <span style={{ marginRight: 10 }}>Connect account</span>
         <ArrowIcon direction="right" />
@@ -19,7 +19,7 @@ const steps = [
   {
     value: 'accounts',
     position: '2',
-    nextLabel: (
+    nextLabel: () => (
       <span styleName="onboarding-btn">
         <span style={{ marginRight: 10 }}>Next</span>
         <ArrowIcon direction="right" />
@@ -29,10 +29,10 @@ const steps = [
   {
     value: 'rewards',
     position: '3',
-    nextLabel: (
+    nextLabel: ({ startingCredits }) => (
       <span styleName="onboarding-btn">
         <span style={{ marginRight: 8 }}>Claim credits</span>
-        <GiftIcon height={22} width={22} amount={10} filled />
+        <GiftIcon height={22} width={22} amount={startingCredits} filled />
       </span>
     ),
     isHidden: organisationMember => organisationMember
@@ -40,7 +40,7 @@ const steps = [
   {
     value: 'organisation',
     position: '3',
-    nextLabel: (
+    nextLabel: () => (
       <span styleName="onboarding-btn">
         <span style={{ marginRight: 8 }}>Next</span>
         <ArrowIcon direction="right" />
@@ -51,7 +51,7 @@ const steps = [
   {
     value: 'finish',
     position: '4',
-    nextLabel: (
+    nextLabel: () => (
       <span styleName="onboarding-btn">
         <span style={{ marginRight: 8 }}>Let's do it!</span>
         <ArrowIcon direction="right" />
@@ -64,7 +64,7 @@ export const initialState = {
   step: steps[0].value,
   isLoading: false,
   canProceed: true,
-  nextLabel: steps[0].nextLabel,
+  nextLabel: steps[0].nextLabel(),
   positionLabel: '1 of 4',
   organisationMember: false
 };
@@ -76,7 +76,7 @@ export default (state, action) => {
       return {
         ...state,
         step,
-        nextLabel,
+        nextLabel: nextLabel(state),
         positionLabel: `${position} of 4`
       };
     }
@@ -85,7 +85,7 @@ export default (state, action) => {
       return {
         ...state,
         step,
-        nextLabel,
+        nextLabel: nextLabel(state),
         positionLabel: `${position} of 4`
       };
     }
@@ -101,6 +101,11 @@ export default (state, action) => {
         organisationMember: action.data
       };
     }
+    case 'set-starting-credits':
+      return {
+        ...state,
+        startingCredits: action.data
+      };
     default:
       return state;
   }
