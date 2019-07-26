@@ -581,8 +581,10 @@ export default function OpenPage() {
                   <span styleName="label">Total users</span>
                   <span styleName="value">{format(stats.users)}</span>
                 </div>
+              </div>
+              <div styleName="boxes">
 
-                <div styleName="big-stat box">
+                {/* <div styleName="big-stat box">
                   <span styleName="label">Teams</span>
                   <span styleName="value">{format(stats.organisations)}</span>
                 </div>
@@ -591,7 +593,7 @@ export default function OpenPage() {
                   <span styleName="value">
                     {format(stats.organisationUsers)}
                   </span>
-                </div>
+                </div> */}
                 <div styleName="big-stat box">
                   <span styleName="label">Google accounts connected</span>
                   <span styleName="value">
