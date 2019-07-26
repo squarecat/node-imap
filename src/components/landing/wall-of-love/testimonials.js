@@ -248,6 +248,53 @@ export default [
     ),
     twitter: `jjbuildit`,
     avatarPath: `image-15`
+  },
+
+  {
+    name: 'Ben Song',
+    text: (
+      <span>
+        <span styleName="highlight">
+          Using Leave Me Alone to clean up my inbox has saved me countless hours
+        </span>
+        . I was able to unsubscribe from dozens of emails in just a few minutes.
+        Leave Me Alone is an excellent productivity booster!
+      </span>
+    ),
+    twitter: `bensong`,
+    avatarPath: `image-16`
+  },
+
+  {
+    name: 'Dinuka',
+    text: (
+      <span>
+        Leave Me Alone helped me{' '}
+        <span styleName="highlight">
+          clean out all the spam and email subscriptions that I've been avoiding
+        </span>{' '}
+        and reduced the burden on checking emails every day!
+      </span>
+    ),
+    twitter: `dinuka_jay`,
+    avatarPath: `image-17`
+  },
+
+  {
+    name: 'Marijke Peereboom',
+    text: (
+      <span>
+        <span styleName="highlight">
+          Within half an hour I was able to delete more than 160 newsletters
+        </span>
+        . I saved the most important emails afterwards, deleted all the other
+        ones, and managed to get to inbox zero the same day. Now I am so much
+        more focused as there are only a few emails I have to deal with each
+        day. Well done to Leave Me Alone!
+      </span>
+    ),
+    twitter: `dubriger`,
+    avatarPath: ``
   }
 
   // {
