@@ -206,6 +206,34 @@ export async function addInvitedUser(id, email) {
   }
 }
 
+export async function bulkAddInvitedUsers(id, emails) {
+  try {
+    const col = await db().collection(COL_NAME);
+    const activities = emails.map(email => ({
+      id: v4(),
+      type: 'invitedUser',
+      timestamp: isoDate(),
+      data: {
+        email
+      }
+    }));
+    await col.updateOne(
+      { id },
+      {
+        $push: {
+          invitedUsers: { $each: emails },
+          activity: { $each: activities }
+        }
+      }
+    );
+    return getById(id);
+  } catch (err) {
+    logger.error(`organisation-dao: error inviting user to organisation ${id}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function removeInvitedUser(id, email) {
   try {
     const col = await db().collection(COL_NAME);

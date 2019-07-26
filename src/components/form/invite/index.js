@@ -1,11 +1,15 @@
 import './invite.module.scss';
 
-import { FormGroup, InlineFormInput } from '..';
+import { FormGroup, FormTextarea, InlineFormInput } from '..';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
 import CopyButton from '../../copy-to-clipboard';
+import InviteModal from '../../modal/invite';
+import { ModalContext } from '../../../providers/modal-provider';
+import _flatten from 'lodash.flatten';
+import _uniq from 'lodash.uniq';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -50,7 +54,7 @@ export const InviteForm = React.memo(function InviteForm({
     async () => {
       try {
         setSendingInvite(true);
-        await sendOrganisationInvite(organisationId, email);
+        await sendOrganisationInvite(organisationId, [email]);
         setOrganisationLastUpdated(Date.now());
         setEmail('');
         alert.actions.setAlert({
@@ -125,7 +129,97 @@ export const InviteForm = React.memo(function InviteForm({
   );
 });
 
-function sendOrganisationInvite(id, email) {
+export const InviteFormMultiple = React.memo(function InviteForm({
+  organisationId
+}) {
+  const alert = useContext(AlertContext);
+  const { open: openModal } = useContext(ModalContext);
+  const [, { setOrganisationLastUpdated }] = useUser();
+
+  const [text, setText] = useState('');
+  const [sendingInvites, setSendingInvites] = useState(false);
+
+  const onClickInvite = useCallback(
+    () => {
+      const emails = parseEmails(text);
+      openModal(
+        <InviteModal emails={emails} onConfirm={() => onInvite(emails)} />
+      );
+    },
+    [text, openModal, onInvite]
+  );
+
+  const onInvite = useCallback(
+    async emails => {
+      try {
+        setSendingInvites(true);
+        await sendOrganisationInvite(organisationId, emails);
+        setOrganisationLastUpdated(Date.now());
+        setText('');
+        alert.actions.setAlert({
+          id: 'org-invite-success',
+          level: 'success',
+          message: `Successfully invited ${emails.length} team ${
+            emails.length === 1 ? 'member' : 'members'
+          }!`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      } catch (err) {
+        alert.actions.setAlert({
+          id: 'org-invite-error',
+          level: 'error',
+          message: `Error sending invites. Please try again or send us a message.`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      } finally {
+        setSendingInvites(false);
+      }
+    },
+    [alert.actions, organisationId, setOrganisationLastUpdated, text]
+  );
+
+  const onChange = useCallback(({ currentTarget }) => {
+    setText(currentTarget.value);
+  }, []);
+
+  return (
+    <form
+      styleName="invite"
+      id="invite-users-multiple-form"
+      onSubmit={e => {
+        e.preventDefault();
+        onClickInvite();
+        return false;
+      }}
+    >
+      <FormGroup>
+        <FormTextarea
+          placeholder="Invite team members by email address, multiple addreses should be comma separated..."
+          name="emails"
+          value={text}
+          onChange={onChange}
+        />
+        <Button
+          fill
+          basic
+          smaller
+          compact
+          inline
+          loading={sendingInvites}
+          disabled={sendingInvites || !text}
+          type="submit"
+          as="button"
+        >
+          Send Invites
+        </Button>
+      </FormGroup>
+    </form>
+  );
+});
+
+function sendOrganisationInvite(id, emails) {
   return request(`/api/organisation/${id}/invite`, {
     method: 'PATCH',
     cache: 'no-cache',
@@ -133,6 +227,25 @@ function sendOrganisationInvite(id, email) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     },
-    body: JSON.stringify({ op: 'add', value: email })
+    body: JSON.stringify({ op: 'add', value: emails })
   });
+}
+
+function parseEmails(str) {
+  const parsed = _uniq(
+    _flatten(
+      str
+        .trim()
+        .split(',')
+        .map(d => d.trim())
+        .filter(d => d.includes('@') && d.includes('.'))
+        .map(d =>
+          d
+            .trim()
+            .split(' ')
+            .filter(d => d.includes('@') && d.includes('.'))
+        )
+    )
+  );
+  return parsed;
 }
