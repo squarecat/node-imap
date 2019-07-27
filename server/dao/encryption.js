@@ -46,6 +46,13 @@ export function isHashEqual(hashedValue, unhashedValue) {
   return hash(unhashedValue) === hashedValue;
 }
 
+export function getMasterKey(password, salt) {
+  const hash = crypto
+    .pbkdf2Sync(password, salt, 1000, 32, `sha512`)
+    .toString(`hex`);
+  return hash;
+}
+
 export function hashPassword(
   password,
   salt = crypto.randomBytes(16).toString('hex')

@@ -3,6 +3,7 @@ import {
   decrypt,
   decryptUnsubscriptions,
   encrypt,
+  getMasterKey,
   hashEmail,
   hashPassword
 } from './encryption';
@@ -699,8 +700,10 @@ export async function authenticate({ email, password }) {
     if (!user) return null;
     const { password: userPassword } = user;
     const { salt, hash } = userPassword;
+    // get master key for encrpting account passwords
     if (checkPassword(password, salt, hash)) {
-      return user;
+      const masterKey = getMasterKey(password, salt);
+      return { ...user, masterKey };
     }
     return null;
   } catch (err) {

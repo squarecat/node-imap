@@ -64,6 +64,7 @@ import addMonths from 'date-fns/add_months';
 import { addReferralToBothUsers } from './referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../utils/stripe';
+import { getMasterKey } from '../dao/encryption';
 import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
@@ -894,9 +895,7 @@ export async function updateUserUnsubStatusById(
       }
     });
   } catch (err) {
-    logger.error(
-      `user-service: failed to update unsub status for user ${userId} and mail ${mailId}`
-    );
+    logger.error(`user-service: failed to update unsub status for user`);
     throw err;
   }
 }

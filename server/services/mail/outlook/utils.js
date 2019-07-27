@@ -13,7 +13,7 @@ export function getFilterString({ from }) {
 
 export function getSearchString({ from, query }) {
   // const fromStr = format(from, outlookSearchFormat);
-  // return `"Body:${query} and Received:>${fromStr}"`;
+  return `"Body:${query} and Received:>${fromStr}"`;
   return query;
 }
 
