@@ -9,7 +9,7 @@ import CardDetails from '../../../../components/card-details';
 import CurrentUsers from '../../../../app/profile/team/current-users';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { FormCheckbox } from '../../../../components/form';
-import InviteForm from '../../../../app/profile/team/invite';
+import Invite from '../../../../app/profile/team/invite';
 import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import PendingInvites from '../../../../app/profile/team/invited-users';
@@ -104,9 +104,7 @@ function Organisation() {
             <Settings loading={loading} organisation={organisation} />
           ) : null}
 
-          {organisationAdmin ? (
-            <InviteForm organisation={organisation} />
-          ) : null}
+          {organisationAdmin ? <Invite organisation={organisation} /> : null}
 
           {organisationAdmin ? (
             <PendingInvites

@@ -13,6 +13,7 @@ import request from '../../../utils/request';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
+import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
@@ -27,6 +28,16 @@ export default () => {
     isBeta: u.isBeta,
     isMigrated: u.__migratedFrom
   }));
+
+  const { value: startingCredits } = useAsync(() =>
+    getMilestoneConnectedFirstAccount()
+  );
+  useEffect(
+    () => {
+      dispatch({ type: 'set-starting-credits', data: startingCredits });
+    },
+    [startingCredits]
+  );
 
   useEffect(
     () => {
@@ -66,6 +77,7 @@ export default () => {
           isMigrated={isMigrated}
           organisation={organisation}
           positionLabel={state.positionLabel}
+          startingCredits={state.startingCredits}
         />
       </ModalBody>
       <ModalWizardActions
@@ -94,7 +106,8 @@ function Content({
   accounts,
   isBeta,
   isMigrated,
-  organisation = {}
+  organisation = {},
+  startingCredits
 }) {
   const content = useMemo(
     () => {
@@ -128,6 +141,7 @@ function Content({
             positionLabel={positionLabel}
             isBeta={isBeta}
             isMigrated={isMigrated}
+            startingCredits={startingCredits}
           />
         );
       }
@@ -195,29 +209,29 @@ function WelcomeContent({ isMigrated, positionLabel }) {
         <p>
           We have added lots of features to make unsubscribing easier and faster
           than before:
-          <ul styleName="feature-list">
-            <li>
-              <TextImportant>Connect multiple email accounts</TextImportant> and
-              scan them all at once
-            </li>
-            <li>
-              <TextImportant>Improved mail list</TextImportant> with sorting,
-              filtering, and pagination
-            </li>
-            <li>
-              <TextImportant>Password login + 2FA</TextImportant> for better
-              privacy & increased security
-            </li>
-            <li>
-              <TextImportant>Credit-based pricing</TextImportant> to only pay
-              for what you unsubscribe from
-            </li>
-            <li>
-              <TextImportant>Subscriber Score</TextImportant> showing you a
-              brand new ranking for senders
-            </li>
-          </ul>
         </p>
+        <ul styleName="feature-list">
+          <li>
+            <TextImportant>Connect multiple email accounts</TextImportant> and
+            scan them all at once
+          </li>
+          <li>
+            <TextImportant>Improved mail list</TextImportant> with sorting,
+            filtering, and pagination
+          </li>
+          <li>
+            <TextImportant>Password login + 2FA</TextImportant> for better
+            privacy & increased security
+          </li>
+          <li>
+            <TextImportant>Credit-based pricing</TextImportant> to only pay for
+            what you unsubscribe from
+          </li>
+          <li>
+            <TextImportant>Subscriber Score</TextImportant> showing you a brand
+            new ranking for senders
+          </li>
+        </ul>
         <p>
           If you have previously used Leave Me Alone with multiple email
           addresses and would like us to merge them into a single account please{' '}
@@ -252,7 +266,12 @@ function WelcomeContent({ isMigrated, positionLabel }) {
   );
 }
 
-function RewardsContent({ positionLabel, isBeta, isMigrated }) {
+function RewardsContent({
+  positionLabel,
+  isBeta,
+  isMigrated,
+  startingCredits
+}) {
   if (isMigrated) {
     return (
       <>
@@ -273,7 +292,8 @@ function RewardsContent({ positionLabel, isBeta, isMigrated }) {
         </p>
         <p>
           To say thanks for being a loyal customer here are{' '}
-          <TextImportant>10 free credits</TextImportant> to get you started!
+          <TextImportant>{startingCredits} free credits</TextImportant> to get
+          you started!
         </p>
         <p>More credits can be purchased or earned for free if you run out.</p>
       </>
@@ -294,12 +314,13 @@ function RewardsContent({ positionLabel, isBeta, isMigrated }) {
       {isBeta ? (
         <p>
           To say thanks for joining us during our beta period here are{' '}
-          <TextImportant>100 free credits</TextImportant> to get you started!
+          <TextImportant>{startingCredits} free credits</TextImportant> to get
+          you started!
         </p>
       ) : (
         <p>
-          Here are <TextImportant>10 free credits</TextImportant> to get you
-          started!
+          Here are <TextImportant>{startingCredits} free credits</TextImportant>{' '}
+          to get you started!
         </p>
       )}
 
@@ -348,4 +369,13 @@ export async function updateMilestone(milestone) {
     },
     body: JSON.stringify({ op: 'update', value: milestone })
   });
+}
+
+async function getMilestoneConnectedFirstAccount() {
+  try {
+    const { credits } = await request(`/api/milestones/connectedFirstAccount`);
+    return credits;
+  } catch (err) {
+    return 10;
+  }
 }

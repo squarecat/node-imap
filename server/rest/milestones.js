@@ -1,4 +1,8 @@
-import { getMilestones, setMilestoneCompleted } from '../services/milestones';
+import {
+  getMilestone,
+  getMilestones,
+  setMilestoneCompleted
+} from '../services/milestones';
 
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
@@ -7,7 +11,11 @@ export default app => {
   app.get('/api/milestones/:name?', auth, async (req, res, next) => {
     const { name } = req.params;
     try {
-      const milestones = await getMilestones({ name });
+      if (name) {
+        const milestone = await getMilestone(name);
+        return res.send(milestone);
+      }
+      const milestones = await getMilestones();
       return res.send(milestones);
     } catch (err) {
       next(

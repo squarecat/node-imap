@@ -56,6 +56,7 @@ function TwoFactorAuth() {
     })
   );
   const { open: openModal } = useContext(ModalContext);
+  const { actions: alertActions } = useContext(AlertContext);
 
   const { SetupModal, VerifyModal } = useMemo(
     () => ({
@@ -72,17 +73,29 @@ function TwoFactorAuth() {
       const onClose = ({ verified }) => {
         if (verified) {
           setRequiresTwoFactorAuth(true);
+          alertActions.setAlert({
+            level: 'success',
+            message: `Two-factor authentication enabled`,
+            isDismissable: true,
+            autoDismiss: true
+          });
         }
       };
       openModal(SetupModal, { dismissable: false, onClose });
     },
-    [SetupModal, openModal, setRequiresTwoFactorAuth]
+    [SetupModal, alertActions, openModal, setRequiresTwoFactorAuth]
   );
   const open2faVerify = useCallback(
     () => {
       const onClose = ({ verified }) => {
         if (verified) {
           setRequiresTwoFactorAuth(false);
+          alertActions.setAlert({
+            level: 'success',
+            message: `Two-factor authentication removed`,
+            isDismissable: true,
+            autoDismiss: true
+          });
         }
       };
       openModal(VerifyModal, { dismissable: false, onClose });
@@ -163,7 +176,6 @@ function ChangePassword() {
         loading: false
       });
       alertActions.setAlert({
-        id: 'change-password-success',
         level: 'success',
         message: `Password changed.`,
         isDismissable: true,
@@ -172,7 +184,6 @@ function ChangePassword() {
     } catch (err) {
       const message = getAuthError(err, 'change');
       alertActions.setAlert({
-        id: 'change-password-error',
         level: 'error',
         message,
         isDismissable: true,
