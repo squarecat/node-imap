@@ -758,7 +758,7 @@ export async function handleInvoicePaymentFailed({ subscriptionId }) {
 export async function handleSubscriptionDeleted({ subscriptionId, request }) {
   try {
     logger.info(
-      `payment-service: handling invoice payment failed for subscription ${subscriptionId}`
+      `payment-service: handling subscription deleted for subscription ${subscriptionId}`
     );
 
     const organisation = await getOrganisationBySubscription(subscriptionId);
