@@ -563,10 +563,18 @@ export async function createSubscriptionForOrganisation(
       }
     });
 
-    const response = generatePaymentResponse(latest_invoice.payment_intent);
+    let intent = latest_invoice.payment_intent;
+
+    if (!seats.length) {
+      intent = {
+        status: 'succeeded'
+      };
+    }
+
+    const response = generatePaymentResponse(intent);
 
     if (response.success) {
-      logger.debug(`payments-service: payment success!`);
+      logger.debug(`payments-service: create subscription success`);
       return handleSubscriptionSuccess(response, {
         organisationId
       });

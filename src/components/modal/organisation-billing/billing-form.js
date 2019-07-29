@@ -129,8 +129,8 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
       const lead = (
         <p>
-          You are signing up for the{' '}
-          <TextImportant>Enterprise plan</TextImportant> billed monthly at{' '}
+          You are signing up for the <TextImportant>Teams plan</TextImportant>{' '}
+          billed monthly at{' '}
           <TextImportant>
             ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
           </TextImportant>
