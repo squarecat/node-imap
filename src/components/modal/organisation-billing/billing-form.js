@@ -119,34 +119,71 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const initialPayment = ENTERPRISE.pricePerSeat * currentUsers.length;
   const infoText = useMemo(
     () => {
-      if (currentUsers.length) {
+      if (subscriptionId) {
         return (
           <p>
-            You currently have{' '}
-            <TextImportant>
-              {`${currentUsers.length} member${
-                currentUsers.length === 1 ? '' : 's'
-              }`}
-            </TextImportant>
-            . You will be billed{' '}
-            <TextImportant>
-              ${(initialPayment / 100).toFixed(2)} monthly starting today
-            </TextImportant>
-            . Your plan will be updated automatically and prorated when members
-            join or are removed.
+            Update your payment method, your billing cycle will not be affected.
           </p>
         );
       }
-      return (
+
+      const lead = (
         <p>
-          You currently have no members. Your card will be{' '}
-          <TextImportant>authorised but not charged</TextImportant>. Your plan
-          will be updated automatically and prorated when members join or are
-          removed.
+          You are signing up for the{' '}
+          <TextImportant>Enterprise plan</TextImportant> billed monthly at{' '}
+          <TextImportant>
+            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
+          </TextImportant>
+          .
         </p>
       );
+      if (currentUsers.length) {
+        return (
+          <>
+            {lead}
+            <p>
+              You currently have{' '}
+              <TextImportant>
+                {`${currentUsers.length} member${
+                  currentUsers.length === 1 ? '' : 's'
+                }`}
+              </TextImportant>
+              . You will be billed{' '}
+              <TextImportant>
+                ${(initialPayment / 100).toFixed(2)} monthly starting today
+              </TextImportant>
+              . Your plan will be updated automatically and prorated when
+              members join or are removed.
+            </p>
+          </>
+        );
+      }
+      return (
+        <>
+          {lead}
+          <p>
+            You currently have no members. Your card will be{' '}
+            <TextImportant>authorised but not charged</TextImportant>. Your plan
+            will be updated automatically and prorated when members join or are
+            removed.
+          </p>
+        </>
+      );
     },
-    [currentUsers.length, initialPayment]
+    [currentUsers.length, initialPayment, subscriptionId]
+  );
+
+  const saveText = useMemo(
+    () => {
+      if (subscriptionId) {
+        return `Update Payment Method`;
+      }
+      if (currentUsers.length) {
+        return `Save and Pay $${(initialPayment / 100).toFixed(2)}`;
+      }
+      return `Save Payment Method`;
+    },
+    [currentUsers.length, initialPayment, subscriptionId]
   );
 
   return (
@@ -159,17 +196,9 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     >
       <ModalBody loading={!stripeState.isReady} compact>
         <ModalHeader>
-          Add Payment Method
+          {subscriptionId ? 'Update Payment Method' : 'Add Payment Method'}
           <ModalCloseIcon />
         </ModalHeader>
-        <p>
-          You are signing up for the{' '}
-          <TextImportant>Enterprise plan</TextImportant> billed monthly at{' '}
-          <TextImportant>
-            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
-          </TextImportant>
-          .
-        </p>
         {infoText}
         <PaymentAddressDetails
           addressDetails={state.addressDetails}
@@ -211,11 +240,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         isDisabled={state.loading || !stripeState.isReady}
         isLoading={state.loading}
         onCancel={closeModal}
-        saveText={
-          currentUsers.length
-            ? `Save and Pay $${(initialPayment / 100).toFixed(2)}`
-            : `Save Payment Method`
-        }
+        saveText={saveText}
       />
     </form>
   );

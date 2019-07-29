@@ -329,7 +329,7 @@ export async function getOrganisationSubscription(id) {
       plan
     } = await getSubscription({ subscriptionId });
 
-    const upcomingInvoice = await getUpcomingInvoice({
+    const { total } = await getUpcomingInvoice({
       customerId,
       subscriptionId
     });
@@ -341,9 +341,7 @@ export async function getOrganisationSubscription(id) {
       ended_at,
       quantity,
       plan,
-      upcomingInvoice: {
-        total: upcomingInvoice.total > 0 ? upcomingInvoice.total : 0
-      }
+      upcomingInvoiceAmount: total > 0 ? total : 0
     };
   } catch (err) {
     throw err;
