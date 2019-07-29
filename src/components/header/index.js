@@ -7,8 +7,9 @@ import { Link } from 'gatsby';
 import Reminder from './reminder';
 import SettingsDropdown from './settings';
 import useUser from '../../utils/hooks/use-user';
+import logo from '../../assets/logo.png';
 
-const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
+// const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 const Header = React.memo(({ loaded }) => {
   const [{ hasOrganisation, isUserLoaded }] = useUser(u => ({
@@ -35,7 +36,7 @@ const Header = React.memo(({ loaded }) => {
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app" styleName="header-logo">
-        <img alt="Leave Me Alone logo" src={logoUrl} />
+        <img alt="Leave Me Alone logo" src={logo} />
         <span styleName="header-title">Leave Me Alone</span>
       </Link>
       <div styleName="header-actions">{content}</div>

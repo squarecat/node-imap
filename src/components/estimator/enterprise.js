@@ -8,7 +8,7 @@ import { TextImportant } from '../../components/text';
 import mailBoxImg from '../../assets/mailbox.png';
 import numeral from 'numeral';
 // import packageImg from '../../assets/package.png';
-import smallLogo from '../../assets/envelope-logo.png';
+import smallLogo from '../../assets/logo.png';
 import spamMailImg from '../../assets/spam-email.png';
 
 // import stampImg from '../../assets/stamp.png';
