@@ -188,3 +188,15 @@ export function getUnsubscribeAlert({
       };
   }
 }
+
+export function getPaymentError(err = {}) {
+  if (err.reason && err.reason.type === 'stripe-card-error') {
+    return err.reason.message;
+  }
+  if (err.requires_payment_method) {
+    // same as Stripe failed to authenticate 3D secure message
+    return `We are unable to authenticate your payment method. Please choose a different payment method and try again.`;
+  }
+
+  return getBasicError();
+}

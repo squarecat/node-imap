@@ -324,8 +324,11 @@ function BillingHistory() {
       } else {
         text = (
           <p>
-            Showing <TextImportant>{payments.length}</TextImportant> previous
-            {`${payments.length} payment${payments.length === 1 ? '' : 's'}`}.
+            Showing{' '}
+            <TextImportant>
+              {`${payments.length} previous payment${payments.length === 1 ? '' : 's'}`}
+            </TextImportant>
+            .
           </p>
         );
       }

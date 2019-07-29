@@ -14,8 +14,7 @@ import { StripeStateContext } from '../../../providers/stripe-provider';
 import { TextImportant } from '../../text';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-
-const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
+import { getPaymentError } from '../../../utils/errors';
 
 function NewBillingForm({ stripe, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
@@ -45,10 +44,9 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
       });
 
       if (paymentError) {
-        console.error(paymentError);
         dispatch({
           type: 'set-error',
-          data: paymentError.message || DEFAULT_ERROR
+          data: paymentError.message
         });
       } else {
         const response = await confirmPayment({
@@ -58,12 +56,13 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
           saveCard: state.save_payment_method,
           ...billingDetails
         });
-        handleResponse(response);
+        await handleResponse(response);
       }
     } catch (err) {
+      const message = getPaymentError(err);
       dispatch({
         type: 'set-error',
-        data: DEFAULT_ERROR
+        data: message
       });
     } finally {
       dispatch({ type: 'set-loading', data: false });
@@ -72,21 +71,13 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
 
   // TODO used elsewhere - make this common
   async function handleResponse(response) {
-    if (response.error) {
-      let message = DEFAULT_ERROR;
-      if (response.error.message) {
-        message = response.error.message;
-      }
-      dispatch({ type: 'set-error', data: message });
-    } else if (response.requires_action) {
-      dispatch({ type: 'set-loading', data: true });
+    if (response.requires_action) {
       await handleRequiresAction(response);
-      dispatch({ type: 'set-loading', data: false });
     } else if (response.requires_payment_method) {
-      // TODO better errors
+      const message = getPaymentError(response);
       dispatch({
         type: 'set-error',
-        data: 'An error occured charging your card'
+        data: message
       });
     } else {
       onPurchaseSuccess(response.user);
@@ -105,7 +96,7 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
 
     if (errorAction) {
       // Show error from Stripe.js in payment form
-      dispatch({ type: 'set-error', data: errorAction });
+      dispatch({ type: 'set-error', data: errorAction.message });
     } else {
       // The card action has been handled
       // The PaymentIntent can be confirmed again on the server
@@ -169,9 +160,7 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
 
         {state.error ? (
           <FormGroup>
-            <FormNotification error>
-              {state.error.message || DEFAULT_ERROR}
-            </FormNotification>
+            <FormNotification error>{state.error}</FormNotification>
           </FormGroup>
         ) : null}
       </ModalBody>
