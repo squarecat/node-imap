@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 
 import Button from '../../../components/btn';
 import { MailContext } from '../provider';
-import stateImg from '../../../assets/envelope-logo.png';
+import stateImg from '../../../assets/logo.png';
 import useUser from '../../../utils/hooks/use-user';
 
 export const Empty = ({ hasFilters } = {}) => {
