@@ -17,8 +17,7 @@ import PaymentCardDetails from '../../payments/card-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-
-const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
+import { getPaymentError } from '../../../utils/errors';
 
 function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -39,19 +38,9 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
       dispatch({ type: 'set-error', data: false });
 
       const { addressDetails } = state;
-
-      console.log('on submit', state);
-
-      // TODO after Beta
-      // 1. if vat number validate it
-
-      // const { taxId, error: taxError } = await validateVatNumber(
-      //   company.vatNumber
-      // );
-
       const customer = getCustomer(state);
 
-      const { token, error } = await stripe.createToken({
+      const { token, tokenError } = await stripe.createToken({
         // the createToken address arguments are named differently to create customer...
         name: addressDetails.name,
         address_line1: addressDetails.line1,
@@ -61,13 +50,11 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         address_zip: addressDetails.postal_code
       });
 
-      if (error) {
-        console.error(error);
-        dispatch({ type: 'set-error', data: error });
+      if (tokenError) {
+        dispatch({ type: 'set-error', data: tokenError.message });
       } else {
         let response;
         if (subscriptionId) {
-          console.log('org already has subscription, update the card');
           response = await updateBilling(id, {
             token,
             ...customer
@@ -79,30 +66,24 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
           });
         }
         await handlePaymentResponse(response);
-        dispatch({ type: 'set-loading', data: false });
       }
     } catch (err) {
-      console.error(err);
-      dispatch({ type: 'set-loading', data: false });
+      const message = getPaymentError(err);
       dispatch({
         type: 'set-error',
-        data: DEFAULT_ERROR
+        data: message
       });
+    } finally {
+      dispatch({ type: 'set-loading', data: false });
     }
   }
 
   async function handlePaymentResponse(response) {
-    if (response.error) {
-      let message = DEFAULT_ERROR;
-      if (response.error.message) {
-        message = response.error.message;
-      }
-      dispatch({ type: 'set-error', data: message });
-    } else if (response.requires_payment_method) {
+    if (response.requires_payment_method) {
+      const message = getPaymentError(response);
       dispatch({
         type: 'set-error',
-        data:
-          'An error occured charging your card, please enter different card details.'
+        data: message
       });
     } else if (response.requires_action) {
       await handleRequiresAction(response);
@@ -216,9 +197,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
         {state.error ? (
           <FormGroup>
-            <FormNotification error>
-              {state.error.message || DEFAULT_ERROR}
-            </FormNotification>
+            <FormNotification error>{state.error}</FormNotification>
           </FormGroup>
         ) : null}
 

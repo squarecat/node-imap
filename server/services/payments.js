@@ -1,7 +1,8 @@
 import {
   addActivityForUser,
   addPackageToUser,
-  getUserById
+  getUserById,
+  removeUserBillingCard
 } from '../services/user';
 import {
   addGiftRedemptionToStats,
@@ -33,12 +34,7 @@ import {
 import { getPackage } from '../../shared/prices';
 import logger from '../utils/logger';
 import { payments } from 'getconfig';
-import { sendToUser } from '../rest/socket';
 import { updateUser } from '../dao/user';
-
-// export function getProduct(id) {
-//   return products.find(p => p.value === id);
-// }
 
 export async function getCoupon(coupon) {
   return getPaymentCoupon(coupon);
@@ -121,7 +117,6 @@ export async function listPaymentsForUser(userId) {
     logger.error(
       `payments-service: failed to list invoices for user ${userId}`
     );
-    logger.error(err);
     throw err;
   }
 }
@@ -155,7 +150,6 @@ export async function listPaymentsForOrganisation(organisationId) {
     logger.error(
       `payments-service: failed to list payments for organisation ${organisationId}`
     );
-    logger.error(err);
     throw err;
   }
 }
@@ -218,7 +212,6 @@ export async function createPaymentWithExistingCardForUser({
     logger.error(
       `payments-service: failed to create payment for existing user card`
     );
-    logger.error(err);
     throw err;
   }
 }
@@ -278,7 +271,6 @@ async function getPaymentDetails({ productId, coupon }) {
     return { price: finalPrice, description };
   } catch (err) {
     logger.error(`payments-service: failed to get package payment details`);
-    logger.error(err);
     throw err;
   }
 }
@@ -314,10 +306,8 @@ async function getOrUpdateCustomerForUser(
     // remove the old card from stripe if there is one
     if (currentPaymentMethodId) {
       await detachPaymentMethod(currentPaymentMethodId);
-      updates = {
-        ...updates,
-        paymentMethodId: null
-      };
+      // update the user right away in case something fails further on
+      await removeUserBillingCard(user.id);
     }
 
     if (saveCard) {
@@ -346,11 +336,11 @@ async function getOrUpdateCustomerForUser(
       };
     }
 
+    logger.debug('payments-service: updating user');
     await updateUser(user.id, updates);
     return customerId;
   } catch (err) {
     logger.error(`payments-service: failed to get or update customer for user`);
-    logger.error(err);
     throw err;
   }
 }
@@ -381,15 +371,12 @@ async function handlePaymentSuccess(
       updateCoupon(coupon);
     }
 
-    // logger.debug(`payments-service: sending credits to socket ${credits}`);
-    // sendToUser(user.id, 'update-credits', credits);
     return {
       ...response,
       user: updatedUser
     };
   } catch (err) {
     logger.error(`payments-service: failed to handle payment success`);
-    logger.error(err);
     throw err;
   }
 }
@@ -401,7 +388,12 @@ export async function createPaymentForUser(
   try {
     let intent;
 
+    logger.debug(`payments-service: creating payment intent for user`);
+
     if (paymentMethodId) {
+      logger.debug(
+        `payments-service: creating payment intent with payment method id`
+      );
       const { price: finalPrice, description } = await getPaymentDetails({
         productId,
         coupon
@@ -422,11 +414,13 @@ export async function createPaymentForUser(
           }
         };
       } else {
+        logger.debug(`payments-service: updating customer`);
         const customerId = await getOrUpdateCustomerForUser(
           { paymentMethodId },
           { user, name, address, saveCard }
         );
 
+        logger.debug(`payments-service: creating intent`);
         intent = await createPaymentIntent(paymentMethodId, {
           amount: finalPrice,
           customerId,
@@ -436,6 +430,9 @@ export async function createPaymentForUser(
         });
       }
     } else if (paymentIntentId) {
+      logger.debug(
+        `payments-service: creating payment intent with payment intent id`
+      );
       intent = await confirmPaymentIntent(paymentIntentId);
     }
 
@@ -453,7 +450,6 @@ export async function createPaymentForUser(
     logger.error(
       `payments-service: failed to create new payment for user ${user.id}`
     );
-    logger.error(err);
     throw err;
   }
 }
@@ -580,7 +576,6 @@ export async function createSubscriptionForOrganisation(
     logger.error(
       `payments-service: failed to create new subscription for organisation ${organisationId}`
     );
-    logger.error(err);
     throw err;
   }
 }
@@ -633,6 +628,9 @@ export async function confirmSubscriptionForOrganisation(organisationId) {
     }
     return handleSubscriptionSuccess({ success: true }, { organisationId });
   } catch (err) {
+    logger.error(
+      `payments-service: failed to confirm subscription for organisation`
+    );
     throw err;
   }
 }

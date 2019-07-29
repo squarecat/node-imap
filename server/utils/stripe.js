@@ -1,101 +1,11 @@
 import Stripe from 'stripe';
-import _capitalize from 'lodash.capitalize';
-import axios from 'axios';
-import countries from './countries.json';
+// import axios from 'axios';
+// import countries from './countries.json';
 import logger from './logger';
 import { payments } from 'getconfig';
+import { PaymentError } from './errors';
 
 const stripe = Stripe(payments.secretKey);
-
-// export async function createPayment({
-//   productPrice,
-//   productLabel,
-//   quantity = 1,
-//   customerId,
-//   coupon,
-//   gift = false,
-//   provider
-// }) {
-//   try {
-//     const description = getDescription({
-//       quantity,
-//       productLabel,
-//       provider,
-//       gift
-//     });
-//     const totalAmount = productPrice * quantity;
-
-//     const payment = await stripe.charges.create({
-//       customer: customerId,
-//       amount: totalAmount,
-//       description,
-//       currency: 'usd',
-//       metadata: {
-//         coupon
-//       }
-//     });
-
-//     logger.info('stripe: created charge');
-//     return payment;
-//   } catch (err) {
-//     logger.error('stripe: failed to create charge');
-//     logError(err);
-//     throw err;
-//   }
-// }
-
-// export async function createInvoice({
-//   productPrice,
-//   productLabel,
-//   quantity = 1,
-//   customerId,
-//   coupon,
-//   address,
-//   provider,
-//   gift = false
-// }) {
-//   const { country } = address;
-//   try {
-//     const description = getDescription({
-//       quantity,
-//       productLabel,
-//       provider,
-//       gift
-//     });
-//     const { vatRate, vatAmount } = await getTaxInfo({
-//       country,
-//       amount: productPrice
-//     });
-
-//     const newProductPrice = (productPrice - vatAmount).toFixed();
-
-//     // create invoice line item
-//     await stripe.invoiceItems.create({
-//       customer: customerId,
-//       quantity,
-//       unit_amount: newProductPrice,
-//       currency: 'usd',
-//       description
-//     });
-//     // invoice line item will automatically be
-//     // applied to this invoice
-//     const payment = await stripe.invoices.create({
-//       customer: customerId,
-//       billing: 'charge_automatically',
-//       auto_advance: true,
-//       tax_percent: vatRate,
-//       metadata: {
-//         coupon
-//       }
-//     });
-//     logger.info('stripe: created invoice');
-//     return payment;
-//   } catch (err) {
-//     logger.error('stripe: failed to create invoice');
-//     logError(err);
-//     throw err;
-//   }
-// }
 
 export async function getPaymentCoupon(name) {
   try {
@@ -131,7 +41,7 @@ export async function updateCouponUses(coupon) {
   } catch (err) {
     logger.error(`stripe: failed to update coupon uses ${coupon}`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -162,7 +72,7 @@ export async function createCoupon({
   } catch (err) {
     logger.error('stripe: failed to create coupon');
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -185,7 +95,7 @@ export async function createCustomer({ email, ...data }) {
   } catch (err) {
     logger.error('stripe: failed to create customer');
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -200,7 +110,7 @@ export async function updateCustomer({ customerId, ...data }) {
   } catch (err) {
     logger.error('stripe: failed to update customer');
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -211,7 +121,7 @@ export async function listInvoices(customerId) {
   } catch (err) {
     logger.error('stripe: failed to list invoices');
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -221,48 +131,48 @@ export async function listCharges(customerId) {
   } catch (err) {
     logger.error('stripe: failed to list charges');
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
-function getCountryCode(country) {
-  const countryEntry = countries.find(c => c.name === country);
-  if (!countryEntry) {
-    throw new Error(`Unknown country name ${country}`);
-  }
-  return countryEntry.code;
-}
+// function getCountryCode(country) {
+//   const countryEntry = countries.find(c => c.name === country);
+//   if (!countryEntry) {
+//     throw new Error(`Unknown country name ${country}`);
+//   }
+//   return countryEntry.code;
+// }
 
-async function getTaxInfo({ amount, country }) {
-  const countryCode = getCountryCode(country);
-  if (!countryCode || countryCode === 'US') {
-    return {
-      vatRate: 0,
-      vatAmount: 0
-    };
-  }
-  try {
-    const url = [
-      'http://apilayer.net/api/price?',
-      `access_key=${payments.vatKey}`,
-      `amount=${amount}`,
-      `country_code=${countryCode}`
-    ].join('&');
-    const response = await axios.get(url);
-    const { vat_rate } = response.data;
-    return {
-      vatRate: vat_rate,
-      vatAmount: amount - amount / (vat_rate / 100 + 1)
-    };
-  } catch (err) {
-    logger.error(`stripe: failed to get tax info`);
-    logError(err);
-    return {
-      vatRate: 0,
-      vatAmount: 0
-    };
-  }
-}
+// async function getTaxInfo({ amount, country }) {
+//   const countryCode = getCountryCode(country);
+//   if (!countryCode || countryCode === 'US') {
+//     return {
+//       vatRate: 0,
+//       vatAmount: 0
+//     };
+//   }
+//   try {
+//     const url = [
+//       'http://apilayer.net/api/price?',
+//       `access_key=${payments.vatKey}`,
+//       `amount=${amount}`,
+//       `country_code=${countryCode}`
+//     ].join('&');
+//     const response = await axios.get(url);
+//     const { vat_rate } = response.data;
+//     return {
+//       vatRate: vat_rate,
+//       vatAmount: amount - amount / (vat_rate / 100 + 1)
+//     };
+//   } catch (err) {
+//     logger.error(`stripe: failed to get tax info`);
+//     logError(err);
+//     return {
+//       vatRate: 0,
+//       vatAmount: 0
+//     };
+//   }
+// }
 
 // function getDescription({ quantity, productLabel, provider, gift }) {
 //   if (gift) {
@@ -298,7 +208,7 @@ export async function createPaymentIntent(
   } catch (err) {
     logger.error(`stripe: failed to create payment intent`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -309,7 +219,7 @@ export async function confirmPaymentIntent(paymentIntentId) {
   } catch (err) {
     logger.error(`stripe: failed to confirm payment intent`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -318,19 +228,25 @@ export function getPaymentMethod(id) {
 }
 
 export async function attachPaymentMethod(paymentMethodId, customerId) {
-  return stripe.paymentMethods.attach(paymentMethodId, {
-    customer: customerId
-  });
+  try {
+    const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+      customer: customerId
+    });
+    return paymentMethod;
+  } catch (err) {
+    logger.error(`stripe: failed to attach payment method`);
+    logError(err);
+    return handleStripeError(err);
+  }
 }
 
 export async function detachPaymentMethod(paymentMethodId) {
   try {
-    const paymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
-    return paymentMethod;
+    await stripe.paymentMethods.detach(paymentMethodId);
   } catch (err) {
     logger.error(`stripe: failed to detach payment method`);
     logError(err);
-    return {};
+    return true;
   }
 }
 
@@ -395,7 +311,7 @@ export async function createSubscription({ customerId, planId, quantity = 1 }) {
   } catch (err) {
     logger.error(`stripe: failed to create subscription`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -409,7 +325,7 @@ export async function updateSubscription({ subscriptionId, quantity }) {
   } catch (err) {
     logger.error(`stripe: failed to update subscription`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -426,7 +342,7 @@ export async function payUpcomingInvoice({ customerId, subscriptionId }) {
   } catch (err) {
     logger.error(`stripe: failed to update subscription`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -440,7 +356,7 @@ export async function getUpcomingInvoice({ customerId, subscriptionId }) {
   } catch (err) {
     logger.error(`stripe: failed to update subscription`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
   }
 }
 
@@ -452,15 +368,47 @@ export async function getSubscription({ subscriptionId }) {
   } catch (err) {
     logger.error(`stripe: failed to fetch subscription`);
     logError(err);
-    throw err;
+    return handleStripeError(err);
+  }
+}
+
+function handleStripeError(err) {
+  switch (err.type) {
+    case 'StripeCardError':
+      // A declined card error
+      // err.message; // => e.g. "Your card's expiration year is invalid."
+      throw new PaymentError('Stripe card error', {
+        errKey: {
+          type: 'stripe-card-error',
+          message: err.message
+        }
+      });
+    case 'StripeRateLimitError':
+      // Too many requests made to the API too quickly
+      throw new PaymentError('Stripe rate limit error', err);
+    case 'StripeInvalidRequestError':
+      // Invalid parameters were supplied to Stripe's API
+      throw new PaymentError('Stripe invalid request error', err);
+    case 'StripeAPIError':
+      // An error occurred internally with Stripe's API
+      throw new PaymentError('Stripe API error', err);
+    case 'StripeConnectionError':
+      // Some kind of error occurred during the HTTPS communication
+      throw new PaymentError('Stripe connection error', err);
+    case 'StripeAuthenticationError':
+      // You probably used an incorrect API key
+      throw new PaymentError('Stripe authentication error', err);
+    default:
+      // Handle any other types of unexpected errors
+      throw new PaymentError('Stripe unexpected error', err);
   }
 }
 
 function logError(err) {
   const { type, message } = err;
-  if (type) logger.error(`stripe: ${err.type}`);
-  if (message) logger.error(`stripe: ${err.message}`);
-  if (!type && !message) {
+  if (type) logger.error(`stripe: error type - ${err.type}`);
+  if (message) logger.error(`stripe: error message - ${err.message}`);
+  if (!type || !message) {
     logger.error(err);
   }
 }

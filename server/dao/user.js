@@ -843,6 +843,7 @@ export async function removeBillingCard(userId) {
           lastUpdatedAt: isoDate()
         },
         $unset: {
+          paymentMethodId: 1,
           'billing.card': 1
         }
       }
