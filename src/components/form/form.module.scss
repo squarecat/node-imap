@@ -1,5 +1,9 @@
 @import '../../styles/common/colors.scss';
-@import '../../styles/common/forms.scss';
+
+$input-font-size: 16px;
+$input-font-weight: 300;
+
+$textarea-font-size: 14px;
 
 .form-input {
   border-radius: 5px;
@@ -53,16 +57,16 @@
     border-left: none;
   }
 
-  ::-webkit-input-placeholder {
+  input::-webkit-input-placeholder {
     font-size: 14px;
   }
-  :-moz-placeholder {
+  input:-moz-placeholder {
     font-size: 14px;
   }
-  ::-moz-placeholder {
+  input::-moz-placeholder {
     font-size: 14px;
   }
-  :-ms-input-placeholder {
+  input:-ms-input-placeholder {
     font-size: 14px;
   }
 }
@@ -325,6 +329,44 @@
   font-size: 14px;
   line-height: 24px;
   user-select: none;
+}
+
+.form-textarea {
+  border-radius: 5px;
+  margin-bottom: 0;
+  width: 100%;
+  font-size: 14px;
+  box-sizing: border-box;
+  border: 1px solid $color-input-border;
+  background: white;
+  outline: 0;
+  padding: 10px;
+  line-height: 26px;
+  resize: vertical;
+  min-height: 74px;
+
+  &:focus {
+    border-color: $color-input-border-focus;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    color: $color-input-disabled;
+    background-color: $color-input-disabled-bg;
+  }
+
+  &::-webkit-input-placeholder {
+    font-size: 14px;
+  }
+  &:-moz-placeholder {
+    font-size: 14px;
+  }
+  &::-moz-placeholder {
+    font-size: 14px;
+  }
+  &:-ms-input-placeholder {
+    font-size: 14px;
+  }
 }
 
 .form-notification {
