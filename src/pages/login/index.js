@@ -339,7 +339,7 @@ const LoginPage = React.memo(
                   <div styleName="existing-provider-btn">
                     <AuthButton
                       provider={state.existingProvider}
-                      action={action}
+                      action="Login"
                     />
                   </div>
                 </>
