@@ -1,4 +1,5 @@
 import {
+  addImapAccount,
   addToUserIgnoreList,
   addUserReminder,
   authenticationRequiresTwoFactor,
@@ -16,6 +17,7 @@ import {
   removeUserReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
+  updateImapAccount,
   updateUserActivityCompleted,
   updateUserAutoBuy,
   updateUserPassword,
@@ -371,6 +373,14 @@ export default app => {
     try {
       if (op === 'remove-account') {
         updatedUser = await removeUserAccount(userId, value);
+      } else if (op === 'add-imap-account') {
+        updatedUser = await addImapAccount(userId, req.user.masterKey, value);
+      } else if (op === 'update-imap-account') {
+        updatedUser = await updateImapAccount(
+          userId,
+          req.user.masterKey,
+          value
+        );
       } else {
         logger.error(`user-rest: user patch op not supported`);
       }

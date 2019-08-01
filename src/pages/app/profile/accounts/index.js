@@ -100,9 +100,10 @@ const Accounts = () => {
     connectedAccountsContent = (
       <p>
         You haven't connected any accounts yet. Connect your{' '}
-        <TextImportant>Google</TextImportant> or{' '}
-        <TextImportant>Microsoft</TextImportant> accounts below to start
-        scanning your inboxes for subscription spam.
+        <TextImportant>Google</TextImportant>,{' '}
+        <TextImportant>Microsoft</TextImportant> or{' '}
+        <TextImportant>IMAP</TextImportant> accounts below to start scanning
+        your inboxes for subscription spam.
       </p>
     );
   } else {

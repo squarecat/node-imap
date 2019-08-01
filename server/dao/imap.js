@@ -20,7 +20,7 @@ export async function get(id, master) {
   }
 }
 
-export async function create(id, master, password) {
+export async function set(id, master, password) {
   try {
     const col = await db().collection(COL_NAME);
     return col.insertOne({
@@ -35,7 +35,20 @@ export async function create(id, master, password) {
   }
 }
 
-export async function updatePassword(id, master, newPassword) {
+export async function remove(id) {
+  try {
+    const col = await db().collection(COL_NAME);
+    return col.removeOne({
+      id
+    });
+  } catch (err) {
+    logger.error(`imap-dao: error removing imap data`);
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function update(id, master, newPassword) {
   try {
     const col = await db().collection(COL_NAME);
     return col.updateOne(
@@ -45,7 +58,7 @@ export async function updatePassword(id, master, newPassword) {
       {
         $set: {
           password: aes256.encrypt(master, newPassword),
-          createdAt: isoDate()
+          lastUpdatedAt: isoDate()
         }
       }
     );

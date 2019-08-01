@@ -64,13 +64,13 @@ import addMonths from 'date-fns/add_months';
 import { addReferralToBothUsers } from './referral';
 import addWeeks from 'date-fns/add_weeks';
 import { detachPaymentMethod } from '../utils/stripe';
-import { getMasterKey } from '../dao/encryption';
 import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
 import { sendForgotPasswordMail } from '../utils/emails/forgot-password';
 import { sendToUser } from '../rest/socket';
+import { setImapAccessDetails, removeImapAccessDetails } from './imap';
 // import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
@@ -475,6 +475,46 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
     logger.error(err);
     throw err;
   }
+}
+
+export async function addImapAccount(userId, masterKey, imapData) {
+  const { username, password, port, host } = imapData;
+  // add encrypted password to the imap collection
+  const id = await setImapAccessDetails(masterKey, password);
+  const account = {
+    id,
+    provider: 'imap',
+    email: username,
+    port,
+    host
+  };
+  const updatedUser = await addAccount(userId, account);
+  addConnectAccountActivity(updatedUser, account);
+  return updatedUser;
+}
+
+export async function updateImapAccount(userId, masterKey, imapData) {}
+
+export async function removeImapAccount(userId, accountId) {
+  const user = await getUserById(userId);
+  const { accounts } = user;
+  const account = accounts.find(a => a.id === accountId);
+  const accountEmail = account.email;
+
+  const updatedUser = await removeAccount(userId, {
+    email: user.email,
+    accountId,
+    accountEmail
+  });
+
+  addActivityForUser(userId, 'removeAdditionalAccount', {
+    id: accountId,
+    provider: 'imap',
+    email: accountEmail
+  });
+  // delete password encrypt from the imap collection
+  await removeImapAccessDetails(accountId);
+  return updatedUser;
 }
 
 export async function createOrUpdateUserFromPassword(userData = {}) {

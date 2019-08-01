@@ -3,7 +3,7 @@ import './connect.module.scss';
 import ConnectButton from './btn';
 import React from 'react';
 
-const providers = ['google', 'outlook'];
+const providers = ['google', 'outlook', 'imap'];
 
 export default ({ onSuccess = () => {}, onError = () => {} }) => {
   return (

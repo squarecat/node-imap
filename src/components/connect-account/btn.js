@@ -1,7 +1,10 @@
 import './connect.module.scss';
 
 import { GoogleIcon, OutlookIcon } from '../icons';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
+
+import ImapModal from '../modal/imap';
+import { ModalContext } from '../../providers/modal-provider';
 
 let windowObjectReference = null;
 let previousUrl = null;
@@ -30,6 +33,7 @@ export default ({
   onSuccess = () => {},
   onError = () => {}
 }) => {
+  const { open: openModal } = useContext(ModalContext);
   useEffect(() => {
     return function cleanup() {
       window.removeEventListener('message', receiveMessage);
@@ -102,6 +106,17 @@ export default ({
       >
         <OutlookIcon width="20" height="20" />
         <span styleName="text">Connect Microsoft</span>
+      </a>
+    );
+  } else if (provider === 'imap') {
+    return (
+      <a
+        onClick={() => {
+          openModal(<ImapModal />);
+        }}
+        styleName="connect-btn"
+      >
+        <span styleName="text">Connect IMAP</span>
       </a>
     );
   } else {

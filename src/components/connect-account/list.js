@@ -16,16 +16,19 @@ const ConnectList = ({
 }) => {
   const [removingAccounts, setRemovingAccounts] = useState({});
 
-  const onClickRemoveAccount = useCallback(async email => {
-    try {
-      setRemovingAccounts({ ...removingAccounts, [email]: true });
-      await onClickRemove(email);
-    } catch (err) {
-      // error is handled with an alert higher up
-    } finally {
-      setRemovingAccounts({ ...removingAccounts, [email]: false });
-    }
-  }, []);
+  const onClickRemoveAccount = useCallback(
+    async email => {
+      try {
+        setRemovingAccounts({ ...removingAccounts, [email]: true });
+        await onClickRemove(email);
+      } catch (err) {
+        // error is handled with an alert higher up
+      } finally {
+        setRemovingAccounts({ ...removingAccounts, [email]: false });
+      }
+    },
+    [onClickRemove, removingAccounts]
+  );
 
   return (
     <ul styleName="account-list">
