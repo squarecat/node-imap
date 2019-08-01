@@ -387,11 +387,12 @@ export default app => {
       res.send(updatedUser);
     } catch (err) {
       next(
-        new RestError('failed to patch user', {
-          userId,
-          op,
-          cause: err
-        })
+        err
+        // new RestError('failed to patch user', {
+        //   userId,
+        //   op,
+        //   cause: err
+        // })
       );
     }
   });

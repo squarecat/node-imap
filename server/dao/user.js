@@ -227,17 +227,25 @@ export async function updateUserWithAccount(
 
 export async function addAccount(id, data) {
   try {
+    let newAccount = {
+      ...data,
+      addedAt: isoDate()
+    };
+    // oauth accounts will have
+    // keys, IMAP will not
+    if (data.keys) {
+      newAccount = {
+        ...newAccount,
+        keys: encryptKeys(data.keys)
+      };
+    }
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
         $push: {
           hashedEmails: hashEmail(data.email),
-          accounts: {
-            ...data,
-            keys: encryptKeys(data.keys),
-            addedAt: isoDate()
-          }
+          accounts: newAccount
         }
       }
     );
@@ -245,6 +253,7 @@ export async function addAccount(id, data) {
     return user;
   } catch (err) {
     logger.error(`user-dao: failed to add user account for user ${id}`);
+    throw err;
   }
 }
 

@@ -233,6 +233,22 @@
   &:last-child {
     margin-bottom: 0;
   }
+  &.unpadded {
+    margin-bottom: 4px;
+  }
+
+  > p,
+  .hint-text {
+    font-size: 10px;
+    opacity: 0.5;
+    padding-left: 5px;
+    margin: 0;
+    transition: opacity 150ms ease-in-out;
+  }
+
+  > input:focus + p {
+    opacity: 0.75;
+  }
 }
 
 .form-label {

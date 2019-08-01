@@ -25,14 +25,16 @@ refresh.use('connect-account-google', GoogleConnectAccountStrategy);
 passport.use('connect-account-outlook', OutlookConnectAccountStrategy);
 refresh.use('connect-account-outlook', OutlookConnectAccountStrategy);
 
+// master key is only ever stored in the
+// users session so we need to serialize and
+// deserialize it here
 passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
+  cb(null, { id: user.id, masterKey: user.masterKey });
 });
-
-passport.deserializeUser(async function(id, cb) {
+passport.deserializeUser(async function({ id, masterKey }, cb) {
   try {
     const user = await getUserById(id);
-    cb(null, user);
+    cb(null, { ...user, masterKey });
   } catch (err) {
     logger.error('auth: failed to deserialize user');
     logger.error(err, null);

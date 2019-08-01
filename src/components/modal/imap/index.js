@@ -1,10 +1,17 @@
 import './imap.module.scss';
 
-import { FormGroup, FormInput, FormLabel } from '../../../components/form';
+import {
+  FormGroup,
+  FormInput,
+  FormLabel,
+  FormNotification
+} from '../../../components/form';
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from '..';
-import React, { useCallback, useContext, useReducer } from 'react';
+import React, { useCallback, useContext, useMemo, useReducer } from 'react';
 
 import { ModalContext } from '../../../providers/modal-provider';
+import PasswordInput from '../../../components/form/password';
+import { TextImportant } from '../../text';
 import request from '../../../utils/request';
 
 const imapReducer = (state, action) => {
@@ -40,7 +47,8 @@ const imapReducer = (state, action) => {
   }
   return state;
 };
-export default ({ account }) => {
+
+export default ({ account = {} } = {}) => {
   const { close: closeModal } = useContext(ModalContext);
   const { username, host, port } = account;
 
@@ -48,7 +56,7 @@ export default ({ account }) => {
     imap: {
       username: username || '',
       host: host || '',
-      port: port || 443,
+      port: port || 993,
       password: ''
     },
     loading: false
@@ -56,133 +64,149 @@ export default ({ account }) => {
 
   const onConfirm = useCallback(
     async () => {
-      const isValid = await testImapConnection(state.imap);
-      if (isValid) {
+      try {
+        dispatch({ type: 'set-loading', data: true });
         await saveImapConnection(state.imap);
-      } else {
-        dispatch({ type: 'set-error' });
+        closeModal();
+      } catch (err) {
+        dispatch({ type: 'set-error', data: err.message });
+      } finally {
+        dispatch({ type: 'set-loading', data: false });
       }
     },
-    [state.imap]
+    [closeModal, state.imap]
   );
 
-  const content = (
-    <>
-      <p>setup instructions</p>
-      <FormGroup>
-        <FormLabel htmlFor="reminder">Username:</FormLabel>
-        <FormInput
-          name="imap-username"
-          smaller
-          disabled={state.loading}
-          required
-          value={state.username}
-          onChange={e =>
-            dispatch({
-              type: 'set-imap',
-              data: { username: e.currentTarget.value }
-            })
-          }
-        />
-      </FormGroup>
-      <FormGroup>
-        <FormLabel htmlFor="reminder">Password:</FormLabel>
-        <FormInput
-          name="imap-password"
-          smaller
-          disabled={state.loading}
-          required
-          value={state.password}
-          onChange={e =>
-            dispatch({
-              type: 'set-imap',
-              data: { password: e.currentTarget.value }
-            })
-          }
-        />
-      </FormGroup>
-      <FormGroup>
-        <FormLabel htmlFor="reminder">Host:</FormLabel>
-        <FormInput
-          name="imap-host"
-          smaller
-          disabled={state.loading}
-          required
-          placeholder="imap.gmail.com"
-          value={state.host}
-          onChange={e =>
-            dispatch({
-              type: 'set-imap',
-              data: { host: e.currentTarget.value }
-            })
-          }
-        />
-      </FormGroup>
-      <FormGroup>
-        <FormLabel htmlFor="reminder">Port:</FormLabel>
-        <FormInput
-          name="imap-host"
-          smaller
-          disabled={state.loading}
-          required
-          value={state.port}
-          onChange={e =>
-            dispatch({
-              type: 'set-imap',
-              data: { port: e.currentTarget.value }
-            })
-          }
-        />
-      </FormGroup>
-    </>
+  const content = useMemo(
+    () => {
+      const { imap } = state;
+      return (
+        <>
+          <p>
+            The Internet Message Access Protocol (IMAP) is a mail protocol used
+            for accessing email on a remote web server from a local client. This
+            should be supported by all modern email clients and web servers, but{' '}
+            <TextImportant>may need to be enabled first</TextImportant> from
+            within your mail client.
+          </p>
+          <FormGroup unpadded>
+            <FormLabel htmlFor="reminder">Username:</FormLabel>
+            <FormInput
+              name="imap-username"
+              smaller
+              disabled={state.loading}
+              required
+              value={imap.username}
+              onChange={e =>
+                dispatch({
+                  type: 'set-imap',
+                  data: { username: e.currentTarget.value }
+                })
+              }
+            />
+            <p>Usually your email address.</p>
+          </FormGroup>
+          <FormGroup unpadded>
+            <FormLabel htmlFor="reminder">Password:</FormLabel>
+            <PasswordInput
+              name="imap-password"
+              doValidation={false}
+              smaller
+              disabled={state.loading}
+              required
+              value={imap.password}
+              autoFocus={false}
+              onChange={value =>
+                dispatch({
+                  type: 'set-imap',
+                  data: { password: value }
+                })
+              }
+            />
+            <p>Usually the password you use to sign into the mail client.</p>
+          </FormGroup>
+          <FormGroup unpadded>
+            <FormLabel htmlFor="reminder">Host:</FormLabel>
+            <FormInput
+              name="imap-host"
+              smaller
+              disabled={state.loading}
+              required
+              placeholder="https://imap.gmail.com"
+              value={imap.host}
+              onChange={e =>
+                dispatch({
+                  type: 'set-imap',
+                  data: { host: e.currentTarget.value }
+                })
+              }
+            />
+            <p>Your client should tell you what this is.</p>
+          </FormGroup>
+          <FormGroup unpadded>
+            <FormLabel htmlFor="reminder">Port:</FormLabel>
+            <FormInput
+              name="imap-host"
+              smaller
+              disabled={state.loading}
+              required
+              value={imap.port}
+              onChange={e =>
+                dispatch({
+                  type: 'set-imap',
+                  data: { port: e.currentTarget.value }
+                })
+              }
+            />
+            <p>Usually either 993 or 143</p>
+          </FormGroup>
+          {state.error ? (
+            <FormNotification error>{state.error}</FormNotification>
+          ) : null}
+        </>
+      );
+    },
+    [state]
   );
 
   return (
-    <div styleName="reminder-modal">
-      <ModalBody compact>
-        <ModalHeader>
-          IMAP Setup
-          <ModalCloseIcon />
-        </ModalHeader>
-        <div>{content}</div>
-        <ModalSaveAction
-          onSave={() => {
-            onConfirm();
-          }}
-          onCancel={closeModal}
-          saveText={'Save'}
-        />
-      </ModalBody>
+    <div styleName="imap-modal">
+      <form
+        id="imap-form"
+        name="imap-form"
+        onSubmit={e => {
+          e.preventDefault();
+          onConfirm();
+          return false;
+        }}
+      >
+        <ModalBody compact>
+          <ModalHeader>
+            IMAP Setup
+            <ModalCloseIcon />
+          </ModalHeader>
+          <div>{content}</div>
+        </ModalBody>
+        <ModalSaveAction onCancel={closeModal} saveText={'Save'} />
+      </form>
     </div>
   );
 };
 
-async function testImapConnection(imapDetails) {
-  try {
-    return request('/api/imap/test', {
-      method: 'POST',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      },
-      body: JSON.stringify({ imapDetails })
-    });
-  } catch (err) {
-    throw err;
-  }
-}
-
 async function saveImapConnection(imapDetails) {
+  const { host } = imapDetails;
   try {
-    return request('/api/me/imap', {
+    if (!host.startsWith('http')) {
+      // throw new Error('Please include host protocol');
+    }
+    return request('/api/me', {
       method: 'PATCH',
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify({ op: 'add', data: imapDetails })
+      body: JSON.stringify({ op: 'add-imap-account', value: imapDetails })
     });
   } catch (err) {
     throw err;

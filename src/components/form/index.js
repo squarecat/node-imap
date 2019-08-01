@@ -180,9 +180,9 @@ export const FormCheckbox = ({ id, name, label, ...props }) => {
   );
 };
 
-export const FormGroup = ({ children, fluid, column, container }) => {
+export const FormGroup = ({ children, fluid, column, unpadded, container }) => {
   return (
-    <div styleName={cx('form-group', { fluid, column, container })}>
+    <div styleName={cx('form-group', { fluid, column, container, unpadded })}>
       {children}
     </div>
   );

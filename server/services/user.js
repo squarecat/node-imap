@@ -1,4 +1,9 @@
-import { AuthError, ConnectAccountError, UserError } from '../utils/errors';
+import {
+  AuthError,
+  ConnectAccountError,
+  LMAError,
+  UserError
+} from '../utils/errors';
 import {
   addAccount,
   addActivity,
@@ -58,6 +63,11 @@ import {
   removeUserAccountFromOrganisation
 } from './organisation';
 import { getMilestone, updateMilestoneCompletions } from './milestones';
+import {
+  removeImapAccessDetails,
+  setImapAccessDetails,
+  testImapConnection
+} from './imap';
 
 import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
@@ -70,7 +80,6 @@ import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
 import { sendForgotPasswordMail } from '../utils/emails/forgot-password';
 import { sendToUser } from '../rest/socket';
-import { setImapAccessDetails, removeImapAccessDetails } from './imap';
 // import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
@@ -479,18 +488,39 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 
 export async function addImapAccount(userId, masterKey, imapData) {
   const { username, password, port, host } = imapData;
-  // add encrypted password to the imap collection
-  const id = await setImapAccessDetails(masterKey, password);
-  const account = {
-    id,
-    provider: 'imap',
-    email: username,
-    port,
-    host
-  };
-  const updatedUser = await addAccount(userId, account);
-  addConnectAccountActivity(updatedUser, account);
-  return updatedUser;
+  try {
+    const { connected, error } = await testImapConnection({
+      username,
+      port,
+      host,
+      password
+    });
+    if (!connected) {
+      throw new LMAError(
+        'Failed to authenticate with IMAP server. Check username and password and try again.',
+        {
+          cause: error
+        }
+      );
+    }
+    // add encrypted password to the imap collection
+    const id = await setImapAccessDetails(masterKey, password);
+    const account = {
+      id,
+      provider: 'imap',
+      email: username,
+      port,
+      host
+    };
+
+    const updatedUser = await addAccount(userId, account);
+    addConnectAccountActivity(updatedUser, account);
+    return updatedUser;
+  } catch (err) {
+    logger.error(`user-service: error adding imap account to ${userId}`);
+    logger.error(err);
+    throw err;
+  }
 }
 
 export async function updateImapAccount(userId, masterKey, imapData) {}

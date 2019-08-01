@@ -44,6 +44,7 @@ export const Strategy = new LocalStrategy(
       if (!user) {
         return done(null, false);
       }
+      debugger;
       return done(null, user);
     } catch (err) {
       return done(err);

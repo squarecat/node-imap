@@ -10,32 +10,56 @@ const connections = io.counter({
 export async function getMailClient(master, account) {
   const { id, username, host, port, tls } = account;
 
+  try {
+    const { password } = await getImapAccessDetails(master, id);
+    return connect({ username, password, host, port, tls });
+  } catch (err) {
+    logger.error('imap-access: failed to connect to IMAP');
+    logger.errro(err);
+  }
+}
+
+function connect({ username, password, host, port, tls = true }) {
   return new Promise(async (resolve, reject) => {
-    try {
-      const { password } = await getImapAccessDetails(master, id);
-      const imap = new Imap({
-        user: username,
-        password,
-        host,
-        port,
-        tls
-      });
-      imap.once('ready', () => {
-        connections.inc();
-        resolve(imap);
-      });
+    const imap = new Imap({
+      user: username,
+      password,
+      host,
+      port,
+      tls
+    });
+    imap.once('ready', () => {
+      console.log('imap connected');
+      connections.inc();
+      resolve(imap);
+    });
 
-      imap.once('error', function(err) {
-        console.log(err);
-      });
-
-      imap.once('end', function() {
-        connections.dec();
-      });
-    } catch (err) {
-      logger.error('imap-access: failed to connect to IMAP');
-      logger.errro(err);
+    imap.once('error', function(err) {
+      console.log('imap error');
+      console.error(err);
       reject(err);
-    }
+    });
+
+    imap.once('end', function() {
+      connections.dec();
+      console.log('imap closed');
+    });
+
+    imap.connect();
   });
+}
+
+export async function testConnection(args) {
+  try {
+    const imap = await connect(args);
+    imap.end();
+    return {
+      connected: true
+    };
+  } catch (err) {
+    return {
+      connected: false,
+      error: err.message
+    };
+  }
 }

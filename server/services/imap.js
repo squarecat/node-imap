@@ -1,14 +1,16 @@
 import { get, remove, set, update } from '../dao/imap';
 
+import { testConnection } from './mail/imap/access';
 import { v4 } from 'node-uuid';
 
 export function getImapAccessDetails(masterKey, accountId) {
   return get(accountId, masterKey);
 }
 
-export function setImapAccessDetails(masterKey, password) {
+export async function setImapAccessDetails(masterKey, password) {
   const accountId = v4();
-  return set(accountId, masterKey, password);
+  await set(accountId, masterKey, password);
+  return accountId;
 }
 
 export function updateImapAccessDetails(accountId, masterKey, password) {
@@ -17,4 +19,8 @@ export function updateImapAccessDetails(accountId, masterKey, password) {
 
 export function removeImapAccessDetails(accountId) {
   return remove(accountId);
+}
+
+export function testImapConnection(account) {
+  return testConnection(account);
 }

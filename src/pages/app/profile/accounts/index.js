@@ -136,6 +136,11 @@ const Accounts = () => {
           onSuccess={() => onConnectSuccess()}
           onError={err => onConnectError(err)}
         />
+        <ConnectButton
+          provider="imap"
+          onSuccess={() => onConnectSuccess()}
+          onError={err => onConnectError(err)}
+        />
       </div>
     </>
   );
