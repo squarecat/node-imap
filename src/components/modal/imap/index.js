@@ -12,6 +12,7 @@ import React, { useCallback, useContext, useMemo, useReducer } from 'react';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
 import { TextImportant } from '../../text';
+import { getImapError } from '../../../utils/errors';
 import request from '../../../utils/request';
 
 const imapReducer = (state, action) => {
@@ -66,10 +67,14 @@ export default ({ account = {} } = {}) => {
     async () => {
       try {
         dispatch({ type: 'set-loading', data: true });
+        dispatch({ type: 'set-error', data: false });
+
         await saveImapConnection(state.imap);
         closeModal();
       } catch (err) {
-        dispatch({ type: 'set-error', data: err.message });
+        console.error(err);
+        const { message } = getImapError(err);
+        dispatch({ type: 'set-error', data: message });
       } finally {
         dispatch({ type: 'set-loading', data: false });
       }
@@ -161,14 +166,18 @@ export default ({ account = {} } = {}) => {
             <p>Usually either 993 or 143</p>
           </FormGroup>
           {state.error ? (
-            <FormNotification error>{state.error}</FormNotification>
+            <FormGroup>
+              <FormNotification error>{state.error}</FormNotification>
+            </FormGroup>
           ) : null}
           {isWeirdHost(imap.host) ? (
-            <FormNotification warning>
-              We support OAuth for Gmail and Outlook accounts which is generally
-              more secure and simpler to setup. Consider using this instead of
-              IMAP.
-            </FormNotification>
+            <FormGroup>
+              <FormNotification warning>
+                We support OAuth for Gmail and Outlook accounts which is
+                generally more secure and simpler to setup. Consider using this
+                instead of IMAP.
+              </FormNotification>
+            </FormGroup>
           ) : null}
         </>
       );
@@ -194,7 +203,12 @@ export default ({ account = {} } = {}) => {
           </ModalHeader>
           <div>{content}</div>
         </ModalBody>
-        <ModalSaveAction onCancel={closeModal} saveText={'Save'} />
+        <ModalSaveAction
+          onCancel={closeModal}
+          saveText={'Save'}
+          isDisabled={state.loading}
+          isLoading={state.loading}
+        />
       </form>
     </div>
   );
@@ -221,5 +235,5 @@ async function saveImapConnection(imapDetails) {
 }
 
 function isWeirdHost(host) {
-  return ['imap.gmail.com', 'outlook.com'].includes(host);
+  return ['imap.gmail.com', 'outlook.com', 'office365.com'].includes(host);
 }

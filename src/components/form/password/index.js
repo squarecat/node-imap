@@ -17,7 +17,8 @@ export default ({
   onChange = () => {},
   autoComplete = 'current-password',
   autoFocus = true,
-  smaller = false
+  smaller = false,
+  ...props
 }) => {
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
@@ -61,6 +62,7 @@ export default ({
   );
   return (
     <FormInput
+      {...props}
       smaller={smaller}
       onChange={({ currentTarget }) => setValue(currentTarget.value)}
       autoFocus={autoFocus}
