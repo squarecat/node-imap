@@ -17,12 +17,21 @@
 }
 
 .subpage h1 {
-  font-size: 30px;
-  line-height: 42px;
+  // font-size: 30px;
+  // line-height: 42px;
 
+  // @media (max-width: 768px) {
+  //   font-size: 25px;
+  //   line-height: 36px;
+  // }
+}
+
+.subpage h2 {
+  font-size: 25px;
+  line-height: 32px;
   @media (max-width: 768px) {
-    font-size: 25px;
-    line-height: 36px;
+    font-size: 20px;
+    line-height: 28px;
   }
 }
 
@@ -39,15 +48,6 @@
 
   @media (max-width: 400px) {
     padding: 20px;
-  }
-}
-
-.subpage h2 {
-  font-size: 25px;
-  line-height: 32px;
-  @media (max-width: 768px) {
-    font-size: 20px;
-    line-height: 28px;
   }
 }
 
@@ -222,4 +222,44 @@ h1.subpage-header-title {
     border: 1px solid $color-red-light;
     box-shadow: 1px 1px 2px hsla(18, 100%, 38%, 0.1);
   }
+}
+
+.subpage-features {
+  margin-top: 150px;
+}
+
+.subpage-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-column-gap: 50px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+  }
+}
+
+.subpage-feature {
+  p {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.subpage-feature-title {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.subpage-feature-img {
+  max-width: 150px;
+  margin-left: -15px;
+}
+
+.subpage-feature-text {
+  text-align: left;
 }

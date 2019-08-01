@@ -1,12 +1,9 @@
 import React from 'react';
-
 import { TextLink } from '../../text';
 
-export const ProviderFooter = ({ name }) => (
+export const ProviderFooter = ({ name, variations }) => (
   <div>
-    <h2>
-      Start unsubscribing from emails in your <span>{name}</span> inboxes today.
-    </h2>
+    <h2>Start unsubscribing from emails in your {variations} inboxes today</h2>
     <a
       href={`/signup?ref=provider-${name}`}
       className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}

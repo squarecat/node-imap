@@ -5,8 +5,11 @@
 }
 
 .hero {
-  min-height: calc(100vh - 50px - 104px);
-  padding-top: 120px;
+  min-height: calc(100vh - 50px - 100px);
+
+  @media (min-width: 901px) {
+    padding-top: 120px;
+  }
 }
 
 .container-text {
@@ -66,33 +69,61 @@
   @extend .subpage-image-section-img--bordered;
 }
 
+.features {
+  @extend .subpage-features;
+}
+.feature {
+  @extend .subpage-feature;
+}
+.feature-title {
+  @extend .subpage-feature-title;
+}
+.feature-img {
+  @extend .subpage-feature-img;
+}
+.feature-text {
+  @extend .subpage-feature-text;
+}
+
 .trustbar {
   margin-top: 20px;
   border-top: 1px solid $color-border-grey;
   background: $color-grey-trustbar;
-  height: 84px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    margin-top: 80px;
+  }
+
+  &.google {
+    background: #373737;
+  }
 }
 
 .trustbar-images {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  height: 100%;
-
-  @media (max-width: 900px) {
-    padding: 20px;
-  }
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .trustbar-img {
   display: flex;
-  margin-right: 15px;
-  height: 100%;
+  align-items: center;
+  margin-right: 40px;
+  max-width: 200px;
+  padding: 20px 0;
 
-  img {
-    max-height: 100%;
+  .google & {
+    max-width: 150px;
+  }
+
+  @media (max-width: 768px) {
+    margin-right: 20px;
   }
 
   &:last-child {
