@@ -50,16 +50,18 @@ function connect({ username, password, host, port, tls = true }) {
 }
 
 export async function testConnection(args) {
+  let imap;
   try {
-    const imap = await connect(args);
+    imap = await connect(args);
     imap.end();
     return {
       connected: true
     };
   } catch (err) {
+    imap.end();
     return {
       connected: false,
-      error: err.message
+      error: err
     };
   }
 }

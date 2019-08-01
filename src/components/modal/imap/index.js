@@ -132,7 +132,7 @@ export default ({ account = {} } = {}) => {
               smaller
               disabled={state.loading}
               required
-              placeholder="https://imap.gmail.com"
+              placeholder="imap.gmail.com"
               value={imap.host}
               onChange={e =>
                 dispatch({
@@ -141,7 +141,7 @@ export default ({ account = {} } = {}) => {
                 })
               }
             />
-            <p>Your client should tell you what this is.</p>
+            <p>Your mail client should tell you what this is.</p>
           </FormGroup>
           <FormGroup unpadded>
             <FormLabel htmlFor="reminder">Port:</FormLabel>
@@ -162,6 +162,13 @@ export default ({ account = {} } = {}) => {
           </FormGroup>
           {state.error ? (
             <FormNotification error>{state.error}</FormNotification>
+          ) : null}
+          {isWeirdHost(imap.host) ? (
+            <FormNotification warning>
+              We support OAuth for Gmail and Outlook accounts which is generally
+              more secure and simpler to setup. Consider using this instead of
+              IMAP.
+            </FormNotification>
           ) : null}
         </>
       );
@@ -196,8 +203,8 @@ export default ({ account = {} } = {}) => {
 async function saveImapConnection(imapDetails) {
   const { host } = imapDetails;
   try {
-    if (!host.startsWith('http')) {
-      // throw new Error('Please include host protocol');
+    if (host.startsWith('http')) {
+      throw new Error('HTTP(S) protocol is not required');
     }
     return request('/api/me', {
       method: 'PATCH',
@@ -211,4 +218,8 @@ async function saveImapConnection(imapDetails) {
   } catch (err) {
     throw err;
   }
+}
+
+function isWeirdHost(host) {
+  return ['imap.gmail.com', 'outlook.com'].includes(host);
 }

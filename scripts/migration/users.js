@@ -27,7 +27,6 @@ const migrateUser = oldRecord => {
       [k]: oldRecord[k]
     };
   }, {});
-  debugger;
   // convert provider to loginProvider
   newRecord = {
     ...newRecord,
