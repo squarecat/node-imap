@@ -583,7 +583,6 @@ export default function OpenPage() {
                 </div>
               </div>
               <div styleName="boxes">
-
                 {/* <div styleName="big-stat box">
                   <span styleName="label">Teams</span>
                   <span styleName="value">{format(stats.organisations)}</span>
@@ -791,6 +790,8 @@ function getMonthlyRevenueGraphStats(stats) {
     if (isAfter(date, lastMonthToShow)) return out;
 
     const formatted = formatDate(date, 'YYYY-MM');
+    const profit = getYValue(d, 'totalRevenue') + getYValue(d, 'giftRevenue');
+
     if (!out[formatted]) {
       // const costs = expenses.find(
       //   e => formatDate(e.date, 'YYYY-MM') === formatted
@@ -799,7 +800,7 @@ function getMonthlyRevenueGraphStats(stats) {
         ...out,
         [formatted]: {
           date,
-          profit: getYValue(d, 'totalRevenue')
+          profit
           // expenses: costs ? costs.total : 0
         }
       };
@@ -809,7 +810,7 @@ function getMonthlyRevenueGraphStats(stats) {
       ...out,
       [formatted]: {
         ...out[formatted],
-        profit: out[formatted].profit + getYValue(d, 'totalRevenue')
+        profit: out[formatted].profit + profit
       }
     };
   }, {});
