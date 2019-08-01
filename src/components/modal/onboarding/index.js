@@ -7,7 +7,7 @@ import ConnectAccounts from './connect-accounts';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
-import logoV2 from '../../../assets/v2-logo-big.png';
+import logoV2 from '../../../assets/logo-v2.png';
 import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import styles from './onboarding.module.scss';

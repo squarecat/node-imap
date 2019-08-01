@@ -112,7 +112,7 @@ export const LoginContext = createContext({ state: initialState });
 
 const LoginPage = React.memo(
   ({ register, transitionStatus, step = defaultStep }) => {
-    resetUrlParams(register ? 'signup' : 'login');
+    // resetUrlParams(register ? 'signup' : 'login');
     const activeRef = useRef(null);
     const [state, dispatch] = useReducer(loginReducer, {
       ...initialState,
@@ -339,7 +339,7 @@ const LoginPage = React.memo(
                   <div styleName="existing-provider-btn">
                     <AuthButton
                       provider={state.existingProvider}
-                      action={action}
+                      action="Login"
                     />
                   </div>
                 </>

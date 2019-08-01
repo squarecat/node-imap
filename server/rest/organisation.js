@@ -1,11 +1,11 @@
 import * as PaymentService from '../services/payments';
 
 import {
+  bulkInviteUsersToOrganisation,
   getOrganisationById,
   getOrganisationPayments,
   getOrganisationSubscription,
   getOrganisationUserStats,
-  inviteUserToOrganisation,
   removeUserFromOrganisation,
   revokeOrganisationInvite,
   updateOrganisation
@@ -96,14 +96,14 @@ export default app => {
 
   app.patch('/api/organisation/:id/invite', auth, async (req, res, next) => {
     const { id } = req.params;
-    const { op, value: email } = req.body;
+    const { op, value } = req.body;
 
     try {
       if (op === 'add') {
-        inviteUserToOrganisation(id, email);
+        bulkInviteUsersToOrganisation(id, value);
         return res.status(202).send();
       } else if (op === 'remove') {
-        const updatedOrg = await revokeOrganisationInvite(id, email);
+        const updatedOrg = await revokeOrganisationInvite(id, value);
         return res.send(updatedOrg);
       }
 

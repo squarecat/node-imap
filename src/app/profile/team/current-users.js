@@ -116,6 +116,7 @@ function CurrentUsers({ organisationId, adminUserEmail, organisationAdmin }) {
               <TableHeadCell />
               <TableHeadCell>Unsubscribes</TableHeadCell>
               <TableHeadCell>Joined</TableHeadCell>
+              <TableHeadCell />
             </TableHead>
             <tbody>
               {users.map(user => (

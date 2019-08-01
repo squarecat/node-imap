@@ -7,6 +7,7 @@ import BillingHistory from '../../../../app/profile/team/billing-history';
 import Button from '../../../../components/btn';
 import CardDetails from '../../../../components/card-details';
 import CurrentUsers from '../../../../app/profile/team/current-users';
+import { EditIcon } from '../../../../components/icons';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { FormCheckbox } from '../../../../components/form';
 import Invite from '../../../../app/profile/team/invite';
@@ -14,12 +15,14 @@ import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import PendingInvites from '../../../../app/profile/team/invited-users';
 import ProfileLayout from '../../../../app/profile/layout';
-import { TextImportant } from '../../../../components/text';
+import { TextImportant, TextLink } from '../../../../components/text';
+import WarningModal from '../../../../components/modal/warning-modal';
 import cx from 'classnames';
 import formatDate from 'date-fns/format';
 import request from '../../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../../utils/hooks/use-user';
+import { openChat } from '../../../../utils/chat';
 
 export default () => {
   return (
@@ -269,35 +272,6 @@ function Billing({ organisation }) {
     delinquent
   } = billing;
 
-  // const onClickRemoveCard = useCallback(
-  //   () => {
-  //     const removeCard = () => {
-  //       console.log('not yet implemented');
-  //     };
-  //     openModal(
-  //       <WarningModal
-  //         onConfirm={() => removeCard()}
-  //         content={
-  //           <p>
-  //             If you remove your payment method and do not add one by the end of
-  //             your billing period{' '}
-  //             <TextImportant>
-  //               we will deactivate your organisation
-  //             </TextImportant>
-  //             . You have until the end of this billing period to add a new
-  //             payment method.
-  //           </p>
-  //         }
-  //         confirmText="Confirm"
-  //       />,
-  //       {
-  //         dismissable: true
-  //       }
-  //     );
-  //   },
-  //   [openModal]
-  // );
-
   const onClickAddBilling = useCallback(
     () => {
       const addPaymentMethodSuccess = () => {
@@ -313,9 +287,9 @@ function Billing({ organisation }) {
     [openModal, organisation, setOrganisationLastUpdated]
   );
 
-  let infoText;
+  let subscriptionStatusText;
   if (subscriptionStatus === 'incomplete') {
-    infoText = (
+    subscriptionStatusText = (
       <p>
         Your subscription is not active. You need to complete additional card
         authentication. If you have not received instructions on how to do this
@@ -323,7 +297,7 @@ function Billing({ organisation }) {
       </p>
     );
   } else if (subscriptionStatus === 'canceled') {
-    infoText = (
+    subscriptionStatusText = (
       <p>
         Your subscription has been canceled{' '}
         {delinquent ? 'as we failed to collect payment' : null}. Update your
@@ -339,20 +313,19 @@ function Billing({ organisation }) {
 
         {isBeta ? <p>All usage is free during the beta!</p> : null}
         {active && !card ? <p>Your team has been activated for free!</p> : null}
+        {subscriptionStatusText}
+
+        {card ? (
+          <div styleName="card-details">
+            <CardDetails card={billing.card} />
+            <a styleName="card-details-edit" onClick={onClickAddBilling}>
+              <EditIcon />
+            </a>
+          </div>
+        ) : null}
 
         {subscriptionId ? (
           <BillingInformation organisationId={id} currentUsers={currentUsers} />
-        ) : null}
-
-        {infoText}
-
-        {card ? (
-          <div style={{ marginTop: 20 }}>
-            <CardDetails card={billing.card} padded />
-            <Button basic compact stretch onClick={onClickAddBilling}>
-              Change Payment Method
-            </Button>
-          </div>
         ) : null}
 
         {!card && !active ? (
@@ -372,8 +345,10 @@ function Billing({ organisation }) {
         <div styleName="organisation-section">
           <h2>Invoicing Details</h2>
           <p>VAT Number: {vatNumber || '-'}</p>
-
-          <p>Contact us to add or modify your VAT number.</p>
+          <p>
+            <TextLink onClick={() => openChat()}>Send us a message</TextLink> to
+            add or modify your VAT number.
+          </p>
         </div>
       ) : null}
     </>
@@ -381,12 +356,64 @@ function Billing({ organisation }) {
 }
 
 function BillingInformation({ organisationId, currentUsers }) {
+  const { open: openModal } = useContext(ModalContext);
+
   const { value: subscription = {}, loading } = useAsync(
     () => fetchSubscription(organisationId),
     [organisationId, currentUsers]
   );
 
   const dateFormat = 'Do MMMM YYYY';
+
+  const onClickCancel = useCallback(
+    ({ periodEnd }) => {
+      // const onCancel = async () => {
+      //   try {
+      //     await cancelSubscription(organisationId);
+      //     alertActions.setAlert({
+      //       level: 'success',
+      //       message: `Successfully cancelled subscription - it will end on ${periodEnd}`,
+      //       isDismissable: true,
+      //       autoDismiss: false
+      //     });
+      //   } catch (err) {
+      //     console.error(err);
+      //     // toggleLoading(false);
+      //     // alertActions.setAlert({
+      //     //   level: 'error',
+      //     //   message: `Something went wrong cancelling your subscription, try again or contact support.`,
+      //     //   isDismissable: true,
+      //     //   autoDismiss: false
+      //     // });
+      //   }
+      // };
+      openModal(
+        <WarningModal
+          onConfirm={() => openChat()}
+          content={
+            <>
+              <p>
+                <TextImportant>
+                  We can't automate this yet, please contact us to cancel your
+                  subscription.
+                </TextImportant>
+              </p>
+              <p>
+                Your subscription will be cancelled immediately. Your account
+                will be deactivated at the end of this billing period on{' '}
+                {periodEnd}.
+              </p>
+            </>
+          }
+          confirmText="Contact Us"
+        />,
+        {
+          dismissable: true
+        }
+      );
+    },
+    [openModal]
+  );
 
   const content = useMemo(
     () => {
@@ -398,8 +425,10 @@ function BillingInformation({ organisationId, currentUsers }) {
         ended_at,
         quantity,
         plan = {},
-        upcomingInvoice
+        upcomingInvoiceAmount
       } = subscription;
+
+      const periodEnd = formatDate(current_period_end * 1000, dateFormat);
 
       if (canceled_at) {
         return (
@@ -412,10 +441,6 @@ function BillingInformation({ organisationId, currentUsers }) {
                 Ends on: {formatDate(current_period_end * 1000, dateFormat)}
               </p>
             )}
-            <p>
-              Subscription ends:{' '}
-              {formatDate(current_period_end * 1000, dateFormat)}
-            </p>
           </>
         );
       } else {
@@ -439,14 +464,18 @@ function BillingInformation({ organisationId, currentUsers }) {
             <p>
               You'll next be billed{' '}
               <TextImportant>
-                ${(upcomingInvoice.total / 100).toFixed(2)}
+                ${(upcomingInvoiceAmount / 100).toFixed(2)}
               </TextImportant>{' '}
-              on the{' '}
-              <TextImportant>
-                {formatDate(current_period_end * 1000, dateFormat)}
-              </TextImportant>
-              .
+              on the <TextImportant>{periodEnd}</TextImportant>.
             </p>
+            <Button
+              basic
+              compact
+              stretch
+              onClick={() => onClickCancel({ periodEnd })}
+            >
+              Cancel Subscription
+            </Button>
           </>
         );
       }
