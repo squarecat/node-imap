@@ -77,6 +77,25 @@ export default ({ account = {} } = {}) => {
     [closeModal, state.imap]
   );
 
+  const notification = useMemo(
+    () => {
+      const { imap } = state;
+      if (state.error) {
+        return <FormNotification error>{state.error}</FormNotification>;
+      }
+      if (isWeirdHost(imap.host)) {
+        return (
+          <FormNotification warning>
+            We support OAuth for Gmail and Outlook accounts which is generally
+            more secure and simpler to setup. Consider using this instead of
+            IMAP.
+          </FormNotification>
+        );
+      }
+    },
+    [state]
+  );
+
   const content = useMemo(
     () => {
       const { imap } = state;
@@ -160,20 +179,11 @@ export default ({ account = {} } = {}) => {
             />
             <p>Usually either 993 or 143</p>
           </FormGroup>
-          {state.error ? (
-            <FormNotification error>{state.error}</FormNotification>
-          ) : null}
-          {isWeirdHost(imap.host) ? (
-            <FormNotification warning>
-              We support OAuth for Gmail and Outlook accounts which is generally
-              more secure and simpler to setup. Consider using this instead of
-              IMAP.
-            </FormNotification>
-          ) : null}
+          {notification}
         </>
       );
     },
-    [state]
+    [notification, state]
   );
 
   return (
