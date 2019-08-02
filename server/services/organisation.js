@@ -1,6 +1,7 @@
 import {
   addInvitedUser,
   addUser,
+  bulkAddInvitedUsers,
   create,
   getById,
   getByInviteCode,
@@ -28,6 +29,7 @@ import {
   updateSubscription
 } from '../utils/stripe';
 
+import _isArray from 'lodash.isarray';
 import { addActivityForUser } from './user';
 import { listPaymentsForOrganisation } from './payments';
 import logger from '../utils/logger';
@@ -106,24 +108,30 @@ export async function createOrganisation(email, data) {
   }
 }
 
-export async function inviteUserToOrganisation(id, email) {
+export async function bulkInviteUsersToOrganisation(id, emails) {
   try {
     const organisation = await getById(id);
-    const isAdmin = organisation.adminUserEmail === email;
-    const invited = organisation.invitedUsers.includes(email);
+    // only add users to the invite list if not already there and not an admin
+    const addToOrganisationInvites = emails.filter(email => {
+      const isAdmin = organisation.adminUserEmail === email;
+      const alreadyInvited = organisation.invitedUsers.includes(email);
+      return !isAdmin && !alreadyInvited;
+    });
 
-    logger.debug(`organisation-service: inviting user to org ${id}`);
-    if (!isAdmin && !invited) {
-      // only add the user to the invite list if not already there and not an admin
-      await addInvitedUser(id, email);
-    }
+    logger.debug(
+      `organisation-service: inviting ${emails.length} users to org ${id}`
+    );
+    await bulkAddInvitedUsers(id, addToOrganisationInvites);
 
     // always send the invite email in case someone lost it etc
-    sendOrganisationInviteMail({
-      toAddress: email,
-      organisationName: organisation.name,
-      inviteCode: organisation.inviteCode
-    });
+    emails.forEach(email =>
+      sendOrganisationInviteMail({
+        toAddress: email,
+        organisationName: organisation.name,
+        inviteCode: organisation.inviteCode
+      })
+    );
+
     return true;
   } catch (err) {
     throw err;
@@ -329,7 +337,7 @@ export async function getOrganisationSubscription(id) {
       plan
     } = await getSubscription({ subscriptionId });
 
-    const upcomingInvoice = await getUpcomingInvoice({
+    const { total } = await getUpcomingInvoice({
       customerId,
       subscriptionId
     });
@@ -341,9 +349,7 @@ export async function getOrganisationSubscription(id) {
       ended_at,
       quantity,
       plan,
-      upcomingInvoice: {
-        total: upcomingInvoice.total > 0 ? upcomingInvoice.total : 0
-      }
+      upcomingInvoiceAmount: total > 0 ? total : 0
     };
   } catch (err) {
     throw err;

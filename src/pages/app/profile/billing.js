@@ -24,7 +24,6 @@ import ProfileLayout from '../../../app/profile/layout';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import { openChat } from '../../../utils/chat';
-import organisation from './team';
 import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
@@ -40,7 +39,10 @@ export default function() {
 function Billing() {
   const { open: openModal } = useContext(ModalContext);
 
-  const [{ billing = {}, organisationId }, { setBilling }] = useUser(u => {
+  const [
+    { billing = {}, organisationId, organisation },
+    { setBilling }
+  ] = useUser(u => {
     return {
       billing: u.billing,
       organisationId: u.organisationId,
@@ -324,8 +326,11 @@ function BillingHistory() {
       } else {
         text = (
           <p>
-            Showing <TextImportant>{payments.length}</TextImportant> previous
-            {`${payments.length} payment${payments.length === 1 ? '' : 's'}`}.
+            Showing{' '}
+            <TextImportant>
+              {`${payments.length} previous payment${payments.length === 1 ? '' : 's'}`}
+            </TextImportant>
+            .
           </p>
         );
       }
