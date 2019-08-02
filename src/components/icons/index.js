@@ -214,6 +214,22 @@ export const ExternalIcon = ({ width = 14, height = 14, ...visProps }) => (
   </svg>
 );
 
+export const EditIcon = ({ width = 14, height = 14, ...visProps }) => (
+  <svg
+    className={getClasses('edit', visProps)}
+    viewBox="0 0 32 32"
+    width={width}
+    height={height}
+    fill="none"
+    stroke="currentcolor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+  </svg>
+);
+
 export const TwitterIcon = ({ width = 20, height = 20, ...visProps }) => (
   <svg
     className={getClasses('twitter', visProps)}

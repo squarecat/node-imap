@@ -8,8 +8,7 @@ import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import { TextImportant } from '../../text';
 import request from '../../../utils/request';
-
-const DEFAULT_ERROR = `An error occured claiming your free credits, please contact support.`;
+import { getPaymentError } from '../../../utils/errors';
 
 export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
   const { close: closeModal } = useContext(ModalContext);
@@ -31,9 +30,10 @@ export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
       });
       handleResponse(response);
     } catch (err) {
+      const message = getPaymentError(err);
       dispatch({
         type: 'set-error',
-        error: DEFAULT_ERROR
+        error: message
       });
     } finally {
       dispatch({ type: 'set-loading', data: false });
@@ -41,16 +41,8 @@ export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
   }
 
   async function handleResponse(response) {
-    if (response.error) {
-      let message = DEFAULT_ERROR;
-      if (response.error.message) {
-        message = response.error.message;
-      }
-      dispatch({ type: 'set-error', error: message });
-    } else {
-      onPurchaseSuccess(response.user);
-      dispatch({ type: 'set-step', data: 'success' });
-    }
+    onPurchaseSuccess(response.user);
+    dispatch({ type: 'set-step', data: 'success' });
   }
 
   return (

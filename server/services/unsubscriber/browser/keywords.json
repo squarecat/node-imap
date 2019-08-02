@@ -8,7 +8,10 @@
     "Successfully",
     "Unsubscribed",
     "has been removed",
-    "request complete"
+    "request complete",
+    "Sorry to see you go",
+    "have been removed",
+    "has been removed"
   ],
   "fail": ["You'll be unsubscribed", "You will be unsubscribed"],
   "buttonActions": ["confirm", "unsubscribe"],

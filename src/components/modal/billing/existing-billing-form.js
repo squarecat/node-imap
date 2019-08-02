@@ -1,5 +1,5 @@
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
-import { FormGroup, FormLabel, FormNotification } from '../../form';
+import { FormGroup, FormNotification } from '../../form';
 import {
   ModalBody,
   ModalCloseIcon,
@@ -7,13 +7,12 @@ import {
   ModalPaymentSaveAction
 } from '..';
 import React, { useContext } from 'react';
-import { TextImportant, TextLink } from '../../text';
+// import { TextImportant, TextLink } from '../../text';
 
 import CardDetails from '../../card-details';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-
-const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
+import { getPaymentError } from '../../../utils/errors';
 
 const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
   const { state, dispatch } = useContext(BillingModalContext);
@@ -21,15 +20,18 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
   async function onSubmit() {
     try {
       dispatch({ type: 'set-loading', data: true });
+      dispatch({ type: 'set-error', data: false });
+
       const response = await confirmPaymentExistingCard({
         productId: state.selectedPackage.id,
         coupon: state.coupon
       });
-      handleResponse(response);
+      await handleResponse(response);
     } catch (err) {
+      const message = getPaymentError(err);
       dispatch({
         type: 'set-error',
-        data: 'Something went wrong, try again or contact support'
+        data: message
       });
     } finally {
       dispatch({ type: 'set-loading', data: false });
@@ -38,24 +40,15 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
 
   // TODO used elsewhere - make this common
   async function handleResponse(response) {
-    if (response.error) {
-      let message = DEFAULT_ERROR;
-      if (response.error.message) {
-        message = response.error.message;
-      }
-      dispatch({ type: 'set-error', data: message });
-    } else if (response.requires_action) {
-      dispatch({ type: 'set-loading', data: true });
+    if (response.requires_action) {
       await handleRequiresAction(response);
-      dispatch({ type: 'set-loading', data: false });
     } else if (response.requires_payment_method) {
-      // TODO better errors
+      const message = getPaymentError(response);
       dispatch({
         type: 'set-error',
-        error:
-          'An error occured charging your card, please enter different card details.'
+        error: message
       });
-      dispatch({ type: 'set-step', data: 'enter-billing-details' });
+      // dispatch({ type: 'set-step', data: 'enter-billing-details' });
     } else {
       onPurchaseSuccess(response.user);
       dispatch({ type: 'set-step', data: 'success' });
@@ -71,7 +64,7 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
 
     if (errorAction) {
       // Show error from Stripe.js in payment form
-      dispatch({ type: 'set-error', data: errorAction });
+      dispatch({ type: 'set-error', data: errorAction.message });
     } else {
       // The card action has been handled
       // The PaymentIntent can be confirmed again on the server
@@ -104,12 +97,6 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
           <CardDetails card={billingCard} />
         </FormGroup>
 
-        {state.error ? (
-          <FormNotification error>
-            {state.error.message || DEFAULT_ERROR}
-          </FormNotification>
-        ) : null}
-
         <p>
           Or{' '}
           <a
@@ -121,6 +108,12 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
           </a>
           .
         </p>
+
+        {state.error ? (
+          <FormGroup>
+            <FormNotification error>{state.error}</FormNotification>
+          </FormGroup>
+        ) : null}
       </ModalBody>
 
       <ModalPaymentSaveAction

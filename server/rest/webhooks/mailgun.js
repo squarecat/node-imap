@@ -97,9 +97,6 @@ export default app => {
     const { sender, recipient, subject, ['body-plain']: bodyPlain } = body;
 
     try {
-      if (!verify(body)) {
-        throw new Error('mailgun: webhook failed to verify');
-      }
       // get the user and mail that this is in reference to
       const [, unsubscribeId] = recipient.match(/^(.+)-bot@.*$/);
       updateUserUnsubStatusById(unsubscribeId, {

@@ -4,27 +4,30 @@ import { addRefundToStats } from '../services/stats';
 import auth from '../middleware/route-auth';
 import countries from '../utils/countries.json';
 import logger from '../utils/logger';
+import { RestError } from '../utils/errors';
 
 export default app => {
-  app.get('/api/payments/coupon/:coupon', auth, async (req, res) => {
+  app.get('/api/payments/coupon/:coupon', auth, async (req, res, next) => {
     const { coupon } = req.params;
     try {
       const c = await PaymentService.getCoupon(coupon);
       res.send(c);
     } catch (err) {
-      logger.error('payments-rest: error with coupon');
-      logger.error(err);
-      return res.status(500).send({
-        success: false,
-        err: err.toString()
-      });
+      next(
+        new RestError('failed to get coupon', {
+          cause: err,
+          ...err.data,
+          statusCode: 400
+        })
+      );
     }
   });
 
   app.post(
     '/api/payments/checkout/new/:productId/:coupon?',
     auth,
-    async (req, res) => {
+    async (req, res, next) => {
+      const { user } = req;
       const { productId, coupon } = req.params;
       const {
         payment_method_id,
@@ -39,17 +42,18 @@ export default app => {
             paymentMethodId: payment_method_id,
             paymentIntentId: payment_intent_id
           },
-          { user: req.user, productId, coupon, name, address, saveCard }
+          { user, productId, coupon, name, address, saveCard }
         );
         return res.send(response);
       } catch (err) {
-        logger.error('payments-rest: error creating new payment');
-        logger.error(err);
-        return res.status(500).send({
-          success: false,
-          err: err.toString(),
-          error: err.message
-        });
+        next(
+          new RestError('failed to create new card payment for user', {
+            userId: user.id,
+            cause: err,
+            ...err.data,
+            statusCode: 400
+          })
+        );
       }
     }
   );
@@ -57,46 +61,54 @@ export default app => {
   app.post(
     '/api/payments/checkout/:productId/:coupon?',
     auth,
-    async (req, res) => {
+    async (req, res, next) => {
+      const { user } = req;
       const { productId, coupon } = req.params;
       try {
         const response = await PaymentService.createPaymentWithExistingCardForUser(
-          { user: req.user, productId, coupon }
+          { user, productId, coupon }
         );
         return res.send(response);
       } catch (err) {
-        logger.error('payments-rest: error creating new payment');
-        logger.error(err);
-        return res.status(500).send({
-          success: false,
-          err: err.toString(),
-          error: err.message
-        });
+        next(
+          new RestError('failed to create existing card payment for user', {
+            userId: user.id,
+            cause: err,
+            ...err.data,
+            statusCode: 400
+          })
+        );
       }
     }
   );
 
-  app.post('/api/payments/claim/:productId/:coupon', auth, async (req, res) => {
-    const { productId, coupon } = req.params;
-    try {
-      const response = await PaymentService.claimCreditsWithCoupon({
-        user: req.user,
-        productId,
-        coupon
-      });
-      return res.send(response);
-    } catch (err) {
-      logger.error('payments-rest: error creating new payment');
-      logger.error(err);
-      return res.status(500).send({
-        success: false,
-        err: err.toString(),
-        error: err.message
-      });
+  app.post(
+    '/api/payments/claim/:productId/:coupon',
+    auth,
+    async (req, res, next) => {
+      const { user } = req;
+      const { productId, coupon } = req.params;
+      try {
+        const response = await PaymentService.claimCreditsWithCoupon({
+          user,
+          productId,
+          coupon
+        });
+        return res.send(response);
+      } catch (err) {
+        next(
+          new RestError('failed to claim credits', {
+            userId: user.id,
+            cause: err,
+            ...err.data,
+            statusCode: 400
+          })
+        );
+      }
     }
-  });
+  );
 
-  app.post('/api/payments/subscription', auth, async (req, res) => {
+  app.post('/api/payments/subscription', auth, async (req, res, next) => {
     const { organisationId, token, name, address } = req.body;
     try {
       const subscription = await PaymentService.createSubscriptionForOrganisation(
@@ -105,29 +117,37 @@ export default app => {
       );
       res.send(subscription);
     } catch (err) {
-      logger.error('payments-rest: error creating new subscription');
-      logger.error(err);
-      return res.status(500).send({
-        success: false,
-        err: err.toString()
-      });
+      next(
+        new RestError('failed to create new subscription', {
+          organisationId,
+          cause: err,
+          ...err.data,
+          statusCode: 400
+        })
+      );
     }
   });
 
-  app.post('/api/payments/subscription/confirm', auth, async (req, res) => {
-    const { organisationId } = req.body;
-    try {
-      await PaymentService.confirmSubscriptionForOrganisation(organisationId);
-      res.send({ success: true });
-    } catch (err) {
-      logger.error('payments-rest: error confirming subscription');
-      logger.error(err);
-      return res.status(500).send({
-        success: false,
-        err: err.toString()
-      });
+  app.post(
+    '/api/payments/subscription/confirm',
+    auth,
+    async (req, res, next) => {
+      const { organisationId } = req.body;
+      try {
+        await PaymentService.confirmSubscriptionForOrganisation(organisationId);
+        res.send({ success: true });
+      } catch (err) {
+        next(
+          new RestError('failed to confirm subscription subscription', {
+            organisationId,
+            cause: err,
+            ...err.data,
+            statusCode: 400
+          })
+        );
+      }
     }
-  });
+  );
 
   // stripe webhooks
   app.post('/api/payments/refund', async (req, res) => {

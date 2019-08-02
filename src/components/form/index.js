@@ -180,7 +180,42 @@ export const FormCheckbox = ({ id, name, label, ...props }) => {
   );
 };
 
-export const FormGroup = ({ children, fluid, column, unpadded, container }) => {
+export const FormTextarea = ({
+  id,
+  name,
+  required,
+  rows = '2',
+  onChange = () => {},
+  value = '',
+  ...props
+}) => {
+  const [inputValue, setInputValue] = useState(value);
+  useEffect(
+    () => {
+      setInputValue(value);
+    },
+    [value]
+  );
+  const classes = cx('form-textarea');
+  return (
+    <textarea
+      {...props}
+      id={id}
+      value={inputValue}
+      name={name}
+      rows={rows}
+      styleName={classes}
+      required={required}
+      spellCheck="false"
+      onChange={e => {
+        setInputValue(e.currentTarget.value);
+        onChange(e);
+      }}
+    />
+  );
+};
+
+export const FormGroup = ({ children, fluid, column, container, unpadded }) => {
   return (
     <div styleName={cx('form-group', { fluid, column, container, unpadded })}>
       {children}

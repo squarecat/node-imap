@@ -17,8 +17,7 @@ import PaymentCardDetails from '../../payments/card-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-
-const DEFAULT_ERROR = 'Something went wrong, try again or contact support';
+import { getPaymentError } from '../../../utils/errors';
 
 function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -39,19 +38,9 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
       dispatch({ type: 'set-error', data: false });
 
       const { addressDetails } = state;
-
-      console.log('on submit', state);
-
-      // TODO after Beta
-      // 1. if vat number validate it
-
-      // const { taxId, error: taxError } = await validateVatNumber(
-      //   company.vatNumber
-      // );
-
       const customer = getCustomer(state);
 
-      const { token, error } = await stripe.createToken({
+      const { token, tokenError } = await stripe.createToken({
         // the createToken address arguments are named differently to create customer...
         name: addressDetails.name,
         address_line1: addressDetails.line1,
@@ -61,13 +50,11 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         address_zip: addressDetails.postal_code
       });
 
-      if (error) {
-        console.error(error);
-        dispatch({ type: 'set-error', data: error });
+      if (tokenError) {
+        dispatch({ type: 'set-error', data: tokenError.message });
       } else {
         let response;
         if (subscriptionId) {
-          console.log('org already has subscription, update the card');
           response = await updateBilling(id, {
             token,
             ...customer
@@ -79,30 +66,24 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
           });
         }
         await handlePaymentResponse(response);
-        dispatch({ type: 'set-loading', data: false });
       }
     } catch (err) {
-      console.error(err);
-      dispatch({ type: 'set-loading', data: false });
+      const message = getPaymentError(err);
       dispatch({
         type: 'set-error',
-        data: DEFAULT_ERROR
+        data: message
       });
+    } finally {
+      dispatch({ type: 'set-loading', data: false });
     }
   }
 
   async function handlePaymentResponse(response) {
-    if (response.error) {
-      let message = DEFAULT_ERROR;
-      if (response.error.message) {
-        message = response.error.message;
-      }
-      dispatch({ type: 'set-error', data: message });
-    } else if (response.requires_payment_method) {
+    if (response.requires_payment_method) {
+      const message = getPaymentError(response);
       dispatch({
         type: 'set-error',
-        data:
-          'An error occured charging your card, please enter different card details.'
+        data: message
       });
     } else if (response.requires_action) {
       await handleRequiresAction(response);
@@ -138,34 +119,71 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const initialPayment = ENTERPRISE.pricePerSeat * currentUsers.length;
   const infoText = useMemo(
     () => {
-      if (currentUsers.length) {
+      if (subscriptionId) {
         return (
           <p>
-            You currently have{' '}
-            <TextImportant>
-              {`${currentUsers.length} member${
-                currentUsers.length === 1 ? '' : 's'
-              }`}
-            </TextImportant>
-            . You will be billed{' '}
-            <TextImportant>
-              ${(initialPayment / 100).toFixed(2)} monthly starting today
-            </TextImportant>
-            . Your plan will be updated automatically and prorated when members
-            join or are removed.
+            Update your payment method, your billing cycle will not be affected.
           </p>
         );
       }
-      return (
+
+      const lead = (
         <p>
-          You currently have no members. Your card will be{' '}
-          <TextImportant>authorised but not charged</TextImportant>. Your plan
-          will be updated automatically and prorated when members join or are
-          removed.
+          You are signing up for the <TextImportant>Teams plan</TextImportant>{' '}
+          billed monthly at{' '}
+          <TextImportant>
+            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
+          </TextImportant>
+          .
         </p>
       );
+      if (currentUsers.length) {
+        return (
+          <>
+            {lead}
+            <p>
+              You currently have{' '}
+              <TextImportant>
+                {`${currentUsers.length} member${
+                  currentUsers.length === 1 ? '' : 's'
+                }`}
+              </TextImportant>
+              . You will be billed{' '}
+              <TextImportant>
+                ${(initialPayment / 100).toFixed(2)} monthly starting today
+              </TextImportant>
+              . Your plan will be updated automatically and prorated when
+              members join or are removed.
+            </p>
+          </>
+        );
+      }
+      return (
+        <>
+          {lead}
+          <p>
+            You currently have no members. Your card will be{' '}
+            <TextImportant>authorised but not charged</TextImportant>. Your plan
+            will be updated automatically and prorated when members join or are
+            removed.
+          </p>
+        </>
+      );
     },
-    [currentUsers.length, initialPayment]
+    [currentUsers.length, initialPayment, subscriptionId]
+  );
+
+  const saveText = useMemo(
+    () => {
+      if (subscriptionId) {
+        return `Update Payment Method`;
+      }
+      if (currentUsers.length) {
+        return `Save and Pay $${(initialPayment / 100).toFixed(2)}`;
+      }
+      return `Save Payment Method`;
+    },
+    [currentUsers.length, initialPayment, subscriptionId]
   );
 
   return (
@@ -178,17 +196,9 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     >
       <ModalBody loading={!stripeState.isReady} compact>
         <ModalHeader>
-          Add Payment Method
+          {subscriptionId ? 'Update Payment Method' : 'Add Payment Method'}
           <ModalCloseIcon />
         </ModalHeader>
-        <p>
-          You are signing up for the{' '}
-          <TextImportant>Enterprise plan</TextImportant> billed monthly at{' '}
-          <TextImportant>
-            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
-          </TextImportant>
-          .
-        </p>
         {infoText}
         <PaymentAddressDetails
           addressDetails={state.addressDetails}
@@ -216,9 +226,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
         {state.error ? (
           <FormGroup>
-            <FormNotification error>
-              {state.error.message || DEFAULT_ERROR}
-            </FormNotification>
+            <FormNotification error>{state.error}</FormNotification>
           </FormGroup>
         ) : null}
 
@@ -232,11 +240,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         isDisabled={state.loading || !stripeState.isReady}
         isLoading={state.loading}
         onCancel={closeModal}
-        saveText={
-          currentUsers.length
-            ? `Save and Pay $${(initialPayment / 100).toFixed(2)}`
-            : `Save Payment Method`
-        }
+        saveText={saveText}
       />
     </form>
   );

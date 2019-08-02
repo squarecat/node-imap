@@ -79,23 +79,18 @@ export default () => {
             Accounts
           </Link>
         </li>
-        {organisationId ? null : (
-          <li styleName="setting-item">
-            <Link styleName="setting-item-link" to="/app/profile/accounts">
-              Accounts
-            </Link>
-          </li>
-        )}
         <li styleName="setting-item">
           <Link styleName="setting-item-link" to="/app/profile/security">
             Security
           </Link>
         </li>
-        <li styleName="setting-item">
-          <Link styleName="setting-item-link" to="/app/profile/billing">
-            Billing
-          </Link>
-        </li>
+        {organisationId ? null : (
+          <li styleName="setting-item">
+            <Link styleName="setting-item-link" to="/app/profile/billing">
+              Billing
+            </Link>
+          </li>
+        )}
         {/* <li styleName="setting-item">
           <Link
             styleName="setting-item-link"

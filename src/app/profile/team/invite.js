@@ -1,6 +1,9 @@
 import './org.module.scss';
 
-import { InviteForm, InviteLink } from '../../../components/form/invite';
+import {
+  InviteFormMultiple,
+  InviteLink
+} from '../../../components/form/invite';
 import React, { useMemo } from 'react';
 
 function InviteSection({ organisation }) {
@@ -28,7 +31,7 @@ function InviteSection({ organisation }) {
             You can invite anyone inside or outside your company by email
             address:
           </p>
-          <InviteForm organisationId={id} />
+          <InviteFormMultiple organisationId={id} />
         </div>
       );
     },
