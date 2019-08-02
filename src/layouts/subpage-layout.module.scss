@@ -1,8 +1,38 @@
+@import '../styles/common/colors.scss';
+
 .subpage {
   background-color: #fff;
   min-height: calc(100% - 50px);
   display: flex;
   flex-direction: column;
+}
+
+.subpage-section {
+}
+
+.subpage-section-inverted {
+  background-color: $color-dark-background;
+  color: white;
+  padding: 90px 0 170px 0;
+}
+
+.subpage h1 {
+  // font-size: 30px;
+  // line-height: 42px;
+
+  // @media (max-width: 768px) {
+  //   font-size: 25px;
+  //   line-height: 36px;
+  // }
+}
+
+.subpage h2 {
+  font-size: 25px;
+  line-height: 32px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+    line-height: 28px;
+  }
 }
 
 .subpage-content {
@@ -21,25 +51,6 @@
   }
 }
 
-.subpage h1 {
-  font-size: 30px;
-  line-height: 42px;
-
-  @media (max-width: 768px) {
-    font-size: 25px;
-    line-height: 36px;
-  }
-}
-
-.subpage h2 {
-  font-size: 25px;
-  line-height: 32px;
-  @media (max-width: 768px) {
-    font-size: 20px;
-    line-height: 28px;
-  }
-}
-
 .centered {
   text-align: center;
 }
@@ -49,10 +60,6 @@
   @media (max-width: 600px) {
     max-width: 100%;
   }
-}
-
-.subpage-section {
-  margin-top: 100px;
 }
 
 .subpage-tagline {
@@ -65,4 +72,194 @@
   @media (max-width: 768px) {
     font-size: 18px;
   }
+}
+
+h1.subpage-header-title {
+  font-size: 42px;
+  line-height: 52px;
+  margin-bottom: 35px;
+  max-width: 450px;
+
+  @media (max-width: 1050px) {
+    font-size: 38px;
+    max-width: 410px;
+  }
+
+  @media (max-width: 1000px) {
+    font-size: 32px;
+    line-height: 45px;
+    margin-bottom: 30px;
+    max-width: 340px;
+  }
+
+  @media (max-width: 900px) {
+    margin: 0 auto 30px auto;
+  }
+
+  @media (max-width: 500px) {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 22px;
+    line-height: 30px;
+    margin: 0 auto 20px auto;
+  }
+}
+
+.subpage-header-tagline {
+  margin-bottom: 45px;
+  font-size: 20px;
+  line-height: 28px;
+
+  @media (max-width: 400px) {
+    margin-bottom: 15px;
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+.subpage-header-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-gap: 70px;
+
+  @media (max-width: 900px) {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    a {
+      margin: 0 auto;
+    }
+  }
+}
+
+.subpage-header-container-text {
+  text-align: left;
+
+  @media (max-width: 900px) {
+    text-align: center;
+  }
+}
+
+.subpage-header-container-image {
+  display: flex;
+  align-items: center;
+  text-align: right;
+
+  @media (max-width: 900px) {
+    max-width: 500px;
+    margin: 70px auto 0;
+  }
+  @media (max-width: 400px) {
+    margin: 40px auto 0;
+  }
+}
+
+.subpage-end-stuff {
+  text-align: center;
+  border-top: 1px solid $color-border-grey;
+  padding-top: 100px;
+  margin-top: 100px;
+}
+
+.subpage-image-section {
+  display: grid;
+  grid-column-gap: 50px;
+  margin: 0 auto 100px auto;
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.subpage-image-section--image-left {
+  grid-template-columns: minmax(300px, 1fr) minmax(0, 2fr);
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+  }
+}
+
+.subpage-image-section-text,
+.subpage-image-section-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  p:last-child {
+    margin: 0;
+  }
+}
+
+.subpage-image-section-img {
+  img {
+    border-radius: 5px;
+    max-height: 400px;
+  }
+
+  @media (max-width: 768px) {
+    width: 300px;
+    max-width: 100%;
+    margin: 50px auto 0;
+  }
+}
+
+.subpage-image-section-img--bordered {
+  img {
+    border: 1px solid $color-red-light;
+    box-shadow: 1px 1px 2px hsla(18, 100%, 38%, 0.1);
+  }
+}
+
+.subpage-features {
+  margin-top: 150px;
+}
+
+.subpage-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-column-gap: 50px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+  }
+}
+
+.subpage-feature {
+  p {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.subpage-feature-title {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.subpage-feature-img {
+  max-width: 150px;
+  margin-left: -15px;
+}
+
+.subpage-feature-text {
+  text-align: left;
 }

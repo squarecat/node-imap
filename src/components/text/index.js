@@ -57,3 +57,7 @@ export const TextLead = ({ prose, children }) => {
 export const TextHighlight = ({ children }) => (
   <span styleName="highlight">{children}</span>
 );
+
+export const HeaderHighlight = ({ children }) => (
+  <span styleName="header-highlight">{children}</span>
+);

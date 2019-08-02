@@ -11,10 +11,10 @@ import SubPageLayout from '../../layouts/subpage-layout';
 import Testimonial from '../../components/landing/testimonial';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
-import googleLogo from '../../assets/gsuite-logo.png';
+import googleLogo from '../../assets/providers/gsuite-logo.png';
 import happy from '../../assets/enterprise/happy.png';
 import luke from '../../assets/luke.jpeg';
-import officeLogo from '../../assets/office-365-logo.png';
+import officeLogo from '../../assets/providers/office-365-logo.png';
 import securityImg from '../../assets/security.png';
 
 const companies = [
@@ -33,7 +33,7 @@ const companies = [
   }
 ];
 
-const EnterprisePage = () => {
+const TeamsPage = () => {
   return (
     <SubPageLayout
       title="Leave Me Alone for Teams"
@@ -44,8 +44,8 @@ const EnterprisePage = () => {
       <div styleName="enterprise-inner">
         <div styleName="container">
           <div styleName="container-text">
-            <h1 styleName="tagline">Productive Teams Use Leave Me Alone</h1>
-            <p styleName="description">
+            <h1 styleName="title">Productive Teams Use Leave Me Alone</h1>
+            <p styleName="tagline">
               The most efficient businesses work without interruption. Take back
               control of your office from unwanted spam email.
             </p>
@@ -279,4 +279,4 @@ const EnterprisePage = () => {
   );
 };
 
-export default EnterprisePage;
+export default TeamsPage;

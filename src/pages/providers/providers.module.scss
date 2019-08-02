@@ -1,0 +1,132 @@
+@import '../../layouts/subpage-layout.module.scss';
+
+.container {
+  @extend .subpage-header-container;
+}
+
+.hero {
+  min-height: calc(100vh - 50px - 100px);
+
+  @media (min-width: 901px) {
+    padding-top: 120px;
+  }
+}
+
+.container-text {
+  @extend .subpage-header-container-text;
+}
+
+.container-image {
+  @extend .subpage-header-container-image;
+}
+
+.title {
+  @extend .subpage-header-title;
+}
+
+.tagline {
+  @extend .subpage-header-tagline;
+}
+
+.provider-inner {
+  @extend .subpage-content;
+}
+
+.end-stuff {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.security {
+  @extend .subpage-section-inverted;
+
+  .image-section {
+    margin-bottom: 0;
+  }
+  .image-section-img {
+    width: 450px;
+    max-width: 100%;
+  }
+}
+
+.image-section {
+  @extend .subpage-image-section;
+}
+
+.image-left {
+  @extend .subpage-image-section--image-left;
+}
+
+.image-section-text {
+  @extend .subpage-image-section-text;
+}
+
+.image-section-img {
+  @extend .subpage-image-section-img;
+}
+
+.bordered {
+  @extend .subpage-image-section-img--bordered;
+}
+
+.features {
+  @extend .subpage-features;
+}
+.feature {
+  @extend .subpage-feature;
+}
+.feature-title {
+  @extend .subpage-feature-title;
+}
+.feature-img {
+  @extend .subpage-feature-img;
+}
+.feature-text {
+  @extend .subpage-feature-text;
+}
+
+.trustbar {
+  margin-top: 20px;
+  border-top: 1px solid $color-border-grey;
+  background: $color-grey-trustbar;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    margin-top: 80px;
+  }
+
+  &.google {
+    background: #373737;
+  }
+}
+
+.trustbar-images {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.trustbar-img {
+  display: flex;
+  align-items: center;
+  margin-right: 40px;
+  max-width: 200px;
+  padding: 20px 0;
+
+  .google & {
+    max-width: 150px;
+  }
+
+  @media (max-width: 768px) {
+    margin-right: 20px;
+  }
+
+  &:last-child {
+    margin: 0;
+  }
+}
