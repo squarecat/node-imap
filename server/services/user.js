@@ -496,12 +496,10 @@ export async function addImapAccount(userId, masterKey, imapData) {
       password
     });
     if (!connected) {
-      throw new LMAError(
-        'Failed to authenticate with IMAP server. Check username and password and try again.',
-        {
-          cause: error
-        }
-      );
+      throw new ConnectAccountError('failed to authenticate with IMAP server', {
+        cause: error,
+        errKey: 'imap-connect-error'
+      });
     }
     // add encrypted password to the imap collection
     const id = await setImapAccessDetails(masterKey, password);

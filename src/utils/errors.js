@@ -64,6 +64,25 @@ export function getConnectError(reason) {
   }
 }
 
+export function getImapError(err = {}) {
+  const { reason } = err;
+
+  switch (reason) {
+    case 'imap-connect-error':
+      return {
+        message:
+          'Failed to authenticate with IMAP server. Check username and password and try again.',
+        level: 'warning'
+      };
+    default:
+      return {
+        message:
+          'Failed to authenticate with IMAP server. Please try again or send us a message.',
+        level: 'error'
+      };
+  }
+}
+
 export function getBasicError(err = {}) {
   const defaultMsg = `Something went wrong. Please try again or send us a message.`;
   if (!err) return defaultMsg;

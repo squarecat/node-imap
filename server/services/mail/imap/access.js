@@ -53,12 +53,12 @@ export async function testConnection(args) {
   let imap;
   try {
     imap = await connect(args);
-    imap.end();
+    // imap.end();
     return {
       connected: true
     };
   } catch (err) {
-    imap.end();
+    // imap.end();
     return {
       connected: false,
       error: err

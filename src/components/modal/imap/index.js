@@ -12,6 +12,7 @@ import React, { useCallback, useContext, useMemo, useReducer } from 'react';
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
 import { TextImportant } from '../../text';
+import { getImapError } from '../../../utils/errors';
 import request from '../../../utils/request';
 
 const imapReducer = (state, action) => {
@@ -66,10 +67,14 @@ export default ({ account = {} } = {}) => {
     async () => {
       try {
         dispatch({ type: 'set-loading', data: true });
+        dispatch({ type: 'set-error', data: false });
+
         await saveImapConnection(state.imap);
         closeModal();
       } catch (err) {
-        dispatch({ type: 'set-error', data: err.message });
+        console.error(err);
+        const { message } = getImapError(err);
+        dispatch({ type: 'set-error', data: message });
       } finally {
         dispatch({ type: 'set-loading', data: false });
       }
@@ -80,11 +85,11 @@ export default ({ account = {} } = {}) => {
   const notification = useMemo(
     () => {
       const { imap } = state;
+      let content;
       if (state.error) {
-        return <FormNotification error>{state.error}</FormNotification>;
-      }
-      if (isWeirdHost(imap.host)) {
-        return (
+        content = <FormNotification error>{state.error}</FormNotification>;
+      } else if (isWeirdHost(imap.host)) {
+        content = (
           <FormNotification warning>
             We support OAuth for Gmail and Outlook accounts which is generally
             more secure and simpler to setup. Consider using this instead of
@@ -92,6 +97,7 @@ export default ({ account = {} } = {}) => {
           </FormNotification>
         );
       }
+      return <FormGroup>{content}</FormGroup>;
     },
     [state]
   );
@@ -204,7 +210,12 @@ export default ({ account = {} } = {}) => {
           </ModalHeader>
           <div>{content}</div>
         </ModalBody>
-        <ModalSaveAction onCancel={closeModal} saveText={'Save'} />
+        <ModalSaveAction
+          onCancel={closeModal}
+          saveText={'Save'}
+          isDisabled={state.loading}
+          isLoading={state.loading}
+        />
       </form>
     </div>
   );
@@ -231,5 +242,5 @@ async function saveImapConnection(imapDetails) {
 }
 
 function isWeirdHost(host) {
-  return ['imap.gmail.com', 'outlook.com'].includes(host);
+  return ['imap.gmail.com', 'outlook.com', 'office365.com'].includes(host);
 }
