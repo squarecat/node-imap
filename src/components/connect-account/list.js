@@ -1,4 +1,4 @@
-import { AtSignIcon, GoogleIcon, OutlookIcon } from '../icons';
+import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
 import React, { useCallback, useState } from 'react';
 
 import Button from '../btn';
@@ -99,7 +99,7 @@ function Account({
 
 function getIcon(provider) {
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
-  if (provider === 'outlook') return <OutlookIcon width="16" height="16" />;
+  if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
   if (provider === 'imap') return <AtSignIcon width="16" height="16" />;
   return <span />;
 }

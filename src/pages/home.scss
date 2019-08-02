@@ -316,7 +316,7 @@ a.more-info:visited {
 
 .trash-pile {
   margin: 0 auto -1px auto;
-  padding-bottom: 300px;
+  padding-bottom: 200px;
 
   background-position: bottom -200px left;
 
@@ -327,6 +327,7 @@ a.more-info:visited {
 
   &[data-show-truck='true'] {
     background-position: bottom -20px left;
+    padding-bottom: 300px;
   }
 
   .text-box {

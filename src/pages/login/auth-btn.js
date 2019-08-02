@@ -1,6 +1,6 @@
 import './login.module.scss';
 
-import { GoogleIcon, OutlookIcon } from '../../components/icons';
+import { GoogleIcon, MicrosoftIcon } from '../../components/icons';
 import React, { useContext, useEffect } from 'react';
 
 import { LoginContext } from './index';
@@ -111,7 +111,7 @@ export default ({ provider, action }) => {
         onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
         styleName="login-me-in-dammit"
       >
-        <OutlookIcon />
+        <MicrosoftIcon />
         <span styleName="text">{`${action} with Microsoft`}</span>
       </a>
     );

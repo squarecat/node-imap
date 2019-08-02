@@ -1,6 +1,6 @@
 import './profile.module.scss';
 
-import { GoogleIcon, OutlookIcon } from '../../../components/icons';
+import { GoogleIcon, MicrosoftIcon } from '../../../components/icons';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { AlertContext } from '../../../providers/alert-provider';
@@ -214,5 +214,5 @@ async function deactivateAccount() {
 
 function getProviderIcon(provider) {
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
-  if (provider === 'outlook') return <OutlookIcon width="16" height="16" />;
+  if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
 }
