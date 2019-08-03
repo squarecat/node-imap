@@ -27,9 +27,14 @@ export function parseMailList(
   { ignoredSenderList = [], unsubscriptions = [] }
 ) {
   return mailList.reduce((out, mailItem) => {
+    if (!mailItem) {
+      return out;
+    }
     const headers = getHeaders(mailItem);
     const isUnsubscribable = isMailUnsubscribable(headers, ignoredSenderList);
-
+    if (!isUnsubscribable) {
+      return out;
+    }
     const mail = parseMailItem(mailItem);
     if (mail) {
       const prevUnsubscriptionInfo = hasUnsubscribedAlready(
@@ -73,11 +78,11 @@ function parseMailItem(item) {
     if (!unsubscribeMailTo && !unsubscribeLink) {
       return null;
     }
-    // const isTrash = labelIds && labelIds.includes('TRASH');
-    // const isSpam = labelIds && labelIds.includes('SPAM');
+    const { id, date, mailbox } = item;
+    const isTrash = mailbox.box.attribs.includes('\\Trash');
+    const isSpam = mailbox.box.attribs.includes('\\Junk');
     const toHeader = getHeaderValue(headers, 'to');
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
-    const { id, date } = item;
     return {
       id: v4(),
       uid: id,
@@ -86,9 +91,9 @@ function parseMailItem(item) {
       to,
       subject: getHeaderValue(headers, 'subject'),
       unsubscribeLink,
-      unsubscribeMailTo
-      // isTrash,
-      // isSpam
+      unsubscribeMailTo,
+      isTrash,
+      isSpam
     };
   } catch (err) {
     logger.error('mail-service: error mapping mail');

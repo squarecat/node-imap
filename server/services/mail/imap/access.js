@@ -9,13 +9,12 @@ const connections = io.counter({
 
 export async function getMailClient(master, account) {
   const { id, email, host, port, tls } = account;
-
   try {
     const password = await getImapAccessDetails(master, id);
     return connect({ username: email, password, host, port, tls });
   } catch (err) {
     logger.error('imap-access: failed to connect to IMAP');
-    logger.errro(err);
+    logger.error(err);
   }
 }
 

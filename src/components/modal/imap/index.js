@@ -121,6 +121,7 @@ export default ({ account = {} } = {}) => {
             <FormInput
               name="imap-username"
               smaller
+              placeholder="you@example.com"
               disabled={state.loading}
               required
               value={imap.username}
@@ -164,7 +165,7 @@ export default ({ account = {} } = {}) => {
               smaller
               disabled={state.loading}
               required
-              placeholder="imap.gmail.com"
+              placeholder="imap.example.com"
               value={imap.host}
               onChange={e => {
                 const host = e.currentTarget.value;
