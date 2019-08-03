@@ -75,7 +75,7 @@ const userProps = [
 
 export default app => {
   app.get('/api/me', auth, async (req, res, next) => {
-    const { id: userId } = req.user;
+    const { id: userId, token } = req.user;
     try {
       const user = await getUserById(userId);
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
@@ -86,7 +86,8 @@ export default app => {
           }
           return u;
         }, {}),
-        requiresTwoFactorAuth
+        requiresTwoFactorAuth,
+        token
       };
       if (isBeta) {
         response = {

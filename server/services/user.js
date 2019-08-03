@@ -523,28 +523,6 @@ export async function addImapAccount(userId, masterKey, imapData) {
 
 export async function updateImapAccount(userId, masterKey, imapData) {}
 
-export async function removeImapAccount(userId, accountId) {
-  const user = await getUserById(userId);
-  const { accounts } = user;
-  const account = accounts.find(a => a.id === accountId);
-  const accountEmail = account.email;
-
-  const updatedUser = await removeAccount(userId, {
-    email: user.email,
-    accountId,
-    accountEmail
-  });
-
-  addActivityForUser(userId, 'removeAdditionalAccount', {
-    id: accountId,
-    provider: 'imap',
-    email: accountEmail
-  });
-  // delete password encrypt from the imap collection
-  await removeImapAccessDetails(accountId);
-  return updatedUser;
-}
-
 export async function createOrUpdateUserFromPassword(userData = {}) {
   const {
     id,
@@ -1000,10 +978,14 @@ export async function removeUserAccount(userId, accountEmail) {
     const user = await getUserById(userId, { withAccountKeys: true });
     const account = user.accounts.find(e => e.email === accountEmail);
 
-    const { id: accountId, provider, keys } = account;
-    const { refreshToken } = keys;
-
-    await revokeToken({ provider, refreshToken });
+    const { id: accountId, provider } = account;
+    if (provider === 'imap') {
+      await removeImapAccessDetails(accountId);
+    } else {
+      const { keys } = account;
+      const { refreshToken } = keys;
+      await revokeToken({ provider, refreshToken });
+    }
 
     const updatedUser = await removeAccount(userId, {
       email: user.email,

@@ -71,15 +71,21 @@ export async function createUserFromPassword(data) {
   try {
     const col = await db().collection(COL_NAME);
     const id = v4();
+    const password = hashPassword(data.password);
     await col.insertOne({
       ...data,
       id,
       ...getUserDefaults({ email: data.email }),
       accounts: [],
-      password: hashPassword(data.password),
+      password,
       verificationCode: shortid.generate()
     });
-    return getUser(id);
+    const masterKey = getMasterKey(data.password, password.salt);
+    const user = await getUser(id);
+    return {
+      ...user,
+      masterKey
+    };
   } catch (err) {
     logger.error('users-dao: error inserting user with password');
     logger.error(err);
@@ -1008,17 +1014,20 @@ function decryptUser(user, options = {}) {
   if (options.withAccountKeys) {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(({ id, provider, email, addedAt, keys }) => ({
-        id,
-        provider,
-        email,
-        addedAt,
-        keys: {
-          ...keys,
-          refreshToken: decrypt(keys.refreshToken),
-          accessToken: decrypt(keys.accessToken)
+      accounts: user.accounts.map(({ keys, ...data }) => {
+        let account = data;
+        if (keys) {
+          account = {
+            ...account,
+            keys: {
+              ...keys,
+              refreshToken: decrypt(keys.refreshToken),
+              accessToken: decrypt(keys.accessToken)
+            }
+          };
         }
-      }))
+        return account;
+      })
     };
   } else {
     decryptedUser = {

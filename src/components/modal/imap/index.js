@@ -1,6 +1,7 @@
 import './imap.module.scss';
 
 import {
+  FormCheckbox,
   FormGroup,
   FormInput,
   FormLabel,
@@ -58,7 +59,8 @@ export default ({ account = {} } = {}) => {
       username: username || '',
       host: host || '',
       port: port || 993,
-      password: ''
+      password: '',
+      tls: true
     },
     loading: false
   });
@@ -122,12 +124,15 @@ export default ({ account = {} } = {}) => {
               disabled={state.loading}
               required
               value={imap.username}
-              onChange={e =>
-                dispatch({
-                  type: 'set-imap',
-                  data: { username: e.currentTarget.value }
-                })
-              }
+              onChange={e => {
+                const username = e.currentTarget.value;
+                if (username !== imap.username) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { username }
+                  });
+                }
+              }}
             />
             <p>Usually your email address.</p>
           </FormGroup>
@@ -141,12 +146,14 @@ export default ({ account = {} } = {}) => {
               required
               value={imap.password}
               autoFocus={false}
-              onChange={value =>
-                dispatch({
-                  type: 'set-imap',
-                  data: { password: value }
-                })
-              }
+              onChange={value => {
+                if (value !== imap.password) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { password: value }
+                  });
+                }
+              }}
             />
             <p>Usually the password you use to sign into the mail client.</p>
           </FormGroup>
@@ -159,12 +166,15 @@ export default ({ account = {} } = {}) => {
               required
               placeholder="imap.gmail.com"
               value={imap.host}
-              onChange={e =>
-                dispatch({
-                  type: 'set-imap',
-                  data: { host: e.currentTarget.value }
-                })
-              }
+              onChange={e => {
+                const host = e.currentTarget.value;
+                if (host !== imap.host) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { host }
+                  });
+                }
+              }}
             />
             <p>Your mail client should tell you what this is.</p>
           </FormGroup>
@@ -176,14 +186,34 @@ export default ({ account = {} } = {}) => {
               disabled={state.loading}
               required
               value={imap.port}
-              onChange={e =>
-                dispatch({
-                  type: 'set-imap',
-                  data: { port: e.currentTarget.value }
-                })
-              }
+              onChange={e => {
+                const port = e.currentTarget.value;
+                if (port !== imap.port) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { port }
+                  });
+                }
+              }}
             />
             <p>Usually either 993 or 143</p>
+          </FormGroup>
+          <FormGroup unpadded>
+            <FormCheckbox
+              name="imap-tls"
+              disabled={state.loading}
+              label="Use TLS"
+              checked={imap.tls}
+              onChange={e => {
+                const tls = e.currentTarget.checked;
+                if (tls !== imap.tls) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { tls }
+                  });
+                }
+              }}
+            />
           </FormGroup>
           {notification}
         </>

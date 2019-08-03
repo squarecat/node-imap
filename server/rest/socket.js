@@ -1,6 +1,6 @@
 import { isAfter, subMinutes } from 'date-fns';
 
-import { checkAuthToken } from '../services/user';
+import { get as getSession } from '../dao/sessions';
 import io from '@pm2/io';
 import logger from '../utils/logger';
 import socketio from 'socket.io';
@@ -48,10 +48,13 @@ export default function(server) {
   // socket auth middleware
   io.use(async (socket, next) => {
     let { userId, token } = socket.handshake.query;
-    const isValid = await checkAuthToken(userId, token);
-    if (isValid) {
+    // check if user is currently logged in and that their
+    // token is valid with the current session
+    const session = await getSession(userId);
+    if (session && session.passport.user.token === token) {
       socket.auth = true;
       socket.userId = userId;
+      socket.masterKey = session.passport.user.masterKey;
       return next();
     }
     logger.error('mail-rest: socket failed authentication, dropping socket');
@@ -64,7 +67,9 @@ export default function(server) {
     socketsOpen.inc();
     logger.info('socket: socket connected');
     handlers.forEach(({ path, cb }) => {
-      socket.on(path, (...args) => cb(userId, ...args));
+      socket.on(path, (data, ...args) =>
+        cb(userId, data, { masterKey: socket.masterKey, ...args })
+      );
     });
 
     socket.on('disconnect', () => {

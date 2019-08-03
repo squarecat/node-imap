@@ -13,6 +13,7 @@ import initTotp from './totp';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
+import { v4 } from 'node-uuid';
 
 passport.use('google-login', GoogleStrategy);
 refresh.use('google-login', GoogleStrategy);
@@ -29,12 +30,15 @@ refresh.use('connect-account-outlook', OutlookConnectAccountStrategy);
 // users session so we need to serialize and
 // deserialize it here
 passport.serializeUser(function(user, cb) {
-  cb(null, { id: user.id, masterKey: user.masterKey });
+  // create a unique session token for socket authentication
+  const token = v4();
+  cb(null, { id: user.id, masterKey: user.masterKey, token });
 });
-passport.deserializeUser(async function({ id, masterKey }, cb) {
+
+passport.deserializeUser(async function({ id, masterKey, token }, cb) {
   try {
     const user = await getUserById(id);
-    cb(null, { ...user, masterKey });
+    cb(null, { ...user, masterKey, token });
   } catch (err) {
     logger.error('auth: failed to deserialize user');
     logger.error(err, null);

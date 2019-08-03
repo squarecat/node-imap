@@ -224,7 +224,7 @@ function getStats({ unsubscribes, seen }) {
 }
 
 function getSenders(addresses, limit) {
-  let show = addresses;
+  let show = [...addresses];
   if (limit) {
     show = addresses.slice(0, limit);
   }

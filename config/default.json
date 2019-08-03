@@ -12,7 +12,11 @@
     "dinkydani@gmail.com"
   ],
   "http": {
-    "port": "$PORT"
+    "port": "$PORT",
+    "session": {
+      "collection": "sessions",
+      "secret": "$SESSION_SECRET"
+    }
   },
   "auth": {
     "google": {
