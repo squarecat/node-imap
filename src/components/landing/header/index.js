@@ -8,8 +8,9 @@ import Dropdown, {
 import { Link } from 'gatsby';
 import React from 'react';
 import cx from 'classnames';
+import logo from '../../../assets/logo.png';
 
-const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
+// const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ setActive = () => {}, inverted = false }) => (
   <div
@@ -25,7 +26,7 @@ export default ({ setActive = () => {}, inverted = false }) => (
     </div> */}
     <div styleName="landing-header-inner">
       <Link to="/" styleName="landing-header-logo">
-        <img alt="Leave Me Alone logo" src={logoUrl} />
+        <img alt="Leave Me Alone logo" src={logo} />
         <span styleName="landing-header-title">Leave Me Alone</span>
       </Link>
       <ul styleName="nav">

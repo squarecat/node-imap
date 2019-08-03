@@ -118,7 +118,7 @@ const IndexPage = () => {
       <div id="main">
         <Header setActive={() => {}} />
         <div
-          className={`friendly-neighbourhood-hero ${
+          className={`home-container friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
           }`}
         >
@@ -156,7 +156,7 @@ const IndexPage = () => {
 
         <div className="home-container">
           <div className="home-container-inner" id="learn">
-            <div className="image-section image-right">
+            <div className="image-section">
               <div className="image-section-text">
                 <h3>All of your subscription emails together</h3>
                 <p>
@@ -190,7 +190,7 @@ const IndexPage = () => {
               </div>
             </div>
 
-            <div className="image-section image-right">
+            <div className="image-section">
               <div className="image-section-text">
                 <h3>Clean all of your inboxes at once</h3>
                 <p>
@@ -256,49 +256,51 @@ const IndexPage = () => {
         </div>
 
         <div className="learn-providers" ref={trashPileRef} id="providers">
-          <div className="text-box text-box-centered">
-            <h3 className="providers-header">
-              We support both Gmail and Outlook
-            </h3>
-            <p>
-              If you have a Google or Microsoft email account then we have you
-              covered. This includes {OAUTH_PROVIDERS}.
-            </p>
-            <div className="provider-logos">
-              <TextLink undecorated as="link" linkTo="/providers/google">
-                <span className="provider-logo">
-                  <GoogleIcon width="60" height="60" />
-                </span>
-              </TextLink>
-              <TextLink undecorated as="link" linkTo="/providers/microsoft">
-                <span className="provider-logo">
-                  <MicrosoftIcon width="60" height="60" />
-                </span>
-              </TextLink>
-            </div>
+          <div className="home-container">
             <div className="text-box text-box-centered">
               <h3 className="providers-header">
-                We support {IMAP_PROVIDERS} using IMAP
+                We support both Gmail and Outlook
               </h3>
+              <p>
+                If you have a Google or Microsoft email account then we have you
+                covered. This includes {OAUTH_PROVIDERS}.
+              </p>
               <div className="provider-logos">
-                <TextLink undecorated as="link" linkTo="/providers/imap">
+                <TextLink undecorated as="link" linkTo="/providers/google">
                   <span className="provider-logo">
-                    <AtSignIcon width="60" height="60" />
+                    <GoogleIcon width="60" height="60" />
+                  </span>
+                </TextLink>
+                <TextLink undecorated as="link" linkTo="/providers/microsoft">
+                  <span className="provider-logo">
+                    <MicrosoftIcon width="60" height="60" />
                   </span>
                 </TextLink>
               </div>
-            </div>
+              <div className="text-box text-box-centered">
+                <h3 className="providers-header">
+                  We support {IMAP_PROVIDERS} using IMAP
+                </h3>
+                <div className="provider-logos">
+                  <TextLink undecorated as="link" linkTo="/providers/imap">
+                    <span className="provider-logo">
+                      <AtSignIcon width="60" height="60" />
+                    </span>
+                  </TextLink>
+                </div>
+              </div>
 
-            <a
-              href="/signup?ref=providers"
-              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-            >
-              Start Unsubscribing
-            </a>
+              <a
+                href="/signup?ref=providers"
+                className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+              >
+                Start Unsubscribing
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="pricing home-container section-padded">
+        <div className="home-container section-padded">
           <div className="home-container-inner" id="pricing">
             <h3>Let's talk money</h3>
             <p>
@@ -310,7 +312,7 @@ const IndexPage = () => {
           <Pricing />
         </div>
 
-        <div className="news home-container section-padded">
+        <div className="home-container section-padded">
           <div className="home-container-inner" id="news">
             <h3>In the news</h3>
             <p>
