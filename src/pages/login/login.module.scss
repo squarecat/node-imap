@@ -117,7 +117,7 @@ $active-bg-color: #ffc7c1;
 
   a {
     height: 62px;
-    line-height: 60px;
+    // line-height: 60px;
 
     &:first-child {
       margin-top: 0;
@@ -125,7 +125,7 @@ $active-bg-color: #ffc7c1;
 
     @media (max-width: 400px) {
       height: 54px;
-      line-height: 52px;
+      // line-height: 52px;
       font-size: 16px;
       padding: 0 15px;
     }
@@ -144,8 +144,7 @@ $active-bg-color: #ffc7c1;
   text-align: left;
 }
 
-.login-me-in-dammit,
-.sign-me-up-dammit {
+.login-me-in-dammit {
   @extend .btn;
   @extend .centered;
   background: white;
@@ -157,10 +156,9 @@ $active-bg-color: #ffc7c1;
   margin: 20px auto;
   text-align: left;
 
-  .text {
-    margin-left: 15px;
-    width: 300px;
-  }
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  grid-gap: 15px;
 
   &:hover {
     box-shadow: 0 7px 1em rgba(194, 58, 0, 0.15);

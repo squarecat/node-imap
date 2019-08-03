@@ -153,7 +153,7 @@ export default ({
           styleName="signup-btn"
           loading={state.loading}
         >
-          <span styleName="text">{submitText}</span>
+          {submitText}
         </Button>
 
         <Button
@@ -168,7 +168,7 @@ export default ({
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           disabled={state.loading}
         >
-          <span styleName="text">Back</span>
+          Back
         </Button>
       </div>
     </form>

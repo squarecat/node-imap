@@ -76,7 +76,7 @@ export default ({ nextText = 'Next' }) => {
           loading={state.loading}
           style={{ width: 150 }}
         >
-          <span styleName="text">{nextText}</span>
+          {nextText}
         </Button>
 
         <Button
@@ -92,7 +92,7 @@ export default ({ nextText = 'Next' }) => {
           outlined
           disabled={state.loading}
         >
-          <span styleName="text">Back</span>
+          Back
         </Button>
       </div>
     </form>
