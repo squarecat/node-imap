@@ -1,32 +1,41 @@
 import './providers.module.scss';
 
-import {
-  HeaderHighlight,
-  TextImportant,
-  TextLink
-} from '../../components/text';
+import { HeaderHighlight, TextLink } from '../../components/text';
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import aolLogo from '../../assets/providers/imap/aol-logo.png';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
+import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
+import { getVariationsText } from '../../components/landing/providers';
 import happy from '../../assets/enterprise/happy.png';
+import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
+import imapModalImg from '../../assets/security-imap-setup.png';
+import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
 const PROVIDER_NAME = 'IMAP';
-// const VARIATIONS = ['Fastmail'];
-// const META_VARIATIONS = 'Fastmail';
-// const TRUSTBAR_LOGOS = [fastmailLogo];
+const VARIATIONS = [
+  'Fastmail',
+  'Yahoo! Mail',
+  'iCloud',
+  'AOL',
+  'all other providers'
+];
+const META_VARIATIONS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other providers`;
+const TRUSTBAR_LOGOS = [fastmailLogo, aolLogo, yahooLogo, icloudLogo];
 
 const ProviderIMAP = () => {
-  // const variationsText = getVariationsText(VARIATIONS);
+  const variationsText = getVariationsText(VARIATIONS);
   return (
     <SubPageLayout
       title={`Leave Me Alone for ${PROVIDER_NAME}`}
-      description={`Easily unsubscribe from unwanted spam, subscription emails, and newsletters in all ${PROVIDER_NAME} inboxes today.`}
+      description={`Easily unsubscribe from unwanted spam, subscription emails, and
+      newsletters in ${META_VARIATIONS} today.`}
       withContent={false}
-      slug="/provider/imap"
+      slug="/providers/imap"
     >
       <div styleName="provider-inner">
         <div styleName="container">
@@ -37,11 +46,11 @@ const ProviderIMAP = () => {
             </h1>
             <p styleName="tagline">
               Easily unsubscribe from unwanted spam, subscription emails, and
-              newsletters in all IMAP inboxes today.
+              newsletters in {variationsText}.
             </p>
 
             <a href="/signup" className={`beam-me-up-cta`}>
-              Get Started for FREE
+              Start Unsubscribing
             </a>
           </div>
           <div styleName="container-image">
@@ -55,11 +64,18 @@ const ProviderIMAP = () => {
               <img src={happy} alt="happy face image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">One</h3>
-              <p>Lorem...</p>
+              <h3 styleName="feature-title">
+                Inbox sanity for all mailboxes, everywhere
+              </h3>
+              <p>
+                The Internet Message Access Protocol (IMAP) is a mail protocol
+                used for accessing email on a remote web server from a local
+                client. This is usually supported by all modern email clients
+                and web servers.
+              </p>
               <p>
                 <TextLink as="link" linkTo="/learn">
-                  Read how Leave Me Alone works{' '}
+                  Learn how Leave Me Alone works{' '}
                   <ArrowIcon inline width="12" height="12" />
                 </TextLink>
               </p>
@@ -70,8 +86,15 @@ const ProviderIMAP = () => {
               <img src={broom} alt="broom sweeping image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Two</h3>
-              <p>Lorem...</p>
+              <h3 styleName="feature-title">
+                Clean all of your mailboxes, together
+              </h3>
+              <p>
+                Connect all of your email accounts and scan them together. Leave
+                Me Alone supports multiple IMAP, Google, and Microsoft accounts.
+                Clear out all of your subscription emails from all of your email
+                addresses in one go.
+              </p>
               <p>
                 <TextLink as="link" linkTo="/learn">
                   See all Leave Me Alone features{' '}
@@ -85,11 +108,18 @@ const ProviderIMAP = () => {
               <img src={envelope} alt="private envelope image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Three</h3>
-              <p>Lorem...</p>
+              <h3 styleName="feature-title">
+                Your information protected, always
+              </h3>
+              <p>
+                We're committed to privacy. We never store the content of your
+                emails, your IMAP credentials are encrypted using password
+                manager level security, and you can deactivate your account,
+                which removes all of your data, at any time.
+              </p>
               <p>
                 <TextLink as="link" linkTo="/security">
-                  Learn how we power these stats{' '}
+                  Read about Leave Me Alone security{' '}
                   <ArrowIcon inline width="12" height="12" />
                 </TextLink>
               </p>
@@ -98,7 +128,7 @@ const ProviderIMAP = () => {
         </div>
       </div>
 
-      {/* <div styleName="trustbar">
+      <div styleName="trustbar imap">
         <div styleName="provider-inner trustbar-images">
           {TRUSTBAR_LOGOS.map((logo, i) => (
             <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
@@ -106,15 +136,31 @@ const ProviderIMAP = () => {
             </span>
           ))}
         </div>
-      </div> */}
+      </div>
 
       <div styleName="security">
         <div styleName="provider-inner">
           <div styleName="image-section">
             <div styleName="image-section-text">
-              <h2>TODO</h2>
-              <p>Lorem...</p>
-              <p>Lorem...</p>
+              <h2>Peace of mind for data security and privacy</h2>
+              <p>
+                Leave Me Alone protects your IMAP credentials in the same way as
+                secure password managers.
+              </p>
+              <p>
+                Your authentication details are encrypted by your personal
+                master password, and can only be decrypted when you log in and
+                fetch your mail.
+              </p>
+              <p>
+                We NEVER store the content of any emails. Emails we scan on your
+                behalf are streamed directly to you, and not stored on our
+                system.
+              </p>
+              <p>
+                At any time you can deactivate your account which will delete
+                all of your data, revoke your API keys, and sign you out.
+              </p>
               <p>
                 <TextLink inverted href="/security">
                   Read more about security at Leave Me Alone{' '}
@@ -123,8 +169,7 @@ const ProviderIMAP = () => {
               </p>
             </div>
             <div styleName="image-section-img bordered">
-              {/* TODO screenshot of IMAP setup? */}
-              {/* <img alt="Google permissions requested" src={googleScopes} /> */}
+              <img alt="IMAP setup modal" src={imapModalImg} />
             </div>
           </div>
         </div>
@@ -132,13 +177,13 @@ const ProviderIMAP = () => {
 
       <div styleName="provider-inner">
         <div styleName="end-stuff">
-          <h2>Start unsubscribing from unwanted emails today</h2>
+          <h2>Start unsubscribing from emails in {variationsText} today!</h2>
           <a
             href={`/signup?ref=provider-${name}`}
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
             style={{ margin: '50px auto' }}
           >
-            Try now for FREE
+            Sign up for Free
           </a>
           <p>Or...</p>
           <p>
@@ -163,17 +208,3 @@ const ProviderIMAP = () => {
 };
 
 export default ProviderIMAP;
-
-// function getVariationsText(list) {
-//   const last = <TextImportant>{list.pop()}</TextImportant>;
-//   return (
-//     <>
-//       {list.map(s => (
-//         <>
-//           <TextImportant>{s}</TextImportant>,{' '}
-//         </>
-//       ))}
-//       and <TextImportant>{last}</TextImportant>
-//     </>
-//   );
-// }

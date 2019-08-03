@@ -1,14 +1,13 @@
 import './providers.module.scss';
 
+import { HeaderHighlight, TextLink } from '../../components/text';
 import {
-  HeaderHighlight,
-  TextImportant,
-  TextLink
-} from '../../components/text';
+  ProviderFooter,
+  getVariationsText
+} from '../../components/landing/providers';
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
-import { ProviderFooter } from '../../components/landing/providers';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import hotmailLogo from '../../assets/providers/hotmail-logo.png';
@@ -37,7 +36,7 @@ const ProviderMicrosoft = () => {
       title={`Leave Me Alone for ${PROVIDER_NAME}`}
       description={`Easily unsubscribe from unwanted spam, subscription emails, and newsletters in your ${PROVIDER_NAME}, ${META_VARIATIONS} inboxes today.`}
       withContent={false}
-      slug="/provider/microsoft"
+      slug="/providers/microsoft"
     >
       <div styleName="provider-inner hero">
         <div styleName="container">
@@ -48,11 +47,11 @@ const ProviderMicrosoft = () => {
             </h1>
             <p styleName="tagline">
               Easily unsubscribe from unwanted spam, subscription emails, and
-              newsletters in your {variationsText} inboxes today.
+              newsletters in your {variationsText} inboxes.
             </p>
 
             <a href="/signup" className={`beam-me-up-cta`}>
-              Get Started for FREE
+              Start Unsubscribing
             </a>
           </div>
           <div styleName="container-image">
@@ -77,6 +76,11 @@ const ProviderMicrosoft = () => {
             <div styleName="image-section-text">
               <h2>We only ask for the permissions we need</h2>
               <p>
+                {PROVIDER_NAME} authorizes Leave Me Alone using OAuth. This
+                allows us to access your emails without you giving us your
+                password.
+              </p>
+              <p>
                 Leave Me Alone never stores the content of any emails. Emails we
                 scan on your behalf are streamed directly to you, and not stored
                 on our system.
@@ -87,14 +91,14 @@ const ProviderMicrosoft = () => {
               </p>
               <p>
                 <TextLink inverted href="/security">
-                  Read more about security at Leave Me Alone{' '}
+                  Learn more about security and permissions{' '}
                   <ArrowIcon inline width="14" height="14" />
                 </TextLink>
               </p>
             </div>
             <div styleName="image-section-img bordered">
               <img
-                alt="Microsoft permissions requested"
+                alt="Microsoft OAuth permissions requested"
                 src={outlookScopesImg}
               />
             </div>
@@ -112,17 +116,3 @@ const ProviderMicrosoft = () => {
 };
 
 export default ProviderMicrosoft;
-
-function getVariationsText(list) {
-  const last = <TextImportant>{list.pop()}</TextImportant>;
-  return (
-    <>
-      {list.map(s => (
-        <span key={s}>
-          <TextImportant>{s}</TextImportant>,{' '}
-        </span>
-      ))}
-      and <TextImportant>{last}</TextImportant>
-    </>
-  );
-}

@@ -1,6 +1,7 @@
 import './organisation.module.scss';
 
 import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { TextImportant, TextLink } from '../../../../components/text';
 
 import { AlertContext } from '../../../../providers/alert-provider';
 import BillingHistory from '../../../../app/profile/team/billing-history';
@@ -15,14 +16,13 @@ import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import PendingInvites from '../../../../app/profile/team/invited-users';
 import ProfileLayout from '../../../../app/profile/layout';
-import { TextImportant, TextLink } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
 import cx from 'classnames';
 import formatDate from 'date-fns/format';
+import { openChat } from '../../../../utils/chat';
 import request from '../../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../../utils/hooks/use-user';
-import { openChat } from '../../../../utils/chat';
 
 export default () => {
   return (
@@ -132,7 +132,7 @@ const OrganisationStatus = React.memo(({ active, admin, billing = {} }) => {
     return (
       <p>
         Your account is <TextImportant>active</TextImportant>.{' '}
-        {admin ? 'Team members' : 'You can'} can start unsubscribing!
+        {admin ? 'Team members' : 'You'} can start unsubscribing!
       </p>
     );
   }

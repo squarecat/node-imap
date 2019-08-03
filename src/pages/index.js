@@ -79,7 +79,8 @@ const NEWS = [
   }
 ];
 
-const PROVIDERS_LIST = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
+export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
+export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other providers`;
 
 const IndexPage = () => {
   const trashPileRef = useRef(null);
@@ -261,7 +262,7 @@ const IndexPage = () => {
             </h3>
             <p>
               If you have a Google or Microsoft email account then we have you
-              covered. This includes {PROVIDERS_LIST}.
+              covered. This includes {OAUTH_PROVIDERS}.
             </p>
             <div className="provider-logos">
               <TextLink undecorated as="link" linkTo="/providers/google">
@@ -277,7 +278,7 @@ const IndexPage = () => {
             </div>
             <div className="text-box text-box-centered">
               <h3 className="providers-header">
-                For all other accounts we support IMAP
+                We support {IMAP_PROVIDERS} using IMAP
               </h3>
               <div className="provider-logos">
                 <TextLink undecorated as="link" linkTo="/providers/imap">
@@ -292,7 +293,7 @@ const IndexPage = () => {
               href="/signup?ref=providers"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             >
-              Start Unsubscribing!
+              Start Unsubscribing
             </a>
           </div>
         </div>

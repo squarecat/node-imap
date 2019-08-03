@@ -1,10 +1,10 @@
 import './senders.module.scss';
 
 import {
-  TextImportant,
-  TextLink,
+  HeaderHighlight,
   TextHighlight,
-  HeaderHighlight
+  TextImportant,
+  TextLink
 } from '../components/text';
 
 import { Arrow as ArrowIcon } from '../components/icons';
@@ -228,7 +228,7 @@ function getStats({ unsubscribes, seen }) {
 }
 
 function getSenders(addresses, limit) {
-  let show = addresses;
+  let show = [...addresses];
   if (limit) {
     show = addresses.slice(0, limit);
   }
