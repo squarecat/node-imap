@@ -22,16 +22,16 @@ const VARIATIONS = [
   'Yahoo! Mail',
   'iCloud',
   'AOL',
-  'all other providers'
+  'all other mailboxes'
 ];
-const META_VARIATIONS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other providers`;
+const META_VARIATIONS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other mailboxes`;
 const TRUSTBAR_LOGOS = [fastmailLogo, aolLogo, yahooLogo, icloudLogo];
 
 const ProviderIMAP = () => {
   const variationsText = getVariationsText(VARIATIONS);
   return (
     <SubPageLayout
-      title={`Leave Me Alone for ${PROVIDER_NAME}`}
+      title={`Leave Me Alone for all mailboxes`}
       description={`Easily unsubscribe from unwanted spam, subscription emails, and
       newsletters in ${META_VARIATIONS} today.`}
       withContent={false}
@@ -42,7 +42,7 @@ const ProviderIMAP = () => {
           <div styleName="container-text">
             <h1 styleName="title">
               Leave Me Alone for{' '}
-              <HeaderHighlight>{PROVIDER_NAME}</HeaderHighlight>
+              <HeaderHighlight>All Mailboxes</HeaderHighlight>
             </h1>
             <p styleName="tagline">
               Easily unsubscribe from unwanted spam, subscription emails, and

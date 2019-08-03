@@ -524,10 +524,7 @@ export async function connectImapAccount(userId, masterKey, imapData) {
     });
 
     if (!connected) {
-      throw new ConnectAccountError('failed to authenticate with IMAP server', {
-        cause: error,
-        errKey: 'imap-connect-error'
-      });
+      throw error;
     }
 
     // add encrypted password to the imap collection
@@ -550,7 +547,7 @@ export async function connectImapAccount(userId, masterKey, imapData) {
   }
 }
 
-// export async function updateImapAccount(userId, masterKey, imapData) {}
+export async function updateImapAccount(userId, masterKey, imapData) {}
 
 export async function createOrUpdateUserFromPassword(userData = {}) {
   const {

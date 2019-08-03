@@ -80,7 +80,7 @@ const NEWS = [
 ];
 
 export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
-export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other providers`;
+export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other mailboxes`;
 
 const IndexPage = () => {
   const trashPileRef = useRef(null);
