@@ -114,7 +114,7 @@ const IndexPage = () => {
       <div id="main">
         <Header setActive={() => {}} />
         <div
-          className={`friendly-neighbourhood-hero ${
+          className={`home-container friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
           }`}
         >
@@ -152,7 +152,7 @@ const IndexPage = () => {
 
         <div className="home-container">
           <div className="home-container-inner" id="learn">
-            <div className="image-section image-right">
+            <div className="image-section">
               <div className="image-section-text">
                 <h3>All of your subscription emails together</h3>
                 <p>
@@ -186,7 +186,7 @@ const IndexPage = () => {
               </div>
             </div>
 
-            <div className="image-section image-right">
+            <div className="image-section">
               <div className="image-section-text">
                 <h3>Clean all of your inboxes at once</h3>
                 <p>
@@ -251,56 +251,35 @@ const IndexPage = () => {
         </div>
 
         <div className="learn-providers" ref={trashPileRef} id="providers">
-          <div className="text-box text-box-centered">
-            <h3 className="providers-header">
-              We support both Gmail and Outlook
-            </h3>
-            <p>
-              If you have a Google or Microsoft email account then we have you
-              covered. This includes Gmail, G Suite, Outlook, Office 365, Live,
-              and Hotmail.
-            </p>
-            <div className="provider-logos">
-              <span className="provider-logo">
-                <GoogleIcon width="60" height="60" />
-              </span>
-              <span className="provider-logo">
-                <OutlookIcon width="60" height="60" />
-              </span>
-            </div>
-
-            {/* <div className="provider-stats">
-                <p>
-                  <span className="provider-stats-num">
-                    {formatNumber(statsData.users)}
-                  </span>{' '}
-                  users worldwide
-                </p>
-                <p>
-                  <span className="provider-stats-num">
-                    {formatNumber(statsData.unsubscriptions)}
-                  </span>{' '}
-                  spam and subscription emails gone forever
-                </p>
+          <div className="home-container">
+            <div className="text-box text-box-centered">
+              <h3 className="providers-header">
+                We support both Gmail and Outlook
+              </h3>
+              <p>
+                If you have a Google or Microsoft email account then we have you
+                covered. This includes Gmail, G Suite, Outlook, Office 365,
+                Live, and Hotmail.
+              </p>
+              <div className="provider-logos">
+                <span className="provider-logo">
+                  <GoogleIcon width="60" height="60" />
+                </span>
+                <span className="provider-logo">
+                  <OutlookIcon width="60" height="60" />
+                </span>
               </div>
-              <div className="unsub-list-img">
-                <Browser>
-                  <img
-                    src={unsubListGif}
-                    alt="Clicking the toggle to unsubscribe from a mailing list"
-                  />
-                </Browser>
-              </div> */}
-            <a
-              href="/signup?ref=providers"
-              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-            >
-              Start Unsubscribing!
-            </a>
+              <a
+                href="/signup?ref=providers"
+                className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+              >
+                Start Unsubscribing!
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="pricing home-container section-padded">
+        <div className="home-container section-padded">
           <div className="home-container-inner" id="pricing">
             <h3>Let's talk money</h3>
             <p>
@@ -312,7 +291,7 @@ const IndexPage = () => {
           <Pricing />
         </div>
 
-        <div className="news home-container section-padded">
+        <div className="home-container section-padded">
           <div className="home-container-inner" id="news">
             <h3>In the news</h3>
             <p>
