@@ -1,9 +1,4 @@
-import {
-  AuthError,
-  ConnectAccountError,
-  LMAError,
-  UserError
-} from '../utils/errors';
+import { AuthError, ConnectAccountError, UserError } from '../utils/errors';
 import {
   addAccount,
   addActivity,
@@ -135,8 +130,9 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   }
 }
 
-async function validateUserAccountCreateUpdate({ id, email, provider }) {
+async function validateConnectAccount(user, accountData) {
   try {
+    const { email, provider } = accountData;
     // we want to know if there is a user already which exists with this email
     // and login provider or has this account connected to their account
     //
@@ -148,7 +144,7 @@ async function validateUserAccountCreateUpdate({ id, email, provider }) {
     // this user google auths danielle@squarecat.io
     // strat will be 'connected-account' - so this account is already connected
     logger.debug(
-      `user-service: validating user account create update for ${provider}`
+      `user-service: validating user account connection for ${provider}`
     );
 
     const loginStrat = await getUserLoginProvider({ email });
@@ -156,7 +152,7 @@ async function validateUserAccountCreateUpdate({ id, email, provider }) {
 
     if (loginStrat === 'connected-account') {
       logger.debug(
-        `user-service: cannot create/update user, already connected to a different account`
+        `user-service: cannot connect account, already connected to a different account`
       );
       throw new AuthError(
         'user account already connected to a different account',
@@ -172,7 +168,6 @@ async function validateUserAccountCreateUpdate({ id, email, provider }) {
       );
       // a user trying to signup would have been prompted for their password
       // a user trying to connect an account we need to check they are connecting their own account
-      const user = await getUserById(id);
 
       // if the user email is the same as the one connecting allow
       // otherwise it will be caught by existing with a different provider
@@ -186,7 +181,7 @@ async function validateUserAccountCreateUpdate({ id, email, provider }) {
 
     if (loginStrat && loginStrat !== provider) {
       logger.debug(
-        `user-service: cannot create/update user, already exists with a different provider`
+        `user-service: cannot connect account, already exists with a different provider`
       );
       throw new AuthError('user already exists with a different provider', {
         errKey: 'auth-provider-error'
@@ -194,6 +189,50 @@ async function validateUserAccountCreateUpdate({ id, email, provider }) {
     }
 
     return loginStrat;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function tryAddUserToOrganisation(user, accountData) {
+  try {
+    const { organisationId } = user;
+    const { id: accountId, email: accountEmail } = accountData;
+
+    logger.debug(
+      `user-service: user belongs to organisation ${organisationId}`
+    );
+    const organisation = await getOrganisationById(organisationId);
+
+    if (!user.organisationAdmin) {
+      logger.debug(
+        `user-service: user is not the organisation admin, checking if this account can join...`
+      );
+
+      const { allowed, reason } = canUserJoinOrganisation({
+        email: accountEmail,
+        organisation
+      });
+      if (!allowed) {
+        logger.debug(
+          `user-service: user cannot connect this account to this organisation ${organisationId}`
+        );
+        throw new ConnectAccountError('user cannot join organisation', {
+          errKey: reason
+        });
+      }
+    } else {
+      logger.debug(
+        `user-service: user is the organisation admin, allowing account to join`
+      );
+    }
+
+    await addUserAccountToOrganisation({
+      user,
+      organisationId,
+      organisationName: organisation.name,
+      account: { id: accountId, email: accountEmail }
+    });
   } catch (err) {
     throw err;
   }
@@ -209,10 +248,11 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     displayName
   } = userData;
   try {
-    await validateUserAccountCreateUpdate({ id, email, provider });
-
     let user = await getUser(id);
     let organisation;
+
+    await validateConnectAccount(user, { email, provider });
+
     if (!user) {
       logger.debug(`user-service: creating new user`);
       // new user account, check if they should be added to an org
@@ -400,13 +440,13 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
   try {
     logger.debug(`user-service: connecting user account - ${provider}`);
 
-    await validateUserAccountCreateUpdate({
-      id: userId,
+    const user = await getUser(userId);
+
+    await validateConnectAccount(user, {
       email: accountEmail,
       provider
     });
 
-    const user = await getUser(userId);
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
     );
@@ -427,41 +467,9 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 
     // check if the user is part of an organisation
     if (user.organisationId) {
-      logger.debug(
-        `user-service: user belongs to organisation ${user.organisationId}`
-      );
-      const organisation = await getOrganisationById(user.organisationId);
-
-      if (!user.organisationAdmin) {
-        logger.debug(
-          `user-service: user is not the organisation admin, checking if this account can join...`
-        );
-
-        const { allowed, reason } = canUserJoinOrganisation({
-          email: accountEmail,
-          organisation
-        });
-        if (!allowed) {
-          logger.debug(
-            `user-service: user cannot connect this account to this organisation ${
-              user.organisationId
-            }`
-          );
-          throw new ConnectAccountError('user cannot join organisation', {
-            errKey: reason
-          });
-        }
-      } else {
-        logger.debug(
-          `user-service: user is the organisation admin, allowing account to join`
-        );
-      }
-
-      await addUserAccountToOrganisation({
-        user,
-        organisationId: user.organisationId,
-        organisationName: organisation.name,
-        account: { id: accountId, email: accountEmail }
+      await tryAddUserToOrganisation(user, {
+        email: accountEmail,
+        provider
       });
     }
 
@@ -486,26 +494,47 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
   }
 }
 
-export async function addImapAccount(userId, masterKey, imapData) {
+export async function connectImapAccount(userId, masterKey, imapData) {
   const { username, password, port, host } = imapData;
   try {
+    const provider = 'imap';
+
+    const user = await getUser(userId);
+    // validate that this account can be connected
+    // aka: not already connected or used to sign in by someone else
+    await validateConnectAccount(user, {
+      email: username,
+      provider
+    });
+
+    // check if the user is part of an organisation
+    if (user.organisationId) {
+      await tryAddUserToOrganisation(user, {
+        email: username,
+        provider
+      });
+    }
+
+    // check the connection
     const { connected, error } = await testImapConnection({
       username,
       port,
       host,
       password
     });
+
     if (!connected) {
       throw new ConnectAccountError('failed to authenticate with IMAP server', {
         cause: error,
         errKey: 'imap-connect-error'
       });
     }
+
     // add encrypted password to the imap collection
     const id = await setImapAccessDetails(masterKey, password);
     const account = {
       id,
-      provider: 'imap',
+      provider,
       email: username,
       port,
       host
@@ -521,7 +550,7 @@ export async function addImapAccount(userId, masterKey, imapData) {
   }
 }
 
-export async function updateImapAccount(userId, masterKey, imapData) {}
+// export async function updateImapAccount(userId, masterKey, imapData) {}
 
 export async function createOrUpdateUserFromPassword(userData = {}) {
   const {
