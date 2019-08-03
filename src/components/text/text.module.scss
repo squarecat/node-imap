@@ -58,9 +58,19 @@
   font-size: 18px;
 }
 
-.highlight {
+.highlight,
+.header-highlight {
   background-color: rgb(253, 219, 215);
   border-radius: 2px;
+}
+
+.highlight {
   padding: 2px 3px;
   line-height: 20px;
+}
+
+.header-highlight {
+  display: inline-block;
+  padding: 0px 6px;
+  margin: 0 -6px;
 }

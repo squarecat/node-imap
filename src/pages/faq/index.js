@@ -1,5 +1,6 @@
 import './faq.module.scss';
 
+import { IMAP_PROVIDERS, OAUTH_PROVIDERS } from '..';
 import { TextImportant, TextLink } from '../../components/text';
 
 import { Arrow as ArrowIcon } from '../../components/icons';
@@ -91,10 +92,10 @@ const FaqPage = () => (
       <div styleName="faq-box">
         <h2 styleName="faq-title">What mail providers do you support?</h2>
         <p>
-          If you have a Google or Microsoft email account then we have you
-          covered. This includes Gmail, G Suite, Outlook, Office 365, Live, and
-          Hotmail.
+          We support all Google and Microsoft email accounts including{' '}
+          {OAUTH_PROVIDERS}.
         </p>
+        <p>We support {IMAP_PROVIDERS} using IMAP.</p>
         <p>
           <a href="mailto:hello@leavemalone">Let us know</a> which services
           you'd like us to integrate with and we'll add it to our{' '}

@@ -104,6 +104,9 @@ export function addConnectedAccount(provider, count = 1) {
   if (provider === 'outlook') {
     return updateSingleStat('connectedAccountOutlook', count);
   }
+  if (provider === 'imap') {
+    return updateSingleStat('connectedAccountImap', count);
+  }
 }
 
 // generic update stat function for anything

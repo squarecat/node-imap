@@ -45,6 +45,30 @@ a.more-info:visited {
   color: $color-primary-font;
 }
 
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  max-width: 1050px;
+  width: 100%;
+  margin: 0 auto;
+  // padding: 0 50px;
+
+  @media (max-width: 960px) {
+    padding: 0 40px;
+  }
+
+  @media (max-width: 400px) {
+    padding: 0 20px;
+  }
+}
+
+.home-container-inner {
+  // text-align: center;
+  position: relative;
+}
+
 .friendly-neighbourhood-hero {
   min-height: calc(100vh - 106px);
   width: 100%;
@@ -54,13 +78,6 @@ a.more-info:visited {
   justify-content: center;
   position: relative;
   flex-direction: column;
-
-  padding: 0 50px;
-
-  @media (max-width: 960px) {
-    padding: 0 20px;
-    min-height: calc(100vh - 60px);
-  }
 }
 
 .friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
@@ -192,26 +209,6 @@ a.more-info:visited {
   max-width: fit-content;
 }
 
-.home-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  padding: 0 50px;
-
-  @media (max-width: 960px) {
-    padding: 0 20px;
-  }
-}
-
-.home-container-inner {
-  max-width: 1050px;
-  margin: 0 auto;
-  text-align: center;
-  width: 100%;
-  position: relative;
-}
-
 .section-padded {
   padding-top: 150px;
 }
@@ -265,6 +262,12 @@ a.more-info:visited {
   img {
     max-width: 300px;
   }
+
+  @media (max-width: 400px) {
+    max-width: 100%;
+    position: relative;
+    left: -15px;
+  }
 }
 
 .all-unsubscriptions-img {
@@ -316,7 +319,7 @@ a.more-info:visited {
 
 .trash-pile {
   margin: 0 auto -1px auto;
-  padding-bottom: 300px;
+  padding-bottom: 200px;
 
   background-position: bottom -200px left;
 
@@ -327,6 +330,7 @@ a.more-info:visited {
 
   &[data-show-truck='true'] {
     background-position: bottom -20px left;
+    padding-bottom: 300px;
   }
 
   .text-box {
@@ -368,6 +372,14 @@ a.more-info:visited {
 .provider-logo {
   display: inline-block;
   margin: 0 40px;
+  transition: transform 250ms ease-in-out;
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 400px) {
+    margin: 0 20px;
+  }
 }
 
 .provider-stats {
@@ -570,6 +582,10 @@ a.more-info:visited {
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 400px) {
+    margin: 50px 0;
   }
 }
 

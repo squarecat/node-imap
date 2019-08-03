@@ -1,6 +1,6 @@
 import './connect.module.scss';
 
-import { AtSignIcon, GoogleIcon, OutlookIcon } from '../icons';
+import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
 import React, { useContext, useEffect } from 'react';
 
 import ImapModal from '../modal/imap';
@@ -104,7 +104,7 @@ export default ({
         }}
         styleName="connect-btn"
       >
-        <OutlookIcon width="20" height="20" />
+        <MicrosoftIcon width="20" height="20" />
         <span styleName="text">Connect Microsoft</span>
       </a>
     );

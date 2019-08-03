@@ -3,8 +3,9 @@ import './home.scss';
 
 import {
   Arrow as ArrowIcon,
+  AtSignIcon,
   GoogleIcon,
-  OutlookIcon,
+  MicrosoftIcon,
   PointyArrow
 } from '../components/icons';
 import React, {
@@ -37,7 +38,7 @@ import useWindowSize from 'react-use/lib/useWindowSize';
 
 const faker = require('../vendor/faker/locale/en');
 
-const news = [
+const NEWS = [
   {
     name: 'Fast Company',
     quote: (
@@ -78,6 +79,9 @@ const news = [
   }
 ];
 
+export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
+export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other providers`;
+
 const IndexPage = () => {
   const trashPileRef = useRef(null);
   const {
@@ -114,7 +118,7 @@ const IndexPage = () => {
       <div id="main">
         <Header setActive={() => {}} />
         <div
-          className={`friendly-neighbourhood-hero ${
+          className={`home-container friendly-neighbourhood-hero ${
             bannerShown ? 'friendly-neighbourhood-hero-bannered' : ''
           }`}
         >
@@ -152,7 +156,7 @@ const IndexPage = () => {
 
         <div className="home-container">
           <div className="home-container-inner" id="learn">
-            <div className="image-section image-right">
+            <div className="image-section">
               <div className="image-section-text">
                 <h3>All of your subscription emails together</h3>
                 <p>
@@ -186,7 +190,7 @@ const IndexPage = () => {
               </div>
             </div>
 
-            <div className="image-section image-right">
+            <div className="image-section">
               <div className="image-section-text">
                 <h3>Clean all of your inboxes at once</h3>
                 <p>
@@ -194,6 +198,7 @@ const IndexPage = () => {
                   Clear out all of your subscription emails from all of your
                   email addresses in one go.
                 </p>
+                <p />
               </div>
               <div className="image-section-img bordered">
                 <img src={connectAccounts} alt="connected accounts image" />
@@ -251,56 +256,51 @@ const IndexPage = () => {
         </div>
 
         <div className="learn-providers" ref={trashPileRef} id="providers">
-          <div className="text-box text-box-centered">
-            <h3 className="providers-header">
-              We support both Gmail and Outlook
-            </h3>
-            <p>
-              If you have a Google or Microsoft email account then we have you
-              covered. This includes Gmail, G Suite, Outlook, Office 365, Live,
-              and Hotmail.
-            </p>
-            <div className="provider-logos">
-              <span className="provider-logo">
-                <GoogleIcon width="60" height="60" />
-              </span>
-              <span className="provider-logo">
-                <OutlookIcon width="60" height="60" />
-              </span>
-            </div>
-
-            {/* <div className="provider-stats">
-                <p>
-                  <span className="provider-stats-num">
-                    {formatNumber(statsData.users)}
-                  </span>{' '}
-                  users worldwide
-                </p>
-                <p>
-                  <span className="provider-stats-num">
-                    {formatNumber(statsData.unsubscriptions)}
-                  </span>{' '}
-                  spam and subscription emails gone forever
-                </p>
+          <div className="home-container">
+            <div className="text-box text-box-centered">
+              <h3 className="providers-header">
+                We support both Gmail and Outlook
+              </h3>
+              <p>
+                If you have a Google or Microsoft email account then we have you
+                covered. This includes {OAUTH_PROVIDERS}.
+              </p>
+              <div className="provider-logos">
+                <TextLink undecorated as="link" linkTo="/providers/google">
+                  <span className="provider-logo">
+                    <GoogleIcon width="60" height="60" />
+                  </span>
+                </TextLink>
+                <TextLink undecorated as="link" linkTo="/providers/microsoft">
+                  <span className="provider-logo">
+                    <MicrosoftIcon width="60" height="60" />
+                  </span>
+                </TextLink>
               </div>
-              <div className="unsub-list-img">
-                <Browser>
-                  <img
-                    src={unsubListGif}
-                    alt="Clicking the toggle to unsubscribe from a mailing list"
-                  />
-                </Browser>
-              </div> */}
-            <a
-              href="/signup?ref=providers"
-              className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-            >
-              Start Unsubscribing!
-            </a>
+              <div className="text-box text-box-centered">
+                <h3 className="providers-header">
+                  We support {IMAP_PROVIDERS} using IMAP
+                </h3>
+                <div className="provider-logos">
+                  <TextLink undecorated as="link" linkTo="/providers/imap">
+                    <span className="provider-logo">
+                      <AtSignIcon width="60" height="60" />
+                    </span>
+                  </TextLink>
+                </div>
+              </div>
+
+              <a
+                href="/signup?ref=providers"
+                className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+              >
+                Start Unsubscribing
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="pricing home-container section-padded">
+        <div className="home-container section-padded">
           <div className="home-container-inner" id="pricing">
             <h3>Let's talk money</h3>
             <p>
@@ -312,14 +312,14 @@ const IndexPage = () => {
           <Pricing />
         </div>
 
-        <div className="news home-container section-padded">
+        <div className="home-container section-padded">
           <div className="home-container-inner" id="news">
             <h3>In the news</h3>
             <p>
               Don't take our word for it, read what people are saying about us.
             </p>
             <div className="in-the-news">
-              {news.map(({ quote, logoUrl, url }) => (
+              {NEWS.map(({ quote, logoUrl, url }) => (
                 <div key={url} className="news-item">
                   <p>"{quote}"</p>
                   <a target="_" className="news-logo" href={url}>
@@ -734,7 +734,7 @@ function Item({
 
             <div className="example-unsub-text" ref={textRef}>
               <p>{text}</p>
-              <Transition timeout={200} appear in={count > 2 && count < 250}>
+              <Transition timeout={200} appear in={count > 2}>
                 {state => {
                   return (
                     <>

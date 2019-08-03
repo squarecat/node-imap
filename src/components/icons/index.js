@@ -480,7 +480,7 @@ export const AtSignIcon = ({ width = 30, height = 30, ...visProps }) => (
   </svg>
 );
 
-export function OutlookIcon({ width = '34', height = '34' }) {
+export function MicrosoftIcon({ width = '34', height = '34' }) {
   return (
     <svg width={width} height={height} viewBox="0 0 21 21">
       <rect x="1" y="1" width="9" height="9" fill="#f25022" />

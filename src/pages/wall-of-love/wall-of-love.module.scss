@@ -1,0 +1,6 @@
+@import '../../layouts/subpage-layout.module.scss';
+
+.end-stuff {
+  @extend .subpage-end-stuff;
+  border-top: none;
+}

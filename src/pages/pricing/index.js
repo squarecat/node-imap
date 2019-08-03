@@ -39,8 +39,8 @@ export function Enterprise({ readMore = false }) {
         <span styleName="pricing-separator" />
       </div>
       <ul styleName="pricing-features">
-        {/* <li>Rid your office of useless email</li> */}
-        <li>Google and Microsoft support</li>
+        <li>Google & Microsoft support</li>
+        <li>IMAP support</li>
         <li>Unlimited unsubscribes</li>
         <li styleName="coming-soon">
           Unlimited API access <span>(coming soon)</span>
@@ -91,7 +91,8 @@ function Packages({ readMore = false }) {
         />
       </span>
       <ul styleName="pricing-features">
-        <li>Google and Microsoft support</li>
+        <li>Google & Microsoft support</li>
+        <li>IMAP support</li>
         <li>1 credit = 1 unsubscribe</li>
         <li styleName="coming-soon">
           Limited API access <span>(coming soon)</span>
@@ -226,7 +227,7 @@ export default () => {
         </a>
       </div>
 
-      <div styleName="more">
+      <div styleName="end-stuff">
         <h2>Want to know more?</h2>
         <p>
           Check out{' '}
@@ -243,6 +244,13 @@ export default () => {
           </TextLink>
           .
         </p>
+        <p style={{ margin: '50px auto' }}>Or...</p>
+        <a
+          href={`/signup`}
+          className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+        >
+          Try now for FREE
+        </a>
       </div>
     </SubPageLayout>
   );

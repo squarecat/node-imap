@@ -26,6 +26,31 @@ const InTheNewsPage = () => {
     >
       <h1 styleName="title">In The News</h1>
       <News />
+      <div styleName="end-stuff">
+        <h2>Want to know more?</h2>
+        <p>
+          Check out{' '}
+          <TextLink as="link" linkTo="/learn">
+            how it works
+          </TextLink>
+          , read about our{' '}
+          <TextLink as="link" linkTo="/security">
+            security
+          </TextLink>
+          , and find out more{' '}
+          <TextLink as="link" linkTo="/about">
+            about us and our mission
+          </TextLink>
+          .
+        </p>
+        <p style={{ margin: '50px auto' }}>Or...</p>
+        <a
+          href={`/signup`}
+          className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+        >
+          Sign Up Now!
+        </a>
+      </div>
     </SubPageLayout>
   );
 };

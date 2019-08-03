@@ -2,90 +2,27 @@
 @import '../../layouts/subpage-layout.module.scss';
 
 .container {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-gap: 70px;
+  @extend .subpage-header-container;
+}
 
-  @media (max-width: 900px) {
-    display: flex;
-    flex-direction: column;
-    max-width: 600px;
-    margin: 0 auto;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    // padding: 40px 0;
+.container-text {
+  @extend .subpage-header-container-text;
+}
 
-    a {
-      margin: 0 auto;
-    }
-  }
+.container-image {
+  @extend .subpage-header-container-image;
+}
+
+.title {
+  @extend .subpage-header-title;
+}
+
+.tagline {
+  @extend .subpage-header-tagline;
 }
 
 .enterprise-inner {
   @extend .subpage-content;
-}
-
-.container-text {
-}
-
-.container-image {
-  display: flex;
-  align-items: center;
-  text-align: right;
-
-  @media (max-width: 900px) {
-    max-width: 500px;
-    margin: 70px auto 0;
-  }
-  @media (max-width: 400px) {
-    margin: 40px auto 0;
-  }
-}
-
-h1.tagline {
-  font-size: 42px;
-  line-height: 52px;
-  margin-bottom: 35px;
-  max-width: 450px;
-
-  @media (max-width: 1050px) {
-    font-size: 38px;
-    max-width: 410px;
-  }
-
-  @media (max-width: 1000px) {
-    font-size: 32px;
-    line-height: 45px;
-    margin-bottom: 30px;
-    max-width: 340px;
-  }
-
-  @media (max-width: 900px) {
-    margin: 0 auto 30px auto;
-  }
-
-  @media (max-width: 500px) {
-    font-size: 32px;
-    line-height: 36px;
-  }
-
-  @media (max-width: 400px) {
-    font-size: 25px;
-    line-height: 36px;
-  }
-}
-
-.description {
-  margin-bottom: 45px;
-  font-size: 20px;
-  line-height: 28px;
-
-  @media (max-width: 400px) {
-    margin-bottom: 30px;
-    font-size: 16px;
-    line-height: 22px;
-  }
 }
 
 .features,
@@ -151,9 +88,7 @@ h1.tagline {
 }
 
 .end-stuff {
-  text-align: center;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 100px;
+  @extend .subpage-end-stuff;
 }
 
 .image-section {
@@ -279,6 +214,7 @@ h1.tagline {
     padding: 20px;
   }
 }
+
 .trustbar-img {
   display: flex;
   margin-right: 15px;
