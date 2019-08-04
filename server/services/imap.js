@@ -24,3 +24,12 @@ export function removeImapAccessDetails(accountId) {
 export function testImapConnection(account) {
   return testConnection(account);
 }
+
+export async function updateImapPassword({
+  accountId,
+  oldMasterKey,
+  newMasterKey
+}) {
+  const password = await get(oldMasterKey, accountId);
+  return updateImapAccessDetails(accountId, newMasterKey, password);
+}

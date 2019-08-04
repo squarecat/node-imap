@@ -851,6 +851,28 @@ export async function updatePassword(id, newPassword) {
   }
 }
 
+// if user password changes from a password reset, we
+// can't update the IMAP passwords because we don't
+// know what the previous master key was, so we
+// mark them as invalid until the user updates them
+export async function invalidateImapAccounts(id, cause) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'accounts.provider': 'imap' },
+      {
+        $set: {
+          'accounts.$.problem': cause
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`user-dao: failed to invalidate imap accounts for ${cause}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function removeBillingCard(userId) {
   try {
     const col = await db().collection(COL_NAME);
