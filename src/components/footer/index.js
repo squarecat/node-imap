@@ -92,6 +92,18 @@ export default () => (
           </li>
         </ul>
         <ul styleName="footer-nav">
+          <h4 styleName="footer-nav-title">Works With</h4>
+          <li>
+            <TextLink href="/providers/google">Google</TextLink>
+          </li>
+          <li>
+            <TextLink href="/providers/microsoft">Microsoft</TextLink>
+          </li>
+          <li>
+            <TextLink href="/providers/imap">IMAP</TextLink>
+          </li>
+        </ul>
+        <ul styleName="footer-nav">
           <h4 styleName="footer-nav-title">Open</h4>
           <li>
             <TextLink href="/open">Open stats</TextLink>

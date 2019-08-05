@@ -13,7 +13,8 @@ import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
 import { getVariationsText } from '../../components/landing/providers';
 import happy from '../../assets/enterprise/happy.png';
 import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
-import imapModalImg from '../../assets/security-imap-setup.png';
+// import imapModalImg from '../../assets/security-imap-setup.png';
+import securityImg from '../../assets/security.png';
 import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
 const PROVIDER_NAME = 'IMAP';
@@ -168,8 +169,8 @@ const ProviderIMAP = () => {
                 </TextLink>
               </p>
             </div>
-            <div styleName="image-section-img bordered">
-              <img alt="IMAP setup modal" src={imapModalImg} />
+            <div styleName="image-section-img">
+              <img src={securityImg} alt="list of our security features" />
             </div>
           </div>
         </div>
