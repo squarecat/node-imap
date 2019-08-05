@@ -18,6 +18,7 @@ import {
   getUserByReferralCode,
   incrementCredits,
   incrementCreditsUsed,
+  invalidateImapAccounts,
   removeAccount,
   removeBillingCard,
   removeReminder,
@@ -61,7 +62,8 @@ import { getMilestone, updateMilestoneCompletions } from './milestones';
 import {
   removeImapAccessDetails,
   setImapAccessDetails,
-  testImapConnection
+  testImapConnection,
+  updateImapPassword
 } from './imap';
 
 import addHours from 'date-fns/add_hours';
@@ -870,10 +872,30 @@ export async function updateUserPreferences(id, preferences) {
   }
 }
 
-export async function updateUserPassword({ id, email, password }, newPassword) {
+export async function updateUserPassword(
+  { id, email, password, masterKey },
+  newPassword
+) {
   try {
-    await authenticateUser({ email, password });
+    const user = await authenticateUser({ email, password });
     const updatedUser = await updatePassword(id, newPassword);
+    const { accounts, masterKey: newMasterKey } = user;
+
+    // update any encrpyted imap details with
+    // the new master key
+    const imapAccounts = accounts.filter(
+      account => account.provider === 'imap'
+    );
+    await Promise.all(
+      imapAccounts.map(account => {
+        return updateImapPassword({
+          accountId: account.id,
+          oldMasterKey: masterKey,
+          newMasterKey
+        });
+      })
+    );
+
     return updatedUser;
   } catch (err) {
     logger.error(`user-service: failed to update user password`);
@@ -1400,6 +1422,7 @@ export async function resetUserPassword({ email, password, resetCode }) {
     }
 
     const updatedUser = await updatePassword(user.id, password);
+    await invalidateImapAccounts(user.id, 'password-invalidated');
     return updatedUser;
   } catch (err) {
     throw err;

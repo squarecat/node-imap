@@ -1,3 +1,5 @@
+import { getMailboxName, getMailboxes } from './mailboxes';
+
 import { MailError } from '../../../utils/errors';
 import { dedupeMailList } from '../common';
 import { getMailClient } from './access';
@@ -22,7 +24,13 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     let dupeCache = {};
     let dupeSenders = [];
 
-    const iterators = [fetch(client, { from })];
+    const searchableMailboxes = await getMailboxes(client);
+
+    // search all the mailboxes we can
+    const iterators = searchableMailboxes.map(mailbox =>
+      fetch(client, { mailbox, from })
+    );
+
     for (let iter of iterators) {
       let next = await iter.next();
       while (!next.done) {
@@ -74,16 +82,11 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     });
   }
 }
-export async function* fetch(client, { from }) {
+
+export async function* fetch(client, { mailbox, from }) {
   try {
     client.onerror = err => console.error(err);
-    console.log('authenticating with imap');
-    const key = 'body[header.fields (from to subject list-unsubscribe)]';
-    const query = [
-      'uid',
-      'BODY.PEEK[HEADER.FIELDS (From To Subject List-Unsubscribe)]'
-    ];
-    const mail = await readFromBox(client, 'INBOX', from);
+    const mail = await readFromBox(client, mailbox, from);
 
     yield mail;
     // const resultUUIDs = await client.search('INBOX', {
@@ -113,25 +116,27 @@ export async function* fetch(client, { from }) {
   }
 }
 
-async function readFromBox(client, mailboxName = 'INBOX', from) {
+async function readFromBox(client, mailbox, from) {
   const openBox = util.promisify(client.openBox.bind(client));
   const search = util.promisify(client.search.bind(client));
   const closeBox = util.promisify(client.closeBox.bind(client));
-  const getBoxes = util.promisify(client.getBoxes.bind(client));
   try {
+    const { name, box } = mailbox;
+    const mailboxName = getMailboxName(name, box);
     await openBox(mailboxName, true);
-    const boxes = await getBoxes();
-    console.log(Object.keys(boxes));
     const uuids = await search([
       'ALL',
       ['SINCE', from],
       ['HEADER', 'LIST-UNSUBSCRIBE', '']
     ]);
-
+    if (!uuids.length) {
+      console.log('nothing to fetch');
+      return [];
+    }
     console.log('fetching mail from IMAP');
     const messages = await fetchUuids(client, uuids);
     await closeBox();
-    return messages;
+    return messages.map(m => ({ ...m, mailbox }));
   } catch (err) {
     console.error(err);
   }

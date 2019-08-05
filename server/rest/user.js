@@ -338,15 +338,14 @@ export default app => {
     // }),
     async (req, res, next) => {
       const { user, body } = req;
-      const { id, email } = user;
+      const { id, email, masterKey } = user;
       const { op, value } = body;
-
       let updatedUser = user;
       try {
         if (op === 'update') {
           const { oldPassword, password: newPassword } = value;
           updatedUser = await updateUserPassword(
-            { id, email, password: oldPassword },
+            { id, email, password: oldPassword, masterKey },
             newPassword
           );
         } else {

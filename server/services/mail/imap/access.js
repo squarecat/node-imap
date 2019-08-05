@@ -10,7 +10,6 @@ const connections = io.counter({
 
 export async function getMailClient(master, account) {
   const { id, email, host, port, tls } = account;
-
   try {
     const password = await getImapAccessDetails(master, id);
     return connect({ username: email, password, host, port, tls });
