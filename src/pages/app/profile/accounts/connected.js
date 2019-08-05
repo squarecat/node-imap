@@ -13,7 +13,7 @@ export default () => {
           {
             source: 'lma-connect-redirect',
             payload: {
-              error: reason,
+              error: { reason },
               success: false
             }
           },

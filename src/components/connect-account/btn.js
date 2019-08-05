@@ -90,7 +90,7 @@ export default ({
         styleName="connect-btn"
       >
         <GoogleIcon width="20" height="20" />
-        <span styleName="text">Connect Google</span>
+        <span>Connect Google</span>
       </a>
     );
   } else if (provider === 'outlook') {
@@ -105,7 +105,7 @@ export default ({
         styleName="connect-btn"
       >
         <MicrosoftIcon width="20" height="20" />
-        <span styleName="text">Connect Microsoft</span>
+        <span>Connect Microsoft</span>
       </a>
     );
   } else if (provider === 'imap') {
@@ -117,7 +117,7 @@ export default ({
         styleName="connect-btn"
       >
         <AtSignIcon width="20" height="20" />
-        <span styleName="text">Connect IMAP</span>
+        <span>Connect Other</span>
       </a>
     );
   } else {

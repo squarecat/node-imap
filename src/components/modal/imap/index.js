@@ -9,12 +9,14 @@ import {
 } from '../../../components/form';
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from '..';
 import React, { useCallback, useContext, useMemo, useReducer } from 'react';
+import { TextImportant, TextLink } from '../../text';
 
 import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
-import { TextImportant } from '../../text';
-import { getImapError } from '../../../utils/errors';
+import { getConnectError } from '../../../utils/errors';
+import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
+import useUser from '../../../utils/hooks/use-user';
 
 const imapReducer = (state, action) => {
   const { type, data } = action;
@@ -53,6 +55,7 @@ const imapReducer = (state, action) => {
 export default ({ account = {} } = {}) => {
   const { close: closeModal } = useContext(ModalContext);
   const { username, host, port } = account;
+  const [isImapEnabled] = useUser(u => u.loginProvider === 'password');
 
   const [state, dispatch] = useReducer(imapReducer, {
     imap: {
@@ -70,12 +73,16 @@ export default ({ account = {} } = {}) => {
       try {
         dispatch({ type: 'set-loading', data: true });
         dispatch({ type: 'set-error', data: false });
-
+        if (state.imap.host.startsWith('http')) {
+          return dispatch({
+            type: 'set-error',
+            data: 'HTTP(S) protocol is not required'
+          });
+        }
         await saveImapConnection(state.imap);
         closeModal();
       } catch (err) {
-        console.error(err);
-        const { message } = getImapError(err);
+        const { message } = getConnectError(err);
         dispatch({ type: 'set-error', data: message });
       } finally {
         dispatch({ type: 'set-loading', data: false });
@@ -113,6 +120,29 @@ export default ({ account = {} } = {}) => {
 
   const content = useMemo(
     () => {
+      if (!isImapEnabled) {
+        return (
+          <>
+            <p>
+              Connecting other mailboxes is{' '}
+              <TextImportant>
+                only available for accounts created with password
+              </TextImportant>
+              .
+            </p>
+            <p>
+              This is because we want to keep your IMAP credentials as secure as
+              possible. The best way to do this is by encrypting your
+              information using the password you log in with.
+            </p>
+            <p>
+              Please <TextLink onClick={() => openChat()}>contact us</TextLink>{' '}
+              and we will switch your account to using email and password.
+            </p>
+          </>
+        );
+      }
+
       const { imap } = state;
       return (
         <>
@@ -227,7 +257,7 @@ export default ({ account = {} } = {}) => {
         </>
       );
     },
-    [notification, state]
+    [isImapEnabled, notification, state]
   );
 
   return (
@@ -248,12 +278,22 @@ export default ({ account = {} } = {}) => {
           </ModalHeader>
           <div>{content}</div>
         </ModalBody>
-        <ModalSaveAction
-          onCancel={closeModal}
-          saveText={'Save'}
-          isDisabled={state.loading}
-          isLoading={state.loading}
-        />
+        {isImapEnabled ? (
+          <ModalSaveAction
+            onCancel={closeModal}
+            saveText={'Save'}
+            isDisabled={state.loading}
+            isLoading={state.loading}
+          />
+        ) : (
+          <ModalSaveAction
+            onSave={() => {
+              openChat();
+            }}
+            onCancel={closeModal}
+            saveText="Contact Us"
+          />
+        )}
       </form>
     </div>
   );
@@ -263,7 +303,13 @@ async function saveImapConnection(imapDetails) {
   const { host } = imapDetails;
   try {
     if (host.startsWith('http')) {
-      throw new Error('HTTP(S) protocol is not required');
+      throw new Error('HTTP(S) protocol is not required', {
+        // mimic the server error
+        reason: {
+          type: 'imap',
+          message: 'HTTP(S) protocol is not required'
+        }
+      });
     }
     return request('/api/me', {
       method: 'PATCH',

@@ -1,5 +1,5 @@
 import {
-  addImapAccount,
+  connectImapAccount,
   addToUserIgnoreList,
   addUserReminder,
   authenticationRequiresTwoFactor,
@@ -374,7 +374,11 @@ export default app => {
       if (op === 'remove-account') {
         updatedUser = await removeUserAccount(userId, value);
       } else if (op === 'add-imap-account') {
-        updatedUser = await addImapAccount(userId, req.user.masterKey, value);
+        updatedUser = await connectImapAccount(
+          userId,
+          req.user.masterKey,
+          value
+        );
       } else if (op === 'update-imap-account') {
         updatedUser = await updateImapAccount(
           userId,

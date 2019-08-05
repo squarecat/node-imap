@@ -93,8 +93,8 @@ export default ({ provider, action }) => {
         onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
         styleName="login-me-in-dammit"
       >
-        <GoogleIcon />
-        <span styleName="text">{`${action} with Google`}</span>
+        <GoogleIcon width="34" height="34" />
+        <span>{`${action} with Google`}</span>
       </a>
     );
   } else if (provider === 'outlook') {
@@ -111,8 +111,8 @@ export default ({ provider, action }) => {
         onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
         styleName="login-me-in-dammit"
       >
-        <MicrosoftIcon />
-        <span styleName="text">{`${action} with Microsoft`}</span>
+        <MicrosoftIcon width="34" height="34" />
+        <span>{`${action} with Microsoft`}</span>
       </a>
     );
   } else {

@@ -2,6 +2,7 @@ import Imap from 'imap';
 import { getImapAccessDetails } from '../../imap.js';
 import io from '@pm2/io';
 import logger from '../../../utils/logger';
+import { parseError } from './errors.js';
 
 const connections = io.counter({
   name: 'IMAP Connections'
@@ -15,6 +16,7 @@ export async function getMailClient(master, account) {
   } catch (err) {
     logger.error('imap-access: failed to connect to IMAP');
     logger.error(err);
+    throw parseError(err);
   }
 }
 
@@ -58,7 +60,7 @@ export async function testConnection(args) {
   } catch (err) {
     return {
       connected: false,
-      error: err
+      error: parseError(err)
     };
   } finally {
     if (imap) {
