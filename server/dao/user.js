@@ -670,7 +670,7 @@ export async function removeAccount(
         ...query,
         $pull: {
           accounts: { id: accountId },
-          hashedEmails: hashEmail(email)
+          hashedEmails: hashEmail(accountEmail)
         }
       };
     } else {
