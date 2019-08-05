@@ -252,11 +252,12 @@ export async function getStats() {
   try {
     const col = await db().collection(COL_NAME);
     const stats = await col.findOne();
-    const providerStats = await getProviderStats();
-    return {
-      ...stats,
-      ...providerStats
-    };
+    // const providerStats = await getProviderStats();
+    return stats;
+    // {
+    //   ...stats,
+    //   ...providerStats
+    // };
   } catch (err) {
     logger.error('stats-dao: failed to get stats');
     logger.error(err);
@@ -298,7 +299,8 @@ const recordedStats = [
   'creditsPurchased',
   'packagesPurchased',
   'connectedAccountGoogle',
-  'connectedAccountOutlook'
+  'connectedAccountOutlook',
+  'connectedAccountImap'
 ];
 
 export async function recordStats() {

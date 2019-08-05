@@ -359,7 +359,7 @@ export default function OpenPage() {
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
   const usersRef = useRef(null);
-  const providersRef = useRef(null);
+  // const providersRef = useRef(null);
 
   useEffect(
     () => {
@@ -388,9 +388,9 @@ export default function OpenPage() {
       if (usersRef.current) {
         usersChart(usersRef.current.getContext('2d'), stats);
       }
-      if (providersRef.current) {
-        providerBarChart(providersRef.current.getContext('2d'), stats);
-      }
+      // if (providersRef.current) {
+      //   providerBarChart(providersRef.current.getContext('2d'), stats);
+      // }
     },
     [stats, monthly]
   );
@@ -603,6 +603,12 @@ export default function OpenPage() {
                   <span styleName="label">Microsoft accounts connected</span>
                   <span styleName="value">
                     {format(stats.connectedAccountOutlook)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Other accounts (IMAP) connected</span>
+                  <span styleName="value">
+                    {format(stats.connectedAccountImap)}
                   </span>
                 </div>
               </div>
