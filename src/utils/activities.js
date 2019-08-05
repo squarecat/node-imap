@@ -46,14 +46,12 @@ const activityEnum = {
   },
   removeAdditionalAccount: ({ data }) =>
     `You removed a connected account - ${data.email}.`,
-  joinedOrganisation: ({ data }) => `You joined the ${data.name} organisation.`,
-  leftOrganisation: ({ data }) => `You left the ${data.name} organisation.`,
+  joinedOrganisation: ({ data }) => `You joined the ${data.name} team.`,
+  leftOrganisation: ({ data }) => `You left the ${data.name} team.`,
   addedAccountToOrganisation: ({ data }) =>
-    `You added the account ${data.email} to your organisation ${data.name}.`,
+    `You added the account ${data.email} to your team ${data.name}.`,
   removedAccountFromOrganisation: ({ data }) =>
-    `You removed the account ${data.email} from your organisation ${
-      data.name
-    }.`,
+    `You removed the account ${data.email} from your team ${data.name}.`,
   addBillingCard: () => `You added a saved payment method.`,
   removeBillingCard: () => `You removed your saved payment method.`
 };
