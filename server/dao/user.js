@@ -1054,12 +1054,15 @@ function decryptUser(user, options = {}) {
   } else {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(({ id, provider, email, addedAt }) => ({
-        id,
-        provider,
-        email,
-        addedAt
-      }))
+      accounts: user.accounts.map(
+        ({ id, provider, email, addedAt, problem }) => ({
+          id,
+          provider,
+          email,
+          addedAt,
+          problem
+        })
+      )
     };
   }
   return decryptedUser;

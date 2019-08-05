@@ -2,9 +2,11 @@ import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
 import React, { useCallback, useState } from 'react';
 
 import Button from '../btn';
+import { FormNotification } from '../form';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
+import { getAccountProblem } from '../../utils/errors';
 import styles from './connect.module.scss';
 
 const ConnectList = ({
@@ -55,7 +57,7 @@ function Account({
   loading,
   onClickRemoveAccount
 }) {
-  const { email, provider, id } = account;
+  const { email, provider, id, problem } = account;
 
   return (
     <Transition
@@ -73,24 +75,33 @@ function Account({
           [styles[`account${s}`]]: hasStyle
         });
         return (
-          <li className={classes}>
-            {getIcon(provider)}
-            <span>
-              {email} {showPrimary && isPrimary ? '(primary)' : ''}
-            </span>
-            {isPrimary ? null : (
-              <Button
-                compact
-                muted
-                basic
-                onClick={() => onClickRemoveAccount(email)}
-                loading={loading}
-              >
-                <span styleName="desktop">Remove</span>
-                <span styleName="mobile">x</span>
-              </Button>
-            )}
-          </li>
+          <>
+            <li className={classes}>
+              {getIcon(provider)}
+              <span styleName={problem ? 'problem' : ''}>
+                {email} {showPrimary && isPrimary ? '(primary)' : ''}
+              </span>
+              {isPrimary ? null : (
+                <Button
+                  compact
+                  muted
+                  basic
+                  onClick={() => onClickRemoveAccount(email)}
+                  loading={loading}
+                >
+                  <span styleName="desktop">Remove</span>
+                  <span styleName="mobile">x</span>
+                </Button>
+              )}
+            </li>
+            {problem ? (
+              <li>
+                <FormNotification warning>
+                  {getAccountProblem(problem)}
+                </FormNotification>
+              </li>
+            ) : null}
+          </>
         );
       }}
     </Transition>
