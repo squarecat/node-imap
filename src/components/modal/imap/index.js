@@ -93,9 +93,16 @@ export default ({ account = {} } = {}) => {
       } else if (isWeirdHost(imap.host)) {
         content = (
           <FormNotification warning>
-            We support OAuth for Gmail and Outlook accounts which is generally
-            more secure and simpler to setup. Consider using this instead of
-            IMAP.
+            We support OAuth for this host which is generally more secure and
+            simpler to setup. Consider using this instead of IMAP.
+          </FormNotification>
+        );
+      } else if (isUnsupportedHost(imap.host)) {
+        content = (
+          <FormNotification error>
+            Connecting Google hosts using IMAP is not supported right now due to
+            Google's tight security model. Please use our "Connect Google"
+            button instead.
           </FormNotification>
         );
       }
@@ -273,5 +280,9 @@ async function saveImapConnection(imapDetails) {
 }
 
 function isWeirdHost(host) {
-  return ['imap.gmail.com', 'outlook.com', 'office365.com'].includes(host);
+  return ['outlook.com', 'outlook.office365.com'].includes(host);
+}
+
+function isUnsupportedHost(host) {
+  return ['imap.gmail.com'].includes(host);
 }

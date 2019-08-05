@@ -13,7 +13,7 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     const { unsubscriptions, ignoredSenderList } = user;
     const client = await getMailClient(masterKey, account);
     logger.info(
-      `gmail-fetcher: checking for new mail after ${new Date(from)} (${
+      `imap-fetcher: checking for new mail after ${new Date(from)} (${
         user.id
       }) [estimated ${0} mail]`
     );
@@ -65,7 +65,7 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     }
 
     logger.info(
-      `gmail-fetcher: finished scan (${user.id}) [took ${(Date.now() - start) /
+      `imap-fetcher: finished scan (${user.id}) [took ${(Date.now() - start) /
         1000}s, ${totalEmailsCount} results]`
     );
     return {
@@ -87,30 +87,7 @@ export async function* fetch(client, { mailbox, from }) {
   try {
     client.onerror = err => console.error(err);
     const mail = await readFromBox(client, mailbox, from);
-
     yield mail;
-    // const resultUUIDs = await client.search('INBOX', {
-    //   since: from
-    // });
-    // let results = await client.listMessages(
-    //   'INBOX',
-    //   `${resultUUIDs[0]}:${resultUUIDs[resultUUIDs.length - 1]}`,
-    //   query,
-    //   {
-    //     byUid: true,
-    //     valueAsString: true
-    //   }
-    // );
-    // results = results.map(r => {
-    //   const headers = r[key].split('\r\n').filter(s => s);
-    //   return {
-    //     payload: { headers, snippet: '' },
-    //     id: r.uid,
-    //     labelIds: [],
-    //     internalDate: Date.now()
-    //   };
-    // });
-    // yield results;
   } catch (err) {
     console.error(err);
   }
@@ -121,19 +98,18 @@ async function readFromBox(client, mailbox, from) {
   const search = util.promisify(client.search.bind(client));
   const closeBox = util.promisify(client.closeBox.bind(client));
   try {
-    const { name, box } = mailbox;
+    const { name, box, attribute } = mailbox;
     const mailboxName = getMailboxName(name, box);
     await openBox(mailboxName, true);
+    console.log(`imap-fetcher: searching mail from ${attribute}`);
     const uuids = await search([
       'ALL',
       ['SINCE', from],
       ['HEADER', 'LIST-UNSUBSCRIBE', '']
     ]);
     if (!uuids.length) {
-      console.log('nothing to fetch');
       return [];
     }
-    console.log('fetching mail from IMAP');
     const messages = await fetchUuids(client, uuids);
     await closeBox();
     return messages.map(m => ({ ...m, mailbox }));
@@ -153,6 +129,9 @@ function fetchUuids(client, uuids) {
       let email = {
         body: ''
       };
+      msg.on('error', err => {
+        logger.error(err);
+      });
       msg.on('body', async stream => {
         stream.on('data', function(data) {
           email = {

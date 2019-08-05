@@ -33,7 +33,7 @@ function connect({ username, password, host, port, tls = true }) {
       resolve(imap);
     });
 
-    imap.once('error', function(err) {
+    imap.on('error', function(err) {
       console.log('imap error');
       console.error(err);
       reject(err);
@@ -52,15 +52,17 @@ export async function testConnection(args) {
   let imap;
   try {
     imap = await connect(args);
-    imap.end();
     return {
       connected: true
     };
   } catch (err) {
-    imap.end();
     return {
       connected: false,
       error: err
     };
+  } finally {
+    if (imap) {
+      imap.end();
+    }
   }
 }

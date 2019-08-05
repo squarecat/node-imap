@@ -23,6 +23,10 @@ function isBoxSearchable(box) {
   return hasAttribute && canBeOpened;
 }
 
+function getRelevantAttribute(box) {
+  return box.attribs.find(a => mailboxAttributes.includes(a));
+}
+
 function boxHasChildren(box) {
   return box.attribs.some(a => a === '\\HasChildren');
 }
@@ -43,7 +47,10 @@ function parseMailBoxes(boxes) {
     const box = boxes[boxName];
     let ret = out;
     if (boxName.toLowerCase() === 'inbox' || isBoxSearchable(box)) {
-      ret = [...ret, { name: boxName, box }];
+      ret = [
+        ...ret,
+        { name: boxName, box, attribute: getRelevantAttribute(box) }
+      ];
     }
     if (boxHasChildren(box)) {
       ret = [...ret, parseMailBoxes(box.children)];
