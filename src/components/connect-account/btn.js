@@ -112,7 +112,7 @@ export default ({
     return (
       <a
         onClick={() => {
-          openModal(<ImapModal />);
+          openModal(<ImapModal onSuccess={onSuccess} />);
         }}
         styleName="connect-btn"
       >

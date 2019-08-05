@@ -52,7 +52,7 @@ const imapReducer = (state, action) => {
   return state;
 };
 
-export default ({ account = {} } = {}) => {
+export default ({ account = {}, onSuccess = () => {} } = {}) => {
   const { close: closeModal } = useContext(ModalContext);
   const { username, host, port } = account;
   const [isImapEnabled] = useUser(u => u.loginProvider === 'password');
@@ -81,6 +81,7 @@ export default ({ account = {} } = {}) => {
         }
         await saveImapConnection(state.imap);
         closeModal();
+        onSuccess();
       } catch (err) {
         const { message } = getConnectError(err);
         dispatch({ type: 'set-error', data: message });
@@ -88,7 +89,7 @@ export default ({ account = {} } = {}) => {
         dispatch({ type: 'set-loading', data: false });
       }
     },
-    [closeModal, state.imap]
+    [closeModal, onSuccess, state.imap]
   );
 
   const notification = useMemo(
