@@ -18,7 +18,7 @@ export default [
       </span>
     ),
     twitter: `BMWeinstein7`,
-    avatarPath: `image-1`
+    avatarPath: `image-1.jpg`
   },
 
   {
@@ -35,7 +35,7 @@ export default [
       </span>
     ),
     twitter: `pradipcloud`,
-    avatarPath: `image-2`
+    avatarPath: `image-2.jpg`
   },
 
   {
@@ -48,8 +48,7 @@ export default [
       </span>
     ),
     twitter: `kerrtrvs`,
-    avatarPath: `image-3`,
-    isShort: true
+    avatarPath: `image-3.jpg`
   },
   {
     name: 'Josh Manders',
@@ -66,7 +65,7 @@ export default [
       </span>
     ),
     twitter: `joshmanders`,
-    avatarPath: `image-4`
+    avatarPath: `image-4.jpg`
   },
 
   {
@@ -83,7 +82,8 @@ export default [
       </span>
     ),
     twitter: `matteing`,
-    avatarPath: `image-5`
+    avatarPath: `image-5.jpg`,
+    companyName: 'Makerlog'
   },
 
   {
@@ -100,7 +100,8 @@ export default [
       </span>
     ),
     twitter: `jesswallaceuk`,
-    avatarPath: `image-6`
+    avatarPath: `image-6.jpg`,
+    companyName: 'Coder Story'
   },
 
   {
@@ -117,7 +118,7 @@ export default [
       </span>
     ),
     twitter: `Ferminrp`,
-    avatarPath: `image-7`
+    avatarPath: `image-7.jpg`
   },
 
   {
@@ -134,7 +135,7 @@ export default [
       </span>
     ),
     twitter: `unindie`,
-    avatarPath: `image-8`
+    avatarPath: `image-8.jpg`
   },
 
   {
@@ -149,7 +150,7 @@ export default [
       </span>
     ),
     twitter: `marie_dm_`,
-    avatarPath: `image-9`
+    avatarPath: `image-9.jpg`
   },
 
   {
@@ -162,8 +163,9 @@ export default [
       </span>
     ),
     twitter: `vertis`,
-    avatarPath: `image-10`,
-    isShort: true
+    avatarPath: `image-10.jpg`,
+    companyName: `GraphQL360`,
+    companyPath: 'graphql360.png'
   },
 
   {
@@ -180,7 +182,9 @@ export default [
       </span>
     ),
     twitter: `tomhaworth_b13`,
-    avatarPath: `image-11`
+    avatarPath: `image-11.jpg`,
+    companyName: 'B13 Technology',
+    companyPath: 'b13technology.png'
   },
 
   {
@@ -198,7 +202,8 @@ export default [
       </span>
     ),
     twitter: `diannamallen`,
-    avatarPath: `image-12`
+    avatarPath: `image-12.jpg`,
+    companyName: 'Budget Meal Planner'
   },
 
   {
@@ -212,7 +217,7 @@ export default [
       </span>
     ),
     twitter: `rbossk757`,
-    avatarPath: `image-13`
+    avatarPath: `image-13.jpg`
   },
 
   {
@@ -230,7 +235,9 @@ export default [
       </span>
     ),
     twitter: `stephsmithio`,
-    avatarPath: `image-14`
+    avatarPath: `image-14.jpg`,
+    companyName: 'Toptal',
+    companyPath: 'toptal.png'
   },
 
   {
@@ -247,7 +254,7 @@ export default [
       </span>
     ),
     twitter: `jjbuildit`,
-    avatarPath: `image-15`
+    avatarPath: `image-15.jpg`
   },
 
   {
@@ -262,7 +269,7 @@ export default [
       </span>
     ),
     twitter: `bensong`,
-    avatarPath: `image-16`
+    avatarPath: `image-16.jpg`
   },
 
   {
@@ -277,7 +284,9 @@ export default [
       </span>
     ),
     twitter: `dinuka_jay`,
-    avatarPath: `image-17`
+    avatarPath: `image-17.jpg`,
+    companyName: 'Tutor Seek',
+    companyPath: 'tutorseek.png'
   },
 
   {

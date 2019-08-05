@@ -44,25 +44,39 @@ export default () => {
 };
 
 function Box({ testimonial }) {
-  const { name, text, twitter, avatarPath } = testimonial;
+  const {
+    name,
+    text,
+    twitter,
+    avatarPath,
+    companyName,
+    companyPath
+  } = testimonial;
   const avatarLetter = name
     .split(' ')
     .map(a => a[0])
     .slice(0, 2)
     .join('');
 
+  let company = null;
+  if (companyPath) {
+    company = <img src={`${BASE_IMG_URL}/companies/${companyPath}`} />;
+  } else if (companyName) {
+    <span>{companyName}</span>;
+  }
   return (
     <div styleName="wrapper">
       <div styleName="box">
         <div styleName="img">
           {avatarPath ? (
-            <img src={`${BASE_IMG_URL}/${avatarPath}.jpg`} />
+            <img src={`${BASE_IMG_URL}/${avatarPath}`} />
           ) : (
             <span styleName="avatar-letter">{avatarLetter}</span>
           )}
         </div>
         <div styleName="content">
           <p styleName="text">{text}</p>
+          {/* <div styleName="name-container"> */}
           {twitter ? (
             <a href={`https://twitter.com/${twitter}`} styleName="twitter-link">
               <span styleName="name">{name}</span>
@@ -70,6 +84,8 @@ function Box({ testimonial }) {
           ) : (
             <span styleName="name">{name}</span>
           )}
+          {/* {company} */}
+          {/* </div> */}
         </div>
       </div>
     </div>
