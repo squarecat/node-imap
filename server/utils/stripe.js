@@ -1,9 +1,9 @@
+import { PaymentError } from './errors';
 import Stripe from 'stripe';
 // import axios from 'axios';
 // import countries from './countries.json';
 import logger from './logger';
 import { payments } from 'getconfig';
-import { PaymentError } from './errors';
 
 const stripe = Stripe(payments.secretKey);
 
@@ -367,6 +367,16 @@ export async function getSubscription({ subscriptionId }) {
     });
   } catch (err) {
     logger.error(`stripe: failed to fetch subscription`);
+    logError(err);
+    return handleStripeError(err);
+  }
+}
+
+export async function listSubscriptions() {
+  try {
+    return stripe.subscriptions.list();
+  } catch (err) {
+    logger.error(`stripe: failed to list subscription`);
     logError(err);
     return handleStripeError(err);
   }

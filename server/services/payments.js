@@ -6,6 +6,7 @@ import {
 } from '../services/user';
 import {
   addGiftRedemptionToStats,
+  addInvoicePaymentToStats,
   addPackageToStats,
   addPaymentToStats
 } from '../services/stats';
@@ -21,6 +22,7 @@ import {
   getSubscription,
   listCharges,
   listInvoices,
+  listSubscriptions,
   payUpcomingInvoice,
   updateCouponUses,
   updateCustomer
@@ -31,6 +33,7 @@ import {
   updateOrganisation
 } from './organisation';
 
+import { PaymentError } from '../utils/errors';
 import { getPackage } from '../../shared/prices';
 import logger from '../utils/logger';
 import { payments } from 'getconfig';
@@ -666,10 +669,10 @@ async function handleSubscriptionSuccess(response, { organisationId }) {
   }
 }
 
-export async function handleInvoicePaymentSuccess({ subscriptionId }) {
+export async function handleSubscriptionCreated({ subscriptionId }) {
   try {
     logger.info(
-      `payment-service: handling invoice payment success for subscription ${subscriptionId}`
+      `payment-service: handling subscription created for subscription ${subscriptionId}`
     );
 
     const organisation = await getOrganisationBySubscription(subscriptionId);
@@ -678,7 +681,12 @@ export async function handleInvoicePaymentSuccess({ subscriptionId }) {
       logger.warn(
         `payments-service: no organisation associated with subscription ${subscriptionId}`
       );
-      return false;
+      throw new PaymentError(
+        `received a subscription created Stripe webhook but found no organisation associated with this subscription ID ${subscriptionId}`,
+        {
+          subscriptionId
+        }
+      );
     }
 
     // after 3D secure or additional SCA payment steps the user might navigate away
@@ -689,11 +697,15 @@ export async function handleInvoicePaymentSuccess({ subscriptionId }) {
     });
   } catch (err) {
     logger.error(
-      `payments-service: failed to handle invoice payment success for subscription ${subscriptionId}`
+      `payments-service: failed to handle invoice subscription created for subscription ${subscriptionId}`
     );
     logger.error(err);
     throw err;
   }
+}
+
+export async function handleInvoicePaymentSuccess({ amount }) {
+  return addInvoicePaymentToStats({ price: amount / 100 });
 }
 
 // When an automatic payment on a subscription fails, a charge.failed and an invoice.payment_failed event are sent, and the subscription state becomes past_due. Stripe attempts to recover payment according to your configured retry rules.
@@ -822,6 +834,32 @@ export async function updateBillingForOrganisation(
     // return a response that would be the same as intent etc
     return {
       success: true
+    };
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getSubscriptionStats() {
+  try {
+    const subscriptions = await listSubscriptions({ status: 'active' });
+    const amount = subscriptions.data.reduce((out, sub) => {
+      const { plan, quantity, discount } = sub;
+      const total = plan.amount * quantity;
+
+      if (discount) {
+        const { duration, percent_off } = discount.coupon;
+        if (duration !== 'forever') {
+          const discountedPrice = applyCoupon(total, { percent_off });
+          return out + discountedPrice;
+        }
+      }
+
+      return out + total;
+    }, 0);
+
+    return {
+      mrr: amount / 100
     };
   } catch (err) {
     throw err;

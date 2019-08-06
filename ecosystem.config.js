@@ -27,6 +27,15 @@ module.exports = {
       cron_restart: '0 0 * * *',
       watch: false,
       autorestart: false
+    },
+    {
+      name: 'monthly-cron',
+      script: 'scripts/cron/monthly/index.js',
+      instances: 1,
+      exec_mode: 'fork',
+      cron_restart: '1 0 1 * *',
+      watch: false,
+      autorestart: false
     }
   ],
   deploy: {
