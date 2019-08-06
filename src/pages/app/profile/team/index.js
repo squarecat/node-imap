@@ -1,6 +1,7 @@
 import './organisation.module.scss';
 
 import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { TextImportant, TextLink } from '../../../../components/text';
 
 import { AlertContext } from '../../../../providers/alert-provider';
 import BillingHistory from '../../../../app/profile/team/billing-history';
@@ -15,14 +16,13 @@ import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import PendingInvites from '../../../../app/profile/team/invited-users';
 import ProfileLayout from '../../../../app/profile/layout';
-import { TextImportant, TextLink } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
 import cx from 'classnames';
 import formatDate from 'date-fns/format';
+import { openChat } from '../../../../utils/chat';
 import request from '../../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../../utils/hooks/use-user';
-import { openChat } from '../../../../utils/chat';
 
 export default () => {
   return (
@@ -425,10 +425,13 @@ function BillingInformation({ organisationId, currentUsers }) {
         ended_at,
         quantity,
         plan = {},
-        upcomingInvoiceAmount
+        upcomingInvoiceAmount,
+        coupon
       } = subscription;
 
       const periodEnd = formatDate(current_period_end * 1000, dateFormat);
+
+      const discountText = getDiscountText(coupon);
 
       if (canceled_at) {
         return (
@@ -461,6 +464,12 @@ function BillingInformation({ organisationId, currentUsers }) {
               </TextImportant>
               .
             </p>
+            {discountText ? (
+              <p>
+                Your discount of <TextImportant>{discountText}</TextImportant>{' '}
+                is active!
+              </p>
+            ) : null}
             <p>
               You'll next be billed{' '}
               <TextImportant>
@@ -519,4 +528,26 @@ function fetchSubscription(id) {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
+}
+
+function getDiscountText(coupon) {
+  if (!coupon) return null;
+
+  const { duration, amount_off, percent_off, duration_in_months } = coupon;
+
+  if (!amount_off && !percent_off) return null;
+
+  let amountText;
+  if (percent_off) {
+    amountText = `${percent_off}% off`;
+  } else if (amount_off) {
+    amountText = `$${(amount_off / 100).toFixed(2)} off`;
+  }
+  if (duration === 'forever') {
+    return amountText;
+  }
+  if (duration === 'once') {
+    return `${amountText} for 1 month`;
+  }
+  return `${amountText} for ${duration_in_months} months`;
 }
