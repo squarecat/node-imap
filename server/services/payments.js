@@ -517,7 +517,7 @@ export async function createSubscriptionForOrganisation(
     logger.debug(`payments-service: created/updated customer ${customerId}`);
 
     const { billing = {} } = organisation;
-    const { subscriptionStatus } = billing;
+    const { subscriptionStatus, discountCoupon } = billing;
 
     // Subscription is incomplete if the initial payment attempt fails.
     // we are trying to create a subscription but the billing block will exist
@@ -545,7 +545,8 @@ export async function createSubscriptionForOrganisation(
     } = await createSubscription({
       customerId,
       planId,
-      quantity: seats
+      quantity: seats,
+      coupon: discountCoupon
     });
 
     logger.debug(`payments-service: updating organisation billing information`);

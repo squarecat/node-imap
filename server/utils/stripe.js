@@ -1,9 +1,9 @@
+import { PaymentError } from './errors';
 import Stripe from 'stripe';
 // import axios from 'axios';
 // import countries from './countries.json';
 import logger from './logger';
 import { payments } from 'getconfig';
-import { PaymentError } from './errors';
 
 const stripe = Stripe(payments.secretKey);
 
@@ -291,7 +291,12 @@ export const generatePaymentResponse = intent => {
 
 // Multiple quantities of a plan are still billed using one invoice, and are prorated
 // when the subscription changes, including when you change just the quantities involved
-export async function createSubscription({ customerId, planId, quantity = 1 }) {
+export async function createSubscription({
+  customerId,
+  planId,
+  quantity = 1,
+  coupon
+}) {
   try {
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
@@ -304,7 +309,8 @@ export async function createSubscription({ customerId, planId, quantity = 1 }) {
       // When creating the subscription, expand the latest_invoice.payment_intent field in order to
       // determine payment outcome using the invoice’s associated PaymentIntent.
       expand: ['latest_invoice.payment_intent'],
-      enable_incomplete_payments: true
+      enable_incomplete_payments: true,
+      coupon
     });
     logger.info(`stripe: created subscription ${subscription.id}`);
     return subscription;
