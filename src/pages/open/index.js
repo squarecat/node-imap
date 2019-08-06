@@ -347,6 +347,84 @@ function providerBarChart(ctx, stats) {
   });
 }
 
+function mrrChart(ctx, stats) {
+  if (!stats) return null;
+  const { monthly = {} } = stats;
+  const { histogram = [] } = monthly;
+
+  let data = histogram.reduce((out, d) => {
+    const date = startOfMonth(getStatDate(d.timestamp));
+    return [
+      ...out,
+      {
+        x: date,
+        y: d.mrr
+      }
+    ];
+  }, []);
+
+  const today = startOfMonth(new Date());
+  data = [
+    ...data,
+    {
+      x: today,
+      y: stats.mrr
+    }
+  ];
+
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          fill: false,
+          backgroundColor: lineColor,
+          borderColor: lineColor,
+          data
+        }
+      ]
+    },
+    type: 'line',
+    options: {
+      legend: {
+        display: false
+      },
+      tooltips: {
+        callbacks: {
+          title: function(items) {
+            return formatDate(items[0].xLabel, 'MMM YYYY');
+          },
+          label: function(items) {
+            return currency(items.yLabel);
+          }
+        }
+      },
+      scales: {
+        xAxes: [
+          {
+            type: 'time',
+            time: {
+              unit: 'month'
+            }
+          }
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              precision: 0,
+              callback: function(label) {
+                return numeral(label).format('$0,0');
+              }
+            }
+          }
+        ]
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
 export default function OpenPage() {
   const { value: stats, loading } = useAsync(getStats);
   const { value: expenses = {}, loadingExpenses } = useAsync(getExpenses);
@@ -355,6 +433,7 @@ export default function OpenPage() {
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const monthlyProfitRef = useRef(null);
+  const mrrRef = useRef(null);
   const emailsRef = useRef(null);
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
@@ -375,6 +454,9 @@ export default function OpenPage() {
           stats,
           monthly
         );
+      }
+      if (mrrRef.current) {
+        mrrChart(mrrRef.current, stats);
       }
       if (emailsRef.current) {
         emailsChart(emailsRef.current.getContext('2d'), stats);
@@ -536,6 +618,11 @@ export default function OpenPage() {
                   <span styleName="label">Gifts redeemed</span>
                   <span styleName="value">{format(stats.giftRedemptions)}</span>
                 </div> */}
+              </div>
+
+              <div styleName="chart box">
+                <h2>Monthly Recurring Revenue</h2>
+                <canvas ref={mrrRef} />
               </div>
 
               <div styleName="boxes">

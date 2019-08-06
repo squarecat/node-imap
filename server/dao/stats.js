@@ -345,27 +345,13 @@ export async function recordStats() {
   await col.updateOne({}, { $push: { 'daily.histogram': today } });
 }
 
-const recordedMonthlyStats = ['mrr'];
 export async function recordStatsMonthly() {
-  const allStats = await getStats();
-
-  let lastMonthTotals = _get(allStats, 'monthly.previousMonthTotals', {});
-  // calc today stats
-  const today = {
+  const thisMonth = {
     timestamp: isoDate(),
-    ...recordedMonthlyStats.reduce((out, stat) => {
-      return {
-        ...out,
-        [stat]: (allStats[stat] || 0) - (lastMonthTotals[stat] || 0)
-      };
-    }, {})
+    mrr: getSubscriptionStats()
   };
 
   const col = await db().collection(COL_NAME);
   // insert this months total
-  await col.updateOne(
-    {},
-    { $set: { 'monthly.previousMonthTotals': _omit(allStats, 'monthly') } }
-  );
-  await col.updateOne({}, { $push: { 'monthly.histogram': today } });
+  await col.updateOne({}, { $push: { 'monthly.histogram': thisMonth } });
 }
