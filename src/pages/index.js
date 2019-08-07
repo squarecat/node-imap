@@ -312,15 +312,14 @@ const IndexPage = () => {
 
         <div className="home-container">
           <div
-            className="home-container-inner"
-            style={{ maxWidth: '550px', textAlign: 'left' }}
+            className="text-box text-box-centered"
+            style={{ textAlign: 'left' }}
           >
             <Testimonial
               text={`Using Leave Me Alone has resulted in a 17% reduction in my
                 emails, saving me hours of time each month.`}
               author="Luke Chadwick, Founder - GraphQL360"
               image={luke}
-              centered
             />
             <TextLink as="link" linkTo="/wall-of-love">
               <span>See all of our customer testimonials</span>{' '}
