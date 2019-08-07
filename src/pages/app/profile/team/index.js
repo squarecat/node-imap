@@ -467,7 +467,7 @@ function BillingInformation({ organisationId, currentUsers }) {
             {discountText ? (
               <p>
                 Your discount of <TextImportant>{discountText}</TextImportant>{' '}
-                is active!
+                is applied!
               </p>
             ) : null}
             <p>
@@ -533,9 +533,15 @@ function fetchSubscription(id) {
 function getDiscountText(coupon) {
   if (!coupon) return null;
 
-  const { duration, amount_off, percent_off, duration_in_months } = coupon;
+  const {
+    valid,
+    duration,
+    amount_off,
+    percent_off,
+    duration_in_months
+  } = coupon;
 
-  if (!amount_off && !percent_off) return null;
+  if (!valid || (!amount_off && !percent_off)) return null;
 
   let amountText;
   if (percent_off) {
