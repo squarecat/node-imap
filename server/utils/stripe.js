@@ -378,6 +378,16 @@ export async function getSubscription({ subscriptionId }) {
   }
 }
 
+export async function listSubscriptions() {
+  try {
+    return stripe.subscriptions.list();
+  } catch (err) {
+    logger.error(`stripe: failed to list subscription`);
+    logError(err);
+    return handleStripeError(err);
+  }
+}
+
 function handleStripeError(err) {
   switch (err.type) {
     case 'StripeCardError':
