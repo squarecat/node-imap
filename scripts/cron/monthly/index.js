@@ -1,7 +1,11 @@
 const pm2 = require('pm2');
 
-if (new Date().getHours() !== 0) {
-  console.log(`Started at wrong time (${new Date().getHours()}), stopping.`);
+const today = new Date();
+
+if (today.getHours() !== 0 && !today.getDate() !== 1) {
+  console.log(
+    `Started at wrong time (day: ${today.getDate()}, hour: ${today.getHours()}), stopping.`
+  );
   process.exit(0);
 }
 
