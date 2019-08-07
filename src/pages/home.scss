@@ -261,12 +261,12 @@ a.more-info:visited {
 .privacy {
   img {
     max-width: 300px;
-  }
 
-  @media (max-width: 400px) {
-    max-width: 100%;
-    position: relative;
-    left: -15px;
+    @media (max-width: 400px) {
+      max-width: 100%;
+      position: relative;
+      left: -15px;
+    }
   }
 }
 
