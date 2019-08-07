@@ -846,16 +846,8 @@ export async function getSubscriptionStats() {
     const amount = subscriptions.data.reduce((out, sub) => {
       const { plan, quantity, discount } = sub;
       const total = plan.amount * quantity;
-
-      if (discount) {
-        const { duration, percent_off } = discount.coupon;
-        if (duration !== 'forever') {
-          const discountedPrice = applyCoupon(total, { percent_off });
-          return out + discountedPrice;
-        }
-      }
-
-      return out + total;
+      const discountedPrice = getSubscriptionDiscount(total, discount);
+      return out + discountedPrice;
     }, 0);
 
     return {
@@ -864,4 +856,14 @@ export async function getSubscriptionStats() {
   } catch (err) {
     throw err;
   }
+}
+
+function getSubscriptionDiscount(total, discount) {
+  if (!discount) return total;
+
+  const { percent_off, amount_off, valid } = discount.coupon;
+  if (!valid) return total;
+
+  const discountedPrice = applyCoupon(total, { percent_off, amount_off });
+  return discountedPrice;
 }

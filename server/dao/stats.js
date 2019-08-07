@@ -2,7 +2,6 @@ import db, { isoDate } from './db';
 
 import _get from 'lodash.get';
 import _omit from 'lodash.omit';
-// import { getProviderStats } from './user';
 import { getSubscriptionStats } from '../services/payments';
 import logger from '../utils/logger';
 
@@ -33,10 +32,6 @@ async function addUnsubscription(type, count = 1) {
     throw err;
   }
 }
-
-// export function addScan(count = 1) {
-//   return updateSingleStat('scans', count);
-// }
 
 export function addFailedUnsubscription(count = 1) {
   return updateSingleStat('unsubscriptionsFailed', count);
@@ -269,11 +264,10 @@ export async function getStats() {
   try {
     const col = await db().collection(COL_NAME);
     const stats = await col.findOne();
-    // TODO do this monthly
-    const monthly = await getSubscriptionStats();
+    const thisMonth = await getSubscriptionStats();
     return {
       ...stats,
-      ...monthly
+      ...thisMonth
     };
   } catch (err) {
     logger.error('stats-dao: failed to get stats');
@@ -348,7 +342,7 @@ export async function recordStats() {
 export async function recordStatsMonthly() {
   const thisMonth = {
     timestamp: isoDate(),
-    mrr: getSubscriptionStats()
+    ...getSubscriptionStats()
   };
 
   const col = await db().collection(COL_NAME);
