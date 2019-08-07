@@ -355,6 +355,7 @@ export async function getOrganisationSubscription(id) {
       upcomingInvoiceAmount: total > 0 ? total : 0,
       coupon: discount
         ? {
+            valid: discount.coupon.valid,
             duration: discount.coupon.duration,
             percent_off: discount.coupon.percent_off,
             amount_off: discount.coupon.amount_off,
