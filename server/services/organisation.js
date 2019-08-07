@@ -334,7 +334,8 @@ export async function getOrganisationSubscription(id) {
       current_period_end,
       ended_at,
       quantity,
-      plan
+      plan,
+      discount
     } = await getSubscription({ subscriptionId });
 
     const { total } = await getUpcomingInvoice({
@@ -348,8 +349,18 @@ export async function getOrganisationSubscription(id) {
       current_period_end,
       ended_at,
       quantity,
-      plan,
-      upcomingInvoiceAmount: total > 0 ? total : 0
+      plan: {
+        amount: plan.amount
+      },
+      upcomingInvoiceAmount: total > 0 ? total : 0,
+      coupon: discount
+        ? {
+            duration: discount.coupon.duration,
+            percent_off: discount.coupon.percent_off,
+            amount_off: discount.coupon.amount_off,
+            duration_in_months: discount.coupon.duration_in_months
+          }
+        : null
     };
   } catch (err) {
     throw err;

@@ -12,13 +12,15 @@ import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
 import { TextImportant } from '../../text';
+import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-import { getPaymentError } from '../../../utils/errors';
+import useUser from '../../../utils/hooks/use-user';
 
 function NewBillingForm({ stripe, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
   const { state: stripeState } = useContext(StripeStateContext);
+  const [email] = useUser(u => u.email);
 
   async function onSubmit() {
     try {
@@ -33,7 +35,8 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
           city: state.city,
           country: state.country,
           postal_code: state.postal_code
-        }
+        },
+        email
       };
 
       const {
