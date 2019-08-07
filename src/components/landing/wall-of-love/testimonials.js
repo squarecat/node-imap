@@ -2,6 +2,8 @@ import './wall-of-love.module.scss';
 
 import React from 'react';
 
+const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
+
 export default [
   {
     name: 'Brendan Weinstein',
@@ -65,7 +67,13 @@ export default [
       </span>
     ),
     twitter: `joshmanders`,
-    avatarPath: `image-4.jpg`
+    avatarPath: `image-4.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/appmetrics.jpg`}
+      />
+    )
   },
 
   {
@@ -83,7 +91,15 @@ export default [
     ),
     twitter: `matteing`,
     avatarPath: `image-5.jpg`,
-    companyName: 'Makerlog'
+    company: (
+      <>
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/makerlog.jpg`}
+        />
+        <span styleName="company-name">Makerlog</span>
+      </>
+    )
   },
 
   {
@@ -101,7 +117,15 @@ export default [
     ),
     twitter: `jesswallaceuk`,
     avatarPath: `image-6.jpg`,
-    companyName: 'Coder Story'
+    company: (
+      <>
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/coderstory.svg`}
+        />
+        <span styleName="company-name">CoderStory</span>
+      </>
+    )
   },
 
   {
@@ -150,7 +174,13 @@ export default [
       </span>
     ),
     twitter: `marie_dm_`,
-    avatarPath: `image-9.jpg`
+    avatarPath: `image-9.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/threader.jpg`}
+      />
+    )
   },
 
   {
@@ -164,8 +194,14 @@ export default [
     ),
     twitter: `vertis`,
     avatarPath: `image-10.jpg`,
-    companyName: `GraphQL360`,
-    companyPath: 'graphql360.png'
+    company: (
+      <span styleName="invert graphql360">
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/graphql360.png`}
+        />
+      </span>
+    )
   },
 
   {
@@ -183,8 +219,14 @@ export default [
     ),
     twitter: `tomhaworth_b13`,
     avatarPath: `image-11.jpg`,
-    companyName: 'B13 Technology',
-    companyPath: 'b13technology.png'
+    company: (
+      <span styleName="invert b13technology">
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/b13technology.webp`}
+        />
+      </span>
+    )
   },
 
   {
@@ -203,7 +245,15 @@ export default [
     ),
     twitter: `diannamallen`,
     avatarPath: `image-12.jpg`,
-    companyName: 'Budget Meal Planner'
+    company: (
+      <>
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/budget-meal-planner.jpg`}
+        />
+        <span styleName="company-name">Budget Meal Planner</span>
+      </>
+    )
   },
 
   {
@@ -217,7 +267,13 @@ export default [
       </span>
     ),
     twitter: `rbossk757`,
-    avatarPath: `image-13.jpg`
+    avatarPath: `image-13.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/roviki-solutions.jpg`}
+      />
+    )
   },
 
   {
@@ -236,8 +292,12 @@ export default [
     ),
     twitter: `stephsmithio`,
     avatarPath: `image-14.jpg`,
-    companyName: 'Toptal',
-    companyPath: 'toptal.png'
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/toptal.png`}
+      />
+    )
   },
 
   {
@@ -285,8 +345,12 @@ export default [
     ),
     twitter: `dinuka_jay`,
     avatarPath: `image-17.jpg`,
-    companyName: 'Tutor Seek',
-    companyPath: 'tutorseek.png'
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/tutorseek.png`}
+      />
+    )
   },
 
   {

@@ -81,3 +81,33 @@ $image-size-tablet: 30px;
 .twitter-link:focus {
   color: $color-primary-font;
 }
+
+.company-container {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin-top: 10px;
+}
+
+.invert {
+  padding: 2px 3px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+
+  &.b13technology {
+    background-color: #0d284b;
+  }
+
+  &.graphql360 {
+    background-color: #0d415b;
+  }
+}
+
+.company-logo {
+  max-height: 40px;
+}
+
+.company-name {
+  margin-left: 10px;
+}
