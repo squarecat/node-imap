@@ -1,10 +1,10 @@
 import * as PaymentService from '../services/payments';
 
+import { RestError } from '../utils/errors';
 import { addRefundToStats } from '../services/stats';
 import auth from '../middleware/route-auth';
 import countries from '../utils/countries.json';
 import logger from '../utils/logger';
-import { RestError } from '../utils/errors';
 
 export default app => {
   app.get('/api/payments/coupon/:coupon', auth, async (req, res, next) => {
@@ -180,7 +180,7 @@ export default app => {
       logger.info('payments-rest: got subscriptions webhook');
       const { body } = req;
       const { type, data } = body;
-      // we dont need to handle invoice payments if they are not for subscription creation
+
       // this event will fire if an invoice is incomplete and then succeeds
       if (
         type === 'invoice.payment_succeeded' &&
@@ -188,7 +188,16 @@ export default app => {
       ) {
         const { object } = data;
         const { subscription: subscriptionId } = object;
-        return PaymentService.handleInvoicePaymentSuccess({ subscriptionId });
+        return PaymentService.handleSubscriptionCreated({ subscriptionId });
+      }
+
+      if (type === 'invoice.payment_succeeded') {
+        const { object } = data;
+        const { subscription: subscriptionId, amount } = object;
+        return PaymentService.handleInvoicePaymentSuccess({
+          subscriptionId,
+          amount
+        });
       }
 
       if (type === 'invoice.payment_failed') {

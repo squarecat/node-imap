@@ -13,11 +13,9 @@ import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
 import { getVariationsText } from '../../components/landing/providers';
 import happy from '../../assets/enterprise/happy.png';
 import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
-// import imapModalImg from '../../assets/security-imap-setup.png';
 import securityImg from '../../assets/security.png';
 import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
-const PROVIDER_NAME = 'IMAP';
 const VARIATIONS = [
   'Fastmail',
   'Yahoo! Mail',

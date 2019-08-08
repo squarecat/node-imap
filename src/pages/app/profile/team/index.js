@@ -425,10 +425,13 @@ function BillingInformation({ organisationId, currentUsers }) {
         ended_at,
         quantity,
         plan = {},
-        upcomingInvoiceAmount
+        upcomingInvoiceAmount,
+        coupon
       } = subscription;
 
       const periodEnd = formatDate(current_period_end * 1000, dateFormat);
+
+      const discountText = getDiscountText(coupon);
 
       if (canceled_at) {
         return (
@@ -461,6 +464,12 @@ function BillingInformation({ organisationId, currentUsers }) {
               </TextImportant>
               .
             </p>
+            {discountText ? (
+              <p>
+                Your discount of <TextImportant>{discountText}</TextImportant>{' '}
+                is applied!
+              </p>
+            ) : null}
             <p>
               You'll next be billed{' '}
               <TextImportant>
@@ -519,4 +528,32 @@ function fetchSubscription(id) {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
+}
+
+function getDiscountText(coupon) {
+  if (!coupon) return null;
+
+  const {
+    valid,
+    duration,
+    amount_off,
+    percent_off,
+    duration_in_months
+  } = coupon;
+
+  if (!valid || (!amount_off && !percent_off)) return null;
+
+  let amountText;
+  if (percent_off) {
+    amountText = `${percent_off}% off`;
+  } else if (amount_off) {
+    amountText = `$${(amount_off / 100).toFixed(2)} off`;
+  }
+  if (duration === 'forever') {
+    return amountText;
+  }
+  if (duration === 'once') {
+    return `${amountText} for 1 month`;
+  }
+  return `${amountText} for ${duration_in_months} months`;
 }
