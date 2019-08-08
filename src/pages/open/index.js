@@ -263,10 +263,10 @@ function mailtoLinkPieChart(ctx, stats) {
       return {
         unsubscriptionsByMailtoStrategy:
           out.unsubscriptionsByMailtoStrategy +
-            d.unsubscriptionsByMailtoStrategy || 0,
+          (d.unsubscriptionsByMailtoStrategy || 0),
         unsubscriptionsByLinkStrategy:
-          out.unsubscriptionsByLinkStrategy + d.unsubscriptionsByLinkStrategy ||
-          0
+          out.unsubscriptionsByLinkStrategy +
+          (d.unsubscriptionsByLinkStrategy || 0)
       };
     },
     { unsubscriptionsByLinkStrategy: 0, unsubscriptionsByMailtoStrategy: 0 }
@@ -347,6 +347,84 @@ function providerBarChart(ctx, stats) {
   });
 }
 
+function mrrChart(ctx, stats) {
+  if (!stats) return null;
+  const { monthly = {} } = stats;
+  const { histogram = [] } = monthly;
+
+  let data = histogram.reduce((out, d) => {
+    const date = startOfMonth(getStatDate(d.timestamp));
+    return [
+      ...out,
+      {
+        x: date,
+        y: d.mrr
+      }
+    ];
+  }, []);
+
+  const today = startOfMonth(new Date());
+  data = [
+    ...data,
+    {
+      x: today,
+      y: stats.mrr
+    }
+  ];
+
+  new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          fill: false,
+          backgroundColor: lineColor,
+          borderColor: lineColor,
+          data
+        }
+      ]
+    },
+    type: 'line',
+    options: {
+      legend: {
+        display: false
+      },
+      tooltips: {
+        callbacks: {
+          title: function(items) {
+            return formatDate(items[0].xLabel, 'MMM YYYY');
+          },
+          label: function(items) {
+            return currency(items.yLabel);
+          }
+        }
+      },
+      scales: {
+        xAxes: [
+          {
+            type: 'time',
+            time: {
+              unit: 'month'
+            }
+          }
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              precision: 0,
+              callback: function(label) {
+                return numeral(label).format('$0,0');
+              }
+            }
+          }
+        ]
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
 export default function OpenPage() {
   const { value: stats, loading } = useAsync(getStats);
   const { value: expenses = {}, loadingExpenses } = useAsync(getExpenses);
@@ -355,6 +433,7 @@ export default function OpenPage() {
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
   const monthlyProfitRef = useRef(null);
+  const mrrRef = useRef(null);
   const emailsRef = useRef(null);
   const referralRef = useRef(null);
   const mailtoLinkRef = useRef(null);
@@ -375,6 +454,9 @@ export default function OpenPage() {
           stats,
           monthly
         );
+      }
+      if (mrrRef.current) {
+        mrrChart(mrrRef.current, stats);
       }
       if (emailsRef.current) {
         emailsChart(emailsRef.current.getContext('2d'), stats);
@@ -398,12 +480,15 @@ export default function OpenPage() {
     return null;
   }
 
-  const totalRevenueStats = getBoxStats(stats, 'totalRevenue');
-  const salesStats = getBoxStats(stats, 'totalSales');
+  const totalRevenueStats = revenueBoxStats(stats);
+  const salesStats = salesBoxStats(stats);
   const usersStats = getBoxStats(stats, 'users');
+  const mrrStats = mrrBoxStats(stats);
+
   console.log('totalRevenueStats', totalRevenueStats);
   console.log('salesStats', salesStats);
   console.log('usersStats', usersStats);
+  console.log('mrrStats', mrrStats);
 
   return (
     <SubPageLayout
@@ -533,6 +618,39 @@ export default function OpenPage() {
                   <span styleName="label">Gifts redeemed</span>
                   <span styleName="value">{format(stats.giftRedemptions)}</span>
                 </div> */}
+              </div>
+
+              <div styleName="chart box">
+                <h2>Monthly Recurring Revenue</h2>
+                <canvas ref={mrrRef} />
+              </div>
+
+              <div styleName="boxes">
+                <div styleName="big-stat box">
+                  <span styleName="label">Last month's MRR</span>
+                  <span styleName="value">{currency(mrrStats.lastMonth)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">MRR Growth Rate (MoM)</span>
+                  <span
+                    styleName={`value ${
+                      mrrStats.growthRate > 0 ? 'positive' : 'negative'
+                    }`}
+                  >
+                    {mrrStats.growthRate > 0 ? '+' : ''}
+                    {percent(mrrStats.growthRate)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Current MRR</span>
+                  <span styleName="value">{currency(mrrStats.thisMonth)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total Subscription Revenue</span>
+                  <span styleName="value">
+                    {currency(stats.totalSubscriptionRevenue)}
+                  </span>
+                </div>
               </div>
 
               <div styleName="chart box">
@@ -796,6 +914,7 @@ function getMonthlyRevenueGraphStats(stats) {
     if (isAfter(date, lastMonthToShow)) return out;
 
     const formatted = formatDate(date, 'YYYY-MM');
+    // if y value is total revenue it calculates subscription rev minus refunds
     const profit = getYValue(d, 'totalRevenue') + getYValue(d, 'giftRevenue');
 
     if (!out[formatted]) {
@@ -833,8 +952,9 @@ function getMonthlyRevenueGraphStats(stats) {
 function getYValue(data, stat) {
   if (stat === 'totalRevenue') {
     const revenue = data[stat] || 0;
+    const subscriptionRevenue = data['totalSubscriptionRevenue'] || 0;
     const refunds = data['totalRevenueRefunded'] || 0;
-    const value = revenue - refunds;
+    const value = revenue + subscriptionRevenue - refunds;
     return value;
   }
   return data[stat] || 0;
@@ -853,7 +973,7 @@ function getPreviousMonthValues(stats, stat, timeframe = 0) {
 
   return histogram.reduce((out, d) => {
     const date = getStatDate(d.timestamp);
-    if (isWithinRange(date, start, end)) return out + d[stat] || 0;
+    if (isWithinRange(date, start, end)) return out + (d[stat] || 0);
     return out;
   }, 0);
 }
@@ -871,7 +991,7 @@ function getThisMonthToDate(stats, stat) {
     const date = getStatDate(d.timestamp);
     // if it's after the first of the month we show it in this month
     if (isAfter(date, start)) {
-      return out + d[stat] || 0;
+      return out + (d[stat] || 0);
     }
     return out;
   }, 0);
@@ -882,26 +1002,20 @@ function getThisMonthToDate(stats, stat) {
   return cumulative + sinceLastHistogram;
 }
 
-function getBoxStats(stats, stat) {
+function getPreviousMonths(stats, stat) {
   const twoMonthsAgo = getPreviousMonthValues(stats, stat, -2);
   const lastMonth = getPreviousMonthValues(stats, stat, -1);
   const thisMonth = getThisMonthToDate(stats, stat);
 
-  if (stat === 'totalRevenue') {
-    return revenueBoxStats(stats, {
-      twoMonthsAgo,
-      lastMonth,
-      thisMonth
-    });
-  }
+  return {
+    twoMonthsAgo,
+    lastMonth,
+    thisMonth
+  };
+}
 
-  if (stat === 'totalSales') {
-    return salesBoxStats(stats, {
-      twoMonthsAgo,
-      lastMonth,
-      thisMonth
-    });
-  }
+function getBoxStats(stats, stat) {
+  const { twoMonthsAgo, lastMonth, thisMonth } = getPreviousMonths(stats, stat);
   const growthRate = getGrowthRate({ lastMonth, twoMonthsAgo });
 
   return {
@@ -912,30 +1026,27 @@ function getBoxStats(stats, stat) {
   };
 }
 
-function revenueBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
-  const twoMonthsAgoGifts = getPreviousMonthValues(stats, 'giftRevenue', -2);
-  const lastMonthGifts = getPreviousMonthValues(stats, 'giftRevenue', -1);
-  const thisMonthGifts = getThisMonthToDate(stats, 'giftRevenue');
-
-  const twoMonthsAgoRevenueRefunds = getPreviousMonthValues(
-    stats,
-    'totalRevenueRefunded',
-    -2
-  );
-  const lastMonthRevenueRefunds = getPreviousMonthValues(
-    stats,
-    'totalRevenueRefunded',
-    -1
-  );
-  const thisMonthRevenueRefunds = getThisMonthToDate(
-    stats,
-    'totalRevenueRefunded'
-  );
+function revenueBoxStats(stats) {
+  const revenue = getPreviousMonths(stats, 'totalRevenue');
+  const subsRevenue = getPreviousMonths(stats, 'totalSubscriptionRevenue');
+  const giftsRevenue = getPreviousMonths(stats, 'giftRevenue');
+  const refunds = getPreviousMonths(stats, 'totalRevenueRefunded');
 
   const totalTwoMonths =
-    twoMonthsAgo + twoMonthsAgoGifts - twoMonthsAgoRevenueRefunds;
-  const totalLastMonth = lastMonth + lastMonthGifts - lastMonthRevenueRefunds;
-  const totalThisMonth = thisMonth + thisMonthGifts - thisMonthRevenueRefunds;
+    revenue.twoMonthsAgo +
+    subsRevenue.twoMonthsAgo +
+    giftsRevenue.twoMonthsAgo -
+    refunds.twoMonthsAgo;
+  const totalLastMonth =
+    revenue.lastMonth +
+    subsRevenue.lastMonth +
+    giftsRevenue.lastMonth -
+    refunds.lastMonth;
+  const totalThisMonth =
+    revenue.thisMonth +
+    subsRevenue.thisMonth +
+    giftsRevenue.thisMonth -
+    refunds.thisMonth;
 
   const totalGrowth = getGrowthRate({
     lastMonth: totalLastMonth,
@@ -950,18 +1061,17 @@ function revenueBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
   };
 }
 
-function salesBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
-  const twoMonthsAgoRefunds = getPreviousMonthValues(
+function salesBoxStats(stats) {
+  const { twoMonthsAgo, lastMonth, thisMonth } = getPreviousMonths(
     stats,
-    'totalSalesRefunded',
-    -2
+    'totalSales'
   );
-  const lastMonthRefunds = getPreviousMonthValues(
-    stats,
-    'totalSalesRefunded',
-    -1
-  );
-  const thisMonthRefunds = getThisMonthToDate(stats, 'totalSalesRefunded');
+
+  const {
+    twoMonthsAgo: twoMonthsAgoRefunds,
+    lastMonth: lastMonthRefunds,
+    thisMonth: thisMonthRefunds
+  } = getPreviousMonths(stats, 'totalSalesRefunded');
 
   const totalTwoMonths = twoMonthsAgo - twoMonthsAgoRefunds;
   const totalLastMonth = lastMonth - lastMonthRefunds;
@@ -976,6 +1086,26 @@ function salesBoxStats(stats, { twoMonthsAgo, lastMonth, thisMonth }) {
     lastMonth: totalLastMonth,
     thisMonth: totalThisMonth,
     growthRate: totalGrowth
+  };
+}
+
+function mrrBoxStats(stats) {
+  if (!stats) return null;
+  const { monthly } = stats;
+  if (!monthly) return 0;
+  const { histogram } = monthly;
+
+  const twoMonthsAgo = histogram[histogram.length - 2].mrr;
+  const lastMonth = histogram[histogram.length - 1].mrr;
+  const thisMonth = stats.mrr;
+
+  const growthRate = getGrowthRate({ lastMonth, twoMonthsAgo });
+
+  return {
+    twoMonthsAgo,
+    lastMonth,
+    thisMonth,
+    growthRate
   };
 }
 
@@ -996,19 +1126,23 @@ function percent(num) {
   return numeral(num).format('0%');
 }
 
-function percentageRevenueFromGifts(stats) {
-  if (!stats.giftRevenue) return 0;
+// function percentageRevenueFromGifts(stats) {
+//   if (!stats.giftRevenue) return 0;
 
-  return (
-    (stats.giftRevenue /
-      (calculateWithRefunds(stats, 'totalRevenue') + stats.giftRevenue)) *
-    100
-  ).toFixed(0);
-}
+//   return (
+//     (stats.giftRevenue /
+//       (calculateWithRefunds(stats, 'totalRevenue') + stats.giftRevenue)) *
+//     100
+//   ).toFixed(0);
+// }
 
 function calculateWithRefunds(stats, stat) {
   if (stat === 'totalRevenue')
-    return stats.totalRevenue - (stats.totalRevenueRefunded || 0);
+    return (
+      stats.totalRevenue +
+      stats.totalSubscriptionRevenue -
+      (stats.totalRevenueRefunded || 0)
+    );
   if (stat === 'totalSales')
     return stats.totalSales - (stats.totalSalesRefunded || 0);
   return 0;

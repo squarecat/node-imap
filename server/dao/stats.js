@@ -2,7 +2,7 @@ import db, { isoDate } from './db';
 
 import _get from 'lodash.get';
 import _omit from 'lodash.omit';
-import { getProviderStats } from './user';
+import { getSubscriptionStats } from '../services/payments';
 import logger from '../utils/logger';
 
 const COL_NAME = 'stats';
@@ -32,10 +32,6 @@ async function addUnsubscription(type, count = 1) {
     throw err;
   }
 }
-
-// export function addScan(count = 1) {
-//   return updateSingleStat('scans', count);
-// }
 
 export function addFailedUnsubscription(count = 1) {
   return updateSingleStat('unsubscriptionsFailed', count);
@@ -173,6 +169,25 @@ export async function addPayment({ price }, count = 1) {
   }
 }
 
+export async function addInvoicePayment({ price }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          totalSubscriptionRevenue: price,
+          totalInvoicesPaid: count
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting invoice payment stat ${price}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function addPackage({ credits }, count = 1) {
   try {
     const col = await db().collection(COL_NAME);
@@ -252,12 +267,11 @@ export async function getStats() {
   try {
     const col = await db().collection(COL_NAME);
     const stats = await col.findOne();
-    // const providerStats = await getProviderStats();
-    return stats;
-    // {
-    //   ...stats,
-    //   ...providerStats
-    // };
+    const thisMonth = await getSubscriptionStats();
+    return {
+      ...stats,
+      ...thisMonth
+    };
   } catch (err) {
     logger.error('stats-dao: failed to get stats');
     logger.error(err);
@@ -282,6 +296,8 @@ const recordedStats = [
   'totalSalesRefunded',
   'giftRevenue',
   'giftSales',
+  'totalSubscriptionRevenue',
+  'totalInvoicesPaid',
   'giftRedemptions',
   'usersDeactivated',
   'remindersRequested',
@@ -325,4 +341,15 @@ export async function recordStats() {
     { $set: { 'daily.previousDayTotals': _omit(allStats, 'daily') } }
   );
   await col.updateOne({}, { $push: { 'daily.histogram': today } });
+}
+
+export async function recordStatsMonthly() {
+  const thisMonth = {
+    timestamp: isoDate(),
+    ...getSubscriptionStats()
+  };
+
+  const col = await db().collection(COL_NAME);
+  // insert this months total
+  await col.updateOne({}, { $push: { 'monthly.histogram': thisMonth } });
 }

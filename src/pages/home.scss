@@ -53,7 +53,7 @@ a.more-info:visited {
   max-width: 1050px;
   width: 100%;
   margin: 0 auto;
-  // padding: 0 50px;
+  padding: 0 50px;
 
   @media (max-width: 960px) {
     padding: 0 40px;
@@ -65,7 +65,7 @@ a.more-info:visited {
 }
 
 .home-container-inner {
-  // text-align: center;
+  text-align: center;
   position: relative;
 }
 
@@ -92,7 +92,6 @@ a.more-info:visited {
   grid-column-gap: 50px;
   text-align: left;
   margin: 0 auto;
-
   max-width: 1050px;
 
   @media (max-width: 960px) {
@@ -261,12 +260,12 @@ a.more-info:visited {
 .privacy {
   img {
     max-width: 300px;
-  }
 
-  @media (max-width: 400px) {
-    max-width: 100%;
-    position: relative;
-    left: -15px;
+    @media (max-width: 400px) {
+      max-width: 100%;
+      position: relative;
+      left: -15px;
+    }
   }
 }
 
@@ -283,6 +282,8 @@ a.more-info:visited {
   align-items: flex-start;
   justify-content: center;
   text-align: left;
+  width: 100%;
+  max-width: 600px;
 
   @media (max-width: 700px) {
     max-width: 400px;
@@ -291,8 +292,6 @@ a.more-info:visited {
 }
 
 .text-box-centered {
-  width: 100%;
-  max-width: 600px;
   text-align: center;
   margin: 0 auto;
 

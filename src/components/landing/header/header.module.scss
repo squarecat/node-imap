@@ -5,12 +5,7 @@
 .landing-header {
   height: auto;
   width: 100%;
-  // padding: 0 50px;
   background-color: #fff;
-
-  // @media (max-width: 960px) {
-  //   padding: 0 20px;
-  // }
 }
 
 .landing-header-inverted {
@@ -26,7 +21,7 @@
   height: 106px;
   width: 1050px;
   margin: 0 auto;
-  // padding: 0 50px;
+  padding: 0 50px;
 
   @media (max-width: 960px) {
     height: 60px;

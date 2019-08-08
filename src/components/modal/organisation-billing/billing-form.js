@@ -15,9 +15,9 @@ import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 // import PaymentCompanyDetails from '../../payments/company-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
+import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-import { getPaymentError } from '../../../utils/errors';
 
 function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -25,7 +25,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const { close: closeModal } = useContext(ModalContext);
 
   const { id, billing = {}, currentUsers } = organisation;
-  const { subscriptionId } = billing;
+  const { subscriptionId, discountPercentOff } = billing;
 
   const onPaymentSuccess = organisation => {
     closeModal();
@@ -155,6 +155,13 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
               . Your plan will be updated automatically and prorated when
               members join or are removed.
             </p>
+            {discountPercentOff ? (
+              <p>
+                Your discount of{' '}
+                <TextImportant>{discountPercentOff}% off</TextImportant> has
+                been applied!
+              </p>
+            ) : null}
           </>
         );
       }
@@ -170,7 +177,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         </>
       );
     },
-    [currentUsers.length, initialPayment, subscriptionId]
+    [currentUsers.length, discountPercentOff, initialPayment, subscriptionId]
   );
 
   const saveText = useMemo(
@@ -179,11 +186,15 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         return `Update Payment Method`;
       }
       if (currentUsers.length) {
-        return `Save and Pay $${(initialPayment / 100).toFixed(2)}`;
+        let amount = initialPayment / 100;
+        if (discountPercentOff) {
+          amount = amount - amount * (discountPercentOff / 100);
+        }
+        return `Save and Pay $${amount.toFixed(2)}`;
       }
       return `Save Payment Method`;
     },
-    [currentUsers.length, initialPayment, subscriptionId]
+    [currentUsers.length, discountPercentOff, initialPayment, subscriptionId]
   );
 
   return (

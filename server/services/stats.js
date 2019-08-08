@@ -5,6 +5,7 @@ import {
   addFailedUnsubscription,
   addGiftPayment,
   addGiftRedemption,
+  addInvoicePayment,
   addNewsletterUnsubscription,
   addNumberofEmails,
   addOrganisation,
@@ -47,6 +48,9 @@ export function addUserToStats(count) {
 }
 export function addPaymentToStats({ price }) {
   return addPayment({ price });
+}
+export function addInvoicePaymentToStats({ price }) {
+  return addInvoicePayment({ price });
 }
 export function addPackageToStats({ credits }) {
   return addPackage({ credits });

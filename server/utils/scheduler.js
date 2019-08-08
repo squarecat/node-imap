@@ -1,6 +1,7 @@
+import { recordStats, recordStatsMonthly } from '../dao/stats';
+
 import { checkUserReminders } from '../dao/reminders';
 import logger from '../utils/logger';
-import { recordStats } from '../dao/stats';
 
 async function recordDailyStats() {
   try {
@@ -20,6 +21,15 @@ async function checkReminders() {
   }
 }
 
+async function recordMonthlyStats() {
+  try {
+    await recordStatsMonthly();
+  } catch (err) {
+    logger.error('scheduler: failed to record stats monthly');
+    logger.error(err);
+  }
+}
+
 async function daily() {
   logger.info('scheduler: daily schedule starting');
   await recordDailyStats();
@@ -27,9 +37,18 @@ async function daily() {
   logger.info('scheduler: daily schedule complete');
 }
 
+async function monthly() {
+  logger.info('scheduler: monthly schedule starting');
+  await recordMonthlyStats();
+  logger.info('scheduler: monthly schedule complete');
+}
+
 export default async function run(schedule) {
   if (schedule === 'daily') {
     return daily();
+  }
+  if (schedule === 'monthly') {
+    return monthly();
   }
   throw new Error(`scheduler: schedule ${schedule} not implemented`);
 }
