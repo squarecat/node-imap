@@ -1,6 +1,11 @@
 import './senders.module.scss';
 
-import { TextImportant, TextLink } from '../components/text';
+import {
+  HeaderHighlight,
+  TextHighlight,
+  TextImportant,
+  TextLink
+} from '../components/text';
 
 import { Arrow as ArrowIcon } from '../components/icons';
 import MailListIllustration from '../components/landing/illustration';
@@ -51,19 +56,19 @@ function SendersPage({ data }) {
       description={`Leave Me Alone makes it easy to unsubscribe from unwanted spam and subscription emails like ones from ${label}.`}
       slug={slug}
     >
-      <div styleName="container intro-header">
+      <div styleName="container">
         <div styleName="container-text">
-          <h1 styleName="tagline">
-            Easily unsubscribe from{' '}
-            <span styleName="header-highlight">{label}</span> emails
+          <h1 styleName="title">
+            Easily unsubscribe from <HeaderHighlight>{label}</HeaderHighlight>{' '}
+            emails
           </h1>
-          <p styleName="description">
+          <p styleName="tagline">
             Leave Me Alone makes it easy to unsubscribe from unwanted spam and
             subscription emails like ones from {label}.
           </p>
           <div styleName="join-container">
             <a href="/signup" className={`beam-me-up-cta`}>
-              Get started for FREE
+              Get Started for FREE
             </a>
             <p styleName="join-text">
               Join <TextImportant>{unsubscribes}</TextImportant> of our users
@@ -84,8 +89,7 @@ function SendersPage({ data }) {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">
-              Unsubscribe from all <span styleName="highlight">{label}</span>{' '}
-              emails
+              Unsubscribe from all <TextHighlight>{label}</TextHighlight> emails
             </h3>
             <p>
               {label} sends emails from{' '}
@@ -110,7 +114,7 @@ function SendersPage({ data }) {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">
-              Clear <span styleName="highlight">{label}</span> from all of your
+              Clear <TextHighlight>{label}</TextHighlight> from all of your
               accounts
             </h3>
             <p>
@@ -132,7 +136,7 @@ function SendersPage({ data }) {
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">
-              See if <span styleName="highlight">{label}</span> emails are worth
+              See if <TextHighlight>{label}</TextHighlight> emails are worth
               keeping
             </h3>
             <p>
@@ -224,7 +228,7 @@ function getStats({ unsubscribes, seen }) {
 }
 
 function getSenders(addresses, limit) {
-  let show = addresses;
+  let show = [...addresses];
   if (limit) {
     show = addresses.slice(0, limit);
   }

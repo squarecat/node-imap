@@ -3,8 +3,9 @@ import './home.scss';
 
 import {
   Arrow as ArrowIcon,
+  AtSignIcon,
   GoogleIcon,
-  OutlookIcon,
+  MicrosoftIcon,
   PointyArrow
 } from '../components/icons';
 import React, {
@@ -25,8 +26,11 @@ import Testimonial from '../components/landing/testimonial';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
+import aolImg from '../assets/providers/imap/aol-logo.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
+import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
+import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
 import luke from '../assets/luke.jpeg';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
@@ -34,10 +38,11 @@ import request from '../utils/request';
 import subscriberScore from '../assets/subscriber-score.png';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
 
 const faker = require('../vendor/faker/locale/en');
 
-const news = [
+const NEWS = [
   {
     name: 'Fast Company',
     quote: (
@@ -77,6 +82,9 @@ const news = [
     logoUrl: 'https://cdn.leavemealone.app/images/news/the-register-logo.png'
   }
 ];
+
+export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
+export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other mailboxes`;
 
 const IndexPage = () => {
   const trashPileRef = useRef(null);
@@ -194,6 +202,7 @@ const IndexPage = () => {
                   Clear out all of your subscription emails from all of your
                   email addresses in one go.
                 </p>
+                <p />
               </div>
               <div className="image-section-img bordered">
                 <img src={connectAccounts} alt="connected accounts image" />
@@ -258,22 +267,48 @@ const IndexPage = () => {
               </h3>
               <p>
                 If you have a Google or Microsoft email account then we have you
-                covered. This includes Gmail, G Suite, Outlook, Office 365,
-                Live, and Hotmail.
+                covered. This includes {OAUTH_PROVIDERS}.
               </p>
               <div className="provider-logos">
-                <span className="provider-logo">
-                  <GoogleIcon width="60" height="60" />
-                </span>
-                <span className="provider-logo">
-                  <OutlookIcon width="60" height="60" />
-                </span>
+                <TextLink undecorated as="link" linkTo="/providers/google">
+                  <span className="provider-logo">
+                    <GoogleIcon width="60" height="60" />
+                  </span>
+                </TextLink>
+                <TextLink undecorated as="link" linkTo="/providers/microsoft">
+                  <span className="provider-logo">
+                    <MicrosoftIcon width="60" height="60" />
+                  </span>
+                </TextLink>
               </div>
+              <div className="text-box text-box-centered">
+                <p>We also support {IMAP_PROVIDERS} that work with IMAP.</p>
+                <TextLink undecorated as="link" linkTo="/providers/imap">
+                  <div className="provider-logos">
+                    <span className="provider-logo imap" title="Fastmail">
+                      <img src={fastmailImg} alt="Fastmail logo" />
+                    </span>
+                    <span className="provider-logo imap invert" title="AOL">
+                      <img src={aolImg} alt="AOL logo" />
+                    </span>
+                    <span className="provider-logo imap" title="iCloud">
+                      <img src={icloudImg} alt="iCloud logo" />
+                    </span>
+                    <span
+                      className="provider-logo imap brighter"
+                      title="Yahoo! Mail"
+                    >
+                      <img src={yahooImg} alt="Yahoo! Mail logo" />
+                    </span>
+                  </div>
+                </TextLink>
+              </div>
+
               <a
                 href="/signup?ref=providers"
                 className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               >
-                Start Unsubscribing!
+                Start Unsubscribing
               </a>
             </div>
           </div>
@@ -298,7 +333,7 @@ const IndexPage = () => {
               Don't take our word for it, read what people are saying about us.
             </p>
             <div className="in-the-news">
-              {news.map(({ quote, logoUrl, url }) => (
+              {NEWS.map(({ quote, logoUrl, url }) => (
                 <div key={url} className="news-item">
                   <p>"{quote}"</p>
                   <a target="_" className="news-logo" href={url}>
@@ -712,7 +747,7 @@ function Item({
 
             <div className="example-unsub-text" ref={textRef}>
               <p>{text}</p>
-              <Transition timeout={200} appear in={count > 2 && count < 250}>
+              <Transition timeout={200} appear in={count > 2}>
                 {state => {
                   return (
                     <>

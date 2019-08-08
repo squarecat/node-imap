@@ -13,19 +13,33 @@
   max-width: 240px;
   height: 48px;
 
-  .text {
-    margin-left: 15px;
-    width: 170px;
-  }
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  grid-gap: 15px;
 
   &:hover {
     background-color: rgba(255, 218, 214, 0.2);
     color: $color-primary-font;
   }
 
+  &.imap {
+    display: flex;
+    svg {
+      margin-right: 15px;
+    }
+  }
+
   @media (max-width: 400px) {
     font-size: 16px;
   }
+}
+
+.connect-btn-logo {
+  max-width: 120px;
+  max-height: 30px;
+}
+
+.other-btns {
 }
 
 .account-list {
@@ -83,6 +97,10 @@
   @media (max-width: 400px) {
     max-height: 200px;
   }
+}
+
+.problem {
+  color: $color-text-warning;
 }
 
 .provider-btn-grid {

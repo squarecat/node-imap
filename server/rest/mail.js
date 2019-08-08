@@ -51,7 +51,7 @@ export default function(app, socket) {
         const { occurrences } = stats;
         const filteredoccurrences = Object.keys(occurrences).reduce(
           (out, k) => {
-            if (occurrences[k] > 1) {
+            if (occurrences[k].count > 1) {
               return {
                 ...out,
                 [k]: occurrences[k]
@@ -82,7 +82,7 @@ export default function(app, socket) {
     };
   }
 
-  socket.on('fetch', async (userId, data = {}) => {
+  socket.on('fetch', async (userId, data = {}, { masterKey }) => {
     const { onMail, onError, onEnd, onProgress } = getSocketFunctions(userId);
     let { accounts: accountFilters } = data;
     // if we're already running a scan for an account then
@@ -105,7 +105,8 @@ export default function(app, socket) {
       // get mail data for user
       const it = await fetchMail({
         userId,
-        accountFilters
+        accountFilters,
+        masterKey
       });
       let next = await it.next();
       while (!next.done) {

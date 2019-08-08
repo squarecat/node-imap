@@ -1,8 +1,6 @@
-import { connect as connectDb, url as mongoUrl } from './dao/db';
-
 import auth from './auth';
 import config from 'getconfig';
-import connectMongo from 'connect-mongo';
+import { connect as connectDb } from './dao/db';
 import cookieParser from 'cookie-parser';
 import errorsApi from './rest/errors';
 import express from 'express';
@@ -20,7 +18,7 @@ import { refreshScores } from './dao/occurrences';
 import schedule from './utils/scheduler';
 import scoresApi from './rest/scores';
 import sentryWebhooks from './rest/webhooks/sentry';
-import session from 'express-session';
+import session from './session';
 import socketApi from './rest/socket';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
@@ -36,27 +34,13 @@ if (process.env.NODE_ENV !== 'development') {
 
 const app = express();
 const server = http.createServer(app);
-const MongoStore = connectMongo(session);
 
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.errorHandler());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded());
-app.use(
-  session({
-    secret: 'colinisafoursidedcatfromspace',
-    saveUninitialized: true,
-    resave: true,
-    cookie: {
-      _expires: 1000 * 60 * 60 * 24 * 7 // 1 week
-    },
-    store: new MongoStore({
-      url: mongoUrl,
-      collection: 'sessions'
-    })
-  })
-);
+app.use(session);
 
 auth(app);
 

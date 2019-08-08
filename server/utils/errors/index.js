@@ -107,6 +107,11 @@ export function ConnectAccountError(message, data) {
 }
 util.inherits(ConnectAccountError, LMAError);
 
+export function ConnectImapError(message, data) {
+  LMAError.call(this, message, data);
+}
+util.inherits(ConnectImapError, LMAError);
+
 export function UserError(message, data) {
   LMAError.call(this, message, data);
 }

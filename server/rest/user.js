@@ -2,6 +2,7 @@ import {
   addToUserIgnoreList,
   addUserReminder,
   authenticationRequiresTwoFactor,
+  connectImapAccount,
   createUserTotpToken,
   deactivateUserAccount,
   getUserActivity,
@@ -16,6 +17,7 @@ import {
   removeUserReminder,
   removeUserTotpToken,
   setUserMilestoneCompleted,
+  updateImapAccount,
   updateUserActivityCompleted,
   updateUserAutoBuy,
   updateUserPassword,
@@ -66,6 +68,7 @@ const userProps = [
   'organisationId',
   'organisationAdmin',
   'organisationActive',
+  'features',
   'organisation',
   '__migratedFrom',
   'passwordLastUpdatedAt'
@@ -73,7 +76,7 @@ const userProps = [
 
 export default app => {
   app.get('/api/me', auth, async (req, res, next) => {
-    const { id: userId } = req.user;
+    const { id: userId, token } = req.user;
     try {
       const user = await getUserById(userId);
       const requiresTwoFactorAuth = await authenticationRequiresTwoFactor(user);
@@ -84,7 +87,9 @@ export default app => {
           }
           return u;
         }, {}),
-        requiresTwoFactorAuth
+        requiresTwoFactorAuth,
+        token,
+        features: user.features || []
       };
       if (isBeta) {
         response = {
@@ -335,15 +340,14 @@ export default app => {
     // }),
     async (req, res, next) => {
       const { user, body } = req;
-      const { id, email } = user;
+      const { id, email, masterKey } = user;
       const { op, value } = body;
-
       let updatedUser = user;
       try {
         if (op === 'update') {
           const { oldPassword, password: newPassword } = value;
           updatedUser = await updateUserPassword(
-            { id, email, password: oldPassword },
+            { id, email, password: oldPassword, masterKey },
             newPassword
           );
         } else {
@@ -371,6 +375,18 @@ export default app => {
     try {
       if (op === 'remove-account') {
         updatedUser = await removeUserAccount(userId, value);
+      } else if (op === 'add-imap-account') {
+        updatedUser = await connectImapAccount(
+          userId,
+          req.user.masterKey,
+          value
+        );
+      } else if (op === 'update-imap-account') {
+        updatedUser = await updateImapAccount(
+          userId,
+          req.user.masterKey,
+          value
+        );
       } else {
         logger.error(`user-rest: user patch op not supported`);
       }
@@ -380,7 +396,8 @@ export default app => {
         new RestError('failed to patch user', {
           userId,
           op,
-          cause: err
+          cause: err,
+          ...err.data
         })
       );
     }

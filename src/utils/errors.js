@@ -3,7 +3,13 @@ import React from 'react';
 import { TextLink } from '../components/text';
 import { openChat } from '../utils/chat';
 
-export function getConnectError(reason) {
+export function getConnectError(err = {}) {
+  const { reason } = err;
+
+  if (err.reason && err.reason.type && err.reason.type.startsWith('imap')) {
+    return getImapError(reason);
+  }
+
   switch (reason) {
     case 'not-invited':
       return {
@@ -61,6 +67,45 @@ export function getConnectError(reason) {
           'Something went wrong connecting your account. Please try again or send us a message.',
         level: 'error'
       };
+  }
+}
+
+export function getImapError(reason) {
+  // this will be thrown if node has caught an error with a message
+  if (reason.type === 'imap-auth-error') {
+    return {
+      message: (
+        <>
+          <p>Failed to add account. The host responded with this message:</p>
+          <p>{reason.message}</p>
+        </>
+      ),
+      level: 'error'
+    };
+  }
+
+  if (reason.type === 'imap-connect-error') {
+    return {
+      message:
+        'Failed to authenticate with IMAP server. Check username and password and try again.',
+      level: 'warning'
+    };
+  }
+
+  // otherwise show our auth error
+  return {
+    message:
+      'Failed to authenticate with IMAP server. Please try again or send us a message.',
+    level: 'error'
+  };
+}
+
+export function getAccountProblem(reason) {
+  switch (reason) {
+    case 'password-invalidated':
+      return `Since you reset your password your IMAP credentials are now invalid. Please remove this account and connect it again.`;
+    default:
+      return `There is a problem with this IMAP account. Please try removing this account and connecting it again, or send us a message.`;
   }
 }
 

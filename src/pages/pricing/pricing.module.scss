@@ -1,6 +1,7 @@
 @import '../../styles/common/colors.scss';
 @import '../../components/btn/btn.module.scss';
 @import '../../components/text/text.module.scss';
+@import '../../layouts/subpage-layout.module.scss';
 
 .pricing-page {
   display: grid;
@@ -227,10 +228,8 @@
   }
 }
 
-.more {
-  margin-top: 100px;
-  padding-top: 100px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+.end-stuff {
+  @extend .subpage-end-stuff;
 }
 
 .credit-info {

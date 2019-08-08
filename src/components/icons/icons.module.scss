@@ -1,3 +1,5 @@
+@import '../../styles/common/colors.scss';
+
 .icon {
   position: relative;
   z-index: 1;
@@ -78,6 +80,14 @@
 .connect {
 }
 .toggle {
+}
+.atsign {
+  color: $color-bg-info;
+  margin: 0;
+}
+.key {
+  color: $color-primary-font;
+  opacity: 0.8;
 }
 .edit {
 }

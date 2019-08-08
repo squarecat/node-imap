@@ -1,6 +1,7 @@
 import './wall-of-love.module.scss';
 
 import React from 'react';
+import {  TextHighlight } from '../../text';
 
 export default [
   {
@@ -9,10 +10,10 @@ export default [
       <span>
         I have tried countless tools and email clients to help get through the
         thousands of useless emails I received daily.{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           Nothing has worked nearly as seamlessly and effectively as Leave Me
           Alone
-        </span>
+        </TextHighlight>
         . For the first time in years I have control over my inbox again. Highly
         recommend to anybody dealing with overloaded inboxes.
       </span>
@@ -26,9 +27,9 @@ export default [
     text: (
       <span>
         Leave Me Alone is a fantastic product to{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           easily unsubscribe from unwanted emails
-        </span>
+          </TextHighlight>
         . When I started using Leave Me Alone I had about 50k emails in my
         inbox, I am now down to 5k! Danielle and James are super responsive and
         always open for feedback.
@@ -43,7 +44,7 @@ export default [
     text: (
       <span>
         Leave Me Alone let me{' '}
-        <span styleName="highlight">easily clean up my inbox</span> and direct
+        <TextHighlight>easily clean up my inbox</TextHighlight> and direct
         my focus to more important emails.
       </span>
     ),
@@ -59,9 +60,9 @@ export default [
         me with emails that I just can't be bothered to handle, so I just delete
         them as they come in. Since using Leave Me Alone I don't have to do that
         anymore. I can{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           officially get off unwanted email lists
-        </span>
+          </TextHighlight>
         . I love this service.
       </span>
     ),
@@ -75,9 +76,9 @@ export default [
       <span>
         Until recently, my personal emails were garbage dumps of old
         subscriptions I've gathered over a decade. Now,{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           my inbox only receives the emails that matter most
-        </span>
+          </TextHighlight>
         . Leave Me Alone gave me something I didn't even know I wanted: inbox
         sanity!
       </span>
@@ -93,9 +94,9 @@ export default [
         Leave Me Alone has helped me reduce spam 1000% over. I often would join
         things, and forget about it and I'd be getting marketing emails for
         years. I'm managing to clear a tonne of junk with Leave Me Alone and{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           keep my inbox more focused on what matters
-        </span>
+          </TextHighlight>
         .
       </span>
     ),
@@ -110,9 +111,9 @@ export default [
         If it wasn't for Leave Me Alone I would never have been able to
         unsubscribe from more than 250 subscriptions taking over my inbox. I can
         now{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           take care of the really important emails without all the noise
-        </span>
+          </TextHighlight>
         .
       </span>
     ),
@@ -126,9 +127,9 @@ export default [
       <span>
         Since using Leave Me Alone months ago, I have had a much less noisy
         inbox. By{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           getting rid of all of those marketing emails
-        </span>
+          </TextHighlight>
         , email is a much more enjoyable experience. Definitely a great
         investment for my future sanity!
       </span>
@@ -141,10 +142,10 @@ export default [
     name: 'Marie',
     text: (
       <span>
-        <span styleName="highlight">
+        <TextHighlight>
           Unsubscribing to spam is really painful. Leave Me Alone makes it
           effortless.
-        </span>{' '}
+          </TextHighlight>{' '}
         It's so satisfying to untick all those boxes and unsubscribe so easily.
       </span>
     ),
@@ -157,7 +158,7 @@ export default [
     text: (
       <span>
         Using Leave Me Alone has resulted in a{' '}
-        <span styleName="highlight">17% reduction in my emails</span>, saving me
+        <TextHighlight>17% reduction in my emails</TextHighlight>, saving me
         hours of time each month.
       </span>
     ),
@@ -173,9 +174,9 @@ export default [
         I must admit I'm lazy at unsubscribing to subscription emails, so my
         email inbox grows at an alarming rate every day. I just used Leave Me
         Alone and{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           unsubscribed to 15 emails in 3 minutes
-        </span>{' '}
+          </TextHighlight>{' '}
         What a great idea!
       </span>
     ),
@@ -189,10 +190,10 @@ export default [
       <span>
         Leave Me Alone cleared my inbox from any and all junk. Not only that,
         but I was able to{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           easily unsubscribe from past newsletters that I have no interest in
           receiving anymore
-        </span>
+          </TextHighlight>
         . Now, I spend minimal time checking my email every day. And when I do
         get an email, I know it's important.
       </span>
@@ -207,7 +208,7 @@ export default [
       <span>
         As an aspiring Consultant I am barraged with offers and spam everyday.
         It's refreshing to{' '}
-        <span styleName="highlight">finally achieve inbox zero</span> through
+        <TextHighlight>finally achieve inbox zero</TextHighlight> through
         Leave Me Alone, while also supporting two awesome Indie Founders.
       </span>
     ),
@@ -220,10 +221,10 @@ export default [
     text: (
       <span>
         I love how Leave Me Alone{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           seamlessly allows you to visualize your inbox and then remove the junk
           - permanently
-        </span>
+          </TextHighlight>
         ! I found the product so valuable that I ended up buying scans for my
         entire team. In the age of constant distraction, it's nice to have a
         tool helping me have a clearer mind (and inbox!).
@@ -240,9 +241,9 @@ export default [
         If you value your time and really hate having to trawl through junk
         email to get to the important stuff, then Leave Me Alone is your
         solution. Added to that,{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           it’s privacy-focused, simple and easy to use
-        </span>
+          </TextHighlight>
         , and beautifully designed.
       </span>
     ),
@@ -254,9 +255,9 @@ export default [
     name: 'Ben Song',
     text: (
       <span>
-        <span styleName="highlight">
+        <TextHighlight>
           Using Leave Me Alone to clean up my inbox has saved me countless hours
-        </span>
+          </TextHighlight>
         . I was able to unsubscribe from dozens of emails in just a few minutes.
         Leave Me Alone is an excellent productivity booster!
       </span>
@@ -270,9 +271,9 @@ export default [
     text: (
       <span>
         Leave Me Alone helped me{' '}
-        <span styleName="highlight">
+        <TextHighlight>
           clean out all the spam and email subscriptions that I've been avoiding
-        </span>{' '}
+          </TextHighlight>{' '}
         and reduced the burden on checking emails every day!
       </span>
     ),
@@ -284,9 +285,9 @@ export default [
     name: 'Marijke Peereboom',
     text: (
       <span>
-        <span styleName="highlight">
+        <TextHighlight>
           Within half an hour I was able to delete more than 160 newsletters
-        </span>
+          </TextHighlight>
         . I saved the most important emails afterwards, deleted all the other
         ones, and managed to get to inbox zero the same day. Now I am so much
         more focused as there are only a few emails I have to deal with each
@@ -302,9 +303,9 @@ export default [
   //   text: (
   //     <span>
 
-  //       <span styleName="highlight">
+  //       <TextHighlight>
 
-  //       </span>
+  //       </TextHighlight>
 
   //     </span>
   //   ),

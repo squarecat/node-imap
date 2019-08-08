@@ -1,6 +1,6 @@
 import './accounts.module.scss';
 
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { AlertContext } from '../../../../providers/alert-provider';
 import ConnectButton from '../../../../components/connect-account/btn';
@@ -24,12 +24,13 @@ const Accounts = () => {
   const { actions: alertActions } = useContext(AlertContext);
   const db = useContext(DatabaseContext);
   const [
-    { accounts = [], primaryEmail, loginProvider },
+    { accounts = [], primaryEmail, loginProvider, features },
     { update: updateUser, load: loadUser }
-  ] = useUser(({ accounts, email, loginProvider }) => ({
+  ] = useUser(({ accounts, email, loginProvider, features }) => ({
     accounts,
     primaryEmail: email,
-    loginProvider
+    loginProvider,
+    features
   }));
 
   const { open: openModal } = useContext(ModalContext);
@@ -97,14 +98,26 @@ const Accounts = () => {
   let connectedAccountsContent;
 
   if (!accounts.length) {
-    connectedAccountsContent = (
-      <p>
-        You haven't connected any accounts yet. Connect your{' '}
-        <TextImportant>Google</TextImportant> or{' '}
-        <TextImportant>Microsoft</TextImportant> accounts below to start
-        scanning your inboxes for subscription spam.
-      </p>
-    );
+    if (features.includes('IMAP')) {
+      connectedAccountsContent = (
+        <p>
+          You haven't connected any accounts yet. Connect your{' '}
+          <TextImportant>Google</TextImportant>,{' '}
+          <TextImportant>Microsoft</TextImportant> or{' '}
+          <TextImportant>IMAP</TextImportant> accounts below to start scanning
+          your inboxes for subscription spam.
+        </p>
+      );
+    } else {
+      connectedAccountsContent = (
+        <p>
+          You haven't connected any accounts yet. Connect your{' '}
+          <TextImportant>Google</TextImportant> or{' '}
+          <TextImportant>Microsoft</TextImportant> accounts below to start
+          scanning your inboxes for subscription spam.
+        </p>
+      );
+    }
   } else {
     connectedAccountsContent = (
       <ConnectedAccountList
@@ -135,6 +148,13 @@ const Accounts = () => {
           onSuccess={() => onConnectSuccess()}
           onError={err => onConnectError(err)}
         />
+        {features.includes('IMAP') ? (
+          <ConnectButton
+            provider="imap"
+            onSuccess={() => onConnectSuccess()}
+            onError={err => onConnectError(err)}
+          />
+        ) : null}
       </div>
     </>
   );
@@ -153,42 +173,58 @@ async function removeAccount(email) {
 }
 
 function modalContent({ email, provider }) {
+  let content;
+  if (provider === 'outlook') {
+    content = (
+      <p>
+        While we will remove this account and any data associated with it,
+        Microsoft don't provide a way to revoke our permissions automatically so
+        you will need to do it manually by visiting your{' '}
+        <a
+          href={revokeUrlForOutlook}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="revoke-link"
+        >
+          <span>Microsoft Account Settings</span>
+          <ExternalIcon padleft width={14} height={14} />
+        </a>
+      </p>
+    );
+  }
+  if (provider === 'google') {
+    content = (
+      <p>
+        We will also revoke our token to access this Google account. You can
+        double check this by visiting your{' '}
+        <a
+          href={revokeUrlForGoogle}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="revoke-link"
+        >
+          <span>Google Account Settings</span>
+          <ExternalIcon padleft width={14} height={14} />
+        </a>
+      </p>
+    );
+  }
+  if (provider === 'imap') {
+    content = (
+      <p>
+        We will completely remove all your IMAP details, including username and
+        password from our systems.
+      </p>
+    );
+  }
+
   return (
     <>
       <p>
         This will disconnect <TextImportant>{email}</TextImportant> from Leave
         Me Alone. You will no longer see subscription emails from this account.
       </p>
-      {provider === 'outlook' ? (
-        <p>
-          While we will remove this account and any data associated with it, you
-          need to revoke Leave Me Alone Microsoft App permissions manually by
-          visiting your{' '}
-          <a
-            href={revokeUrlForOutlook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="revoke-link"
-          >
-            <span>Microsoft Account Settings</span>
-            <ExternalIcon padleft width={14} height={14} />
-          </a>
-        </p>
-      ) : (
-        <p>
-          We will also revoke our token to access this Google account. You can
-          double check this by visiting your{' '}
-          <a
-            href={revokeUrlForGoogle}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="revoke-link"
-          >
-            <span>Google Account Settings</span>
-            <ExternalIcon padleft width={14} height={14} />
-          </a>
-        </p>
-      )}
+      {content}
     </>
   );
 }

@@ -132,7 +132,7 @@ const OrganisationStatus = React.memo(({ active, admin, billing = {} }) => {
     return (
       <p>
         Your account is <TextImportant>active</TextImportant>.{' '}
-        {admin ? 'Team members' : 'You can'} can start unsubscribing!
+        {admin ? 'Team members' : 'You'} can start unsubscribing!
       </p>
     );
   }

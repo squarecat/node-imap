@@ -3,6 +3,7 @@ import {
   decrypt,
   decryptUnsubscriptions,
   encrypt,
+  getMasterKey,
   hashEmail,
   hashPassword
 } from './encryption';
@@ -70,15 +71,21 @@ export async function createUserFromPassword(data) {
   try {
     const col = await db().collection(COL_NAME);
     const id = v4();
+    const password = hashPassword(data.password);
     await col.insertOne({
       ...data,
       id,
       ...getUserDefaults({ email: data.email }),
       accounts: [],
-      password: hashPassword(data.password),
+      password,
       verificationCode: shortid.generate()
     });
-    return getUser(id);
+    const masterKey = getMasterKey(data.password, password.salt);
+    const user = await getUser(id);
+    return {
+      ...user,
+      masterKey
+    };
   } catch (err) {
     logger.error('users-dao: error inserting user with password');
     logger.error(err);
@@ -226,17 +233,25 @@ export async function updateUserWithAccount(
 
 export async function addAccount(id, data) {
   try {
+    let newAccount = {
+      ...data,
+      addedAt: isoDate()
+    };
+    // oauth accounts will have
+    // keys, IMAP will not
+    if (data.keys) {
+      newAccount = {
+        ...newAccount,
+        keys: encryptKeys(data.keys)
+      };
+    }
     const col = await db().collection(COL_NAME);
     await col.updateOne(
       { id },
       {
         $push: {
           hashedEmails: hashEmail(data.email),
-          accounts: {
-            ...data,
-            keys: encryptKeys(data.keys),
-            addedAt: isoDate()
-          }
+          accounts: newAccount
         }
       }
     );
@@ -244,6 +259,7 @@ export async function addAccount(id, data) {
     return user;
   } catch (err) {
     logger.error(`user-dao: failed to add user account for user ${id}`);
+    throw err;
   }
 }
 
@@ -699,8 +715,10 @@ export async function authenticate({ email, password }) {
     if (!user) return null;
     const { password: userPassword } = user;
     const { salt, hash } = userPassword;
+    // get master key for encrpting account passwords
     if (checkPassword(password, salt, hash)) {
-      return user;
+      const masterKey = getMasterKey(password, salt);
+      return { ...user, masterKey };
     }
     return null;
   } catch (err) {
@@ -828,6 +846,28 @@ export async function updatePassword(id, newPassword) {
     return user;
   } catch (err) {
     logger.error('user-dao: failed to update password');
+    logger.error(err);
+    throw err;
+  }
+}
+
+// if user password changes from a password reset, we
+// can't update the IMAP passwords because we don't
+// know what the previous master key was, so we
+// mark them as invalid until the user updates them
+export async function invalidateImapAccounts(id, cause) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'accounts.provider': 'imap' },
+      {
+        $set: {
+          'accounts.$.problem': cause
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`user-dao: failed to invalidate imap accounts for ${cause}`);
     logger.error(err);
     throw err;
   }
@@ -996,27 +1036,33 @@ function decryptUser(user, options = {}) {
   if (options.withAccountKeys) {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(({ id, provider, email, addedAt, keys }) => ({
-        id,
-        provider,
-        email,
-        addedAt,
-        keys: {
-          ...keys,
-          refreshToken: decrypt(keys.refreshToken),
-          accessToken: decrypt(keys.accessToken)
+      accounts: user.accounts.map(({ keys, ...data }) => {
+        let account = data;
+        if (keys) {
+          account = {
+            ...account,
+            keys: {
+              ...keys,
+              refreshToken: decrypt(keys.refreshToken),
+              accessToken: decrypt(keys.accessToken)
+            }
+          };
         }
-      }))
+        return account;
+      })
     };
   } else {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(({ id, provider, email, addedAt }) => ({
-        id,
-        provider,
-        email,
-        addedAt
-      }))
+      accounts: user.accounts.map(
+        ({ id, provider, email, addedAt, problem }) => ({
+          id,
+          provider,
+          email,
+          addedAt,
+          problem
+        })
+      )
     };
   }
   return decryptedUser;

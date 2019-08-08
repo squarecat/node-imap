@@ -99,43 +99,6 @@ export async function* fetchMail(
   }
 }
 
-export async function* fetchMailImap(client, { from }) {
-  try {
-    client.onerror = err => console.error(err);
-    console.log('authenticating with imap');
-    await client.connect();
-    const key = 'body[header.fields (from to subject list-unsubscribe)]';
-    const query = [
-      'uid',
-      'BODY.PEEK[HEADER.FIELDS (From To Subject List-Unsubscribe)]'
-    ];
-    const resultUUIDs = await client.search('INBOX', {
-      since: from
-    });
-    let results = await client.listMessages(
-      'INBOX',
-      `${resultUUIDs[0]}:${resultUUIDs[resultUUIDs.length - 1]}`,
-      query,
-      {
-        byUid: true,
-        valueAsString: true
-      }
-    );
-    results = results.map(r => {
-      const headers = r[key].split('\r\n').filter(s => s);
-      return {
-        payload: { headers, snippet: '' },
-        id: r.uid,
-        labelIds: [],
-        internalDate: Date.now()
-      };
-    });
-    yield results;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
 async function* fetchMailApi(
   client,
   {

@@ -68,7 +68,7 @@ export default () => {
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
         >
-          <span styleName="text">Verify</span>
+          Verify
         </Button>
         <Button
           onClick={() => {
@@ -82,7 +82,7 @@ export default () => {
           onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           disabled={isLoading}
         >
-          <span styleName="text">Back</span>
+          Back
         </Button>
       </div>
     </form>

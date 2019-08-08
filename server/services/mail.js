@@ -11,6 +11,7 @@ import {
 import { addOrUpdateOccurrences } from './occurrences';
 import emailAddresses from 'email-addresses';
 import { fetchMail as fetchMailFromGmail } from './mail/gmail';
+import { fetchMail as fetchMailFromImap } from './mail/imap';
 import { fetchMail as fetchMailFromOutlook } from './mail/outlook';
 import fs from 'fs';
 import { getUserById } from './user';
@@ -19,7 +20,7 @@ import logger from '../utils/logger';
 import { resolveUnsubscription as resolveUserUnsubscription } from '../dao/user';
 import subMonths from 'date-fns/sub_months';
 
-export async function* fetchMail({ userId, accountFilters = [] }) {
+export async function* fetchMail({ userId, masterKey, accountFilters = [] }) {
   const user = await getUserById(userId, { withAccountKeys: true });
   let { accounts, preferences } = user;
   let accountScanData = [];
@@ -42,7 +43,7 @@ export async function* fetchMail({ userId, accountFilters = [] }) {
   }
   try {
     const iterators = await Promise.all(
-      accounts.map(account => fetchMailByAccount({ account, user }))
+      accounts.map(account => fetchMailByAccount({ account, user, masterKey }))
     );
     for (let iter of iterators) {
       let next = await iter.next();
@@ -72,7 +73,12 @@ export async function* fetchMail({ userId, accountFilters = [] }) {
   }
 }
 
-export async function* fetchMailByAccount({ user, account, ignore = false }) {
+export async function* fetchMailByAccount({
+  user,
+  account,
+  masterKey,
+  ignore = false
+}) {
   const { provider, filter } = account;
   let { from } = filter;
   // from should be max 6 months
@@ -89,6 +95,8 @@ export async function* fetchMailByAccount({ user, account, ignore = false }) {
       );
     } else if (provider === 'outlook') {
       it = await fetchMailFromOutlook({ user, account, from });
+    } else if (provider === 'imap') {
+      it = await fetchMailFromImap({ user, account, from, masterKey });
     } else {
       throw new Error('mail-service unknown provider');
     }

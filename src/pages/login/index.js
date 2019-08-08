@@ -6,6 +6,7 @@ import { TextImportant, TextLink } from '../../components/text';
 import AuthButton from './auth-btn';
 import EmailForm from './email';
 import { FormNotification } from '../../components/form';
+import { KeyIcon } from '../../components/icons';
 import Layout from '../../layouts/layout';
 import PasswordForm from './password';
 import TwoFactorForm from './2fa';
@@ -357,7 +358,7 @@ const LoginPage = React.memo(
                   }
                   styleName="signup-btn back-btn"
                 >
-                  <span styleName="text">Back</span>
+                  Back
                 </button>
               </div>
             </>
@@ -502,10 +503,8 @@ const AuthButtons = React.memo(({ dispatch, action }) => {
                 }
                 styleName="login-me-in-dammit"
               >
-                <span
-                  style={{ marginLeft: 0, textAlign: 'center' }}
-                  styleName="text"
-                >{`${action} with Password`}</span>
+                <KeyIcon />
+                <span>{`${action} with Password`}</span>
               </a>
             )
           },

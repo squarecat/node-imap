@@ -16,48 +16,54 @@ export default ({
   doValidation = true,
   onChange = () => {},
   autoComplete = 'current-password',
-  autoFocus = true
+  autoFocus = true,
+  smaller = false,
+  ...props
 }) => {
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
 
-  const validate = async () => {
-    if (doValidation) {
-      if (value.length < minLength) {
-        return setState({
-          isValid: false,
-          message: passwordLengthText
-        });
-      }
-      const isPwned = await fetchPwnedStatus(value);
-      if (isPwned) {
-        console.log('password is pwned');
-        return setState({
-          isValid: false,
-          message: compromisedPasswordText
-        });
-      }
-    }
-
-    return setState({
-      isValid: true,
-      message: ''
-    });
-  };
   useEffect(
     () => {
-      value && validate();
+      const validate = async () => {
+        if (doValidation) {
+          if (value.length < minLength) {
+            return setState({
+              isValid: false,
+              message: passwordLengthText
+            });
+          }
+          const isPwned = await fetchPwnedStatus(value);
+          if (isPwned) {
+            console.log('password is pwned');
+            return setState({
+              isValid: false,
+              message: compromisedPasswordText
+            });
+          }
+        }
+
+        return setState({
+          isValid: true,
+          message: ''
+        });
+      };
+      if (value) {
+        validate();
+      }
     },
-    [value]
+    [doValidation, value]
   );
   useEffect(
     () => {
       onChange(value, { isValid: state.isValid, message: state.message });
     },
-    [value, state.isValid, state.message]
+    [value, state.isValid, state.message, onChange]
   );
   return (
     <FormInput
+      {...props}
+      smaller={smaller}
       onChange={({ currentTarget }) => setValue(currentTarget.value)}
       autoFocus={autoFocus}
       value={value}

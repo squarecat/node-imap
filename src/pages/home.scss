@@ -53,14 +53,14 @@ a.more-info:visited {
   max-width: 1050px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 50px;
+  padding: 20px 50px;
 
   @media (max-width: 960px) {
-    padding: 0 40px;
+    padding: 20px 40px;
   }
 
   @media (max-width: 400px) {
-    padding: 0 20px;
+    padding: 20px 20px;
   }
 }
 
@@ -165,7 +165,7 @@ a.more-info:visited {
   }
 
   @media (max-width: 400px) {
-    font-size: 22px;
+    font-size: 25px;
     line-height: 30px;
     margin-bottom: 20px;
   }
@@ -284,16 +284,12 @@ a.more-info:visited {
   text-align: left;
   width: 100%;
   max-width: 600px;
-
-  @media (max-width: 700px) {
-    max-width: 400px;
-    margin: 0 auto 20px auto;
-  }
 }
 
 .text-box-centered {
   text-align: center;
   margin: 0 auto;
+  align-items: center;
 
   h3 {
     margin: 0 auto 30px auto;
@@ -318,7 +314,7 @@ a.more-info:visited {
 
 .trash-pile {
   margin: 0 auto -1px auto;
-  padding-bottom: 300px;
+  padding-bottom: 200px;
 
   background-position: bottom -200px left;
 
@@ -329,6 +325,7 @@ a.more-info:visited {
 
   &[data-show-truck='true'] {
     background-position: bottom -20px left;
+    padding-bottom: 300px;
   }
 
   .text-box {
@@ -347,14 +344,6 @@ a.more-info:visited {
   background-color: $color-dark-background;
   color: white;
   z-index: 2;
-
-  .text-box {
-    padding: 0 20px;
-  }
-}
-
-.provider-logos {
-  margin: 30px auto 50px auto;
 }
 
 .item-box .example-unsubscribe-container {
@@ -367,9 +356,29 @@ a.more-info:visited {
   }
 }
 
+.provider-logos {
+  margin: 30px auto 50px auto;
+}
+
 .provider-logo {
   display: inline-block;
   margin: 0 40px;
+  transition: transform 250ms ease-in-out;
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &.imap {
+    margin: 0 20px 20px 0;
+    img {
+      height: 30px;
+    }
+  }
+  &.invert {
+    filter: invert(1);
+  }
+  &.brighter {
+    filter: brightness(1.4);
+  }
 
   @media (max-width: 400px) {
     margin: 0 20px;

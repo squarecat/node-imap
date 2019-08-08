@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 
 import Button from '../../../components/btn';
 import { MailContext } from '../provider';
+import { navigate } from 'gatsby';
 import stateImg from '../../../assets/logo.png';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -30,7 +31,7 @@ export const Empty = ({ hasFilters } = {}) => {
           <Button
             compact
             basic
-            onClick={() => navigator('/app/profile/accounts')}
+            onClick={() => navigate('/app/profile/accounts')}
           >
             Connect an account
           </Button>

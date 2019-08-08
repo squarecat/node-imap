@@ -8,6 +8,7 @@ import {
 } from '../../components/icons';
 import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 
+import { IMAP_PROVIDERS } from '..';
 import React from 'react';
 import Testimonial from '../../components/landing/testimonial';
 import { TextLink } from '../../components/text';
@@ -111,17 +112,37 @@ export default function Learn() {
               out all of your subscription emails from all of your email
               addresses in one go.
             </p>
+            <p>
+              We support all Google and Microsoft email accounts using OAuth. We
+              support {IMAP_PROVIDERS}
+              using IMAP.
+            </p>
+            <p>
+              Learn more about how we authenticate with{' '}
+              <TextLink href="/providers/google">Google</TextLink>,{' '}
+              <TextLink href="/providers/microsoft">Microsoft</TextLink>, and{' '}
+              <TextLink href="/providers/imap">IMAP</TextLink>.
+            </p>
           </div>
         </div>
 
         <div styleName="feature">
           <div styleName="feature-text">
-            <h3 styleName="feature-title">Credits</h3>
+            <h3 styleName="feature-title">Credits for unsubscribes</h3>
             <p>1 credit = 1 unsubscribe.</p>
-            <p>Only pay for what you want to unsubscribe from.</p>
             <p>
-              Earn more credits for inviting friends, tweeting about us,
-              reaching milestones and more!
+              Only pay for what you unsubscribe from. We don't charge you
+              credits if we can't unsubscribe you for whatever reason.
+            </p>
+            <p>
+              You can earn more credits for inviting friends, tweeting about us,
+              reaching milestones, and more!
+            </p>
+            <p>
+              <TextLink href="/pricing">
+                Check how many credits you might need{' '}
+                <ArrowIcon inline width="14" height="14" />
+              </TextLink>
             </p>
           </div>
           <div styleName="feature-img bordered">
@@ -139,12 +160,14 @@ export default function Learn() {
           <div styleName="feature-text">
             <h3 styleName="feature-title">Customisable mail list</h3>
             <p>
-              Filter and sort your mail by email address, date received, score,
-              and more.
+              See all of your spam, newsletters, and subscription emails in one
+              place. Make quick work of clearing your inbox by using filters and
+              sorting mail by email address, date received, score, and more.
             </p>
             <p>
-              We will keep your list up to date so each time you log in your new
-              subscription emails will be ready to view.
+              Unsubscribe in your own time - we keep your list up-to-date so
+              each time you log in your new subscription emails will be ready to
+              view.
             </p>
           </div>
         </div>

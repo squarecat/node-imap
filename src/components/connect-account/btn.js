@@ -1,7 +1,15 @@
 import './connect.module.scss';
 
-import { GoogleIcon, OutlookIcon } from '../icons';
-import React, { useEffect } from 'react';
+import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
+
+import ImapModal from '../modal/imap';
+import { ModalContext } from '../../providers/modal-provider';
+
+// import aolLogo from '../../assets/providers/imap/aol-logo.png';
+// import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
+// import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
+// import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
 let windowObjectReference = null;
 let previousUrl = null;
@@ -28,13 +36,25 @@ const strWindowFeatures = [
 export default ({
   provider = 'password',
   onSuccess = () => {},
-  onError = () => {}
+  onError = () => {},
+  imapOptions = {}
 }) => {
+  const { replace: replaceModal } = useContext(ModalContext);
+  // const prevModal = useRef(modal);
   useEffect(() => {
     return function cleanup() {
       window.removeEventListener('message', receiveMessage);
     };
   });
+  const openImapModal = useCallback(
+    () => {
+      replaceModal(<ImapModal onConfirm={onSuccess} />, {
+        ...imapOptions,
+        context: { step: 'accounts' }
+      });
+    },
+    [imapOptions, onSuccess, replaceModal]
+  );
 
   const receiveMessage = event => {
     // Do we trust the sender of this message?  (might be
@@ -86,7 +106,7 @@ export default ({
         styleName="connect-btn"
       >
         <GoogleIcon width="20" height="20" />
-        <span styleName="text">Connect Google</span>
+        <span>Connect Google</span>
       </a>
     );
   } else if (provider === 'outlook') {
@@ -100,9 +120,42 @@ export default ({
         }}
         styleName="connect-btn"
       >
-        <OutlookIcon width="20" height="20" />
-        <span styleName="text">Connect Microsoft</span>
+        <MicrosoftIcon width="20" height="20" />
+        <span>Connect Microsoft</span>
       </a>
+    );
+  } else if (provider === 'imap') {
+    return (
+      <a onClick={openImapModal} styleName="connect-btn">
+        <AtSignIcon width="20" height="20" />
+        <span>Connect Other</span>
+      </a>
+      // <div styleName="other-btns">
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img
+      //       src={icloudLogo}
+      //       alt="iCloud logo"
+      //       styleName="connect-btn-logo"
+      //     />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img src={aolLogo} alt="AOL logo" styleName="connect-btn-logo" />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img
+      //       src={fastmailLogo}
+      //       alt="Fastmail logo"
+      //       styleName="connect-btn-logo"
+      //     />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img src={yahooLogo} alt="Yahoo logo" styleName="connect-btn-logo" />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <AtSignIcon width="20" height="20" />
+      //     <span>Other...</span>
+      //   </a>
+      // </div>
     );
   } else {
     return null;
