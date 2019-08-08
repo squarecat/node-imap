@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "author": "Squarecat <admin@squarecat.io>",
   "dependencies": {
-    "@async-generators/from-emitter": "^0.3.0",
     "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
     "@babel/plugin-syntax-async-generators": "^7.2.0",
     "@babel/polyfill": "^7.0.0",
