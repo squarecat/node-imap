@@ -22,9 +22,24 @@
     color: $color-primary-font;
   }
 
+  &.imap {
+    display: flex;
+    svg {
+      margin-right: 15px;
+    }
+  }
+
   @media (max-width: 400px) {
     font-size: 16px;
   }
+}
+
+.connect-btn-logo {
+  max-width: 120px;
+  max-height: 30px;
+}
+
+.other-btns {
 }
 
 .account-list {

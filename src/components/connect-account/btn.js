@@ -6,6 +6,11 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import ImapModal from '../modal/imap';
 import { ModalContext } from '../../providers/modal-provider';
 
+// import aolLogo from '../../assets/providers/imap/aol-logo.png';
+// import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
+// import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
+// import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
+
 let windowObjectReference = null;
 let previousUrl = null;
 const strWindowFeatures = [
@@ -125,6 +130,32 @@ export default ({
         <AtSignIcon width="20" height="20" />
         <span>Connect Other</span>
       </a>
+      // <div styleName="other-btns">
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img
+      //       src={icloudLogo}
+      //       alt="iCloud logo"
+      //       styleName="connect-btn-logo"
+      //     />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img src={aolLogo} alt="AOL logo" styleName="connect-btn-logo" />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img
+      //       src={fastmailLogo}
+      //       alt="Fastmail logo"
+      //       styleName="connect-btn-logo"
+      //     />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <img src={yahooLogo} alt="Yahoo logo" styleName="connect-btn-logo" />
+      //   </a>
+      //   <a onClick={openImapModal} styleName="connect-btn imap">
+      //     <AtSignIcon width="20" height="20" />
+      //     <span>Other...</span>
+      //   </a>
+      // </div>
     );
   } else {
     return null;
