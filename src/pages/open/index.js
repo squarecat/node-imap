@@ -263,10 +263,10 @@ function mailtoLinkPieChart(ctx, stats) {
       return {
         unsubscriptionsByMailtoStrategy:
           out.unsubscriptionsByMailtoStrategy +
-            d.unsubscriptionsByMailtoStrategy || 0,
+          (d.unsubscriptionsByMailtoStrategy || 0),
         unsubscriptionsByLinkStrategy:
-          out.unsubscriptionsByLinkStrategy + d.unsubscriptionsByLinkStrategy ||
-          0
+          out.unsubscriptionsByLinkStrategy +
+          (d.unsubscriptionsByLinkStrategy || 0)
       };
     },
     { unsubscriptionsByLinkStrategy: 0, unsubscriptionsByMailtoStrategy: 0 }
@@ -908,6 +908,7 @@ function getMonthlyRevenueGraphStats(stats) {
     if (isAfter(date, lastMonthToShow)) return out;
 
     const formatted = formatDate(date, 'YYYY-MM');
+    // if y value is total revenue it calculates subscription rev minus refunds
     const profit = getYValue(d, 'totalRevenue') + getYValue(d, 'giftRevenue');
 
     if (!out[formatted]) {
@@ -966,7 +967,7 @@ function getPreviousMonthValues(stats, stat, timeframe = 0) {
 
   return histogram.reduce((out, d) => {
     const date = getStatDate(d.timestamp);
-    if (isWithinRange(date, start, end)) return out + d[stat] || 0;
+    if (isWithinRange(date, start, end)) return out + (d[stat] || 0);
     return out;
   }, 0);
 }
@@ -984,7 +985,7 @@ function getThisMonthToDate(stats, stat) {
     const date = getStatDate(d.timestamp);
     // if it's after the first of the month we show it in this month
     if (isAfter(date, start)) {
-      return out + d[stat] || 0;
+      return out + (d[stat] || 0);
     }
     return out;
   }, 0);
@@ -1009,7 +1010,6 @@ function getPreviousMonths(stats, stat) {
 
 function getBoxStats(stats, stat) {
   const { twoMonthsAgo, lastMonth, thisMonth } = getPreviousMonths(stats, stat);
-
   const growthRate = getGrowthRate({ lastMonth, twoMonthsAgo });
 
   return {
@@ -1021,33 +1021,26 @@ function getBoxStats(stats, stat) {
 }
 
 function revenueBoxStats(stats) {
-  const { twoMonthsAgo, lastMonth, thisMonth } = getPreviousMonths(
-    stats,
-    'totalRevenue'
-  );
-  const {
-    twoMonthsAgo: twoMonthsAgoSubs,
-    lastMonth: lastMonthSubs,
-    thisMonth: thisMonthSubs
-  } = getPreviousMonths(stats, 'totalSubscriptionRevenue');
-  const {
-    twoMonthsAgo: twoMonthsAgoGifts,
-    lastMonth: lastMonthGifts,
-    thisMonth: thisMonthGifts
-  } = getPreviousMonths(stats, 'giftRevenue');
-
-  const {
-    twoMonthsAgo: twoMonthsAgoRefunds,
-    lastMonth: lastMonthRefunds,
-    thisMonth: thisMonthRefunds
-  } = getPreviousMonths(stats, 'totalRevenueRefunded');
+  const revenue = getPreviousMonths(stats, 'totalRevenue');
+  const subsRevenue = getPreviousMonths(stats, 'totalSubscriptionRevenue');
+  const giftsRevenue = getPreviousMonths(stats, 'giftRevenue');
+  const refunds = getPreviousMonths(stats, 'totalRevenueRefunded');
 
   const totalTwoMonths =
-    twoMonthsAgo + twoMonthsAgoSubs + twoMonthsAgoGifts - twoMonthsAgoRefunds;
+    revenue.twoMonthsAgo +
+    subsRevenue.twoMonthsAgo +
+    giftsRevenue.twoMonthsAgo -
+    refunds.twoMonthsAgo;
   const totalLastMonth =
-    lastMonth + lastMonthSubs + lastMonthGifts - lastMonthRefunds;
+    revenue.lastMonth +
+    subsRevenue.lastMonth +
+    giftsRevenue.lastMonth -
+    refunds.lastMonth;
   const totalThisMonth =
-    thisMonth + thisMonthSubs + thisMonthGifts - thisMonthRefunds;
+    revenue.thisMonth +
+    subsRevenue.thisMonth +
+    giftsRevenue.thisMonth -
+    refunds.thisMonth;
 
   const totalGrowth = getGrowthRate({
     lastMonth: totalLastMonth,
@@ -1127,19 +1120,23 @@ function percent(num) {
   return numeral(num).format('0%');
 }
 
-function percentageRevenueFromGifts(stats) {
-  if (!stats.giftRevenue) return 0;
+// function percentageRevenueFromGifts(stats) {
+//   if (!stats.giftRevenue) return 0;
 
-  return (
-    (stats.giftRevenue /
-      (calculateWithRefunds(stats, 'totalRevenue') + stats.giftRevenue)) *
-    100
-  ).toFixed(0);
-}
+//   return (
+//     (stats.giftRevenue /
+//       (calculateWithRefunds(stats, 'totalRevenue') + stats.giftRevenue)) *
+//     100
+//   ).toFixed(0);
+// }
 
 function calculateWithRefunds(stats, stat) {
   if (stat === 'totalRevenue')
-    return stats.totalRevenue - (stats.totalRevenueRefunded || 0);
+    return (
+      stats.totalRevenue +
+      stats.totalSubscriptionRevenue -
+      (stats.totalRevenueRefunded || 0)
+    );
   if (stat === 'totalSales')
     return stats.totalSales - (stats.totalSalesRefunded || 0);
   return 0;
