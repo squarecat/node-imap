@@ -31,7 +31,7 @@ export function useMailSync() {
     credits: u.billing ? u.billing.credits : 0,
     organisationId: u.organisationId,
     organisationActive: u.organisationActive,
-    accountIds: u.accounts.map(a => a.id).filter(a => a.problem),
+    accountIds: u.accounts.map(a => a.id).filter(a => !a.problem),
     hasAccountProblem: u.accounts.some(a => a.problem),
     preferences: u.preferences
   }));

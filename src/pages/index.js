@@ -282,9 +282,7 @@ const IndexPage = () => {
                 </TextLink>
               </div>
               <div className="text-box text-box-centered">
-                <h3 className="providers-header">
-                  We support {IMAP_PROVIDERS} using IMAP
-                </h3>
+                <p>We also support {IMAP_PROVIDERS} that work with IMAP.</p>
                 <TextLink undecorated as="link" linkTo="/providers/imap">
                   <div className="provider-logos">
                     <span className="provider-logo imap">

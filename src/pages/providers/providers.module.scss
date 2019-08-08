@@ -6,9 +6,13 @@
 
 .hero {
   min-height: calc(100vh - 50px - 100px);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 0 40px;
 
-  @media (min-width: 901px) {
-    padding-top: 120px;
+  @media (max-width: 900px) {
+    padding-top: 40px;
   }
 }
 
@@ -18,6 +22,7 @@
 
 .container-image {
   @extend .subpage-header-container-image;
+  justify-content: flex-end;
 }
 
 .title {
