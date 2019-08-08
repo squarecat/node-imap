@@ -178,7 +178,7 @@ const ProviderIMAP = () => {
         <div styleName="end-stuff">
           <h2>Start unsubscribing from emails in {variationsText} today!</h2>
           <a
-            href={`/signup?ref=provider-${name}`}
+            href={`/signup?ref=provider-imap`}
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
             style={{ margin: '50px auto' }}
           >
