@@ -39,8 +39,10 @@ export default ({
   onError = () => {},
   imapOptions = {}
 }) => {
-  const { replace: replaceModal } = useContext(ModalContext);
-  // const prevModal = useRef(modal);
+  const { replace: replaceModal, open: openModal, modal } = useContext(
+    ModalContext
+  );
+
   useEffect(() => {
     return function cleanup() {
       window.removeEventListener('message', receiveMessage);

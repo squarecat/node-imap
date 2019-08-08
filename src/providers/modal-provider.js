@@ -61,9 +61,14 @@ export const ModalProvider = React.memo(({ children }) => {
 
   const replaceModal = useCallback(
     (modal, options = {}) => {
-      openModal(modal, { ...options, show: true, replaced: !!state.modal });
+      const modalIsAlreadyOpen = openState.shown;
+      openModal(modal, {
+        ...options,
+        show: true,
+        replaced: modalIsAlreadyOpen
+      });
     },
-    [openModal, state.modal]
+    [openModal, openState.shown]
   );
 
   useEffect(
