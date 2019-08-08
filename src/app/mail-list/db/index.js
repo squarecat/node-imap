@@ -105,7 +105,7 @@ export function useMailSync() {
             await db.occurrences.bulkPut(
               Object.keys(occurrences).map(d => ({
                 key: d,
-                count: occurrences[d]
+                ...occurrences[d]
               }))
             );
             await db.prefs.put({

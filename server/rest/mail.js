@@ -51,7 +51,7 @@ export default function(app, socket) {
         const { occurrences } = stats;
         const filteredoccurrences = Object.keys(occurrences).reduce(
           (out, k) => {
-            if (occurrences[k] > 1) {
+            if (occurrences[k].count > 1) {
               return {
                 ...out,
                 [k]: occurrences[k]

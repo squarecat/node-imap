@@ -1,9 +1,10 @@
 import { ModalBody, ModalHeader, ModalWizardActions } from '..';
-import OnboardingReducer, { initialState } from './reducer';
-import React, { useEffect, useMemo, useReducer } from 'react';
+import OnboardingReducer, { initialState, steps } from './reducer';
+import React, { useContext, useEffect, useMemo, useReducer } from 'react';
 import { TextImportant, TextLink } from '../../text';
 
 import ConnectAccounts from './connect-accounts';
+import { ModalContext } from '../../../providers/modal-provider';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import cx from 'classnames';
@@ -17,7 +18,17 @@ import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
-  const [state, dispatch] = useReducer(OnboardingReducer, initialState);
+  const { context: modalContext } = useContext(ModalContext);
+  const firstState = {
+    ...initialState,
+    ...modalContext
+  };
+  const [state, dispatch] = useReducer(OnboardingReducer, {
+    ...firstState,
+    nextLabel: steps[
+      steps.findIndex(s => s.value === firstState.step)
+    ].nextLabel()
+  });
   const [
     { accounts, organisationId, organisation, isBeta, isMigrated },
     { setMilestoneCompleted }

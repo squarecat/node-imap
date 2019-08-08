@@ -27,7 +27,11 @@ function connect({ username, password, host, port, tls = true }) {
       password,
       host,
       port,
-      tls
+      tls,
+      tlsOptions: {
+        // ignore certificates if running in dev mode
+        rejectUnauthorized: process.env.NODE_ENV === 'production'
+      }
     });
     imap.once('ready', () => {
       console.log('imap connected');

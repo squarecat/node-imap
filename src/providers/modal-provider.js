@@ -22,10 +22,18 @@ export const ModalProvider = React.memo(({ children }) => {
     modal: null
   });
   const previousOpenState = usePrevious(openState);
+  const previousModalState = usePrevious(state);
 
-  const closeModal = useCallback(data => {
-    setOpenState({ shown: false, data });
-  }, []);
+  const closeModal = useCallback(
+    data => {
+      if (state.options.replaced) {
+        setState({ ...previousModalState, context: state.options.context });
+      } else {
+        setOpenState({ shown: false, data });
+      }
+    },
+    [previousModalState, state.options.context, state.options.replaced]
+  );
 
   // after the modal is closed, call the onClose
   // function if one was provided
@@ -50,6 +58,13 @@ export const ModalProvider = React.memo(({ children }) => {
     });
     setOpenState({ shown: initialShown });
   }, []);
+
+  const replaceModal = useCallback(
+    (modal, options = {}) => {
+      openModal(modal, { ...options, show: true, replaced: !!state.modal });
+    },
+    [openModal, state.modal]
+  );
 
   useEffect(
     () => {
@@ -87,9 +102,11 @@ export const ModalProvider = React.memo(({ children }) => {
   const value = useMemo(
     () => ({
       open: openModal,
-      close: closeModal
+      close: closeModal,
+      replace: replaceModal,
+      context: state.context
     }),
-    [closeModal, openModal]
+    [closeModal, openModal, replaceModal, state.context]
   );
 
   return (

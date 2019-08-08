@@ -8,6 +8,7 @@ import initOutlook, {
 } from './outlook';
 import initPassword, { Strategy as PasswordStrategy } from './password';
 
+import { get as getSession } from '../dao/sessions';
 import { getUserById } from '../services/user';
 import initTotp from './totp';
 import logger from '../utils/logger';
@@ -26,12 +27,23 @@ refresh.use('connect-account-google', GoogleConnectAccountStrategy);
 passport.use('connect-account-outlook', OutlookConnectAccountStrategy);
 refresh.use('connect-account-outlook', OutlookConnectAccountStrategy);
 
-// master key is only ever stored in the
-// users session so we need to serialize and
-// deserialize it here
-passport.serializeUser(function(user, cb) {
-  // create a unique session token for socket authentication
-  const token = v4();
+// - master key is only ever stored in the
+//   users session so we need to serialize and
+//   deserialize it here
+// - a token is created for each user in order
+//   to validate socket connections can only come
+//   from that user
+passport.serializeUser(async (user, cb) => {
+  // if a session exists then use the same
+  // token as that one to avoid lookup issues
+  const session = await getSession(user.id);
+  let token;
+  if (session) {
+    token = session.passport.user.token;
+  } else {
+    // or create a unique session token for socket authentication
+    token = v4();
+  }
   cb(null, { id: user.id, masterKey: user.masterKey, token });
 });
 
@@ -55,6 +67,9 @@ export default app => {
   initTotp(app);
   app.get('/auth/logout', (req, res) => {
     req.logout();
+    // destroy the session triggering
+    // it to be removed from mongo
+    req.session = null;
     res.redirect('/');
   });
 };

@@ -1,5 +1,6 @@
 import * as CommonUtils from '../common';
 
+import Imap from 'imap';
 import logger from '../../../utils/logger';
 
 export function isMailUnsubscribable(headers = [], ignoredSenderList = []) {
@@ -41,17 +42,13 @@ export function getHeaderValue(headers, name) {
 }
 
 export function getHeaders({ body }) {
-  const pairs = body.split('\r\n');
-  const headers = pairs
-    .filter(p => p)
-    .map(p => {
-      const [name, value] = p.split(': ').map(nv => nv.trim());
-      return {
-        name,
-        value
-      };
-    });
-  return headers;
+  const parsed = Imap.parseHeader(body);
+  return Object.keys(parsed).map(key => {
+    return {
+      name: key,
+      value: parsed[key][0]
+    };
+  });
 }
 
 export function getUnsubValuesFromHeader(header) {
@@ -59,3 +56,4 @@ export function getUnsubValuesFromHeader(header) {
 }
 
 export const hasUnsubscribedAlready = CommonUtils.hasUnsubscribedAlready;
+export const dedupeMailList = CommonUtils.dedupeMailList;

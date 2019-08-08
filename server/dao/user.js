@@ -1033,35 +1033,35 @@ function decryptUser(user, options = {}) {
     )
   };
   // don't return account keys unless specified
-  if (options.withAccountKeys) {
-    decryptedUser = {
-      ...decryptedUser,
-      accounts: user.accounts.map(({ keys, ...data }) => {
-        let account = data;
-        if (keys) {
-          account = {
-            ...account,
-            keys: {
-              ...keys,
-              refreshToken: decrypt(keys.refreshToken),
-              accessToken: decrypt(keys.accessToken)
-            }
-          };
-        }
-        return account;
-      })
-    };
-  } else {
-    decryptedUser = {
-      ...decryptedUser,
-      accounts: user.accounts.map(({ id, provider, email, addedAt }) => ({
-        id,
-        provider,
-        email,
-        addedAt
-      }))
-    };
-  }
+  // if (options.withAccountKeys) {
+  decryptedUser = {
+    ...decryptedUser,
+    accounts: user.accounts.map(({ keys, ...data }) => {
+      let account = data;
+      if (keys) {
+        account = {
+          ...account,
+          keys: {
+            ...keys,
+            refreshToken: decrypt(keys.refreshToken),
+            accessToken: decrypt(keys.accessToken)
+          }
+        };
+      }
+      return account;
+    })
+  };
+  // } else {
+  //   decryptedUser = {
+  //     ...decryptedUser,
+  //     accounts: user.accounts.map(({ id, provider, email, addedAt }) => ({
+  //       id,
+  //       provider,
+  //       email,
+  //       addedAt
+  //     }))
+  //   };
+  // }
   return decryptedUser;
 }
 

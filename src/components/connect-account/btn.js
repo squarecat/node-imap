@@ -1,7 +1,7 @@
 import './connect.module.scss';
 
 import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import ImapModal from '../modal/imap';
 import { ModalContext } from '../../providers/modal-provider';
@@ -31,14 +31,25 @@ const strWindowFeatures = [
 export default ({
   provider = 'password',
   onSuccess = () => {},
-  onError = () => {}
+  onError = () => {},
+  imapOptions = {}
 }) => {
-  const { open: openModal } = useContext(ModalContext);
+  const { replace: replaceModal } = useContext(ModalContext);
+  // const prevModal = useRef(modal);
   useEffect(() => {
     return function cleanup() {
       window.removeEventListener('message', receiveMessage);
     };
   });
+  const openImapModal = useCallback(
+    () => {
+      replaceModal(<ImapModal onConfirm={onSuccess} />, {
+        ...imapOptions,
+        context: { step: 'accounts' }
+      });
+    },
+    [imapOptions, onSuccess, replaceModal]
+  );
 
   const receiveMessage = event => {
     // Do we trust the sender of this message?  (might be
@@ -110,12 +121,7 @@ export default ({
     );
   } else if (provider === 'imap') {
     return (
-      <a
-        onClick={() => {
-          openModal(<ImapModal />);
-        }}
-        styleName="connect-btn"
-      >
+      <a onClick={openImapModal} styleName="connect-btn">
         <AtSignIcon width="20" height="20" />
         <span>Connect Other</span>
       </a>

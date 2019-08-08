@@ -5,7 +5,7 @@ import { Arrow as ArrowIcon, SearchIcon } from '../../icons';
 import { Gift as GiftIcon } from '../../icons';
 import React from 'react';
 
-const steps = [
+export const steps = [
   {
     value: 'welcome',
     position: '1',

@@ -42,18 +42,25 @@ export function getMailboxName(name, box) {
   return fullname;
 }
 
-function parseMailBoxes(boxes) {
+function parseMailBoxes(boxes, path = '') {
   return Object.keys(boxes).reduce((out, boxName) => {
     const box = boxes[boxName];
+    const { delimiter } = box;
+    const newPath = path ? `${path}${delimiter}${boxName}` : boxName;
     let ret = out;
     if (boxName.toLowerCase() === 'inbox' || isBoxSearchable(box)) {
       ret = [
         ...ret,
-        { name: boxName, box, attribute: getRelevantAttribute(box) }
+        {
+          name: boxName,
+          path: newPath,
+          box,
+          attribute: getRelevantAttribute(box)
+        }
       ];
     }
     if (boxHasChildren(box)) {
-      ret = [...ret, parseMailBoxes(box.children)];
+      ret = [...ret, ...parseMailBoxes(box.children, newPath)];
     }
     return ret;
   }, []);

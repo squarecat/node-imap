@@ -103,14 +103,17 @@ export function dedupeMailList(
   const { deduped, dupes, dupeSenders } = mailList.reduce(
     (out, mail) => {
       const dupeKey = getDupeKey(mail.from, mail.to);
-      const dupeoccurrences = out.dupes[dupeKey] || 0;
-      if (!dupeoccurrences) {
+      const dupe = out.dupes[dupeKey];
+      if (!dupe) {
         const { isSpam, isTrash } = mail;
         return {
           deduped: [...out.deduped, mail],
           dupes: {
             ...out.dupes,
-            [dupeKey]: 1
+            [dupeKey]: {
+              count: 1,
+              lastSeen: mail.date
+            }
           },
           dupeSenders: {
             ...out.dupeSenders,
@@ -125,17 +128,21 @@ export function dedupeMailList(
       }
       const { isSpam, isTrash } =
         out.dupeSenders[mail.from.toLowerCase()] || {};
+
       return {
         ...out,
         dupes: {
           ...out.dupes,
-          [dupeKey]: dupeoccurrences + 1
+          [dupeKey]: {
+            lastSeen: mail.from > dupe.lastSeen ? mail.from : dupe.lastSeen,
+            count: dupe.count + 1
+          }
         },
         dupeSenders: {
           ...out.dupeSenders,
           [mail.from.toLowerCase()]: {
             sender: mail.from,
-            occurrences: dupeoccurrences + 1,
+            occurrences: dupe.count + 1,
             isSpam: !!isSpam, // sometimes these are undefined
             isTrash: !!isTrash
           }

@@ -1,22 +1,22 @@
-import { getMailboxName, getMailboxes } from './mailboxes';
-
 import { MailError } from '../../../utils/errors';
-import { dedupeMailList } from '../common';
+import { dedupeMailList } from './utils';
 import { getMailClient } from './access';
+import { getMailboxes } from './mailboxes';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 import util from 'util';
 
 export async function* fetchMail({ masterKey, user, account, from }) {
   const start = Date.now();
+  let client;
   try {
     const { unsubscriptions, ignoredSenderList } = user;
-    const client = await getMailClient(masterKey, account);
     logger.info(
       `imap-fetcher: checking for new mail after ${new Date(from)} (${
         user.id
       }) [estimated ${0} mail]`
     );
+    client = await getMailClient(masterKey, account);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
@@ -80,78 +80,137 @@ export async function* fetchMail({ masterKey, user, account, from }) {
       provider: 'gmail',
       cause: err
     });
+  } finally {
+    if (client) {
+      client.end();
+    }
   }
 }
 
 export async function* fetch(client, { mailbox, from }) {
   try {
     client.onerror = err => console.error(err);
-    const mail = await readFromBox(client, mailbox, from);
-    yield mail;
+
+    const iter = readFromBox(client, mailbox, from);
+    let next = await iter.next();
+    while (!next.done) {
+      const mail = next.value;
+      yield mail;
+      next = await iter.next();
+    }
   } catch (err) {
     console.error(err);
   }
 }
 
-async function readFromBox(client, mailbox, from) {
+async function* readFromBox(client, mailbox, from) {
   const openBox = util.promisify(client.openBox.bind(client));
   const search = util.promisify(client.search.bind(client));
   const closeBox = util.promisify(client.closeBox.bind(client));
+  const sort = util.promisify(client.sort.bind(client));
   try {
-    const { name, box, attribute } = mailbox;
-    const mailboxName = getMailboxName(name, box);
-    await openBox(mailboxName, true);
-    console.log(`imap-fetcher: searching mail from ${attribute}`);
-    const uuids = await search([
-      'ALL',
-      ['SINCE', from],
-      ['HEADER', 'LIST-UNSUBSCRIBE', '']
-    ]);
+    const { attribute, path } = mailbox;
+    await openBox(path, true);
+    console.log(`imap-fetcher: searching mail from ${attribute || path}`);
+    const supportsSort = client.serverSupports('SORT');
+    let uuids;
+    const query = ['ALL', ['SINCE', from], ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+    if (supportsSort) {
+      uuids = await sort(['-DATE'], query);
+    } else {
+      uuids = await search(query);
+    }
     if (!uuids.length) {
+      console.log('no results');
       return [];
     }
-    const messages = await fetchUuids(client, uuids);
+
+    const iter = fetchUuids(client, uuids);
+    let next = await iter.next();
+    while (!next.done) {
+      const mail = next.value;
+      yield mail.map(m => ({ ...m, mailbox }));
+      next = await iter.next();
+    }
     await closeBox();
-    return messages.map(m => ({ ...m, mailbox }));
   } catch (err) {
     console.error(err);
   }
 }
 
-function fetchUuids(client, uuids) {
+async function* fetchUuids(client, uuids) {
+  console.log(`fetching ${uuids.length} messages`);
+  const f = client.fetch(uuids, {
+    markSeen: false,
+    bodies: 'HEADER.FIELDS (From To Subject List-Unsubscribe)'
+  });
+
+  const iter = iterator(f);
+  let next = await iter.next();
+  while (!next.done) {
+    const message = next.value;
+    yield message;
+    next = await iter.next();
+  }
+}
+
+async function getMessage(message) {
   return new Promise((resolve, reject) => {
-    const f = client.fetch(uuids, {
-      markSeen: false,
-      bodies: 'HEADER.FIELDS (From To Subject List-Unsubscribe)'
-    });
-    let messages = [];
-    f.on('message', msg => {
-      let email = {
-        body: ''
-      };
-      msg.on('error', err => {
-        logger.error(err);
-      });
-      msg.on('body', async stream => {
-        stream.on('data', function(data) {
-          email = {
-            ...email,
-            body: `${email.body}${data.toString()}`
-          };
-        });
-      });
-      msg.once('attributes', ({ uid, flags, date }) => {
-        email = { ...email, id: uid, flags, date };
-      });
-      msg.once('end', () => {
-        messages = [...messages, email];
-      });
-    });
-    f.once('error', err => {
+    let e = {
+      body: ''
+    };
+    message.on('error', err => {
+      console.error(err);
       reject(err);
     });
-    f.once('end', () => {
-      resolve(messages);
+    message.on('body', async stream => {
+      stream.on('data', function(data) {
+        e = {
+          ...e,
+          body: `${e.body}${data.toString('utf8')}`
+        };
+      });
+    });
+    message.once('attributes', ({ uid, flags, date }) => {
+      e = { ...e, id: uid, flags, date };
+    });
+    message.once('end', () => {
+      resolve(e);
     });
   });
+}
+
+async function* iterator(f) {
+  let messages = [];
+
+  let done = false;
+  const onEnd = () => {
+    done = true;
+  };
+  const onMessage = async message => {
+    const email = await getMessage(message);
+    messages = [...messages, email];
+  };
+  f.on('end', onEnd);
+  f.on('message', onMessage);
+
+  async function iterateMessage() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(messages.splice(0, 20));
+      }, 500);
+    });
+  }
+
+  while (true) {
+    const value = await iterateMessage();
+    if (value.length) {
+      console.log(`returning ${value.length} messages`);
+      yield value;
+    }
+    if (done && !messages.length) {
+      console.log('iterating message done');
+      return [];
+    }
+  }
 }

@@ -80,6 +80,9 @@ export default ({ onboarding = false, enterprise = false }) => {
         <AccountProviderButtons
           onSuccess={onConnectSuccess}
           onError={onConnectError}
+          imapOptions={{
+            opaque: true
+          }}
         />
       ) : null}
 

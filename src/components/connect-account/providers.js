@@ -5,7 +5,7 @@ import React from 'react';
 
 const providers = ['google', 'outlook', 'imap'];
 
-export default ({ onSuccess = () => {}, onError = () => {} }) => {
+export default ({ onSuccess = () => {}, onError = () => {}, imapOptions }) => {
   return (
     <div styleName="provider-btn-grid">
       {providers.map(providerName => (
@@ -14,6 +14,7 @@ export default ({ onSuccess = () => {}, onError = () => {} }) => {
           provider={providerName}
           onSuccess={onSuccess}
           onError={onError}
+          imapOptions={imapOptions}
         />
       ))}
     </div>

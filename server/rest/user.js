@@ -1,8 +1,8 @@
 import {
-  connectImapAccount,
   addToUserIgnoreList,
   addUserReminder,
   authenticationRequiresTwoFactor,
+  connectImapAccount,
   createUserTotpToken,
   deactivateUserAccount,
   getUserActivity,
@@ -68,6 +68,7 @@ const userProps = [
   'organisationId',
   'organisationAdmin',
   'organisationActive',
+  'features',
   'organisation',
   '__migratedFrom',
   'passwordLastUpdatedAt'
@@ -87,7 +88,8 @@ export default app => {
           return u;
         }, {}),
         requiresTwoFactorAuth,
-        token
+        token,
+        features: user.features || []
       };
       if (isBeta) {
         response = {

@@ -83,8 +83,9 @@ function parseMailItem(item) {
     const isSpam = mailbox.box.attribs.includes('\\Junk');
     const toHeader = getHeaderValue(headers, 'to');
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
+    const lmaId = `${id}-${+date}`;
     return {
-      id: v4(),
+      id: lmaId,
       uid: id,
       date: date,
       from: getHeaderValue(headers, 'from') || '',

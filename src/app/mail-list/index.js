@@ -8,10 +8,12 @@ import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
 import UnsubModal from '../../components/modal/unsub-modal';
 import styles from './mail-list.module.scss';
+import useUser from '../../utils/hooks/use-user';
 
 function MailView() {
   const { state, dispatch, actions } = useContext(MailContext);
   const { open: openModal, onClose } = useContext(ModalContext);
+  const [accounts] = useUser(u => u.accounts);
   const {
     fetch,
     totalCount,
@@ -29,9 +31,11 @@ function MailView() {
   } = state;
 
   // fetch new messages on load and
-  // check for new messages each 30 seconds?
+  // TODO check for new messages each 30 seconds?
   useEffect(() => {
-    fetch();
+    if (accounts.length) {
+      fetch();
+    }
   }, []);
 
   // scroll back to the top if the page changes
@@ -94,12 +98,12 @@ function MailView() {
       if (showLoading) {
         return <Loading />;
       }
-      if (!mail.length) {
+      if (!mail.length || !accounts.length) {
         return <Empty hasFilters={activeFilters.length} />;
       }
       return <MailList mail={mail} />;
     },
-    [isLoading, isFetching, mail, activeFilters]
+    [isLoading, isFetching, mail, accounts.length, activeFilters.length]
   );
   return (
     <div styleName="mail-list">

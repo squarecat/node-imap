@@ -24,12 +24,13 @@ const Accounts = () => {
   const { actions: alertActions } = useContext(AlertContext);
   const db = useContext(DatabaseContext);
   const [
-    { accounts = [], primaryEmail, loginProvider },
+    { accounts = [], primaryEmail, loginProvider, features },
     { update: updateUser, load: loadUser }
-  ] = useUser(({ accounts, email, loginProvider }) => ({
+  ] = useUser(({ accounts, email, loginProvider, features }) => ({
     accounts,
     primaryEmail: email,
-    loginProvider
+    loginProvider,
+    features
   }));
 
   const { open: openModal } = useContext(ModalContext);
@@ -97,15 +98,26 @@ const Accounts = () => {
   let connectedAccountsContent;
 
   if (!accounts.length) {
-    connectedAccountsContent = (
-      <p>
-        You haven't connected any accounts yet. Connect your{' '}
-        <TextImportant>Google</TextImportant>,{' '}
-        <TextImportant>Microsoft</TextImportant> or{' '}
-        <TextImportant>IMAP</TextImportant> accounts below to start scanning
-        your inboxes for subscription spam.
-      </p>
-    );
+    if (features.includes('IMAP')) {
+      connectedAccountsContent = (
+        <p>
+          You haven't connected any accounts yet. Connect your{' '}
+          <TextImportant>Google</TextImportant>,{' '}
+          <TextImportant>Microsoft</TextImportant> or{' '}
+          <TextImportant>IMAP</TextImportant> accounts below to start scanning
+          your inboxes for subscription spam.
+        </p>
+      );
+    } else {
+      connectedAccountsContent = (
+        <p>
+          You haven't connected any accounts yet. Connect your{' '}
+          <TextImportant>Google</TextImportant> or{' '}
+          <TextImportant>Microsoft</TextImportant> accounts below to start
+          scanning your inboxes for subscription spam.
+        </p>
+      );
+    }
   } else {
     connectedAccountsContent = (
       <ConnectedAccountList
@@ -136,11 +148,13 @@ const Accounts = () => {
           onSuccess={() => onConnectSuccess()}
           onError={err => onConnectError(err)}
         />
-        <ConnectButton
-          provider="imap"
-          onSuccess={() => onConnectSuccess()}
-          onError={err => onConnectError(err)}
-        />
+        {features.includes('IMAP') ? (
+          <ConnectButton
+            provider="imap"
+            onSuccess={() => onConnectSuccess()}
+            onError={err => onConnectError(err)}
+          />
+        ) : null}
       </div>
     </>
   );
