@@ -1,7 +1,8 @@
 import './wall-of-love.module.scss';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
+import _shuffle from 'lodash.shuffle';
 import testimonialData from './testimonials';
 import useMedia from 'react-use/lib/useMedia';
 
@@ -12,7 +13,12 @@ export default () => {
   const isTablet = useMedia('(max-width: 900px)');
   // const isDesktop = useMedia('(max-width: 1024px)');
 
-  const data = testimonialData;
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const shuffled = _shuffle(testimonialData);
+    setData(shuffled);
+  }, []);
 
   const columns = useMemo(
     () => {
@@ -75,8 +81,10 @@ function Box({ testimonial }) {
             ) : (
               <span styleName="name">{name}</span>
             )}
+            {company ? (
+              <div styleName="company-container">{company}</div>
+            ) : null}
           </div>
-          {company ? <div styleName="company-container">{company}</div> : null}
         </div>
       </div>
     </div>

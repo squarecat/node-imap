@@ -70,10 +70,16 @@ $image-size-tablet: 30px;
 }
 
 .name-container {
+  display: flex;
+  align-items: center;
 }
 
 .name {
   font-weight: bold;
+  white-space: nowrap;
+  margin-right: 15px;
+  display: inline-block;
+  line-height: 30px;
 }
 
 .twitter-link,
@@ -85,13 +91,12 @@ $image-size-tablet: 30px;
 .company-container {
   display: flex;
   align-items: center;
-  height: 40px;
-  margin-top: 10px;
+  max-height: 30px;
+  max-width: 100px;
 }
 
 .invert {
   padding: 2px 3px;
-  height: 44px;
   display: flex;
   align-items: center;
 
@@ -105,9 +110,9 @@ $image-size-tablet: 30px;
 }
 
 .company-logo {
-  max-height: 40px;
+  max-height: 30px;
 }
 
 .company-name {
-  margin-left: 10px;
+  display: none;
 }
