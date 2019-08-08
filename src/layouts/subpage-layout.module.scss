@@ -26,13 +26,13 @@
 }
 
 .subpage h1 {
-  // font-size: 30px;
-  // line-height: 42px;
+  font-size: 30px;
+  line-height: 42px;
 
-  // @media (max-width: 768px) {
-  //   font-size: 25px;
-  //   line-height: 36px;
-  // }
+  @media (max-width: 768px) {
+    font-size: 25px;
+    line-height: 36px;
+  }
 }
 
 .subpage h2 {
@@ -72,7 +72,7 @@
 }
 
 .subpage-tagline {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 30px;
   margin-bottom: 2rem;
   opacity: 0.6;
@@ -83,47 +83,21 @@
   }
 }
 
-h1.subpage-header-title {
-  font-size: 42px;
-  line-height: 52px;
-  margin-bottom: 35px;
-  max-width: 450px;
-
-  @media (max-width: 1050px) {
-    font-size: 38px;
-    max-width: 410px;
-  }
-
-  @media (max-width: 1000px) {
-    font-size: 32px;
-    line-height: 45px;
-    margin-bottom: 30px;
-    max-width: 340px;
-  }
+.subpage-landing-title {
+  max-width: 360px;
 
   @media (max-width: 900px) {
     margin: 0 auto 30px auto;
   }
-
-  @media (max-width: 500px) {
-    font-size: 32px;
-    line-height: 36px;
-  }
-
-  @media (max-width: 400px) {
-    font-size: 22px;
-    line-height: 30px;
-    margin: 0 auto 20px auto;
-  }
 }
 
-.subpage-header-tagline {
+.subpage-landing-tagline {
   margin-bottom: 45px;
   font-size: 20px;
   line-height: 28px;
 
   @media (max-width: 400px) {
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     font-size: 16px;
     line-height: 22px;
   }

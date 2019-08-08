@@ -21,11 +21,11 @@
 }
 
 .title {
-  @extend .subpage-header-title;
+  @extend .subpage-landing-title;
 }
 
 .tagline {
-  @extend .subpage-header-tagline;
+  @extend .subpage-landing-tagline;
 }
 
 .provider-inner {

@@ -1,9 +1,9 @@
 import './security.module.scss';
 
+import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 import { TextImportant, TextLink } from '../../components/text';
 
 import React from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
 import gmailScopesImg from '../../assets/security-gmail-scopes.png';
 import lockImg from '../../assets/lock.png';
 import outlookScopesImg from '../../assets/security-outlook-scopes.png';
@@ -30,10 +30,10 @@ export default function SecurityPage() {
       <div styleName="security-inner">
         <h1>Security at Leave Me Alone</h1>
 
-        <p styleName="tagline">
+        <SubpageTagline>
           We take security and data privacy very seriously at Leave Me Alone,
           and we are proud to be open and transparent about how we operate.
-        </p>
+        </SubpageTagline>
 
         <div styleName="permissions">
           <h2>What permissions do we ask for?</h2>
