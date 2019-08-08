@@ -5,6 +5,7 @@ import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import React from 'react';
 import { getUnsubscribeAlert } from '../../../utils/errors';
+import { navigate } from 'gatsby';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -20,6 +21,7 @@ export function useMailSync() {
       organisationId,
       organisationActive,
       accountIds,
+      hasAccountProblem,
       preferences
     },
     { incrementUnsubCount }
@@ -29,7 +31,8 @@ export function useMailSync() {
     credits: u.billing ? u.billing.credits : 0,
     organisationId: u.organisationId,
     organisationActive: u.organisationActive,
-    accountIds: u.accounts.map(a => a.id),
+    accountIds: u.accounts.map(a => a.id).filter(a => a.problem),
+    hasAccountProblem: u.accounts.some(a => a.problem),
     preferences: u.preferences
   }));
   const { isConnected, socket, error, emit } = useSocket({
@@ -242,6 +245,27 @@ export function useMailSync() {
     fetch: async () => {
       try {
         setIsFetching(true);
+        if (hasAccountProblem) {
+          actions.setAlert({
+            message: (
+              <span>
+                There is a problem with one of your accounts. Please visit the
+                accounts page to resolve this.
+              </span>
+            ),
+            isDismissable: true,
+            autoDismiss: false,
+            level: 'warning',
+            actions: [
+              {
+                label: 'Go to accounts',
+                onClick: () => {
+                  navigate('/app/profile/accounts');
+                }
+              }
+            ]
+          });
+        }
         const pref = await db.prefs.get('lastFetchParams');
         const lastScan = await db.prefs.get('lastFetchResult');
         let fetchParams = {

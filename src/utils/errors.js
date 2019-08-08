@@ -100,6 +100,15 @@ export function getImapError(reason) {
   };
 }
 
+export function getAccountProblem(reason) {
+  switch (reason) {
+    case 'password-invalidated':
+      return `Since you reset your password your IMAP credentials are now invalid. Please remove this account and connect it again.`;
+    default:
+      return `There is a problem with this IMAP account. Please try removing this account and connecting it again, or send us a message.`;
+  }
+}
+
 export function getBasicError(err = {}) {
   const defaultMsg = `Something went wrong. Please try again or send us a message.`;
   if (!err) return defaultMsg;
