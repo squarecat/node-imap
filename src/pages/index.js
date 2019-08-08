@@ -26,8 +26,11 @@ import Testimonial from '../components/landing/testimonial';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
+import aolImg from '../assets/providers/imap/aol-logo.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
+import fastmailImg from '../assets/providers/imap/fastmail-icon.png';
+import icloudImg from '../assets/providers/imap/icloud-icon.png';
 import luke from '../assets/luke.jpeg';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
@@ -35,6 +38,7 @@ import request from '../utils/request';
 import subscriberScore from '../assets/subscriber-score.png';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import yahooImg from '../assets/providers/imap/yahoo-logo.png';
 
 const faker = require('../vendor/faker/locale/en');
 
@@ -281,13 +285,22 @@ const IndexPage = () => {
                 <h3 className="providers-header">
                   We support {IMAP_PROVIDERS} using IMAP
                 </h3>
-                <div className="provider-logos">
-                  <TextLink undecorated as="link" linkTo="/providers/imap">
-                    <span className="provider-logo">
-                      <AtSignIcon width="60" height="60" />
+                <TextLink undecorated as="link" linkTo="/providers/imap">
+                  <div className="provider-logos">
+                    <span className="provider-logo imap">
+                      <img src={fastmailImg} alt="Fastmail logo" />
                     </span>
-                  </TextLink>
-                </div>
+                    <span className="provider-logo imap invert">
+                      <img src={aolImg} alt="AOL logo" />
+                    </span>
+                    <span className="provider-logo imap">
+                      <img src={icloudImg} alt="iCloud logo" />
+                    </span>
+                    <span className="provider-logo imap brighter">
+                      <img src={yahooImg} alt="Yahoo! Mail logo" />
+                    </span>
+                  </div>
+                </TextLink>
               </div>
 
               <a

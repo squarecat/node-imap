@@ -64,7 +64,7 @@ const ProviderMicrosoft = () => {
         <div styleName="provider-inner trustbar-images">
           {TRUSTBAR_LOGOS.map((logo, i) => (
             <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-              <img src={logo} />
+              <img src={logo} alt="Microsoft email provider logo" />
             </span>
           ))}
         </div>
