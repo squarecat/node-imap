@@ -144,24 +144,6 @@ const Accounts = () => {
           onError={err => onConnectError(err)}
           hideImap={!features.includes('IMAP')}
         />
-
-        {/* <ConnectButton
-          provider="google"
-          onSuccess={() => onConnectSuccess()}
-          onError={err => onConnectError(err)}
-        />
-        <ConnectButton
-          provider="outlook"
-          onSuccess={() => onConnectSuccess()}
-          onError={err => onConnectError(err)}
-        />
-        {features.includes('IMAP') ? (
-          <ConnectButton
-            provider="imap"
-            onSuccess={() => onConnectSuccess()}
-            onError={err => onConnectError(err)}
-          />
-        ) : null} */}
       </div>
     </>
   );
