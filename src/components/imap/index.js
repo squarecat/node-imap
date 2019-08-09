@@ -1,3 +1,5 @@
+import './imap.module.scss';
+
 import {
   FormCheckbox,
   FormGroup,
@@ -27,7 +29,7 @@ export const CONFIG = {
   icloud: {
     label: 'iCloud',
     imap: {
-      host: 'https://imap.mail.me.com',
+      host: 'imap.mail.me.com',
       port: 993
     },
     passwordLink: 'https://support.apple.com/en-us/HT204397'
@@ -65,6 +67,7 @@ export default ({ actions, onConfirm, providerType }) => {
       username: '',
       password: '',
       tls: true,
+      ssl: true,
       ...initialState
     },
     loading: false
@@ -263,25 +266,42 @@ export default ({ actions, onConfirm, providerType }) => {
                 />
                 <p>Usually either 993 or 143</p>
               </FormGroup>
-              <FormGroup unpadded>
-                <FormCheckbox
-                  name="imap-tls"
-                  disabled={state.loading}
-                  label="Use TLS"
-                  checked={imap.tls}
-                  onChange={e => {
-                    const tls = e.currentTarget.checked;
-                    if (tls !== imap.tls) {
-                      dispatch({
-                        type: 'set-imap',
-                        data: { tls }
-                      });
-                    }
-                  }}
-                />
-              </FormGroup>
             </>
           )}
+          <FormGroup unpadded>
+            <FormCheckbox
+              name="imap-tls"
+              disabled={state.loading}
+              label="Use TLS"
+              checked={imap.tls}
+              onChange={e => {
+                const tls = e.currentTarget.checked;
+                if (tls !== imap.tls) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { tls }
+                  });
+                }
+              }}
+            />
+          </FormGroup>
+          <FormGroup unpadded>
+            <FormCheckbox
+              name="imap-ssl"
+              disabled={state.loading}
+              label="Use SSL"
+              checked={imap.ssl}
+              onChange={e => {
+                const ssl = e.currentTarget.checked;
+                if (ssl !== imap.ssl) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { ssl }
+                  });
+                }
+              }}
+            />
+          </FormGroup>
           {notification}
         </>
       );
@@ -375,17 +395,12 @@ function getProviderLead(type) {
 }
 
 async function saveImapConnection(imapDetails) {
-  const { host } = imapDetails;
+  const { host, ssl, tls } = imapDetails;
+  let hostWithProtocol = host;
+  if (ssl & !tls) {
+    hostWithProtocol = `https://${host}`;
+  }
   try {
-    if (host.startsWith('http')) {
-      throw new Error('HTTP(S) protocol is not required', {
-        // mimic the server error
-        reason: {
-          type: 'imap',
-          message: 'HTTP(S) protocol is not required'
-        }
-      });
-    }
     return request('/api/me', {
       method: 'PATCH',
       cache: 'no-cache',
@@ -393,7 +408,10 @@ async function saveImapConnection(imapDetails) {
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify({ op: 'add-imap-account', value: imapDetails })
+      body: JSON.stringify({
+        op: 'add-imap-account',
+        value: { ...imapDetails, host: hostWithProtocol }
+      })
     });
   } catch (err) {
     throw err;
