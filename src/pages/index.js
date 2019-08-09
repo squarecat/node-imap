@@ -128,7 +128,7 @@ const IndexPage = () => {
         >
           <div className="hero-inner">
             <div className="hero-box hero-left">
-              <div className="hero-right-inner">
+              <div className="hero-left-inner">
                 <h1 className="catchy-tagline">
                   Easily unsubscribe from spam emails
                 </h1>
@@ -222,7 +222,7 @@ const IndexPage = () => {
                 </p>
                 <p>
                   <TextLink as="link" linkTo="/security">
-                    <span>Learn more about security and data management</span>{' '}
+                    <span>Learn more about security and privacy</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -346,10 +346,7 @@ const IndexPage = () => {
         </div>
 
         <div className="home-container">
-          <div
-            className="text-box text-box-centered"
-            style={{ textAlign: 'left' }}
-          >
+          <div className="text-box text-box-left">
             <Testimonial
               text={`Using Leave Me Alone has resulted in a 17% reduction in my
                 emails, saving me hours of time each month.`}
