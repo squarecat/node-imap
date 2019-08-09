@@ -3,7 +3,6 @@ import './home.scss';
 
 import {
   Arrow as ArrowIcon,
-  AtSignIcon,
   GoogleIcon,
   MicrosoftIcon,
   PointyArrow
@@ -158,6 +157,23 @@ const IndexPage = () => {
           </div>
         </div>
 
+        <div className="home-container testimonial-section" >
+          <div
+            className="text-box text-box-centered"
+            style={{ textAlign: 'left' }}
+          >
+            <Testimonial
+              text={`Using Leave Me Alone has resulted in a 17% reduction in my
+                emails, saving me hours of time each month.`}
+              author="Luke Chadwick, Founder - GraphQL360"
+              image={luke}
+            />
+            <TextLink as="link" linkTo="/wall-of-love">
+              <span>See all of our customer testimonials</span>{' '}
+              <ArrowIcon inline />
+            </TextLink>
+          </div>
+        </div>
         <div className="home-container">
           <div className="home-container-inner" id="learn">
             <div className="image-section">
@@ -230,7 +246,24 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-
+        <div className="home-container section-padded">
+          <div className="home-container-inner" id="news">
+            <h3>In the news</h3>
+            <p>
+              Don't take our word for it, read what people are saying about us.
+            </p>
+            <div className="in-the-news">
+              {NEWS.map(({ quote, logoUrl, url }) => (
+                <div key={url} className="news-item">
+                  <p>"{quote}"</p>
+                  <a target="_" className="news-logo" href={url}>
+                    <img src={logoUrl} />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
         <div
           className="trash-pile"
           id="trash-pile"
@@ -258,7 +291,6 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-
         <div className="learn-providers" ref={trashPileRef} id="providers">
           <div className="home-container">
             <div className="text-box text-box-centered">
@@ -313,7 +345,6 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-
         <div className="home-container section-padded">
           <div className="home-container-inner" id="pricing">
             <h3>Let's talk money</h3>
@@ -325,44 +356,6 @@ const IndexPage = () => {
           </div>
           <Pricing />
         </div>
-
-        <div className="home-container section-padded">
-          <div className="home-container-inner" id="news">
-            <h3>In the news</h3>
-            <p>
-              Don't take our word for it, read what people are saying about us.
-            </p>
-            <div className="in-the-news">
-              {NEWS.map(({ quote, logoUrl, url }) => (
-                <div key={url} className="news-item">
-                  <p>"{quote}"</p>
-                  <a target="_" className="news-logo" href={url}>
-                    <img src={logoUrl} />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="home-container">
-          <div
-            className="text-box text-box-centered"
-            style={{ textAlign: 'left' }}
-          >
-            <Testimonial
-              text={`Using Leave Me Alone has resulted in a 17% reduction in my
-                emails, saving me hours of time each month.`}
-              author="Luke Chadwick, Founder - GraphQL360"
-              image={luke}
-            />
-            <TextLink as="link" linkTo="/wall-of-love">
-              <span>See all of our customer testimonials</span>{' '}
-              <ArrowIcon inline />
-            </TextLink>
-          </div>
-        </div>
-
         <div className="home-container">
           <div className="home-container-inner end-stuff">
             {statsContent}
@@ -375,7 +368,6 @@ const IndexPage = () => {
             </a>
           </div>
         </div>
-
         <Footer />
       </div>
     </Layout>
