@@ -18,12 +18,12 @@ import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
 const VARIATIONS = [
   'Fastmail',
-  'Yahoo! Mail',
+  'Yahoo Mail',
   'iCloud',
   'AOL',
   'all other mailboxes'
 ];
-const META_VARIATIONS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other mailboxes`;
+const META_VARIATIONS = `Fastmail, Yahoo Mail, iCloud, AOL, and all other mailboxes`;
 const TRUSTBAR_LOGOS = [fastmailLogo, aolLogo, yahooLogo, icloudLogo];
 
 const ProviderIMAP = () => {

@@ -408,17 +408,22 @@ $textarea-font-size: 14px;
 
   &.error {
     color: white;
-    background: $color-bg-error;
+    background-color: $color-bg-error;
     border: 1px solid $color-text-error;
   }
   &.warning {
     color: white;
-    background: $color-bg-warning;
+    background-color: $color-bg-warning;
     border: 1px solid $color-text-warning;
   }
   &.success {
     color: white;
-    background: $color-bg-success;
+    background-color: $color-bg-success;
     border: 1px solid $color-text-success;
+  }
+  &.info {
+    color: white;
+    background-color: $color-bg-info;
+    border: 1px solid $color-text-info;
   }
 }

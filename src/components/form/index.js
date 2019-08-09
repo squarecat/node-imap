@@ -228,6 +228,7 @@ export const FormNotification = ({
   error,
   warning,
   success,
+  info,
   ...visProps
 }) => (
   <div
@@ -235,6 +236,7 @@ export const FormNotification = ({
       error,
       warning,
       success,
+      info,
       fluid: visProps.fluid
     })}
   >

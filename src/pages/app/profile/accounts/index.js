@@ -1,7 +1,8 @@
 import './accounts.module.scss';
 
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 
+import AccountProviderButtons from '../../../../components/connect-account/providers';
 import { AlertContext } from '../../../../providers/alert-provider';
 import ConnectButton from '../../../../components/connect-account/btn';
 import ConnectedAccountList from '../../../../components/connect-account/list';
@@ -104,8 +105,8 @@ const Accounts = () => {
           You haven't connected any accounts yet. Connect your{' '}
           <TextImportant>Google</TextImportant>,{' '}
           <TextImportant>Microsoft</TextImportant> or{' '}
-          <TextImportant>IMAP</TextImportant> accounts below to start scanning
-          your inboxes for subscription spam.
+          <TextImportant>Other Mailbox</TextImportant> accounts below to start
+          scanning your inboxes for subscription spam.
         </p>
       );
     } else {
@@ -138,7 +139,13 @@ const Accounts = () => {
 
       <div styleName="accounts-section connect">
         <h2>Connect more accounts</h2>
-        <ConnectButton
+        <AccountProviderButtons
+          onSuccess={onConnectSuccess}
+          onError={err => onConnectError(err)}
+          hideImap={!features.includes('IMAP')}
+        />
+
+        {/* <ConnectButton
           provider="google"
           onSuccess={() => onConnectSuccess()}
           onError={err => onConnectError(err)}
@@ -154,7 +161,7 @@ const Accounts = () => {
             onSuccess={() => onConnectSuccess()}
             onError={err => onConnectError(err)}
           />
-        ) : null}
+        ) : null} */}
       </div>
     </>
   );
