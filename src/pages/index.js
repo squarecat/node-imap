@@ -709,9 +709,9 @@ function Item({
 
   const onClickTweet = useCallback(
     () => {
-      const text = `I'm loving the one-click unsubscribe button on ${
+      const text = `I'm loving the one-click unsubscribe button on @LeaveMeAloneApp... I've clicked it ${count} times! 🙅‍ ${
         window.location.host
-      }... I've clicked it ${count} times! 🙅‍`;
+      }`;
       openTweetIntent(text);
     },
     [count]
