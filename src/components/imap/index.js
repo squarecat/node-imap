@@ -71,12 +71,12 @@ export default ({ actions, onConfirm }) => {
       try {
         dispatch({ type: 'set-loading', data: true });
         dispatch({ type: 'set-error', data: false });
-        if (state.imap.host.startsWith('http')) {
-          return dispatch({
-            type: 'set-error',
-            data: 'HTTP(S) protocol is not required'
-          });
-        }
+        // if (state.imap.host.startsWith('http')) {
+        // return dispatch({
+        //   type: 'set-error',
+        //   data: 'HTTP(S) protocol is not required'
+        // });
+        // }
         await saveImapConnection(state.imap);
         onConfirm();
       } catch (err) {

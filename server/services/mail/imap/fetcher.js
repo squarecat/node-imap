@@ -114,7 +114,11 @@ async function* readFromBox(client, mailbox, from) {
     console.log(`imap-fetcher: searching mail from ${attribute || path}`);
     const supportsSort = client.serverSupports('SORT');
     let uuids;
-    const query = ['ALL', ['SINCE', from], ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+    let searchParams = ['BODY', 'unsubscribe'];
+    if (client._config.host !== 'imap.mail.me.com') {
+      searchParams = ['OR', searchParams, ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+    }
+    const query = ['ALL', ['SINCE', from], searchParams];
     if (supportsSort) {
       uuids = await sort(['-DATE'], query);
     } else {
