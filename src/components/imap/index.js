@@ -130,7 +130,7 @@ export default ({ actions, onConfirm }) => {
             </p>
             <p>
               This is because we want to keep your IMAP credentials as secure as
-              possible. The best way to do this is by encrypting your
+              possible and the best way to do this is by encrypting your
               information using the password you log in with.
             </p>
             <p>
