@@ -60,6 +60,7 @@ export default ({ actions, onConfirm }) => {
       host: '',
       port: 993,
       password: '',
+      ssl: true,
       tls: true
     },
     loading: false
@@ -194,9 +195,7 @@ export default ({ actions, onConfirm }) => {
           </FormGroup>
           <FormGroup unpadded>
             <FormLabel htmlFor="reminder">Host:</FormLabel>
-            <InlineFormInput
-              style={{ paddingLeft: '80px' }}
-              childrenPosition="left"
+            <FormInput
               name="imap-host"
               smaller
               disabled={state.loading}
@@ -212,28 +211,7 @@ export default ({ actions, onConfirm }) => {
                   });
                 }
               }}
-            >
-              <>
-                <FormCheckbox
-                  name="imap-ssl"
-                  disabled={state.loading}
-                  label="SSL"
-                  checked={imap.ssl}
-                  onChange={e => {
-                    const ssl = e.currentTarget.checked;
-                    if (ssl !== imap.ssl) {
-                      dispatch({
-                        type: 'set-imap',
-                        data: { ssl }
-                      });
-                    }
-                  }}
-                />
-                <span styleName="imap-label-text">
-                  {imap.ssl ? 'https://' : 'http://'}
-                </span>
-              </>
-            </InlineFormInput>
+            />
             <p>Your mail client should tell you what this is.</p>
           </FormGroup>
           <FormGroup unpadded>
@@ -273,6 +251,23 @@ export default ({ actions, onConfirm }) => {
               }}
             />
           </FormGroup>
+          <FormGroup unpadded>
+            <FormCheckbox
+              name="imap-ssl"
+              disabled={state.loading}
+              label="Use SSL"
+              checked={imap.ssl}
+              onChange={e => {
+                const ssl = e.currentTarget.checked;
+                if (ssl !== imap.ssl) {
+                  dispatch({
+                    type: 'set-imap',
+                    data: { ssl }
+                  });
+                }
+              }}
+            />
+          </FormGroup>
           {notification}
         </>
       );
@@ -304,12 +299,10 @@ function isUnsupportedHost(host) {
 }
 
 async function saveImapConnection(imapDetails) {
-  const { host, ssl } = imapDetails;
-  let hostWithProtocol;
-  if (ssl) {
+  const { host, ssl, tls } = imapDetails;
+  let hostWithProtocol = host;
+  if (ssl & !tls) {
     hostWithProtocol = `https://${host}`;
-  } else {
-    hostWithProtocol = `http://${host}`;
   }
   try {
     return request('/api/me', {
