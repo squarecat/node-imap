@@ -104,7 +104,7 @@
   "license": "MIT",
   "scripts": {
     "build": "yarn run build:client && yarn run build:server",
-    "build:client": "gatsby build",
+    "build:client": "rm -r ./.cache && gatsby build",
     "build:server": "babel -d ./build ./server --source-maps && cp server/utils/countries.json build/utils/countries.json && cp server/services/unsubscriber/browser/keywords.json build/services/unsubscriber/browser/keywords.json",
     "develop": "gatsby develop",
     "start": "node index",
