@@ -171,19 +171,19 @@ export default () => {
         </p>
         <p>
           You can read more about this on{' '}
-          <a href="https://lifehacker.com/unroll-me-the-email-unsubscription-service-has-been-c-1794593445">
+          <a href="https://www.nytimes.com/2017/04/24/technology/personal-data-firm-slice-unroll-me-backlash-uber.html">
             The New York Times
           </a>
           ,{' '}
-          <a href="https://techcrunch.com/2018/05/05/unroll-me-to-close-to-eu-users-saying-it-cant-comply-with-gdpr/">
+          <a href="https://lifehacker.com/unroll-me-the-email-unsubscription-service-has-been-c-1794593445">
             Life Hacker
           </a>
           ,{' '}
-          <a href="https://www.theguardian.com/technology/2017/apr/24/unrollme-mail-unsubscription-service-heartbroken-sells-user-inbox-data-slice">
+          <a href="https://www.wired.com/2017/04/stop-services-like-unroll-snooping-gmail">
             Wired
           </a>
           ,{' '}
-          <a href="https://techcrunch.com/2018/05/05/unroll-me-to-close-to-eu-users-saying-it-cant-comply-with-gdpr/">
+          <a href="https://techcrunch.com/2018/05/05/unroll-me-to-close-to-eu-users-saying-it-cant-comply-with-gdpr">
             TechCrunch
           </a>
           ,{' '}
