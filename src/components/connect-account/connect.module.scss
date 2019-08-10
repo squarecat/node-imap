@@ -104,5 +104,6 @@
 
   &.column {
     grid-template-columns: 1fr;
+    max-width: 240px;
   }
 }
