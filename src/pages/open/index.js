@@ -296,57 +296,6 @@ function mailtoLinkPieChart(ctx, stats) {
   });
 }
 
-function providerBarChart(ctx, stats) {
-  if (!stats) return null;
-
-  const data = {
-    google: stats.googleUsers,
-    outlook: stats.outlookUsers
-  };
-
-  new Chart(ctx, {
-    data: {
-      datasets: [
-        {
-          backgroundColor: [lineColorLight, lineColor2Light],
-          borderWidth: 2,
-          borderColor: [lineColor, lineColor2],
-          data: [data.google, data.outlook]
-        }
-      ],
-      labels: ['Google', 'Outlook']
-    },
-    type: 'bar',
-    options: {
-      legend: {
-        display: false
-      },
-      scales: {
-        xAxes: [
-          {
-            barPercentage: 0.4
-          }
-        ],
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-              precision: 0,
-              callback: function(value) {
-                if (value % 1 === 0) {
-                  return value;
-                }
-              }
-            }
-          }
-        ]
-      },
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  });
-}
-
 function mrrChart(ctx, stats) {
   if (!stats) return null;
   const { monthly = {} } = stats;
@@ -432,6 +381,7 @@ export default function OpenPage() {
 
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
+  const dailyCreditsRef = useRef(null);
   const monthlyProfitRef = useRef(null);
   const mrrRef = useRef(null);
   const emailsRef = useRef(null);
@@ -470,9 +420,6 @@ export default function OpenPage() {
       if (usersRef.current) {
         usersChart(usersRef.current.getContext('2d'), stats);
       }
-      // if (providersRef.current) {
-      //   providerBarChart(providersRef.current.getContext('2d'), stats);
-      // }
     },
     [stats, monthly]
   );
@@ -528,7 +475,7 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Revenue Growth Rate (MoM)</span>
+                  <span styleName="label">Revenue growth rate (MoM)</span>
                   <span
                     styleName={`value ${
                       totalRevenueStats.growthRate > 0 ? 'positive' : 'negative'
@@ -545,7 +492,7 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Total Revenue</span>
+                  <span styleName="label">Total revenue</span>
                   <span styleName="value">
                     {currency(
                       calculateWithRefunds(stats, 'totalRevenue') +
@@ -559,7 +506,7 @@ export default function OpenPage() {
                   <span styleName="value">{format(salesStats.lastMonth)}</span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Sales Growth Rate (MoM)</span>
+                  <span styleName="label">Sales growth rate (MoM)</span>
                   <span
                     styleName={`value ${
                       salesStats.growthRate > 0 ? 'positive' : 'negative'
@@ -579,7 +526,6 @@ export default function OpenPage() {
                     {format(calculateWithRefunds(stats, 'totalSales'))}
                   </span>
                 </div>
-
                 <div styleName="big-stat box">
                   <span styleName="label">Revenue per user</span>
                   <span styleName="value">
@@ -589,7 +535,7 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Total packages purchased</span>
+                  <span styleName="label">Total credit packages purchased</span>
                   <span styleName="value">
                     {format(stats.packagesPurchased)}
                   </span>
@@ -601,7 +547,12 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Total credits rewarded</span>
+                  <span styleName="label">
+                    Total free credits rewarded{' '}
+                    <span role="img" aria-label="Sparkle">
+                      ✨
+                    </span>
+                  </span>
                   <span styleName="value">{format(stats.creditsRewarded)}</span>
                 </div>
                 {/* <div styleName="big-stat box">
@@ -627,11 +578,11 @@ export default function OpenPage() {
 
               <div styleName="boxes">
                 <div styleName="big-stat box">
-                  <span styleName="label">Last month's MRR</span>
+                  <span styleName="label">MRR at end of last month</span>
                   <span styleName="value">{currency(mrrStats.lastMonth)}</span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">MRR Growth Rate (MoM)</span>
+                  <span styleName="label">MRR growth rate (MoM)</span>
                   <span
                     styleName={`value ${
                       mrrStats.growthRate > 0 ? 'positive' : 'negative'
@@ -646,7 +597,7 @@ export default function OpenPage() {
                   <span styleName="value">{currency(mrrStats.thisMonth)}</span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Total Subscription Revenue</span>
+                  <span styleName="label">Total subscription revenue</span>
                   <span styleName="value">
                     {currency(stats.totalSubscriptionRevenue)}
                   </span>
@@ -679,7 +630,7 @@ export default function OpenPage() {
                   <span styleName="value">{format(usersStats.lastMonth)}</span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">New Signups Growth Rate (MoM)</span>
+                  <span styleName="label">New Signups growth rate (MoM)</span>
                   <span
                     styleName={`value ${
                       usersStats.growthRate > 0 ? 'positive' : 'negative'
@@ -724,7 +675,7 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Other accounts (IMAP) connected</span>
+                  <span styleName="label">Other accounts connected (IMAP)</span>
                   <span styleName="value">
                     {format(stats.connectedAccountImap)}
                   </span>
@@ -740,12 +691,12 @@ export default function OpenPage() {
             </div>
             <div styleName="subscriptions">
               <div styleName="chart box">
-                <h2>Daily Spam Email Unsubscriptions</h2>
+                <h2>Daily Emails Unsubscribed From</h2>
                 <canvas ref={subscriptionRef} />
               </div>
               <div styleName="boxes">
                 <div styleName="big-stat box">
-                  <span styleName="label">Total Spam Emails</span>
+                  <span styleName="label">Total subscription emails seen</span>
                   <span styleName="value">
                     {format(
                       stats.unsubscribableEmails -
@@ -754,21 +705,26 @@ export default function OpenPage() {
                   </span>
                 </div>
                 <div styleName="big-stat box">
-                  <span styleName="label">Total Unsubscriptions</span>
+                  <span styleName="label">Total emails unsubscribed from</span>
                   <span styleName="value">{format(stats.unsubscriptions)}</span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total emails scanned</span>
+                  <span styleName="value">{format(stats.emails)}</span>
                 </div>
               </div>
               <div styleName="chart box">
                 <h2>
-                  Unsubscribes - <span style={{ color: lineColor }}>Link</span>{' '}
-                  vs <span style={{ color: lineColor2 }}>Mailto</span>
+                  Unsubscribe Strategy -{' '}
+                  <span style={{ color: lineColor }}>Link</span> vs{' '}
+                  <span style={{ color: lineColor2 }}>Mailto</span>
                 </h2>
                 <canvas ref={mailtoLinkRef} />
               </div>
             </div>
             <div styleName="scans">
               <div styleName="chart box">
-                <h2>Emails Scanned</h2>
+                <h2>Daily Emails Scanned</h2>
                 <canvas ref={emailsRef} />
               </div>
               <div styleName="boxes">
@@ -776,10 +732,6 @@ export default function OpenPage() {
                   <span styleName="label">Total number of scans</span>
                   <span styleName="value">{format(stats.scans)}</span>
                 </div> */}
-                <div styleName="big-stat box">
-                  <span styleName="label">Total emails scanned</span>
-                  <span styleName="value">{format(stats.emails)}</span>
-                </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Total reminders requested</span>
                   <span styleName="value">
@@ -794,28 +746,18 @@ export default function OpenPage() {
             </div>
 
             <div styleName="referrals">
-              <h2>v1.0 Referrals</h2>
-              <div styleName="boxes">
-                <div styleName="big-stat box">
-                  <span styleName="label">Total referral signups</span>
-                  <span styleName="value">{format(stats.referralSignup)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Referral conversion rate</span>
-                  <span styleName="value">
-                    {percent(stats.referralPaidScan / stats.referralSignup)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div styleName="referrals">
-              <h2>v2.0 Referrals</h2>
+              <h2>Referrals</h2>
               <div styleName="boxes">
                 <div styleName="big-stat box">
                   <span styleName="label">Total referral signups</span>
                   <span styleName="value">
                     {format(stats.referralSignupV2)}
+                  </span>
+                </div>
+                <div styleName="big-stat box">
+                  <span styleName="label">Total referral purchases</span>
+                  <span styleName="value">
+                    {format(stats.referralPurchaseV2)}
                   </span>
                 </div>
                 <div styleName="big-stat box">
@@ -1137,6 +1079,8 @@ function percent(num) {
 // }
 
 function calculateWithRefunds(stats, stat) {
+  if (!stats) return null;
+
   if (stat === 'totalRevenue')
     return (
       stats.totalRevenue +
