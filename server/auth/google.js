@@ -17,10 +17,6 @@ import refresh from 'passport-oauth2-refresh';
 const { google } = auth;
 logger.info(`google-auth: redirecting to ${google.loginRedirect}`);
 
-// Prompt the user to select an account.
-// https://developers.google.com/identity/protocols/OAuth2WebServer
-const PROMPT_TYPE = 'select_account';
-
 export const Strategy = new GoogleStrategy(
   {
     clientID: google.clientId,
@@ -160,6 +156,8 @@ export function refreshAccessToken(
 }
 
 export default app => {
+  // Prompt the user to select an account.
+  // https://developers.google.com/identity/protocols/OAuth2WebServer
   app.get(
     '/auth/google',
     passport.authenticate('google-login', {
