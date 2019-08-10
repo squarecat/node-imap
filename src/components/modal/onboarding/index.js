@@ -7,8 +7,13 @@ import ConnectAccounts from './connect-accounts';
 import { ModalContext } from '../../../providers/modal-provider';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
+import aolLogo from '../../../assets/providers/imap/aol-logo.png';
 import cx from 'classnames';
+import fastmailLogo from '../../../assets/providers/imap/fastmail-logo-small.jpg';
+import googleLogo from '../../../assets/providers/google-logo.png';
+import icloudLogo from '../../../assets/providers/imap/icloud-logo-small.jpg';
 import logoV2 from '../../../assets/logo-v2.png';
+import microsoftLogo from '../../../assets/providers/microsoft-logo.png';
 import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import styles from './onboarding.module.scss';
@@ -16,6 +21,7 @@ import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
+import yahooLogo from '../../../assets/providers/imap/yahoo-logo.png';
 
 export default () => {
   const { context: modalContext } = useContext(ModalContext);
@@ -107,6 +113,12 @@ export default () => {
       <img styleName="preload" src={unsubscribeSpamImage} />
       <img styleName="preload" src={unsubscribeGif} />
       <img styleName="preload" src={logoV2} />
+      <img styleName="preload" src={icloudLogo} />
+      <img styleName="preload" src={fastmailLogo} />
+      <img styleName="preload" src={aolLogo} />
+      <img styleName="preload" src={yahooLogo} />
+      <img styleName="preload" src={googleLogo} />
+      <img styleName="preload" src={microsoftLogo} />
     </div>
   );
 };
