@@ -1,12 +1,12 @@
 import '../login/login.module.scss';
 
+import { AtSignIcon, KeyIcon } from '../../components/icons';
 import React, { createContext, useMemo, useReducer, useRef } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
 import AuthButton from './auth-btn';
 import EmailForm from './email';
 import { FormNotification } from '../../components/form';
-import { KeyIcon } from '../../components/icons';
 import Layout from '../../layouts/layout';
 import PasswordForm from './password';
 import TwoFactorForm from './2fa';
@@ -93,6 +93,8 @@ function loginReducer(state, action) {
       return { ...state, isActive: action.data };
     case 'set-existing-provider':
       return { ...state, existingProvider: action.data };
+    case 'set-provider-intent':
+      return { ...state, providerIntent: action.data };
     default:
       return state;
   }
@@ -129,6 +131,11 @@ const LoginPage = React.memo(
           height = loginNewUserHeight;
         } else if (state.step === 'enter-password') {
           height = loginWithPasswordHeight;
+        } else if (
+          state.step === 'enter-email' &&
+          state.providerIntent === 'other'
+        ) {
+          height = loginEmailCardHeight + 40;
         } else if (state.step === 'enter-email') {
           height = loginEmailCardHeight;
         } else if (state.step === 'select-existing') {
@@ -193,10 +200,11 @@ const LoginPage = React.memo(
           selectContent = (
             <>
               <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
-              <p>
-                Google and Microsoft authorize Leave Me Alone without a
-                password.
-              </p>
+              {register ? (
+                <p>Start unsubscribing now!</p>
+              ) : (
+                <p>Great to see you again!</p>
+              )}
               <div styleName="buttons">
                 <AuthButtons dispatch={dispatch} action={action} />
               </div>
@@ -443,7 +451,7 @@ const LoginPage = React.memo(
     );
 
     return (
-      <Layout page={action}>
+      <Layout title={action} slug={register ? '/signup' : '/login'}>
         <LoginContext.Provider value={value}>
           <div
             ref={activeRef}
@@ -485,41 +493,56 @@ function getError(error) {
 const AuthButtons = React.memo(({ dispatch, action }) => {
   const btns = useMemo(
     () => {
-      return (
-        [
+      let buttons = [
+        {
+          type: 'password',
+          el: (
+            <a
+              key="pw"
+              onClick={() => {
+                dispatch({ type: 'set-provider-intent', data: 'password' });
+                dispatch({ type: 'set-step', data: 'enter-email' });
+              }}
+              styleName="login-me-in-dammit"
+            >
+              <KeyIcon />
+              <span>{`${action} with Password`}</span>
+            </a>
+          )
+        },
+        {
+          type: 'google',
+          el: <AuthButton action={action} provider="google" />
+        },
+        {
+          type: 'outlook',
+          el: <AuthButton action={action} provider="outlook" />
+        }
+      ];
+
+      if (action === 'Sign up') {
+        buttons = [
+          ...buttons,
           {
-            type: 'password',
+            type: 'other',
             el: (
               <a
-                key="pw"
-                onClick={() =>
-                  dispatch({ type: 'set-step', data: 'enter-email' })
-                }
-                onMouseEnter={() =>
-                  dispatch({ type: 'set-active', data: true })
-                }
-                onMouseLeave={() =>
-                  dispatch({ type: 'set-active', data: false })
-                }
+                key="other"
+                onClick={() => {
+                  dispatch({ type: 'set-provider-intent', data: 'other' });
+                  dispatch({ type: 'set-step', data: 'enter-email' });
+                }}
                 styleName="login-me-in-dammit"
               >
-                <KeyIcon />
-                <span>{`${action} with Password`}</span>
+                <AtSignIcon />
+                <span>{`Other email provider...`}</span>
               </a>
             )
-          },
-          {
-            type: 'google',
-            el: <AuthButton action={action} provider="google" />
-          },
-          {
-            type: 'outlook',
-            el: <AuthButton action={action} provider="outlook" />
           }
-        ]
-          // .sort(a => (a.type === previousProvider ? -1 : 1))
-          .map(b => <span key={b.type}>{b.el}</span>)
-      );
+        ];
+      }
+
+      return buttons.map(b => <span key={b.type}>{b.el}</span>);
     },
     [action, dispatch]
   );

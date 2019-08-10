@@ -84,7 +84,7 @@ const NEWS = [
 ];
 
 export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
-export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other mailboxes`;
+export const IMAP_PROVIDERS = `Fastmail, Yahoo Mail, iCloud, AOL, and all other mailboxes`;
 
 const IndexPage = () => {
   const trashPileRef = useRef(null);
@@ -296,9 +296,9 @@ const IndexPage = () => {
                     </span>
                     <span
                       className="provider-logo imap brighter"
-                      title="Yahoo! Mail"
+                      title="Yahoo Mail"
                     >
-                      <img src={yahooImg} alt="Yahoo! Mail logo" />
+                      <img src={yahooImg} alt="Yahoo Mail logo" />
                     </span>
                   </div>
                 </TextLink>

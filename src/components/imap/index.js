@@ -5,63 +5,70 @@ import {
   FormGroup,
   FormInput,
   FormLabel,
-  FormNotification,
-  InlineFormInput
+  FormNotification
 } from '../form';
 import React, { useCallback, useMemo, useReducer } from 'react';
 import { TextImportant, TextLink } from '../text';
 
 import PasswordInput from '../form/password';
 import { getConnectError } from '../../utils/errors';
+import imapReducer from './reducer';
 import { openChat } from '../../utils/chat';
 import request from '../../utils/request';
 import useUser from '../../utils/hooks/use-user';
 
-const imapReducer = (state, action) => {
-  const { type, data } = action;
-  if (type === 'reset') {
-    return {
-      ...state,
-      imap: data,
-      error: null,
-      loading: false
-    };
+export const CONFIG = {
+  fastmail: {
+    label: 'Fastmail',
+    imap: {
+      host: 'imap.fastmail.com',
+      port: 993
+    },
+    passwordLink: 'https://www.fastmail.com/help/clients/apppassword.html'
+  },
+  icloud: {
+    label: 'iCloud',
+    imap: {
+      host: 'imap.mail.me.com',
+      port: 993
+    },
+    passwordLink: 'https://support.apple.com/en-us/HT204397'
+  },
+  yahoo: {
+    label: 'Yahoo',
+    imap: {
+      host: 'imap.mail.yahoo.com',
+      port: 993
+    },
+    passwordLink: 'https://help.yahoo.com/kb/SLN15241.html'
+  },
+  aol: {
+    label: 'AOL',
+    imap: {
+      host: 'imap.aol.com',
+      port: 993
+    },
+    passwordLink: 'https://help.aol.com/articles/Create-and-manage-app-password'
   }
-  if (type === 'set-imap') {
-    return {
-      ...state,
-      imap: {
-        ...state.imap,
-        ...data
-      }
-    };
-  }
-  if (type === 'set-loading') {
-    return {
-      ...state,
-      loading: data
-    };
-  }
-  if (type === 'set-error') {
-    return {
-      ...state,
-      error: data
-    };
-  }
-  return state;
 };
 
-export default ({ actions, onConfirm }) => {
+export default ({ actions, onConfirm, providerType }) => {
   const [isImapEnabled] = useUser(u => u.loginProvider === 'password');
+
+  const initialState = providerType
+    ? CONFIG[providerType].imap
+    : {
+        host: '',
+        port: 993
+      };
 
   const [state, dispatch] = useReducer(imapReducer, {
     imap: {
       username: '',
-      host: '',
-      port: 993,
       password: '',
+      tls: true,
       ssl: true,
-      tls: true
+      ...initialState
     },
     loading: false
   });
@@ -71,12 +78,12 @@ export default ({ actions, onConfirm }) => {
       try {
         dispatch({ type: 'set-loading', data: true });
         dispatch({ type: 'set-error', data: false });
-        if (state.imap.host.startsWith('http')) {
-          return dispatch({
-            type: 'set-error',
-            data: 'HTTP(S) protocol is not required'
-          });
-        }
+        // if (state.imap.host.startsWith('http')) {
+        // return dispatch({
+        //   type: 'set-error',
+        //   data: 'HTTP(S) protocol is not required'
+        // });
+        // }
         await saveImapConnection(state.imap);
         onConfirm();
       } catch (err) {
@@ -116,6 +123,24 @@ export default ({ actions, onConfirm }) => {
     [state]
   );
 
+  const lead = useMemo(
+    () => {
+      if (providerType) {
+        return getProviderLead(providerType);
+      }
+      return (
+        <p>
+          The Internet Message Access Protocol (IMAP) is a mail protocol used
+          for accessing email on a remote web server from a local client. This
+          should be supported by all modern email clients and web servers, but{' '}
+          <TextImportant>may need to be enabled first</TextImportant> from
+          within your mail client.
+        </p>
+      );
+    },
+    [providerType]
+  );
+
   const content = useMemo(
     () => {
       if (!isImapEnabled) {
@@ -130,7 +155,7 @@ export default ({ actions, onConfirm }) => {
             </p>
             <p>
               This is because we want to keep your IMAP credentials as secure as
-              possible. The best way to do this is by encrypting your
+              possible and the best way to do this is by encrypting your
               information using the password you log in with.
             </p>
             <p>
@@ -142,17 +167,16 @@ export default ({ actions, onConfirm }) => {
       }
 
       const { imap } = state;
+
       return (
         <>
-          <p>
-            The Internet Message Access Protocol (IMAP) is a mail protocol used
-            for accessing email on a remote web server from a local client. This
-            should be supported by all modern email clients and web servers, but{' '}
-            <TextImportant>may need to be enabled first</TextImportant> from
-            within your mail client.
-          </p>
+          {lead}
           <FormGroup unpadded>
-            <FormLabel htmlFor="reminder">Username:</FormLabel>
+            <FormLabel htmlFor="imap-username">
+              {providerType
+                ? `${CONFIG[providerType].label} email address:`
+                : 'Username:'}
+            </FormLabel>
             <FormInput
               name="imap-username"
               smaller
@@ -170,10 +194,14 @@ export default ({ actions, onConfirm }) => {
                 }
               }}
             />
-            <p>Usually your email address.</p>
+            {providerType ? null : <p>Usually your email address.</p>}
           </FormGroup>
           <FormGroup unpadded>
-            <FormLabel htmlFor="reminder">Password:</FormLabel>
+            <FormLabel htmlFor="imap-password">
+              {providerType
+                ? `${CONFIG[providerType].label} password:`
+                : 'Password:'}
+            </FormLabel>
             <PasswordInput
               name="imap-password"
               doValidation={false}
@@ -191,49 +219,55 @@ export default ({ actions, onConfirm }) => {
                 }
               }}
             />
-            <p>Usually the password you use to sign into the mail client.</p>
+            {providerType ? null : (
+              <p>Usually the password you use to sign into the mail client.</p>
+            )}
           </FormGroup>
-          <FormGroup unpadded>
-            <FormLabel htmlFor="reminder">Host:</FormLabel>
-            <FormInput
-              name="imap-host"
-              smaller
-              disabled={state.loading}
-              required
-              placeholder="imap.example.com"
-              value={imap.host}
-              onChange={e => {
-                const host = e.currentTarget.value;
-                if (host !== imap.host) {
-                  dispatch({
-                    type: 'set-imap',
-                    data: { host }
-                  });
-                }
-              }}
-            />
-            <p>Your mail client should tell you what this is.</p>
-          </FormGroup>
-          <FormGroup unpadded>
-            <FormLabel htmlFor="reminder">Port:</FormLabel>
-            <FormInput
-              name="imap-host"
-              smaller
-              disabled={state.loading}
-              required
-              value={imap.port}
-              onChange={e => {
-                const port = e.currentTarget.value;
-                if (port !== imap.port) {
-                  dispatch({
-                    type: 'set-imap',
-                    data: { port }
-                  });
-                }
-              }}
-            />
-            <p>Usually either 993 or 143</p>
-          </FormGroup>
+          {providerType ? null : (
+            <>
+              <FormGroup unpadded>
+                <FormLabel htmlFor="imap-host">Host:</FormLabel>
+                <FormInput
+                  name="imap-host"
+                  smaller
+                  disabled={state.loading}
+                  required
+                  placeholder="imap.example.com"
+                  value={imap.host}
+                  onChange={e => {
+                    const host = e.currentTarget.value;
+                    if (host !== imap.host) {
+                      dispatch({
+                        type: 'set-imap',
+                        data: { host }
+                      });
+                    }
+                  }}
+                />
+                <p>Your mail client should tell you what this is.</p>
+              </FormGroup>
+              <FormGroup unpadded>
+                <FormLabel htmlFor="imap-port">Port:</FormLabel>
+                <FormInput
+                  name="imap-port"
+                  smaller
+                  disabled={state.loading}
+                  required
+                  value={imap.port}
+                  onChange={e => {
+                    const port = e.currentTarget.value;
+                    if (port !== imap.port) {
+                      dispatch({
+                        type: 'set-imap',
+                        data: { port }
+                      });
+                    }
+                  }}
+                />
+                <p>Usually either 993 or 143</p>
+              </FormGroup>
+            </>
+          )}
           <FormGroup unpadded>
             <FormCheckbox
               name="imap-tls"
@@ -272,7 +306,7 @@ export default ({ actions, onConfirm }) => {
         </>
       );
     },
-    [isImapEnabled, notification, state]
+    [isImapEnabled, lead, notification, providerType, state]
   );
   return (
     <form
@@ -296,6 +330,68 @@ function isWeirdHost(host) {
 
 function isUnsupportedHost(host) {
   return ['imap.gmail.com'].includes(host);
+}
+
+function getProviderLead(type) {
+  if (type === 'fastmail') {
+    return (
+      <FormGroup>
+        <FormNotification info>
+          You need to get an{' '}
+          <TextLink inverted href={CONFIG[type].passwordLink} target="_">
+            app password
+          </TextLink>{' '}
+          for Leave Me Alone to access your account. You cannot use your normal
+          password.
+        </FormNotification>
+      </FormGroup>
+    );
+  }
+
+  if (type === 'icloud') {
+    return (
+      <FormGroup>
+        <FormNotification info>
+          If you are using two-factor authentication for your Apple ID or
+          getting "check username and password" error you need to generate an{' '}
+          <TextLink inverted href={CONFIG[type].passwordLink} target="_">
+            app-specific password
+          </TextLink>{' '}
+          to be used for Leave Me Alone.
+        </FormNotification>
+      </FormGroup>
+    );
+  }
+
+  if (type === 'yahoo') {
+    return (
+      <FormGroup>
+        <FormNotification info>
+          If you've activated two-step verification or Account Key for your
+          Yahoo account, you'll need to generate and use an{' '}
+          <TextLink inverted href={CONFIG[type].passwordLink} target="_">
+            app password
+          </TextLink>{' '}
+          to access Yahoo Mail from Leave Me Alone.
+        </FormNotification>
+      </FormGroup>
+    );
+  }
+
+  if (type === 'aol') {
+    return (
+      <FormGroup>
+        <FormNotification info>
+          If you've activated two-step verification for your AOL account, you'll
+          need to generate and use an{' '}
+          <TextLink inverted href={CONFIG[type].passwordLink} target="_">
+            app password
+          </TextLink>{' '}
+          to access AOL Mail from Leave Me Alone.
+        </FormNotification>
+      </FormGroup>
+    );
+  }
 }
 
 async function saveImapConnection(imapDetails) {

@@ -44,6 +44,14 @@ export default ({ nextText = 'Next' }) => {
 
   return (
     <form id="email-form" styleName="sign-up-form" onSubmit={submit}>
+      {state.providerIntent === 'other' ? (
+        <span styleName="other-signup-notice">
+          <FormNotification info>
+            To connect other mailboxes that work with IMAP you need to first
+            sign up using password.
+          </FormNotification>
+        </span>
+      ) : null}
       <FormGroup fluid>
         <FormLabel htmlFor="username">Enter your email address...</FormLabel>
         <FormInput

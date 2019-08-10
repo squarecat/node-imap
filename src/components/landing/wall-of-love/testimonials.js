@@ -3,6 +3,8 @@ import './wall-of-love.module.scss';
 import React from 'react';
 import {  TextHighlight } from '../../text';
 
+const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
+
 export default [
   {
     name: 'Brendan Weinstein',
@@ -19,7 +21,7 @@ export default [
       </span>
     ),
     twitter: `BMWeinstein7`,
-    avatarPath: `image-1`
+    avatarPath: `image-1.jpg`
   },
 
   {
@@ -36,7 +38,7 @@ export default [
       </span>
     ),
     twitter: `pradipcloud`,
-    avatarPath: `image-2`
+    avatarPath: `image-2.jpg`
   },
 
   {
@@ -49,8 +51,7 @@ export default [
       </span>
     ),
     twitter: `kerrtrvs`,
-    avatarPath: `image-3`,
-    isShort: true
+    avatarPath: `image-3.jpg`
   },
   {
     name: 'Josh Manders',
@@ -67,7 +68,13 @@ export default [
       </span>
     ),
     twitter: `joshmanders`,
-    avatarPath: `image-4`
+    avatarPath: `image-4.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/appmetrics.jpg`}
+      />
+    )
   },
 
   {
@@ -84,7 +91,16 @@ export default [
       </span>
     ),
     twitter: `matteing`,
-    avatarPath: `image-5`
+    avatarPath: `image-5.jpg`,
+    company: (
+      <>
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/makerlog.jpg`}
+        />
+        <span styleName="company-name">Makerlog</span>
+      </>
+    )
   },
 
   {
@@ -101,7 +117,16 @@ export default [
       </span>
     ),
     twitter: `jesswallaceuk`,
-    avatarPath: `image-6`
+    avatarPath: `image-6.jpg`,
+    company: (
+      <>
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/coderstory.svg`}
+        />
+        <span styleName="company-name">CoderStory</span>
+      </>
+    )
   },
 
   {
@@ -118,7 +143,7 @@ export default [
       </span>
     ),
     twitter: `Ferminrp`,
-    avatarPath: `image-7`
+    avatarPath: `image-7.jpg`
   },
 
   {
@@ -135,7 +160,7 @@ export default [
       </span>
     ),
     twitter: `unindie`,
-    avatarPath: `image-8`
+    avatarPath: `image-8.jpg`
   },
 
   {
@@ -150,7 +175,13 @@ export default [
       </span>
     ),
     twitter: `marie_dm_`,
-    avatarPath: `image-9`
+    avatarPath: `image-9.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/threader.jpg`}
+      />
+    )
   },
 
   {
@@ -163,8 +194,15 @@ export default [
       </span>
     ),
     twitter: `vertis`,
-    avatarPath: `image-10`,
-    isShort: true
+    avatarPath: `image-10.jpg`,
+    company: (
+      <span styleName="invert graphql360">
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/graphql360.png`}
+        />
+      </span>
+    )
   },
 
   {
@@ -181,7 +219,15 @@ export default [
       </span>
     ),
     twitter: `tomhaworth_b13`,
-    avatarPath: `image-11`
+    avatarPath: `image-11.jpg`,
+    company: (
+      <span styleName="invert b13technology">
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/b13technology.webp`}
+        />
+      </span>
+    )
   },
 
   {
@@ -199,7 +245,16 @@ export default [
       </span>
     ),
     twitter: `diannamallen`,
-    avatarPath: `image-12`
+    avatarPath: `image-12.jpg`,
+    company: (
+      <>
+        <img
+          styleName="company-logo"
+          src={`${BASE_IMG_URL}/companies/budget-meal-planner.jpg`}
+        />
+        <span styleName="company-name">Budget Meal Planner</span>
+      </>
+    )
   },
 
   {
@@ -213,7 +268,13 @@ export default [
       </span>
     ),
     twitter: `rbossk757`,
-    avatarPath: `image-13`
+    avatarPath: `image-13.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/roviki-solutions.jpg`}
+      />
+    )
   },
 
   {
@@ -231,7 +292,13 @@ export default [
       </span>
     ),
     twitter: `stephsmithio`,
-    avatarPath: `image-14`
+    avatarPath: `image-14.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/toptal.png`}
+      />
+    )
   },
 
   {
@@ -248,7 +315,7 @@ export default [
       </span>
     ),
     twitter: `jjbuildit`,
-    avatarPath: `image-15`
+    avatarPath: `image-15.jpg`
   },
 
   {
@@ -263,7 +330,7 @@ export default [
       </span>
     ),
     twitter: `bensong`,
-    avatarPath: `image-16`
+    avatarPath: `image-16.jpg`
   },
 
   {
@@ -278,7 +345,13 @@ export default [
       </span>
     ),
     twitter: `dinuka_jay`,
-    avatarPath: `image-17`
+    avatarPath: `image-17.jpg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/tutorseek.png`}
+      />
+    )
   },
 
   {
