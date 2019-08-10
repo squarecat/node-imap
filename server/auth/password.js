@@ -10,6 +10,7 @@ import { AuthError } from '../utils/errors';
 import Joi from 'joi';
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
+import { pushSessionProp } from '../session';
 import { validateBody } from '../middleware/validation';
 
 const createUserParams = {
@@ -68,6 +69,7 @@ export default app => {
         }
 
         req.logIn(user, async err => {
+          pushSessionProp(req, 'authFactors', 'password');
           const twoFactorRequired = await authenticationRequiresTwoFactor(user);
           if (err) return errorHandler(res, err);
           setRememberMeCookie(res, {

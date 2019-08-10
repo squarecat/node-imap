@@ -12,14 +12,11 @@ import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
 import logger from '../utils/logger';
 import passport from 'passport';
+import { pushSessionProp } from '../session';
 import refresh from 'passport-oauth2-refresh';
 
 const { google } = auth;
 logger.info(`google-auth: redirecting to ${google.loginRedirect}`);
-
-// Prompt the user to select an account.
-// https://developers.google.com/identity/protocols/OAuth2WebServer
-const PROMPT_TYPE = 'select_account';
 
 export const Strategy = new GoogleStrategy(
   {
@@ -160,6 +157,8 @@ export function refreshAccessToken(
 }
 
 export default app => {
+  // Prompt the user to select an account.
+  // https://developers.google.com/identity/protocols/OAuth2WebServer
   app.get(
     '/auth/google',
     passport.authenticate('google-login', {
@@ -206,6 +205,7 @@ export default app => {
           logger.error(loginErr);
           return res.redirect(baseErrUrl);
         }
+        pushSessionProp(req, 'authFactors', 'google');
         setRememberMeCookie(res, {
           username: user.email,
           provider: 'google'

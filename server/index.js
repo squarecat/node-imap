@@ -35,6 +35,7 @@ if (process.env.NODE_ENV !== 'development') {
 const app = express();
 const server = http.createServer(app);
 
+app.set('trust proxy', 1);
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.errorHandler());
 app.use(express.json());

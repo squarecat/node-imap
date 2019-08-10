@@ -8,6 +8,7 @@ import initOutlook, {
 } from './outlook';
 import initPassword, { Strategy as PasswordStrategy } from './password';
 
+import { destroySession } from '../session';
 import { get as getSession } from '../dao/sessions';
 import { getUserById } from '../services/user';
 import initTotp from './totp';
@@ -67,9 +68,7 @@ export default app => {
   initTotp(app);
   app.get('/auth/logout', (req, res) => {
     req.logout();
-    // destroy the session triggering
-    // it to be removed from mongo
-    req.session = null;
+    destroySession(req);
     res.redirect('/');
   });
 };

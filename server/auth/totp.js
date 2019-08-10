@@ -1,3 +1,5 @@
+import { pushSessionProp, setSessionProp } from '../session';
+
 import { verifyUserTotpToken } from '../services/user';
 
 export default app => {
@@ -6,8 +8,9 @@ export default app => {
     const { token } = body;
     const verified = await verifyUserTotpToken(user, { token });
     if (verified) {
-      req.session.secondFactor = true;
-      req.session.authFactors = ['totp'];
+      debugger;
+      setSessionProp(req, 'secondFactor', true);
+      pushSessionProp(req, 'authFactors', 'totp');
     }
     return res.send({
       success: verified
