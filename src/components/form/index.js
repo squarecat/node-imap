@@ -65,14 +65,6 @@ export const InlineFormInput = ({
   ...props
 }) => {
   const inline = <span styleName="inline-input-wrapper">{children}</span>;
-  // if (childrenPosition === 'right') {
-  //   return (
-  //     <span styleName="inline-input" data-position={childrenPosition}>
-  //       <FormInput {...props} />
-  //       {inline}
-  //     </span>
-  //   );
-  // }
   return (
     <span styleName="inline-input" data-position={childrenPosition}>
       <FormInput {...props} />
