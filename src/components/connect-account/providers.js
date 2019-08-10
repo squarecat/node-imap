@@ -2,26 +2,21 @@ import './connect.module.scss';
 
 import ConnectButton from './btn';
 import React from 'react';
-import cx from 'classnames';
 
 const defaultProviders = ['google', 'outlook', 'imap'];
 
 export default ({
   onSuccess = () => {},
   onError = () => {},
-  hideImap = false,
+  showImap = false,
   imapOptions
 }) => {
-  const providers = hideImap
-    ? defaultProviders.filter(p => p !== 'imap')
-    : defaultProviders;
-
-  const classes = cx(`provider-btn-grid`, {
-    column: hideImap
-  });
+  console.log('showImap', showImap);
+  let providers = defaultProviders;
+  if (!showImap) providers = defaultProviders.filter(d => d !== 'imap');
 
   return (
-    <div styleName={classes}>
+    <div styleName="provider-btn-grid">
       {providers.map(providerName => (
         <ConnectButton
           key={providerName}

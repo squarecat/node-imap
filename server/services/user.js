@@ -132,9 +132,8 @@ export async function createOrUpdateUserFromGoogle(userData = {}, keys) {
   }
 }
 
-async function validateConnectAccount(user, accountData) {
+async function validateAccount(user, accountData, action = 'login') {
   try {
-    const { email, provider } = accountData;
     // we want to know if there is a user already which exists with this email
     // and login provider or has this account connected to their account
     //
@@ -145,6 +144,8 @@ async function validateConnectAccount(user, accountData) {
     // existing account dinkydani@gmail.com has connected danielle@squarecat.io
     // this user google auths danielle@squarecat.io
     // strat will be 'connected-account' - so this account is already connected
+
+    const { email, provider } = accountData;
     logger.debug(
       `user-service: validating user account connection for ${provider}`
     );
@@ -164,15 +165,12 @@ async function validateConnectAccount(user, accountData) {
       );
     }
 
-    if (loginStrat === 'password') {
+    // if the an existing account is found with password
+    // check if it is this users account and they are connecting an account with the same email
+    if (loginStrat === 'password' && action === 'connect') {
       logger.debug(
-        `user-service: trying to connect an account which is used for password login... checking the user is allowed`
+        `user-service: existing account found with password login strat...`
       );
-      // a user trying to signup would have been prompted for their password
-      // a user trying to connect an account we need to check they are connecting their own account
-
-      // if the user email is the same as the one connecting allow
-      // otherwise it will be caught by existing with a different provider
       if (user && user.email === email) {
         logger.debug(
           `user-service: user connecting this account is the owner of the login account, allowing...`
@@ -181,6 +179,7 @@ async function validateConnectAccount(user, accountData) {
       }
     }
 
+    // otherwise a strategy has been found and it does not match the one being used
     if (loginStrat && loginStrat !== provider) {
       logger.debug(
         `user-service: cannot connect account, already exists with a different provider`
@@ -253,7 +252,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     let user = await getUser(id);
     let organisation;
 
-    await validateConnectAccount(user, { email, provider });
+    await validateAccount(user, { email, provider });
 
     if (!user) {
       logger.debug(`user-service: creating new user`);
@@ -444,10 +443,14 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 
     const user = await getUser(userId);
 
-    await validateConnectAccount(user, {
-      email: accountEmail,
-      provider
-    });
+    await validateAccount(
+      user,
+      {
+        email: accountEmail,
+        provider
+      },
+      'connect'
+    );
 
     const isAccountAlreadyConnected = user.accounts.find(
       acc => acc.id === accountId
@@ -504,10 +507,14 @@ export async function connectImapAccount(userId, masterKey, imapData) {
     const user = await getUser(userId);
     // validate that this account can be connected
     // aka: not already connected or used to sign in by someone else
-    await validateConnectAccount(user, {
-      email: username,
-      provider
-    });
+    await validateAccount(
+      user,
+      {
+        email: username,
+        provider
+      },
+      'connect'
+    );
 
     // check if the user is part of an organisation
     if (user.organisationId) {

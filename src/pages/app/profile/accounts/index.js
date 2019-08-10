@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 
 import AccountProviderButtons from '../../../../components/connect-account/providers';
 import { AlertContext } from '../../../../providers/alert-provider';
-import ConnectButton from '../../../../components/connect-account/btn';
 import ConnectedAccountList from '../../../../components/connect-account/list';
 import { DatabaseContext } from '../../../../providers/db-provider';
 import { ExternalIcon } from '../../../../components/icons';
@@ -142,7 +141,7 @@ const Accounts = () => {
         <AccountProviderButtons
           onSuccess={onConnectSuccess}
           onError={err => onConnectError(err)}
-          hideImap={!features.includes('IMAP')}
+          showImap={features.includes('IMAP')}
         />
       </div>
     </>

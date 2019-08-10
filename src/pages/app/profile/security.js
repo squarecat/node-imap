@@ -250,7 +250,7 @@ function ChangePassword() {
             name="newPassword"
             autoComplete="new-password"
             autoFocus={false}
-            checkIfPwned={true}
+            doValidation={true}
             value={state.password}
             onChange={value =>
               setState({

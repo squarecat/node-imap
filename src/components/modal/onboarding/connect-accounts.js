@@ -11,13 +11,15 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default ({ onboarding = false, enterprise = false }) => {
-  const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(
-    u => ({
-      accounts: u.accounts,
-      email: u.email,
-      loginProvider: u.loginProvider
-    })
-  );
+  const [
+    { accounts, email, loginProvider, features },
+    { load: loadUser }
+  ] = useUser(u => ({
+    accounts: u.accounts,
+    email: u.email,
+    loginProvider: u.loginProvider,
+    features: u.features
+  }));
   const [error, setError] = useState(null);
 
   const onConnectSuccess = async () => {
@@ -80,6 +82,7 @@ export default ({ onboarding = false, enterprise = false }) => {
         <AccountProviderButtons
           onSuccess={onConnectSuccess}
           onError={onConnectError}
+          showImap={features.includes('IMAP')}
           imapOptions={{
             opaque: true
           }}
