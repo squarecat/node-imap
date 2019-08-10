@@ -8,6 +8,8 @@ import Button from '../../btn';
 import CopyButton from '../../copy-to-clipboard';
 import { InlineFormInput } from '../../form';
 import { Link } from 'gatsby';
+import { ModalContext } from '../../../providers/modal-provider';
+import ReminderModal from '../reminder';
 import { TextImportant } from '../../text';
 import { TwitterIcon } from '../../icons';
 import { getSocialContent } from './tweets';
@@ -249,6 +251,15 @@ const rewardLabels = {
       </span>
     )
   },
+  setReminder: {
+    text: 'Set a reminder',
+    description: replaceModal => (
+      <span>
+        <a onClick={() => replaceModal(<ReminderModal />)}>Set a reminder</a> to
+        come back soon
+      </span>
+    )
+  },
   sharedOnTwitter: {
     icon: <TwitterIcon />,
     text: 'Share on Twitter',
@@ -330,28 +341,35 @@ function getRewardList(rewards = [], socialContent, loginProvider) {
         name: r.name
       };
     });
-  return rewardList(rewardItems, socialContent);
+  return <RewardList rewardItems={rewardItems} socialContent={socialContent} />;
 }
 
-function rewardList(rewardItems, socialContent) {
+function RewardList({ rewardItems, socialContent }) {
+  const { replace: replaceModal } = useContext(ModalContext);
   return (
     <ul styleName="earn-credit">
-      {rewardItems.map(({ text, name, reward, awarded, description }) => (
-        <li key={name}>
-          <div styleName="earn-description">
-            <span>{text}</span>
-            <span styleName="earn-description-text">
-              {typeof description === 'function'
-                ? description(socialContent.tweet)
-                : description}
-            </span>
-          </div>
-          <div styleName="earn-status">
-            <span styleName="earn-amount">{`${reward} credits`}</span>
-            <span styleName="earn-checkbox" data-checked={awarded > 0} />
-          </div>
-        </li>
-      ))}
+      {rewardItems.map(({ text, name, reward, awarded, description }) => {
+        let descriptionText;
+        if (name === 'setReminder') {
+          descriptionText = description(replaceModal);
+        } else if (name === 'sharedOnTwitter') {
+          descriptionText = description(socialContent.tweet);
+        } else {
+          descriptionText = description;
+        }
+        return (
+          <li key={name}>
+            <div styleName="earn-description">
+              <span>{text}</span>
+              <span styleName="earn-description-text">{descriptionText}</span>
+            </div>
+            <div styleName="earn-status">
+              <span styleName="earn-amount">{`${reward} credits`}</span>
+              <span styleName="earn-checkbox" data-checked={awarded > 0} />
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }
