@@ -109,5 +109,5 @@ export default () => {
 };
 
 async function fetchTotpData() {
-  return request('/api/user/me/2fa/setup');
+  return request('/api/me/2fa/setup');
 }
