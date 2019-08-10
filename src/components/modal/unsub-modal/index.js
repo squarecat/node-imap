@@ -20,7 +20,6 @@ const imageUseQuestion = (
 );
 
 const UnsubModal = ({ onSubmit, mail }) => {
-  const { actions } = useContext(MailContext);
   const error = !mail.estimatedSuccess;
   const { close } = useContext(ModalContext);
   const [slide, changeSlide] = useState('first');
@@ -29,10 +28,9 @@ const UnsubModal = ({ onSubmit, mail }) => {
   const onClickSubmit = useCallback(
     details => {
       onSubmit(details);
-      actions.setUnsubData(null);
       close();
     },
-    [actions, close, onSubmit]
+    [close, onSubmit]
   );
   const slideContent = useMemo(
     () => {
@@ -40,7 +38,6 @@ const UnsubModal = ({ onSubmit, mail }) => {
         if (error && !mail.resolved) {
           return changeSlide('positive');
         }
-        actions.setUnsubData(null);
         close();
       };
       const onClickNegative = () => changeSlide('negative');
@@ -83,7 +80,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
         return slide3(onClickSubmit);
       }
     },
-    [actions, close, error, mail, onClickSubmit, selected, slide]
+    [close, error, mail, onClickSubmit, selected, slide]
   );
   return <div styleName="unsub-modal">{slideContent}</div>;
 };

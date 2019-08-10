@@ -74,20 +74,15 @@ const MailView = React.memo(function() {
     [actions, unsubData]
   );
 
-  // const clearUnsubData = useCallback(
-  //   () => {
-  //     actions.setUnsubData(null);
-  //   },
-  //   [actions]
-  // );
-
   useEffect(
     () => {
       if (unsubData) {
-        openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />);
+        openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
+          onClose: () => actions.setUnsubData(null)
+        });
       }
     },
-    [onSubmit, openModal, unsubData]
+    [actions, onSubmit, openModal, unsubData]
   );
 
   const showLoading = (isLoading || isFetching) && !mail.length;
