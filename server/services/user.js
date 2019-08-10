@@ -839,8 +839,14 @@ export async function addUserReminder(id, timeframe) {
     if (!remindAt) {
       throw new Error('invalid reminder timeframe');
     }
+    const user = await addReminder(id, { timeframe, remindAt });
+    addActivityForUser(id, 'setReminder', {
+      id,
+      timeframe,
+      remindAt
+    });
     addReminderRequestToStats();
-    return addReminder(id, { timeframe, remindAt });
+    return user;
   } catch (err) {
     throw err;
   }
