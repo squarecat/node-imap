@@ -7,15 +7,17 @@ const { secret, collection } = http.session;
 
 const MongoStore = connectMongo(session);
 
+const isProd = process.env.NODE_ENV === 'production';
 // details on chosen options here:
 //   https://www.npmjs.com/package/express-session
 export default session({
   secret,
   saveUninitialized: false,
   resave: true,
+  proxy: isProd,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProd,
     expires: 1000 * 60 * 60 * 24 * 7 // 1 week
   },
   unset: 'destroy',
