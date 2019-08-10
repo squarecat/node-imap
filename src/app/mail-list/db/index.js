@@ -226,7 +226,7 @@ export function useMailSync() {
         }
       };
     },
-    [isConnected, error, db]
+    [isConnected, error]
   );
   return {
     ready: isConnected,

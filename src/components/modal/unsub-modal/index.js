@@ -4,6 +4,7 @@ import { TextImportant, TextLink } from '../../text';
 
 import Button from '../../btn';
 import { ExternalIcon } from '../../icons';
+import { MailContext } from '../../../app/mail-list/provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import UnsubImage from './unsub-image';
 import { openChat } from '../../../utils/chat';
@@ -19,6 +20,7 @@ const imageUseQuestion = (
 );
 
 const UnsubModal = ({ onSubmit, mail }) => {
+  const { actions } = useContext(MailContext);
   const error = !mail.estimatedSuccess;
   const { close } = useContext(ModalContext);
   const [slide, changeSlide] = useState('first');
@@ -27,9 +29,10 @@ const UnsubModal = ({ onSubmit, mail }) => {
   const onClickSubmit = useCallback(
     details => {
       onSubmit(details);
+      actions.setUnsubData(null);
       close();
     },
-    [close, onSubmit]
+    [actions, close, onSubmit]
   );
   const slideContent = useMemo(
     () => {
@@ -37,6 +40,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
         if (error && !mail.resolved) {
           return changeSlide('positive');
         }
+        actions.setUnsubData(null);
         close();
       };
       const onClickNegative = () => changeSlide('negative');
@@ -79,7 +83,7 @@ const UnsubModal = ({ onSubmit, mail }) => {
         return slide3(onClickSubmit);
       }
     },
-    [close, error, mail, onClickSubmit, selected, slide]
+    [actions, close, error, mail, onClickSubmit, selected, slide]
   );
   return <div styleName="unsub-modal">{slideContent}</div>;
 };

@@ -14,7 +14,7 @@ import { useMailSync } from './db';
 const sortByValues = ['date', 'score'];
 export const MailContext = createContext({});
 
-export function MailProvider({ children }) {
+export const MailProvider = React.memo(function({ children }) {
   const db = useContext(DatabaseContext);
   const [state, dispatch] = useReducer(mailReducer, initialState);
   const {
@@ -175,7 +175,7 @@ export function MailProvider({ children }) {
       {children}
     </MailContext.Provider>
   );
-}
+});
 
 async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
