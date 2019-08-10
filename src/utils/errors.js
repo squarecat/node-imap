@@ -71,24 +71,19 @@ export function getConnectError(err = {}) {
 }
 
 export function getImapError(reason) {
+  const { type } = reason;
   // this will be thrown if node has caught an error with a message
-  if (reason.type === 'imap-auth-error') {
+  if (type === 'imap-auth-error' || type === 'imap-connect-error') {
     return {
       message: (
         <>
-          <p>Failed to add account. The host responded with this message:</p>
+          <p>
+            Failed to connect account. The host responded with this message:
+          </p>
           <p>{reason.message}</p>
         </>
       ),
       level: 'error'
-    };
-  }
-
-  if (reason.type === 'imap-connect-error') {
-    return {
-      message:
-        'Failed to authenticate with IMAP server. Check username and password and try again.',
-      level: 'warning'
     };
   }
 
