@@ -12,6 +12,7 @@ import addSeconds from 'date-fns/add_seconds';
 import { auth } from 'getconfig';
 import logger from '../utils/logger';
 import passport from 'passport';
+import { pushSessionProp } from '../session';
 import refresh from 'passport-oauth2-refresh';
 
 const { google } = auth;
@@ -204,6 +205,7 @@ export default app => {
           logger.error(loginErr);
           return res.redirect(baseErrUrl);
         }
+        pushSessionProp(req, 'authFactors', 'google');
         setRememberMeCookie(res, {
           username: user.email,
           provider: 'google'

@@ -31,7 +31,7 @@ export default session({
 
 function serialize(session) {
   let obj = {};
-  const { cookie, passport } = session;
+  const { cookie, passport, secondFactor, authFactors } = session;
   obj = {
     cookie: {
       originalMaxAge: cookie.originalMaxAge,
@@ -48,10 +48,40 @@ function serialize(session) {
     obj = {
       ...obj,
       userId: user ? user.id : null,
+      secondFactor,
+      authFactors,
       passport: {
         user
       }
     };
   }
   return obj;
+}
+
+// push to an array prop in the session
+export function pushSessionProp(req, prop, value) {
+  const arr = req.session[prop] || [];
+  req.session[prop] = [...arr, value];
+  return value;
+}
+
+// set a value prop on the session
+export function setSessionProp(req, prop, value) {
+  req.session[prop] = value;
+  return value;
+}
+
+// get a value from the session
+export function getSessionProp(req, prop) {
+  return req.session[prop];
+}
+
+export function hasSessionProp(req, prop) {
+  return !!getSessionProp(req, prop);
+}
+
+// destroy the session.
+// This triggers it to be removed from the store
+export function destroySession(req) {
+  req.session = null;
 }
