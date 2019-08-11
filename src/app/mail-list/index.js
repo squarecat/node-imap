@@ -10,9 +10,9 @@ import UnsubModal from '../../components/modal/unsub-modal';
 import styles from './mail-list.module.scss';
 import useUser from '../../utils/hooks/use-user';
 
-function MailView() {
+const MailView = React.memo(function() {
   const { state, dispatch, actions } = useContext(MailContext);
-  const { open: openModal, onClose } = useContext(ModalContext);
+  const { open: openModal } = useContext(ModalContext);
   const [accounts] = useUser(u => u.accounts);
   const {
     fetch,
@@ -74,27 +74,20 @@ function MailView() {
     [actions, unsubData]
   );
 
-  const clearUnsubData = useCallback(
-    () => {
-      actions.setUnsubData(null);
-    },
-    [actions]
-  );
-
   useEffect(
     () => {
       if (unsubData) {
         openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
-          onClose: clearUnsubData
+          onClose: () => actions.setUnsubData(null)
         });
       }
     },
-    [unsubData, actions, openModal, onSubmit, clearUnsubData, onClose]
+    [actions, onSubmit, openModal, unsubData]
   );
 
+  const showLoading = (isLoading || isFetching) && !mail.length;
   const content = useMemo(
     () => {
-      const showLoading = (isLoading || isFetching) && !mail.length;
       if (showLoading) {
         return <Loading />;
       }
@@ -103,8 +96,9 @@ function MailView() {
       }
       return <MailList mail={mail} />;
     },
-    [isLoading, isFetching, mail, accounts.length, activeFilters.length]
+    [showLoading, mail, accounts.length, activeFilters.length]
   );
+
   return (
     <div styleName="mail-list">
       <Filters
@@ -146,7 +140,7 @@ function MailView() {
       </div>
     </div>
   );
-}
+});
 
 export default () => {
   return (
@@ -155,3 +149,5 @@ export default () => {
     </MailProvider>
   );
 };
+
+MailView.whyDidYouRender = true;

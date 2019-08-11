@@ -1,15 +1,16 @@
 import './connect.module.scss';
 
-import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
+import { AtSignIcon } from '../icons';
 import ImapModal from '../modal/imap';
 import { ModalContext } from '../../providers/modal-provider';
-
-// import aolLogo from '../../assets/providers/imap/aol-logo.png';
-// import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
-// import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
-// import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
+import aolLogo from '../../assets/providers/imap/aol-logo.png';
+import fastmailLogo from '../../assets/providers/imap/fastmail-logo-small.jpg';
+import googleLogo from '../../assets/providers/google-logo.png';
+import icloudLogo from '../../assets/providers/imap/icloud-logo-small.jpg';
+import microsoftLogo from '../../assets/providers/microsoft-logo.png';
+import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
 let windowObjectReference = null;
 let previousUrl = null;
@@ -39,9 +40,7 @@ export default ({
   onError = () => {},
   imapOptions = {}
 }) => {
-  const { replace: replaceModal, open: openModal, modal } = useContext(
-    ModalContext
-  );
+  const { replace: replaceModal } = useContext(ModalContext);
 
   useEffect(() => {
     return function cleanup() {
@@ -49,8 +48,8 @@ export default ({
     };
   });
   const openImapModal = useCallback(
-    () => {
-      replaceModal(<ImapModal onConfirm={onSuccess} />, {
+    type => {
+      replaceModal(<ImapModal providerType={type} onConfirm={onSuccess} />, {
         ...imapOptions,
         context: { step: 'accounts' }
       });
@@ -107,8 +106,7 @@ export default ({
         }}
         styleName="connect-btn"
       >
-        <GoogleIcon width="20" height="20" />
-        <span>Connect Google</span>
+        <img src={googleLogo} alt="Google logo" styleName="connect-btn-logo" />
       </a>
     );
   } else if (provider === 'outlook') {
@@ -122,42 +120,43 @@ export default ({
         }}
         styleName="connect-btn"
       >
-        <MicrosoftIcon width="20" height="20" />
-        <span>Connect Microsoft</span>
+        {/* <MicrosoftIcon width="20" height="20" />
+        <span>Connect Microsoft</span> */}
+        <img
+          src={microsoftLogo}
+          alt="Microsoft logo"
+          styleName="connect-btn-logo"
+        />
       </a>
     );
   } else if (provider === 'imap') {
     return (
-      <a onClick={openImapModal} styleName="connect-btn">
-        <AtSignIcon width="20" height="20" />
-        <span>Connect Other</span>
-      </a>
-      // <div styleName="other-btns">
-      //   <a onClick={openImapModal} styleName="connect-btn imap">
-      //     <img
-      //       src={icloudLogo}
-      //       alt="iCloud logo"
-      //       styleName="connect-btn-logo"
-      //     />
-      //   </a>
-      //   <a onClick={openImapModal} styleName="connect-btn imap">
-      //     <img src={aolLogo} alt="AOL logo" styleName="connect-btn-logo" />
-      //   </a>
-      //   <a onClick={openImapModal} styleName="connect-btn imap">
-      //     <img
-      //       src={fastmailLogo}
-      //       alt="Fastmail logo"
-      //       styleName="connect-btn-logo"
-      //     />
-      //   </a>
-      //   <a onClick={openImapModal} styleName="connect-btn imap">
-      //     <img src={yahooLogo} alt="Yahoo logo" styleName="connect-btn-logo" />
-      //   </a>
-      //   <a onClick={openImapModal} styleName="connect-btn imap">
-      //     <AtSignIcon width="20" height="20" />
-      //     <span>Other...</span>
-      //   </a>
-      // </div>
+      <>
+        <a onClick={() => openImapModal('icloud')} styleName="connect-btn">
+          <img
+            src={icloudLogo}
+            alt="iCloud logo"
+            styleName="connect-btn-logo"
+          />
+        </a>
+        <a onClick={() => openImapModal('fastmail')} styleName="connect-btn">
+          <img
+            src={fastmailLogo}
+            alt="Fastmail logo"
+            styleName="connect-btn-logo"
+          />
+        </a>
+        <a onClick={() => openImapModal('aol')} styleName="connect-btn">
+          <img src={aolLogo} alt="AOL logo" styleName="connect-btn-logo" />
+        </a>
+        <a onClick={() => openImapModal('yahoo')} styleName="connect-btn">
+          <img src={yahooLogo} alt="Yahoo logo" styleName="connect-btn-logo" />
+        </a>
+        <a onClick={() => openImapModal()} styleName="connect-btn">
+          <AtSignIcon width="20" height="20" />
+          <span>Other...</span>
+        </a>
+      </>
     );
   } else {
     return null;

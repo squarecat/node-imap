@@ -1,0 +1,13 @@
+@import '../../styles/common/colors.scss';
+
+.imap-label-text {
+  font-size: 16px;
+  border-left: 1px solid $color-input-border;
+  padding-right: 5px;
+  background: white;
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translate(1px, -50%);
+  border: 0;
+}

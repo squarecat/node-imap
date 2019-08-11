@@ -4,6 +4,7 @@ import { TextImportant, TextLink } from '../../text';
 
 import Button from '../../btn';
 import { ExternalIcon } from '../../icons';
+import { MailContext } from '../../../app/mail-list/provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import UnsubImage from './unsub-image';
 import { openChat } from '../../../utils/chat';

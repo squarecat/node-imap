@@ -83,7 +83,7 @@ const NEWS = [
 ];
 
 export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
-export const IMAP_PROVIDERS = `Fastmail, Yahoo! Mail, iCloud, AOL, and all other mailboxes`;
+export const IMAP_PROVIDERS = `Fastmail, Yahoo Mail, iCloud, AOL, and all other mailboxes`;
 
 const IndexPage = () => {
   const trashPileRef = useRef(null);
@@ -127,7 +127,7 @@ const IndexPage = () => {
         >
           <div className="hero-inner">
             <div className="hero-box hero-left">
-              <div className="hero-right-inner">
+              <div className="hero-left-inner">
                 <h1 className="catchy-tagline">
                   Easily unsubscribe from spam emails
                 </h1>
@@ -157,7 +157,7 @@ const IndexPage = () => {
           </div>
         </div>
 
-        <div className="home-container testimonial-section" >
+        <div className="home-container testimonial-section">
           <div
             className="text-box text-box-centered"
             style={{ textAlign: 'left' }}
@@ -238,7 +238,7 @@ const IndexPage = () => {
                 </p>
                 <p>
                   <TextLink as="link" linkTo="/security">
-                    <span>Learn more about security and data management</span>{' '}
+                    <span>Learn more about security and privacy</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -328,9 +328,9 @@ const IndexPage = () => {
                     </span>
                     <span
                       className="provider-logo imap brighter"
-                      title="Yahoo! Mail"
+                      title="Yahoo Mail"
                     >
-                      <img src={yahooImg} alt="Yahoo! Mail logo" />
+                      <img src={yahooImg} alt="Yahoo Mail logo" />
                     </span>
                   </div>
                 </TextLink>
@@ -356,6 +356,41 @@ const IndexPage = () => {
           </div>
           <Pricing />
         </div>
+
+        <div className="home-container section-padded">
+          <div className="home-container-inner" id="news">
+            <h3>In the news</h3>
+            <p>
+              Don't take our word for it, read what people are saying about us.
+            </p>
+            <div className="in-the-news">
+              {NEWS.map(({ quote, logoUrl, url }) => (
+                <div key={url} className="news-item">
+                  <p>"{quote}"</p>
+                  <a target="_" className="news-logo" href={url}>
+                    <img src={logoUrl} />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="home-container">
+          <div className="text-box text-box-left">
+            <Testimonial
+              text={`Using Leave Me Alone has resulted in a 17% reduction in my
+                emails, saving me hours of time each month.`}
+              author="Luke Chadwick, Founder - GraphQL360"
+              image={luke}
+            />
+            <TextLink as="link" linkTo="/wall-of-love">
+              <span>See all of our customer testimonials</span>{' '}
+              <ArrowIcon inline />
+            </TextLink>
+          </div>
+        </div>
+
         <div className="home-container">
           <div className="home-container-inner end-stuff">
             {statsContent}
@@ -704,9 +739,9 @@ function Item({
 
   const onClickTweet = useCallback(
     () => {
-      const text = `I'm loving the one-click unsubscribe button on ${
+      const text = `I'm loving the one-click unsubscribe button on @LeaveMeAloneApp... I've clicked it ${count} times! 🙅‍ ${
         window.location.host
-      }... I've clicked it ${count} times! 🙅‍`;
+      }`;
       openTweetIntent(text);
     },
     [count]

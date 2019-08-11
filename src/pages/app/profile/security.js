@@ -250,7 +250,7 @@ function ChangePassword() {
             name="newPassword"
             autoComplete="new-password"
             autoFocus={false}
-            checkIfPwned={true}
+            doValidation={true}
             value={state.password}
             onChange={value =>
               setState({
@@ -299,7 +299,7 @@ function ChangePassword() {
 }
 
 function removeTwoFactorAuth(token) {
-  fetch('/api/user/me/2fa', {
+  fetch('/api/me/2fa', {
     method: 'DELETE',
     cache: 'no-cache',
     credentials: 'same-origin',

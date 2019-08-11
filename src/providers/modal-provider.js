@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState
 } from 'react';
@@ -15,61 +16,87 @@ const defaultOptions = {
   dismissable: true
 };
 
-export const ModalProvider = React.memo(({ children }) => {
-  const [openState, setOpenState] = useState({ shown: false, data: {} });
-  const [state, setState] = useState({
-    options: {},
-    modal: null
-  });
-  const previousOpenState = usePrevious(openState);
-  const previousModalState = usePrevious(state);
-
-  const closeModal = useCallback(
-    data => {
-      if (state.options.replaced) {
-        setState({ ...previousModalState, context: state.options.context });
-      } else {
-        setOpenState({ shown: false, data });
+const modalReducer = (state, action) => {
+  if (action.type === 'open') {
+    return {
+      ...state,
+      shown: true,
+      modal: action.data.modal,
+      options: {
+        ...defaultOptions,
+        ...action.data.options
       }
-    },
-    [previousModalState, state.options.context, state.options.replaced]
-  );
+    };
+  }
+  if (action.type === 'close') {
+    if (state.prevModal) {
+      return {
+        ...state,
+        shown: true,
+        modal: state.prevModal,
+        options: state.prevOptions,
+        prevModal: null,
+        prevOptions: null
+      };
+    }
+    if (state.options.onClose) {
+      state.options.onClose(action.data);
+    }
+    return {
+      ...state,
+      shown: false,
+      modal: null,
+      options: {}
+    };
+  }
+  if (action.type === 'replace') {
+    return {
+      shown: true,
+      ...action.data,
+      prevModal: state.modal,
+      prevOptions: state.options
+    };
+  }
+  return state;
+};
+
+export const ModalProvider = React.memo(({ children }) => {
+  const [state, dispatch] = useReducer(modalReducer, {
+    modal: null,
+    shown: false,
+    options: {}
+  });
+  // const [openState, setOpenState] = useState({ shown: false, data: {} });
+  // const [state, setState] = useState({
+  //   options: {},
+  //   modal: null
+  // });
+  // const previousOpenState = usePrevious(openState);
+  // const previousModalState = usePrevious(state);
 
   // after the modal is closed, call the onClose
   // function if one was provided
-  useEffect(
-    () => {
-      if (previousOpenState && previousOpenState.shown && !openState.shown) {
-        state.options.onClose && state.options.onClose(openState.data);
-      }
-    },
-    [state.options, openState.shown, openState.data, previousOpenState]
-  );
+  // useEffect(
+  //   () => {
+  //     if (previousOpenState && previousOpenState.shown && !openState.shown) {
+  //     }
+  //   },
+  //   [state.options, openState.shown, openState.data, previousOpenState]
+  // );
+
+  const closeModal = useCallback(data => {
+    dispatch({ type: 'close', data });
+  }, []);
 
   const openModal = useCallback((modal, options = {}) => {
     const initialShown =
       typeof options.show !== 'undefined' ? options.show : true;
-    setState({
-      modal,
-      options: {
-        ...defaultOptions,
-        ...options
-      }
-    });
-    setOpenState({ shown: initialShown });
+    dispatch({ type: 'open', data: { shown: initialShown, modal, options } });
   }, []);
 
-  const replaceModal = useCallback(
-    (modal, options = {}) => {
-      const modalIsAlreadyOpen = openState.shown;
-      openModal(modal, {
-        ...options,
-        show: true,
-        replaced: modalIsAlreadyOpen
-      });
-    },
-    [openModal, openState.shown]
-  );
+  const replaceModal = useCallback((modal, options = {}) => {
+    dispatch({ type: 'replace', data: { modal, options } });
+  }, []);
 
   useEffect(
     () => {
@@ -93,7 +120,7 @@ export const ModalProvider = React.memo(({ children }) => {
         document.removeEventListener('keyup', closeModalByEsc);
         document.removeEventListener('click', closeModalByClickAway);
       }
-      if (openState.shown) {
+      if (state.shown) {
         document.addEventListener('keyup', closeModalByEsc);
         document.addEventListener('click', closeModalByClickAway);
       } else {
@@ -101,7 +128,7 @@ export const ModalProvider = React.memo(({ children }) => {
       }
       return () => removeListeners();
     },
-    [closeModal, openState.shown, state.options.dismissable]
+    [closeModal, state.options.dismissable, state.shown]
   );
 
   const value = useMemo(
@@ -117,17 +144,9 @@ export const ModalProvider = React.memo(({ children }) => {
   return (
     <ModalContext.Provider value={value}>
       {children}
-      <Modal shown={openState.shown} {...state.options}>
+      <Modal shown={state.shown} {...state.options}>
         {state.modal}
       </Modal>
     </ModalContext.Provider>
   );
 });
-
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}

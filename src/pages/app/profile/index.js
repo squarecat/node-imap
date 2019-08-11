@@ -199,7 +199,7 @@ function DangerZone({ organisationAdmin, organisation }) {
 }
 async function deactivateAccount() {
   try {
-    return request('/api/user/me', {
+    return request('/api/me', {
       credentials: 'same-origin',
       method: 'DELETE',
       headers: {

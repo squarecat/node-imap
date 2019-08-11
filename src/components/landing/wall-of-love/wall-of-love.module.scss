@@ -69,12 +69,50 @@ $image-size-tablet: 30px;
   border-radius: 2px;
 }
 
+.name-container {
+  display: flex;
+  align-items: center;
+}
+
 .name {
   font-weight: bold;
+  white-space: nowrap;
+  margin-right: 15px;
+  display: inline-block;
+  line-height: 30px;
 }
 
 .twitter-link,
 .twitter-link:hover,
 .twitter-link:focus {
   color: $color-primary-font;
+}
+
+.company-container {
+  display: flex;
+  align-items: center;
+  max-height: 30px;
+  max-width: 100px;
+}
+
+.invert {
+  padding: 2px 3px;
+  display: flex;
+  align-items: center;
+
+  &.b13technology {
+    background-color: #0d284b;
+  }
+
+  &.graphql360 {
+    background-color: #0d415b;
+  }
+}
+
+.company-logo {
+  max-height: 30px;
+}
+
+.company-name {
+  display: none;
 }

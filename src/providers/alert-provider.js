@@ -3,7 +3,8 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useReducer
+  useReducer,
+  useRef
 } from 'react';
 
 import AlertBanner from '../components/alerts';
@@ -84,25 +85,27 @@ const AlertReducer = (state, action) => {
 export function AlertProvider({ children }) {
   const [state, dispatch] = useReducer(AlertReducer, initialState);
   const { current, queue } = state;
+  const dismissTimeout = useRef(null);
+  const nextTimeout = useRef(null);
   // if there's a new alert, then dismiss it
   // after a timeout
   useEffect(
     () => {
-      let dismissTimeout;
-      let nextTimeout;
       if (current && current.autoDismiss) {
-        dismissTimeout = setTimeout(() => {
+        clearTimeout(dismissTimeout.current);
+        dismissTimeout.current = setTimeout(() => {
           dispatch({ type: 'dismiss-alert' });
         }, current.dismissAfter);
       }
       if (!current && queue.length) {
-        nextTimeout = setTimeout(() => {
+        clearTimeout(nextTimeout.current);
+        nextTimeout.current = setTimeout(() => {
           dispatch({ type: 'set-next' });
         }, 500);
       }
       return () => {
-        clearTimeout(dismissTimeout);
-        clearTimeout(nextTimeout);
+        clearTimeout(dismissTimeout.current);
+        clearTimeout(nextTimeout.current);
       };
     },
     [current, queue]

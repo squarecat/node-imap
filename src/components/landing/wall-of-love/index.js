@@ -1,7 +1,8 @@
 import './wall-of-love.module.scss';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
+import _shuffle from 'lodash.shuffle';
 import testimonialData from './testimonials';
 import useMedia from 'react-use/lib/useMedia';
 
@@ -12,7 +13,12 @@ export default () => {
   const isTablet = useMedia('(max-width: 900px)');
   // const isDesktop = useMedia('(max-width: 1024px)');
 
-  const data = testimonialData;
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const shuffled = _shuffle(testimonialData);
+    setData(shuffled);
+  }, []);
 
   const columns = useMemo(
     () => {
@@ -44,7 +50,8 @@ export default () => {
 };
 
 function Box({ testimonial }) {
-  const { name, text, twitter, avatarPath } = testimonial;
+  const { name, text, twitter, avatarPath, company } = testimonial;
+
   const avatarLetter = name
     .split(' ')
     .map(a => a[0])
@@ -56,20 +63,28 @@ function Box({ testimonial }) {
       <div styleName="box">
         <div styleName="img">
           {avatarPath ? (
-            <img src={`${BASE_IMG_URL}/${avatarPath}.jpg`} />
+            <img src={`${BASE_IMG_URL}/${avatarPath}`} />
           ) : (
             <span styleName="avatar-letter">{avatarLetter}</span>
           )}
         </div>
         <div styleName="content">
           <p styleName="text">{text}</p>
-          {twitter ? (
-            <a href={`https://twitter.com/${twitter}`} styleName="twitter-link">
+          <div styleName="name-container">
+            {twitter ? (
+              <a
+                href={`https://twitter.com/${twitter}`}
+                styleName="twitter-link"
+              >
+                <span styleName="name">{name}</span>
+              </a>
+            ) : (
               <span styleName="name">{name}</span>
-            </a>
-          ) : (
-            <span styleName="name">{name}</span>
-          )}
+            )}
+            {company ? (
+              <div styleName="company-container">{company}</div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

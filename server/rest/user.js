@@ -418,7 +418,7 @@ export default app => {
     }
   });
 
-  app.delete('/api/user/me', auth, async (req, res, next) => {
+  app.delete('/api/me', auth, async (req, res, next) => {
     const { user } = req;
     const { id: userId } = user;
     try {
@@ -481,7 +481,7 @@ export default app => {
     }
   );
 
-  app.get('/api/user/me/2fa/setup', auth, async (req, res, next) => {
+  app.get('/api/me/2fa/setup', auth, async (req, res, next) => {
     const { user } = req;
     try {
       const { otpauth_url, base32 } = await createUserTotpToken(user);
@@ -498,7 +498,7 @@ export default app => {
     }
   });
 
-  app.delete('/api/user/me/2fa', totpAuth, async (req, res, next) => {
+  app.delete('/api/me/2fa', totpAuth, async (req, res, next) => {
     const { user } = req;
     try {
       await removeUserTotpToken(user);

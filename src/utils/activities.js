@@ -36,6 +36,13 @@ const activityEnum = {
     if (!rewardCredits) return text;
     return `${text} You earned ${rewardCredits} credits.`;
   },
+  setReminder: ({ rewardCredits, data }) => {
+    const text = `You set a reminder for ${
+      reminderTimeframes[data.timeframe]
+    }.`;
+    if (!rewardCredits) return text;
+    return `${text} You earned ${rewardCredits} credits.`;
+  },
 
   // non reward
   packagePurchase: ({ data }) => {
@@ -56,6 +63,12 @@ const activityEnum = {
   removeBillingCard: () => `You removed your saved payment method.`
 };
 
+const reminderTimeframes = {
+  '1w': '1 week',
+  '1m': '1 month',
+  '3m': '3 months',
+  '6m': '6 months'
+};
 export function parseActivity(activity, user) {
   const { type } = activity;
   const activityFn = activityEnum[type];

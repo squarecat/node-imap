@@ -1,4 +1,5 @@
 import config from 'getconfig';
+import { getSessionProp } from '../session';
 import logger from '../utils/logger';
 
 const adminUsers = config.admins;
@@ -41,7 +42,7 @@ function isUserAuthenticated(req) {
   if (!requiresSecondFactor) {
     return isRegularAuth;
   }
-  const isSecondFactorAuthed = !!req.session.secondFactor;
+  const isSecondFactorAuthed = getSessionProp(req, 'secondFactor');
   return isRegularAuth && isSecondFactorAuthed;
 }
 
