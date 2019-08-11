@@ -178,7 +178,7 @@ const TeamsPage = () => {
             </p>
             <p>
               About <TextImportant>one in ten</TextImportant>
-              <a styleName="cite-link" href="#cite-1">
+              <a styleName="cite-link" href="#cite-2">
                 <sup>[2]</sup>
               </a>{' '}
               of these emails are subscriptions, and many are completely

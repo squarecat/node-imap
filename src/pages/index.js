@@ -3,7 +3,6 @@ import './home.scss';
 
 import {
   Arrow as ArrowIcon,
-  AtSignIcon,
   GoogleIcon,
   MicrosoftIcon,
   PointyArrow
