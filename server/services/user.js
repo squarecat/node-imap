@@ -749,18 +749,40 @@ export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
       ...rest
     });
 
-    const unsubCount = user.unsubscriptions.length;
-    if (unsubCount === 100) {
-      addActivityForUser(userId, 'reached100Unsubscribes');
-    } else if (unsubCount === 500) {
-      addActivityForUser(userId, 'reached500Unsubscribes');
-    }
+    addUnsubscribesActivity(user);
+
     return user;
   } catch (err) {
     throw err;
   }
 }
 
+async function addUnsubscribesActivity({
+  id: userId,
+  unsubscriptions,
+  activity
+}) {
+  try {
+    const unsubCount = unsubscriptions.length;
+    if (unsubCount === 100) {
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (unsubCount === 500) {
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    } else if (
+      unsubCount > 100 &&
+      !activity.find(a => a.type === 'reached100Unsubscribes')
+    ) {
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (
+      unsubCount > 500 &&
+      !activity.find(a => a.type === 'reached500Unsubscribes')
+    ) {
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    }
+  } catch (err) {
+    throw err;
+  }
+}
 // // TODO will be legacy
 // export function addScanToUser(userId, scanData) {
 //   return addScan(userId, scanData);
