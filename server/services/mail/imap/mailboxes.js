@@ -1,3 +1,4 @@
+import logger from '../../../utils/logger';
 import util from 'util';
 
 const mailboxAttributes = [
@@ -10,25 +11,39 @@ const mailboxAttributes = [
 
 export async function getMailboxes(client) {
   const getBoxes = util.promisify(client.getBoxes.bind(client));
-  const boxes = await getBoxes();
-  const searchable = parseMailBoxes(boxes);
-  return searchable;
+  let boxes;
+  try {
+    boxes = await getBoxes();
+    const searchable = parseMailBoxes(boxes);
+    return searchable;
+  } catch (err) {
+    if (boxes) {
+      console.log(JSON.stringify(Object.keys(boxes)));
+    } else {
+      logger.error('no mailboxes found, trying with default INBOX box');
+      return {
+        path: 'INBOX'
+      };
+    }
+    logger.error('failed to get mailboxes');
+    throw err;
+  }
 }
 
-function isBoxSearchable(box) {
-  const hasAttribute = box.attribs.some(a => mailboxAttributes.includes(a));
-  const canBeOpened = box.attribs.every(
+function isBoxSearchable({ attribs = [] }) {
+  // const hasAttribute = box.attribs.some(a => mailboxAttributes.includes(a));
+  const canBeOpened = attribs.every(
     a => a !== '\\Noselect' && a !== '\\NonExistent'
   );
-  return hasAttribute && canBeOpened;
+  return canBeOpened;
 }
 
-function getRelevantAttribute(box) {
-  return box.attribs.find(a => mailboxAttributes.includes(a));
+function getRelevantAttribute({ attribs = [] }) {
+  return attribs.find(a => mailboxAttributes.includes(a));
 }
 
-function boxHasChildren(box) {
-  return box.attribs.some(a => a === '\\HasChildren');
+function boxHasChildren({ attribs = [] }) {
+  return attribs.some(a => a === '\\HasChildren');
 }
 
 export function getMailboxName(name, box) {
