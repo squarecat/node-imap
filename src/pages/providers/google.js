@@ -12,7 +12,7 @@ import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import gmailLogo from '../../assets/providers/gmail-logo.png';
 import googleLogo from '../../assets/providers/google-logo.png';
-import googleScopes from '../../assets/security-gmail-scopes.png';
+import googleScopes from '../../assets/security/security-gmail-scopes.png';
 import gsuiteLogo from '../../assets/providers/gsuite-logo.png';
 
 const PROVIDER_NAME = 'Google';

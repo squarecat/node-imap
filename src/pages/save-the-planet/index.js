@@ -10,18 +10,21 @@ import request from '../../utils/request';
 import { TextImportant, TextLink } from '../../components/text';
 import numeral from 'numeral';
 
-const CARBON_PER_EMAIL = 4;
-const CARBON_OFFSET_PER_TREE = 15694; // (34.6 pounds)
-const LONDON_PARIS_CARBON = 30000;
-const NEWSLETTERS_NEVER_OPENED = 0.75;
+import CarbonEstimator, {
+  CARBON_PER_EMAIL,
+  LONDON_PARIS_CARBON,
+  CARBON_OFFSET_PER_TREE
+} from '../../components/estimator/carbon';
 
+const EMAILS_SENT_PER_DAY = 246.5; // 246500000000
+const NEWSLETTERS_NEVER_OPENED = 0.75;
 // 30000: "London to Paris",
 // 480000: "London to New York",
 // 1460000: "London to Sydney"
 
 const title = `Save the Planet`;
-const description = `One email equates to ${CARBON_PER_EMAIL}g of CO2 a year and ${NEWSLETTERS_NEVER_OPENED *
-  100}% of mail is never opened.  Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
+// const description = `One email equates to ${CARBON_PER_EMAIL}g of CO2 a year and ${NEWSLETTERS_NEVER_OPENED *
+//   100}% of mail is never opened.  Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
 
 const ClimatePage = () => {
@@ -42,6 +45,7 @@ const ClimatePage = () => {
           users,
           unsubscriptions,
           totalCarbonSavedInGrams: carbon,
+          totalCarbonSavedInTonnes: carbon / 1e6,
           londonToParis: (carbon / LONDON_PARIS_CARBON).toFixed(0)
         });
       }
@@ -52,7 +56,7 @@ const ClimatePage = () => {
   return (
     <SubPageLayout
       title={title}
-      description={description}
+      // description={description}
       withContent={false}
       slug={slug}
     >
@@ -61,17 +65,16 @@ const ClimatePage = () => {
           <div styleName="container-text">
             <h1 styleName="title">Clean your Inbox. Save the Planet.</h1>
             <p styleName="tagline">
-              One email equates to {CARBON_PER_EMAIL}g of <CO2 /> and{' '}
-              {NEWSLETTERS_NEVER_OPENED * 100}% of mail is never opened.
+              One email equates to {CARBON_PER_EMAIL}g of carbon.{' '}
+              {EMAILS_SENT_PER_DAY} billion emails are sent every day.
               Unsubscribe from unwanted subscription emails and reduce your
-              carbon footprint{' '}
+              carbon footprint.{' '}
               <TextLink undecorated href="#cite-1">
                 <sup>[1]</sup>
               </TextLink>
               <TextLink undecorated href="#cite-4">
                 <sup>[4]</sup>
               </TextLink>
-              .
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
               Make a difference
@@ -98,13 +101,16 @@ const ClimatePage = () => {
                   We have unsubscribed from{' '}
                   {formatNumber(stats.unsubscriptions)} subscription emails,{' '}
                   <TextImportant>
-                    saving {formatNumber(stats.totalCarbonSavedInGrams / 1e6)}{' '}
-                    tonnes in <CO2 /> emissions
-                  </TextImportant>{' '}
+                    saving {formatNumber(stats.totalCarbonSavedInTonnes)}{' '}
+                    {formatNumber(stats.totalCarbonSavedInTonnes) === 1
+                      ? 'tonne'
+                      : 'tonnes'}{' '}
+                    in <CO2 /> emissions
+                  </TextImportant>
+                  .{' '}
                   <TextLink undecorated href="#cite-1">
                     <sup>[1]</sup>
                   </TextLink>
-                  .
                 </p>
               )}
             </div>
@@ -128,11 +134,10 @@ const ClimatePage = () => {
                     {formatNumber(stats.londonToParis)} flights from London to
                     Paris
                   </TextImportant>{' '}
-                  in carbon emissions{' '}
+                  in carbon emissions.{' '}
                   <TextLink undecorated href="#cite-2">
                     <sup>[2]</sup>
                   </TextLink>
-                  .
                 </p>
               )}
             </div>
@@ -156,11 +161,11 @@ const ClimatePage = () => {
                       stats.totalCarbonSavedInGrams / CARBON_OFFSET_PER_TREE
                     )}{' '}
                     trees
-                  </TextImportant>{' '}
+                  </TextImportant>
+                  .{' '}
                   <TextLink undecorated href="#cite-3">
                     <sup>[3]</sup>
                   </TextLink>
-                  .
                 </p>
               )}
             </div>
@@ -169,8 +174,7 @@ const ClimatePage = () => {
       </div>
 
       <div styleName="climate-inner">
-        <h2>How much carbon can I offset?</h2>
-        <p>Slider...</p>
+        <CarbonEstimator />
       </div>
 
       <div styleName="climate-inner">
@@ -191,9 +195,20 @@ const ClimatePage = () => {
         <h2>Will unsubscribing really make a difference?</h2>
         <p>
           Yes! {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened.
-          Setting rules to archive, delete, or label doesn't stop the carbon
-          impact of receiving the email. By unsubscribing from mailing lists you
-          stop the email from being sent to you in the first place!
+          Setting rules to archive, delete, or apply a label doesn't stop the
+          carbon impact of receiving the email. By unsubscribing from mailing
+          lists you stop the email from being sent at all.
+        </p>
+        <p>
+          You will also help the senders to reduce their carbon footprint and
+          improve the quality of their mailing lists.
+        </p>
+
+        <h2>How can emails contribute to carbon emissions?</h2>
+        <p>
+          The culprits are greenhouse gases produced in running the computer,
+          server and routers but also those emitted when the equipment was
+          manufactured.
         </p>
       </div>
 
@@ -203,8 +218,8 @@ const ClimatePage = () => {
             <li id="cite-1">
               <sup>[1]</sup>
               <cite>
-                <a href="https://climatecare.org/infographic-the-carbon-footprint-of-the-internet/">
-                  An email has an estimated carbon footprint of 4 grams of CO2
+                <a href="https://img.en25.com/Web/McAfee/CarbonFootprint_12pagesfr_s_fnl2.pdf">
+                  A legitimate email emits on average 4 grams of CO2
                 </a>
               </cite>
             </li>
@@ -231,6 +246,14 @@ const ClimatePage = () => {
               <cite>
                 <a href="https://www.smartinsights.com/email-marketing/email-communications-strategy/statistics-sources-for-email-marketing/">
                   In 2018, the average open rate across all industries is 24.8%
+                </a>
+              </cite>
+            </li>
+            <li id="cite-5">
+              <sup>[5]</sup>
+              <cite>
+                <a href="https://phys.org/news/2015-11-carbon-footprint-email.html">
+                  The environmental impact of some common activities
                 </a>
               </cite>
             </li>

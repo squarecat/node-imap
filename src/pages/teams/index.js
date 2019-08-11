@@ -15,7 +15,7 @@ import googleLogo from '../../assets/providers/gsuite-logo.png';
 import happy from '../../assets/enterprise/happy.png';
 import luke from '../../assets/luke.jpeg';
 import officeLogo from '../../assets/providers/office-365-logo.png';
-import securityImg from '../../assets/security.png';
+import securityImg from '../../assets/security/security.png';
 
 const companies = [
   {

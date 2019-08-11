@@ -4,10 +4,10 @@ import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 import { TextImportant, TextLink } from '../../components/text';
 
 import React from 'react';
-import gmailScopesImg from '../../assets/security-gmail-scopes.png';
-import lockImg from '../../assets/lock.png';
-import outlookScopesImg from '../../assets/security-outlook-scopes.png';
-import securityImg from '../../assets/security.png';
+import gmailScopesImg from '../../assets/security/security-gmail-scopes.png';
+import lockImg from '../../assets/security/lock.png';
+import outlookScopesImg from '../../assets/security/security-outlook-scopes.png';
+import securityImg from '../../assets/security/security.png';
 import subscriberScoreImg from '../../assets/subscriber-score.png';
 
 const scopesUrlForGoogle =
