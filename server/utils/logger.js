@@ -8,6 +8,7 @@ const logger = {
     if (isDev) {
       return console.log(msg);
     }
+    return console.debug(msg);
   },
   info: msg => {
     return console.log(msg);
