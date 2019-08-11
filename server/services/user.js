@@ -739,14 +739,26 @@ export async function checkAuthToken(userId, token) {
 }
 
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, date } = mail;
-  return addUnsubscription(userId, {
-    to,
-    from,
-    id,
-    date,
-    ...rest
-  });
+  try {
+    const { to, from, id, date } = mail;
+    const user = await addUnsubscription(userId, {
+      to,
+      from,
+      id,
+      date,
+      ...rest
+    });
+
+    const unsubCount = user.unsubscriptions.length;
+    if (unsubCount === 100) {
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (unsubCount === 500) {
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    }
+    return user;
+  } catch (err) {
+    throw err;
+  }
 }
 
 // // TODO will be legacy
