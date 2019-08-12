@@ -281,7 +281,6 @@ export async function getStats() {
 
 const recordedStats = [
   'users',
-  // 'scans',
   'estimates',
   'unsubscriptions',
   'emails',

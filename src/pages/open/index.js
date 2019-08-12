@@ -20,10 +20,10 @@ import subDays from 'date-fns/sub_days';
 import useAsync from 'react-use/lib/useAsync';
 
 const lineColor = '#EB6C69';
-const lineColorLight = '#fedbd5';
+// const lineColorLight = '#fedbd5';
 
 const lineColor2 = '#9D5AAC';
-const lineColor2Light = '#CA9CD4';
+// const lineColor2Light = '#CA9CD4';
 
 const barColor1 = 'rgba(157, 90, 172, 0.3)';
 // const barColor1 = 'rgba(0, 0, 0, 0.3)';
@@ -375,13 +375,34 @@ function mrrChart(ctx, stats) {
 }
 
 export default function OpenPage() {
+  return (
+    <SubPageLayout
+      title="Open Startup"
+      description={`Leave Me Alone is an Open Startup. All of our metrics are public. See our sales, revenue, expenses, users, and more.`}
+      slug="/open"
+    >
+      <div styleName="open-page">
+        <div styleName="open-title box">
+          <h1>All of our metrics are public</h1>
+          <h2>
+            We're proud to share our stats as part of the{' '}
+            <TextLink href="https://openstartups.co/">Open Startups</TextLink>{' '}
+            movement
+          </h2>
+        </div>
+        <Open />
+      </div>
+    </SubPageLayout>
+  );
+}
+
+function Open() {
   const { value: stats, loading } = useAsync(getStats);
   const { value: expenses = {}, loadingExpenses } = useAsync(getExpenses);
   const { itemised = [], monthly } = expenses;
 
   const subscriptionRef = useRef(null);
   const dailyRevRef = useRef(null);
-  const dailyCreditsRef = useRef(null);
   const monthlyProfitRef = useRef(null);
   const mrrRef = useRef(null);
   const emailsRef = useRef(null);
@@ -423,9 +444,6 @@ export default function OpenPage() {
     },
     [stats, monthly]
   );
-  if (loading) {
-    return null;
-  }
 
   const totalRevenueStats = revenueBoxStats(stats);
   const salesStats = salesBoxStats(stats);
@@ -437,125 +455,119 @@ export default function OpenPage() {
   console.log('usersStats', usersStats);
   console.log('mrrStats', mrrStats);
 
-  return (
-    <SubPageLayout
-      title="Open Startup"
-      description={`Leave Me Alone is an Open Startup. All of our metrics are public. See our sales, revenue, expenses, users, and more.`}
-      slug="/open"
-    >
-      <div styleName="open-page">
-        <div styleName="open-title box">
-          <h1>All of our metrics are public</h1>
-          <h2>
-            We're proud to share our stats as part of the{' '}
-            <TextLink href="https://openstartups.co/">Open Startups</TextLink>{' '}
-            movement
-          </h2>
-        </div>
-        {loading ? (
-          <div styleName="box">
-            <h2>Loading stats...</h2>
-          </div>
-        ) : (
-          <ErrorBoundary>
-            <div styleName="revenue">
-              <div styleName="chart box">
-                <h2>
-                  Daily Revenue -{' '}
-                  <span style={{ color: lineColor }}>Sales</span> vs{' '}
-                  <span style={{ color: lineColor2 }}>Gift Sales</span>
-                </h2>
-                <canvas ref={dailyRevRef} />
-              </div>
-              <div styleName="boxes">
-                <div styleName="big-stat box">
-                  <span styleName="label">Last month's revenue</span>
-                  <span styleName="value">
-                    {currency(totalRevenueStats.lastMonth)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Revenue growth rate (MoM)</span>
-                  <span
-                    styleName={`value ${
-                      totalRevenueStats.growthRate > 0 ? 'positive' : 'negative'
-                    }`}
-                  >
-                    {totalRevenueStats.growthRate > 0 ? '+' : ''}
-                    {percent(totalRevenueStats.growthRate)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">This month's revenue to date</span>
-                  <span styleName="value">
-                    {currency(totalRevenueStats.thisMonth)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total revenue</span>
-                  <span styleName="value">
-                    {currency(
-                      calculateWithRefunds(stats, 'totalRevenue') +
-                        stats.giftRevenue
-                    )}
-                  </span>
-                </div>
+  if (loading) {
+    return (
+      <div styleName="box padded">
+        <p>Loading stats...</p>
+      </div>
+    );
+  }
 
-                <div styleName="big-stat box">
-                  <span styleName="label">Last month's sales</span>
-                  <span styleName="value">{format(salesStats.lastMonth)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Sales growth rate (MoM)</span>
-                  <span
-                    styleName={`value ${
-                      salesStats.growthRate > 0 ? 'positive' : 'negative'
-                    }`}
-                  >
-                    {salesStats.growthRate > 0 ? '+' : ''}
-                    {percent(salesStats.growthRate)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">This month's sales to date</span>
-                  <span styleName="value">{format(salesStats.thisMonth)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total sales</span>
-                  <span styleName="value">
-                    {format(calculateWithRefunds(stats, 'totalSales'))}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Revenue per user</span>
-                  <span styleName="value">
-                    {currency(
-                      calculateWithRefunds(stats, 'totalRevenue') / stats.users
-                    )}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total credit packages purchased</span>
-                  <span styleName="value">
-                    {format(stats.packagesPurchased)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total credits purchased</span>
-                  <span styleName="value">
-                    {format(stats.creditsPurchased)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">
-                    Total free credits rewarded{' '}
-                    <span role="img" aria-label="Sparkle">
-                      ✨
-                    </span>
-                  </span>
-                  <span styleName="value">{format(stats.creditsRewarded)}</span>
-                </div>
-                {/* <div styleName="big-stat box">
+  if (!stats) {
+    return (
+      <div styleName="box padded">
+        <p>
+          Something went wrong fetching stats, please try again or send us a
+          message.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <div styleName="revenue">
+        <div styleName="chart box">
+          <h2>
+            Daily Revenue - <span style={{ color: lineColor }}>Sales</span> vs{' '}
+            <span style={{ color: lineColor2 }}>Gift Sales</span>
+          </h2>
+          <canvas ref={dailyRevRef} />
+        </div>
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <span styleName="label">Last month's revenue</span>
+            <span styleName="value">
+              {currency(totalRevenueStats.lastMonth)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Revenue growth rate (MoM)</span>
+            <span
+              styleName={`value ${
+                totalRevenueStats.growthRate > 0 ? 'positive' : 'negative'
+              }`}
+            >
+              {totalRevenueStats.growthRate > 0 ? '+' : ''}
+              {percent(totalRevenueStats.growthRate)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">This month's revenue to date</span>
+            <span styleName="value">
+              {currency(totalRevenueStats.thisMonth)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total revenue</span>
+            <span styleName="value">
+              {currency(
+                calculateWithRefunds(stats, 'totalRevenue') + stats.giftRevenue
+              )}
+            </span>
+          </div>
+
+          <div styleName="big-stat box">
+            <span styleName="label">Last month's sales</span>
+            <span styleName="value">{format(salesStats.lastMonth)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Sales growth rate (MoM)</span>
+            <span
+              styleName={`value ${
+                salesStats.growthRate > 0 ? 'positive' : 'negative'
+              }`}
+            >
+              {salesStats.growthRate > 0 ? '+' : ''}
+              {percent(salesStats.growthRate)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">This month's sales to date</span>
+            <span styleName="value">{format(salesStats.thisMonth)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total sales</span>
+            <span styleName="value">
+              {format(calculateWithRefunds(stats, 'totalSales'))}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Revenue per user</span>
+            <span styleName="value">
+              {currency(
+                calculateWithRefunds(stats, 'totalRevenue') / stats.users
+              )}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total credit packages purchased</span>
+            <span styleName="value">{format(stats.packagesPurchased)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total credits purchased</span>
+            <span styleName="value">{format(stats.creditsPurchased)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">
+              Total free credits rewarded{' '}
+              <span role="img" aria-label="Sparkle">
+                ✨
+              </span>
+            </span>
+            <span styleName="value">{format(stats.creditsRewarded)}</span>
+          </div>
+          {/* <div styleName="big-stat box">
                   <span styleName="label">Revenue from gifts</span>
                   <span styleName="value">
                     {`${percentageRevenueFromGifts(stats)}%`}
@@ -569,90 +581,88 @@ export default function OpenPage() {
                   <span styleName="label">Gifts redeemed</span>
                   <span styleName="value">{format(stats.giftRedemptions)}</span>
                 </div> */}
-              </div>
+        </div>
 
-              <div styleName="chart box">
-                <h2>Monthly Recurring Revenue</h2>
-                <canvas ref={mrrRef} />
-              </div>
+        <div styleName="chart box">
+          <h2>Monthly Recurring Revenue</h2>
+          <canvas ref={mrrRef} />
+        </div>
 
-              <div styleName="boxes">
-                <div styleName="big-stat box">
-                  <span styleName="label">MRR at end of last month</span>
-                  <span styleName="value">{currency(mrrStats.lastMonth)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">MRR growth rate (MoM)</span>
-                  <span
-                    styleName={`value ${
-                      mrrStats.growthRate > 0 ? 'positive' : 'negative'
-                    }`}
-                  >
-                    {mrrStats.growthRate > 0 ? '+' : ''}
-                    {percent(mrrStats.growthRate)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Current MRR</span>
-                  <span styleName="value">{currency(mrrStats.thisMonth)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total subscription revenue</span>
-                  <span styleName="value">
-                    {currency(stats.totalSubscriptionRevenue)}
-                  </span>
-                </div>
-              </div>
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <span styleName="label">MRR at end of last month</span>
+            <span styleName="value">{currency(mrrStats.lastMonth)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">MRR growth rate (MoM)</span>
+            <span
+              styleName={`value ${
+                mrrStats.growthRate > 0 ? 'positive' : 'negative'
+              }`}
+            >
+              {mrrStats.growthRate > 0 ? '+' : ''}
+              {percent(mrrStats.growthRate)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Current MRR</span>
+            <span styleName="value">{currency(mrrStats.thisMonth)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total subscription revenue</span>
+            <span styleName="value">
+              {currency(stats.totalSubscriptionRevenue)}
+            </span>
+          </div>
+        </div>
 
-              <div styleName="chart box">
-                <h2>
-                  <span style={{ color: lineColor }}>Monthly Profit</span> -{' '}
-                  <span styleName="title-colored" style={{ color: barColor1 }}>
-                    Revenue
-                  </span>{' '}
-                  vs{' '}
-                  <span styleName="title-colored" style={{ color: barColor2 }}>
-                    Expenses
-                  </span>
-                </h2>
-                <canvas ref={monthlyProfitRef} />
-              </div>
-            </div>
+        <div styleName="chart box">
+          <h2>
+            <span style={{ color: lineColor }}>Monthly Profit</span> -{' '}
+            <span styleName="title-colored" style={{ color: barColor1 }}>
+              Revenue
+            </span>{' '}
+            vs{' '}
+            <span styleName="title-colored" style={{ color: barColor2 }}>
+              Expenses
+            </span>
+          </h2>
+          <canvas ref={monthlyProfitRef} />
+        </div>
+      </div>
 
-            <div styleName="users">
-              <div styleName="chart box">
-                <h2>New Signups</h2>
-                <canvas ref={usersRef} />
-              </div>
-              <div styleName="boxes">
-                <div styleName="big-stat box">
-                  <span styleName="label">Last month's new signups</span>
-                  <span styleName="value">{format(usersStats.lastMonth)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">New Signups growth rate (MoM)</span>
-                  <span
-                    styleName={`value ${
-                      usersStats.growthRate > 0 ? 'positive' : 'negative'
-                    }`}
-                  >
-                    {usersStats.growthRate > 0 ? '+' : ''}
-                    {percent(usersStats.growthRate)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">
-                    This month's new signups to date
-                  </span>
-                  <span styleName="value">{format(usersStats.thisMonth)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total users</span>
-                  <span styleName="value">{format(stats.users)}</span>
-                </div>
-              </div>
-              <div styleName="boxes">
-                {/* <div styleName="big-stat box">
+      <div styleName="users">
+        <div styleName="chart box">
+          <h2>New Signups</h2>
+          <canvas ref={usersRef} />
+        </div>
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <span styleName="label">Last month's new signups</span>
+            <span styleName="value">{format(usersStats.lastMonth)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">New Signups growth rate (MoM)</span>
+            <span
+              styleName={`value ${
+                usersStats.growthRate > 0 ? 'positive' : 'negative'
+              }`}
+            >
+              {usersStats.growthRate > 0 ? '+' : ''}
+              {percent(usersStats.growthRate)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">This month's new signups to date</span>
+            <span styleName="value">{format(usersStats.thisMonth)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total users</span>
+            <span styleName="value">{format(stats.users)}</span>
+          </div>
+        </div>
+        <div styleName="boxes">
+          {/* <div styleName="big-stat box">
                   <span styleName="label">Teams</span>
                   <span styleName="value">{format(stats.organisations)}</span>
                 </div>
@@ -662,155 +672,141 @@ export default function OpenPage() {
                     {format(stats.organisationUsers)}
                   </span>
                 </div> */}
-                <div styleName="big-stat box">
-                  <span styleName="label">Google accounts connected</span>
-                  <span styleName="value">
-                    {format(stats.connectedAccountGoogle)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Microsoft accounts connected</span>
-                  <span styleName="value">
-                    {format(stats.connectedAccountOutlook)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Other accounts connected (IMAP)</span>
-                  <span styleName="value">
-                    {format(stats.connectedAccountImap)}
-                  </span>
-                </div>
-              </div>
-              {/* <div styleName="chart box">
+          <div styleName="big-stat box">
+            <span styleName="label">Google accounts connected</span>
+            <span styleName="value">
+              {format(stats.connectedAccountGoogle)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Microsoft accounts connected</span>
+            <span styleName="value">
+              {format(stats.connectedAccountOutlook)}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Other accounts connected (IMAP)</span>
+            <span styleName="value">{format(stats.connectedAccountImap)}</span>
+          </div>
+        </div>
+        {/* <div styleName="chart box">
                 <h2>
                   Users - <span style={{ color: lineColor }}>Google</span> vs{' '}
                   <span style={{ color: lineColor2 }}>Outlook</span>
                 </h2>
                 <canvas ref={providersRef} />
               </div> */}
-            </div>
-            <div styleName="subscriptions">
-              <div styleName="chart box">
-                <h2>Daily Emails Unsubscribed From</h2>
-                <canvas ref={subscriptionRef} />
-              </div>
-              <div styleName="boxes">
-                <div styleName="big-stat box">
-                  <span styleName="label">Total subscription emails seen</span>
-                  <span styleName="value">
-                    {format(
-                      stats.unsubscribableEmails -
-                        stats.previouslyUnsubscribedEmails
-                    )}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total emails unsubscribed from</span>
-                  <span styleName="value">{format(stats.unsubscriptions)}</span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total emails scanned</span>
-                  <span styleName="value">{format(stats.emails)}</span>
-                </div>
-              </div>
-              <div styleName="chart box">
-                <h2>
-                  Unsubscribe Strategy -{' '}
-                  <span style={{ color: lineColor }}>Link</span> vs{' '}
-                  <span style={{ color: lineColor2 }}>Mailto</span>
-                </h2>
-                <canvas ref={mailtoLinkRef} />
-              </div>
-            </div>
-            <div styleName="scans">
-              <div styleName="chart box">
-                <h2>Daily Emails Scanned</h2>
-                <canvas ref={emailsRef} />
-              </div>
-              <div styleName="boxes">
-                {/* <div styleName="big-stat box">
+      </div>
+      <div styleName="subscriptions">
+        <div styleName="chart box">
+          <h2>Daily Emails Unsubscribed From</h2>
+          <canvas ref={subscriptionRef} />
+        </div>
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <span styleName="label">Total subscription emails seen</span>
+            <span styleName="value">
+              {format(
+                stats.unsubscribableEmails - stats.previouslyUnsubscribedEmails
+              )}
+            </span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total emails unsubscribed from</span>
+            <span styleName="value">{format(stats.unsubscriptions)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total emails scanned</span>
+            <span styleName="value">{format(stats.emails)}</span>
+          </div>
+        </div>
+        <div styleName="chart box">
+          <h2>
+            Unsubscribe Strategy -{' '}
+            <span style={{ color: lineColor }}>Link</span> vs{' '}
+            <span style={{ color: lineColor2 }}>Mailto</span>
+          </h2>
+          <canvas ref={mailtoLinkRef} />
+        </div>
+      </div>
+      <div styleName="scans">
+        <div styleName="chart box">
+          <h2>Daily Emails Scanned</h2>
+          <canvas ref={emailsRef} />
+        </div>
+        <div styleName="boxes">
+          {/* <div styleName="big-stat box">
                   <span styleName="label">Total number of scans</span>
                   <span styleName="value">{format(stats.scans)}</span>
                 </div> */}
-                <div styleName="big-stat box">
-                  <span styleName="label">Total reminders requested</span>
-                  <span styleName="value">
-                    {format(stats.remindersRequested)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total reminders sent</span>
-                  <span styleName="value">{format(stats.remindersSent)}</span>
-                </div>
-              </div>
-            </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total reminders requested</span>
+            <span styleName="value">{format(stats.remindersRequested)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total reminders sent</span>
+            <span styleName="value">{format(stats.remindersSent)}</span>
+          </div>
+        </div>
+      </div>
 
-            <div styleName="referrals">
-              <h2>Referrals</h2>
-              <div styleName="boxes">
-                <div styleName="big-stat box">
-                  <span styleName="label">Total referral signups</span>
-                  <span styleName="value">
-                    {format(stats.referralSignupV2)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Total referral purchases</span>
-                  <span styleName="value">
-                    {format(stats.referralPurchaseV2)}
-                  </span>
-                </div>
-                <div styleName="big-stat box">
-                  <span styleName="label">Referral conversion rate</span>
-                  <span styleName="value">
-                    {percent(stats.referralPurchaseV2 / stats.referralSignupV2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div styleName="expenses">
-              {loadingExpenses ? (
-                <div styleName="box">
-                  <h2>Loading expenses...</h2>
-                </div>
-              ) : (
-                <div styleName="box">
-                  <h2>Last Month's Expenses</h2>
-                  <Table>
-                    <tbody>
-                      {itemised.map((expense, i) => {
-                        return (
-                          <TableRow key={i}>
-                            <TableCell>{expense.type}</TableCell>
-                            <TableCell>
-                              <TextLink href={expense.url}>
-                                {expense.service}
-                              </TextLink>
-                            </TableCell>
-                            <TableCell>{currency(expense.cost)}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                      <TableRow inverted>
-                        <TableCell />
-                        <TableCell>Total</TableCell>
-                        <TableCell>
-                          <span>
-                            {currency(
-                              itemised.reduce((out, e) => out + e.cost, 0)
-                            )}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    </tbody>
-                  </Table>
-                </div>
-              )}
-            </div>
-          </ErrorBoundary>
+      <div styleName="referrals">
+        <h2>Referrals</h2>
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <span styleName="label">Total referral signups</span>
+            <span styleName="value">{format(stats.referralSignupV2)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Total referral purchases</span>
+            <span styleName="value">{format(stats.referralPurchaseV2)}</span>
+          </div>
+          <div styleName="big-stat box">
+            <span styleName="label">Referral conversion rate</span>
+            <span styleName="value">
+              {percent(stats.referralPurchaseV2 / stats.referralSignupV2)}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div styleName="expenses">
+        {loadingExpenses ? (
+          <div styleName="box">
+            <h2>Loading expenses...</h2>
+          </div>
+        ) : (
+          <div styleName="box">
+            <h2>Last Month's Expenses</h2>
+            <Table>
+              <tbody>
+                {itemised.map((expense, i) => {
+                  return (
+                    <TableRow key={i}>
+                      <TableCell>{expense.type}</TableCell>
+                      <TableCell>
+                        <TextLink href={expense.url}>
+                          {expense.service}
+                        </TextLink>
+                      </TableCell>
+                      <TableCell>{currency(expense.cost)}</TableCell>
+                    </TableRow>
+                  );
+                })}
+                <TableRow inverted>
+                  <TableCell />
+                  <TableCell>Total</TableCell>
+                  <TableCell>
+                    <span>
+                      {currency(itemised.reduce((out, e) => out + e.cost, 0))}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              </tbody>
+            </Table>
+          </div>
         )}
       </div>
-    </SubPageLayout>
+    </ErrorBoundary>
   );
 }
 
