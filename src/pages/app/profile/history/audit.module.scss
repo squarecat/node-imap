@@ -1,0 +1,44 @@
+@import '../../../../styles/common/colors.scss';
+@import '../../../../components/text/text.module.scss';
+@import '../../../../components/btn/btn.module.scss';
+@import './../../../app/profile/profile.module.scss';
+
+.section {
+  @extend .profile-section;
+  @extend .profile-section--unpadded;
+}
+.content {
+  @extend .profile-unpadded-content;
+}
+
+.log-group {
+  border: 1px solid blue;
+}
+.log-group-title {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.accordion {
+}
+
+.message {
+  background-color: $color-bg-neutral;
+  color: white;
+}
+
+.message-log {
+  background-color: $color-bg-neutral;
+}
+.message-debug {
+  background-color: $color-bg-success;
+}
+.message-info {
+  background-color: $color-bg-info;
+}
+.message-warn {
+  background-color: $color-bg-warning;
+}
+.message-error {
+  background-color: $color-bg-error;
+}
