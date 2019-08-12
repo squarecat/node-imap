@@ -741,42 +741,42 @@ export async function checkAuthToken(userId, token) {
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
   try {
     const { to, from, id, date } = mail;
-    const user = await addUnsubscription(userId, {
+    return addUnsubscription(userId, {
       to,
       from,
       id,
       date,
       ...rest
     });
-
-    addUnsubscribesActivity(user);
-
-    return user;
   } catch (err) {
     throw err;
   }
 }
 
-async function addUnsubscribesActivity({
-  id: userId,
-  unsubscriptions,
-  activity
-}) {
+export async function addUnsubscribeActivityToUser(
+  userId,
+  { unsubCount, milestones }
+) {
   try {
-    const unsubCount = unsubscriptions.length;
+    if (unsubCount < 100) {
+      return true;
+    }
+
     if (unsubCount === 100) {
+      logger.debug(`user-service: unsub count is 100`);
       addActivityForUser(userId, 'reached100Unsubscribes');
     } else if (unsubCount === 500) {
+      logger.debug(`user-service: unsub count is 500`);
       addActivityForUser(userId, 'reached500Unsubscribes');
-    } else if (
-      unsubCount > 100 &&
-      !activity.find(a => a.type === 'reached100Unsubscribes')
-    ) {
+    } else if (unsubCount > 100 && !milestones.reached100Unsubscribes) {
+      logger.debug(
+        `user-service: unsub count is over 100 and they don't have the reward`
+      );
       addActivityForUser(userId, 'reached100Unsubscribes');
-    } else if (
-      unsubCount > 500 &&
-      !activity.find(a => a.type === 'reached500Unsubscribes')
-    ) {
+    } else if (unsubCount > 500 && !milestones.reached500Unsubscribes) {
+      logger.debug(
+        `user-service: unsub count is over 500 and they don't have the reward`
+      );
       addActivityForUser(userId, 'reached500Unsubscribes');
     }
   } catch (err) {
