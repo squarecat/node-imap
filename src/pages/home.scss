@@ -70,7 +70,8 @@ a.more-info:visited {
 }
 
 .friendly-neighbourhood-hero {
-  min-height: calc(100vh - 106px);
+  height: calc(100vh - 106px);
+  max-height: 600px;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -323,7 +324,7 @@ a.more-info:visited {
 
 .trash-pile {
   margin: 0 auto -1px auto;
-  padding-bottom: 200px;
+  padding-bottom: 250px;
 
   background-position: bottom -200px left;
 
@@ -334,12 +335,11 @@ a.more-info:visited {
 
   &[data-show-truck='true'] {
     background-position: bottom -20px left;
-    padding-bottom: 300px;
+    // padding-bottom: 300px;
   }
 
   .text-box {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    padding-top: 100px;
+    // padding-top: 190px;
   }
 
   .beam-me-up-cta {
@@ -347,7 +347,7 @@ a.more-info:visited {
   }
 }
 
-.learn-providers {
+.dark-section {
   position: relative;
   padding: 140px 0;
   background-color: $color-dark-background;
@@ -590,7 +590,7 @@ a.more-info:visited {
   grid-template-columns: repeat(3, 1fr);
   justify-content: center;
   font-size: 14px;
-  margin: 100px auto;
+  padding: 0px 0 100px 0;
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
@@ -801,4 +801,29 @@ a.more-info:visited {
 
 .testimonial-section {
   background-color: rgba(255, 217, 214, 0.1);
+  padding: 0px 50px;
+}
+
+.main-image-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 2em auto -100px auto;
+}
+
+.main-image-section {
+  padding-bottom: 0;
+  overflow: hidden;
+  border-bottom: 1px solid #ececec;
+
+  .home-container {
+    padding-bottom: 0;
+  }
+}
+
+.privacy-section {
+  background-color: rgba(255, 217, 214, 0.1);
+
+  .image-section {
+    grid-template-rows: 300px;
+  }
 }

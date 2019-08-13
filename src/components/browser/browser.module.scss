@@ -17,6 +17,10 @@
   border-bottom: 1px solid white;
   height: 20px;
   width: 100%;
+
+  .large & {
+    height: 25px;
+  }
 }
 
 .header-dot {
@@ -26,6 +30,13 @@
   margin-top: 5px;
   margin-left: 5px;
   float: left;
+
+  .large & {
+    height: 10px;
+    width: 10px;
+    margin-top: 6px;
+    margin-left: 8px;
+  }
 
   &.red {
     background: rgb(252, 98, 93);

@@ -14,14 +14,18 @@ import React, {
   useRef,
   useState
 } from 'react';
+import Testimonial, {
+  HeroTestimonial,
+  TrustBar
+} from '../components/landing/testimonial';
 import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
+import Browser from '../components/browser';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
 import MailListIllustration from '../components/landing/illustration';
 import { Pricing } from './pricing';
-import Testimonial from '../components/landing/testimonial';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
@@ -30,7 +34,8 @@ import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
-import luke from '../assets/luke.jpeg';
+import luke from '../assets/testimonials/luke-nobg.png';
+import mailListImage from '../assets/mail-list-illustation.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
@@ -40,6 +45,12 @@ import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
 
 const faker = require('../vendor/faker/locale/en');
+
+const companyLinks = [
+  'https://cdn.leavemealone.app/images/companies/toptal.png',
+  'https://cdn.leavemealone.app/images/companies/tutorseek.png',
+  'https://cdn.leavemealone.app/images/companies/product-hunt.png'
+];
 
 const NEWS = [
   {
@@ -137,11 +148,7 @@ const IndexPage = () => {
                 </p>
 
                 <div className="join-container">
-                  <a
-                    href="/signup?ref=hero"
-                    className={`beam-me-up-cta`}
-                    // state={{ register: true }}
-                  >
+                  <a href="/signup?ref=hero" className={`beam-me-up-cta`}>
                     Get Started For Free!
                   </a>
                   {statsContent}
@@ -157,39 +164,37 @@ const IndexPage = () => {
           </div>
         </div>
 
-        <div className="home-container testimonial-section">
-          <div
-            className="text-box text-box-centered"
-            style={{ textAlign: 'left' }}
-          >
-            <Testimonial
+        <div className="testimonial-section">
+          <div className="home-container">
+            <HeroTestimonial
               text={`Using Leave Me Alone has resulted in a 17% reduction in my
                 emails, saving me hours of time each month.`}
-              author="Luke Chadwick, Founder - GraphQL360"
+              author="Luke Chadwick, Founder"
               image={luke}
+              companyName="GraphQL360"
+              companyLogo={''}
             />
-            <TextLink as="link" linkTo="/wall-of-love">
-              <span>See all of our customer testimonials</span>{' '}
-              <ArrowIcon inline />
-            </TextLink>
           </div>
         </div>
+        <TrustBar logos={companyLinks} label="Used by employees at: " dark />
+
+        <div className="dark-section main-image-section">
+          <div className="home-container">
+            <h2>All of your subscription emails together</h2>
+            <p>
+              Too much noise in your inbox? We show you all the mailing lists
+              you're subscribed to and let you unsubscribe with one click.
+            </p>
+          </div>
+          <div className="main-image-container">
+            <Browser large>
+              <img className="browser-image" src={mailListImage} />
+            </Browser>
+          </div>
+        </div>
+
         <div className="home-container">
           <div className="home-container-inner" id="learn">
-            <div className="image-section">
-              <div className="image-section-text">
-                <h3>All of your subscription emails together</h3>
-                <p>
-                  Too much noise in your inbox? We show you all the mailing
-                  lists you're subscribed to and let you unsubscribe with one
-                  click.
-                </p>
-              </div>
-              <div className="image-section-img">
-                <MailListIllustration />
-              </div>
-            </div>
-
             <div className="image-section image-left">
               <div className="image-section-img">
                 <img src={subscriberScore} alt="subscriber score image" />
@@ -224,46 +229,9 @@ const IndexPage = () => {
                 <img src={connectAccounts} alt="connected accounts image" />
               </div>
             </div>
+          </div>
+        </div>
 
-            <div className="image-section image-left privacy">
-              <div className="image-section-img">
-                <img src={envelope} alt="private envelope image" />
-              </div>
-              <div className="image-section-text">
-                <h3>Privacy first</h3>
-                <p>
-                  We're committed to privacy. We don't store any email content
-                  so you don't have to worry about us losing or selling your
-                  data.
-                </p>
-                <p>
-                  <TextLink as="link" linkTo="/security">
-                    <span>Learn more about security and privacy</span>{' '}
-                    <ArrowIcon inline />
-                  </TextLink>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="home-container section-padded">
-          <div className="home-container-inner" id="news">
-            <h3>In the news</h3>
-            <p>
-              Don't take our word for it, read what people are saying about us.
-            </p>
-            <div className="in-the-news">
-              {NEWS.map(({ quote, logoUrl, url }) => (
-                <div key={url} className="news-item">
-                  <p>"{quote}"</p>
-                  <a target="_" className="news-logo" href={url}>
-                    <img src={logoUrl} />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
         <div
           className="trash-pile"
           id="trash-pile"
@@ -291,7 +259,11 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="learn-providers" ref={trashPileRef} id="providers">
+        <div
+          className="dark-section learn-providers"
+          ref={trashPileRef}
+          id="providers"
+        >
           <div className="home-container">
             <div className="text-box text-box-centered">
               <h3 className="providers-header">
@@ -345,24 +317,30 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-        <div className="home-container section-padded">
-          <div className="home-container-inner" id="pricing">
-            <h3>Let's talk money</h3>
-            <p>
-              So that we can <a href="/pricing#why">keep your data safe</a>{' '}
-              Leave Me Alone is a paid service. Each email you unsubscribe from
-              costs one credit.
-            </p>
+        <div className="privacy-section">
+          <div className="home-container">
+            <div className="image-section image-left privacy">
+              <div className="image-section-img">
+                <img src={envelope} alt="private envelope image" />
+              </div>
+              <div className="image-section-text">
+                <h3>Privacy first</h3>
+                <p>
+                  We take your privacy seriously. Your emails are just that -
+                  yours, and they should stay that way. We don't store any email
+                  content so you don't have to worry about us losing or selling
+                  your private data.
+                </p>
+                <p>
+                  <TextLink as="link" linkTo="/security">
+                    <span>Learn more about security and privacy</span>{' '}
+                    <ArrowIcon inline />
+                  </TextLink>
+                </p>
+              </div>
+            </div>
           </div>
-          <Pricing />
-        </div>
-
-        <div className="home-container section-padded">
           <div className="home-container-inner" id="news">
-            <h3>In the news</h3>
-            <p>
-              Don't take our word for it, read what people are saying about us.
-            </p>
             <div className="in-the-news">
               {NEWS.map(({ quote, logoUrl, url }) => (
                 <div key={url} className="news-item">
@@ -375,22 +353,17 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-
-        <div className="home-container">
-          <div className="text-box text-box-left">
-            <Testimonial
-              text={`Using Leave Me Alone has resulted in a 17% reduction in my
-                emails, saving me hours of time each month.`}
-              author="Luke Chadwick, Founder - GraphQL360"
-              image={luke}
-            />
-            <TextLink as="link" linkTo="/wall-of-love">
-              <span>See all of our customer testimonials</span>{' '}
-              <ArrowIcon inline />
-            </TextLink>
+        <div className="home-container section-padded">
+          <div className="home-container-inner" id="pricing">
+            <h3>Let's talk money</h3>
+            <p>
+              So that we can <a href="/pricing#why">keep your data safe</a>{' '}
+              Leave Me Alone is a paid service. Each email you unsubscribe from
+              costs one credit.
+            </p>
           </div>
+          <Pricing />
         </div>
-
         <div className="home-container">
           <div className="home-container-inner end-stuff">
             {statsContent}

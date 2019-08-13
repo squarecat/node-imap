@@ -1,9 +1,10 @@
 import './browser.module.scss';
 
 import React from 'react';
+import cx from 'classnames';
 
-export default ({ children }) => (
-  <div styleName="browser-container">
+export default ({ children, large }) => (
+  <div styleName={cx('browser-container', { large })}>
     <div styleName="header">
       <div styleName="header-dot red" />
       <div styleName="header-dot yellow" />
