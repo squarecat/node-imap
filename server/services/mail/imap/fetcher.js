@@ -1,4 +1,5 @@
 import { MailError } from '../../../utils/errors';
+import { createAudit } from '../../audit';
 import { dedupeMailList } from './utils';
 import { getMailClient } from './access';
 import { getMailboxes } from './mailboxes';
@@ -7,6 +8,7 @@ import { parseMailList } from './parser';
 import util from 'util';
 
 export async function* fetchMail({ masterKey, user, account, from }) {
+  const audit = createAudit(user.id, 'imap/fetch');
   const start = Date.now();
   let client;
   try {
@@ -16,7 +18,8 @@ export async function* fetchMail({ masterKey, user, account, from }) {
         user.id
       }) [estimated ${0} mail]`
     );
-    client = await getMailClient(masterKey, account);
+    audit.append('Checking for new mail...');
+    client = await getMailClient(masterKey, account, audit);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
@@ -116,7 +119,9 @@ async function* readFromBox(client, mailbox, from) {
     let uuids;
     let searchParams = ['BODY', 'unsubscribe'];
     if (client._config.host !== 'imap.mail.me.com') {
-      searchParams = ['OR', searchParams, ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+      // fixme, implement body searching for all mailboxes
+      // searchParams = ['OR', searchParams, ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+      searchParams = ['HEADER', 'LIST-UNSUBSCRIBE', ''];
     }
     const query = ['ALL', ['SINCE', from], searchParams];
     if (supportsSort) {
