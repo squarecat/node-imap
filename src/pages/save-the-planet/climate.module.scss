@@ -29,41 +29,6 @@
   }
 }
 
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  grid-column-gap: 50px;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    margin-top: 90px;
-  }
-}
-
-.feature {
-  p {
-    font-size: 16px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
-}
-
-.feature-title {
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.feature-img {
-  max-width: 150px;
-  margin-left: -15px;
-}
-
-.feature-text {
-}
-
 .sources {
   margin: 100px 0 -100px 0;
   font-size: 10px;
@@ -82,4 +47,10 @@
   li:target {
     background-color: rgba(yellow, 0.25);
   }
+}
+
+.questions {
+}
+.question {
+  margin-bottom: 80px;
 }

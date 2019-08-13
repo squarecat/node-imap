@@ -1,9 +1,9 @@
 import './estimator.module.scss';
 
 import React, { useMemo, useState } from 'react';
+import { TextImportant, TextLink } from '../../components/text';
 
 import RangeInput from '../../components/form/range';
-import { TextImportant, TextLink } from '../../components/text';
 import mailBoxImg from '../../assets/mailbox.png';
 import numeral from 'numeral';
 import smallLogo from '../../assets/logo.png';
@@ -31,51 +31,7 @@ export default function Estimator({
 
   const recommendationContent = useMemo(
     () => {
-      const carbonSavedPerMonth = unsubsPerMonth * CARBON_PER_EMAIL;
-      const treesPlantedPerYear =
-        (carbonSavedPerMonth / CARBON_OFFSET_PER_TREE) * 12;
-      const plasticBagsPerYear =
-        (carbonSavedPerMonth / CARBON_PLASTIC_BAG) * 12;
-      const drivingSavedPerYear =
-        (carbonSavedPerMonth / CARBON_DRIVING_1KM) * 12;
-
-      return (
-        <>
-          <p>
-            We estimate you receive around{' '}
-            <TextImportant>
-              {formatNumber(unsubsPerMonth)} unwanted subscription emails{' '}
-            </TextImportant>{' '}
-            each month.
-          </p>
-          <p>
-            Unsubscribing from these could{' '}
-            <TextImportant>
-              reduce your carbon footprint by{' '}
-              {formatNumber(carbonSavedPerMonth)}g
-            </TextImportant>
-            .
-          </p>
-          <p>
-            This is the same as{' '}
-            <TextImportant>
-              using {formatNumber(plasticBagsPerYear)} fewer plastic bags
-            </TextImportant>
-            ,{' '}
-            <TextImportant>
-              driving {formatNumber(drivingSavedPerYear)}km less
-            </TextImportant>
-            , or{' '}
-            <TextImportant>
-              planting {formatNumber(treesPlantedPerYear)} trees
-            </TextImportant>{' '}
-            each year.{' '}
-            <TextLink undecorated href="#cite-5">
-              <sup>[5]</sup>
-            </TextLink>
-          </p>
-        </>
-      );
+      return getRecommendationContent(unsubsPerMonth);
     },
     [unsubsPerMonth]
   );
@@ -158,4 +114,57 @@ export default function Estimator({
 
 function formatNumber(num) {
   return numeral(num).format('0,00');
+}
+
+function getRecommendationContent(unsubsPerMonth) {
+  const carbonSavedPerMonth = unsubsPerMonth * CARBON_PER_EMAIL;
+
+  const comparisonContent = getComparisonContent(carbonSavedPerMonth);
+  return (
+    <>
+      <p>
+        We estimate you receive around{' '}
+        <TextImportant>
+          {formatNumber(unsubsPerMonth)} unwanted subscription emails{' '}
+        </TextImportant>{' '}
+        each month.
+      </p>
+      <p>
+        Unsubscribing from these could{' '}
+        <TextImportant>
+          reduce your carbon footprint by {formatNumber(carbonSavedPerMonth)}g
+        </TextImportant>
+        .
+      </p>
+      {comparisonContent}
+    </>
+  );
+}
+
+function getComparisonContent(carbonSavedPerMonth) {
+  const treesPlantedPerYear =
+    (carbonSavedPerMonth / CARBON_OFFSET_PER_TREE) * 12;
+  const plasticBagsPerYear = (carbonSavedPerMonth / CARBON_PLASTIC_BAG) * 12;
+  const drivingSavedPerYear = (carbonSavedPerMonth / CARBON_DRIVING_1KM) * 12;
+
+  return (
+    <p>
+      This is the same as{' '}
+      <TextImportant>
+        using {formatNumber(plasticBagsPerYear)} fewer plastic bags
+      </TextImportant>
+      ,{' '}
+      <TextImportant>
+        driving {formatNumber(drivingSavedPerYear)}km less
+      </TextImportant>
+      , or{' '}
+      <TextImportant>
+        planting {formatNumber(treesPlantedPerYear)} trees
+      </TextImportant>{' '}
+      each year.{' '}
+      <TextLink undecorated href="#cite-5">
+        <sup>[5]</sup>
+      </TextLink>
+    </p>
+  );
 }

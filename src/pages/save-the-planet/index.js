@@ -1,20 +1,27 @@
 import './climate.module.scss';
-import React, { useState, useEffect, useMemo } from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
-import treeImg from '../../assets/climate/tree.png';
-import downImg from '../../assets/climate/down.png';
-import planeImg from '../../assets/climate/around-the-globe.png';
-import rainbowImg from '../../assets/climate/rainbow.png';
-import useAsync from 'react-use/lib/useAsync';
-import request from '../../utils/request';
-import { TextImportant, TextLink } from '../../components/text';
-import numeral from 'numeral';
 
 import CarbonEstimator, {
+  CARBON_OFFSET_PER_TREE,
   CARBON_PER_EMAIL,
-  LONDON_PARIS_CARBON,
-  CARBON_OFFSET_PER_TREE
+  LONDON_PARIS_CARBON
 } from '../../components/estimator/carbon';
+import Features, {
+  Feature,
+  FeatureImage,
+  FeatureText,
+  FeatureTitle
+} from '../../components/landing/features';
+import React, { useEffect, useMemo, useState } from 'react';
+import { TextImportant, TextLink } from '../../components/text';
+
+import SubPageLayout from '../../layouts/subpage-layout';
+import downImg from '../../assets/climate/down.png';
+import numeral from 'numeral';
+import planeImg from '../../assets/climate/around-the-globe.png';
+import rainbowImg from '../../assets/climate/rainbow.png';
+import request from '../../utils/request';
+import treeImg from '../../assets/climate/tree.png';
+import useAsync from 'react-use/lib/useAsync';
 
 const EMAILS_SENT_PER_DAY = 246.5; // 246500000000
 const NEWSLETTERS_NEVER_OPENED = 0.75;
@@ -22,7 +29,7 @@ const NEWSLETTERS_NEVER_OPENED = 0.75;
 // 480000: "London to New York",
 // 1460000: "London to Sydney"
 
-const title = `Save the Planet`;
+const title = `Clean your Inbox and Save the Planet`;
 // const description = `One email equates to ${CARBON_PER_EMAIL}g of CO2 a year and ${NEWSLETTERS_NEVER_OPENED *
 //   100}% of mail is never opened.  Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
@@ -87,13 +94,13 @@ const ClimatePage = () => {
       </div>
 
       <div styleName="climate-inner">
-        <div styleName="features">
-          <div styleName="feature">
-            <div styleName="feature-img">
+        <Features>
+          <Feature>
+            <FeatureImage>
               <img src={downImg} alt="cartoon cloud with a down arrow" />
-            </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">Reduce Carbon Footprint</h3>
+            </FeatureImage>
+            <FeatureTitle>Reduce Carbon Footprint</FeatureTitle>
+            <FeatureText>
               {!stats ? (
                 <p>Loading...</p>
               ) : (
@@ -113,18 +120,18 @@ const ClimatePage = () => {
                   </TextLink>
                 </p>
               )}
-            </div>
-          </div>
+            </FeatureText>
+          </Feature>
 
-          <div styleName="feature">
-            <div styleName="feature-img">
+          <Feature>
+            <FeatureImage>
               <img
                 src={planeImg}
                 alt="cartoon cloud with plane flying around a globe"
               />
-            </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">Offset Flight Emissions</h3>
+            </FeatureImage>
+            <FeatureTitle>Offset Flight Emissions</FeatureTitle>
+            <FeatureText>
               {!stats ? (
                 <p>Loading...</p>
               ) : (
@@ -140,15 +147,15 @@ const ClimatePage = () => {
                   </TextLink>
                 </p>
               )}
-            </div>
-          </div>
+            </FeatureText>
+          </Feature>
 
-          <div styleName="feature">
-            <div styleName="feature-img">
-              <img src={rainbowImg} alt="cartoon cloud with a raindbow" />
-            </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">Improve The Atmosphere</h3>
+          <Feature>
+            <FeatureImage>
+              <img src={rainbowImg} alt="cartoon cloud with a rainbow" />
+            </FeatureImage>
+            <FeatureTitle>Improve The Atmosphere</FeatureTitle>
+            <FeatureText>
               {!stats ? (
                 <p>Loading...</p>
               ) : (
@@ -168,9 +175,9 @@ const ClimatePage = () => {
                   </TextLink>
                 </p>
               )}
-            </div>
-          </div>
-        </div>
+            </FeatureText>
+          </Feature>
+        </Features>
       </div>
 
       <div styleName="climate-inner">
@@ -180,8 +187,11 @@ const ClimatePage = () => {
       <div styleName="climate-inner">
         <h2>Plant a tree and we donate to ...</h2>
         <p>
-          Planting 1 tree offsets carbon footprint by {CARBON_OFFSET_PER_TREE}{' '}
-          over it's lifetime
+          Planting 1 tree offsets your carbon footprint by{' '}
+          {formatNumber(CARBON_OFFSET_PER_TREE / 100)}kg over it's lifetime.
+          That's equivalent to unsubscribing from{' '}
+          {formatNumber(CARBON_OFFSET_PER_TREE / CARBON_PER_EMAIL)} subscription
+          emails!
         </p>
         <p>
           Donate at the checkout to plant a tree and we will also donate to a
@@ -191,25 +201,36 @@ const ClimatePage = () => {
         <p>Trees planeted so far...</p>
       </div>
 
-      <div styleName="climate-inner">
-        <h2>Will unsubscribing really make a difference?</h2>
-        <p>
-          Yes! {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened.
-          Setting rules to archive, delete, or apply a label doesn't stop the
-          carbon impact of receiving the email. By unsubscribing from mailing
-          lists you stop the email from being sent at all.
-        </p>
-        <p>
-          You will also help the senders to reduce their carbon footprint and
-          improve the quality of their mailing lists.
-        </p>
-
-        <h2>How can emails contribute to carbon emissions?</h2>
-        <p>
-          The culprits are greenhouse gases produced in running the computer,
-          server and routers but also those emitted when the equipment was
-          manufactured.
-        </p>
+      <div styleName="climate-inner questions">
+        <div styleName="question">
+          <h2>Will unsubscribing really make a difference?</h2>
+          <p>
+            Yes! {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened.
+            Deleting or setting rules to move these emails into a folder doesn't
+            stop the carbon impact of receiving the email. By unsubscribing from
+            unwanted mailing lists you can stop the email from being sent at
+            all.
+          </p>
+          <p>
+            You will also help the senders to reduce their carbon footprint and
+            improve the quality of their mailing lists, which helps all Leave Me
+            Alone users.
+          </p>
+        </div>
+        <div styleName="question">
+          <h2>How can emails contribute to carbon emissions?</h2>
+          <p>
+            The culprits are greenhouse gases produced in running the computer,
+            server and routers but also those emitted when the equipment was
+            manufactured.
+          </p>
+          <p>TODO write more here...</p>
+        </div>
+        <div styleName="question">
+          <h2>What else can I do to help reduce my carbon footprint?</h2>
+          <p>Resources for reducing carbon emissions...</p>
+          <p>TODO write more here...</p>
+        </div>
       </div>
 
       <div styleName="climate-inner">
