@@ -92,7 +92,7 @@ $image-size-tablet: 30px;
   display: flex;
   align-items: center;
   max-height: 30px;
-  max-width: 100%;
+  max-width: 100px;
 }
 
 .invert {
@@ -111,6 +111,11 @@ $image-size-tablet: 30px;
 
 .company-logo {
   max-height: 30px;
+
+  &.ptobot {
+    position: relative;
+    top: -3px;
+  }
 }
 
 .company-name {

@@ -855,7 +855,11 @@ export async function getSubscriptionStats() {
       mrr: amount / 100
     };
   } catch (err) {
-    throw err;
+    logger.error(`payments-service: failed to get subscription stats`);
+    logger.error(err);
+    return {
+      mrr: 0
+    };
   }
 }
 

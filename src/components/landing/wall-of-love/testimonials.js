@@ -309,7 +309,13 @@ export default [
       </span>
     ),
     twitter: `jjbuildit`,
-    avatarPath: `image-15.jpg`
+    avatarPath: `image-15.jpg`,
+    company: (
+      <img
+        styleName="company-logo ptobot"
+        src={`${BASE_IMG_URL}/companies/ptobot.svg`}
+      />
+    )
   },
 
   {
@@ -328,7 +334,7 @@ export default [
   },
 
   {
-    name: 'Dinuka Jayasuriya',
+    name: 'Dinuka',
     text: (
       <span>
         Leave Me Alone helped me{' '}
