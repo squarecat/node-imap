@@ -16,24 +16,30 @@ export async function getGmailAccessToken(userId, account) {
   return accessToken;
 }
 
-export async function getMailClient(userId, account) {
-  return getApiClient(userId, account);
+export async function getMailClient(userId, account, audit) {
+  return getApiClient(userId, account, audit);
 }
 
-async function getApiClient(userId, account) {
-  const accessToken = await getGmailAccessToken(userId, account);
-  const oauth2Client = new google.auth.OAuth2(
-    googleConfig.clientId,
-    googleConfig.clientSecret,
-    googleConfig.redirect
-  );
-  oauth2Client.setCredentials({
-    access_token: accessToken
-  });
-  return google.gmail({
-    version: 'v1',
-    auth: oauth2Client
-  });
+async function getApiClient(userId, account, audit) {
+  audit.append('Fetching Google access token');
+  try {
+    const accessToken = await getGmailAccessToken(userId, account);
+    const oauth2Client = new google.auth.OAuth2(
+      googleConfig.clientId,
+      googleConfig.clientSecret,
+      googleConfig.redirect
+    );
+    oauth2Client.setCredentials({
+      access_token: accessToken
+    });
+    return google.gmail({
+      version: 'v1',
+      auth: oauth2Client
+    });
+  } catch (err) {
+    audit.appendError('Failed to refresh access token');
+    throw err;
+  }
 }
 
 // async function getImapClient(userOrUserId) {

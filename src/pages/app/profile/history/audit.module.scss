@@ -1,0 +1,139 @@
+@import '../../../../styles/common/colors.scss';
+@import '../../../../components/text/text.module.scss';
+@import '../../../../components/btn/btn.module.scss';
+@import './../../../app/profile/profile.module.scss';
+
+.section {
+  @extend .profile-section;
+  @extend .profile-section--unpadded;
+}
+.content {
+  @extend .profile-unpadded-content;
+}
+
+.accordion {
+  &:last-child {
+    .accordion-header {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  }
+
+  &.open {
+    .accordion-header {
+      border-radius: 0;
+    }
+  }
+}
+
+.accordion-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 150ms ease-in-out;
+
+  &:hover {
+    background-color: $color-red-light;
+  }
+
+  .open & {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  }
+}
+
+.log-actions {
+  display: flex;
+  align-items: center;
+}
+.expand-icon {
+}
+
+.log-date {
+  text-align: right;
+  margin-right: 20px;
+  > span {
+    display: block;
+  }
+}
+.date-relative {
+}
+.date-absolute {
+}
+.log-group {
+  font-size: 16px;
+  line-height: 20px;
+  margin: 0 10px 0 0;
+}
+
+.accordion-content {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+
+  .open & {
+    max-height: 100%;
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-gap: 10px;
+
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  &:last-child {
+    border: none;
+  }
+}
+.message-date {
+}
+.message-text {
+  margin: 0;
+  font-family: monospace;
+  background: none;
+  padding: 0;
+}
+
+.message-level {
+}
+
+.message-log,
+.message-debug,
+.message-info {
+  .message-level {
+    color: $color-text-info;
+  }
+}
+
+.message-warn {
+  .message-level {
+    color: $color-text-warning;
+  }
+}
+.message-error {
+  .message-level {
+    background-color: $color-bg-error;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+}
+
+.date-muted {
+  font-size: 12px;
+  opacity: 0.6;
+}

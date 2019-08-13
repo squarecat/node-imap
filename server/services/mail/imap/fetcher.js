@@ -1,4 +1,5 @@
 import { MailError } from '../../../utils/errors';
+import { createAudit } from '../../audit';
 import { dedupeMailList } from './utils';
 import { getMailClient } from './access';
 import { getMailboxes } from './mailboxes';
@@ -7,6 +8,7 @@ import { parseMailList } from './parser';
 import util from 'util';
 
 export async function* fetchMail({ masterKey, user, account, from }) {
+  const audit = createAudit(user.id, 'fetch/imap');
   const start = Date.now();
   let client;
   try {
@@ -16,7 +18,12 @@ export async function* fetchMail({ masterKey, user, account, from }) {
         user.id
       }) [estimated ${0} mail]`
     );
-    client = await getMailClient(masterKey, account);
+    audit.append(
+      `Starting scan for mail on account ${account.email} ${
+        from ? `after ${new Date(from)}` : ''
+      }`
+    );
+    client = await getMailClient(masterKey, account, audit);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
@@ -63,11 +70,18 @@ export async function* fetchMail({ masterKey, user, account, from }) {
         next = await iter.next();
       }
     }
-
+    const timeTaken = (Date.now() - start) / 1000;
     logger.info(
-      `imap-fetcher: finished scan (${user.id}) [took ${(Date.now() - start) /
-        1000}s, ${totalEmailsCount} results]`
+      `imap-fetcher: finished scan (${
+        user.id
+      }) [took ${timeTaken}s, ${totalEmailsCount} results]`
     );
+    audit.append(
+      `Scan finished on account ${
+        account.email
+      }. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
+    );
+
     return {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
@@ -83,6 +97,7 @@ export async function* fetchMail({ masterKey, user, account, from }) {
   } finally {
     if (client) {
       client.end();
+      client.destroy();
     }
   }
 }
@@ -108,15 +123,18 @@ async function* readFromBox(client, mailbox, from) {
   const search = util.promisify(client.search.bind(client));
   const closeBox = util.promisify(client.closeBox.bind(client));
   const sort = util.promisify(client.sort.bind(client));
+  let box;
   try {
     const { attribute, path } = mailbox;
-    await openBox(path, true);
+    box = await openBox(path, true);
     console.log(`imap-fetcher: searching mail from ${attribute || path}`);
     const supportsSort = client.serverSupports('SORT');
     let uuids;
     let searchParams = ['BODY', 'unsubscribe'];
     if (client._config.host !== 'imap.mail.me.com') {
-      searchParams = ['OR', searchParams, ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+      // fixme, implement body searching for all mailboxes
+      // searchParams = ['OR', searchParams, ['HEADER', 'LIST-UNSUBSCRIBE', '']];
+      searchParams = ['HEADER', 'LIST-UNSUBSCRIBE', ''];
     }
     const query = ['ALL', ['SINCE', from], searchParams];
     if (supportsSort) {
@@ -125,7 +143,6 @@ async function* readFromBox(client, mailbox, from) {
       uuids = await search(query);
     }
     if (!uuids.length) {
-      console.log('no results');
       return [];
     }
 
@@ -136,9 +153,12 @@ async function* readFromBox(client, mailbox, from) {
       yield mail.map(m => ({ ...m, mailbox }));
       next = await iter.next();
     }
-    await closeBox();
   } catch (err) {
     console.error(err);
+  } finally {
+    if (box) {
+      await closeBox();
+    }
   }
 }
 
@@ -209,11 +229,9 @@ async function* iterator(f) {
   while (true) {
     const value = await iterateMessage();
     if (value.length) {
-      console.log(`returning ${value.length} messages`);
       yield value;
     }
     if (done && !messages.length) {
-      console.log('iterating message done');
       return [];
     }
   }

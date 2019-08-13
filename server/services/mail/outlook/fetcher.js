@@ -1,12 +1,14 @@
 import { doRequest, getOutlookAccessToken } from './access';
 import { getFilterString, getSearchString } from './utils';
 
+import { createAudit } from '../../audit';
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
 export async function* fetchMail({ user, account, from }) {
+  const audit = createAudit(user.id, 'fetch/microsoft');
   const start = Date.now();
   try {
     const { unsubscriptions, ignoredSenderList } = user;
@@ -15,7 +17,7 @@ export async function* fetchMail({ user, account, from }) {
         from,
         includeTrash: true
       }),
-      getOutlookAccessToken(user.id, account)
+      getOutlookAccessToken(user.id, account, audit)
     ]);
     let totalEmailsCount = 0;
     let totalUnsubCount = 0;
@@ -27,6 +29,11 @@ export async function* fetchMail({ user, account, from }) {
       `outlook-fetcher: checking for new mail after ${getFilterString({
         from
       })} (${user.id}) [estimated ${totalEstimate} mail]`
+    );
+    audit.append(
+      `Starting scan for mail on account ${account.email} ${
+        from ? `after ${new Date(from)}` : ''
+      }`
     );
     // get the folders so we can associate them later
     const mailFolders = await getMailFolders(accessToken);
@@ -74,10 +81,16 @@ export async function* fetchMail({ user, account, from }) {
         next = await iter.next();
       }
     }
+    const timeTaken = (Date.now() - start) / 1000;
     logger.info(
-      `outlook-fetcher: finished scan (${user.id}) [took ${(Date.now() -
-        start) /
-        1000}s, ${totalEmailsCount} results]`
+      `outlook-fetcher: finished scan (${
+        user.id
+      }) [took ${timeTaken}s, ${totalEmailsCount} results]`
+    );
+    audit.append(
+      `Scan finished on account ${
+        account.email
+      }. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
     );
     return {
       totalMail: totalEmailsCount,
