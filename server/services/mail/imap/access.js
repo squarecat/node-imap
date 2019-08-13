@@ -8,11 +8,12 @@ const connections = io.counter({
   name: 'IMAP Connections'
 });
 
-export async function getMailClient(master, account) {
+export async function getMailClient(master, account, audit) {
   const { id, email, host, port, tls } = account;
   try {
-    const password = await getImapAccessDetails(master, id);
-    return connect({ username: email, password, host, port, tls });
+    audit.append('Decrypting IMAP details');
+    const password = await getImapAccessDetails(master, id, audit);
+    return connect({ username: email, password, host, port, tls, audit });
   } catch (err) {
     logger.error('imap-access: failed to connect to IMAP');
     logger.error(err);
@@ -20,7 +21,21 @@ export async function getMailClient(master, account) {
   }
 }
 
-function connect({ username, password, host, port, tls = true }) {
+const uselessLogs = [
+  '=> DONE',
+  `<= 'IDLE OK IDLE`,
+  `=> 'IDLE IDLE'`,
+  `<= '+ idling'`,
+  `<= '* BYE'`,
+  `OK !!`,
+  `CLOSE`
+];
+function connect({ username, password, host, port, tls = true, audit }) {
+  audit.append(
+    `Connecting to IMAP host ${host}:${port} with username ${username}${
+      tls ? ` using tls` : ''
+    }`
+  );
   return new Promise(async (resolve, reject) => {
     const imap = new Imap({
       user: username,
@@ -33,25 +48,27 @@ function connect({ username, password, host, port, tls = true }) {
         rejectUnauthorized: process.env.NODE_ENV === 'production'
       },
       debug: msg => {
-        if (msg.includes('LOGIN')) return;
-        return logger.debug(msg);
+        if (uselessLogs.some(log => msg.includes(log))) {
+          return;
+        }
+        audit.append(`IMAP LOG: ${msg}`);
       }
     });
     imap.once('ready', () => {
-      console.log('imap connected');
+      audit.append(`IMAP connection successful`);
       connections.inc();
       resolve(imap);
     });
 
     imap.on('error', function(err) {
-      console.log('imap error');
+      audit.append(`IMAP connection failed`);
       console.error(err);
       reject(err);
     });
 
     imap.once('end', function() {
       connections.dec();
-      console.log('imap closed');
+      audit.append(`IMAP connection closed`);
     });
 
     imap.connect();
