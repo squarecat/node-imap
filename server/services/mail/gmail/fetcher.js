@@ -14,7 +14,7 @@ import { parseMailList } from './parser';
 // todo convert to generator?
 export async function* fetchMail(
   { user, account, from },
-  { strategy = 'api', batch = false } = {}
+  { batch = false } = {}
 ) {
   const audit = createAudit(user.id, 'fetch/google');
   const start = Date.now();
@@ -25,7 +25,7 @@ export async function* fetchMail(
         from,
         includeTrash: true
       }),
-      getMailClient(user.id, account, strategy, audit),
+      getMailClient(user.id, account, audit),
       getGmailAccessToken(user.id, account)
     ]);
     logger.info(
