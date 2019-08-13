@@ -96,7 +96,6 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     });
   } finally {
     if (client) {
-      debugger;
       client.end();
       client.destroy();
     }
