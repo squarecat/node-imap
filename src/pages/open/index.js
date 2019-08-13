@@ -450,11 +450,6 @@ function Open() {
   const usersStats = getBoxStats(stats, 'users');
   const mrrStats = mrrBoxStats(stats);
 
-  console.log('totalRevenueStats', totalRevenueStats);
-  console.log('salesStats', salesStats);
-  console.log('usersStats', usersStats);
-  console.log('mrrStats', mrrStats);
-
   if (loading) {
     return (
       <div styleName="box padded">
@@ -473,6 +468,11 @@ function Open() {
       </div>
     );
   }
+
+  console.log('totalRevenueStats', totalRevenueStats);
+  console.log('salesStats', salesStats);
+  console.log('usersStats', usersStats);
+  console.log('mrrStats', mrrStats);
 
   return (
     <ErrorBoundary>

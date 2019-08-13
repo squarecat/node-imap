@@ -111,6 +111,12 @@ $image-size-tablet: 30px;
 
 .company-logo {
   max-height: 30px;
+
+  &.ptobot {
+    height: 30px;
+    position: relative;
+    top: -3px;
+  }
 }
 
 .company-name {
