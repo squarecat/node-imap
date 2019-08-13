@@ -334,7 +334,7 @@ export default [
   },
 
   {
-    name: 'Dinuka Jayasuriya',
+    name: 'Dinuka',
     text: (
       <span>
         Leave Me Alone helped me{' '}
