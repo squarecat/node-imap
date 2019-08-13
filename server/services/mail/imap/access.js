@@ -75,10 +75,13 @@ function connect({ username, password, host, port, tls = true, audit }) {
   });
 }
 
-export async function testConnection(args) {
+export async function testConnection(args, audit) {
   let imap;
   try {
-    imap = await connect(args);
+    imap = await connect({
+      ...args,
+      audit
+    });
     return {
       connected: true
     };

@@ -12,6 +12,18 @@
 }
 
 .accordion {
+  &:last-child {
+    .accordion-header {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  }
+
+  &.open {
+    .accordion-header {
+      border-radius: 0;
+    }
+  }
 }
 
 .accordion-header {
@@ -20,12 +32,29 @@
   align-items: center;
   justify-content: space-between;
   padding: 5px 10px;
-
   border-top: 1px solid rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 150ms ease-in-out;
+
+  &:hover {
+    background-color: $color-red-light;
+  }
+
+  .open & {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  }
 }
+
+.log-actions {
+  display: flex;
+  align-items: center;
+}
+.expand-icon {
+}
+
 .log-date {
   text-align: right;
+  margin-right: 20px;
   > span {
     display: block;
   }
@@ -41,6 +70,15 @@
 }
 
 .accordion-content {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+
+  .open & {
+    max-height: 100%;
+    opacity: 1;
+    pointer-events: all;
+  }
 }
 
 .message {
