@@ -35,8 +35,14 @@ export function log(message, { userId, id, groupId, group, level = 'log' }) {
   });
 }
 
-export function get(userId) {
-  return audit.get(userId);
+export async function get(userId) {
+  try {
+    const records = await audit.get(userId);
+    if (!records || !records.logs) return [];
+    return records.logs;
+  } catch (err) {
+    throw err;
+  }
 }
 
 function addToBuffer(m) {
