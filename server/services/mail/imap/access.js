@@ -23,6 +23,7 @@ export async function getMailClient(master, account, audit) {
 
 const uselessLogs = [
   '=> DONE',
+  'LOGIN',
   `<= 'IDLE OK IDLE`,
   `=> 'IDLE IDLE'`,
   `<= '+ idling'`,
@@ -36,6 +37,7 @@ function connect({ username, password, host, port, tls = true, audit }) {
       tls ? ` using tls` : ''
     }`
   );
+  let log = '';
   return new Promise(async (resolve, reject) => {
     const imap = new Imap({
       user: username,
@@ -51,7 +53,7 @@ function connect({ username, password, host, port, tls = true, audit }) {
         if (uselessLogs.some(log => msg.includes(log))) {
           return;
         }
-        audit.append(`IMAP LOG: ${msg}`);
+        log = `${log}\n${msg}`;
       }
     });
     imap.once('ready', () => {
@@ -63,11 +65,13 @@ function connect({ username, password, host, port, tls = true, audit }) {
     imap.on('error', function(err) {
       audit.append(`IMAP connection failed`);
       console.error(err);
+      audit.appendDebug(`IMAP LOG:\n${log}`);
       reject(err);
     });
 
-    imap.once('end', function() {
+    imap.once('close', function() {
       connections.dec();
+      audit.appendDebug(`IMAP LOG:\n${log}`);
       audit.append(`IMAP connection closed`);
     });
 
@@ -75,10 +79,13 @@ function connect({ username, password, host, port, tls = true, audit }) {
   });
 }
 
-export async function testConnection(args) {
+export async function testConnection(args, audit) {
   let imap;
   try {
-    imap = await connect(args);
+    imap = await connect(
+      args,
+      audit
+    );
     return {
       connected: true
     };

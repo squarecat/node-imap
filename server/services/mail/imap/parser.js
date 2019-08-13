@@ -9,7 +9,6 @@ import {
 
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
-import { v4 } from 'node-uuid';
 
 /**
  * Parser considerations

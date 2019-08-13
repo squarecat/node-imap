@@ -8,10 +8,17 @@ let auditBuffer = [];
 
 export function createAudit(userId, group) {
   const groupId = v1();
+  const args = { groupId, userId, group };
   return {
     id: groupId,
     append: (message, data) => {
-      log(message, { groupId, userId, group, ...data });
+      log(message, { ...args, ...data });
+    },
+    appendError: (message, data) => {
+      log(message, { ...args, level: 'error', ...data });
+    },
+    appendDebug: (message, data) => {
+      log(message, { ...args, level: 'debug', ...data });
     }
   };
 }

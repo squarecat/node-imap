@@ -501,7 +501,7 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 }
 
 export async function connectImapAccount(userId, masterKey, imapData) {
-  const audit = createAudit(userId, 'user/connect-imap');
+  const audit = createAudit(userId, 'action/connect-imap');
   const { username, password, port, host } = imapData;
   try {
     const provider = 'imap';

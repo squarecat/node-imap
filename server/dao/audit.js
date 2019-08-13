@@ -37,13 +37,13 @@ export async function append(userId, groupId, { group, messages }) {
     return col.updateOne(
       {
         userId,
-        'logs.$.groupId': groupId
+        'logs.groupId': groupId
       },
       {
         $set: {
           lastUpdated: isoDate()
         },
-        $push: {
+        $pushAll: {
           [`logs.$.messages`]: messages
         }
       }
