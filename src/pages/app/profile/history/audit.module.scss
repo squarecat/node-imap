@@ -84,7 +84,7 @@
 .message {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 
   display: grid;
@@ -103,7 +103,10 @@
 .message-text {
   margin: 0;
   font-family: monospace;
+  background: none;
+  padding: 0;
 }
+
 .message-level {
 }
 

@@ -129,7 +129,12 @@ function Accordion({ log }) {
             <span styleName="message-date date-muted">
               {formatDate(message.timestamp, logTimeFormat)}
             </span>
-            <p styleName="message-text">{message.message}</p>
+            {message.message.includes('\n') ? (
+              <pre styleName="message-text">{message.message}</pre>
+            ) : (
+              <span styleName="message-text">{message.message}</span>
+            )}
+
             <span styleName="message-level">{levels[message.level]}</span>
           </div>
         ))}
@@ -140,7 +145,7 @@ function Accordion({ log }) {
 
 export default () => {
   return (
-    <ProfileLayout pageName="Audit logs">
+    <ProfileLayout pageName="Audit Logs">
       <AuditLogs />
     </ProfileLayout>
   );

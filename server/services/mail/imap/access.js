@@ -25,6 +25,7 @@ const uselessLogs = [
   '=> DONE',
   'LOGIN',
   `<= 'IDLE OK IDLE`,
+  `<= 'IDLE BAD`,
   `=> 'IDLE IDLE'`,
   `<= '+ idling'`,
   `<= '* BYE'`,
