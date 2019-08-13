@@ -739,16 +739,50 @@ export async function checkAuthToken(userId, token) {
 }
 
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, date } = mail;
-  return addUnsubscription(userId, {
-    to,
-    from,
-    id,
-    date,
-    ...rest
-  });
+  try {
+    const { to, from, id, date } = mail;
+    return addUnsubscription(userId, {
+      to,
+      from,
+      id,
+      date,
+      ...rest
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
+export async function addUnsubscribeActivityToUser(
+  userId,
+  { unsubCount, milestones }
+) {
+  try {
+    if (unsubCount < 100) {
+      return true;
+    }
+
+    if (unsubCount === 100) {
+      logger.debug(`user-service: unsub count is 100`);
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (unsubCount === 500) {
+      logger.debug(`user-service: unsub count is 500`);
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    } else if (unsubCount > 100 && !milestones.reached100Unsubscribes) {
+      logger.debug(
+        `user-service: unsub count is over 100 and they don't have the reward`
+      );
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (unsubCount > 500 && !milestones.reached500Unsubscribes) {
+      logger.debug(
+        `user-service: unsub count is over 500 and they don't have the reward`
+      );
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    }
+  } catch (err) {
+    throw err;
+  }
+}
 // // TODO will be legacy
 // export function addScanToUser(userId, scanData) {
 //   return addScan(userId, scanData);

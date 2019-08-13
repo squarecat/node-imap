@@ -43,6 +43,16 @@ const activityEnum = {
     if (!rewardCredits) return text;
     return `${text} You earned ${rewardCredits} credits.`;
   },
+  reached100Unsubscribes: ({ rewardCredits }) => {
+    const text = `You reached 100 total unsubscribes!`;
+    if (!rewardCredits) return text;
+    return `${text} You earned ${rewardCredits} credits.`;
+  },
+  reached500Unsubscribes: ({ rewardCredits }) => {
+    const text = `You reached 500 total unsubscribes!`;
+    if (!rewardCredits) return text;
+    return `${text} You earned ${rewardCredits} credits.`;
+  },
 
   // non reward
   packagePurchase: ({ data }) => {
