@@ -21,7 +21,7 @@ export async function getMailClient(userId, account, audit) {
 }
 
 async function getApiClient(userId, account, audit) {
-  audit.append('Fetching Google access token');
+  audit && audit.append('Fetching Google access token');
   try {
     const accessToken = await getGmailAccessToken(userId, account);
     const oauth2Client = new google.auth.OAuth2(
@@ -37,7 +37,7 @@ async function getApiClient(userId, account, audit) {
       auth: oauth2Client
     });
   } catch (err) {
-    audit.appendError('Failed to refresh access token');
+    audit && audit.appendError('Failed to refresh access token');
     throw err;
   }
 }
