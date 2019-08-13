@@ -1,12 +1,12 @@
 import './layout.module.scss';
 
 import {
-  SearchIcon,
   CreditCardIcon,
   HeartIcon,
   LinkIcon,
   LockIcon,
   MailIcon,
+  SearchIcon,
   SettingsIcon,
   UserIcon,
   WorkIcon
@@ -79,7 +79,7 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <SearchIcon width="16" height="16" />
+                  <MailIcon width="16" height="16" />
                   <span>Activity history</span>
                 </Link>
               </li>
@@ -89,7 +89,8 @@ export default ({ pageName, children }) => {
                   styleName="profile-nav-link"
                   activeClassName="profile-nav-link--active"
                 >
-                  <MailIcon width="16" height="16" />
+                  <SearchIcon width="16" height="16" />
+
                   <span>Audit logs</span>
                 </Link>
               </li>
