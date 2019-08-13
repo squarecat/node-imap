@@ -29,11 +29,13 @@ import Joi from 'joi';
 import QRCode from 'qrcode';
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
+import { get as getAudit } from '../services/audit';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
 import rateLimit from '../middleware/rate-limit';
 import totpAuth from '../middleware/totp-auth';
-import { validateBody } from '../middleware/validation';
+
+// import { validateBody } from '../middleware/validation';
 
 // const patchPasswordParams = {
 //   oldPassword: Joi.string()
@@ -146,6 +148,24 @@ export default app => {
     } catch (err) {
       next(
         new RestError('failed to get user activity', {
+          userId,
+          cause: err
+        })
+      );
+    }
+  });
+
+  app.get('/api/me/audit', auth, async (req, res, next) => {
+    const { id: userId } = req.user;
+    try {
+      const logs = await getAudit(userId);
+      if (!logs) {
+        return res.send([]);
+      }
+      return res.send(logs);
+    } catch (err) {
+      next(
+        new RestError('failed to get user audit logs', {
           userId,
           cause: err
         })
