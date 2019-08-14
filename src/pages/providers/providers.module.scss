@@ -38,8 +38,7 @@
 }
 
 .end-stuff {
-  text-align: center;
-  margin-top: 100px;
+  @extend .subpage-end-stuff;
 }
 
 .security {

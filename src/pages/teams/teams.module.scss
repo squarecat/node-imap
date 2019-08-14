@@ -30,12 +30,18 @@
   margin-top: 150px;
 }
 
-.pricing {
-  margin-top: 90px;
-}
-
 .security {
   margin-top: 0;
+  @extend .subpage-section-inverted;
+
+  .image-section {
+    margin-bottom: 0;
+  }
+
+  .image-section-img {
+    width: 450px;
+    max-width: 100%;
+  }
 }
 
 .features {
@@ -71,20 +77,6 @@
 }
 
 .feature-text {
-}
-
-.security {
-  background-color: $color-dark-background;
-  color: white;
-  padding: 90px 0 170px 0;
-
-  .image-section {
-    margin-bottom: 0;
-  }
-  .image-section-img {
-    width: 450px;
-    max-width: 100%;
-  }
 }
 
 .end-stuff {
@@ -163,12 +155,6 @@
   .gsuite {
     padding: 10px 20px 10px 10px;
   }
-}
-
-.more {
-  margin-top: 100px;
-  padding-top: 100px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .sources {

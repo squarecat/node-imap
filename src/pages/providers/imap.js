@@ -174,33 +174,31 @@ const ProviderIMAP = () => {
         </div>
       </div>
 
-      <div styleName="provider-inner">
-        <div styleName="end-stuff">
-          <h2>Start unsubscribing from emails in {variationsText} today!</h2>
-          <a
-            href={`/signup?ref=provider-imap`}
-            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
-            style={{ margin: '50px auto' }}
-          >
-            Sign up for Free
-          </a>
-          <p>Or...</p>
-          <p>
-            Check out{' '}
-            <TextLink as="link" linkTo="/learn">
-              how it works
-            </TextLink>
-            , read about our{' '}
-            <TextLink as="link" linkTo="/security">
-              security
-            </TextLink>
-            , and find out more{' '}
-            <TextLink as="link" linkTo="/about">
-              about us and our mission
-            </TextLink>
-            .
-          </p>
-        </div>
+      <div styleName="provider-inner end-stuff">
+        <h2>Start unsubscribing from emails in {variationsText} today!</h2>
+        <a
+          href={`/signup?ref=provider-imap`}
+          className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
+          style={{ margin: '50px auto' }}
+        >
+          Sign up for Free
+        </a>
+        <p>Or...</p>
+        <p>
+          Check out{' '}
+          <TextLink as="link" linkTo="/learn">
+            how it works
+          </TextLink>
+          , read about our{' '}
+          <TextLink as="link" linkTo="/security">
+            security
+          </TextLink>
+          , and find out more{' '}
+          <TextLink as="link" linkTo="/about">
+            about us and our mission
+          </TextLink>
+          .
+        </p>
       </div>
     </SubPageLayout>
   );

@@ -98,10 +98,8 @@ const ProviderGoogle = () => {
         </div>
       </div>
 
-      <div styleName="provider-inner">
-        <div styleName="end-stuff">
-          <ProviderFooter name={PROVIDER_NAME} variations={variationsText} />
-        </div>
+      <div styleName="provider-inner end-stuff">
+        <ProviderFooter name={PROVIDER_NAME} variations={variationsText} />
       </div>
     </SubPageLayout>
   );

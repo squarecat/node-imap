@@ -204,26 +204,24 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      <div styleName="security-inner">
-        <div styleName="stuff-at-the-bottom">
-          <h2>Want to know more?</h2>
-          <p>
-            We are proud to be open and transparent about our service in every
-            way we can.
-          </p>
-          <p>
-            If you have any more questions about how we operate then please{' '}
-            <a href="mailto:security@leavemealone.app">get in touch</a> - we
-            will be happy to help!
-          </p>
-          <a
-            href="mailto:security@leavemealone.app"
-            className={`beam-me-up-cta beam-me-up-cta-center`}
-            style={{ marginTop: 50 }}
-          >
-            Contact Us
-          </a>
-        </div>
+      <div styleName="security-inner end-stuff">
+        <h2>Want to know more?</h2>
+        <p>
+          We are proud to be open and transparent about our service in every way
+          we can.
+        </p>
+        <p>
+          If you have any more questions about how we operate then please{' '}
+          <a href="mailto:security@leavemealone.app">get in touch</a> - we will
+          be happy to help!
+        </p>
+        <a
+          href="mailto:security@leavemealone.app"
+          className={`beam-me-up-cta beam-me-up-cta-center`}
+          style={{ marginTop: 50 }}
+        >
+          Contact Us
+        </a>
       </div>
     </SubPageLayout>
   );
