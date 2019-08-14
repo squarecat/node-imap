@@ -317,7 +317,7 @@ function mrrChart(ctx, stats) {
     ...data,
     {
       x: today,
-      y: stats.mrr
+      y: monthly.mrr
     }
   ];
 
@@ -1035,7 +1035,7 @@ function mrrBoxStats(stats) {
 
   const twoMonthsAgo = histogram[histogram.length - 2].mrr;
   const lastMonth = histogram[histogram.length - 1].mrr;
-  const thisMonth = stats.mrr;
+  const thisMonth = monthly.mrr;
 
   const growthRate = getGrowthRate({ lastMonth, twoMonthsAgo });
 
