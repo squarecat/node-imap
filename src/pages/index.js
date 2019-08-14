@@ -7,6 +7,7 @@ import {
   MicrosoftIcon,
   PointyArrow
 } from '../components/icons';
+import { HeroTestimonial, TrustBar } from '../components/landing/testimonial';
 import React, {
   useCallback,
   useMemo,
@@ -14,18 +15,14 @@ import React, {
   useRef,
   useState
 } from 'react';
-import Testimonial, {
-  HeroTestimonial,
-  TrustBar
-} from '../components/landing/testimonial';
 import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
 import Browser from '../components/browser';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
-import MailListIllustration from '../components/landing/illustration';
 import { Pricing } from './pricing';
+import Slider from '../components/landing/slider';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
@@ -39,7 +36,9 @@ import mailListImage from '../assets/mail-list-illustation.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
+import steph from '../assets/testimonials/steph.jpg';
 import subscriberScore from '../assets/subscriber-score.png';
+import tom from '../assets/testimonials/tom.jpg';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
@@ -165,16 +164,63 @@ const IndexPage = () => {
         </div>
 
         <div className="testimonial-section">
-          <div className="home-container">
-            <HeroTestimonial
-              text={`Using Leave Me Alone has resulted in a 17% reduction in my
-                emails, saving me hours of time each month.`}
-              author="Luke Chadwick, Founder"
-              image={luke}
-              companyName="GraphQL360"
-              companyLogo={''}
-            />
-          </div>
+          <Slider
+            slides={[
+              <div key="1" className="home-container">
+                <HeroTestimonial
+                  text={
+                    <span>
+                      I love how Leave Me Alone{' '}
+                      <TextHighlight>
+                        seamlessly allows you to visualize your inbox and then
+                        remove the junk - permanently
+                      </TextHighlight>
+                      ! I found the product so valuable that I ended up buying
+                      scans for my entire team.
+                    </span>
+                  }
+                  author="Steph Smith, Head of Publications"
+                  image={steph}
+                  companyName="Toptal"
+                  companyLogo={''}
+                />
+              </div>,
+              <div key="2" className="home-container">
+                <HeroTestimonial
+                  text={
+                    <span>
+                      Using Leave Me Alone has resulted in a{' '}
+                      <TextHighlight>17% reduction in my emails</TextHighlight>,
+                      saving me hours of time each month.
+                    </span>
+                  }
+                  author="Luke Chadwick, Founder"
+                  image={luke}
+                  companyName="GraphQL360"
+                  companyLogo={''}
+                />
+              </div>,
+              <div key="2" className="home-container">
+                <HeroTestimonial
+                  text={
+                    <span>
+                      I must admit I'm lazy at unsubscribing to subscription
+                      emails, so my email inbox grows at an alarming rate every
+                      day. I just used Leave Me Alone and{' '}
+                      <TextHighlight>
+                        unsubscribed to 15 emails in 3 minutes
+                      </TextHighlight>
+                      . What a great idea!
+                    </span>
+                  }
+                  author="Tom Haworth, CEO"
+                  image={tom}
+                  companyName="B13 Technology"
+                  companyLogo={''}
+                />
+              </div>
+            ]}
+          />
         </div>
         <TrustBar logos={companyLinks} label="Used by employees at: " dark />
 
@@ -267,7 +313,7 @@ const IndexPage = () => {
           <div className="home-container">
             <div className="text-box text-box-centered">
               <h3 className="providers-header">
-                We support both Gmail and Outlook
+                We support both Gmail and Outlook out of the box
               </h3>
               <p>
                 If you have a Google or Microsoft email account then we have you
@@ -286,7 +332,9 @@ const IndexPage = () => {
                 </TextLink>
               </div>
               <div className="text-box text-box-centered">
-                <p>We also support {IMAP_PROVIDERS} that work with IMAP.</p>
+                <p>
+                  Or you can also connect {IMAP_PROVIDERS} that work with IMAP.
+                </p>
                 <TextLink undecorated as="link" linkTo="/providers/imap">
                   <div className="provider-logos">
                     <span className="provider-logo imap" title="Fastmail">
@@ -340,16 +388,18 @@ const IndexPage = () => {
               </div>
             </div>
           </div>
-          <div className="home-container-inner" id="news">
-            <div className="in-the-news">
-              {NEWS.map(({ quote, logoUrl, url }) => (
-                <div key={url} className="news-item">
-                  <p>"{quote}"</p>
-                  <a target="_" className="news-logo" href={url}>
-                    <img src={logoUrl} />
-                  </a>
-                </div>
-              ))}
+          <div className="home-container">
+            <div className="home-container-inner" id="news">
+              <div className="in-the-news">
+                {NEWS.map(({ quote, logoUrl, url }) => (
+                  <div key={url} className="news-item">
+                    <p>"{quote}"</p>
+                    <a target="_" className="news-logo" href={url}>
+                      <img src={logoUrl} />
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

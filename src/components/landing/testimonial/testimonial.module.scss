@@ -34,7 +34,7 @@
   display: grid;
   grid-column-gap: 2em;
   grid-template-columns: 150px 1fr;
-  padding: 4em 0 4em 0;
+  padding: 4em 0 2em 0;
   img {
     width: 300px;
   }
@@ -81,6 +81,7 @@
   border: 2px solid rgba(0, 0, 0, 0.1);
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   background: white;
+  margin-top: 1em;
 
   img {
     width: auto;

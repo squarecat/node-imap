@@ -75,19 +75,24 @@ function Packages({ readMore = false }) {
       <h3 styleName="pricing-title">For Individuals</h3>
       <img styleName="pricing-image" src={packageImg} />
       <span styleName="pricing-text">Starting at</span>
-      <p styleName="pricing-price">
-        <span styleName="currency">$</span>
-        <span>{(price / 100).toFixed(2)}</span>
-      </p>
-      <span styleName="pricing-text">
-        for <span>{credits}</span> credits
+      <span aria-live="polite" aria-atomic="true">
+        <p styleName="pricing-price">
+          <span styleName="currency">$</span>
+          <span>{(price / 100).toFixed(2)}</span>
+        </p>
+        <span styleName="pricing-text">
+          for <span>{credits}</span> credits
+        </span>
       </span>
       <span styleName="pricing-slider">
         <RangeInput
+          aria-label="slider for number of packages"
           min="1"
           max="4"
           value={packageValue}
-          onChange={val => setPackageValue(val)}
+          onChange={val => {
+            setPackageValue(val);
+          }}
         />
       </span>
       <ul styleName="pricing-features">
