@@ -163,3 +163,44 @@
   border-radius: 2px;
   margin-left: 2px;
 }
+
+.recommendation-carbon {
+  display: flex;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.trees {
+  display: grid;
+  grid-template-columns: repeat(4, 60px);
+  grid-template-rows: repeat(4, 60px);
+  margin-right: 40px;
+
+  @media (max-width: 768px) {
+    margin: 0 0 40px 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.tree {
+  overflow: hidden;
+
+  &.half {
+    width: 30px;
+  }
+
+  img {
+    width: 60px;
+    max-width: none;
+  }
+}
+
+.carbon-comparison {
+  ul {
+    list-style: disc;
+  }
+}

@@ -4,10 +4,12 @@ import React, { useMemo, useState } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
 import RangeInput from '../../components/form/range';
+import _times from 'lodash.times';
 import mailBoxImg from '../../assets/mailbox.png';
 import numeral from 'numeral';
 import smallLogo from '../../assets/logo.png';
 import spamMailImg from '../../assets/spam-email.png';
+import treeImg from '../../assets/climate/tree.png';
 
 const PECENTAGE_EMAILS_SPAM = 0.08;
 const PERCENTAGE_UNSUBS = 0.36;
@@ -17,6 +19,7 @@ export const LONDON_PARIS_CARBON = 30000;
 const CARBON_PLASTIC_BAG = 10;
 export const CARBON_OFFSET_PER_TREE = 15694; // (34.6 pounds)
 const CARBON_DRIVING_1KM = 260;
+const CARBON_BLACK_COFFEE = 21;
 
 export default function Estimator({
   title = 'How much can I reduce my carbon footprint by?',
@@ -31,9 +34,9 @@ export default function Estimator({
 
   const recommendationContent = useMemo(
     () => {
-      return getRecommendationContent(unsubsPerMonth);
+      return getRecommendationContent(mailPerDay, unsubsPerMonth);
     },
-    [unsubsPerMonth]
+    [mailPerDay, unsubsPerMonth]
   );
 
   return (
@@ -91,7 +94,7 @@ export default function Estimator({
           <div styleName="count">
             <div styleName="count-value">
               <div styleName="count-number">{formatNumber(unsubsPerMonth)}</div>
-              <div styleName="count-label">unsubscribes</div>
+              <div styleName="count-label">unwanted</div>
             </div>
             <div styleName="count-icon">
               <img styleName="envelope-image" src={smallLogo} />
@@ -103,11 +106,7 @@ export default function Estimator({
           </div>
         </div>
       </div>
-      <div styleName="recommendation">
-        <div styleName="recommendation-description">
-          {recommendationContent}
-        </div>
-      </div>
+      {recommendationContent}
     </div>
   );
 }
@@ -116,55 +115,88 @@ function formatNumber(num) {
   return numeral(num).format('0,00');
 }
 
-function getRecommendationContent(unsubsPerMonth) {
+function getRecommendationContent(mailPerDay, unsubsPerMonth) {
   const carbonSavedPerMonth = unsubsPerMonth * CARBON_PER_EMAIL;
-
   const comparisonContent = getComparisonContent(carbonSavedPerMonth);
+
+  const treeHalves = mailPerDay / 10;
+  console.log(`treeHalves`, treeHalves);
+  const wholeTrees = Math.round(treeHalves / 2);
+  console.log(`wholeTrees`, wholeTrees);
+  const showHalf = treeHalves % 2 === 0;
+  console.log(`showHalf`, showHalf);
   return (
-    <>
-      <p>
-        We estimate you receive around{' '}
-        <TextImportant>
-          {formatNumber(unsubsPerMonth)} unwanted subscription emails{' '}
-        </TextImportant>{' '}
-        each month.
-      </p>
-      <p>
-        Unsubscribing from these could{' '}
-        <TextImportant>
-          reduce your carbon footprint by {formatNumber(carbonSavedPerMonth)}g
-        </TextImportant>
-        .
-      </p>
-      {comparisonContent}
-    </>
+    <div styleName="recommendation recommendation-carbon">
+      <div styleName="trees">
+        {_times(wholeTrees, index => (
+          <div styleName="tree" key={`tree-${index}`}>
+            <img alt="deciduous tree in a cloud" src={treeImg} />
+          </div>
+        ))}
+        {showHalf ? (
+          <div styleName="tree half">
+            <img alt="deciduous tree in a cloud" src={treeImg} />
+          </div>
+        ) : null}
+      </div>
+
+      <div>
+        <p>
+          We estimate that you can{' '}
+          <TextImportant>
+            reduce your carbon footprint by {formatNumber(carbonSavedPerMonth)}g
+          </TextImportant>{' '}
+          if you unsubscribe from {formatNumber(unsubsPerMonth)} unwanted
+          subscription emails.
+        </p>
+        {comparisonContent}
+      </div>
+    </div>
   );
 }
 
 function getComparisonContent(carbonSavedPerMonth) {
-  const treesPlantedPerYear =
-    (carbonSavedPerMonth / CARBON_OFFSET_PER_TREE) * 12;
+  // const treesPlantedPerYear =
+  //   (carbonSavedPerMonth / CARBON_OFFSET_PER_TREE) * 12;
   const plasticBagsPerYear = (carbonSavedPerMonth / CARBON_PLASTIC_BAG) * 12;
+  const coffeeSavedPerYear = (carbonSavedPerMonth / CARBON_BLACK_COFFEE) * 12;
   const drivingSavedPerYear = (carbonSavedPerMonth / CARBON_DRIVING_1KM) * 12;
 
   return (
-    <p>
-      This is the same as{' '}
-      <TextImportant>
-        using {formatNumber(plasticBagsPerYear)} fewer plastic bags
-      </TextImportant>
-      ,{' '}
-      <TextImportant>
-        driving {formatNumber(drivingSavedPerYear)}km less
-      </TextImportant>
-      , or{' '}
-      <TextImportant>
-        planting {formatNumber(treesPlantedPerYear)} trees
-      </TextImportant>{' '}
-      each year.{' '}
-      <TextLink undecorated href="#cite-5">
-        <sup>[5]</sup>
-      </TextLink>
-    </p>
+    <div styleName="carbon-comparison">
+      <p>This is the same as...</p>
+      <ul>
+        <li>
+          Using{' '}
+          <TextImportant>
+            {formatNumber(plasticBagsPerYear)} fewer plastic bags
+          </TextImportant>
+        </li>
+        <li>
+          Drinking{' '}
+          <TextImportant>
+            {formatNumber(coffeeSavedPerYear)} fewer black coffees
+          </TextImportant>
+        </li>
+        <li>
+          Driving{' '}
+          <TextImportant>
+            {formatNumber(drivingSavedPerYear)}km less in a car
+          </TextImportant>
+        </li>
+        {/* <li>
+          Planting{' '}
+          <TextImportant>
+            {formatNumber(treesPlantedPerYear)} trees
+          </TextImportant>
+        </li> */}
+      </ul>{' '}
+      <p>
+        ...in a single year.{' '}
+        <TextLink undecorated href="#cite-5">
+          <sup>[5]</sup>
+        </TextLink>
+      </p>
+    </div>
   );
 }

@@ -23,15 +23,14 @@ import request from '../../utils/request';
 import treeImg from '../../assets/climate/tree.png';
 import useAsync from 'react-use/lib/useAsync';
 
-const EMAILS_SENT_PER_DAY = 246.5; // 246500000000
+const EMAILS_SENT_PER_DAY = 247; // 246500000000
 const NEWSLETTERS_NEVER_OPENED = 0.75;
 // 30000: "London to Paris",
 // 480000: "London to New York",
 // 1460000: "London to Sydney"
 
 const title = `Clean your Inbox and Save the Planet`;
-// const description = `One email equates to ${CARBON_PER_EMAIL}g of CO2 a year and ${NEWSLETTERS_NEVER_OPENED *
-//   100}% of mail is never opened.  Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
+const description = `One email produces ${CARBON_PER_EMAIL}g of carbon. ${EMAILS_SENT_PER_DAY} billion emails are sent every day. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
 
 const ClimatePage = () => {
@@ -63,7 +62,7 @@ const ClimatePage = () => {
   return (
     <SubPageLayout
       title={title}
-      // description={description}
+      description={description}
       withContent={false}
       slug={slug}
     >
@@ -72,7 +71,7 @@ const ClimatePage = () => {
           <div styleName="container-text">
             <h1 styleName="title">Clean your Inbox. Save the Planet.</h1>
             <p styleName="tagline">
-              One email equates to {CARBON_PER_EMAIL}g of carbon.{' '}
+              One email produces {CARBON_PER_EMAIL}g of carbon.{' '}
               {EMAILS_SENT_PER_DAY} billion emails are sent every day.
               Unsubscribe from unwanted subscription emails and reduce your
               carbon footprint.{' '}
