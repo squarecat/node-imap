@@ -9,7 +9,6 @@ import {
 
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
-import { v4 } from 'node-uuid';
 
 /**
  * Parser considerations
@@ -79,8 +78,12 @@ function parseMailItem(item) {
       return null;
     }
     const { id, date, mailbox } = item;
-    const isTrash = mailbox.box.attribs.includes('\\Trash');
-    const isSpam = mailbox.box.attribs.includes('\\Junk');
+    let isTrash = false;
+    let isSpam = false;
+    if (mailbox.box && mailbox.box.attribs) {
+      isTrash = mailbox.box.attribs.includes('\\Trash');
+      isSpam = mailbox.box.attribs.includes('\\Junk');
+    }
     const toHeader = getHeaderValue(headers, 'to');
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
     const lmaId = `${id}-${+date}`;

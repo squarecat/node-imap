@@ -214,7 +214,6 @@ export async function updateUserWithAccount(
       id: userId,
       'accounts.email': accountEmail
     };
-    logger.debug(`user-dao: updating user account ${accountEmail}`);
     await col.updateOne(query, {
       $set: {
         ...accountData,

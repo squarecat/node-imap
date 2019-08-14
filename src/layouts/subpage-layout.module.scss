@@ -49,22 +49,6 @@
   }
 }
 
-.subpage-content {
-  padding: 80px 40px 0 40px;
-  max-width: 1050px;
-  margin: 0 auto;
-  width: 100%;
-  flex: 1;
-
-  @media (max-width: 768px) {
-    padding: 40px;
-  }
-
-  @media (max-width: 400px) {
-    padding: 20px;
-  }
-}
-
 .centered {
   text-align: center;
 }

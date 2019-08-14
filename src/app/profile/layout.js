@@ -1,12 +1,12 @@
 import './layout.module.scss';
 
 import {
-  BellIcon,
   CreditCardIcon,
   HeartIcon,
   LinkIcon,
   LockIcon,
   MailIcon,
+  SearchIcon,
   SettingsIcon,
   UserIcon,
   WorkIcon
@@ -81,6 +81,17 @@ export default ({ pageName, children }) => {
                 >
                   <MailIcon width="16" height="16" />
                   <span>Activity history</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/app/profile/history/audit"
+                  styleName="profile-nav-link"
+                  activeClassName="profile-nav-link--active"
+                >
+                  <SearchIcon width="16" height="16" />
+
+                  <span>Audit logs</span>
                 </Link>
               </li>
               {/* <li>

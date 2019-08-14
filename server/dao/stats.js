@@ -267,11 +267,7 @@ export async function getStats() {
   try {
     const col = await db().collection(COL_NAME);
     const stats = await col.findOne();
-    const thisMonth = await getSubscriptionStats();
-    return {
-      ...stats,
-      ...thisMonth
-    };
+    return stats;
   } catch (err) {
     logger.error('stats-dao: failed to get stats');
     logger.error(err);
@@ -281,7 +277,6 @@ export async function getStats() {
 
 const recordedStats = [
   'users',
-  // 'scans',
   'estimates',
   'unsubscriptions',
   'emails',
@@ -334,11 +329,18 @@ export async function recordStats() {
     }, {})
   };
 
+  const subscriptionStats = await getSubscriptionStats();
+
   const col = await db().collection(COL_NAME);
   // insert today total
   await col.updateOne(
     {},
-    { $set: { 'daily.previousDayTotals': _omit(allStats, 'daily') } }
+    {
+      $set: {
+        'daily.previousDayTotals': _omit(allStats, ['daily', 'monthly']),
+        'monthly.mrr': subscriptionStats.mrr
+      }
+    }
   );
   await col.updateOne({}, { $push: { 'daily.histogram': today } });
 }

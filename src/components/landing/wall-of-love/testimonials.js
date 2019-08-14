@@ -1,7 +1,7 @@
 import './wall-of-love.module.scss';
 
 import React from 'react';
-import {  TextHighlight } from '../../text';
+import { TextHighlight } from '../../text';
 
 const BASE_IMG_URL = `${process.env.CDN_URL}/images/testimonials`;
 
@@ -29,12 +29,10 @@ export default [
     text: (
       <span>
         Leave Me Alone is a fantastic product to{' '}
-        <TextHighlight>
-          easily unsubscribe from unwanted emails
-          </TextHighlight>
-        . When I started using Leave Me Alone I had about 50k emails in my
-        inbox, I am now down to 5k! Danielle and James are super responsive and
-        always open for feedback.
+        <TextHighlight>easily unsubscribe from unwanted emails</TextHighlight>.
+        When I started using Leave Me Alone I had about 50k emails in my inbox,
+        I am now down to 5k! Danielle and James are super responsive and always
+        open for feedback.
       </span>
     ),
     twitter: `pradipcloud`,
@@ -46,8 +44,8 @@ export default [
     text: (
       <span>
         Leave Me Alone let me{' '}
-        <TextHighlight>easily clean up my inbox</TextHighlight> and direct
-        my focus to more important emails.
+        <TextHighlight>easily clean up my inbox</TextHighlight> and direct my
+        focus to more important emails.
       </span>
     ),
     twitter: `kerrtrvs`,
@@ -61,10 +59,8 @@ export default [
         me with emails that I just can't be bothered to handle, so I just delete
         them as they come in. Since using Leave Me Alone I don't have to do that
         anymore. I can{' '}
-        <TextHighlight>
-          officially get off unwanted email lists
-          </TextHighlight>
-        . I love this service.
+        <TextHighlight>officially get off unwanted email lists</TextHighlight>.
+        I love this service.
       </span>
     ),
     twitter: `joshmanders`,
@@ -85,7 +81,7 @@ export default [
         subscriptions I've gathered over a decade. Now,{' '}
         <TextHighlight>
           my inbox only receives the emails that matter most
-          </TextHighlight>
+        </TextHighlight>
         . Leave Me Alone gave me something I didn't even know I wanted: inbox
         sanity!
       </span>
@@ -112,7 +108,7 @@ export default [
         years. I'm managing to clear a tonne of junk with Leave Me Alone and{' '}
         <TextHighlight>
           keep my inbox more focused on what matters
-          </TextHighlight>
+        </TextHighlight>
         .
       </span>
     ),
@@ -138,7 +134,7 @@ export default [
         now{' '}
         <TextHighlight>
           take care of the really important emails without all the noise
-          </TextHighlight>
+        </TextHighlight>
         .
       </span>
     ),
@@ -154,7 +150,7 @@ export default [
         inbox. By{' '}
         <TextHighlight>
           getting rid of all of those marketing emails
-          </TextHighlight>
+        </TextHighlight>
         , email is a much more enjoyable experience. Definitely a great
         investment for my future sanity!
       </span>
@@ -170,7 +166,7 @@ export default [
         <TextHighlight>
           Unsubscribing to spam is really painful. Leave Me Alone makes it
           effortless.
-          </TextHighlight>{' '}
+        </TextHighlight>{' '}
         It's so satisfying to untick all those boxes and unsubscribe so easily.
       </span>
     ),
@@ -212,9 +208,7 @@ export default [
         I must admit I'm lazy at unsubscribing to subscription emails, so my
         email inbox grows at an alarming rate every day. I just used Leave Me
         Alone and{' '}
-        <TextHighlight>
-          unsubscribed to 15 emails in 3 minutes
-          </TextHighlight>{' '}
+        <TextHighlight>unsubscribed to 15 emails in 3 minutes</TextHighlight>{' '}
         What a great idea!
       </span>
     ),
@@ -239,7 +233,7 @@ export default [
         <TextHighlight>
           easily unsubscribe from past newsletters that I have no interest in
           receiving anymore
-          </TextHighlight>
+        </TextHighlight>
         . Now, I spend minimal time checking my email every day. And when I do
         get an email, I know it's important.
       </span>
@@ -250,7 +244,7 @@ export default [
       <>
         <img
           styleName="company-logo"
-          src={`${BASE_IMG_URL}/companies/budget-meal-planner.jpg`}
+          src={`${BASE_IMG_URL}/companies/budget-meal-planner.png`}
         />
         <span styleName="company-name">Budget Meal Planner</span>
       </>
@@ -263,8 +257,8 @@ export default [
       <span>
         As an aspiring Consultant I am barraged with offers and spam everyday.
         It's refreshing to{' '}
-        <TextHighlight>finally achieve inbox zero</TextHighlight> through
-        Leave Me Alone, while also supporting two awesome Indie Founders.
+        <TextHighlight>finally achieve inbox zero</TextHighlight> through Leave
+        Me Alone, while also supporting two awesome Indie Founders.
       </span>
     ),
     twitter: `rbossk757`,
@@ -285,7 +279,7 @@ export default [
         <TextHighlight>
           seamlessly allows you to visualize your inbox and then remove the junk
           - permanently
-          </TextHighlight>
+        </TextHighlight>
         ! I found the product so valuable that I ended up buying scans for my
         entire team. In the age of constant distraction, it's nice to have a
         tool helping me have a clearer mind (and inbox!).
@@ -310,12 +304,18 @@ export default [
         solution. Added to that,{' '}
         <TextHighlight>
           it’s privacy-focused, simple and easy to use
-          </TextHighlight>
+        </TextHighlight>
         , and beautifully designed.
       </span>
     ),
     twitter: `jjbuildit`,
-    avatarPath: `image-15.jpg`
+    avatarPath: `image-15.jpg`,
+    company: (
+      <img
+        styleName="company-logo ptobot"
+        src={`${BASE_IMG_URL}/companies/ptobot.svg`}
+      />
+    )
   },
 
   {
@@ -324,7 +324,7 @@ export default [
       <span>
         <TextHighlight>
           Using Leave Me Alone to clean up my inbox has saved me countless hours
-          </TextHighlight>
+        </TextHighlight>
         . I was able to unsubscribe from dozens of emails in just a few minutes.
         Leave Me Alone is an excellent productivity booster!
       </span>
@@ -340,7 +340,7 @@ export default [
         Leave Me Alone helped me{' '}
         <TextHighlight>
           clean out all the spam and email subscriptions that I've been avoiding
-          </TextHighlight>{' '}
+        </TextHighlight>{' '}
         and reduced the burden on checking emails every day!
       </span>
     ),
@@ -360,7 +360,7 @@ export default [
       <span>
         <TextHighlight>
           Within half an hour I was able to delete more than 160 newsletters
-          </TextHighlight>
+        </TextHighlight>
         . I saved the most important emails afterwards, deleted all the other
         ones, and managed to get to inbox zero the same day. Now I am so much
         more focused as there are only a few emails I have to deal with each
@@ -369,6 +369,52 @@ export default [
     ),
     twitter: `dubriger`,
     avatarPath: ``
+  },
+
+  {
+    name: 'Tamara Sredojevic',
+    text: (
+      <span>
+        <TextHighlight>I love to know that my data is safe</TextHighlight>.
+        Leave Me Alone is user friendly, it's beautiful and it does the job
+        well. What more could I ask for?
+      </span>
+    ),
+    twitter: `gimmeacamera`,
+    avatarPath: `image-18.jpg`
+  },
+
+  {
+    name: 'AC Dye',
+    text: (
+      <span>
+        <TextHighlight>
+          Leave Me Alone is such an easy to use tool
+        </TextHighlight>
+        , and I love supporting indie founders. Danielle and James are active on
+        Twitter, and they are always ready to help any way they can.
+      </span>
+    ),
+    twitter: `acdyee`,
+    avatarPath: `image-19.jpg`
+  },
+
+  {
+    name: 'Kyle McDonald',
+    text: (
+      <span>
+        After attending CES{' '}
+        <TextHighlight>
+          my inbox gets filled with tons of subscription emails from all the
+          company email lists
+        </TextHighlight>{' '}
+        you get added to. I needed to get these out of my inbox and Leave Me
+        Alone allowed me to do that so much faster then I would have been able
+        to do it manually.
+      </span>
+    ),
+    twitter: `designbykyle`,
+    avatarPath: `image-20.jpg`
   }
 
   // {

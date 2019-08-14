@@ -70,6 +70,7 @@ import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
 import { addReferralToBothUsers } from './referral';
 import addWeeks from 'date-fns/add_weeks';
+import { createAudit } from './audit';
 import { detachPaymentMethod } from '../utils/stripe';
 import { listPaymentsForUser } from './payments';
 import logger from '../utils/logger';
@@ -500,6 +501,7 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 }
 
 export async function connectImapAccount(userId, masterKey, imapData) {
+  const audit = createAudit(userId, 'action/connect-imap');
   const { username, password, port, host } = imapData;
   try {
     const provider = 'imap';
@@ -515,6 +517,7 @@ export async function connectImapAccount(userId, masterKey, imapData) {
       },
       'connect'
     );
+    audit.append('Successfully validated account');
 
     // check if the user is part of an organisation
     if (user.organisationId) {
@@ -524,18 +527,23 @@ export async function connectImapAccount(userId, masterKey, imapData) {
       });
     }
 
+    audit.append('Testing IMAP connection...');
     // check the connection
-    const { connected, error } = await testImapConnection({
-      username,
-      port,
-      host,
-      password
-    });
+    const { connected, error } = await testImapConnection(
+      {
+        username,
+        port,
+        host,
+        password
+      },
+      audit
+    );
 
     if (!connected) {
       throw error;
     }
 
+    audit.append('Encrypting IMAP details');
     // add encrypted password to the imap collection
     const id = await setImapAccessDetails(masterKey, password);
     const account = {
@@ -548,9 +556,11 @@ export async function connectImapAccount(userId, masterKey, imapData) {
 
     const updatedUser = await addAccount(userId, account);
     addConnectAccountActivity(updatedUser, account);
+    audit.append('IMAP account added successfully');
     return updatedUser;
   } catch (err) {
     logger.error(`user-service: error adding imap account to ${userId}`);
+    audit.append('Failed to add IMAP account');
     logger.error(err);
     throw err;
   }
@@ -739,16 +749,50 @@ export async function checkAuthToken(userId, token) {
 }
 
 export async function addUnsubscriptionToUser(userId, { mail, ...rest }) {
-  const { to, from, id, date } = mail;
-  return addUnsubscription(userId, {
-    to,
-    from,
-    id,
-    date,
-    ...rest
-  });
+  try {
+    const { to, from, id, date } = mail;
+    return addUnsubscription(userId, {
+      to,
+      from,
+      id,
+      date,
+      ...rest
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
+export async function addUnsubscribeActivityToUser(
+  userId,
+  { unsubCount, milestones }
+) {
+  try {
+    if (unsubCount < 100) {
+      return true;
+    }
+
+    if (unsubCount === 100) {
+      logger.debug(`user-service: unsub count is 100`);
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (unsubCount === 500) {
+      logger.debug(`user-service: unsub count is 500`);
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    } else if (unsubCount > 100 && !milestones.reached100Unsubscribes) {
+      logger.debug(
+        `user-service: unsub count is over 100 and they don't have the reward`
+      );
+      addActivityForUser(userId, 'reached100Unsubscribes');
+    } else if (unsubCount > 500 && !milestones.reached500Unsubscribes) {
+      logger.debug(
+        `user-service: unsub count is over 500 and they don't have the reward`
+      );
+      addActivityForUser(userId, 'reached500Unsubscribes');
+    }
+  } catch (err) {
+    throw err;
+  }
+}
 // // TODO will be legacy
 // export function addScanToUser(userId, scanData) {
 //   return addScan(userId, scanData);

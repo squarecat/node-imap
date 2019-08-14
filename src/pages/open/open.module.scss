@@ -33,6 +33,12 @@
   border: 1px solid $color-border-red;
   border-radius: 7px;
 }
+.box.padded {
+  padding: 20px;
+  p {
+    margin: 0;
+  }
+}
 
 .chart {
   flex: 1;
