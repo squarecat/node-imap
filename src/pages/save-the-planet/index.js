@@ -183,47 +183,55 @@ const ClimatePage = () => {
         <CarbonEstimator />
       </div>
 
-      <div styleName="climate-inner">
-        <h2>Plant a tree and we donate to ...</h2>
-        <p>
-          Planting 1 tree offsets your carbon footprint by{' '}
-          {formatNumber(CARBON_OFFSET_PER_TREE / 100)}kg over it's lifetime.
-          That's equivalent to unsubscribing from{' '}
-          {formatNumber(CARBON_OFFSET_PER_TREE / CARBON_PER_EMAIL)} subscription
-          emails!
-        </p>
-        <p>
-          Donate at the checkout to plant a tree and we will also donate to a
-          charity (give them a selection for environment, privacy, and other 2)
-        </p>
-        <p>Donated so far...</p>
-        <p>Trees planeted so far...</p>
+      <div styleName="donate">
+        <div styleName="climate-inner">
+          <h2>Plant a tree and we donate to ...</h2>
+          <p>
+            Planting 1 tree offsets your carbon footprint by{' '}
+            {formatNumber(CARBON_OFFSET_PER_TREE / 100)}kg over it's lifetime.
+            That's equivalent to unsubscribing from{' '}
+            {formatNumber(CARBON_OFFSET_PER_TREE / CARBON_PER_EMAIL)}{' '}
+            subscription emails!
+          </p>
+          <p>
+            Donate at the checkout to plant a tree and we will also donate to a
+            charity (give them a selection for environment, privacy, and other
+            2)
+          </p>
+          <p>Donated so far...</p>
+          <p>Trees planeted so far...</p>
+        </div>
       </div>
 
       <div styleName="climate-inner questions">
         <div styleName="question">
           <h2>Will unsubscribing really make a difference?</h2>
           <p>
-            Yes! {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened.
-            Deleting or setting rules to move these emails into a folder doesn't
-            stop the carbon impact of receiving the email. By unsubscribing from
-            unwanted mailing lists you can stop the email from being sent at
-            all.
+            Yes!{' '}
+            <TextImportant>
+              {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened
+            </TextImportant>
+            . Deleting or setting rules to move these emails into a folder
+            doesn't stop the carbon impact of receiving the email. By
+            unsubscribing from unwanted mailing lists you can stop the email
+            from being sent at all.
           </p>
           <p>
             You will also help the senders to reduce their carbon footprint and
             improve the quality of their mailing lists, which helps all Leave Me
-            Alone users.
+            Alone users!
           </p>
         </div>
         <div styleName="question">
           <h2>How can emails contribute to carbon emissions?</h2>
           <p>
-            The culprits are greenhouse gases produced in running the computer,
-            server and routers but also those emitted when the equipment was
-            manufactured.
+            The carbon impact of just about everything is calculated in terms of
+            the greenhouse gases that are produced when running computers,
+            servers, and routers. This also includes the greenhouse gases
+            emitted when the equipment was manufactured.
           </p>
           <p>TODO write more here...</p>
+          <p>Data centers, electricity cost, water cost etc...</p>
         </div>
         <div styleName="question">
           <h2>What else can I do to help reduce my carbon footprint?</h2>

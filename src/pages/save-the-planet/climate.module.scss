@@ -29,6 +29,10 @@
   }
 }
 
+.donate {
+  @extend .subpage-section-inverted;
+}
+
 .sources {
   margin: 100px 0 -100px 0;
   font-size: 10px;
