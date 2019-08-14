@@ -43,8 +43,10 @@ export async function append(userId, groupId, { group, messages }) {
         $set: {
           lastUpdated: isoDate()
         },
-        $pushAll: {
-          [`logs.$.messages`]: messages
+        $push: {
+          [`logs.$.messages`]: {
+            $each: messages
+          }
         }
       }
     );
