@@ -2,6 +2,7 @@ import 'isomorphic-fetch';
 import './home.scss';
 
 import {
+  Arrow,
   Arrow as ArrowIcon,
   GoogleIcon,
   MicrosoftIcon,
@@ -139,7 +140,7 @@ const IndexPage = () => {
             <div className="hero-box hero-left">
               <div className="hero-left-inner">
                 <h1 className="catchy-tagline">
-                  Easily unsubscribe from spam emails
+                  Less unwanted mail in your inbox
                 </h1>
                 <p className="informative-description">
                   See all of your subscription emails in one place and
@@ -148,7 +149,7 @@ const IndexPage = () => {
 
                 <div className="join-container">
                   <a href="/signup?ref=hero" className={`beam-me-up-cta`}>
-                    Get Started For Free!
+                    Start unsubscribing now!
                   </a>
                   {statsContent}
                 </div>
@@ -413,6 +414,11 @@ const IndexPage = () => {
             </p>
           </div>
           <Pricing />
+          <p>
+            Every new user receives{' '}
+            <TextImportant>5 free credits</TextImportant>, and more can be
+            earned easily.
+          </p>
         </div>
         <div className="home-container">
           <div className="home-container-inner end-stuff">
