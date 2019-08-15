@@ -193,10 +193,10 @@ export default app => {
 
       if (type === 'invoice.payment_succeeded') {
         const { object } = data;
-        const { subscription: subscriptionId, amount } = object;
+        const { subscription: subscriptionId, total } = object;
         return PaymentService.handleInvoicePaymentSuccess({
           subscriptionId,
-          amount
+          total
         });
       }
 
