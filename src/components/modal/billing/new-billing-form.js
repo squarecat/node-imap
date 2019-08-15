@@ -1,3 +1,5 @@
+import './billing-modal.module.scss';
+
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
 import { FormCheckbox, FormGroup, FormNotification } from '../../form';
 import {
@@ -6,8 +8,9 @@ import {
   ModalHeader,
   ModalPaymentSaveAction
 } from '..';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
+import Donate from './donate';
 import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
@@ -56,8 +59,9 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
           paymentMethod,
           productId: state.selectedPackage.id,
           coupon: state.coupon,
+          donate: state.donate,
           saveCard: state.save_payment_method,
-          ...billingDetails
+          billingDetails
         });
         await handleResponse(response);
       }
@@ -112,6 +116,14 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
     }
   }
 
+  const displayPrice = useMemo(
+    () => {
+      const priceContent = getDisplayPrice(state.selectedPackage, state.donate);
+      return <span>Pay{priceContent}</span>;
+    },
+    [state.selectedPackage, state.donate]
+  );
+
   return (
     <form
       id="payment-form"
@@ -126,45 +138,57 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
           Enter Payment Method
           <ModalCloseIcon />
         </ModalHeader>
-        <p>
-          Purchasing a package of{' '}
-          <TextImportant>{state.selectedPackage.credits} credits</TextImportant>
-          .
-        </p>
+        <div styleName="payment-panels">
+          <div styleName="panel">
+            <h4>
+              Purchasing a package of{' '}
+              <TextImportant>
+                {state.selectedPackage.credits} credits
+              </TextImportant>
+              .
+            </h4>
 
-        <PaymentAddressDetails
-          addressDetails={state}
-          loading={state.loading}
-          onChange={(key, value) =>
-            dispatch({
-              type: 'set-billing-detail',
-              data: { key, value }
-            })
-          }
-        />
+            <PaymentAddressDetails
+              addressDetails={state}
+              loading={state.loading}
+              onChange={(key, value) =>
+                dispatch({
+                  type: 'set-billing-detail',
+                  data: { key, value }
+                })
+              }
+            />
 
-        <PaymentCardDetails loading={state.loading} />
+            <PaymentCardDetails loading={state.loading} />
 
-        <FormGroup>
-          <FormCheckbox
-            onChange={() =>
-              dispatch({
-                type: 'set-billing-detail',
-                data: {
-                  key: 'save_payment_method',
-                  value: !state.save_payment_method
+            <FormGroup>
+              <FormCheckbox
+                onChange={() =>
+                  dispatch({
+                    type: 'set-billing-detail',
+                    data: {
+                      key: 'save_payment_method',
+                      value: !state.save_payment_method
+                    }
+                  })
                 }
-              })
-            }
-            checked={state.save_payment_method}
-            label="Save payment method"
-          />
-        </FormGroup>
+                checked={state.save_payment_method}
+                label="Save payment method"
+              />
+            </FormGroup>
+          </div>
+
+          <div styleName="panel panel-right">
+            <Donate />
+          </div>
+        </div>
 
         {state.error ? (
-          <FormGroup>
-            <FormNotification error>{state.error}</FormNotification>
-          </FormGroup>
+          <div styleName="error">
+            <FormGroup>
+              <FormNotification error>{state.error}</FormNotification>
+            </FormGroup>
+          </div>
         ) : null}
       </ModalBody>
 
@@ -172,7 +196,7 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
         isDisabled={state.loading || !stripeState.isReady}
         isLoading={state.loading}
         cancelText="Back"
-        saveText={<span>Pay{getDisplayPrice(state.selectedPackage)}</span>}
+        saveText={displayPrice}
         onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
       />
     </form>
@@ -185,9 +209,9 @@ async function confirmPayment({
   paymentMethod,
   productId,
   coupon,
-  name,
-  address,
-  saveCard
+  billingDetails,
+  saveCard,
+  donate
 }) {
   const { id } = paymentMethod;
   let url;
@@ -203,6 +227,11 @@ async function confirmPayment({
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     },
-    body: JSON.stringify({ payment_method_id: id, name, address, saveCard })
+    body: JSON.stringify({
+      payment_method_id: id,
+      billingDetails,
+      saveCard,
+      donate
+    })
   });
 }

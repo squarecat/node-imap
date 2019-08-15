@@ -1,3 +1,5 @@
+import './billing-modal.module.scss';
+
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
 import { FormGroup, FormNotification } from '../../form';
 import {
@@ -6,13 +8,13 @@ import {
   ModalHeader,
   ModalPaymentSaveAction
 } from '..';
-import React, { useContext } from 'react';
-// import { TextImportant, TextLink } from '../../text';
+import React, { useContext, useMemo } from 'react';
 
 import CardDetails from '../../card-details';
+import Donate from './donate';
+import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-import { getPaymentError } from '../../../utils/errors';
 
 const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
   const { state, dispatch } = useContext(BillingModalContext);
@@ -24,7 +26,8 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
 
       const response = await confirmPaymentExistingCard({
         productId: state.selectedPackage.id,
-        coupon: state.coupon
+        coupon: state.coupon,
+        donate: state.donate
       });
       await handleResponse(response);
     } catch (err) {
@@ -77,6 +80,14 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
     }
   }
 
+  const displayPrice = useMemo(
+    () => {
+      const priceContent = getDisplayPrice(state.selectedPackage, state.donate);
+      return <span>Pay{priceContent}</span>;
+    },
+    [state.selectedPackage, state.donate]
+  );
+
   return (
     <form
       id="existing-payment-form"
@@ -91,28 +102,38 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
           Buy Package
           <ModalCloseIcon />
         </ModalHeader>
-        <p>Confirm purchase with your saved payment method:</p>
+        <div styleName="payment-panels">
+          <div styleName="panel">
+            <h4>Confirm purchase with your saved payment method:</h4>
 
-        <FormGroup>
-          <CardDetails card={billingCard} />
-        </FormGroup>
+            <FormGroup>
+              <CardDetails card={billingCard} />
+            </FormGroup>
 
-        <p>
-          Or{' '}
-          <a
-            onClick={() =>
-              dispatch({ type: 'set-step', data: 'enter-billing-details' })
-            }
-          >
-            use a different card
-          </a>
-          .
-        </p>
+            <p>
+              Or{' '}
+              <a
+                onClick={() =>
+                  dispatch({ type: 'set-step', data: 'enter-billing-details' })
+                }
+              >
+                use a different card
+              </a>
+              .
+            </p>
+          </div>
+
+          <div styleName="panel panel-right">
+            <Donate />
+          </div>
+        </div>
 
         {state.error ? (
-          <FormGroup>
-            <FormNotification error>{state.error}</FormNotification>
-          </FormGroup>
+          <div styleName="error">
+            <FormGroup>
+              <FormNotification error>{state.error}</FormNotification>
+            </FormGroup>
+          </div>
         ) : null}
       </ModalBody>
 
@@ -120,7 +141,7 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
         isDisabled={state.loading}
         isLoading={state.loading}
         cancelText="Back"
-        saveText={<span>Pay{getDisplayPrice(state.selectedPackage)}</span>}
+        saveText={displayPrice}
         onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
       />
     </form>
@@ -129,7 +150,7 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
 
 export default injectStripe(ExistingForm);
 
-async function confirmPaymentExistingCard({ productId, coupon }) {
+async function confirmPaymentExistingCard({ productId, coupon, donate }) {
   let url;
   if (coupon) {
     url = `/api/payments/checkout/${productId}/${coupon}`;
@@ -142,6 +163,9 @@ async function confirmPaymentExistingCard({ productId, coupon }) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
-    }
+    },
+    body: JSON.stringify({
+      donate
+    })
   });
 }

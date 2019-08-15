@@ -1,6 +1,6 @@
 import './billing-modal.module.scss';
 
-import React, { createContext, useEffect, useReducer } from 'react';
+import React, { createContext, useEffect, useMemo, useReducer } from 'react';
 import billingModalReducer, { initialState } from './reducer';
 
 import { Elements } from 'react-stripe-elements';
@@ -31,8 +31,23 @@ export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
     [selectedPackage]
   );
 
+  const stepWidth = useMemo(
+    () => {
+      if (
+        state.step === 'enter-billing-details' ||
+        state.step === 'existing-billing-details'
+      ) {
+        return 800;
+      }
+      return 550;
+    },
+    [state.step]
+  );
+
+  const style = useMemo(() => ({ width: stepWidth }), [stepWidth]);
+
   return (
-    <div styleName="billing-modal">
+    <div styleName="billing-modal" style={style}>
       <StripeProvider>
         <Elements>
           <BillingModalContext.Provider value={{ state, dispatch }}>
@@ -63,10 +78,14 @@ export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
   );
 };
 
-export function getDisplayPrice({ price, discountAmount, discountPrice }) {
-  const viewPrice = (price / 100).toFixed(2);
+export function getDisplayPrice(
+  { price, discountAmount, discountPrice },
+  donate = false
+) {
+  const donateAmount = getDonateAmount(donate);
+  const viewPrice = ((price + donateAmount) / 100).toFixed(2);
   if (discountAmount) {
-    const viewDiscountPrice = (discountPrice / 100).toFixed(2);
+    const viewDiscountPrice = ((discountPrice + donateAmount) / 100).toFixed(2);
     return (
       <span styleName="price">
         <span styleName="price-discounted">${viewPrice}</span> $
@@ -76,6 +95,11 @@ export function getDisplayPrice({ price, discountAmount, discountPrice }) {
   }
 
   return <span styleName="price">${viewPrice}</span>;
+}
+
+export function getDonateAmount(donate) {
+  if (donate) return 100;
+  return 0;
 }
 
 export async function confirmIntent({ paymentIntent, productId, coupon }) {

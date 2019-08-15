@@ -185,7 +185,7 @@ export async function listCharges(customerId) {
 
 export async function createPaymentIntent(
   paymentMethodId,
-  { customerId, amount, description, coupon, saveCard }
+  { customerId, amount, description, coupon, saveCard, donateAmount = 0 }
 ) {
   logger.debug('stripe: creating payment intent');
   try {
@@ -196,7 +196,8 @@ export async function createPaymentIntent(
       customer: customerId,
       amount,
       metadata: {
-        coupon
+        coupon,
+        donateAmount
       },
       description,
       currency: 'usd',
