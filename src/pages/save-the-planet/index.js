@@ -1,7 +1,6 @@
 import './climate.module.scss';
 
 import CarbonEstimator, {
-  CARBON_OFFSET_PER_TREE,
   CARBON_PER_EMAIL,
   LONDON_PARIS_CARBON
 } from '../../components/estimator/carbon';
@@ -11,8 +10,8 @@ import Features, {
   FeatureText,
   FeatureTitle
 } from '../../components/landing/features';
-import React, { useEffect, useMemo, useState } from 'react';
-import { TextImportant, TextLink } from '../../components/text';
+import React, { useEffect, useState } from 'react';
+import { TextHighlight, TextImportant, TextLink } from '../../components/text';
 
 import SubPageLayout from '../../layouts/subpage-layout';
 import downImg from '../../assets/climate/down.png';
@@ -23,14 +22,21 @@ import request from '../../utils/request';
 import treeImg from '../../assets/climate/tree.png';
 import useAsync from 'react-use/lib/useAsync';
 
-const EMAILS_SENT_PER_DAY = 247; // 246500000000
+const EMAILS_SENT_PER_DAY = 246500000000; // 247; // (B) 246500000000
+const CARBON_OFFSET_PER_TREE_PER_YEAR = 15694; // (34.6 pounds)
 const NEWSLETTERS_NEVER_OPENED = 0.75;
+const TONNE_CONVERSION = 1e6;
+const TONNES_CARBON_PER_YEAR = numeral(
+  (EMAILS_SENT_PER_DAY * CARBON_PER_EMAIL) / TONNE_CONVERSION
+).format('0,0');
 // 30000: "London to Paris",
 // 480000: "London to New York",
 // 1460000: "London to Sydney"
 
+const TREE_ORG_LINK = 'https://onetreeplanted.org';
+
 const title = `Clean your Inbox and Save the Planet`;
-const description = `One email produces ${CARBON_PER_EMAIL}g of carbon. ${EMAILS_SENT_PER_DAY} billion emails are sent every day. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
+// const description = `One email produces ${CARBON_PER_EMAIL}g of carbon. ${EMAILS_SENT_PER_DAY} billion emails are sent every day. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
 
 const ClimatePage = () => {
@@ -46,13 +52,14 @@ const ClimatePage = () => {
     () => {
       if (!statsLoading && statsData) {
         const { users, unsubscriptions } = statsData;
-        const carbon = unsubscriptions * CARBON_PER_EMAIL;
+        const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
         setStats({
           users,
           unsubscriptions,
-          totalCarbonSavedInGrams: carbon,
-          totalCarbonSavedInTonnes: carbon / 1e6,
-          londonToParis: (carbon / LONDON_PARIS_CARBON).toFixed(0)
+          totalCarbonSavedInGrams,
+          londonToParis: (
+            totalCarbonSavedInGrams / LONDON_PARIS_CARBON
+          ).toFixed(0)
         });
       }
     },
@@ -62,7 +69,7 @@ const ClimatePage = () => {
   return (
     <SubPageLayout
       title={title}
-      description={description}
+      // description={description} TODO DOOO MEEEE
       withContent={false}
       slug={slug}
     >
@@ -71,6 +78,17 @@ const ClimatePage = () => {
           <div styleName="container-text">
             <h1 styleName="title">Clean your Inbox. Save the Planet.</h1>
             <p styleName="tagline">
+              Emails dump {TONNES_CARBON_PER_YEAR} tonnes of <CO2 /> into the
+              atmosphere ever year. Unsubscribe from unwanted subscription
+              emails and reduce your carbon footprint.{' '}
+              <TextLink undecorated href="#cite-1">
+                <sup>[1]</sup>
+              </TextLink>
+              <TextLink undecorated href="#cite-2">
+                <sup>[2]</sup>
+              </TextLink>
+            </p>
+            {/* <p styleName="tagline">
               One email produces {CARBON_PER_EMAIL}g of carbon.{' '}
               {EMAILS_SENT_PER_DAY} billion emails are sent every day.
               Unsubscribe from unwanted subscription emails and reduce your
@@ -78,10 +96,10 @@ const ClimatePage = () => {
               <TextLink undecorated href="#cite-1">
                 <sup>[1]</sup>
               </TextLink>
-              <TextLink undecorated href="#cite-4">
-                <sup>[4]</sup>
+              <TextLink undecorated href="#cite-6">
+                <sup>[6]</sup>
               </TextLink>
-            </p>
+            </p> */}
             <a href="/signup" className={`beam-me-up-cta`}>
               Make a difference
             </a>
@@ -107,10 +125,7 @@ const ClimatePage = () => {
                   We have unsubscribed from{' '}
                   {formatNumber(stats.unsubscriptions)} subscription emails,{' '}
                   <TextImportant>
-                    saving {formatNumber(stats.totalCarbonSavedInTonnes)}{' '}
-                    {formatNumber(stats.totalCarbonSavedInTonnes) === 1
-                      ? 'tonne'
-                      : 'tonnes'}{' '}
+                    saving {formatWeightTonnes(stats.totalCarbonSavedInGrams)}{' '}
                     in <CO2 /> emissions
                   </TextImportant>
                   .{' '}
@@ -141,8 +156,8 @@ const ClimatePage = () => {
                     Paris
                   </TextImportant>{' '}
                   in carbon emissions.{' '}
-                  <TextLink undecorated href="#cite-2">
-                    <sup>[2]</sup>
+                  <TextLink undecorated href="#cite-3">
+                    <sup>[3]</sup>
                   </TextLink>
                 </p>
               )}
@@ -164,13 +179,14 @@ const ClimatePage = () => {
                   <TextImportant>
                     planting{' '}
                     {formatNumber(
-                      stats.totalCarbonSavedInGrams / CARBON_OFFSET_PER_TREE
+                      stats.totalCarbonSavedInGrams /
+                        CARBON_OFFSET_PER_TREE_PER_YEAR
                     )}{' '}
-                    trees
+                    trees every year
                   </TextImportant>
                   .{' '}
-                  <TextLink undecorated href="#cite-3">
-                    <sup>[3]</sup>
+                  <TextLink undecorated href="#cite-4">
+                    <sup>[4]</sup>
                   </TextLink>
                 </p>
               )}
@@ -185,21 +201,27 @@ const ClimatePage = () => {
 
       <div styleName="donate">
         <div styleName="climate-inner">
-          <h2>Plant a tree and we donate to ...</h2>
+          <h2>Plant a tree...</h2>
           <p>
-            Planting 1 tree offsets your carbon footprint by{' '}
-            {formatNumber(CARBON_OFFSET_PER_TREE / 100)}kg over it's lifetime.
-            That's equivalent to unsubscribing from{' '}
-            {formatNumber(CARBON_OFFSET_PER_TREE / CARBON_PER_EMAIL)}{' '}
+            Planting one tree offsets your carbon footprint by{' '}
+            {formatNumber(CARBON_OFFSET_PER_TREE_PER_YEAR / 100)}kg in a single
+            year{' '}
+            <TextLink undecorated href="#cite-4">
+              <sup>[4]</sup>
+            </TextLink>
+            . That's equivalent to unsubscribing from{' '}
+            {formatNumber(CARBON_OFFSET_PER_TREE_PER_YEAR / CARBON_PER_EMAIL)}{' '}
             subscription emails!
           </p>
           <p>
-            Donate at the checkout to plant a tree and we will also donate to a
-            charity (give them a selection for environment, privacy, and other
-            2)
+            One dollar plants one tree with our partner{' '}
+            <TextLink href={TREE_ORG_LINK} target="_">
+              One Tree Planted
+            </TextLink>
+            . We plant an additional tree for every 10 our customers do!
           </p>
           <p>Donated so far...</p>
-          <p>Trees planeted so far...</p>
+          <p>Trees planted so far...</p>
         </div>
       </div>
 
@@ -210,8 +232,11 @@ const ClimatePage = () => {
             Yes!{' '}
             <TextImportant>
               {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened
-            </TextImportant>
-            . Deleting or setting rules to move these emails into a folder
+            </TextImportant>{' '}
+            <TextLink undecorated href="#cite-6">
+              <sup>[6]</sup>
+            </TextLink>
+            . Deleting these emails or setting rules to move them into a folder
             doesn't stop the carbon impact of receiving the email. By
             unsubscribing from unwanted mailing lists you can stop the email
             from being sent at all.
@@ -225,13 +250,31 @@ const ClimatePage = () => {
         <div styleName="question">
           <h2>How can emails contribute to carbon emissions?</h2>
           <p>
-            The carbon impact of just about everything is calculated in terms of
-            the greenhouse gases that are produced when running computers,
-            servers, and routers. This also includes the greenhouse gases
+            The carbon impact of digital activity is calculated in terms of the
+            greenhouse gases that are produced when running servers, computers,
+            routers etc.
+          </p>
+          <p>
+            The{' '}
+            <TextImportant>
+              gigantic data centers that power the internet consume vast amounts
+              of electricity and water
+            </TextImportant>
+            . Storing, moving, processing, and analyzing data all require
+            energy. Keeping everything cool and running efficiently requires
+            water.
+          </p>
+          <p>
+            The carbon footprint of something also includes the greenhouse gases
             emitted when the equipment was manufactured.
           </p>
-          <p>TODO write more here...</p>
-          <p>Data centers, electricity cost, water cost etc...</p>
+          <p>
+            With all of these things taken into account, a legitimate email
+            emits on average 4 grams of <CO2 />.{' '}
+            <TextLink undecorated href="#cite-1">
+              <sup>[1]</sup>
+            </TextLink>
+          </p>
         </div>
         <div styleName="question">
           <h2>What else can I do to help reduce my carbon footprint?</h2>
@@ -254,27 +297,42 @@ const ClimatePage = () => {
             <li id="cite-2">
               <sup>[2]</sup>
               <cite>
-                <a href="https://www.carbonfootprint.com">
-                  Economy class direct one way flight from LON to PAR is 0.03
-                  tonnes of CO2
+                <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
+                  In 2019, the Total Worldwide Emails Sent/Received Per Day is
+                  246.5 (B)
                 </a>
               </cite>
             </li>
             <li id="cite-3">
               <sup>[3]</sup>
               <cite>
-                <a href="https://trees.org/carboncalculator">
-                  A tree in a Forest Garden sequesters a rate of 34.6 pounds
-                  (15694g) of carbon per tree
+                <a href="https://www.carbonfootprint.com">
+                  Economy class direct one way flight from LON to PAR is 0.03
+                  tonnes (30000g) of CO2
                 </a>
               </cite>
             </li>
-            <li id="cite-4">
+            <li id="cite-4" styleName="multiple">
               <sup>[4]</sup>
               <cite>
-                <a href="https://www.smartinsights.com/email-marketing/email-communications-strategy/statistics-sources-for-email-marketing/">
-                  In 2018, the average open rate across all industries is 24.8%
-                </a>
+                <div>
+                  <a href="https://trees.org/carboncalculator">
+                    A tree in a Forest Garden sequesters a rate of 34.6 pounds
+                    (15694g) of carbon per tree
+                  </a>
+                </div>
+                <div>
+                  <a href="https://archpaper.com/2017/07/trees-sequester-carbon-myth/">
+                    The average amount each tree was likely to sequester was 88
+                    pounds (39916g) per tree per year
+                  </a>
+                </div>
+                <div>
+                  <a href="http://www.unm.edu/~jbrink/365/Documents/Calculating_tree_carbon.pdf">
+                    How to calculate the amount of CO2 sequestered in a tree per
+                    year
+                  </a>
+                </div>
               </cite>
             </li>
             <li id="cite-5">
@@ -282,6 +340,14 @@ const ClimatePage = () => {
               <cite>
                 <a href="https://phys.org/news/2015-11-carbon-footprint-email.html">
                   The environmental impact of some common activities
+                </a>
+              </cite>
+            </li>
+            <li id="cite-6">
+              <sup>[6]</sup>
+              <cite>
+                <a href="https://www.smartinsights.com/email-marketing/email-communications-strategy/statistics-sources-for-email-marketing/">
+                  In 2018, the average open rate across all industries is 24.8%
                 </a>
               </cite>
             </li>
@@ -300,6 +366,16 @@ function fetchStats() {
 
 function formatNumber(num) {
   return numeral(num).format('0,0');
+}
+
+function formatWeightTonnes(weight) {
+  const val = formatNumber(weight / TONNE_CONVERSION);
+  const text = val > 1 ? 'tonnes' : 'tonne';
+  return (
+    <span>
+      {val} {text}
+    </span>
+  );
 }
 
 function CO2() {

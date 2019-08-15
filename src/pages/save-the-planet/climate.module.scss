@@ -46,10 +46,18 @@
 
   sup {
     margin-right: 4px;
+    font-size: 75%;
   }
 
   li:target {
     background-color: rgba(yellow, 0.25);
+  }
+
+  .multiple {
+    display: flex;
+    sup {
+      top: 1em;
+    }
   }
 }
 

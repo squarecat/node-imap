@@ -17,7 +17,6 @@ const DAYS_IN_MONTH = 30;
 export const CARBON_PER_EMAIL = 4;
 export const LONDON_PARIS_CARBON = 30000;
 const CARBON_PLASTIC_BAG = 10;
-export const CARBON_OFFSET_PER_TREE = 15694; // (34.6 pounds)
 const CARBON_DRIVING_1KM = 260;
 const CARBON_BLACK_COFFEE = 21;
 
@@ -120,11 +119,9 @@ function getRecommendationContent(mailPerDay, unsubsPerMonth) {
   const comparisonContent = getComparisonContent(carbonSavedPerMonth);
 
   const treeHalves = mailPerDay / 10;
-  console.log(`treeHalves`, treeHalves);
   const wholeTrees = Math.round(treeHalves / 2);
-  console.log(`wholeTrees`, wholeTrees);
   const showHalf = treeHalves % 2 === 0;
-  console.log(`showHalf`, showHalf);
+
   return (
     <div styleName="recommendation recommendation-carbon">
       <div styleName="trees">
@@ -156,8 +153,6 @@ function getRecommendationContent(mailPerDay, unsubsPerMonth) {
 }
 
 function getComparisonContent(carbonSavedPerMonth) {
-  // const treesPlantedPerYear =
-  //   (carbonSavedPerMonth / CARBON_OFFSET_PER_TREE) * 12;
   const plasticBagsPerYear = (carbonSavedPerMonth / CARBON_PLASTIC_BAG) * 12;
   const coffeeSavedPerYear = (carbonSavedPerMonth / CARBON_BLACK_COFFEE) * 12;
   const drivingSavedPerYear = (carbonSavedPerMonth / CARBON_DRIVING_1KM) * 12;
