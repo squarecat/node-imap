@@ -274,12 +274,14 @@ async function getPaymentDetails({ productId, coupon, donate }) {
     // get which product they are buying
     const { price: productPrice, credits } = getPackage(productId);
 
-    // calcualte any coupon discount
     let finalPrice = productPrice;
+    let donateAmount = 0;
+
     logger.debug(
       `payments-service: getting payment details, product price is ${finalPrice}`
     );
 
+    // calculate any coupon discount
     let couponObject;
     if (coupon) {
       couponObject = await getCoupon(coupon);
@@ -291,15 +293,17 @@ async function getPaymentDetails({ productId, coupon, donate }) {
 
     let description = `Payment for ${credits} credits`;
 
+    // add any donations afterwards
     if (donate) {
-      finalPrice = finalPrice + DONATE_AMOUNT;
+      donateAmount = DONATE_AMOUNT;
+      finalPrice = finalPrice + donateAmount;
       description = `${description} + donation to plant a tree`;
       logger.debug(
         `payments-service: donation applied, payment amount is now ${finalPrice}`
       );
     }
 
-    return { price: finalPrice, description };
+    return { price: finalPrice, description, donateAmount };
   } catch (err) {
     logger.error(`payments-service: failed to get package payment details`);
     throw err;

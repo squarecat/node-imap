@@ -14,8 +14,14 @@ import request from '../../../utils/request';
 export const BillingModalContext = createContext({ state: initialState });
 
 export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
+  const initialStep = useMemo(
+    () => (billingCard ? 'existing-billing-details' : 'start-purchase'),
+    [billingCard]
+  );
+
   const [state, dispatch] = useReducer(billingModalReducer, {
-    ...initialState
+    ...initialState,
+    step: initialStep
   });
 
   useEffect(
@@ -24,11 +30,12 @@ export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
         type: 'init',
         data: {
           ...initialState,
+          step: initialStep,
           selectedPackage
         }
       });
     },
-    [selectedPackage]
+    [initialStep, selectedPackage]
   );
 
   const stepWidth = useMemo(
@@ -59,6 +66,7 @@ export default ({ selectedPackage, billingCard, onPurchaseSuccess }) => {
             ) : null}
             {state.step === 'enter-billing-details' ? (
               <NewBillingForm
+                hasBillingCard={!!billingCard}
                 onPurchaseSuccess={user => onPurchaseSuccess(user)}
               />
             ) : null}

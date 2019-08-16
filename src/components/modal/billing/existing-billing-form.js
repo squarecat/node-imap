@@ -11,12 +11,15 @@ import {
 import React, { useContext, useMemo } from 'react';
 
 import CardDetails from '../../card-details';
+import CouponForm from './coupon';
 import Donate from './donate';
+import { ModalContext } from '../../../providers/modal-provider';
 import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
 
 const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
+  const { close: closeModal } = useContext(ModalContext);
   const { state, dispatch } = useContext(BillingModalContext);
 
   async function onSubmit() {
@@ -89,14 +92,7 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
   );
 
   return (
-    <form
-      id="existing-payment-form"
-      onSubmit={e => {
-        e.preventDefault();
-        return onSubmit();
-      }}
-      method="post"
-    >
+    <>
       <ModalBody compact>
         <ModalHeader>
           Buy Package
@@ -104,11 +100,11 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
         </ModalHeader>
         <div styleName="payment-panels">
           <div styleName="panel">
-            <h4>Confirm purchase with your saved payment method:</h4>
+            <h4>Use saved payment method</h4>
 
-            <FormGroup>
+            <div styleName="card-preview">
               <CardDetails card={billingCard} />
-            </FormGroup>
+            </div>
 
             <p>
               Or{' '}
@@ -121,6 +117,10 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
               </a>
               .
             </p>
+
+            <div styleName="existing-card-coupon">
+              <CouponForm />
+            </div>
           </div>
 
           <div styleName="panel panel-right">
@@ -140,11 +140,12 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
       <ModalPaymentSaveAction
         isDisabled={state.loading}
         isLoading={state.loading}
-        cancelText="Back"
+        cancelText="Cancel"
         saveText={displayPrice}
-        onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
+        onSave={onSubmit}
+        onCancel={closeModal}
       />
-    </form>
+    </>
   );
 };
 

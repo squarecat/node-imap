@@ -8,7 +8,7 @@ import {
   ModalHeader,
   ModalPaymentSaveAction
 } from '..';
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 
 import Donate from './donate';
 import PaymentAddressDetails from '../../payments/address-details';
@@ -20,7 +20,7 @@ import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
-function NewBillingForm({ stripe, onPurchaseSuccess }) {
+function NewBillingForm({ stripe, hasBillingCard, onPurchaseSuccess }) {
   const { state, dispatch } = useContext(BillingModalContext);
   const { state: stripeState } = useContext(StripeStateContext);
   const [email] = useUser(u => u.email);
@@ -124,6 +124,18 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
     [state.selectedPackage, state.donate]
   );
 
+  const onCancel = useCallback(
+    () => {
+      if (hasBillingCard) {
+        // user has come from the link from existing billing details
+        dispatch({ type: 'set-step', data: 'existing-billing-details' });
+      } else {
+        dispatch({ type: 'set-step', data: 'start-purchase' });
+      }
+    },
+    [dispatch, hasBillingCard]
+  );
+
   return (
     <form
       id="payment-form"
@@ -174,6 +186,7 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
                 }
                 checked={state.save_payment_method}
                 label="Save payment method"
+                disabled={state.loading}
               />
             </FormGroup>
           </div>
@@ -197,7 +210,7 @@ function NewBillingForm({ stripe, onPurchaseSuccess }) {
         isLoading={state.loading}
         cancelText="Back"
         saveText={displayPrice}
-        onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
+        onCancel={onCancel}
       />
     </form>
   );

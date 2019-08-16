@@ -148,6 +148,10 @@
     padding: 0;
     margin-bottom: -20px;
   }
+
+  @media (max-width: 400px) {
+    flex-direction: column-reverse;
+  }
 }
 
 .modal-actions {

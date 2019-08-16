@@ -70,6 +70,7 @@ export default function Donate() {
             }
             checked={state.donate}
             label={`Add $1 to plant a tree`}
+            disabled={state.loading}
           />
         </FormGroup>
       </div>
