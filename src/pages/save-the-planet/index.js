@@ -4,7 +4,6 @@ import {
   CARBON_LONDON_PARIS,
   CARBON_OFFSET_PER_TREE_PER_YEAR,
   CARBON_PER_EMAIL,
-  EMAILS_SENT_PER_DAY,
   NEWSLETTERS_NEVER_OPENED,
   TONNES_CARBON_PER_YEAR,
   TONNE_CONVERSION
@@ -22,6 +21,7 @@ import CarbonEstimator from '../../components/estimator/carbon';
 import SubPageLayout from '../../layouts/subpage-layout';
 import downImg from '../../assets/climate/down.png';
 import numeral from 'numeral';
+import oneTreePlantedLogo from '../../assets/climate/one-tree-planted/OneTreePlanted-logo-square-green.png';
 import planeImg from '../../assets/climate/around-the-globe.png';
 import rainbowImg from '../../assets/climate/rainbow.png';
 import request from '../../utils/request';
@@ -73,9 +73,9 @@ const ClimatePage = () => {
           <div styleName="container-text">
             <h1 styleName="title">Clean your Inbox. Save the Planet.</h1>
             <p styleName="tagline">
-              Emails dump {TONNES_CARBON_PER_YEAR} tonnes of <CO2 /> into the
-              atmosphere ever year. Unsubscribe from unwanted subscription
-              emails and reduce your carbon footprint.{' '}
+              Emails dump {formatNumber(TONNES_CARBON_PER_YEAR)} tonnes of{' '}
+              <CO2 /> into the atmosphere ever year. Unsubscribe from unwanted
+              subscription emails and reduce your carbon footprint.{' '}
               <TextLink undecorated href="#cite-1">
                 <sup>[1]</sup>
               </TextLink>
@@ -196,27 +196,37 @@ const ClimatePage = () => {
 
       <div styleName="donate">
         <div styleName="climate-inner">
-          <h2>Plant a tree...</h2>
-          <p>
-            Planting one tree offsets your carbon footprint by{' '}
-            {formatNumber(CARBON_OFFSET_PER_TREE_PER_YEAR / 100)}kg in a single
-            year{' '}
-            <TextLink undecorated href="#cite-4">
-              <sup>[4]</sup>
-            </TextLink>
-            . That's equivalent to unsubscribing from{' '}
-            {formatNumber(CARBON_OFFSET_PER_TREE_PER_YEAR / CARBON_PER_EMAIL)}{' '}
-            subscription emails!
-          </p>
-          <p>
-            One dollar plants one tree with our partner{' '}
-            <TextLink href={TREE_ORG_LINK} target="_">
-              One Tree Planted
-            </TextLink>
-            . We plant an additional tree for every 10 our customers do!
-          </p>
-          <p>Donated so far...</p>
-          <p>Trees planted so far...</p>
+          <div styleName="image-section">
+            <div styleName="image-section-text">
+              <h2>Donate $1 and we plant one tree</h2>
+              <p>
+                Trees help clean the air we breathe, filter the water we drink,
+                and absorb harmful carbon from the atmosphere.
+              </p>
+              <p>
+                One tree absorbs{' '}
+                {formatNumber(CARBON_OFFSET_PER_TREE_PER_YEAR / 100)}kg of
+                carbon in a single year{' '}
+                <TextLink undecorated inverted href="#cite-4">
+                  <sup>[4]</sup>
+                </TextLink>
+                . That's equivalent to unsubscribing from{' '}
+                {formatNumber(
+                  CARBON_OFFSET_PER_TREE_PER_YEAR / CARBON_PER_EMAIL
+                )}{' '}
+                subscription emails!
+              </p>
+              <p>
+                Donate one dollar at the checkout to plant a tree. We plant an
+                additional tree for every 10 our customers do!
+              </p>
+            </div>
+            <div styleName="image-section-img">
+              <a href={TREE_ORG_LINK}>
+                <img src={oneTreePlantedLogo} alt="One Tree Planted logo" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 

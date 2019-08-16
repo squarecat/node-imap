@@ -33,6 +33,16 @@
   @extend .subpage-section-inverted;
 }
 
+.image-section {
+  @extend .subpage-image-section;
+}
+.image-section-text {
+  @extend .subpage-image-section-text;
+}
+.image-section-img {
+  @extend .subpage-image-section-img;
+}
+
 .sources {
   margin: 100px 0 -100px 0;
   font-size: 10px;
