@@ -34,6 +34,8 @@ import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
 import luke from '../assets/testimonials/luke-nobg.png';
 import mailListImage from '../assets/mail-list-illustation.png';
+import mailListImageWebp from '../assets/mail-list-illustation.webp';
+import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
@@ -140,7 +142,7 @@ const IndexPage = () => {
             <div className="hero-box hero-left">
               <div className="hero-left-inner">
                 <h1 className="catchy-tagline">
-                  Less unwanted mail in your inbox
+                  Easily unsubscribe from unwanted emails
                 </h1>
                 <p className="informative-description">
                   See all of your subscription emails in one place and
@@ -149,7 +151,7 @@ const IndexPage = () => {
 
                 <div className="join-container">
                   <a href="/signup?ref=hero" className={`beam-me-up-cta`}>
-                    Start unsubscribing now!
+                    Get Started for Free
                   </a>
                   {statsContent}
                 </div>
@@ -234,8 +236,15 @@ const IndexPage = () => {
             </p>
           </div>
           <div className="main-image-container">
-            <Browser large>
-              <img className="browser-image" src={mailListImage} />
+            <Browser large hideOnMobile>
+              <picture className="browser-image">
+                <source
+                  srcSet={mailListMobileImage}
+                  media="(max-width: 600px)"
+                />
+                {/* <source type="image/webp" srcSet={mailListImageWebp} /> */}
+                <img src={mailListImage} />
+              </picture>
             </Browser>
           </div>
         </div>
@@ -366,6 +375,22 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
+
+        <div className="home-container section-padded">
+          <div className="home-container-inner" id="pricing">
+            <h3>Let's talk money</h3>
+            <p>
+              So that we can <a href="/pricing#why">keep your data safe</a>{' '}
+              Leave Me Alone is a paid service. Each email you unsubscribe from
+              costs one credit.
+            </p>
+          </div>
+          <Pricing />
+          <p style={{ textAlign: 'center' }}>
+            Every new account receives{' '}
+            <TextImportant>5 free credits</TextImportant>.
+          </p>
+        </div>
         <div className="privacy-section">
           <div className="home-container">
             <div className="image-section image-left privacy">
@@ -376,9 +401,12 @@ const IndexPage = () => {
                 <h3>Privacy first</h3>
                 <p>
                   We take your privacy seriously. Your emails are just that -
-                  yours, and they should stay that way. We don't store any email
-                  content so you don't have to worry about us losing or selling
-                  your private data.
+                  yours, and they should stay that way.{' '}
+                  <TextImportant>
+                    We don't store any email content
+                  </TextImportant>{' '}
+                  so you don't have to worry about us losing or selling your
+                  private data.
                 </p>
                 <p>
                   <TextLink as="link" linkTo="/security">
@@ -403,22 +431,6 @@ const IndexPage = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="home-container section-padded">
-          <div className="home-container-inner" id="pricing">
-            <h3>Let's talk money</h3>
-            <p>
-              So that we can <a href="/pricing#why">keep your data safe</a>{' '}
-              Leave Me Alone is a paid service. Each email you unsubscribe from
-              costs one credit.
-            </p>
-          </div>
-          <Pricing />
-          <p>
-            Every new user receives{' '}
-            <TextImportant>5 free credits</TextImportant>, and more can be
-            earned easily.
-          </p>
         </div>
         <div className="home-container">
           <div className="home-container-inner end-stuff">

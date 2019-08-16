@@ -31,25 +31,29 @@ export function HeroTestimonial({
       </div>
       <blockquote styleName="blockquote">
         <p>"{text}"</p>
-        <cite styleName="author">
-          <span>{author}</span>
-          <span styleName="company">
-            <span>{companyName}</span>
-            <span>{companyLogo}</span>
-          </span>
-        </cite>
       </blockquote>
+      <cite styleName="author">
+        <span>{author}</span>
+        <span styleName="company">
+          <span>{companyName}</span>
+          <span>{companyLogo}</span>
+        </span>
+      </cite>
     </div>
   );
 }
 
-export function TrustBar({ logos = [], label, ...visProps }) {
+export function TrustBar({ logos = [], label = false, ...visProps }) {
   const styles = cx('trustbar', visProps);
   const content = useMemo(
     () => {
       return (
         <>
-          {label ? <span styleName="trustbar-label">{label}</span> : null}
+          {label ? (
+            <span styleName="trustbar-label">
+              Used by<span styleName="long-text"> employees at</span>:
+            </span>
+          ) : null}
           {logos.map((logo, i) => (
             <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
               <img src={logo} alt="trusted provider logo" />

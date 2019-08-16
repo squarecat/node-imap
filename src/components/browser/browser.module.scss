@@ -10,6 +10,14 @@
   &.shadowed {
     box-shadow: 0 7px 1em rgba(194, 58, 0, 0.1);
   }
+
+  &.hide-on-mobile {
+    @media (max-width: 600px) {
+      border: 0;
+      background: transparent;
+      min-width: 0;
+    }
+  }
 }
 
 .header {
@@ -20,6 +28,12 @@
 
   .large & {
     height: 25px;
+  }
+
+  .hide-on-mobile & {
+    @media (max-width: 600px) {
+      display: none;
+    }
   }
 }
 

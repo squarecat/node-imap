@@ -1,10 +1,14 @@
-import './browser.module.scss';
-
 import React from 'react';
 import cx from 'classnames';
+import styles from './browser.module.scss';
 
-export default ({ children, large }) => (
-  <div styleName={cx('browser-container', { large })}>
+export default ({ children, large, hideOnMobile }) => (
+  <div
+    className={cx(styles.browserContainer, {
+      [styles.large]: large,
+      [styles.hideOnMobile]: hideOnMobile
+    })}
+  >
     <div styleName="header">
       <div styleName="header-dot red" />
       <div styleName="header-dot yellow" />

@@ -70,7 +70,6 @@ a.more-info:visited {
 }
 
 .friendly-neighbourhood-hero {
-  height: calc(100vh - 106px);
   max-height: 600px;
   width: 100%;
   margin: 0 auto;
@@ -79,6 +78,14 @@ a.more-info:visited {
   justify-content: center;
   position: relative;
   flex-direction: column;
+
+  @media (max-width: 500px) {
+    padding: 50px 20px 20px 20px;
+  }
+
+  @media (max-width: 400px) {
+    padding: 30px 20px 20px 20px;
+  }
 }
 
 .friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
@@ -105,8 +112,8 @@ a.more-info:visited {
   }
 
   @media (max-width: 400px) {
-    top: -25px;
-    padding: 0;
+    // padding: 0;
+    grid-row-gap: 25px;
   }
 }
 
@@ -214,6 +221,12 @@ a.more-info:visited {
 
 .section-padded {
   padding-top: 150px;
+  padding-bottom: 100px;
+
+  @media (max-width: 500px) {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
 }
 
 .image-section {
@@ -237,6 +250,10 @@ a.more-info:visited {
     &.image-left {
       flex-direction: column-reverse;
     }
+  }
+
+  @media (max-width: 500px) {
+    margin: 40px auto;
   }
 }
 
@@ -264,6 +281,7 @@ a.more-info:visited {
 .privacy {
   img {
     max-width: 300px;
+    width: 100%;
 
     @media (max-width: 400px) {
       max-width: 100%;
@@ -345,6 +363,10 @@ a.more-info:visited {
   .beam-me-up-cta {
     margin-top: 2rem;
   }
+
+  @media (max-width: 500px) {
+    padding-bottom: 100px;
+  }
 }
 
 .dark-section {
@@ -353,6 +375,10 @@ a.more-info:visited {
   background-color: $color-dark-background;
   color: white;
   z-index: 2;
+
+  @media (max-width: 500px) {
+    padding: 50px 0;
+  }
 }
 
 .item-box .example-unsubscribe-container {
@@ -594,10 +620,8 @@ a.more-info:visited {
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
-  }
-
-  @media (max-width: 400px) {
-    margin: 50px 0;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -623,12 +647,10 @@ a.more-info:visited {
     p {
       margin-top: 25px;
     }
-    &:nth-child(2) {
-      border-left: 0;
-      border-right: 0;
-      border-top: 1px solid $color-red-light;
-      border-bottom: 1px solid $color-red-light;
-    }
+  }
+  @media (max-width: 500px) {
+    text-align: left;
+    padding: 10px 0;
   }
 }
 .news-logo {
@@ -745,7 +767,15 @@ a.more-info:visited {
   }
 
   @media (max-width: 960px) {
-    bottom: -30px;
+    bottom: -20px;
+  }
+
+  @media (max-width: 600px) {
+    bottom: 0;
+  }
+
+  @media (max-width: 400px) {
+    bottom: 15px;
   }
 
   p {
@@ -787,15 +817,28 @@ a.more-info:visited {
 
 .end-stuff {
   text-align: center;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 150px;
-  margin-top: 100px;
 
   .join-text {
     font-size: 25px;
     line-height: 32px;
     max-width: 610px;
     margin: 0 auto;
+  }
+
+  @media (max-width: 700px) {
+    padding-top: 100px;
+
+    .join-text {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    padding-top: 50px;
+    a {
+      margin: 30px auto;
+    }
   }
 }
 
@@ -821,11 +864,25 @@ a.more-info:visited {
 
 .privacy-section {
   background-color: rgba(255, 217, 214, 0.1);
-  padding: 200px 0 100px 0;
 
   .image-section {
     grid-template-rows: 300px;
-    margin: 0;
-    margin-bottom: 150px;
+    margin: 100px 0;
+
+    @media (max-width: 500px) {
+      margin: 40px 0 0 0;
+
+      .image-section-img {
+        max-width: 80%;
+        width: 200px;
+        margin: 20px auto 0 auto;
+      }
+    }
+  }
+}
+
+.browser-image {
+  @media (max-width: 600px) {
+    max-width: 400px;
   }
 }

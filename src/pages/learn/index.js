@@ -277,7 +277,7 @@ export default function Learn() {
 
         <Testimonial
           text={`I must admit I'm lazy at unsubscribing to subscription emails, so my email inbox grows at an alarming rate every day. I just used Leave Me Alone and unsubscribed to 15 emails in 3 minutes. What a great idea!`}
-          author="Tom Haworth, Managing Director - B13 Technology"
+          author="Tom Haworth, CEO - B13 Technology"
           image={tom}
           centered
         />
