@@ -1,5 +1,13 @@
 import './estimator.module.scss';
 
+import {
+  CARBON_BLACK_COFFEE,
+  CARBON_DRIVING_1KM,
+  CARBON_PER_EMAIL,
+  CARBON_PLASTIC_BAG,
+  PECENTAGE_EMAILS_SPAM,
+  PERCENTAGE_UNSUBS
+} from '../../utils/climate';
 import React, { useMemo, useState } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
@@ -11,23 +19,13 @@ import smallLogo from '../../assets/logo.png';
 import spamMailImg from '../../assets/spam-email.png';
 import treeImg from '../../assets/climate/tree.png';
 
-const PECENTAGE_EMAILS_SPAM = 0.08;
-const PERCENTAGE_UNSUBS = 0.36;
-const DAYS_IN_MONTH = 30;
-export const CARBON_PER_EMAIL = 4;
-export const LONDON_PARIS_CARBON = 30000;
-const CARBON_PLASTIC_BAG = 10;
-const CARBON_DRIVING_1KM = 260;
-const CARBON_BLACK_COFFEE = 21;
-
 export default function Estimator({
   title = 'How much can I reduce my carbon footprint by?',
   startFrom = 20
 }) {
   const [mailPerDay, setMailPerDay] = useState(startFrom);
 
-  const mailPerMonth =
-    mailPerDay === 0 ? 10 * DAYS_IN_MONTH : mailPerDay * DAYS_IN_MONTH;
+  const mailPerMonth = mailPerDay === 0 ? 10 * 30 : mailPerDay * 30;
   const spamPerMonth = mailPerMonth * PECENTAGE_EMAILS_SPAM;
   const unsubsPerMonth = spamPerMonth * PERCENTAGE_UNSUBS;
 

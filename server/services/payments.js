@@ -215,9 +215,9 @@ export async function createPaymentWithExistingCardForUser({
       return handlePaymentSuccess(response, {
         user,
         productId,
-        finalPrice: intent.amount,
+        finalPrice: +intent.amount,
         coupon: intent.metadata.coupon,
-        donateAmount: intent.metadata.donateAmount
+        donateAmount: +intent.metadata.donateAmount
       });
     }
 
@@ -494,9 +494,9 @@ export async function createPaymentForUser(
       return handlePaymentSuccess(response, {
         user,
         productId,
-        finalPrice: intent.amount,
+        finalPrice: +intent.amount,
         coupon: intent.metadata.coupon,
-        donateAmount: intent.metadata.donateAmount
+        donateAmount: +intent.metadata.donateAmount
       });
     }
     return response;

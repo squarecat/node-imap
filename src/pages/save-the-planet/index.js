@@ -1,9 +1,14 @@
 import './climate.module.scss';
 
-import CarbonEstimator, {
+import {
+  CARBON_LONDON_PARIS,
+  CARBON_OFFSET_PER_TREE_PER_YEAR,
   CARBON_PER_EMAIL,
-  LONDON_PARIS_CARBON
-} from '../../components/estimator/carbon';
+  EMAILS_SENT_PER_DAY,
+  NEWSLETTERS_NEVER_OPENED,
+  TONNES_CARBON_PER_YEAR,
+  TONNE_CONVERSION
+} from '../../utils/climate';
 import Features, {
   Feature,
   FeatureImage,
@@ -11,8 +16,9 @@ import Features, {
   FeatureTitle
 } from '../../components/landing/features';
 import React, { useEffect, useState } from 'react';
-import { TextHighlight, TextImportant, TextLink } from '../../components/text';
+import { TextImportant, TextLink } from '../../components/text';
 
+import CarbonEstimator from '../../components/estimator/carbon';
 import SubPageLayout from '../../layouts/subpage-layout';
 import downImg from '../../assets/climate/down.png';
 import numeral from 'numeral';
@@ -22,21 +28,10 @@ import request from '../../utils/request';
 import treeImg from '../../assets/climate/tree.png';
 import useAsync from 'react-use/lib/useAsync';
 
-const EMAILS_SENT_PER_DAY = 246500000000; // 247; // (B) 246500000000
-const CARBON_OFFSET_PER_TREE_PER_YEAR = 15694; // (34.6 pounds)
-const NEWSLETTERS_NEVER_OPENED = 0.75;
-const TONNE_CONVERSION = 1e6;
-const TONNES_CARBON_PER_YEAR = numeral(
-  (EMAILS_SENT_PER_DAY * CARBON_PER_EMAIL) / TONNE_CONVERSION
-).format('0,0');
-// 30000: "London to Paris",
-// 480000: "London to New York",
-// 1460000: "London to Sydney"
-
 const TREE_ORG_LINK = 'https://onetreeplanted.org';
 
 const title = `Clean your Inbox and Save the Planet`;
-// const description = `One email produces ${CARBON_PER_EMAIL}g of carbon. ${EMAILS_SENT_PER_DAY} billion emails are sent every day. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
+const description = `Emails dump ${TONNES_CARBON_PER_YEAR} tonnes of CO2 into the atmosphere ever year. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
 
 const ClimatePage = () => {
@@ -58,7 +53,7 @@ const ClimatePage = () => {
           unsubscriptions,
           totalCarbonSavedInGrams,
           londonToParis: (
-            totalCarbonSavedInGrams / LONDON_PARIS_CARBON
+            totalCarbonSavedInGrams / CARBON_LONDON_PARIS
           ).toFixed(0)
         });
       }
@@ -69,7 +64,7 @@ const ClimatePage = () => {
   return (
     <SubPageLayout
       title={title}
-      // description={description} TODO DOOO MEEEE
+      description={description}
       withContent={false}
       slug={slug}
     >

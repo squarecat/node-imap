@@ -1,5 +1,11 @@
 import './open.module.scss';
 
+import {
+  CARBON_LONDON_PARIS,
+  CARBON_OFFSET_PER_TREE_PER_YEAR,
+  CARBON_PER_EMAIL,
+  formatWeight
+} from '../../utils/climate';
 import React, { useEffect, useRef } from 'react';
 import Table, { TableCell, TableRow } from '../../components/table';
 
@@ -7,6 +13,7 @@ import Chart from 'chart.js';
 import ErrorBoundary from '../../components/error-boundary';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
+import _times from 'lodash.times';
 import addMonths from 'date-fns/add_months';
 import endOfMonth from 'date-fns/end_of_month';
 import formatDate from 'date-fns/format';
@@ -17,6 +24,7 @@ import request from '../../utils/request';
 import startOfDay from 'date-fns/start_of_day';
 import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
+import treeImg from '../../assets/climate/tree.png';
 import useAsync from 'react-use/lib/useAsync';
 
 const lineColor = '#EB6C69';
@@ -445,11 +453,6 @@ function Open() {
     [stats, monthly]
   );
 
-  const totalRevenueStats = revenueBoxStats(stats);
-  const salesStats = salesBoxStats(stats);
-  const usersStats = getBoxStats(stats, 'users');
-  const mrrStats = mrrBoxStats(stats);
-
   if (loading) {
     return (
       <div styleName="box padded">
@@ -469,10 +472,14 @@ function Open() {
     );
   }
 
-  console.log('totalRevenueStats', totalRevenueStats);
-  console.log('salesStats', salesStats);
-  console.log('usersStats', usersStats);
-  console.log('mrrStats', mrrStats);
+  const totalRevenueStats = revenueBoxStats(stats);
+  const salesStats = salesBoxStats(stats);
+  const usersStats = getBoxStats(stats, 'users');
+  const mrrStats = mrrBoxStats(stats);
+
+  const totalTreesPlanted =
+    stats.totalDonations +
+    (stats.totalDonations < 10 ? 0 : Math.round(stats.totalDonations / 10));
 
   return (
     <ErrorBoundary>
@@ -519,7 +526,9 @@ function Open() {
 
           <div styleName="big-stat box">
             <span styleName="label">Last month's sales</span>
-            <span styleName="value">{format(salesStats.lastMonth)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(salesStats.lastMonth)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Sales growth rate (MoM)</span>
@@ -534,12 +543,14 @@ function Open() {
           </div>
           <div styleName="big-stat box">
             <span styleName="label">This month's sales to date</span>
-            <span styleName="value">{format(salesStats.thisMonth)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(salesStats.thisMonth)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total sales</span>
             <span styleName="value">
-              {format(calculateWithRefunds(stats, 'totalSales'))}
+              {formatNumberAbbr(calculateWithRefunds(stats, 'totalSales'))}
             </span>
           </div>
           <div styleName="big-stat box">
@@ -552,11 +563,15 @@ function Open() {
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total credit packages purchased</span>
-            <span styleName="value">{format(stats.packagesPurchased)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.packagesPurchased)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total credits purchased</span>
-            <span styleName="value">{format(stats.creditsPurchased)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.creditsPurchased)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">
@@ -565,7 +580,9 @@ function Open() {
                 ✨
               </span>
             </span>
-            <span styleName="value">{format(stats.creditsRewarded)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.creditsRewarded)}
+            </span>
           </div>
           {/* <div styleName="big-stat box">
                   <span styleName="label">Revenue from gifts</span>
@@ -575,11 +592,11 @@ function Open() {
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Total gift sales</span>
-                  <span styleName="value">{format(stats.giftSales)}</span>
+                  <span styleName="value">{formatNumberAbbr(stats.giftSales)}</span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Gifts redeemed</span>
-                  <span styleName="value">{format(stats.giftRedemptions)}</span>
+                  <span styleName="value">{formatNumberAbbr(stats.giftRedemptions)}</span>
                 </div> */}
         </div>
 
@@ -639,7 +656,9 @@ function Open() {
         <div styleName="boxes">
           <div styleName="big-stat box">
             <span styleName="label">Last month's new signups</span>
-            <span styleName="value">{format(usersStats.lastMonth)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(usersStats.lastMonth)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">New Signups growth rate (MoM)</span>
@@ -654,39 +673,43 @@ function Open() {
           </div>
           <div styleName="big-stat box">
             <span styleName="label">This month's new signups to date</span>
-            <span styleName="value">{format(usersStats.thisMonth)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(usersStats.thisMonth)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total users</span>
-            <span styleName="value">{format(stats.users)}</span>
+            <span styleName="value">{formatNumberAbbr(stats.users)}</span>
           </div>
         </div>
         <div styleName="boxes">
           {/* <div styleName="big-stat box">
                   <span styleName="label">Teams</span>
-                  <span styleName="value">{format(stats.organisations)}</span>
+                  <span styleName="value">{formatNumberAbbr(stats.organisations)}</span>
                 </div>
                 <div styleName="big-stat box">
                   <span styleName="label">Team members</span>
                   <span styleName="value">
-                    {format(stats.organisationUsers)}
+                    {formatNumberAbbr(stats.organisationUsers)}
                   </span>
                 </div> */}
           <div styleName="big-stat box">
             <span styleName="label">Google accounts connected</span>
             <span styleName="value">
-              {format(stats.connectedAccountGoogle)}
+              {formatNumberAbbr(stats.connectedAccountGoogle)}
             </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Microsoft accounts connected</span>
             <span styleName="value">
-              {format(stats.connectedAccountOutlook)}
+              {formatNumberAbbr(stats.connectedAccountOutlook)}
             </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Other accounts connected (IMAP)</span>
-            <span styleName="value">{format(stats.connectedAccountImap)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.connectedAccountImap)}
+            </span>
           </div>
         </div>
         {/* <div styleName="chart box">
@@ -706,18 +729,20 @@ function Open() {
           <div styleName="big-stat box">
             <span styleName="label">Total subscription emails seen</span>
             <span styleName="value">
-              {format(
+              {formatNumberAbbr(
                 stats.unsubscribableEmails - stats.previouslyUnsubscribedEmails
               )}
             </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total emails unsubscribed from</span>
-            <span styleName="value">{format(stats.unsubscriptions)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.unsubscriptions)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total emails scanned</span>
-            <span styleName="value">{format(stats.emails)}</span>
+            <span styleName="value">{formatNumberAbbr(stats.emails)}</span>
           </div>
         </div>
         <div styleName="chart box">
@@ -737,29 +762,36 @@ function Open() {
         <div styleName="boxes">
           {/* <div styleName="big-stat box">
                   <span styleName="label">Total number of scans</span>
-                  <span styleName="value">{format(stats.scans)}</span>
+                  <span styleName="value">{formatNumberAbbr(stats.scans)}</span>
                 </div> */}
           <div styleName="big-stat box">
             <span styleName="label">Total reminders requested</span>
-            <span styleName="value">{format(stats.remindersRequested)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.remindersRequested)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total reminders sent</span>
-            <span styleName="value">{format(stats.remindersSent)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.remindersSent)}
+            </span>
           </div>
         </div>
       </div>
 
       <div styleName="referrals">
-        <h2>Referrals</h2>
         <div styleName="boxes">
           <div styleName="big-stat box">
             <span styleName="label">Total referral signups</span>
-            <span styleName="value">{format(stats.referralSignupV2)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.referralSignupV2)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Total referral purchases</span>
-            <span styleName="value">{format(stats.referralPurchaseV2)}</span>
+            <span styleName="value">
+              {formatNumberAbbr(stats.referralPurchaseV2)}
+            </span>
           </div>
           <div styleName="big-stat box">
             <span styleName="label">Referral conversion rate</span>
@@ -769,6 +801,78 @@ function Open() {
           </div>
         </div>
       </div>
+
+      <div styleName="climate">
+        {/* <div styleName="box box-title">
+          <h3>
+            Cleaning your inbox helps to{' '}
+            <TextLink href="/save-the-planet" target="_">
+              save the planet
+            </TextLink>
+            .
+          </h3>
+        </div> */}
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <h3>
+              Cleaning your inbox helps to{' '}
+              <TextLink href="/save-the-planet" target="_">
+                save the planet
+              </TextLink>
+            </h3>
+            <span styleName="label">Total trees planted</span>
+            <div styleName="trees">
+              {_times(totalTreesPlanted, index => (
+                <div styleName="tree" key={`tree-${index}`}>
+                  <img alt="deciduous tree in a cloud" src={treeImg} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div styleName="boxes">
+          <div styleName="big-stat box">
+            <span styleName="label">Carbon saved by unsubscribing</span>
+            <span styleName="value">
+              {formatWeight(stats.unsubscriptions * CARBON_PER_EMAIL)}
+            </span>
+          </div>
+
+          {/* <div styleName="big-stat box">
+            <span styleName="label">
+              Equivalent flights from London to Paris
+            </span>
+            <span styleName="value">
+              {formatNumber(
+                (
+                  (stats.unsubscriptions * CARBON_PER_EMAIL) /
+                  CARBON_LONDON_PARIS
+                ).toFixed(0)
+              )}
+            </span>
+          </div> */}
+
+          <div styleName="big-stat box">
+            <span styleName="label">Carbon offset by planting trees</span>
+            <span styleName="value">
+              {formatWeight(
+                totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR
+              )}
+            </span>
+          </div>
+
+          {/* <div styleName="big-stat box">
+            <span styleName="label">Equivalent unwanted emails</span>
+            <span styleName="value">
+              {formatNumber(
+                (totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR) /
+                  CARBON_PER_EMAIL
+              )}
+            </span>
+          </div> */}
+        </div>
+      </div>
+
       <div styleName="expenses">
         {loadingExpenses ? (
           <div styleName="box">
@@ -1047,13 +1151,17 @@ function mrrBoxStats(stats) {
   };
 }
 
-function format(num) {
+function formatNumberAbbr(num) {
   if (!num) return 0;
 
   if (num < 1000) {
     return num;
   }
   return numeral(num).format('0.0a');
+}
+
+function formatNumber(num) {
+  return numeral(num).format('0,0');
 }
 
 function currency(num) {
