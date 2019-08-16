@@ -54,7 +54,7 @@ export default function Estimator({
           <div styleName="slider">
             <RangeInput
               min="10"
-              max="300"
+              max="310"
               value={mailPerDay}
               step="10"
               onChange={setMailPerDay}

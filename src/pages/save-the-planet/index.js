@@ -14,9 +14,10 @@ import Features, {
   FeatureText,
   FeatureTitle
 } from '../../components/landing/features';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
+import { Arrow as ArrowIcon } from '../../components/icons';
 import CarbonEstimator from '../../components/estimator/carbon';
 import SubPageLayout from '../../layouts/subpage-layout';
 import downImg from '../../assets/climate/down.png';
@@ -41,22 +42,120 @@ const ClimatePage = () => {
     value: statsData
   } = useAsync(fetchStats, []);
 
-  const [stats, setStats] = useState(null);
+  // const [stats, setStats] = useState(null);
+  // useEffect(
+  //   () => {
+  //     if (!statsLoading && statsData) {
+  //       const { users, unsubscriptions } = statsData;
+  //       const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
+  //       setStats({
+  //         users,
+  //         unsubscriptions,
+  //         totalCarbonSavedInGrams,
+  //         londonToParis: (
+  //           totalCarbonSavedInGrams / CARBON_LONDON_PARIS
+  //         ).toFixed(0)
+  //       });
+  //     }
+  //   },
+  //   [statsData, statsError, statsLoading]
+  // );
 
-  useEffect(
+  const featuresContent = useMemo(
     () => {
-      if (!statsLoading && statsData) {
-        const { users, unsubscriptions } = statsData;
-        const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
-        setStats({
-          users,
-          unsubscriptions,
-          totalCarbonSavedInGrams,
-          londonToParis: (
-            totalCarbonSavedInGrams / CARBON_LONDON_PARIS
-          ).toFixed(0)
-        });
+      if (statsError) {
+        return {
+          one: null,
+          two: null,
+          three: null
+        };
       }
+
+      if (statsLoading) {
+        return {
+          one: <p>Loading...</p>,
+          two: <p>Loading...</p>,
+          three: <p>Loading...</p>
+        };
+      }
+
+      const { users, unsubscriptions } = statsData;
+      const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
+      const stats = {
+        users,
+        unsubscriptions,
+        totalCarbonSavedInGrams,
+        londonToParis: (totalCarbonSavedInGrams / CARBON_LONDON_PARIS).toFixed(
+          0
+        )
+      };
+
+      return {
+        one: (
+          <p>
+            We have unsubscribed from {formatNumber(stats.unsubscriptions)}{' '}
+            subscription emails,{' '}
+            <TextImportant>
+              saving {formatWeightTonnes(stats.totalCarbonSavedInGrams)} in{' '}
+              <CO2 /> emissions
+            </TextImportant>
+            .{' '}
+            <TextLink undecorated href="#cite-1">
+              <sup>[1]</sup>
+            </TextLink>
+          </p>
+        ),
+        two: (
+          <p>
+            Receiving those emails is equivalent to{' '}
+            <TextImportant>
+              {formatNumber(stats.londonToParis)} flights from London to Paris
+            </TextImportant>{' '}
+            in carbon emissions.{' '}
+            <TextLink undecorated href="#cite-3">
+              <sup>[3]</sup>
+            </TextLink>
+          </p>
+        ),
+        three: (
+          <p>
+            Unsubscribing from those emails is the same carbon reduction as{' '}
+            <TextImportant>
+              planting{' '}
+              {formatNumber(
+                stats.totalCarbonSavedInGrams / CARBON_OFFSET_PER_TREE_PER_YEAR
+              )}{' '}
+              trees every year
+            </TextImportant>
+            .{' '}
+            <TextLink undecorated href="#cite-4">
+              <sup>[4]</sup>
+            </TextLink>
+          </p>
+        )
+      };
+    },
+    [statsData, statsError, statsLoading]
+  );
+
+  const joinStatsContent = useMemo(
+    () => {
+      if (statsError) {
+        return null;
+      }
+      if (statsLoading) {
+        return <p>Loading...</p>;
+      }
+      return (
+        <p styleName="join-text">
+          Join{' '}
+          <TextImportant>{formatNumber(statsData.users)} users</TextImportant>{' '}
+          who have unsubscribed from a total of{' '}
+          <TextImportant>
+            {formatNumber(statsData.unsubscriptions)} emails
+          </TextImportant>
+        </p>
+      );
     },
     [statsData, statsError, statsLoading]
   );
@@ -112,24 +211,7 @@ const ClimatePage = () => {
               <img src={downImg} alt="cartoon cloud with a down arrow" />
             </FeatureImage>
             <FeatureTitle>Reduce Carbon Footprint</FeatureTitle>
-            <FeatureText>
-              {!stats ? (
-                <p>Loading...</p>
-              ) : (
-                <p>
-                  We have unsubscribed from{' '}
-                  {formatNumber(stats.unsubscriptions)} subscription emails,{' '}
-                  <TextImportant>
-                    saving {formatWeightTonnes(stats.totalCarbonSavedInGrams)}{' '}
-                    in <CO2 /> emissions
-                  </TextImportant>
-                  .{' '}
-                  <TextLink undecorated href="#cite-1">
-                    <sup>[1]</sup>
-                  </TextLink>
-                </p>
-              )}
-            </FeatureText>
+            <FeatureText>{featuresContent.one}</FeatureText>
           </Feature>
 
           <Feature>
@@ -140,23 +222,7 @@ const ClimatePage = () => {
               />
             </FeatureImage>
             <FeatureTitle>Offset Flight Emissions</FeatureTitle>
-            <FeatureText>
-              {!stats ? (
-                <p>Loading...</p>
-              ) : (
-                <p>
-                  Receiving those emails is equivalent to{' '}
-                  <TextImportant>
-                    {formatNumber(stats.londonToParis)} flights from London to
-                    Paris
-                  </TextImportant>{' '}
-                  in carbon emissions.{' '}
-                  <TextLink undecorated href="#cite-3">
-                    <sup>[3]</sup>
-                  </TextLink>
-                </p>
-              )}
-            </FeatureText>
+            <FeatureText>{featuresContent.two}</FeatureText>
           </Feature>
 
           <Feature>
@@ -164,28 +230,7 @@ const ClimatePage = () => {
               <img src={rainbowImg} alt="cartoon cloud with a rainbow" />
             </FeatureImage>
             <FeatureTitle>Improve The Atmosphere</FeatureTitle>
-            <FeatureText>
-              {!stats ? (
-                <p>Loading...</p>
-              ) : (
-                <p>
-                  Unsubscribing from those emails is the same carbon reduction
-                  as{' '}
-                  <TextImportant>
-                    planting{' '}
-                    {formatNumber(
-                      stats.totalCarbonSavedInGrams /
-                        CARBON_OFFSET_PER_TREE_PER_YEAR
-                    )}{' '}
-                    trees every year
-                  </TextImportant>
-                  .{' '}
-                  <TextLink undecorated href="#cite-4">
-                    <sup>[4]</sup>
-                  </TextLink>
-                </p>
-              )}
-            </FeatureText>
+            <FeatureText>{featuresContent.three}</FeatureText>
           </Feature>
         </Features>
       </div>
@@ -220,6 +265,12 @@ const ClimatePage = () => {
                 Donate one dollar at the checkout to plant a tree. We plant an
                 additional tree for every 10 our customers do!
               </p>
+              <p>
+                <TextLink inverted href={TREE_ORG_LINK}>
+                  <span>Learn more about One Tree Planted</span>{' '}
+                  <ArrowIcon inline />
+                </TextLink>
+              </p>
             </div>
             <div styleName="image-section-img">
               <a href={TREE_ORG_LINK}>
@@ -237,11 +288,12 @@ const ClimatePage = () => {
             Yes!{' '}
             <TextImportant>
               {NEWSLETTERS_NEVER_OPENED * 100}% of emails are never opened
-            </TextImportant>{' '}
+            </TextImportant>
+            .{' '}
             <TextLink undecorated href="#cite-6">
               <sup>[6]</sup>
-            </TextLink>
-            . Deleting these emails or setting rules to move them into a folder
+            </TextLink>{' '}
+            Deleting these emails or setting rules to move them into a folder
             doesn't stop the carbon impact of receiving the email. By
             unsubscribing from unwanted mailing lists you can stop the email
             from being sent at all.
@@ -282,13 +334,40 @@ const ClimatePage = () => {
           </p>
         </div>
         <div styleName="question">
-          <h2>What else can I do to help reduce my carbon footprint?</h2>
-          <p>Resources for reducing carbon emissions...</p>
-          <p>TODO write more here...</p>
+          <h2>What else can I do to reduce my carbon footprint?</h2>
+          <p>
+            <TextImportant>Keep your emails lean</TextImportant> - long messages
+            and emails with attachments produce 12 times more carbon emissions.{' '}
+            <TextLink undecorated href="#cite-1">
+              <sup>[1]</sup>
+            </TextLink>
+          </p>
+          <p>
+            <TextImportant>Delete emails you are finished with</TextImportant> -
+            storing emails still consumes electricity and water which emits
+            greenhouse gases.
+          </p>
+          <p>
+            <TextImportant>Clean your inbox regularly</TextImportant> -
+            unsubscribing from unwanted emails reduces the carbon impact for
+            both you and the sender.
+          </p>
         </div>
       </div>
 
       <div styleName="climate-inner">
+
+        <div styleName="end-stuff">
+          {joinStatsContent}
+          <a
+            href={`/signup?ref=save-the-planet`}
+            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
+            style={{ margin: '50px auto' }}
+          >
+            Start Unsubscribing!
+          </a>
+        </div>
+
         <div styleName="sources">
           <ul>
             <li id="cite-1">

@@ -76,3 +76,14 @@
 .question {
   margin-bottom: 80px;
 }
+
+.end-stuff {
+  @extend .subpage-end-stuff;
+}
+
+.join-text {
+  font-size: 25px;
+  line-height: 32px;
+  max-width: 610px;
+  margin: 0 auto;
+}

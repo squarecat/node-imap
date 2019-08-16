@@ -48,9 +48,7 @@ export default () => (
             <TextLink href="/teams">For Teams</TextLink>
           </li>
           <li>
-            <TextLink undecorated href="mailto:hello@leavemealone.app">
-              Contact
-            </TextLink>
+            <TextLink href="/save-the-planet">Save the planet</TextLink>
           </li>
         </ul>
         <ul styleName="footer-nav">
