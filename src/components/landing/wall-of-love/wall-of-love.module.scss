@@ -77,7 +77,7 @@ $image-size-tablet: 30px;
 .name {
   font-weight: bold;
   white-space: nowrap;
-  margin-right: 15px;
+  margin-right: 10px;
   display: inline-block;
   line-height: 30px;
 }
@@ -111,6 +111,11 @@ $image-size-tablet: 30px;
 
 .company-logo {
   max-height: 30px;
+
+  &.ptobot {
+    position: relative;
+    top: -3px;
+  }
 }
 
 .company-name {

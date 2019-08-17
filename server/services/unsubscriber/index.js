@@ -2,7 +2,8 @@ import {
   addUnsubscriptionToUser,
   getUserById,
   incrementCreditsUsedForUser,
-  incrementUserCredits
+  incrementUserCredits,
+  addUnsubscribeActivityToUser
 } from '../user';
 
 import { UserError } from '../../utils/errors';
@@ -21,9 +22,13 @@ export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
 
 export const unsubscribeFromMail = async (userId, mail) => {
-  const { billing, organisationId, organisationActive } = await getUserById(
-    userId
-  );
+  const {
+    billing,
+    organisationId,
+    organisationActive,
+    unsubscriptions,
+    milestones
+  } = await getUserById(userId);
   const credits = billing ? billing.credits : 0;
   const { allowed, reason } = canUnsubscribe({
     credits,
@@ -108,6 +113,10 @@ export const unsubscribeFromMail = async (userId, mail) => {
       sendToUser(userId, 'update-credits', 1);
     }
     addNewUnsubscribeOccrurence(userId, mail.from);
+    addUnsubscribeActivityToUser(userId, {
+      unsubCount: unsubscriptions.length + 1,
+      milestones
+    });
     return {
       id: output.id,
       estimatedSuccess: output.estimatedSuccess,
