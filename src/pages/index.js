@@ -34,7 +34,7 @@ import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
 import luke from '../assets/testimonials/luke-nobg.png';
 import mailListImage from '../assets/mail-list-illustation.png';
-import mailListImageWebp from '../assets/mail-list-illustation.webp';
+// import mailListImageWebp from '../assets/mail-list-illustation.webp';
 import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
@@ -64,10 +64,13 @@ const companyLinks = [
 ];
 
 let domContentLoaded = false;
+let initialScreenHeight = 0;
 if (typeof window !== 'undefined') {
   window.addEventListener('DOMContentLoaded', () => {
     domContentLoaded = true;
+    initialScreenHeight = document.documentElement.scrollHeight + 500;
   });
+  initialScreenHeight = document.documentElement.scrollHeight + 500;
 }
 
 const NEWS = [
@@ -424,7 +427,10 @@ const IndexPage = () => {
           <div className="home-container">
             <div className="image-section image-left privacy">
               <div className="image-section-img">
-                <img src={envelope} alt="cartoon envelope surrounded by clouds and flowers" />
+                <img
+                  src={envelope}
+                  alt="cartoon envelope surrounded by clouds and flowers"
+                />
               </div>
               <div className="image-section-text">
                 <h3>Privacy first</h3>
@@ -625,9 +631,7 @@ function nodes(state, action) {
 function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
   const { width } = useWindowSize();
   const [isLoad, setLoad] = useState(domContentLoaded);
-  const [fallLimit, setFallLimit] = useState(
-    document.documentElement.scrollHeight + 500
-  );
+  const [fallLimit, setFallLimit] = useState(initialScreenHeight);
   const ref = useRef(null);
   const [state, dispatch] = useReducer(nodes, {
     count: 0,

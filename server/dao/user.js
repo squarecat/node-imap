@@ -659,6 +659,14 @@ export async function updateUnsubStatusById(
         }
       }
     );
+    const user = await col.findOne({
+      'unsubscriptions.unsubscribeId': unsubId
+    });
+    const { id, unsubscriptions } = user;
+    const unsub = unsubscriptions.find(
+      ({ unsubscribeId }) => unsubscribeId === unsubId
+    );
+    return { id, mailId: unsub.id };
   } catch (err) {
     logger.error('user-dao: failed to update unsub status');
     logger.error(err);
