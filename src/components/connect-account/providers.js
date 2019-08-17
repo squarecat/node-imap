@@ -5,15 +5,8 @@ import React from 'react';
 
 const defaultProviders = ['google', 'outlook', 'imap'];
 
-export default ({
-  onSuccess = () => {},
-  onError = () => {},
-  showImap = false,
-  imapOptions
-}) => {
-  console.log('showImap', showImap);
+export default ({ onSuccess = () => {}, onError = () => {}, imapOptions }) => {
   let providers = defaultProviders;
-  if (!showImap) providers = defaultProviders.filter(d => d !== 'imap');
 
   return (
     <div styleName="provider-btn-grid">
