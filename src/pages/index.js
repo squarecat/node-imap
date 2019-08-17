@@ -625,7 +625,6 @@ function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
       const top = trashPileRef.offsetTop;
       const elTop = ref.current.offsetTop;
       const bottom = top - elTop - 50;
-      console.log(`${top} - ${bottom}`);
       return bottom;
     },
     [trashPileRef]
