@@ -33,8 +33,7 @@ import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
 import luke from '../assets/testimonials/luke-nobg.png';
-import mailListImage from '../assets/mail-list-illustation.png';
-// import mailListImageWebp from '../assets/mail-list-illustation.webp';
+import mailListImageLarge from '../assets/mail-list-illustation.png';
 import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
@@ -262,7 +261,7 @@ const IndexPage = () => {
                   media="(max-width: 600px)"
                 />
                 <img
-                  src={mailListImage}
+                  src={mailListImageLarge}
                   alt="list of subscription emails in Leave Me Alone"
                 />
               </picture>
