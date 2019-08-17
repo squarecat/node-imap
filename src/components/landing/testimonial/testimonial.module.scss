@@ -173,6 +173,10 @@
     padding: 0 20px;
     font-size: 14px;
   }
+
+  &.spaced {
+    padding: 0;
+  }
 }
 
 .trustbar-images {
@@ -181,6 +185,11 @@
   justify-content: space-between;
   padding-top: 0;
   padding-bottom: 0;
+
+  .spaced & {
+    max-width: 1050px;
+    width: 100%;
+  }
 }
 
 .trustbar-img {
@@ -190,7 +199,7 @@
   max-width: 200px;
   padding: 20px 0;
 
-  .google & {
+  .spaced & {
     max-width: 150px;
   }
 }

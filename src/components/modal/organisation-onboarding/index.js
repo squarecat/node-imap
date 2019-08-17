@@ -101,7 +101,7 @@ function Content({
             <img
               styleName="onboarding-example-img"
               src={unsubscribeSpamImage}
-              alt="example-image"
+              alt="an example subscription email in Leave Me Alone with a toggle to unsubscribe"
             />
             <p>Let's get started!</p>
           </>

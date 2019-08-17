@@ -97,17 +97,21 @@ export default ({ sender = null }) => {
 
 function getSocialImg(senderName) {
   let img = facebookImg;
+  let alt = 'Facebook logo';
   if (senderName === 'facebook' || senderName === 'amazon') {
     img = twitterImg;
+    alt = 'Twitter logo';
   }
-  return <img styleName="img" src={img} />;
+  return <img styleName="img" src={img} alt={alt} />;
 }
 function getDiscountImg(senderName) {
   let img = amazonImg;
+  let alt = 'Amazon logo';
   if (senderName === 'facebook' || senderName === 'amazon') {
     img = walmartImg;
+    alt = 'Walmart logo';
   }
-  return <img styleName="img" src={img} />;
+  return <img styleName="img" src={img} alt={alt} />;
 }
 function getSenderContent({ label, domain }) {
   return (
