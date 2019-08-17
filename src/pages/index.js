@@ -262,9 +262,9 @@ const IndexPage = () => {
                   Subscriber Score, so you can quickly tell if it's worth
                   hanging on to.
                 </p>
-                <p>
+                <p className="image-section-link">
                   <TextLink as="link" linkTo="/learn">
-                    <span>View all features of Leave Me Alone</span>{' '}
+                    <span>View all Leave Me Alone features</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -279,7 +279,12 @@ const IndexPage = () => {
                   Clear out all of your subscription emails from all of your
                   email addresses in one go.
                 </p>
-                <p />
+                <p className="image-section-link">
+                  <TextLink as="link" linkTo="#providers">
+                    <span>See our supported email providers</span>{' '}
+                    <ArrowIcon inline />
+                  </TextLink>
+                </p>
               </div>
               <div className="image-section-img bordered">
                 <img src={connectAccounts} alt="connected accounts image" />

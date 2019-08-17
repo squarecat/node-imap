@@ -106,7 +106,7 @@ a.more-info:visited {
 
   @media (max-width: 960px) {
     grid-template-columns: 100%;
-    grid-template-rows: minmax(400px, 1fr) auto;
+    grid-template-rows: 1fr;
     grid-gap: 35px;
     text-align: center;
   }
@@ -179,7 +179,7 @@ a.more-info:visited {
 
   @media (max-width: 400px) {
     font-size: 25px;
-    line-height: 30px;
+    line-height: 32px;
     margin-bottom: 20px;
   }
 }
@@ -281,6 +281,12 @@ a.more-info:visited {
   @media (max-width: 900px) {
     max-width: 500px;
     margin: 50px auto 0;
+  }
+}
+
+.image-section-link {
+  @media (max-width: 360px) {
+    font-size: 90%;
   }
 }
 
@@ -696,11 +702,16 @@ a.more-info:visited {
     padding: 25px 15px;
   }
 
+  @media (max-width: 960px) {
+    grid-template-columns: auto 1fr 68px;
+    padding: 25px 25px;
+  }
+
   @media (max-width: 620px) {
     padding: 20px 15px;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 460px) {
     grid-template-columns: 1fr 68px;
   }
 }
@@ -710,7 +721,11 @@ a.more-info:visited {
   line-height: 22px;
   text-align: left;
 
-  @media (max-width: 560px) {
+  @media (max-width: 500px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 460px) {
     display: none;
   }
 }
@@ -786,6 +801,7 @@ a.more-info:visited {
 
   @media (max-width: 400px) {
     bottom: 15px;
+    font-size: 10px;
   }
 
   p {
@@ -809,6 +825,9 @@ a.more-info:visited {
 
 .example-from-name {
   font-size: 15px;
+  @media (max-width: 500px) {
+    font-size: 14px;
+  }
 }
 
 .example-from-email {
