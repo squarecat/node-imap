@@ -30,7 +30,7 @@ export default function About() {
 
           <p>
             In the Leave Me Alone office we're 100% committed to helping reduce
-            the impact of spam emails on the world.
+            the impact of unwanted emails on the world.
           </p>
           <p>
             When we first began investigating how we could make a difference we

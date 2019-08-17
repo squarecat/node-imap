@@ -91,7 +91,7 @@ function Content({
             </ModalHeader>
             <p>
               <strong>Leave Me Alone</strong> makes it quick and easy to
-              unsubscribe from unwanted spam so that your team can focus on
+              unsubscribe from unwanted emails so that your team can focus on
               building your business.
             </p>
             <p>
