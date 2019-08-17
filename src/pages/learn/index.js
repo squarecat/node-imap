@@ -114,8 +114,7 @@ export default function Learn() {
             </p>
             <p>
               We support all Google and Microsoft email accounts using OAuth. We
-              support {IMAP_PROVIDERS}
-              using IMAP.
+              support {IMAP_PROVIDERS} using IMAP.
             </p>
             <p>
               Learn more about how we authenticate with{' '}
