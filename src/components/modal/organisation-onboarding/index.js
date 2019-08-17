@@ -91,7 +91,7 @@ function Content({
             </ModalHeader>
             <p>
               <strong>Leave Me Alone</strong> makes it quick and easy to
-              unsubscribe from unwanted spam so that your team can focus on
+              unsubscribe from unwanted emails so that your team can focus on
               building your business.
             </p>
             <p>
@@ -101,7 +101,7 @@ function Content({
             <img
               styleName="onboarding-example-img"
               src={unsubscribeSpamImage}
-              alt="example-image"
+              alt="an example subscription email in Leave Me Alone with a toggle to unsubscribe"
             />
             <p>Let's get started!</p>
           </>

@@ -70,14 +70,23 @@ a.more-info:visited {
 }
 
 .friendly-neighbourhood-hero {
-  min-height: calc(100vh - 106px);
   width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  // dont change this unless you want
+  // to fuck up the animation stuff
+  position: static;
   flex-direction: column;
+
+  @media (max-width: 500px) {
+    padding: 50px 20px 20px 20px;
+  }
+
+  @media (max-width: 400px) {
+    padding: 30px 20px 20px 20px;
+  }
 }
 
 .friendly-neighbourhood-hero.friendly-neighbourhood-hero-bannered {
@@ -86,26 +95,27 @@ a.more-info:visited {
 
 .hero-inner {
   display: grid;
-  grid-template-columns: minmax(400px, 1fr) minmax(480px, 1fr);
-  grid-template-rows: 1fr;
-  grid-column-gap: 50px;
   text-align: left;
   margin: 0 auto;
 
-  @media (max-width: 1000px) {
-    grid-template-columns: minmax(360px, 1fr) minmax(460px, 1fr);
+  grid-template-columns: 1fr minmax(460px, 1fr);
+  grid-template-rows: minmax(400px, 1fr);
+  grid-gap: 40px;
+
+  @media (max-width: 1100px) {
+    grid-gap: 30px;
   }
 
   @media (max-width: 960px) {
     grid-template-columns: 100%;
-    grid-template-rows: 1fr 155px;
-    grid-row-gap: 35px;
+    grid-template-rows: 1fr;
+    grid-gap: 35px;
     text-align: center;
   }
 
   @media (max-width: 400px) {
-    top: -25px;
-    padding: 0;
+    // padding: 0;
+    grid-row-gap: 25px;
   }
 }
 
@@ -118,7 +128,6 @@ a.more-info:visited {
   justify-content: flex-start;
 
   @media (max-width: 960px) {
-    max-width: 100%;
     justify-content: center;
   }
 }
@@ -132,14 +141,14 @@ a.more-info:visited {
 }
 
 .hero-left-inner {
-  max-width: 400px;
+  max-width: 460px;
 
-  @media (max-width: 1000px) {
-    max-width: 360px;
+  @media (max-width: 1100px) {
+    max-width: 440px;
   }
 
   @media (max-width: 960px) {
-    max-width: 600px;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -148,28 +157,31 @@ a.more-info:visited {
 }
 
 .catchy-tagline {
-  font-size: 42px;
+  font-size: 40px;
   line-height: 52px;
   margin-bottom: 35px;
+  max-width: 450px;
 
-  @media (max-width: 1050px) {
-    font-size: 38px;
+  @media (max-width: 1100px) {
+    font-size: 36px;
+    line-height: 45px;
+    margin-bottom: 30px;
+    max-width: 410px;
   }
 
   @media (max-width: 1000px) {
     font-size: 32px;
-    line-height: 45px;
-    margin-bottom: 30px;
+    line-height: 36px;
+    max-width: 370px;
   }
 
-  @media (max-width: 500px) {
-    font-size: 32px;
-    line-height: 36px;
+  @media (max-width: 960px) {
+    max-width: 100%;
   }
 
   @media (max-width: 400px) {
     font-size: 25px;
-    line-height: 30px;
+    line-height: 32px;
     margin-bottom: 20px;
   }
 }
@@ -177,6 +189,10 @@ a.more-info:visited {
 .informative-description {
   margin-bottom: 45px;
   font-size: 20px;
+
+  @media (max-width: 960px) {
+    max-width: 600px;
+  }
 
   @media (max-width: 400px) {
     margin-bottom: 15px;
@@ -195,7 +211,7 @@ a.more-info:visited {
   @extend .btn;
   @extend .stretch;
   width: auto;
-  max-width: 310px;
+  max-width: 320px;
 }
 
 .beam-me-up-cta-center {
@@ -213,6 +229,12 @@ a.more-info:visited {
 
 .section-padded {
   padding-top: 150px;
+  padding-bottom: 100px;
+
+  @media (max-width: 500px) {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
 }
 
 .image-section {
@@ -221,7 +243,7 @@ a.more-info:visited {
   grid-row-gap: 20px;
   margin: 100px auto;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: 400px;
+  grid-template-rows: 350px;
   align-items: center;
 
   &:last-child {
@@ -236,6 +258,10 @@ a.more-info:visited {
     &.image-left {
       flex-direction: column-reverse;
     }
+  }
+
+  @media (max-width: 500px) {
+    margin: 40px auto;
   }
 }
 
@@ -260,9 +286,16 @@ a.more-info:visited {
   }
 }
 
+.image-section-link {
+  @media (max-width: 360px) {
+    font-size: 90%;
+  }
+}
+
 .privacy {
   img {
     max-width: 300px;
+    width: 100%;
 
     @media (max-width: 400px) {
       max-width: 100%;
@@ -334,25 +367,32 @@ a.more-info:visited {
 
   &[data-show-truck='true'] {
     background-position: bottom -20px left;
-    padding-bottom: 300px;
+    padding-bottom: 250px;
   }
 
   .text-box {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    padding-top: 100px;
+    // padding-top: 190px;
   }
 
   .beam-me-up-cta {
     margin-top: 2rem;
   }
+
+  @media (max-width: 500px) {
+    padding-bottom: 100px;
+  }
 }
 
-.learn-providers {
+.dark-section {
   position: relative;
   padding: 140px 0;
   background-color: $color-dark-background;
   color: white;
   z-index: 2;
+
+  @media (max-width: 500px) {
+    padding: 50px 0;
+  }
 }
 
 .item-box .example-unsubscribe-container {
@@ -590,14 +630,12 @@ a.more-info:visited {
   grid-template-columns: repeat(3, 1fr);
   justify-content: center;
   font-size: 14px;
-  margin: 100px auto;
+  padding: 0px 0 100px 0;
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
-  }
-
-  @media (max-width: 400px) {
-    margin: 50px 0;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -623,12 +661,10 @@ a.more-info:visited {
     p {
       margin-top: 25px;
     }
-    &:nth-child(2) {
-      border-left: 0;
-      border-right: 0;
-      border-top: 1px solid $color-red-light;
-      border-bottom: 1px solid $color-red-light;
-    }
+  }
+  @media (max-width: 500px) {
+    text-align: left;
+    padding: 10px 0;
   }
 }
 .news-logo {
@@ -664,11 +700,20 @@ a.more-info:visited {
     opacity: 1;
   }
 
+  @media (max-width: 1050px) {
+    padding: 25px 15px;
+  }
+
+  @media (max-width: 960px) {
+    grid-template-columns: auto 1fr 68px;
+    padding: 25px 25px;
+  }
+
   @media (max-width: 620px) {
     padding: 20px 15px;
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 460px) {
     grid-template-columns: 1fr 68px;
   }
 }
@@ -678,7 +723,11 @@ a.more-info:visited {
   line-height: 22px;
   text-align: left;
 
-  @media (max-width: 560px) {
+  @media (max-width: 500px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 460px) {
     display: none;
   }
 }
@@ -687,7 +736,7 @@ a.more-info:visited {
   position: relative;
   width: 100%;
   height: 190px;
-  max-width: 600px;
+  max-width: 500px;
 }
 
 .example-unsubscribe-container {
@@ -745,7 +794,16 @@ a.more-info:visited {
   }
 
   @media (max-width: 960px) {
-    bottom: -30px;
+    bottom: -20px;
+  }
+
+  @media (max-width: 600px) {
+    bottom: 0;
+  }
+
+  @media (max-width: 400px) {
+    bottom: 15px;
+    font-size: 10px;
   }
 
   p {
@@ -769,6 +827,9 @@ a.more-info:visited {
 
 .example-from-name {
   font-size: 15px;
+  @media (max-width: 500px) {
+    font-size: 14px;
+  }
 }
 
 .example-from-email {
@@ -787,14 +848,72 @@ a.more-info:visited {
 
 .end-stuff {
   text-align: center;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 100px;
-  margin-top: 100px;
+  padding-top: 150px;
 
   .join-text {
     font-size: 25px;
     line-height: 32px;
     max-width: 610px;
     margin: 0 auto;
+  }
+
+  @media (max-width: 700px) {
+    padding-top: 100px;
+
+    .join-text {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    padding-top: 50px;
+    a {
+      margin: 30px auto;
+    }
+  }
+}
+
+.testimonial-section {
+  background-color: rgba(255, 217, 214, 0.1);
+}
+
+.main-image-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 2em auto -100px auto;
+}
+
+.main-image-section {
+  padding-bottom: 0;
+  overflow: hidden;
+  border-bottom: 1px solid #ececec;
+
+  .home-container {
+    padding-bottom: 0;
+  }
+}
+
+.privacy-section {
+  background-color: rgba(255, 217, 214, 0.1);
+
+  .image-section {
+    grid-template-rows: 300px;
+    margin: 100px 0;
+
+    @media (max-width: 500px) {
+      margin: 40px 0 0 0;
+
+      .image-section-img {
+        max-width: 80%;
+        width: 200px;
+        margin: 20px auto 0 auto;
+      }
+    }
+  }
+}
+
+.browser-image {
+  @media (max-width: 600px) {
+    max-width: 400px;
   }
 }

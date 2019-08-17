@@ -69,6 +69,7 @@ export default [
       <img
         styleName="company-logo"
         src={`${BASE_IMG_URL}/companies/appmetrics.jpg`}
+        alt="AppMetrics logo"
       />
     )
   },
@@ -93,6 +94,7 @@ export default [
         <img
           styleName="company-logo"
           src={`${BASE_IMG_URL}/companies/makerlog.jpg`}
+          alt="Makerlog logo"
         />
         <span styleName="company-name">Makerlog</span>
       </>
@@ -119,6 +121,7 @@ export default [
         <img
           styleName="company-logo"
           src={`${BASE_IMG_URL}/companies/coderstory.svg`}
+          alt="CoderStory logo"
         />
         <span styleName="company-name">CoderStory</span>
       </>
@@ -176,6 +179,7 @@ export default [
       <img
         styleName="company-logo"
         src={`${BASE_IMG_URL}/companies/threader.jpg`}
+        alt="Threader logo"
       />
     )
   },
@@ -196,6 +200,7 @@ export default [
         <img
           styleName="company-logo"
           src={`${BASE_IMG_URL}/companies/graphql360.png`}
+          alt="GraphQL360 logo"
         />
       </span>
     )
@@ -219,6 +224,7 @@ export default [
         <img
           styleName="company-logo"
           src={`${BASE_IMG_URL}/companies/b13technology.webp`}
+          alt="B13 Technology logo"
         />
       </span>
     )
@@ -245,6 +251,7 @@ export default [
         <img
           styleName="company-logo"
           src={`${BASE_IMG_URL}/companies/budget-meal-planner.png`}
+          alt="Budget Meal Planner logo"
         />
         <span styleName="company-name">Budget Meal Planner</span>
       </>
@@ -267,6 +274,7 @@ export default [
       <img
         styleName="company-logo"
         src={`${BASE_IMG_URL}/companies/roviki-solutions.jpg`}
+        alt="Roviki Solutions logo"
       />
     )
   },
@@ -291,6 +299,7 @@ export default [
       <img
         styleName="company-logo"
         src={`${BASE_IMG_URL}/companies/toptal.png`}
+        alt="Toptal logo"
       />
     )
   },
@@ -314,6 +323,7 @@ export default [
       <img
         styleName="company-logo ptobot"
         src={`${BASE_IMG_URL}/companies/ptobot.svg`}
+        alt="PTOBot logo"
       />
     )
   },
@@ -350,6 +360,7 @@ export default [
       <img
         styleName="company-logo"
         src={`${BASE_IMG_URL}/companies/tutorseek.png`}
+        alt="TutorSeek logo"
       />
     )
   },

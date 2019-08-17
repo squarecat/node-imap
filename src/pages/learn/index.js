@@ -103,7 +103,7 @@ export default function Learn() {
 
         <div styleName="feature image-left">
           <div styleName="feature-img bordered">
-            <img src={connectAccountsImg} alt="connected accounts image" />
+            <img src={connectAccountsImg} alt="list of connected email accounts" />
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">Clean all of your inboxes at once</h3>
@@ -114,8 +114,7 @@ export default function Learn() {
             </p>
             <p>
               We support all Google and Microsoft email accounts using OAuth. We
-              support {IMAP_PROVIDERS}
-              using IMAP.
+              support {IMAP_PROVIDERS} using IMAP.
             </p>
             <p>
               Learn more about how we authenticate with{' '}
@@ -146,7 +145,7 @@ export default function Learn() {
             </p>
           </div>
           <div styleName="feature-img bordered">
-            <img src={creditsImg} alt="your credits balance modal" />
+            <img src={creditsImg} alt="modal showing remaining credits balance" />
           </div>
         </div>
 
@@ -277,7 +276,7 @@ export default function Learn() {
 
         <Testimonial
           text={`I must admit I'm lazy at unsubscribing to subscription emails, so my email inbox grows at an alarming rate every day. I just used Leave Me Alone and unsubscribed to 15 emails in 3 minutes. What a great idea!`}
-          author="Tom Haworth, Managing Director - B13 Technology"
+          author="Tom Haworth, CEO - B13 Technology"
           image={tom}
           centered
         />

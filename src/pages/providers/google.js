@@ -10,6 +10,7 @@ import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import { TrustBar } from '../../components/landing/testimonial';
 import gmailLogo from '../../assets/providers/gmail-logo.png';
 import googleLogo from '../../assets/providers/google-logo.png';
 import googleScopes from '../../assets/security-gmail-scopes.png';
@@ -19,7 +20,11 @@ const PROVIDER_NAME = 'Google';
 const VARIATIONS = ['Gmail', 'Googlemail', 'G Suite'];
 const META_VARIATIONS = `Gmail, Googlemail, and G Suite`;
 
-const TRUSTBAR_LOGOS = [gmailLogo, googleLogo, gsuiteLogo];
+const TRUSTBAR_LOGOS = [
+  { name: 'Gmail', link: gmailLogo },
+  { name: 'Google', link: googleLogo },
+  { name: 'G Suite', link: gsuiteLogo }
+];
 
 const ProviderGoogle = () => {
   const variationsText = getVariationsText(VARIATIONS);
@@ -52,15 +57,7 @@ const ProviderGoogle = () => {
         </div>
       </div>
 
-      <div styleName="trustbar google">
-        <div styleName="provider-inner trustbar-images">
-          {TRUSTBAR_LOGOS.map((logo, i) => (
-            <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-              <img src={logo} alt="Google email provider logo" />
-            </span>
-          ))}
-        </div>
-      </div>
+      <TrustBar logos={TRUSTBAR_LOGOS} dark spaced />
 
       <div styleName="security">
         <div styleName="provider-inner">
