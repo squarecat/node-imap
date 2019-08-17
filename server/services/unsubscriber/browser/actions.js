@@ -22,6 +22,9 @@ export async function doBespokeUnsubscribe(page, url) {
   if (url.includes('quora.com')) {
     return unsubscribeFromQuora(page);
   }
+  if (url.includes('ebay.co.uk')) {
+    return unsubscribeFromEbay(page);
+  }
   throw new Error(
     `browser-actions: bespoke unsubscribe from ${url} not implemented`
   );
@@ -52,6 +55,20 @@ export async function unsubscribeFromQuora(page) {
     const btn = await page.$('.submit_button');
     await btn.click();
     await page.waitForSelector('.PMsgSuccess.Success');
+    return true;
+  } catch (err) {
+    logger.error('browser-actions: failed to unsubscribe from quora');
+    return false;
+  }
+}
+
+export async function unsubscribeFromEbay(page) {
+  logger.info('browser-actions: doing a bespoke unsub from ebay');
+  try {
+    await page.click('#unsubscribe-button3');
+    const btn = await page.$('#confirm-button');
+    await btn.click();
+    await page.waitForSelector('#unsubscribe-success');
     return true;
   } catch (err) {
     logger.error('browser-actions: failed to unsubscribe from quora');
