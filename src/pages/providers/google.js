@@ -20,7 +20,11 @@ const PROVIDER_NAME = 'Google';
 const VARIATIONS = ['Gmail', 'Googlemail', 'G Suite'];
 const META_VARIATIONS = `Gmail, Googlemail, and G Suite`;
 
-const TRUSTBAR_LOGOS = [gmailLogo, googleLogo, gsuiteLogo];
+const TRUSTBAR_LOGOS = [
+  { name: 'Gmail', link: gmailLogo },
+  { name: 'Google', link: googleLogo },
+  { name: 'G Suite', link: gsuiteLogo }
+];
 
 const ProviderGoogle = () => {
   const variationsText = getVariationsText(VARIATIONS);
@@ -53,7 +57,7 @@ const ProviderGoogle = () => {
         </div>
       </div>
 
-      <TrustBar logos={TRUSTBAR_LOGOS} dark google />
+      <TrustBar logos={TRUSTBAR_LOGOS} dark spaced />
 
       <div styleName="security">
         <div styleName="provider-inner">

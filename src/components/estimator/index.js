@@ -175,7 +175,7 @@ export default function Estimator({
               <div styleName="count-label">emails</div>
             </div>
             <div styleName="count-icon">
-              <img src={mailBoxImg} />
+              <img src={mailBoxImg} alt="mail box icon" />
             </div>
             <div styleName="count-description">
               You receive approximately this many emails per month
@@ -189,7 +189,7 @@ export default function Estimator({
               <div styleName="count-label">subscriptions</div>
             </div>
             <div styleName="count-icon">
-              <img src={spamMailImg} />
+              <img src={spamMailImg} alt="envelope icon" />
             </div>
             <div styleName="count-description">
               Around <TextImportant>8-10%</TextImportant> of all mail we scan is
@@ -204,7 +204,11 @@ export default function Estimator({
               <div styleName="count-label">unsubscribes</div>
             </div>
             <div styleName="count-icon">
-              <img styleName="envelope-image" src={smallLogo} />
+              <img
+                styleName="envelope-image"
+                src={smallLogo}
+                alt="envelope icon with Leave Me Alone logo"
+              />
             </div>
             <div styleName="count-description">
               Users report around <TextImportant>36%</TextImportant> of the

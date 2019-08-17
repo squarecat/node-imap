@@ -1,8 +1,8 @@
 const sitemapOptions = require('./sitemap.js');
 module.exports = {
   siteMetadata: {
-    title: 'Easily unsubscribe from spam emails - Leave Me Alone',
-    description: `See all of your spam, newsletters, and subscription emails in one place and unsubscribe from them with a single click. Take back control of your Gmail and Outlook inbox.`,
+    title: 'Easily unsubscribe from unwanted emails - Leave Me Alone',
+    description: `See all of your subscription emails, newsletters, and spam in one place and unsubscribe from them with a single click. Take back control of your inbox.`,
     baseUrl: 'https://leavemealone.app',
     siteUrl: 'https://leavemealone.app',
     twitterHandle: '@LeaveMeAloneApp',

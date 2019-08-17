@@ -10,6 +10,7 @@ import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import { TrustBar } from '../../components/landing/testimonial';
 import hotmailLogo from '../../assets/providers/hotmail-logo.png';
 import microsoftLogo from '../../assets/providers/microsoft-logo.png';
 import msnLogo from '../../assets/providers/msn-logo.png';
@@ -22,11 +23,11 @@ const VARIATIONS = ['Hotmail', 'Outlook', 'Office 365', 'Live', 'MSN'];
 const META_VARIATIONS = `Hotmail, Outlook, Office 365, Live, and MSN`;
 
 const TRUSTBAR_LOGOS = [
-  microsoftLogo,
-  hotmailLogo,
-  outlookLogo,
-  officeLogo,
-  msnLogo
+  { name: 'Microsoft', link: microsoftLogo },
+  { name: 'Hotmail', link: hotmailLogo },
+  { name: 'Outlook', link: outlookLogo },
+  { name: 'Office 365', link: officeLogo },
+  { name: 'MSN', link: msnLogo }
 ];
 
 const ProviderMicrosoft = () => {
@@ -60,15 +61,7 @@ const ProviderMicrosoft = () => {
         </div>
       </div>
 
-      <div styleName="trustbar">
-        <div styleName="provider-inner trustbar-images">
-          {TRUSTBAR_LOGOS.map((logo, i) => (
-            <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-              <img src={logo} alt="Microsoft email provider logo" />
-            </span>
-          ))}
-        </div>
-      </div>
+      <TrustBar logos={TRUSTBAR_LOGOS} spaced />
 
       <div styleName="security">
         <div styleName="provider-inner">

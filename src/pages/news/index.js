@@ -79,11 +79,11 @@ function News() {
   return (
     <>
       <div styleName="news-list">
-        {quotes.map(({ quote, logoUrl, url }) => (
+        {quotes.map(({ quote, logoUrl, url, name }) => (
           <div key={url} styleName="item">
             <p>"{quote}"</p>
             <a target="_" styleName="logo" href={url}>
-              <img src={logoUrl} />
+              <img src={logoUrl} alt={`${name} logo`} />
             </a>
           </div>
         ))}

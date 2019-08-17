@@ -2,7 +2,6 @@ import 'isomorphic-fetch';
 import './home.scss';
 
 import {
-  Arrow,
   Arrow as ArrowIcon,
   GoogleIcon,
   MicrosoftIcon,
@@ -50,9 +49,18 @@ import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
 const faker = require('../vendor/faker/locale/en');
 
 const companyLinks = [
-  'https://cdn.leavemealone.app/images/companies/toptal.png',
-  'https://cdn.leavemealone.app/images/companies/tutorseek.png',
-  'https://cdn.leavemealone.app/images/companies/product-hunt.png'
+  {
+    name: 'Toptal',
+    link: 'https://cdn.leavemealone.app/images/companies/toptal.png'
+  },
+  {
+    name: 'TutorSeek',
+    link: 'https://cdn.leavemealone.app/images/companies/tutorseek.png'
+  },
+  {
+    name: 'Product Hunt',
+    link: 'https://cdn.leavemealone.app/images/companies/product-hunt.png'
+  }
 ];
 
 let domContentLoaded = false;
@@ -248,7 +256,10 @@ const IndexPage = () => {
                   srcSet={mailListMobileImage}
                   media="(max-width: 600px)"
                 />
-                <img src={mailListImage} />
+                <img
+                  src={mailListImage}
+                  alt="list of subscription emails in Leave Me Alone"
+                />
               </picture>
             </Browser>
           </div>
@@ -258,7 +269,10 @@ const IndexPage = () => {
           <div className="home-container-inner" id="learn">
             <div className="image-section image-left">
               <div className="image-section-img">
-                <img src={subscriberScore} alt="subscriber score image" />
+                <img
+                  src={subscriberScore}
+                  alt="Tooltip for Subscriber Score showing the ranking for an example email list"
+                />
               </div>
               <div className="image-section-text">
                 <h3>Quickly see the worst spammers</h3>
@@ -292,7 +306,10 @@ const IndexPage = () => {
                 </p>
               </div>
               <div className="image-section-img bordered">
-                <img src={connectAccounts} alt="connected accounts image" />
+                <img
+                  src={connectAccounts}
+                  alt="List of connected email accounts"
+                />
               </div>
             </div>
           </div>
@@ -405,7 +422,7 @@ const IndexPage = () => {
           <div className="home-container">
             <div className="image-section image-left privacy">
               <div className="image-section-img">
-                <img src={envelope} alt="private envelope image" />
+                <img src={envelope} alt="cartoon envelope surrounded by clouds and flowers" />
               </div>
               <div className="image-section-text">
                 <h3>Privacy first</h3>
@@ -430,11 +447,11 @@ const IndexPage = () => {
           <div className="home-container">
             <div className="home-container-inner" id="news">
               <div className="in-the-news">
-                {NEWS.map(({ quote, logoUrl, url }) => (
+                {NEWS.map(({ quote, logoUrl, url, name }) => (
                   <div key={url} className="news-item">
                     <p>"{quote}"</p>
                     <a target="_" className="news-logo" href={url}>
-                      <img src={logoUrl} />
+                      <img src={logoUrl} alt={`${name} logo`} />
                     </a>
                   </div>
                 ))}

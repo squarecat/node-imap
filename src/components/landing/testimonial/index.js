@@ -9,7 +9,7 @@ export default ({ text, author, image, ...visProps }) => (
     <blockquote styleName="blockquote">
       <p>"{text}"</p>
       <cite styleName="author">
-        <img src={image} />
+        <img src={image} alt={`${author} avatar`} />
         <span>{author}</span>
       </cite>
     </blockquote>
@@ -27,7 +27,7 @@ export function HeroTestimonial({
   return (
     <div styleName={styles}>
       <div styleName="image-container">
-        <img src={image} />
+        <img src={image} alt={`${author} avatar`} />
       </div>
       <blockquote styleName="blockquote">
         <p>"{text}"</p>
@@ -44,7 +44,10 @@ export function HeroTestimonial({
 }
 
 export function TrustBar({ logos = [], label = false, ...visProps }) {
-  const styles = cx('trustbar', visProps);
+  const styles = cx('trustbar', {
+    dark: visProps.dark,
+    spaced: visProps.spaced
+  });
   const content = useMemo(
     () => {
       return (
@@ -54,9 +57,9 @@ export function TrustBar({ logos = [], label = false, ...visProps }) {
               Used by<span styleName="long-text"> employees at</span>:
             </span>
           ) : null}
-          {logos.map((logo, i) => (
+          {logos.map(({ name, link }, i) => (
             <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-              <img src={logo} alt="trusted provider logo" />
+              <img src={link} alt={`${name} logo`} />
             </span>
           ))}
         </>

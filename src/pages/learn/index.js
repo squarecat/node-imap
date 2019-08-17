@@ -103,7 +103,7 @@ export default function Learn() {
 
         <div styleName="feature image-left">
           <div styleName="feature-img bordered">
-            <img src={connectAccountsImg} alt="connected accounts image" />
+            <img src={connectAccountsImg} alt="list of connected email accounts" />
           </div>
           <div styleName="feature-text">
             <h3 styleName="feature-title">Clean all of your inboxes at once</h3>
@@ -145,7 +145,7 @@ export default function Learn() {
             </p>
           </div>
           <div styleName="feature-img bordered">
-            <img src={creditsImg} alt="your credits balance modal" />
+            <img src={creditsImg} alt="modal showing remaining credits balance" />
           </div>
         </div>
 
