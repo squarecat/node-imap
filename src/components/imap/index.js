@@ -350,16 +350,24 @@ function getProviderLead(type) {
 
   if (type === 'icloud') {
     return (
-      <FormGroup>
-        <FormNotification info>
-          If you are using two-factor authentication for your Apple ID or
-          getting "check username and password" error you need to generate an{' '}
-          <TextLink inverted href={CONFIG[type].passwordLink} target="_">
-            app-specific password
-          </TextLink>{' '}
-          to be used for Leave Me Alone.
-        </FormNotification>
-      </FormGroup>
+      <>
+        <FormGroup>
+          <FormNotification info>
+            If you are using two-factor authentication or getting "check
+            username and password" error you need to generate an{' '}
+            <TextLink inverted href={CONFIG[type].passwordLink} target="_">
+              app-specific password
+            </TextLink>{' '}
+            to be used for Leave Me Alone.
+          </FormNotification>
+        </FormGroup>
+        <FormGroup>
+          <FormNotification warning>
+            Ensure you are using your primary iCloud email address - this may be
+            different from your Apple ID.
+          </FormNotification>
+        </FormGroup>
+      </>
     );
   }
 
