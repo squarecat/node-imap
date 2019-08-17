@@ -244,7 +244,7 @@ export default [
       <>
         <img
           styleName="company-logo"
-          src={`${BASE_IMG_URL}/companies/budget-meal-planner.jpg`}
+          src={`${BASE_IMG_URL}/companies/budget-meal-planner.png`}
         />
         <span styleName="company-name">Budget Meal Planner</span>
       </>
@@ -309,7 +309,13 @@ export default [
       </span>
     ),
     twitter: `jjbuildit`,
-    avatarPath: `image-15.jpg`
+    avatarPath: `image-15.jpg`,
+    company: (
+      <img
+        styleName="company-logo ptobot"
+        src={`${BASE_IMG_URL}/companies/ptobot.svg`}
+      />
+    )
   },
 
   {
@@ -363,6 +369,52 @@ export default [
     ),
     twitter: `dubriger`,
     avatarPath: ``
+  },
+
+  {
+    name: 'Tamara Sredojevic',
+    text: (
+      <span>
+        <TextHighlight>I love to know that my data is safe</TextHighlight>.
+        Leave Me Alone is user friendly, it's beautiful and it does the job
+        well. What more could I ask for?
+      </span>
+    ),
+    twitter: `gimmeacamera`,
+    avatarPath: `image-18.jpg`
+  },
+
+  {
+    name: 'AC Dye',
+    text: (
+      <span>
+        <TextHighlight>
+          Leave Me Alone is such an easy to use tool
+        </TextHighlight>
+        , and I love supporting indie founders. Danielle and James are active on
+        Twitter, and they are always ready to help any way they can.
+      </span>
+    ),
+    twitter: `acdyee`,
+    avatarPath: `image-19.jpg`
+  },
+
+  {
+    name: 'Kyle McDonald',
+    text: (
+      <span>
+        After attending CES{' '}
+        <TextHighlight>
+          my inbox gets filled with tons of subscription emails from all the
+          company email lists
+        </TextHighlight>{' '}
+        you get added to. I needed to get these out of my inbox and Leave Me
+        Alone allowed me to do that so much faster then I would have been able
+        to do it manually.
+      </span>
+    ),
+    twitter: `designbykyle`,
+    avatarPath: `image-20.jpg`
   }
 
   // {

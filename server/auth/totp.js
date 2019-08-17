@@ -8,7 +8,6 @@ export default app => {
     const { token } = body;
     const verified = await verifyUserTotpToken(user, { token });
     if (verified) {
-      debugger;
       setSessionProp(req, 'secondFactor', true);
       pushSessionProp(req, 'authFactors', 'totp');
     }

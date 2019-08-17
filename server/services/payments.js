@@ -705,8 +705,8 @@ export async function handleSubscriptionCreated({ subscriptionId }) {
   }
 }
 
-export async function handleInvoicePaymentSuccess({ amount }) {
-  return addInvoicePaymentToStats({ price: amount / 100 });
+export async function handleInvoicePaymentSuccess({ total }) {
+  return addInvoicePaymentToStats({ price: total / 100 });
 }
 
 // When an automatic payment on a subscription fails, a charge.failed and an invoice.payment_failed event are sent, and the subscription state becomes past_due. Stripe attempts to recover payment according to your configured retry rules.
@@ -855,7 +855,11 @@ export async function getSubscriptionStats() {
       mrr: amount / 100
     };
   } catch (err) {
-    throw err;
+    logger.error(`payments-service: failed to get subscription stats`);
+    logger.error(err);
+    return {
+      mrr: 0
+    };
   }
 }
 

@@ -75,7 +75,9 @@ a.more-info:visited {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  // dont change this unless you want
+  // to fuck up the animation stuff
+  position: static;
   flex-direction: column;
 
   @media (max-width: 500px) {

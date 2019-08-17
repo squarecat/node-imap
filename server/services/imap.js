@@ -21,8 +21,8 @@ export function removeImapAccessDetails(accountId) {
   return remove(accountId);
 }
 
-export function testImapConnection(account) {
-  return testConnection(account);
+export function testImapConnection(account, audit) {
+  return testConnection(account, audit);
 }
 
 export async function updateImapPassword({
