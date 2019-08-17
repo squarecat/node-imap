@@ -70,7 +70,6 @@ a.more-info:visited {
 }
 
 .friendly-neighbourhood-hero {
-  max-height: 600px;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -94,20 +93,21 @@ a.more-info:visited {
 
 .hero-inner {
   display: grid;
-  grid-template-columns: minmax(400px, 1fr) minmax(480px, 1fr);
-  grid-template-rows: 1fr;
-  grid-column-gap: 50px;
   text-align: left;
   margin: 0 auto;
 
-  @media (max-width: 1000px) {
-    grid-template-columns: minmax(360px, 1fr) minmax(460px, 1fr);
+  grid-template-columns: 1fr minmax(460px, 1fr);
+  grid-template-rows: minmax(400px, 1fr);
+  grid-gap: 40px;
+
+  @media (max-width: 1100px) {
+    grid-gap: 30px;
   }
 
   @media (max-width: 960px) {
     grid-template-columns: 100%;
-    grid-template-rows: 1fr 155px;
-    grid-row-gap: 35px;
+    grid-template-rows: minmax(400px, 1fr) auto;
+    grid-gap: 35px;
     text-align: center;
   }
 
@@ -126,7 +126,6 @@ a.more-info:visited {
   justify-content: flex-start;
 
   @media (max-width: 960px) {
-    max-width: 100%;
     justify-content: center;
   }
 }
@@ -140,14 +139,14 @@ a.more-info:visited {
 }
 
 .hero-left-inner {
-  max-width: 400px;
+  max-width: 460px;
 
-  @media (max-width: 1000px) {
-    max-width: 360px;
+  @media (max-width: 1100px) {
+    max-width: 440px;
   }
 
   @media (max-width: 960px) {
-    max-width: 600px;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -156,23 +155,26 @@ a.more-info:visited {
 }
 
 .catchy-tagline {
-  font-size: 42px;
+  font-size: 40px;
   line-height: 52px;
   margin-bottom: 35px;
+  max-width: 450px;
 
-  @media (max-width: 1050px) {
-    font-size: 38px;
+  @media (max-width: 1100px) {
+    font-size: 36px;
+    line-height: 45px;
+    margin-bottom: 30px;
+    max-width: 410px;
   }
 
   @media (max-width: 1000px) {
     font-size: 32px;
-    line-height: 45px;
-    margin-bottom: 30px;
+    line-height: 36px;
+    max-width: 370px;
   }
 
-  @media (max-width: 500px) {
-    font-size: 32px;
-    line-height: 36px;
+  @media (max-width: 960px) {
+    max-width: 100%;
   }
 
   @media (max-width: 400px) {
@@ -185,6 +187,10 @@ a.more-info:visited {
 .informative-description {
   margin-bottom: 45px;
   font-size: 20px;
+
+  @media (max-width: 960px) {
+    max-width: 600px;
+  }
 
   @media (max-width: 400px) {
     margin-bottom: 15px;
@@ -686,6 +692,10 @@ a.more-info:visited {
     opacity: 1;
   }
 
+  @media (max-width: 1050px) {
+    padding: 25px 15px;
+  }
+
   @media (max-width: 620px) {
     padding: 20px 15px;
   }
@@ -709,7 +719,7 @@ a.more-info:visited {
   position: relative;
   width: 100%;
   height: 190px;
-  max-width: 600px;
+  max-width: 500px;
 }
 
 .example-unsubscribe-container {
