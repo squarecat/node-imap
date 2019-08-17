@@ -64,9 +64,11 @@ const companyLinks = [
 ];
 
 let domContentLoaded = false;
-window.addEventListener('DOMContentLoaded', () => {
-  domContentLoaded = true;
-});
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    domContentLoaded = true;
+  });
+}
 
 const NEWS = [
   {
