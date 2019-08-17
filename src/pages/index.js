@@ -11,6 +11,7 @@ import {
 import { HeroTestimonial, TrustBar } from '../components/landing/testimonial';
 import React, {
   useCallback,
+  useEffect,
   useMemo,
   useReducer,
   useRef,
@@ -53,6 +54,11 @@ const companyLinks = [
   'https://cdn.leavemealone.app/images/companies/tutorseek.png',
   'https://cdn.leavemealone.app/images/companies/product-hunt.png'
 ];
+
+let domContentLoaded = false;
+window.addEventListener('DOMContentLoaded', () => {
+  domContentLoaded = true;
+});
 
 const NEWS = [
   {
@@ -242,7 +248,6 @@ const IndexPage = () => {
                   srcSet={mailListMobileImage}
                   media="(max-width: 600px)"
                 />
-                {/* <source type="image/webp" srcSet={mailListImageWebp} /> */}
                 <img src={mailListImage} />
               </picture>
             </Browser>
@@ -454,65 +459,6 @@ function fetchStats() {
   return request('/api/stats?summary=true');
 }
 
-// function Stats({ isLoading, data, isVisible }) {
-//   const [stats, setStats] = useState({
-//     unsubscribableEmails: 0,
-//     unsubscriptions: 0
-//   });
-
-//   useEffect(
-//     () => {
-//       if (!isLoading && isVisible) {
-//         const {
-//           unsubscribableEmails,
-//           unsubscriptions,
-//           previouslyUnsubscribedEmails
-//         } = data;
-//         setStats({
-//           unsubscribableEmails:
-//             unsubscribableEmails - previouslyUnsubscribedEmails,
-//           unsubscriptions,
-//           set: true
-//         });
-//       }
-//     },
-//     [isVisible]
-//   );
-
-//   return (
-//     <div className="stats">
-//       <div className="stat">
-//         <span className="stat-value">
-//           <AnimatedNumber
-//             value={stats.unsubscribableEmails}
-//             style={{
-//               transition: '0.8s ease-out',
-//               fontSize: 48
-//             }}
-//             duration={1000}
-//             formatValue={n => formatNumber(n)}
-//           />
-//         </span>
-//         <span>Spam emails scanned</span>
-//       </div>
-//       <div className="stat">
-//         <span className="stat-value">
-//           <AnimatedNumber
-//             value={stats.unsubscriptions}
-//             style={{
-//               transition: '0.8s ease-out',
-//               fontSize: 48
-//             }}
-//             duration={1000}
-//             formatValue={n => formatNumber(n)}
-//           />
-//         </span>
-//         <span>Spam emails unsubscribed</span>
-//       </div>
-//     </div>
-//   );
-// }
-
 IndexPage.whyDidYouRender = true;
 
 export default IndexPage;
@@ -654,6 +600,10 @@ function nodes(state, action) {
 
 function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
   const { width } = useWindowSize();
+  const [isLoad, setLoad] = useState(domContentLoaded);
+  const [fallLimit, setFallLimit] = useState(
+    document.documentElement.scrollHeight + 500
+  );
   const ref = useRef(null);
   const [state, dispatch] = useReducer(nodes, {
     count: 0,
@@ -667,19 +617,48 @@ function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
       }
       dispatch({ type: 'next' });
     },
-    [dispatch]
+    [onFirstClick, state.count]
   );
 
-  const fallLimit = useMemo(
+  const getFallLimit = useCallback(
     () => {
-      if (ref.current && trashPileRef) {
-        console.log(width);
-        const top = trashPileRef.offsetTop;
-        const elTop = ref.current.getBoundingClientRect().y;
-        return top - elTop - 50;
+      const top = trashPileRef.offsetTop;
+      const elTop = ref.current.offsetTop;
+      const bottom = top - elTop - 50;
+      console.log(`${top} - ${bottom}`);
+      return bottom;
+    },
+    [trashPileRef]
+  );
+
+  useEffect(
+    () => {
+      const fn = () => setLoad(true);
+      window.addEventListener('DOMContentLoaded', fn);
+      const interval = setInterval(() => {
+        const newFallLimit = getFallLimit();
+        if (fallLimit !== newFallLimit) {
+          setFallLimit(newFallLimit);
+        }
+      }, 1000);
+      return () => {
+        window.removeEventListener('DOMContentLoaded', fn);
+        clearInterval(interval);
+      };
+    },
+    [fallLimit, getFallLimit]
+  );
+
+  useEffect(
+    () => {
+      if (isLoad && width && ref.current && trashPileRef) {
+        const newFallLimit = getFallLimit();
+        if (fallLimit !== newFallLimit) {
+          setFallLimit(newFallLimit);
+        }
       }
     },
-    [trashPileRef, width]
+    [isLoad, width, trashPileRef, getFallLimit, fallLimit]
   );
 
   return (
@@ -774,6 +753,7 @@ function Item({
       ref.current.style.willChange = 'transform, opacity';
       outerRef.current.style.willChange = 'transform';
       window.requestAnimationFrame(frame);
+      return true;
     },
     [ref, outerRef, onClick, fallLimit, animate]
   );
