@@ -144,7 +144,7 @@ export default function SecurityPage() {
           </div>
         </div>
 
-        <div styleName="image-section image-left">
+        <div styleName="image-section image-left" id="subscriber-score">
           <div styleName="image-section-img">
             <img
               src={subscriberScoreImg}

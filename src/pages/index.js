@@ -33,6 +33,7 @@ import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
 import luke from '../assets/testimonials/luke-nobg.png';
+import mailImg from '../assets/example-spam-2.png';
 import mailListImageLarge from '../assets/mail-list-illustation.png';
 import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
@@ -271,6 +272,28 @@ const IndexPage = () => {
 
         <div className="home-container">
           <div className="home-container-inner" id="learn">
+            <div className="image-section">
+              <div className="image-section-text">
+                <h3>One click unsubscribe</h3>
+                <p>
+                  To unsubscribe from the emails you don't want just click the
+                  toggle and we will do the hard work for you.
+                </p>
+                <p className="image-section-link">
+                  <TextLink as="link" linkTo="/learn">
+                    <span>View all Leave Me Alone features</span>{' '}
+                    <ArrowIcon inline />
+                  </TextLink>
+                </p>
+              </div>
+              <div className="image-section-img shadowed">
+                <img
+                  src={mailImg}
+                  alt="An example subscription email item showing the sender and how many times it has been received"
+                />
+              </div>
+            </div>
+
             <div className="image-section image-left">
               <div className="image-section-img">
                 <img
@@ -286,8 +309,8 @@ const IndexPage = () => {
                   hanging on to.
                 </p>
                 <p className="image-section-link">
-                  <TextLink as="link" linkTo="/learn">
-                    <span>View all Leave Me Alone features</span>{' '}
+                  <TextLink as="link" linkTo="/security#subscriber-score">
+                    <span>Learn more about Subscriber Score</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -309,7 +332,7 @@ const IndexPage = () => {
                   </TextLink>
                 </p>
               </div>
-              <div className="image-section-img bordered">
+              <div className="image-section-img bordered shadowed">
                 <img
                   src={connectAccounts}
                   alt="List of connected email accounts"

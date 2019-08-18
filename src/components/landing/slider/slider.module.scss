@@ -80,14 +80,14 @@
   [data-slide='1'] & {
     &:after {
       -webkit-transform: translate(-5px, -1px) translateX(0px);
-      transform: translate(-5px, 0px) translateX(-22px);
+      transform: translate(-5px, 0px) translateX(0px);
     }
   }
 
   [data-slide='2'] & {
     &:after {
       -webkit-transform: translate(-5px, -1px) translateX(22px);
-      transform: translate(-5px, 0px) translateX(-22px);
+      transform: translate(-5px, 0px) translateX(22px);
     }
   }
 

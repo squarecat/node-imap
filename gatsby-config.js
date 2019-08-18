@@ -15,10 +15,12 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-plugin-sass`,
     {
-      resolve: 'gatsby-plugin-simple-analytics',
+      resolve: 'simple-analytics-gatsby-plugin',
       options: {
-        domain: 'stats.leavemealone.app',
-        metomic: 'analytics'
+        domain: process.env.SIMPLE_ANALYTICS_DOMAIN,
+        metomic: 'analytics',
+        events: true,
+        trackPageViews: true
       }
     },
     {
