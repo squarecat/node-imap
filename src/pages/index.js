@@ -39,6 +39,7 @@ import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
+import sa from '../../plugins/simple-analytics-gatsby-plugin';
 import steph from '../assets/testimonials/steph.jpg';
 import subscriberScore from '../assets/subscriber-score.png';
 import tom from '../assets/testimonials/tom.jpg';

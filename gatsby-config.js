@@ -1,4 +1,5 @@
 const sitemapOptions = require('./sitemap.js');
+console.log('sa: ', process.env.SIMPLE_ANALYTICS_DOMAIN);
 module.exports = {
   siteMetadata: {
     title: 'Easily unsubscribe from unwanted emails - Leave Me Alone',
@@ -18,6 +19,7 @@ module.exports = {
       resolve: 'simple-analytics-gatsby-plugin',
       options: {
         domain: process.env.SIMPLE_ANALYTICS_DOMAIN,
+        scriptName: process.env.SIMPLE_ANALYTICS_SCRIPT,
         metomic: 'analytics',
         events: true,
         trackPageViews: true
