@@ -360,7 +360,7 @@ const ClimatePage = () => {
         <div styleName="end-stuff">
           {joinStatsContent}
           <a
-            href={`/signup?ref=save-the-planet`}
+            href="/signup"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ margin: '50px auto' }}
           >
