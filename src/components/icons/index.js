@@ -124,7 +124,24 @@ export const Arrow = ({
       </svg>
     );
   }
-  throw 'not implemented';
+  if (direction === 'left') {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 32 32"
+        width={width}
+        height={height}
+        fill="none"
+        stroke="currentcolor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="4"
+      >
+        <path d="M10 6 L2 16 10 26 M2 16 L30 16" />
+      </svg>
+    );
+  }
+  throw 'Icon not implemented';
 };
 
 export const SettingsIcon = ({ width = 15, height = 15, ...visProps }) => (

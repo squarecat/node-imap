@@ -37,7 +37,7 @@ const TeamsPage = () => {
   return (
     <SubPageLayout
       title="Leave Me Alone for Teams"
-      description={`The most efficient businesses work without interruption. Take back control of your office from unwanted spam email.`}
+      description={`The most efficient businesses work without interruption. Take back control of your office from unwanted emails.`}
       withContent={false}
       slug="/teams"
     >
@@ -47,7 +47,7 @@ const TeamsPage = () => {
             <h1 styleName="title">Productive Teams Use Leave Me Alone</h1>
             <p styleName="tagline">
               The most efficient businesses work without interruption. Take back
-              control of your office from unwanted spam email.
+              control of your office from unwanted emails.
             </p>
 
             <a

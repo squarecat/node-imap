@@ -4,6 +4,7 @@
  * See: https://www.gatsbyjs.org/docs/browser-apis/
  */
 const Sentry = require('@sentry/browser');
+
 const env = process.env.NODE_ENV;
 // You can delete this file if you're not using it
 exports.onClientEntry = () => {

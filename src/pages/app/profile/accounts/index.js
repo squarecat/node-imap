@@ -98,26 +98,15 @@ const Accounts = () => {
   let connectedAccountsContent;
 
   if (!accounts.length) {
-    if (features.includes('IMAP')) {
-      connectedAccountsContent = (
-        <p>
-          You haven't connected any accounts yet. Connect your{' '}
-          <TextImportant>Google</TextImportant>,{' '}
-          <TextImportant>Microsoft</TextImportant> or{' '}
-          <TextImportant>Other Mailbox</TextImportant> accounts below to start
-          scanning your inboxes for subscription spam.
-        </p>
-      );
-    } else {
-      connectedAccountsContent = (
-        <p>
-          You haven't connected any accounts yet. Connect your{' '}
-          <TextImportant>Google</TextImportant> or{' '}
-          <TextImportant>Microsoft</TextImportant> accounts below to start
-          scanning your inboxes for subscription spam.
-        </p>
-      );
-    }
+    connectedAccountsContent = (
+      <p>
+        You haven't connected any accounts yet. Connect your{' '}
+        <TextImportant>Google</TextImportant>,{' '}
+        <TextImportant>Microsoft</TextImportant> or{' '}
+        <TextImportant>Other Mailbox</TextImportant> accounts below to start
+        scanning your inboxes for subscription spam.
+      </p>
+    );
   } else {
     connectedAccountsContent = (
       <ConnectedAccountList
@@ -141,7 +130,6 @@ const Accounts = () => {
         <AccountProviderButtons
           onSuccess={onConnectSuccess}
           onError={err => onConnectError(err)}
-          showImap={features.includes('IMAP')}
         />
       </div>
     </>

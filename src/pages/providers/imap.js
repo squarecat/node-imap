@@ -6,6 +6,7 @@ import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
+import { TrustBar } from '../../components/landing/testimonial';
 import aolLogo from '../../assets/providers/imap/aol-logo.png';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
@@ -24,7 +25,12 @@ const VARIATIONS = [
   'all other mailboxes'
 ];
 const META_VARIATIONS = `Fastmail, Yahoo Mail, iCloud, AOL, and all other mailboxes`;
-const TRUSTBAR_LOGOS = [fastmailLogo, aolLogo, yahooLogo, icloudLogo];
+const TRUSTBAR_LOGOS = [
+  { name: 'Fastmail', link: fastmailLogo },
+  { name: 'AOL', link: aolLogo },
+  { name: 'Yahoo', link: yahooLogo },
+  { name: 'iCloud', link: icloudLogo }
+];
 
 const ProviderIMAP = () => {
   const variationsText = getVariationsText(VARIATIONS);
@@ -127,14 +133,8 @@ const ProviderIMAP = () => {
         </div>
       </div>
 
-      <div styleName="trustbar imap">
-        <div styleName="provider-inner trustbar-images">
-          {TRUSTBAR_LOGOS.map((logo, i) => (
-            <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-              <img src={logo} alt="IMAP provider logo" />
-            </span>
-          ))}
-        </div>
+      <div style={{ marginTop: 90 }}>
+        <TrustBar logos={TRUSTBAR_LOGOS} spaced />
       </div>
 
       <div styleName="security">

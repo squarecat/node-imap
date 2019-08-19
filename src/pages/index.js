@@ -7,8 +7,10 @@ import {
   MicrosoftIcon,
   PointyArrow
 } from '../components/icons';
+import { HeroTestimonial, TrustBar } from '../components/landing/testimonial';
 import React, {
   useCallback,
+  useEffect,
   useMemo,
   useReducer,
   useRef,
@@ -16,12 +18,12 @@ import React, {
 } from 'react';
 import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
+import Browser from '../components/browser';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
 import Layout from '../layouts/layout';
-import MailListIllustration from '../components/landing/illustration';
 import { Pricing } from './pricing';
-import Testimonial from '../components/landing/testimonial';
+import Slider from '../components/landing/slider';
 import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
@@ -30,16 +32,47 @@ import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
-import luke from '../assets/luke.jpeg';
+import luke from '../assets/testimonials/luke-nobg.png';
+import mailImg from '../assets/example-spam-2.png';
+import mailListImageLarge from '../assets/mail-list-illustation.png';
+import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
+import sa from '../../plugins/simple-analytics-gatsby-plugin';
+import steph from '../assets/testimonials/steph.jpg';
 import subscriberScore from '../assets/subscriber-score.png';
+import tom from '../assets/testimonials/tom.jpg';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
 
 const faker = require('../vendor/faker/locale/en');
+
+const companyLinks = [
+  {
+    name: 'Toptal',
+    link: 'https://cdn.leavemealone.app/images/companies/toptal.png'
+  },
+  {
+    name: 'TutorSeek',
+    link: 'https://cdn.leavemealone.app/images/companies/tutorseek.png'
+  },
+  {
+    name: 'Product Hunt',
+    link: 'https://cdn.leavemealone.app/images/companies/product-hunt.png'
+  }
+];
+
+let domContentLoaded = false;
+let initialScreenHeight = 0;
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    domContentLoaded = true;
+    initialScreenHeight = document.documentElement.scrollHeight + 500;
+  });
+  initialScreenHeight = document.documentElement.scrollHeight + 500;
+}
 
 const NEWS = [
   {
@@ -129,7 +162,7 @@ const IndexPage = () => {
             <div className="hero-box hero-left">
               <div className="hero-left-inner">
                 <h1 className="catchy-tagline">
-                  Easily unsubscribe from spam emails
+                  Easily unsubscribe from unwanted emails
                 </h1>
                 <p className="informative-description">
                   See all of your subscription emails in one place and
@@ -137,12 +170,8 @@ const IndexPage = () => {
                 </p>
 
                 <div className="join-container">
-                  <a
-                    href="/signup"
-                    className={`beam-me-up-cta`}
-                    // state={{ register: true }}
-                  >
-                    Get Started For Free!
+                  <a href="/signup" className={`beam-me-up-cta`}>
+                    Get Started for Free
                   </a>
                   {statsContent}
                 </div>
@@ -157,25 +186,121 @@ const IndexPage = () => {
           </div>
         </div>
 
+        <div className="testimonial-section">
+          <Slider
+            slides={[
+              <div key="1" className="home-container">
+                <HeroTestimonial
+                  text={
+                    <span>
+                      I love how Leave Me Alone{' '}
+                      <TextHighlight>
+                        seamlessly allows you to visualize your inbox and then
+                        remove the junk - permanently
+                      </TextHighlight>
+                      ! I found the product so valuable that I ended up buying
+                      scans for my entire team.
+                    </span>
+                  }
+                  author="Steph Smith, Head of Publications"
+                  image={steph}
+                  companyName="Toptal"
+                  companyLogo={''}
+                />
+              </div>,
+              <div key="2" className="home-container">
+                <HeroTestimonial
+                  text={
+                    <span>
+                      Using Leave Me Alone has resulted in a{' '}
+                      <TextHighlight>17% reduction in my emails</TextHighlight>,
+                      saving me hours of time each month.
+                    </span>
+                  }
+                  author="Luke Chadwick, Founder"
+                  image={luke}
+                  companyName="GraphQL360"
+                  companyLogo={''}
+                />
+              </div>,
+              <div key="2" className="home-container">
+                <HeroTestimonial
+                  text={
+                    <span>
+                      I must admit I'm lazy at unsubscribing to subscription
+                      emails, so my email inbox grows at an alarming rate every
+                      day. I just used Leave Me Alone and{' '}
+                      <TextHighlight>
+                        unsubscribed to 15 emails in 3 minutes
+                      </TextHighlight>
+                      . What a great idea!
+                    </span>
+                  }
+                  author="Tom Haworth, CEO"
+                  image={tom}
+                  companyName="B13 Technology"
+                  companyLogo={''}
+                />
+              </div>
+            ]}
+          />
+        </div>
+        <TrustBar logos={companyLinks} label="Used by employees at: " dark />
+
+        <div className="dark-section main-image-section">
+          <div className="home-container">
+            <h2>All of your subscription emails together</h2>
+            <p>
+              Too much noise in your inbox? We show you all the mailing lists
+              you're subscribed to and let you unsubscribe with one click.
+            </p>
+          </div>
+          <div className="main-image-container">
+            <Browser large hideOnMobile>
+              <picture className="browser-image">
+                <source
+                  srcSet={mailListMobileImage}
+                  media="(max-width: 600px)"
+                />
+                <img
+                  src={mailListImageLarge}
+                  alt="list of subscription emails in Leave Me Alone"
+                />
+              </picture>
+            </Browser>
+          </div>
+        </div>
+
         <div className="home-container">
           <div className="home-container-inner" id="learn">
             <div className="image-section">
               <div className="image-section-text">
-                <h3>All of your subscription emails together</h3>
+                <h3>One click unsubscribe</h3>
                 <p>
-                  Too much noise in your inbox? We show you all the mailing
-                  lists you're subscribed to and let you unsubscribe with one
-                  click.
+                  To unsubscribe from the emails you don't want just click the
+                  toggle and we will do the hard work for you.
+                </p>
+                <p className="image-section-link">
+                  <TextLink as="link" linkTo="/learn">
+                    <span>View all Leave Me Alone features</span>{' '}
+                    <ArrowIcon inline />
+                  </TextLink>
                 </p>
               </div>
-              <div className="image-section-img">
-                <MailListIllustration />
+              <div className="image-section-img shadowed">
+                <img
+                  src={mailImg}
+                  alt="An example subscription email item showing the sender and how many times it has been received"
+                />
               </div>
             </div>
 
             <div className="image-section image-left">
               <div className="image-section-img">
-                <img src={subscriberScore} alt="subscriber score image" />
+                <img
+                  src={subscriberScore}
+                  alt="Tooltip for Subscriber Score showing the ranking for an example email list"
+                />
               </div>
               <div className="image-section-text">
                 <h3>Quickly see the worst spammers</h3>
@@ -184,9 +309,9 @@ const IndexPage = () => {
                   Subscriber Score, so you can quickly tell if it's worth
                   hanging on to.
                 </p>
-                <p>
-                  <TextLink as="link" linkTo="/learn">
-                    <span>View all features of Leave Me Alone</span>{' '}
+                <p className="image-section-link">
+                  <TextLink as="link" linkTo="/security#subscriber-score">
+                    <span>Learn more about Subscriber Score</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -201,30 +326,18 @@ const IndexPage = () => {
                   Clear out all of your subscription emails from all of your
                   email addresses in one go.
                 </p>
-                <p />
-              </div>
-              <div className="image-section-img bordered">
-                <img src={connectAccounts} alt="connected accounts image" />
-              </div>
-            </div>
-
-            <div className="image-section image-left privacy">
-              <div className="image-section-img">
-                <img src={envelope} alt="private envelope image" />
-              </div>
-              <div className="image-section-text">
-                <h3>Privacy first</h3>
-                <p>
-                  We're committed to privacy. We don't store any email content
-                  so you don't have to worry about us losing or selling your
-                  data.
-                </p>
-                <p>
-                  <TextLink as="link" linkTo="/security">
-                    <span>Learn more about security and privacy</span>{' '}
+                <p className="image-section-link">
+                  <TextLink as="link" linkTo="#providers">
+                    <span>See our supported email providers</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
+              </div>
+              <div className="image-section-img bordered shadowed">
+                <img
+                  src={connectAccounts}
+                  alt="List of connected email accounts"
+                />
               </div>
             </div>
           </div>
@@ -257,12 +370,15 @@ const IndexPage = () => {
             </div>
           </div>
         </div>
-
-        <div className="learn-providers" ref={trashPileRef} id="providers">
+        <div
+          className="dark-section learn-providers"
+          ref={trashPileRef}
+          id="providers"
+        >
           <div className="home-container">
             <div className="text-box text-box-centered">
               <h3 className="providers-header">
-                We support both Gmail and Outlook
+                We support both Gmail and Outlook out of the box
               </h3>
               <p>
                 If you have a Google or Microsoft email account then we have you
@@ -281,7 +397,9 @@ const IndexPage = () => {
                 </TextLink>
               </div>
               <div className="text-box text-box-centered">
-                <p>We also support {IMAP_PROVIDERS} that work with IMAP.</p>
+                <p>
+                  Or you can also connect {IMAP_PROVIDERS} that work with IMAP.
+                </p>
                 <TextLink undecorated as="link" linkTo="/providers/imap">
                   <div className="provider-logos">
                     <span className="provider-logo imap" title="Fastmail">
@@ -323,42 +441,55 @@ const IndexPage = () => {
             </p>
           </div>
           <Pricing />
+          <p style={{ textAlign: 'center' }}>
+            Every new account receives{' '}
+            <TextImportant>5 free credits</TextImportant>.
+          </p>
         </div>
-
-        <div className="home-container section-padded">
-          <div className="home-container-inner" id="news">
-            <h3>In the news</h3>
-            <p>
-              Don't take our word for it, read what people are saying about us.
-            </p>
-            <div className="in-the-news">
-              {NEWS.map(({ quote, logoUrl, url }) => (
-                <div key={url} className="news-item">
-                  <p>"{quote}"</p>
-                  <a target="_" className="news-logo" href={url}>
-                    <img src={logoUrl} />
-                  </a>
-                </div>
-              ))}
+        <div className="privacy-section">
+          <div className="home-container">
+            <div className="image-section image-left privacy">
+              <div className="image-section-img">
+                <img
+                  src={envelope}
+                  alt="cartoon envelope surrounded by clouds and flowers"
+                />
+              </div>
+              <div className="image-section-text">
+                <h3>Privacy first</h3>
+                <p>
+                  We take your privacy seriously. Your emails are just that -
+                  yours, and they should stay that way.{' '}
+                  <TextImportant>
+                    We don't store any email content
+                  </TextImportant>{' '}
+                  so you don't have to worry about us losing or selling your
+                  private data.
+                </p>
+                <p>
+                  <TextLink as="link" linkTo="/security">
+                    <span>Learn more about security and privacy</span>{' '}
+                    <ArrowIcon inline />
+                  </TextLink>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="home-container">
+            <div className="home-container-inner" id="news">
+              <div className="in-the-news">
+                {NEWS.map(({ quote, logoUrl, url, name }) => (
+                  <div key={url} className="news-item">
+                    <p>"{quote}"</p>
+                    <a target="_" className="news-logo" href={url}>
+                      <img src={logoUrl} alt={`${name} logo`} />
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="home-container">
-          <div className="text-box text-box-left">
-            <Testimonial
-              text={`Using Leave Me Alone has resulted in a 17% reduction in my
-                emails, saving me hours of time each month.`}
-              author="Luke Chadwick, Founder - GraphQL360"
-              image={luke}
-            />
-            <TextLink as="link" linkTo="/wall-of-love">
-              <span>See all of our customer testimonials</span>{' '}
-              <ArrowIcon inline />
-            </TextLink>
-          </div>
-        </div>
-
         <div className="home-container">
           <div className="home-container-inner end-stuff">
             {statsContent}
@@ -371,7 +502,6 @@ const IndexPage = () => {
             </a>
           </div>
         </div>
-
         <Footer />
       </div>
     </Layout>
@@ -381,65 +511,6 @@ const IndexPage = () => {
 function fetchStats() {
   return request('/api/stats?summary=true');
 }
-
-// function Stats({ isLoading, data, isVisible }) {
-//   const [stats, setStats] = useState({
-//     unsubscribableEmails: 0,
-//     unsubscriptions: 0
-//   });
-
-//   useEffect(
-//     () => {
-//       if (!isLoading && isVisible) {
-//         const {
-//           unsubscribableEmails,
-//           unsubscriptions,
-//           previouslyUnsubscribedEmails
-//         } = data;
-//         setStats({
-//           unsubscribableEmails:
-//             unsubscribableEmails - previouslyUnsubscribedEmails,
-//           unsubscriptions,
-//           set: true
-//         });
-//       }
-//     },
-//     [isVisible]
-//   );
-
-//   return (
-//     <div className="stats">
-//       <div className="stat">
-//         <span className="stat-value">
-//           <AnimatedNumber
-//             value={stats.unsubscribableEmails}
-//             style={{
-//               transition: '0.8s ease-out',
-//               fontSize: 48
-//             }}
-//             duration={1000}
-//             formatValue={n => formatNumber(n)}
-//           />
-//         </span>
-//         <span>Spam emails scanned</span>
-//       </div>
-//       <div className="stat">
-//         <span className="stat-value">
-//           <AnimatedNumber
-//             value={stats.unsubscriptions}
-//             style={{
-//               transition: '0.8s ease-out',
-//               fontSize: 48
-//             }}
-//             duration={1000}
-//             formatValue={n => formatNumber(n)}
-//           />
-//         </span>
-//         <span>Spam emails unsubscribed</span>
-//       </div>
-//     </div>
-//   );
-// }
 
 IndexPage.whyDidYouRender = true;
 
@@ -582,6 +653,8 @@ function nodes(state, action) {
 
 function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
   const { width } = useWindowSize();
+  const [isLoad, setLoad] = useState(domContentLoaded);
+  const [fallLimit, setFallLimit] = useState(initialScreenHeight);
   const ref = useRef(null);
   const [state, dispatch] = useReducer(nodes, {
     count: 0,
@@ -595,19 +668,47 @@ function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
       }
       dispatch({ type: 'next' });
     },
-    [dispatch]
+    [onFirstClick, state.count]
   );
 
-  const fallLimit = useMemo(
+  const getFallLimit = useCallback(
     () => {
-      if (ref.current && trashPileRef) {
-        console.log(width);
-        const top = trashPileRef.offsetTop;
-        const elTop = ref.current.getBoundingClientRect().y;
-        return top - elTop - 50;
+      const top = trashPileRef.offsetTop;
+      const elTop = ref.current.offsetTop;
+      const bottom = top - elTop - 50;
+      return bottom;
+    },
+    [trashPileRef]
+  );
+
+  useEffect(
+    () => {
+      const fn = () => setLoad(true);
+      window.addEventListener('DOMContentLoaded', fn);
+      const interval = setInterval(() => {
+        const newFallLimit = getFallLimit();
+        if (fallLimit !== newFallLimit) {
+          setFallLimit(newFallLimit);
+        }
+      }, 1000);
+      return () => {
+        window.removeEventListener('DOMContentLoaded', fn);
+        clearInterval(interval);
+      };
+    },
+    [fallLimit, getFallLimit]
+  );
+
+  useEffect(
+    () => {
+      if (isLoad && width && ref.current && trashPileRef) {
+        const newFallLimit = getFallLimit();
+        if (fallLimit !== newFallLimit) {
+          setFallLimit(newFallLimit);
+        }
       }
     },
-    [trashPileRef, width]
+    [isLoad, width, trashPileRef, getFallLimit, fallLimit]
   );
 
   return (
@@ -702,6 +803,7 @@ function Item({
       ref.current.style.willChange = 'transform, opacity';
       outerRef.current.style.willChange = 'transform';
       window.requestAnimationFrame(frame);
+      return true;
     },
     [ref, outerRef, onClick, fallLimit, animate]
   );

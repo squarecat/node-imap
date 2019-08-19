@@ -1,8 +1,9 @@
 const sitemapOptions = require('./sitemap.js');
+console.log('sa: ', process.env.SIMPLE_ANALYTICS_DOMAIN);
 module.exports = {
   siteMetadata: {
-    title: 'Easily unsubscribe from spam emails - Leave Me Alone',
-    description: `See all of your spam, newsletters, and subscription emails in one place and unsubscribe from them with a single click. Take back control of your Gmail and Outlook inbox.`,
+    title: 'Easily unsubscribe from unwanted emails - Leave Me Alone',
+    description: `See all of your subscription emails, newsletters, and spam in one place and unsubscribe from them with a single click. Take back control of your inbox.`,
     baseUrl: 'https://leavemealone.app',
     siteUrl: 'https://leavemealone.app',
     twitterHandle: '@LeaveMeAloneApp',
@@ -15,10 +16,13 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-plugin-sass`,
     {
-      resolve: 'gatsby-plugin-simple-analytics',
+      resolve: 'simple-analytics-gatsby-plugin',
       options: {
-        domain: 'stats.leavemealone.app',
-        metomic: 'analytics'
+        domain: process.env.SIMPLE_ANALYTICS_DOMAIN,
+        scriptName: process.env.SIMPLE_ANALYTICS_SCRIPT,
+        metomic: 'analytics',
+        events: true,
+        trackPageViews: true
       }
     },
     {
