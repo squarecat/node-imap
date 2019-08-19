@@ -1,4 +1,4 @@
-import './climate.module.scss';
+import './save-the-planet.module.scss';
 
 import {
   CARBON_LONDON_PARIS,
@@ -205,34 +205,34 @@ const ClimatePage = () => {
       </div>
 
       <div styleName="climate-inner">
-        <Features>
-          <Feature>
-            <FeatureImage>
+        <div styleName="features">
+          <div styleName="feature">
+            <div styleName="feature-img">
               <img src={downImg} alt="cartoon cloud with a down arrow" />
-            </FeatureImage>
-            <FeatureTitle>Reduce Carbon Footprint</FeatureTitle>
-            <FeatureText>{featuresContent.one}</FeatureText>
-          </Feature>
+            </div>
+            <h3 styleName="feature-title">Reduce Carbon Footprint</h3>
+            <p styleName="feature-text">{featuresContent.one}</p>
+          </div>
 
-          <Feature>
-            <FeatureImage>
+          <div styleName="feature">
+            <div styleName="feature-img">
               <img
                 src={planeImg}
                 alt="cartoon cloud with plane flying around a globe"
               />
-            </FeatureImage>
-            <FeatureTitle>Offset Flight Emissions</FeatureTitle>
-            <FeatureText>{featuresContent.two}</FeatureText>
-          </Feature>
+            </div>
+            <h3 styleName="feature-title">Offset Flight Emissions</h3>
+            <p styleName="feature-text">{featuresContent.two}</p>
+          </div>
 
-          <Feature>
-            <FeatureImage>
+          <div styleName="feature">
+            <div styleName="feature-img">
               <img src={rainbowImg} alt="cartoon cloud with a rainbow" />
-            </FeatureImage>
-            <FeatureTitle>Improve The Atmosphere</FeatureTitle>
-            <FeatureText>{featuresContent.three}</FeatureText>
-          </Feature>
-        </Features>
+            </div>
+            <h3 styleName="feature-title">Improve The Atmosphere</h3>
+            <p styleName="feature-text">{featuresContent.three}</p>
+          </div>
+        </div>
       </div>
 
       <div styleName="climate-inner">
@@ -281,7 +281,7 @@ const ClimatePage = () => {
         </div>
       </div>
 
-      <div styleName="climate-inner questions">
+      <div styleName="climate-inner">
         <div styleName="question">
           <h2>Will unsubscribing really make a difference?</h2>
           <p>
@@ -353,9 +353,6 @@ const ClimatePage = () => {
             both you and the sender.
           </p>
         </div>
-      </div>
-
-      <div styleName="climate-inner">
 
         <div styleName="end-stuff">
           {joinStatsContent}

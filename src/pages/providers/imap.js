@@ -62,10 +62,10 @@ const ProviderIMAP = () => {
             <div styleName="feature-img">
               <img src={happy} alt="happy face image" />
             </div>
+            <h3 styleName="feature-title">
+              Inbox sanity for all mailboxes, everywhere
+            </h3>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Inbox sanity for all mailboxes, everywhere
-              </h3>
               <p>
                 The Internet Message Access Protocol (IMAP) is a mail protocol
                 used for accessing email on a remote web server from a local
@@ -84,10 +84,10 @@ const ProviderIMAP = () => {
             <div styleName="feature-img">
               <img src={broom} alt="broom sweeping image" />
             </div>
+            <h3 styleName="feature-title">
+              Clean all of your mailboxes, together
+            </h3>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Clean all of your mailboxes, together
-              </h3>
               <p>
                 Connect all of your email accounts and scan them together. Leave
                 Me Alone supports multiple IMAP, Google, and Microsoft accounts.
@@ -106,10 +106,10 @@ const ProviderIMAP = () => {
             <div styleName="feature-img">
               <img src={envelope} alt="private envelope image" />
             </div>
+            <h3 styleName="feature-title">
+              Your information protected, always
+            </h3>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Your information protected, always
-              </h3>
               <p>
                 We're committed to privacy. We never store the content of your
                 emails, your IMAP credentials are encrypted using password

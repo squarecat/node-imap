@@ -17,6 +17,10 @@
   @media (max-width: 960px) {
     padding: 40px;
   }
+
+  @media (max-width: 400px) {
+    padding: 20px;
+  }
 }
 
 .subpage-section-inverted {
@@ -203,17 +207,13 @@
 }
 
 .subpage-features {
-  margin-top: 150px;
-}
-
-.subpage-features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   grid-column-gap: 50px;
+  margin-top: 150px;
 
   @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 100%;
     margin-top: 90px;
   }
 }
@@ -224,7 +224,9 @@
   }
 
   @media (max-width: 768px) {
-    font-size: 16px;
+    p {
+      font-size: 16px;
+    }
   }
 }
 

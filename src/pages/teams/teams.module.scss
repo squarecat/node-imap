@@ -25,7 +25,6 @@
   @extend .subpage-content;
 }
 
-.features,
 .savings {
   margin-top: 150px;
 }
@@ -45,38 +44,23 @@
 }
 
 .features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  grid-column-gap: 50px;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    margin-top: 90px;
-  }
+  @extend .subpage-features;
 }
 
 .feature {
-  p {
-    font-size: 14px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
+  @extend .subpage-feature;
 }
 
 .feature-title {
-  font-size: 20px;
-  line-height: 24px;
+  @extend .subpage-feature-title;
 }
 
 .feature-img {
-  max-width: 150px;
-  margin-left: -15px;
+  @extend .subpage-feature-img;
 }
 
 .feature-text {
+  @extend .subpage-feature-text;
 }
 
 .end-stuff {
