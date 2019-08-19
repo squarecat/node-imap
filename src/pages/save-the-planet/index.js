@@ -8,12 +8,6 @@ import {
   TONNES_CARBON_PER_YEAR,
   TONNE_CONVERSION
 } from '../../utils/climate';
-import Features, {
-  Feature,
-  FeatureImage,
-  FeatureText,
-  FeatureTitle
-} from '../../components/landing/features';
 import React, { useMemo } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
@@ -32,7 +26,7 @@ import useAsync from 'react-use/lib/useAsync';
 const TREE_ORG_LINK = 'https://onetreeplanted.org';
 
 const title = `Clean your Inbox and Save the Planet`;
-const description = `Emails dump ${TONNES_CARBON_PER_YEAR} tonnes of CO2 into the atmosphere ever year. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
+const description = `Emails contribute to ${TONNES_CARBON_PER_YEAR} tonnes of CO2 being dumped into the atmosphere every year. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
 
 const ClimatePage = () => {
@@ -41,25 +35,6 @@ const ClimatePage = () => {
     loading: statsLoading,
     value: statsData
   } = useAsync(fetchStats, []);
-
-  // const [stats, setStats] = useState(null);
-  // useEffect(
-  //   () => {
-  //     if (!statsLoading && statsData) {
-  //       const { users, unsubscriptions } = statsData;
-  //       const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
-  //       setStats({
-  //         users,
-  //         unsubscriptions,
-  //         totalCarbonSavedInGrams,
-  //         londonToParis: (
-  //           totalCarbonSavedInGrams / CARBON_LONDON_PARIS
-  //         ).toFixed(0)
-  //       });
-  //     }
-  //   },
-  //   [statsData, statsError, statsLoading]
-  // );
 
   const featuresContent = useMemo(
     () => {
@@ -172,9 +147,13 @@ const ClimatePage = () => {
           <div styleName="container-text">
             <h1 styleName="title">Clean your Inbox. Save the Planet.</h1>
             <p styleName="tagline">
-              Emails dump {formatNumber(TONNES_CARBON_PER_YEAR)} tonnes of{' '}
-              <CO2 /> into the atmosphere ever year. Unsubscribe from unwanted
-              subscription emails and reduce your carbon footprint.{' '}
+              Emails contribute to{' '}
+              <TextImportant>
+                {formatNumber(TONNES_CARBON_PER_YEAR)} tonnes of <CO2 /> being
+                dumped into the atmosphere every year
+              </TextImportant>
+              . Unsubscribe from unwanted subscription emails and reduce your
+              carbon footprint.{' '}
               <TextLink undecorated href="#cite-1">
                 <sup>[1]</sup>
               </TextLink>

@@ -35,12 +35,11 @@ export default function Donate() {
         Emails contribute to{' '}
         <TextImportant>
           {TONNES_CARBON_PER_YEAR} tonnes of carbon being dumped into the
-          atmosphere every year
+          atmosphere every year.
         </TextImportant>{' '}
-        <TextLink undecorated href="/save-the-planet#cite-5">
-          <sup>[5]</sup>
+        <TextLink undecorated href="/save-the-planet#cite-1" target="_">
+          <sup>[1]</sup>
         </TextLink>
-        .
       </p>
       <p>
         You are already helping by unsubscribing from the ones you do not want.
