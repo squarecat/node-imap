@@ -82,9 +82,13 @@ function MailItem({ id, onLoad }) {
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
-        <span styleName="from-email" title={m.fromEmail}>{`<${
-          m.fromEmail
-        }>`}</span>
+        <Tooltip
+          placement="bottom"
+          destroyTooltipOnHide={true}
+          overlay={<span>{`Sent to ${m.to} from ${m.fromEmail}`}</span>}
+        >
+          <span styleName="from-email">{`<${m.fromEmail}>`}</span>
+        </Tooltip>
       </td>
       <td styleName="cell tags-column">
         {m.isTrash ? (
