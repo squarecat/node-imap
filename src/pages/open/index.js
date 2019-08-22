@@ -821,6 +821,7 @@ function Open() {
               </TextLink>
             </h3>
             <span styleName="label">Total trees planted</span>
+            <span styleName="value">{totalTreesPlanted}</span>
             <div styleName="trees">
               {_times(totalTreesPlanted, index => (
                 <div styleName="tree" key={`tree-${index}`}>
@@ -831,17 +832,15 @@ function Open() {
           </div>
         </div>
         <div styleName="boxes">
-          <div styleName="big-stat box">
+          <div styleName="box big-stat">
             <span styleName="label">Carbon saved by unsubscribing</span>
             <span styleName="value">
               {formatWeight(stats.unsubscriptions * CARBON_PER_EMAIL)}
             </span>
-          </div>
 
-          {/* <div styleName="big-stat box">
-            <span styleName="label">
-              Equivalent flights from London to Paris
-            </span>
+            <div styleName="separator">
+              <span>equal to</span>
+            </div>
             <span styleName="value">
               {formatNumber(
                 (
@@ -850,7 +849,8 @@ function Open() {
                 ).toFixed(0)
               )}
             </span>
-          </div> */}
+            <span styleName="label">flights from London to Paris</span>
+          </div>
 
           <div styleName="big-stat box">
             <span styleName="label">Carbon offset by planting trees</span>
@@ -859,17 +859,18 @@ function Open() {
                 totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR
               )}
             </span>
-          </div>
 
-          {/* <div styleName="big-stat box">
-            <span styleName="label">Equivalent unwanted emails</span>
+            <div styleName="separator">
+              <span>equal to</span>
+            </div>
             <span styleName="value">
               {formatNumber(
                 (totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR) /
                   CARBON_PER_EMAIL
               )}
             </span>
-          </div> */}
+            <span styleName="label">emails unsubscribed from</span>
+          </div>
         </div>
       </div>
 

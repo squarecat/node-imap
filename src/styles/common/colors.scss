@@ -12,6 +12,7 @@ $color-dark-background: rgb(29, 25, 25);
 $color-grey: #f2edec;
 $color-grey-darker: #e9e1e1;
 $color-grey-trustbar: #eee;
+$color-grey-dark: #9a9393;
 
 // $color-primary-font: hsla(0, 0%, 0%, 0.8);
 $color-primary-font: #333333;
@@ -29,7 +30,7 @@ $color-weak-border: $color-secondary-bg;
 $color-input-label: #999;
 $color-input-placeholder: #bfbfbf;
 $color-input-bg: #fff;
-$color-input-disabled: #9a9393;
+$color-input-disabled: $color-grey-dark;
 $color-input-disabled-bg: $color-grey;
 
 $color-border-red: #ffc9c5;
@@ -45,7 +46,7 @@ $color-bg-error: #f1645f;
 $color-bg-warning: #f86724;
 $color-bg-success: #37d288;
 $color-bg-info: #4f9bcc;
-$color-bg-neutral: #9a9393;
+$color-bg-neutral: $color-grey-dark;
 
 $color-border-info: #a9d7f2;
 

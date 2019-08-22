@@ -66,6 +66,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 
   .label,
   .value {
@@ -75,6 +76,10 @@
   .value {
     font-size: 32px;
     margin-top: 10px;
+  }
+
+  .separator + .value {
+    margin-bottom: 10px;
   }
 }
 .positive {
@@ -118,4 +123,32 @@
 .tree {
   width: 60px;
   height: 60px;
+}
+
+.separator {
+  font-size: 16px;
+  margin: 25px 0 15px 0;
+  color: $color-grey-dark;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 60%;
+    margin: 0 auto;
+    height: 1px;
+    background-color: $color-border-grey;
+    opacity: 0.6;
+    left: 0;
+    right: 0;
+    top: 50%;
+    z-index: 0;
+  }
+
+  span {
+    background-color: white;
+    padding: 5px 10px;
+    z-index: 1;
+    position: relative;
+  }
 }
