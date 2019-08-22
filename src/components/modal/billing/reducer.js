@@ -8,7 +8,8 @@ export const initialState = {
   save_payment_method: true,
   coupon: '',
   step: 'start-purchase',
-  selectedPackage: {}
+  selectedPackage: {},
+  donate: false
 };
 
 function billingModalReducer(state, action) {

@@ -171,7 +171,7 @@ const IndexPage = () => {
 
                 <div className="join-container">
                   <TextLink
-                    href="/signup?ref=hero"
+                    href="/signup"
                     event={'clicked-hero-cta'}
                     className={`beam-me-up-cta`}
                   >
@@ -427,7 +427,7 @@ const IndexPage = () => {
 
               <TextLink
                 event={'clicked-providers-cta'}
-                href="/signup?ref=providers"
+                href="/signup"
                 className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               >
                 Start Unsubscribing
@@ -500,7 +500,7 @@ const IndexPage = () => {
             {statsContent}
             <TextLink
               event="clicked-footer-cta"
-              href="/signup?ref=footer"
+              href="/signup"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               style={{ margin: '50px auto' }}
             >

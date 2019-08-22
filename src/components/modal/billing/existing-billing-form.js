@@ -1,3 +1,5 @@
+import './billing-modal.module.scss';
+
 import { BillingModalContext, confirmIntent, getDisplayPrice } from './index';
 import { FormGroup, FormNotification } from '../../form';
 import {
@@ -6,15 +8,18 @@ import {
   ModalHeader,
   ModalPaymentSaveAction
 } from '..';
-import React, { useContext } from 'react';
-// import { TextImportant, TextLink } from '../../text';
+import React, { useContext, useMemo } from 'react';
 
 import CardDetails from '../../card-details';
+import CouponForm from './coupon';
+import Donate from './donate';
+import { ModalContext } from '../../../providers/modal-provider';
+import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-import { getPaymentError } from '../../../utils/errors';
 
 const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
+  const { close: closeModal } = useContext(ModalContext);
   const { state, dispatch } = useContext(BillingModalContext);
 
   async function onSubmit() {
@@ -24,7 +29,8 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
 
       const response = await confirmPaymentExistingCard({
         productId: state.selectedPackage.id,
-        coupon: state.coupon
+        coupon: state.coupon,
+        donate: state.donate
       });
       await handleResponse(response);
     } catch (err) {
@@ -77,59 +83,75 @@ const ExistingForm = ({ stripe, billingCard, onPurchaseSuccess }) => {
     }
   }
 
+  const displayPrice = useMemo(
+    () => {
+      const priceContent = getDisplayPrice(state.selectedPackage, state.donate);
+      return <span>Pay{priceContent}</span>;
+    },
+    [state.selectedPackage, state.donate]
+  );
+
   return (
-    <form
-      id="existing-payment-form"
-      onSubmit={e => {
-        e.preventDefault();
-        return onSubmit();
-      }}
-      method="post"
-    >
+    <>
       <ModalBody compact>
         <ModalHeader>
           Buy Package
           <ModalCloseIcon />
         </ModalHeader>
-        <p>Confirm purchase with your saved payment method:</p>
+        <div styleName="payment-panels">
+          <div styleName="panel">
+            <h4>Use saved payment method</h4>
 
-        <FormGroup>
-          <CardDetails card={billingCard} />
-        </FormGroup>
+            <div styleName="card-preview">
+              <CardDetails card={billingCard} />
+            </div>
 
-        <p>
-          Or{' '}
-          <a
-            onClick={() =>
-              dispatch({ type: 'set-step', data: 'enter-billing-details' })
-            }
-          >
-            use a different card
-          </a>
-          .
-        </p>
+            <p>
+              Or{' '}
+              <a
+                onClick={() =>
+                  dispatch({ type: 'set-step', data: 'enter-billing-details' })
+                }
+              >
+                use a different card
+              </a>
+              .
+            </p>
+
+            <div styleName="existing-card-coupon">
+              <CouponForm />
+            </div>
+          </div>
+
+          <div styleName="panel panel-right">
+            <Donate />
+          </div>
+        </div>
 
         {state.error ? (
-          <FormGroup>
-            <FormNotification error>{state.error}</FormNotification>
-          </FormGroup>
+          <div styleName="error">
+            <FormGroup>
+              <FormNotification error>{state.error}</FormNotification>
+            </FormGroup>
+          </div>
         ) : null}
       </ModalBody>
 
       <ModalPaymentSaveAction
         isDisabled={state.loading}
         isLoading={state.loading}
-        cancelText="Back"
-        saveText={<span>Pay{getDisplayPrice(state.selectedPackage)}</span>}
-        onCancel={() => dispatch({ type: 'set-step', data: 'start-purchase' })}
+        cancelText="Cancel"
+        saveText={displayPrice}
+        onSave={onSubmit}
+        onCancel={closeModal}
       />
-    </form>
+    </>
   );
 };
 
 export default injectStripe(ExistingForm);
 
-async function confirmPaymentExistingCard({ productId, coupon }) {
+async function confirmPaymentExistingCard({ productId, coupon, donate }) {
   let url;
   if (coupon) {
     url = `/api/payments/checkout/${productId}/${coupon}`;
@@ -142,6 +164,9 @@ async function confirmPaymentExistingCard({ productId, coupon }) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
-    }
+    },
+    body: JSON.stringify({
+      donate
+    })
   });
 }

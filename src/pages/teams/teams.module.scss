@@ -25,66 +25,42 @@
   @extend .subpage-content;
 }
 
-.features,
 .savings {
   margin-top: 150px;
 }
 
-.pricing {
-  margin-top: 90px;
-}
-
 .security {
   margin-top: 0;
-}
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  grid-column-gap: 50px;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    margin-top: 90px;
-  }
-}
-
-.feature {
-  p {
-    font-size: 14px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
-}
-
-.feature-title {
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.feature-img {
-  max-width: 150px;
-  margin-left: -15px;
-}
-
-.feature-text {
-}
-
-.security {
-  background-color: $color-dark-background;
-  color: white;
-  padding: 90px 0 170px 0;
+  @extend .subpage-section-inverted;
 
   .image-section {
     margin-bottom: 0;
   }
+
   .image-section-img {
     width: 450px;
     max-width: 100%;
   }
+}
+
+.features {
+  @extend .subpage-features;
+}
+
+.feature {
+  @extend .subpage-feature;
+}
+
+.feature-title {
+  @extend .subpage-feature-title;
+}
+
+.feature-img {
+  @extend .subpage-feature-img;
+}
+
+.feature-text {
+  @extend .subpage-feature-text;
 }
 
 .end-stuff {
@@ -163,12 +139,6 @@
   .gsuite {
     padding: 10px 20px 10px 10px;
   }
-}
-
-.more {
-  margin-top: 100px;
-  padding-top: 100px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .sources {

@@ -263,6 +263,25 @@ export async function addCreditsRewarded(credits) {
   }
 }
 
+export async function addDonation({ amount }, count = 1) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      {},
+      {
+        $inc: {
+          totalDonated: amount,
+          totalDonations: count
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(`stats-dao: error inserting donation stat ${amount}`);
+    logger.error(err);
+    throw err;
+  }
+}
+
 export async function getStats() {
   try {
     const col = await db().collection(COL_NAME);
@@ -311,7 +330,9 @@ const recordedStats = [
   'packagesPurchased',
   'connectedAccountGoogle',
   'connectedAccountOutlook',
-  'connectedAccountImap'
+  'connectedAccountImap',
+  'totalDonated',
+  'totalDonations'
 ];
 
 export async function recordStats() {

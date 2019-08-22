@@ -6,9 +6,9 @@ import BetaTesters from '../../components/landing/beta-testers';
 import React from 'react';
 import { TextLink } from '../../components/text';
 import danImg from '../../assets/about/dan_klammer.jpg';
-import huskoImg from '../../assets/dogs-square.jpg';
-import rocketImg from '../../assets/rocket.png';
-import worldImg from '../../assets/geography.png';
+import huskoImg from '../../assets/about/dogs-square.jpg';
+import rocketImg from '../../assets/about/rocket.png';
+import worldImg from '../../assets/about/geography.png';
 
 // import { TwitterIcon } from '../../components/icons';
 
