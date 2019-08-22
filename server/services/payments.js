@@ -5,6 +5,7 @@ import {
   removeUserBillingCard
 } from '../services/user';
 import {
+  addDonationToStats,
   addGiftRedemptionToStats,
   addInvoicePaymentToStats,
   addPackageToStats,
@@ -38,6 +39,8 @@ import { getPackage } from '../../shared/prices';
 import logger from '../utils/logger';
 import { payments } from 'getconfig';
 import { updateUser } from '../dao/user';
+
+const DONATE_AMOUNT = 100;
 
 export async function getCoupon(coupon) {
   return getPaymentCoupon(coupon);
@@ -160,7 +163,8 @@ export async function listPaymentsForOrganisation(organisationId) {
 export async function createPaymentWithExistingCardForUser({
   user,
   productId,
-  coupon
+  coupon,
+  donate
 }) {
   try {
     logger.info(
@@ -172,9 +176,14 @@ export async function createPaymentWithExistingCardForUser({
     let intent;
 
     const { customerId, paymentMethodId } = await getUserById(user.id);
-    const { price: finalPrice, description } = await getPaymentDetails({
+    const {
+      price: finalPrice,
+      description,
+      donateAmount
+    } = await getPaymentDetails({
       productId,
-      coupon
+      coupon,
+      donate
     });
 
     if (finalPrice < 50) {
@@ -196,7 +205,8 @@ export async function createPaymentWithExistingCardForUser({
         amount: finalPrice,
         customerId,
         description,
-        coupon
+        coupon,
+        donateAmount
       });
     }
 
@@ -205,8 +215,9 @@ export async function createPaymentWithExistingCardForUser({
       return handlePaymentSuccess(response, {
         user,
         productId,
-        finalPrice: intent.amount,
-        coupon: intent.metadata.coupon
+        finalPrice: +intent.amount,
+        coupon: intent.metadata.coupon,
+        donateAmount: +intent.metadata.donateAmount
       });
     }
 
@@ -258,20 +269,41 @@ export async function claimCreditsWithCoupon({ user, productId, coupon }) {
   }
 }
 
-async function getPaymentDetails({ productId, coupon }) {
+async function getPaymentDetails({ productId, coupon, donate }) {
   try {
     // get which product they are buying
     const { price: productPrice, credits } = getPackage(productId);
-    const description = `Payment for ${credits} credits`;
 
-    // calcualte any coupon discount
     let finalPrice = productPrice;
+    let donateAmount = 0;
+
+    logger.debug(
+      `payments-service: getting payment details, product price is ${finalPrice}`
+    );
+
+    // calculate any coupon discount
     let couponObject;
     if (coupon) {
       couponObject = await getCoupon(coupon);
       finalPrice = applyCoupon(productPrice, couponObject);
+      logger.debug(
+        `payments-service: coupon applied, payment amount is now ${finalPrice}`
+      );
     }
-    return { price: finalPrice, description };
+
+    let description = `Payment for ${credits} credits`;
+
+    // add any donations afterwards
+    if (donate) {
+      donateAmount = DONATE_AMOUNT;
+      finalPrice = finalPrice + donateAmount;
+      description = `${description} + donation to plant a tree`;
+      logger.debug(
+        `payments-service: donation applied, payment amount is now ${finalPrice}`
+      );
+    }
+
+    return { price: finalPrice, description, donateAmount };
   } catch (err) {
     logger.error(`payments-service: failed to get package payment details`);
     throw err;
@@ -280,9 +312,10 @@ async function getPaymentDetails({ productId, coupon }) {
 
 async function getOrUpdateCustomerForUser(
   { paymentMethodId },
-  { user, name, address, saveCard }
+  { user, billingDetails, saveCard }
 ) {
   try {
+    const { name, address } = billingDetails;
     let {
       customerId,
       paymentMethodId: currentPaymentMethodId,
@@ -350,7 +383,7 @@ async function getOrUpdateCustomerForUser(
 
 async function handlePaymentSuccess(
   response,
-  { user, productId, finalPrice, coupon }
+  { user, productId, finalPrice, coupon, donateAmount }
 ) {
   try {
     logger.info(`payments-service: payment success for user ${user.id}`);
@@ -366,8 +399,17 @@ async function handlePaymentSuccess(
     });
 
     if (finalPrice > 50) {
+      logger.debug(
+        `payments-service: adding payment to stats ${finalPrice / 100}`
+      );
       addPaymentToStats({ price: finalPrice / 100 });
       addPackageToStats({ credits });
+    }
+    if (donateAmount) {
+      logger.debug(
+        `payments-service: adding donation to stats ${donateAmount / 100}`
+      );
+      addDonationToStats({ amount: donateAmount / 100 });
     }
 
     if (coupon) {
@@ -386,7 +428,7 @@ async function handlePaymentSuccess(
 
 export async function createPaymentForUser(
   { paymentMethodId, paymentIntentId },
-  { user, productId, coupon, name, address, saveCard }
+  { user, productId, coupon, billingDetails, saveCard, donate }
 ) {
   try {
     let intent;
@@ -397,9 +439,14 @@ export async function createPaymentForUser(
       logger.debug(
         `payments-service: creating payment intent with payment method id`
       );
-      const { price: finalPrice, description } = await getPaymentDetails({
+      const {
+        price: finalPrice,
+        description,
+        donateAmount
+      } = await getPaymentDetails({
         productId,
-        coupon
+        coupon,
+        donate
       });
 
       // return success for beta users or amounts under 0.50c
@@ -420,16 +467,19 @@ export async function createPaymentForUser(
         logger.debug(`payments-service: updating customer`);
         const customerId = await getOrUpdateCustomerForUser(
           { paymentMethodId },
-          { user, name, address, saveCard }
+          { user, billingDetails, saveCard }
         );
 
-        logger.debug(`payments-service: creating intent`);
+        logger.debug(
+          `payments-service: creating intent for amount ${finalPrice}`
+        );
         intent = await createPaymentIntent(paymentMethodId, {
           amount: finalPrice,
           customerId,
           description,
           coupon,
-          saveCard
+          saveCard,
+          donateAmount
         });
       }
     } else if (paymentIntentId) {
@@ -444,8 +494,9 @@ export async function createPaymentForUser(
       return handlePaymentSuccess(response, {
         user,
         productId,
-        finalPrice: intent.amount,
-        coupon: intent.metadata.coupon
+        finalPrice: +intent.amount,
+        coupon: intent.metadata.coupon,
+        donateAmount: +intent.metadata.donateAmount
       });
     }
     return response;

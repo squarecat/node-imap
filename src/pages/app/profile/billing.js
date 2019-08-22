@@ -312,7 +312,10 @@ function BillingDetails() {
 }
 
 function BillingHistory() {
-  const { value, loading, error } = useAsync(fetchBillingHistory);
+  const [credits] = useUser(u => {
+    return u.billing.credits;
+  });
+  const { value, loading, error } = useAsync(fetchBillingHistory, [credits]);
 
   const content = useMemo(
     () => {
@@ -328,7 +331,9 @@ function BillingHistory() {
           <p>
             Showing{' '}
             <TextImportant>
-              {`${payments.length} previous payment${payments.length === 1 ? '' : 's'}`}
+              {`${payments.length} previous payment${
+                payments.length === 1 ? '' : 's'
+              }`}
             </TextImportant>
             .
           </p>

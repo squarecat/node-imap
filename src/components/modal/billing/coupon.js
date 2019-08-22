@@ -8,7 +8,7 @@ import Button from '../../btn';
 import cx from 'classnames';
 import request from '../../../utils/request';
 
-export default function CouponInput() {
+export default function CouponForm() {
   const { state, dispatch } = useContext(BillingModalContext);
 
   // const [isCouponShown, showCoupon] = useState(false);

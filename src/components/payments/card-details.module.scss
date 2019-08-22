@@ -2,6 +2,11 @@
 @import '../form/form.module.scss';
 
 .wrapper {
+  height: 48px;
+  &:empty {
+    border: 1px solid $color-input-border;
+    border-radius: 5px;
+  }
 }
 
 :global(.StripeElement) {

@@ -1,6 +1,7 @@
 import {
   addConnectedAccount,
   addCreditsRewarded,
+  addDonation,
   addEstimate,
   addFailedUnsubscription,
   addGiftPayment,
@@ -105,6 +106,9 @@ export function addOrganisationUnsubscribeToStats(count) {
 }
 export function addConnectedAccountToStats(provider) {
   return addConnectedAccount(provider);
+}
+export function addDonationToStats({ amount }) {
+  return addDonation({ amount });
 }
 
 export function getAllStats() {

@@ -14,11 +14,7 @@ import spamMailImg from '../../assets/spam-email.png';
 // import stampImg from '../../assets/stamp.png';
 // import truckImg from '../../assets/truck.png';
 
-export default function Estimator({
-  title,
-  startFrom = 20,
-  showTimeSaved = false
-}) {
+export default function Estimator({ title, startFrom = 20 }) {
   const [mailPerDay, setMailPerDay] = useState(startFrom);
 
   const mailPerMonth = mailPerDay === 0 ? 10 * 30 : mailPerDay * 30;
@@ -72,88 +68,19 @@ export default function Estimator({
     [unsubsPerMonth]
   );
 
-  {
-    /* const {
-    mailPerDayLabel,
-    recommendationImage,
-    recommendationContent
-  } = useMemo(
-    () => {
-      let mailPerDayLabel = '<10';
-      if (parseInt(mailPerDay, 10) <= 10) {
-        mailPerDayLabel = 'fewer than 10';
-      } else if (parseInt(mailPerDay, 10) < 300) {
-        mailPerDayLabel = mailPerDay;
-      } else if (parseInt(mailPerDay, 10) >= 300) {
-        mailPerDayLabel = '300+';
-      }
-
-      let recommendation;
-      let recommendationImage;
-      if (unsubsPerMonth < 45) {
-        recommendationImage = stampImg;
-        recommendation = (
-          <span>
-            We recommend you start on the{' '}
-            <TextImportant>Usage based plan</TextImportant>, if you receive more
-            than 85 unwanted subscription emails then it would be better to
-            switch to a package.
-          </span>
-        );
-      } else if (unsubsPerMonth < 200) {
-        recommendationImage = packageImg;
-        recommendation = (
-          <span>
-            The cheapest option would be to buy a{' '}
-            <TextImportant>Package</TextImportant> and get a bulk discount.
-          </span>
-        );
-      } else {
-        recommendationImage = truckImg;
-        recommendation = (
-          <span>
-            Wow, that's a lot of emails! We recommend you{' '}
-            <a href="mailto:hello@leavemealone.app">contact us</a> for a{' '}
-            <TextImportant>special custom package</TextImportant> rate.
-          </span>
-        );
-      }
-      return {
-        recommendationContent: recommendation,
-        recommendationImage,
-        mailPerDayLabel
-      };
-    },
-    [mailPerDay, unsubsPerMonth]
-  ); */
-  }
-
   return (
     <div styleName="pricing-estimates">
       <div styleName="pricing-estimator">
         <div styleName="pricing-estimate-text">
           <h3>{title}</h3>
-          {showTimeSaved ? (
-            <>
-              <p>
-                From our anonymous usage data we can estimate how much time your
-                company can save based on your number of employees.
-              </p>
-              <p>Approximately how many people work in your office?</p>
-            </>
-          ) : (
-            <>
-              <p>
-                From our anonymous usage data we can estimate how many credits
-                you might need based on the size of your inbox.
-              </p>
-              <p>
-                Approximately how much mail do you receive{' '}
-                <TextImportant>each day?</TextImportant>
-              </p>
-            </>
-          )}
-
+          <p>
+            From our anonymous usage data we can estimate how many credits you
+            might need based on the size of your inbox.
+          </p>
+          <p>
+            Approximately how much mail do you receive{' '}
+            <TextImportant>each day?</TextImportant>
+          </p>
           <div styleName="slider">
             <RangeInput
               min="10"
@@ -228,32 +155,8 @@ export default function Estimator({
             </TextImportant>{' '}
             each month.
           </p>
-          {showTimeSaved ? (
-            <>
-              <p>
-                You could easily save{' '}
-                <TextImportant>
-                  {`${numeral(unsubsPerMonth * 1.1).format('0,00')} minutes`}
-                </TextImportant>{' '}
-                of time spent reading email each month if these were gone{' '}
-                <a styleName="cite-link" href="#cite-2">
-                  <sup>[3]</sup>
-                </a>
-                .
-              </p>
-              <p>
-                That's{' '}
-                <TextImportant>
-                  {`${numeral((unsubsPerMonth * 1.1 * 12) / 60).format(
-                    '0,00'
-                  )} hours`}
-                </TextImportant>{' '}
-                a year!
-              </p>
-            </>
-          ) : (
-            recommendationContent
-          )}
+
+          {recommendationContent}
         </div>
       </div>
     </div>

@@ -4,10 +4,10 @@ import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 import { TextImportant, TextLink } from '../../components/text';
 
 import React from 'react';
-import gmailScopesImg from '../../assets/security-gmail-scopes.png';
-import lockImg from '../../assets/lock.png';
-import outlookScopesImg from '../../assets/security-outlook-scopes.png';
-import securityImg from '../../assets/security.png';
+import gmailScopesImg from '../../assets/security/security-gmail-scopes.png';
+import lockImg from '../../assets/security/lock.png';
+import outlookScopesImg from '../../assets/security/security-outlook-scopes.png';
+import securityImg from '../../assets/security/security.png';
 import subscriberScoreImg from '../../assets/subscriber-score.png';
 
 const scopesUrlForGoogle =
@@ -204,26 +204,24 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      <div styleName="security-inner">
-        <div styleName="stuff-at-the-bottom">
-          <h2>Want to know more?</h2>
-          <p>
-            We are proud to be open and transparent about our service in every
-            way we can.
-          </p>
-          <p>
-            If you have any more questions about how we operate then please{' '}
-            <a href="mailto:security@leavemealone.app">get in touch</a> - we
-            will be happy to help!
-          </p>
-          <a
-            href="mailto:security@leavemealone.app"
-            className={`beam-me-up-cta beam-me-up-cta-center`}
-            style={{ marginTop: 50 }}
-          >
-            Contact Us
-          </a>
-        </div>
+      <div styleName="security-inner end-stuff">
+        <h2>Want to know more?</h2>
+        <p>
+          We are proud to be open and transparent about our service in every way
+          we can.
+        </p>
+        <p>
+          If you have any more questions about how we operate then please{' '}
+          <a href="mailto:security@leavemealone.app">get in touch</a> - we will
+          be happy to help!
+        </p>
+        <a
+          href="mailto:security@leavemealone.app"
+          className={`beam-me-up-cta beam-me-up-cta-center`}
+          style={{ marginTop: 50 }}
+        >
+          Contact Us
+        </a>
       </div>
     </SubPageLayout>
   );

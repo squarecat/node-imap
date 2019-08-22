@@ -14,7 +14,7 @@ import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
 import { getVariationsText } from '../../components/landing/providers';
 import happy from '../../assets/enterprise/happy.png';
 import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
-import securityImg from '../../assets/security.png';
+import securityImg from '../../assets/security/security.png';
 import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 
 const VARIATIONS = [
@@ -68,10 +68,10 @@ const ProviderIMAP = () => {
             <div styleName="feature-img">
               <img src={happy} alt="happy face image" />
             </div>
+            <h3 styleName="feature-title">
+              Inbox sanity for all mailboxes, everywhere
+            </h3>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Inbox sanity for all mailboxes, everywhere
-              </h3>
               <p>
                 The Internet Message Access Protocol (IMAP) is a mail protocol
                 used for accessing email on a remote web server from a local
@@ -90,10 +90,10 @@ const ProviderIMAP = () => {
             <div styleName="feature-img">
               <img src={broom} alt="broom sweeping image" />
             </div>
+            <h3 styleName="feature-title">
+              Clean all of your mailboxes, together
+            </h3>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Clean all of your mailboxes, together
-              </h3>
               <p>
                 Connect all of your email accounts and scan them together. Leave
                 Me Alone supports multiple IMAP, Google, and Microsoft accounts.
@@ -112,10 +112,10 @@ const ProviderIMAP = () => {
             <div styleName="feature-img">
               <img src={envelope} alt="private envelope image" />
             </div>
+            <h3 styleName="feature-title">
+              Your information protected, always
+            </h3>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">
-                Your information protected, always
-              </h3>
               <p>
                 We're committed to privacy. We never store the content of your
                 emails, your IMAP credentials are encrypted using password
@@ -174,33 +174,31 @@ const ProviderIMAP = () => {
         </div>
       </div>
 
-      <div styleName="provider-inner">
-        <div styleName="end-stuff">
-          <h2>Start unsubscribing from emails in {variationsText} today!</h2>
-          <a
-            href={`/signup?ref=provider-imap`}
-            className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
-            style={{ margin: '50px auto' }}
-          >
-            Sign up for Free
-          </a>
-          <p>Or...</p>
-          <p>
-            Check out{' '}
-            <TextLink as="link" linkTo="/learn">
-              how it works
-            </TextLink>
-            , read about our{' '}
-            <TextLink as="link" linkTo="/security">
-              security
-            </TextLink>
-            , and find out more{' '}
-            <TextLink as="link" linkTo="/about">
-              about us and our mission
-            </TextLink>
-            .
-          </p>
-        </div>
+      <div styleName="provider-inner end-stuff">
+        <h2>Start unsubscribing from emails in {variationsText} today!</h2>
+        <a
+          href="/signup"
+          className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
+          style={{ margin: '50px auto' }}
+        >
+          Sign up for Free
+        </a>
+        <p>Or...</p>
+        <p>
+          Check out{' '}
+          <TextLink as="link" linkTo="/learn">
+            how it works
+          </TextLink>
+          , read about our{' '}
+          <TextLink as="link" linkTo="/security">
+            security
+          </TextLink>
+          , and find out more{' '}
+          <TextLink as="link" linkTo="/about">
+            about us and our mission
+          </TextLink>
+          .
+        </p>
       </div>
     </SubPageLayout>
   );

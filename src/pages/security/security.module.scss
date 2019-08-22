@@ -5,11 +5,6 @@
   list-style: disc;
 }
 
-.stuff-at-the-bottom {
-  text-align: center;
-  margin: 100px auto 0 auto;
-}
-
 .image-section {
   display: grid;
   grid-column-gap: 50px;
@@ -71,6 +66,7 @@
 
 .permissions {
 }
+
 .scopes {
   h3 {
     font-size: 20px;
@@ -81,9 +77,7 @@
 }
 
 .security-features {
-  background-color: $color-dark-background;
-  color: white;
-  padding: 90px 0 170px 0;
+  @extend .subpage-section-inverted;
 
   .image-section {
     margin-bottom: 0;
@@ -95,4 +89,8 @@
 
 .security-inner {
   @extend .subpage-content;
+}
+
+.end-stuff {
+  @extend .subpage-end-stuff;
 }

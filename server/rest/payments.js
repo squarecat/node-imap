@@ -32,9 +32,9 @@ export default app => {
       const {
         payment_method_id,
         payment_intent_id,
-        name,
-        address,
-        saveCard
+        billingDetails,
+        saveCard,
+        donate
       } = req.body;
       try {
         const response = await PaymentService.createPaymentForUser(
@@ -42,7 +42,7 @@ export default app => {
             paymentMethodId: payment_method_id,
             paymentIntentId: payment_intent_id
           },
-          { user, productId, coupon, name, address, saveCard }
+          { user, productId, coupon, billingDetails, saveCard, donate }
         );
         return res.send(response);
       } catch (err) {
@@ -64,9 +64,10 @@ export default app => {
     async (req, res, next) => {
       const { user } = req;
       const { productId, coupon } = req.params;
+      const { donate } = req.body;
       try {
         const response = await PaymentService.createPaymentWithExistingCardForUser(
-          { user, productId, coupon }
+          { user, productId, coupon, donate }
         );
         return res.send(response);
       } catch (err) {

@@ -264,15 +264,12 @@ $textarea-font-size: 14px;
     max-width: 90%;
     margin: auto;
   }
-  &.column {
-    display: flex;
-    flex-direction: column;
-  }
-  &:last-child {
-    margin-bottom: 0;
-  }
   &.unpadded {
     margin-bottom: 4px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
   }
 
   > p,

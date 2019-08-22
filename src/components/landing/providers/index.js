@@ -24,7 +24,7 @@ export function ProviderFooter({ name, variations }) {
         Start unsubscribing from emails in your {variations} inboxes today!
       </h2>
       <a
-        href={`/signup?ref=provider-${name}`}
+        href="/signup"
         className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert beam-me-up-fit-long-stuff-please`}
         style={{ margin: '50px auto' }}
       >
