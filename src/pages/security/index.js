@@ -216,13 +216,14 @@ export default function SecurityPage() {
             <a href="mailto:security@leavemealone.app">get in touch</a> - we
             will be happy to help!
           </p>
-          <a
+          <TextLink
+            event="clicked-security-mailto"
             href="mailto:security@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center`}
             style={{ marginTop: 50 }}
           >
             Contact Us
-          </a>
+          </TextLink>
         </div>
       </div>
     </SubPageLayout>

@@ -54,9 +54,13 @@ const ProviderIMAP = () => {
               newsletters in {variationsText}.
             </p>
 
-            <a href="/signup" className={`beam-me-up-cta`}>
+            <TextLink
+              href="/signup"
+              event="clicked-imap-cta"
+              className={`beam-me-up-cta`}
+            >
               Start Unsubscribing
-            </a>
+            </TextLink>
           </div>
           <div styleName="container-image">
             <MailListIllustration />

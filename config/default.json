@@ -68,11 +68,11 @@
     }
   },
   "urls": {
-    "base": "http://local.leavemealone.xyz",
+    "base": "https://local.leavemealone.xyz",
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",
-    "referral": "http://local.leavemealone.xyz/r/",
+    "referral": "https://local.leavemealone.xyz/r/",
     "requestBeta": "https://airtable.com/shrGnYnRq2RMqJJpA",
     "submitTestimonial": "https://airtable.com/shr3BnaKrqo1TMFCR",
     "cdn": "https://cdn.leavemealone.app"

@@ -287,13 +287,14 @@ export default function Learn() {
           centered
         />
 
-        <a
+        <TextLink
           href="/signup"
+          event="clicked-learn-cta"
           className={`beam-me-up-cta beam-me-up-cta-center`}
           style={{ marginTop: '50px' }}
         >
           Get Started For Free!
-        </a>
+        </TextLink>
       </div>
     </SubPageLayout>
   );

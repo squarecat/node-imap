@@ -44,12 +44,13 @@ const InTheNewsPage = () => {
           .
         </p>
         <p style={{ margin: '50px auto' }}>Or...</p>
-        <a
+        <TextLink
+          event="clicked-news-cta"
           href={`/signup`}
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
         >
           Sign Up Now!
-        </a>
+        </TextLink>
       </div>
     </SubPageLayout>
   );

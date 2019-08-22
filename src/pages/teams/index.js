@@ -50,12 +50,13 @@ const TeamsPage = () => {
               control of your office from unwanted emails.
             </p>
 
-            <a
+            <TextLink
+              event="clicked-teams-mailto"
               href="mailto:teams@leavemealone.app"
               className={`beam-me-up-cta`}
             >
               Contact Us
-            </a>
+            </TextLink>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -217,13 +218,14 @@ const TeamsPage = () => {
 
         <div styleName="end-stuff">
           <h2>Find out more about Leave Me Alone for your company</h2>
-          <a
+          <TextLink
+            event="clicked-teams-company-mailto"
             href="mailto:teams@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ margin: '50px auto' }}
           >
             Contact Us
-          </a>
+          </TextLink>
           <p>
             Part of a charity or non-profit?{' '}
             <TextLink href="mailto:teams@leavemealone.app">
