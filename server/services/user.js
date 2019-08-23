@@ -44,7 +44,8 @@ import {
   addReminderRequestToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
-  addUserToStats
+  addUserToStats,
+  addRemovedAccountToStats
 } from './stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
@@ -58,13 +59,13 @@ import {
   getOrganisationByInvitedEmailOrValidDomain,
   removeUserAccountFromOrganisation
 } from './organisation';
-import { getMilestone, updateMilestoneCompletions } from './milestones';
 import {
   removeImapAccessDetails,
   setImapAccessDetails,
   testImapConnection,
   updateImapPassword
 } from './imap';
+import { getMilestone, updateMilestoneCompletions } from './milestones';
 
 import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
@@ -502,7 +503,14 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 
 export async function connectImapAccount(userId, masterKey, imapData) {
   const audit = createAudit(userId, 'action/connect-imap');
-  const { username, password, port, host } = imapData;
+  const {
+    username,
+    password,
+    port,
+    host,
+    displayName,
+    imapProvider
+  } = imapData;
   try {
     const provider = 'imap';
 
@@ -549,6 +557,8 @@ export async function connectImapAccount(userId, masterKey, imapData) {
     const account = {
       id,
       provider,
+      displayName,
+      imapProvider,
       email: username,
       port,
       host
@@ -710,7 +720,7 @@ function addConnectAccountActivity(updatedUser, account) {
     provider: account.provider,
     email: account.email
   });
-  addConnectedAccountToStats(account.provider);
+  addConnectedAccountToStats(account);
 }
 
 export async function updateUserAccountToken({ userId, accountEmail }, keys) {
@@ -1103,6 +1113,7 @@ export async function removeUserAccount(userId, accountEmail) {
       provider,
       email: accountEmail
     });
+    addRemovedAccountToStats(account);
 
     if (user.organisationId) {
       logger.debug(

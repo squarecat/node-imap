@@ -24,6 +24,7 @@ import {
   addUser,
   addUserAccountDeactivated,
   getStats,
+  removeConnectedAccount,
   removeOrganisationUser
 } from '../dao/stats';
 
@@ -103,8 +104,11 @@ export function removeOrganisationUserToStats(count) {
 export function addOrganisationUnsubscribeToStats(count) {
   return addOrganisationUnsubscribe(count);
 }
-export function addConnectedAccountToStats(provider) {
-  return addConnectedAccount(provider);
+export function addConnectedAccountToStats(account) {
+  return addConnectedAccount(account);
+}
+export function addRemovedAccountToStats(account) {
+  return removeConnectedAccount(account);
 }
 
 export function getAllStats() {

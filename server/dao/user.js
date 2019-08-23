@@ -9,6 +9,7 @@ import {
 } from './encryption';
 import db, { isoDate } from './db';
 
+import _omit from 'lodash.omit';
 import logger from '../utils/logger';
 import shortid from 'shortid';
 import { v4 } from 'node-uuid';
@@ -1061,15 +1062,9 @@ function decryptUser(user, options = {}) {
   } else {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(
-        ({ id, provider, email, addedAt, problem }) => ({
-          id,
-          provider,
-          email,
-          addedAt,
-          problem
-        })
-      )
+      accounts: user.accounts.map(account => ({
+        ..._omit(account, ['keys', 'port', 'host'])
+      }))
     };
   }
   return decryptedUser;

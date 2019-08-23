@@ -93,7 +93,8 @@ export function removeOrganisationUser(count = -1) {
 export function addOrganisationUnsubscribe(count = 1) {
   return updateSingleStat('organisationUnsubscribes', count);
 }
-export function addConnectedAccount(provider, count = 1) {
+export async function addConnectedAccount(account, count = 1) {
+  const { provider } = account;
   if (provider === 'google') {
     return updateSingleStat('connectedAccountGoogle', count);
   }
@@ -101,7 +102,47 @@ export function addConnectedAccount(provider, count = 1) {
     return updateSingleStat('connectedAccountOutlook', count);
   }
   if (provider === 'imap') {
-    return updateSingleStat('connectedAccountImap', count);
+    await updateSingleStat('connectedAccountImap', count);
+    const { imapProvider } = account;
+    // record the specific IMAP account providers too
+    if (imapProvider === 'yahoo') {
+      return updateSingleStat('connectedAccountImapYahoo', count);
+    }
+    if (imapProvider === 'icloud') {
+      return updateSingleStat('connectedAccountImapIcloud', count);
+    }
+    if (imapProvider === 'fastmail') {
+      return updateSingleStat('connectedAccountImapFastmail', count);
+    }
+    if (imapProvider === 'aol') {
+      return updateSingleStat('connectedAccountImapAol', count);
+    }
+  }
+}
+export async function removeConnectedAccount(account, count = 1) {
+  const { provider } = account;
+  if (provider === 'google') {
+    return updateSingleStat('removedAccountGoogle', count);
+  }
+  if (provider === 'outlook') {
+    return updateSingleStat('removedAccountOutlook', count);
+  }
+  if (provider === 'imap') {
+    await updateSingleStat('removedAccountImap', count);
+    const { imapProvider } = account;
+    // record the specific IMAP account providers too
+    if (imapProvider === 'yahoo') {
+      return updateSingleStat('removedAccountImapYahoo', count);
+    }
+    if (imapProvider === 'icloud') {
+      return updateSingleStat('removedAccountImapIcloud', count);
+    }
+    if (imapProvider === 'fastmail') {
+      return updateSingleStat('removedAccountImapFastmail', count);
+    }
+    if (imapProvider === 'aol') {
+      return updateSingleStat('removedAccountImapAol', count);
+    }
   }
 }
 
@@ -311,7 +352,18 @@ const recordedStats = [
   'packagesPurchased',
   'connectedAccountGoogle',
   'connectedAccountOutlook',
-  'connectedAccountImap'
+  'connectedAccountImap',
+  'connectedAccountImapYahoo',
+  'connectedAccountImapIcloud',
+  'connectedAccountImapFastmail',
+  'connectedAccountImapAol',
+  'removedAccountGoogle',
+  'removedAccountOutlook',
+  'removedAccountImap',
+  'removedAccountImapYahoo',
+  'removedAccountImapIcloud',
+  'removedAccountImapFastmail',
+  'removedAccountImapAol'
 ];
 
 export async function recordStats() {

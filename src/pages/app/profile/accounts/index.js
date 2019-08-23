@@ -37,7 +37,7 @@ const Accounts = () => {
 
   const onClickRemoveAccount = async email => {
     const account = accounts.find(e => e.email === email);
-    const warningModalData = { email, provider: account.provider };
+    const warningModalData = account;
     openModal(
       <WarningModal
         onConfirm={() => onClickWarningConfirm(account)}
@@ -148,7 +148,7 @@ async function removeAccount(email) {
   });
 }
 
-function modalContent({ email, provider }) {
+function modalContent({ email, provider, displayName }) {
   let content;
   if (provider === 'outlook') {
     content = (
@@ -186,10 +186,11 @@ function modalContent({ email, provider }) {
     );
   }
   if (provider === 'imap') {
+    let name = displayName || 'IMAP';
     content = (
       <p>
-        We will completely remove all your IMAP details, including username and
-        password from our systems.
+        We will completely remove all your {name} details, including username
+        and password from our systems.
       </p>
     );
   }
