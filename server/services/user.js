@@ -647,8 +647,11 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
 }
 
 async function getReferredByData(referralCode) {
+  // no referral code provided
   if (!referralCode) return null;
   const referrer = await getUserByReferralCode(referralCode);
+  // invalid referral code
+  if (!referrer) return null;
   const { credits } = await getMilestone('signedUpFromReferral');
   return {
     id: referrer.id,
