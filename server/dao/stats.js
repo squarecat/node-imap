@@ -103,18 +103,18 @@ export async function addConnectedAccount(account, count = 1) {
   }
   if (provider === 'imap') {
     await updateSingleStat('connectedAccountImap', count);
-    const { imapProvider } = account;
+    const { providerType } = account;
     // record the specific IMAP account providers too
-    if (imapProvider === 'yahoo') {
+    if (providerType === 'yahoo') {
       return updateSingleStat('connectedAccountImapYahoo', count);
     }
-    if (imapProvider === 'icloud') {
+    if (providerType === 'icloud') {
       return updateSingleStat('connectedAccountImapIcloud', count);
     }
-    if (imapProvider === 'fastmail') {
+    if (providerType === 'fastmail') {
       return updateSingleStat('connectedAccountImapFastmail', count);
     }
-    if (imapProvider === 'aol') {
+    if (providerType === 'aol') {
       return updateSingleStat('connectedAccountImapAol', count);
     }
   }
@@ -129,18 +129,18 @@ export async function removeConnectedAccount(account, count = 1) {
   }
   if (provider === 'imap') {
     await updateSingleStat('removedAccountImap', count);
-    const { imapProvider } = account;
+    const { providerType } = account;
     // record the specific IMAP account providers too
-    if (imapProvider === 'yahoo') {
+    if (providerType === 'yahoo') {
       return updateSingleStat('removedAccountImapYahoo', count);
     }
-    if (imapProvider === 'icloud') {
+    if (providerType === 'icloud') {
       return updateSingleStat('removedAccountImapIcloud', count);
     }
-    if (imapProvider === 'fastmail') {
+    if (providerType === 'fastmail') {
       return updateSingleStat('removedAccountImapFastmail', count);
     }
-    if (imapProvider === 'aol') {
+    if (providerType === 'aol') {
       return updateSingleStat('removedAccountImapAol', count);
     }
   }

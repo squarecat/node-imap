@@ -509,7 +509,7 @@ export async function connectImapAccount(userId, masterKey, imapData) {
     port,
     host,
     displayName,
-    imapProvider
+    providerType
   } = imapData;
   try {
     const provider = 'imap';
@@ -558,7 +558,7 @@ export async function connectImapAccount(userId, masterKey, imapData) {
       id,
       provider,
       displayName,
-      imapProvider,
+      providerType,
       email: username,
       port,
       host

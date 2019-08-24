@@ -65,14 +65,14 @@ function Account({
   loading,
   onClickRemoveAccount
 }) {
-  const { email, provider, id, problem, displayName, imapProvider } = account;
+  const { email, provider, id, problem, displayName, providerType } = account;
 
-  const iconContent = getIcon(provider, imapProvider);
+  const iconContent = getIcon(provider, providerType);
 
   let emailContent = email;
   if (isPrimary && showPrimary) {
     emailContent = `${email} (primary)`;
-  } else if (displayName && !imapProvider) {
+  } else if (displayName && !providerType) {
     emailContent = `${email} (${displayName})`;
   }
 
@@ -123,20 +123,20 @@ function Account({
   );
 }
 
-function getIcon(provider, imapProvider) {
+function getIcon(provider, providerType) {
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
   if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
   if (provider === 'imap') {
-    if (imapProvider === 'yahoo') {
+    if (providerType === 'yahoo') {
       return <YahooIcon width="16" height="16" />;
     }
-    if (imapProvider === 'icloud') {
+    if (providerType === 'icloud') {
       return <ICloudIcon />;
     }
-    if (imapProvider === 'fastmail') {
+    if (providerType === 'fastmail') {
       return <FastmailIcon />;
     }
-    if (imapProvider === 'aol') {
+    if (providerType === 'aol') {
       return <AolIcon width="16" height="16" />;
     }
     return <AtSignIcon width="16" height="16" />;

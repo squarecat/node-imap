@@ -23,7 +23,7 @@ export const CONFIG = {
       host: 'imap.fastmail.com',
       port: 993,
       displayName: 'Fastmail',
-      imapProvider: 'fastmail'
+      providerType: 'fastmail'
     },
     passwordLink: 'https://www.fastmail.com/help/clients/apppassword.html'
   },
@@ -32,7 +32,7 @@ export const CONFIG = {
       host: 'imap.mail.me.com',
       port: 993,
       displayName: 'iCloud',
-      imapProvider: 'icloud'
+      providerType: 'icloud'
     },
     passwordLink: 'https://support.apple.com/en-us/HT204397'
   },
@@ -41,7 +41,7 @@ export const CONFIG = {
       host: 'imap.mail.yahoo.com',
       port: 993,
       displayName: 'Yahoo',
-      imapProvider: 'yahoo'
+      providerType: 'yahoo'
     },
     passwordLink: 'https://help.yahoo.com/kb/SLN15241.html'
   },
@@ -50,7 +50,7 @@ export const CONFIG = {
       host: 'imap.aol.com',
       port: 993,
       displayName: 'AOL',
-      imapProvider: 'aol'
+      providerType: 'aol'
     },
     passwordLink: 'https://help.aol.com/articles/Create-and-manage-app-password'
   }
