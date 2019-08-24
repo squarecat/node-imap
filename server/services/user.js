@@ -42,10 +42,10 @@ import {
   addNewsletterUnsubscriptionToStats,
   addReferralPurchaseToStats,
   addReminderRequestToStats,
+  addRemovedAccountToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
-  addUserToStats,
-  addRemovedAccountToStats
+  addUserToStats
 } from './stats';
 import {
   addUpdateSubscriber as addUpdateNewsletterSubscriber,
@@ -59,13 +59,13 @@ import {
   getOrganisationByInvitedEmailOrValidDomain,
   removeUserAccountFromOrganisation
 } from './organisation';
+import { getMilestone, updateMilestoneCompletions } from './milestones';
 import {
   removeImapAccessDetails,
   setImapAccessDetails,
   testImapConnection,
   updateImapPassword
 } from './imap';
-import { getMilestone, updateMilestoneCompletions } from './milestones';
 
 import addHours from 'date-fns/add_hours';
 import addMonths from 'date-fns/add_months';
@@ -1361,7 +1361,7 @@ function checkReward({ userActivity, activityData }) {
     // connectedAdditionalAccount can only be done once per additional email
     case 'connectedAdditionalAccount': {
       const alreadyConnected = userActivity.find(
-        a => a.type === type && a.data.id === data.id
+        a => a.type === type && a.data.email === data.email
       );
       if (alreadyConnected) {
         logger.debug(
