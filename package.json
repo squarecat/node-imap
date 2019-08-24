@@ -23,6 +23,7 @@
     "cookie-parser": "^1.4.3",
     "date-fns": "^1.29.0",
     "dexie": "^2.0.4",
+    "dotenv": "^8.1.0",
     "email-addresses": "^3.0.3",
     "emailjs-imap-client": "^3.0.7",
     "eslint-plugin-react-hooks": "^1.6.0",

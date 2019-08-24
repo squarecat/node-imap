@@ -220,9 +220,15 @@ export const FormTextarea = ({
   );
 };
 
-export const FormGroup = ({ children, fluid, column, unpadded, container }) => {
+export const FormGroup = ({ children, fluid, container, unpadded }) => {
   return (
-    <div styleName={cx('form-group', { fluid, column, container, unpadded })}>
+    <div
+      styleName={cx('form-group', {
+        fluid,
+        container,
+        unpadded
+      })}
+    >
       {children}
     </div>
   );

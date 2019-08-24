@@ -170,9 +170,13 @@ const IndexPage = () => {
                 </p>
 
                 <div className="join-container">
-                  <a href="/signup?ref=hero" className={`beam-me-up-cta`}>
+                  <TextLink
+                    href="/signup"
+                    event={'clicked-hero-cta'}
+                    className={`beam-me-up-cta`}
+                  >
                     Get Started for Free
-                  </a>
+                  </TextLink>
                   {statsContent}
                 </div>
               </div>
@@ -421,12 +425,13 @@ const IndexPage = () => {
                 </TextLink>
               </div>
 
-              <a
-                href="/signup?ref=providers"
+              <TextLink
+                event={'clicked-providers-cta'}
+                href="/signup"
                 className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               >
                 Start Unsubscribing
-              </a>
+              </TextLink>
             </div>
           </div>
         </div>
@@ -493,13 +498,14 @@ const IndexPage = () => {
         <div className="home-container">
           <div className="home-container-inner end-stuff">
             {statsContent}
-            <a
-              href="/signup?ref=footer"
+            <TextLink
+              event="clicked-footer-cta"
+              href="/signup"
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               style={{ margin: '50px auto' }}
             >
               Get Started For Free
-            </a>
+            </TextLink>
           </div>
         </div>
         <Footer />

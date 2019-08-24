@@ -13,7 +13,7 @@ import SubPageLayout from '../../layouts/subpage-layout';
 import { TrustBar } from '../../components/landing/testimonial';
 import gmailLogo from '../../assets/providers/gmail-logo.png';
 import googleLogo from '../../assets/providers/google-logo.png';
-import googleScopes from '../../assets/security-gmail-scopes.png';
+import googleScopes from '../../assets/security/security-gmail-scopes.png';
 import gsuiteLogo from '../../assets/providers/gsuite-logo.png';
 
 const PROVIDER_NAME = 'Google';
@@ -47,9 +47,13 @@ const ProviderGoogle = () => {
               newsletters in your {variationsText} inboxes.
             </p>
 
-            <a href="/signup" className={`beam-me-up-cta`}>
+            <TextLink
+              href="/signup"
+              event="clicked-google-cta"
+              className={`beam-me-up-cta`}
+            >
               Start Unsubscribing
-            </a>
+            </TextLink>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -95,10 +99,8 @@ const ProviderGoogle = () => {
         </div>
       </div>
 
-      <div styleName="provider-inner">
-        <div styleName="end-stuff">
-          <ProviderFooter name={PROVIDER_NAME} variations={variationsText} />
-        </div>
+      <div styleName="provider-inner end-stuff">
+        <ProviderFooter name={PROVIDER_NAME} variations={variationsText} />
       </div>
     </SubPageLayout>
   );

@@ -50,12 +50,13 @@ export function Enterprise({ readMore = false }) {
         </li>
         <li>Email, chat and phone support</li>
       </ul>
-      <a
+      <TextLink
+        event="clicked-pricing-mailto"
         href="mailto:teams@leavemealone.app"
         className={`beam-me-up-cta beam-me-up-cta-center`}
       >
         Contact us
-      </a>
+      </TextLink>
       {readMore ? (
         <div styleName="read-more">
           <p>
@@ -227,9 +228,13 @@ export default () => {
         </p>
 
         <br />
-        <a href="/signup" className={`beam-me-up-cta beam-me-up-cta-center`}>
+        <TextLink
+          href="/signup"
+          event="clicked-pricing-privacy-cta"
+          className={`beam-me-up-cta beam-me-up-cta-center`}
+        >
           Sign Me Up!
-        </a>
+        </TextLink>
       </div>
 
       <div styleName="end-stuff">
@@ -250,12 +255,13 @@ export default () => {
           .
         </p>
         <p style={{ margin: '50px auto' }}>Or...</p>
-        <a
+        <TextLink
           href={`/signup`}
+          event="clicked-pricing-footer-cta"
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
         >
           Try now for FREE
-        </a>
+        </TextLink>
       </div>
     </SubPageLayout>
   );

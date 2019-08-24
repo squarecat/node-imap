@@ -5,7 +5,11 @@ import { FacebookIcon, LinkedInIcon, MailIcon, TwitterIcon } from '../icons';
 import { Link } from 'gatsby';
 import React from 'react';
 import { TextLink } from '../text';
+import oneTreePlantedImg from '../../assets/climate/one-tree-planted/OneTreePlanted-horizontal-white.png';
 
+// import oneTreePlantedImg from '../../assets/climate/one-tree-planted/ReforestationPartnerLogo.png';
+
+const TREE_ORG_LINK = 'https://onetreeplanted.org';
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default () => (
@@ -44,9 +48,7 @@ export default () => (
             <TextLink href="/teams">For Teams</TextLink>
           </li>
           <li>
-            <TextLink undecorated href="mailto:hello@leavemealone.app">
-              Contact
-            </TextLink>
+            <TextLink href="/save-the-planet">Save the planet</TextLink>
           </li>
         </ul>
         <ul styleName="footer-nav">
@@ -134,35 +136,44 @@ export default () => (
           </li>
         </ul>
       </div>
-      <ul styleName="footer-social">
-        <li title="@LeaveMeAloneApp">
-          <TextLink undecorated href="https://twitter.com/leavemealoneapp">
-            <TwitterIcon />
-          </TextLink>
-        </li>
-        <li title="@LeaveMeAloneApp">
-          <TextLink undecorated href="https://facebook.com/leavemealoneapp">
-            <FacebookIcon />
-          </TextLink>
-        </li>
-        <li title="hello@leavemealone.app">
-          <TextLink undecorated href="mailto:hello@leavemealone.app">
-            <MailIcon width="20" height="20" />
-          </TextLink>
-        </li>
-        <li>
-          <TextLink
-            undecorated
-            href="https://linkedin.com/showcase/leave-me-alone-app"
-          >
-            <LinkedInIcon width="20" height="20" />
-          </TextLink>
-        </li>
-      </ul>
-      <div styleName="made-by">
-        <span>
-          Made by <TextLink href="https://squarecat.io">Squarecat</TextLink>
-        </span>
+
+      <div styleName="footer-bottom">
+        <div styleName="made-by">
+          <span>
+            Made by <TextLink href="https://squarecat.io">Squarecat</TextLink>
+          </span>
+        </div>
+        <ul styleName="footer-social">
+          <li title="@LeaveMeAloneApp">
+            <TextLink undecorated href="https://twitter.com/leavemealoneapp">
+              <TwitterIcon />
+            </TextLink>
+          </li>
+          <li title="@LeaveMeAloneApp">
+            <TextLink undecorated href="https://facebook.com/leavemealoneapp">
+              <FacebookIcon />
+            </TextLink>
+          </li>
+          <li title="hello@leavemealone.app">
+            <TextLink undecorated href="mailto:hello@leavemealone.app">
+              <MailIcon width="20" height="20" />
+            </TextLink>
+          </li>
+          <li>
+            <TextLink
+              undecorated
+              href="https://linkedin.com/showcase/leave-me-alone-app"
+            >
+              <LinkedInIcon width="20" height="20" />
+            </TextLink>
+          </li>
+        </ul>
+        <a styleName="one-tree-planted" href={TREE_ORG_LINK}>
+          <img
+            src={oneTreePlantedImg}
+            alt="One Tree Planted reforestation partner logo"
+          />
+        </a>
       </div>
     </div>
   </div>

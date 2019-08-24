@@ -17,12 +17,22 @@
   @media (max-width: 960px) {
     padding: 40px;
   }
+
+  @media (max-width: 400px) {
+    padding: 20px;
+  }
 }
 
 .subpage-section-inverted {
   background-color: $color-dark-background;
   color: white;
   padding: 90px 0 170px 0;
+  margin-bottom: 90px;
+
+  @media (max-width: 960px) {
+    margin-bottom: 60px;
+    padding: 90px 0;
+  }
 }
 
 .subpage h1 {
@@ -136,6 +146,11 @@
   margin-top: 100px;
 }
 
+.subpage-section-inverted + .subpage-end-stuff {
+  border-top: none;
+  @extend .subpage-content;
+}
+
 .subpage-image-section {
   display: grid;
   grid-column-gap: 50px;
@@ -192,17 +207,13 @@
 }
 
 .subpage-features {
-  margin-top: 150px;
-}
-
-.subpage-features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   grid-column-gap: 50px;
+  margin-top: 150px;
 
   @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 100%;
     margin-top: 90px;
   }
 }
@@ -213,7 +224,9 @@
   }
 
   @media (max-width: 768px) {
-    font-size: 16px;
+    p {
+      font-size: 16px;
+    }
   }
 }
 

@@ -186,12 +186,17 @@ const FaqPage = () => (
       </p>
       <p>
         Still have questions?{' '}
-        <TextLink href="mailto:support@leavemealone.app">Get in touch</TextLink>
+        <TextLink
+          event="clicked-faq-emailto"
+          href="mailto:support@leavemealone.app"
+        >
+          Get in touch
+        </TextLink>
         !
       </p>
-      <a href="/signup" styleName="cta">
+      <TextLink event="clicked-faq-cta" href="/signup" styleName="cta">
         Get Started For Free!
-      </a>
+      </TextLink>
     </div>
   </SubPageLayout>
 );

@@ -16,7 +16,7 @@ import microsoftLogo from '../../assets/providers/microsoft-logo.png';
 import msnLogo from '../../assets/providers/msn-logo.png';
 import officeLogo from '../../assets/providers/office-365-logo.png';
 import outlookLogo from '../../assets/providers/outlook-logo.png';
-import outlookScopesImg from '../../assets/security-outlook-scopes.png';
+import outlookScopesImg from '../../assets/security/security-outlook-scopes.png';
 
 const PROVIDER_NAME = 'Microsoft';
 const VARIATIONS = ['Hotmail', 'Outlook', 'Office 365', 'Live', 'MSN'];
@@ -51,9 +51,13 @@ const ProviderMicrosoft = () => {
               newsletters in your {variationsText} inboxes.
             </p>
 
-            <a href="/signup" className={`beam-me-up-cta`}>
+            <TextLink
+              href="/signup"
+              event="clicked-microsoft-cta"
+              className={`beam-me-up-cta`}
+            >
               Start Unsubscribing
-            </a>
+            </TextLink>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -99,10 +103,8 @@ const ProviderMicrosoft = () => {
         </div>
       </div>
 
-      <div styleName="provider-inner">
-        <div styleName="end-stuff">
-          <ProviderFooter name={PROVIDER_NAME} variations={variationsText} />
-        </div>
+      <div styleName="provider-inner end-stuff">
+        <ProviderFooter name={PROVIDER_NAME} variations={variationsText} />
       </div>
     </SubPageLayout>
   );

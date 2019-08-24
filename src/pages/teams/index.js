@@ -15,7 +15,7 @@ import googleLogo from '../../assets/providers/gsuite-logo.png';
 import happy from '../../assets/enterprise/happy.png';
 import luke from '../../assets/luke.jpeg';
 import officeLogo from '../../assets/providers/office-365-logo.png';
-import securityImg from '../../assets/security.png';
+import securityImg from '../../assets/security/security.png';
 
 const companies = [
   {
@@ -50,12 +50,13 @@ const TeamsPage = () => {
               control of your office from unwanted emails.
             </p>
 
-            <a
+            <TextLink
+              event="clicked-teams-mailto"
               href="mailto:teams@leavemealone.app"
               className={`beam-me-up-cta`}
             >
               Contact Us
-            </a>
+            </TextLink>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -67,43 +68,36 @@ const TeamsPage = () => {
             <div styleName="feature-img">
               <img src={happy} alt="happy face image" />
             </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">Inbox sanity for happy teams</h3>
-              <p>
-                Receiving unwanted subscription emails is a source of annoyance,
-                frustration and interruption. Leave Me Alone makes it quick and
-                easy to unsubscribe so that your team can focus on building your
-                business.
-              </p>
-            </div>
+            <h3 styleName="feature-title">Inbox sanity for happy teams</h3>
+            <p styleName="feature-text">
+              Receiving unwanted subscription emails is a source of annoyance,
+              frustration and interruption. Leave Me Alone makes it quick and
+              easy to unsubscribe so that your team can focus on building your
+              business.
+            </p>
           </div>
           <div styleName="feature">
             <div styleName="feature-img">
               <img src={broom} alt="broom sweeping image" />
             </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">Clean all accounts together</h3>
-              <p>
-                Email is necessary for company communication. Each team member
-                can connect all of their email accounts and see all of their
-                subscription emails in one go. Make email a productive tool
-                again.
-              </p>
-            </div>
+            <h3 styleName="feature-title">Clean all accounts together</h3>
+            <p styleName="feature-text">
+              Email is necessary for company communication. Each team member can
+              connect all of their email accounts and see all of their
+              subscription emails in one go. Make email a productive tool again.
+            </p>
           </div>
           <div styleName="feature">
             <div styleName="feature-img">
               <img src={envelope} alt="private envelope image" />
             </div>
-            <div styleName="feature-text">
-              <h3 styleName="feature-title">Stay focused and productive</h3>
-              <p>
-                When you unsubscribe we don't just move your mail into a folder
-                or to trash, instead we actually unsubscribe you from the list.
-                Your company will be clear of subscriptions forever, even if you
-                decide to stop using our service.
-              </p>
-            </div>
+            <h3 styleName="feature-title">Stay focused and productive</h3>
+            <p styleName="feature-text">
+              When you unsubscribe we don't just move your mail into a folder or
+              to trash, instead we actually unsubscribe you from the list. Your
+              company will be clear of subscriptions forever, even if you decide
+              to stop using our service.
+            </p>
           </div>
         </div>
       </div>
@@ -178,7 +172,7 @@ const TeamsPage = () => {
             </p>
             <p>
               About <TextImportant>one in ten</TextImportant>
-              <a styleName="cite-link" href="#cite-1">
+              <a styleName="cite-link" href="#cite-2">
                 <sup>[2]</sup>
               </a>{' '}
               of these emails are subscriptions, and many are completely
@@ -217,13 +211,14 @@ const TeamsPage = () => {
 
         <div styleName="end-stuff">
           <h2>Find out more about Leave Me Alone for your company</h2>
-          <a
+          <TextLink
+            event="clicked-teams-company-mailto"
             href="mailto:teams@leavemealone.app"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ margin: '50px auto' }}
           >
             Contact Us
-          </a>
+          </TextLink>
           <p>
             Part of a charity or non-profit?{' '}
             <TextLink href="mailto:teams@leavemealone.app">

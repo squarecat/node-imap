@@ -1,6 +1,9 @@
 .billing-modal {
-  width: 500px;
   max-width: 100%;
+
+  h4 {
+    font-size: 16px;
+  }
 }
 
 .price {
@@ -9,4 +12,42 @@
 .price-discounted {
   margin-left: 5px;
   text-decoration: line-through;
+}
+
+.payment-panels {
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.panel-left {
+}
+.panel-right {
+  padding: 0 0 0 20px;
+  margin: 0 0 0 20px;
+  border-left: 1px solid rgba(255, 201, 197, 0.35);
+
+  @media (max-width: 600px) {
+    padding: 20px 0 0 0;
+    margin: 20px 0 0 0;
+    border-left: none;
+    border-top: 1px solid rgba(255, 201, 197, 0.35);
+  }
+}
+
+.error {
+  margin: 20px 0 0 0;
+}
+.card-preview {
+  margin-bottom: 20px;
+}
+.existing-card-coupon {
+  margin-top: auto;
 }

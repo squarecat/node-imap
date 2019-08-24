@@ -1,4 +1,8 @@
 const sitemapOptions = require('./sitemap.js');
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`
+});
+
 console.log('sa: ', process.env.SIMPLE_ANALYTICS_DOMAIN);
 module.exports = {
   siteMetadata: {
@@ -21,7 +25,7 @@ module.exports = {
         domain: process.env.SIMPLE_ANALYTICS_DOMAIN,
         scriptName: process.env.SIMPLE_ANALYTICS_SCRIPT,
         metomic: 'analytics',
-        events: true,
+        trackEvents: true,
         trackPageViews: true
       }
     },
