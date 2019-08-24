@@ -372,7 +372,6 @@ const recordedStats = [
   'connectedAccountGoogle',
   'connectedAccountOutlook',
   'connectedAccountImap',
-<<<<<<< HEAD
   'connectedAccountImapYahoo',
   'connectedAccountImapIcloud',
   'connectedAccountImapFastmail',
@@ -383,11 +382,9 @@ const recordedStats = [
   'removedAccountImapYahoo',
   'removedAccountImapIcloud',
   'removedAccountImapFastmail',
-  'removedAccountImapAol'
-=======
+  'removedAccountImapAol',
   'totalDonated',
   'totalDonations'
->>>>>>> master
 ];
 
 export async function recordStats() {
