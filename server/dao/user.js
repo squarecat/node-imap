@@ -1062,9 +1062,9 @@ function decryptUser(user, options = {}) {
   } else {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(account => ({
-        ..._omit(account, ['keys', 'port', 'host'])
-      }))
+      accounts: user.accounts.map(account =>
+        _omit(account, ['keys', 'port', 'host'])
+      )
     };
   }
   return decryptedUser;
