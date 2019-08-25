@@ -136,9 +136,10 @@ export const ModalProvider = React.memo(({ children }) => {
       open: openModal,
       close: closeModal,
       replace: replaceModal,
+      isShown: state.shown,
       context: state.context
     }),
-    [closeModal, openModal, replaceModal, state.context]
+    [closeModal, openModal, replaceModal, state.shown, state.context]
   );
 
   return (

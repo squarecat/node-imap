@@ -215,7 +215,7 @@ function Packages({ onClickBuy }) {
 function Enterprise() {
   return (
     <div styleName="billing-section">
-      <h2>Enterprise</h2>
+      <h2>Teams</h2>
       <div styleName="plans-list">
         <PlanImage smaller compact type="enterprise" />
         <div>
