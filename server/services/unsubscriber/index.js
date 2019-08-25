@@ -1,9 +1,9 @@
 import {
+  addUnsubscribeActivityToUser,
   addUnsubscriptionToUser,
   getUserById,
   incrementCreditsUsedForUser,
-  incrementUserCredits,
-  addUnsubscribeActivityToUser
+  incrementUserCredits
 } from '../user';
 
 import { UserError } from '../../utils/errors';
@@ -118,6 +118,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       milestones
     });
     return {
+      ...mailData,
       id: output.id,
       estimatedSuccess: output.estimatedSuccess,
       hasImage,

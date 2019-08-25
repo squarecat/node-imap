@@ -17,6 +17,24 @@ export function PointyArrow({ width = 32, height = 32 }) {
   );
 }
 
+export function Info({ width = 32, height = 32, ...props }) {
+  return (
+    <svg
+      {...props}
+      viewBox="0 0 32 32"
+      width={width}
+      height={height}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="3"
+    >
+      <path d="M16 14 L16 23 M16 8 L16 10" />
+      <circle cx="16" cy="16" r="14" />
+    </svg>
+  );
+}
+
 export function Refresh({ width = 32, height = 32, ...visProps }) {
   return (
     <svg

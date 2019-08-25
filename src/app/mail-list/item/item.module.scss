@@ -29,6 +29,10 @@
     width: 66px;
     padding: 10px 5px;
   }
+
+  @media (max-width: 350px) {
+    display: none;
+  }
 }
 .from-column {
   white-space: nowrap;
@@ -64,6 +68,11 @@
   @media (max-width: 650px) {
     width: 90px;
   }
+
+  @media (max-width: 350px) {
+    width: 60px;
+    padding: 0;
+  }
 }
 
 .mail-item {
@@ -90,7 +99,7 @@
   flex: 1;
 }
 
-.from-email,
+.mail-data-link,
 .from-name,
 .from-date {
   display: block;
@@ -612,4 +621,34 @@ pre {
 .from-email-message {
   display: inline-block;
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.mail-data-link {
+  display: inline-flex;
+  position: relative;
+  cursor: pointer;
+
+  svg {
+    stroke: currentColor;
+    stroke-width: 1px;
+    position: relative;
+    top: 6px;
+    margin-right: 5px;
+    min-width: 12px;
+
+    @media (max-width: 480px) {
+      top: 5px;
+    }
+  }
+
+  &:hover::after {
+    position: absolute;
+    content: '';
+    left: -6px;
+    right: -6px;
+    top: 2px;
+    bottom: 4px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
 }

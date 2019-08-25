@@ -24,6 +24,10 @@
     padding: 10px 15px;
     height: auto;
     vertical-align: top;
+
+    @media (max-width: 400px) {
+      padding: 5px 0px;
+    }
   }
 
   td:first-child {
@@ -81,6 +85,11 @@
   margin-top: 8px;
   font-size: 14px;
   line-height: 22px;
+
+  @media (max-width: 400px) {
+    font-size: 12px;
+    line-height: 18px;
+  }
 }
 
 .relative-timestamp {

@@ -24,7 +24,7 @@ export function useMailSync() {
       hasAccountProblem,
       preferences
     },
-    { incrementUnsubCount }
+    { incrementUnsubCount, addUnsub }
   ] = useUser(u => ({
     id: u.id,
     token: u.token,
@@ -155,6 +155,7 @@ export function useMailSync() {
                 emailData
               };
             }
+            addUnsub(data);
             await db.mail.update(id, update);
             const mail = await db.mail.get(id);
             if (!estimatedSuccess) {

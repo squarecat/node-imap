@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useMailItem, useOccurrence, useScore } from '../db/hooks';
 
 import IgnoreIcon from '../../../components/ignore-icon';
+import { Info as InfoIcon } from '../../../components/icons';
 import { MailContext } from '../provider';
 import MailItemDataModal from '../../../components/modal/mail-data';
 import { ModalContext } from '../../../providers/modal-provider';
@@ -57,6 +58,17 @@ function MailItem({ id, onLoad }) {
     [m, onLoad]
   );
 
+  const openUnsubModal = useCallback(
+    () => {
+      let strat = m.unsubStrategy;
+      if (!strat) {
+        strat = m.unsubscribeLink ? 'link' : 'mailto';
+      }
+      actions.setUnsubData({ ...m, unsubStrategy: strat });
+    },
+    [actions, m]
+  );
+
   return (
     <>
       <td styleName="cell timestamp-column">
@@ -86,7 +98,15 @@ function MailItem({ id, onLoad }) {
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
-        <a onClick={() => openModal(<MailItemDataModal item={m} />)}>
+        <a
+          styleName="mail-data-link"
+          onClick={() =>
+            openModal(
+              <MailItemDataModal item={m} openUnsubModal={openUnsubModal} />
+            )
+          }
+        >
+          <InfoIcon width="12" height="12" />
           <span styleName="from-email">{`<${m.fromEmail}>`}</span>
         </a>
       </td>
@@ -129,14 +149,7 @@ function MailItem({ id, onLoad }) {
           mail={m}
           isIgnored={isIgnored}
           onUnsubscribe={actions.onUnsubscribe}
-          setUnsubModal={() => {
-            // defensive code against an old bug where unsubStrategy can be null
-            let strat = m.unsubStrategy;
-            if (!strat) {
-              strat = m.unsubscribeLink ? 'link' : 'mailto';
-            }
-            actions.setUnsubData({ ...m, unsubStrategy: strat });
-          }}
+          setUnsubModal={openUnsubModal}
         />
       </td>
     </>
@@ -190,20 +203,9 @@ function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
     );
   } else {
     content = (
-      <svg
-        onClick={() => setUnsubModal()}
-        styleName="failed-to-unsub-icon"
-        viewBox="0 0 32 32"
-        width="20"
-        height="20"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="3"
-      >
-        <path d="M16 14 L16 23 M16 8 L16 10" />
-        <circle cx="16" cy="16" r="14" />
-      </svg>
+      <span onClick={() => setUnsubModal()} styleName="failed-to-unsub-icon">
+        <InfoIcon width="20" height="20" />
+      </span>
     );
   }
 

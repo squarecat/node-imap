@@ -1,24 +1,23 @@
 import './mail-data.module.scss';
 
 import { ModalBody, ModalCloseIcon, ModalHeader } from '..';
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../table';
 import { TextImportant, TextLink } from '../../text';
 
 import Button from '../../btn';
-import { ModalContext } from '../../../providers/modal-provider';
 import Tooltip from '../../tooltip';
 import cx from 'classnames';
 import format from 'date-fns/format';
 import relative from 'tiny-relative-date';
+import request from '../../../utils/request';
 import useOccurrence from '../../../app/mail-list/db/use-occurrence';
 import useUser from '../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
 
-const MailData = ({ item }) => {
-  const { close: closeModal, replace: replaceModal } = useContext(ModalContext);
+const MailData = ({ item, openUnsubModal }) => {
   const { fromEmail, to } = item;
   const [{ unsubscriptions, showAccount }] = useUser(u => ({
     unsubscriptions: u.unsubscriptions,
@@ -36,34 +35,39 @@ const MailData = ({ item }) => {
           item={item}
           unsubscriptions={unsubscriptions}
           showAccount={showAccount}
+          openUnsubModal={openUnsubModal}
         />
       </ModalBody>
     </div>
   );
 };
 
-const Content = React.memo(function({ item, unsubscriptions, showAccount }) {
+const Content = React.memo(function({
+  item,
+  unsubscriptions,
+  showAccount,
+  openUnsubModal
+}) {
   const {
     to,
     fromEmail,
     forAccount,
-    from,
     fromName,
     isTrash,
     isSpam,
     provider,
     status,
-    subscribed,
     date
   } = item;
 
   const unsub = unsubscriptions.find(u => {
-    return u.from === from && u.to === to;
+    return u.from.includes(`<${fromEmail}>`) && u.to === to;
   });
   const labelObj = {
     spam: isSpam,
     trash: isTrash
   };
+  console.log(unsub);
   const labels = useMemo(
     () => {
       if (!isSpam && !isTrash) return null;
@@ -117,7 +121,11 @@ const Content = React.memo(function({ item, unsubscriptions, showAccount }) {
             <TableCell>
               <UnsubStatus unsub={unsub} status={status} />
               <UnsubscribedAt status={status} unsub={unsub} />
-              <UnsubscribeStatusText status={status} unsub={unsub} />
+              <UnsubscribeStatusText
+                openUnsubModal={openUnsubModal}
+                status={status}
+                unsub={unsub}
+              />
             </TableCell>
           </TableRow>
           <TableRow>
@@ -148,10 +156,27 @@ const UnsubscribedAt = React.memo(function UnsubscribedAt({ status, unsub }) {
     return null;
   }
   const { unsubscribedAt } = unsub;
-  return <span styleName="relative-timestamp">{relative(unsubscribedAt)}</span>;
+  return (
+    <Tooltip
+      placement="bottom"
+      overlay={
+        <>
+          <span styleName="from-date">
+            {format(unsubscribedAt, mailDateFormat)}
+          </span>
+          <span styleName="from-time">
+            {format(unsubscribedAt, mailTimeFormat)}
+          </span>
+        </>
+      }
+    >
+      <span styleName="relative-timestamp">{relative(unsubscribedAt)}</span>
+    </Tooltip>
+  );
 });
 
 const UnsubscribeStatusText = React.memo(function UnsubscribeStatusText({
+  openUnsubModal,
   unsub
 }) {
   console.log('status text', unsub);
@@ -169,7 +194,8 @@ const UnsubscribeStatusText = React.memo(function UnsubscribeStatusText({
         <span styleName="unsub-status-text">
           We unsubscribed <TextImportant>{text}</TextImportant> and estimated
           that the unsubscribe was <TextImportant>successful</TextImportant>.{' '}
-          You can <TextLink onClick={() => {}}>see the details here</TextLink>.
+          You can{' '}
+          <TextLink onClick={openUnsubModal}>see the details here</TextLink>.
         </span>
       </>
     );
@@ -182,7 +208,8 @@ const UnsubscribeStatusText = React.memo(function UnsubscribeStatusText({
         {unsub.resolved ? (
           <span>You then unsubscribed manually and marked it as resolved.</span>
         ) : null}{' '}
-        <TextLink onClick={() => {}}>See details</TextLink>.
+        You can{' '}
+        <TextLink onClick={openUnsubModal}>see the details here</TextLink>.
       </span>
     </>
   );
@@ -224,7 +251,30 @@ const LastReceived = React.memo(function LastReceived({
   date,
   unsub = {}
 }) {
+  const [, { updateReportedUnsub }] = useUser();
+  const [state, setState] = useState({
+    loading: false,
+    reported: unsub.reported || false,
+    reportedAt: unsub.reportedAt || null
+  });
+
   const occurrences = useOccurrence({ fromEmail, toEmail, withLastSeen: true });
+
+  const onReportClick = useCallback(
+    async () => {
+      setState({ reportedAt: null, reported: false, loading: true });
+      console.log('reporting....', occurrences);
+      await reportMail({
+        ...unsub,
+        lastReceived: occurrences ? occurrences.lastSeen : date,
+        occurrences: occurrences ? occurrences.count : 1
+      });
+      const d = Date.now();
+      updateReportedUnsub({ ...unsub, reportedAt: d, reported: true });
+      setState({ reportedAt: d, reported: true, loading: false });
+    },
+    [occurrences, unsub, date, updateReportedUnsub]
+  );
 
   let lastSeen;
   if (!occurrences.lastSeen) {
@@ -269,11 +319,19 @@ const LastReceived = React.memo(function LastReceived({
       {isDelinquent ? (
         <>
           <span styleName="report-btn">
-            <Button muted outlined basic smaller>
-              Report
+            <Button
+              disabled={state.reported || state.loading}
+              muted
+              outlined
+              basic
+              smaller
+              onClick={onReportClick}
+            >
+              {state.reported ? 'Reported' : 'Report'}
             </Button>
           </span>
           <ReportData
+            reported={state.reported}
             lastSeen={lastSeen}
             unsubscribedAt={unsub.unsubscribedAt}
           />
@@ -285,8 +343,21 @@ const LastReceived = React.memo(function LastReceived({
 
 const ReportData = React.memo(function ReportData({
   lastSeen,
-  unsubscribedAt
+  unsubscribedAt,
+  reported,
+  reportedAt
 }) {
+  if (reported) {
+    return (
+      <div styleName="report-text">
+        <p>
+          You reported this mailing list to us{' '}
+          <TextImportant>{relative(reportedAt)}</TextImportant>. We'll email you
+          with updates as soon as we have any.
+        </p>
+      </div>
+    );
+  }
   if (lastSeen > new Date(unsubscribedAt)) {
     return (
       <div styleName="report-text">
@@ -310,11 +381,11 @@ const ReportData = React.memo(function ReportData({
   return null;
 });
 
-MailData.whyDidYouRender = true;
-UnsubscribedAt.whyDidYouRender = true;
-UnsubscribeStatusText.whyDidYouRender = true;
-UnsubStatus.whyDidYouRender = true;
-Occurences.whyDidYouRender = true;
-LastReceived.whyDidYouRender = true;
-
 export default MailData;
+
+function reportMail(item) {
+  return request('/api/report', {
+    method: 'PUT',
+    body: JSON.stringify(item)
+  });
+}
