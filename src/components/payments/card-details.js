@@ -13,7 +13,6 @@ const cardElementOptions = {
     base: {
       iconColor: '#bfbfbf',
       color: '#333333',
-      lineHeight: '46px',
       fontWeight: 300,
       fontFamily: 'Gotham-Rounded, Helvetica Neue',
       fontSize: '16px',
