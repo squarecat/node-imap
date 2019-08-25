@@ -78,8 +78,6 @@ export default ({ nextText = 'Next' }) => {
         <Button
           as="button"
           type="submit"
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
           loading={state.loading}
           style={{ width: 150 }}
@@ -92,8 +90,6 @@ export default ({ nextText = 'Next' }) => {
           onClick={() => {
             dispatch({ type: 'set-step', data: 'select' });
           }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn back-btn"
           style={{ width: 150 }}
           muted

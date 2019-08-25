@@ -89,8 +89,6 @@ export default ({ provider, action }) => {
           openSignInWindow('/auth/google', 'SignInWindow');
           return false;
         }}
-        onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-        onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
         styleName="login-me-in-dammit"
       >
         <GoogleIcon width="34" height="34" />
@@ -107,8 +105,6 @@ export default ({ provider, action }) => {
           openSignInWindow('/auth/outlook', 'SignInWindow');
           return false;
         }}
-        onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-        onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
         styleName="login-me-in-dammit"
       >
         <MicrosoftIcon width="34" height="34" />

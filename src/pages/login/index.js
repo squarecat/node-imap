@@ -89,8 +89,6 @@ function loginReducer(state, action) {
       return { ...state, resetCode: action.data };
     case 'set-error':
       return { ...state, error: action.data };
-    case 'set-active':
-      return { ...state, isActive: action.data };
     case 'set-existing-provider':
       return { ...state, existingProvider: action.data };
     case 'set-provider-intent':
@@ -358,12 +356,6 @@ const LoginPage = React.memo(
                 <button
                   type="button"
                   onClick={() => dispatch({ type: 'set-step', data: 'select' })}
-                  onMouseEnter={() =>
-                    dispatch({ type: 'set-active', data: true })
-                  }
-                  onMouseLeave={() =>
-                    dispatch({ type: 'set-active', data: false })
-                  }
                   styleName="signup-btn back-btn"
                 >
                   Back

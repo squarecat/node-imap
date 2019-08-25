@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { FormInput } from '../index';
 import Hashes from 'jshashes';
@@ -12,14 +12,14 @@ If you use this password for any other services then you should change it immedi
 const minLength = 6;
 const passwordLengthText = 'Password must be greater than 6 characters';
 
-export default ({
+const PasswordField = function({
   doValidation = true,
   onChange = () => {},
   autoComplete = 'current-password',
   autoFocus = true,
   smaller = false,
   ...props
-}) => {
+}) {
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
 
@@ -43,16 +43,18 @@ export default ({
           }
         }
 
-        return setState({
-          isValid: true,
-          message: ''
-        });
+        if (!state.isValid) {
+          return setState({
+            isValid: true,
+            message: ''
+          });
+        }
       };
       if (value) {
         validate();
       }
     },
-    [doValidation, value]
+    [doValidation, state.isValid, value]
   );
   useEffect(
     () => {
@@ -60,11 +62,21 @@ export default ({
     },
     [value, state.isValid, state.message, onChange]
   );
+
+  const onInputChange = useCallback(
+    ({ currentTarget }) => {
+      if (value !== currentTarget.value) {
+        setValue(currentTarget.value);
+      }
+    },
+    [value]
+  );
+
   return (
     <FormInput
       {...props}
       smaller={smaller}
-      onChange={({ currentTarget }) => setValue(currentTarget.value)}
+      onChange={onInputChange}
       autoFocus={autoFocus}
       value={value}
       compact
@@ -87,3 +99,6 @@ async function fetchPwnedStatus(password) {
   const isPwned = response.search(checkDigest) > -1;
   return isPwned;
 }
+
+PasswordField.whyDidYouRender = true;
+export default PasswordField;
