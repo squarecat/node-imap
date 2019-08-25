@@ -1,5 +1,6 @@
-import './imap.module.scss';
+import './imap-modal.module.scss';
 
+import { AolIcon, FastmailIcon, ICloudIcon, YahooIcon } from '../../icons';
 import ImapForm, { CONFIG } from '../../imap';
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from '..';
 import React, { useContext, useMemo } from 'react';
@@ -15,8 +16,14 @@ export default ({ onConfirm = () => {}, providerType }) => {
   const title = useMemo(
     () => {
       if (!providerType) return 'Connect IMAP account';
-      const label = CONFIG[providerType].label;
-      return `Connect ${label} account`;
+      const icon = getIcon(providerType);
+      const label = CONFIG[providerType].imap.displayName;
+      return (
+        <span styleName="title-with-icon">
+          <span styleName="icon">{icon}</span>
+          <span styleName="text">Connect {label} account</span>
+        </span>
+      );
     },
     [providerType]
   );
@@ -57,3 +64,19 @@ export default ({ onConfirm = () => {}, providerType }) => {
     </div>
   );
 };
+
+function getIcon(providerType) {
+  if (providerType === 'yahoo') {
+    return <YahooIcon width="16" height="16" />;
+  }
+  if (providerType === 'icloud') {
+    return <ICloudIcon />;
+  }
+  if (providerType === 'fastmail') {
+    return <FastmailIcon />;
+  }
+  if (providerType === 'aol') {
+    return <AolIcon width="16" height="16" />;
+  }
+  return null;
+}

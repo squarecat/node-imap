@@ -1,6 +1,10 @@
 import React from 'react';
+import aolIconImg from '../../assets/providers/imap/aol-logo.png';
 import cx from 'classnames';
+import fastmailIconImg from '../../assets/providers/imap/fastmail-icon.png';
+import icloudIconImg from '../../assets/providers/imap/icloud-icon.png';
 import styles from './icons.module.scss';
+import yahooIconImg from '../../assets/providers/imap/yahoo-icon.png';
 
 export function PointyArrow({ width = 32, height = 32 }) {
   return (
@@ -545,6 +549,22 @@ export function GoogleIcon({ width = '34', height = '34' }) {
       <path fill="none" d="M2 2h44v44H2z" />
     </svg>
   );
+}
+
+export function ICloudIcon() {
+  return <img src={icloudIconImg} styleName="icon-image" />;
+}
+
+export function FastmailIcon() {
+  return <img src={fastmailIconImg} styleName="icon-image" />;
+}
+
+export function AolIcon() {
+  return <img src={aolIconImg} styleName="icon-image" />;
+}
+
+export function YahooIcon() {
+  return <img src={yahooIconImg} styleName="icon-image" />;
 }
 
 export function PoweredByStripe({ width = 119, height = 26 }) {

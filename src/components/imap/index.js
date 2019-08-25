@@ -19,34 +19,38 @@ import useUser from '../../utils/hooks/use-user';
 
 export const CONFIG = {
   fastmail: {
-    label: 'Fastmail',
     imap: {
       host: 'imap.fastmail.com',
-      port: 993
+      port: 993,
+      displayName: 'Fastmail',
+      providerType: 'fastmail'
     },
     passwordLink: 'https://www.fastmail.com/help/clients/apppassword.html'
   },
   icloud: {
-    label: 'iCloud',
     imap: {
       host: 'imap.mail.me.com',
-      port: 993
+      port: 993,
+      displayName: 'iCloud',
+      providerType: 'icloud'
     },
     passwordLink: 'https://support.apple.com/en-us/HT204397'
   },
   yahoo: {
-    label: 'Yahoo',
     imap: {
       host: 'imap.mail.yahoo.com',
-      port: 993
+      port: 993,
+      displayName: 'Yahoo',
+      providerType: 'yahoo'
     },
     passwordLink: 'https://help.yahoo.com/kb/SLN15241.html'
   },
   aol: {
-    label: 'AOL',
     imap: {
       host: 'imap.aol.com',
-      port: 993
+      port: 993,
+      displayName: 'AOL',
+      providerType: 'aol'
     },
     passwordLink: 'https://help.aol.com/articles/Create-and-manage-app-password'
   }
@@ -174,7 +178,7 @@ export default ({ actions, onConfirm, providerType }) => {
           <FormGroup unpadded>
             <FormLabel htmlFor="imap-username">
               {providerType
-                ? `${CONFIG[providerType].label} email address:`
+                ? `${CONFIG[providerType].imap.displayName} email address:`
                 : 'Username:'}
             </FormLabel>
             <FormInput
@@ -199,7 +203,7 @@ export default ({ actions, onConfirm, providerType }) => {
           <FormGroup unpadded>
             <FormLabel htmlFor="imap-password">
               {providerType
-                ? `${CONFIG[providerType].label} password:`
+                ? `${CONFIG[providerType].imap.displayName} password:`
                 : 'Password:'}
             </FormLabel>
             <PasswordInput
@@ -267,6 +271,30 @@ export default ({ actions, onConfirm, providerType }) => {
                 <p>Usually either 993 or 143</p>
               </FormGroup>
             </>
+          )}
+          {providerType ? null : (
+            <FormGroup unpadded>
+              <FormLabel htmlFor="imap-display-name">Display name:</FormLabel>
+              <FormInput
+                name="imap-display-name"
+                smaller
+                placeholder="Example Mail"
+                disabled={state.loading}
+                value={imap.displayName}
+                onChange={e => {
+                  const displayName = e.currentTarget.value;
+                  if (displayName !== imap.displayName) {
+                    dispatch({
+                      type: 'set-imap',
+                      data: { displayName }
+                    });
+                  }
+                }}
+              />
+              <p>
+                Optional. Name of this IMAP provider to help you identify it.
+              </p>
+            </FormGroup>
           )}
           <FormGroup unpadded>
             <FormCheckbox

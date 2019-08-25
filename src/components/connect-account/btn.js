@@ -6,9 +6,9 @@ import { AtSignIcon } from '../icons';
 import ImapModal from '../modal/imap';
 import { ModalContext } from '../../providers/modal-provider';
 import aolLogo from '../../assets/providers/imap/aol-logo.png';
-import fastmailLogo from '../../assets/providers/imap/fastmail-logo-small.jpg';
+import fastmailLogo from '../../assets/providers/imap/fastmail-logo-small.png';
 import googleLogo from '../../assets/providers/google-logo.png';
-import icloudLogo from '../../assets/providers/imap/icloud-logo-small.jpg';
+import icloudLogo from '../../assets/providers/imap/icloud-logo-small.png';
 import microsoftLogo from '../../assets/providers/microsoft-logo.png';
 import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
 

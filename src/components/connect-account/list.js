@@ -1,4 +1,12 @@
-import { AtSignIcon, GoogleIcon, MicrosoftIcon } from '../icons';
+import {
+  AolIcon,
+  AtSignIcon,
+  FastmailIcon,
+  GoogleIcon,
+  ICloudIcon,
+  MicrosoftIcon,
+  YahooIcon
+} from '../icons';
 import React, { useCallback, useState } from 'react';
 
 import Button from '../btn';
@@ -57,7 +65,16 @@ function Account({
   loading,
   onClickRemoveAccount
 }) {
-  const { email, provider, id, problem } = account;
+  const { email, provider, id, problem, displayName, providerType } = account;
+
+  const iconContent = getIcon(provider, providerType);
+
+  let emailContent = email;
+  if (isPrimary && showPrimary) {
+    emailContent = `${email} (primary)`;
+  } else if (displayName && !providerType) {
+    emailContent = `${email} (${displayName})`;
+  }
 
   return (
     <Transition
@@ -77,10 +94,8 @@ function Account({
         return (
           <>
             <li className={classes}>
-              {getIcon(provider)}
-              <span styleName={problem ? 'problem' : ''}>
-                {email} {showPrimary && isPrimary ? '(primary)' : ''}
-              </span>
+              {iconContent}
+              {emailContent}
               {isPrimary ? null : (
                 <Button
                   compact
@@ -108,10 +123,24 @@ function Account({
   );
 }
 
-function getIcon(provider) {
+function getIcon(provider, providerType) {
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
   if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
-  if (provider === 'imap') return <AtSignIcon width="16" height="16" />;
+  if (provider === 'imap') {
+    if (providerType === 'yahoo') {
+      return <YahooIcon width="16" height="16" />;
+    }
+    if (providerType === 'icloud') {
+      return <ICloudIcon />;
+    }
+    if (providerType === 'fastmail') {
+      return <FastmailIcon />;
+    }
+    if (providerType === 'aol') {
+      return <AolIcon width="16" height="16" />;
+    }
+    return <AtSignIcon width="16" height="16" />;
+  }
   return <span />;
 }
 
