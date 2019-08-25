@@ -27,6 +27,8 @@ import subDays from 'date-fns/sub_days';
 import treeImg from '../../assets/climate/tree.png';
 import useAsync from 'react-use/lib/useAsync';
 
+const OPEN_STARTUP_LINK = `https://blog.leavemealone.app/what-does-it-mean-to-be-an-open-startup`;
+
 const lineColor = '#EB6C69';
 // const lineColorLight = '#fedbd5';
 
@@ -394,7 +396,9 @@ export default function OpenPage() {
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
-            <TextLink href="https://openstartups.co/">Open Startups</TextLink>{' '}
+            <TextLink href={OPEN_STARTUP_LINK} target="_">
+              Open Startups
+            </TextLink>{' '}
             movement
           </h2>
         </div>
