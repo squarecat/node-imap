@@ -222,11 +222,6 @@ export const InviteFormMultiple = React.memo(function InviteForm({
 function sendOrganisationInvite(id, emails) {
   return request(`/api/organisation/${id}/invite`, {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
     body: JSON.stringify({ op: 'add', value: emails })
   });
 }

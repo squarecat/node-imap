@@ -235,11 +235,7 @@ async function confirmPayment({
   }
   return request(url, {
     method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({
       payment_method_id: id,
       billingDetails,

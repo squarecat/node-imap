@@ -7,8 +7,8 @@ import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import { TextImportant } from '../../text';
-import request from '../../../utils/request';
 import { getPaymentError } from '../../../utils/errors';
+import request from '../../../utils/request';
 
 export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
   const { close: closeModal } = useContext(ModalContext);
@@ -86,11 +86,6 @@ export default function StartPurchase({ hasBillingCard, onPurchaseSuccess }) {
 async function claimCredits({ productId, coupon }) {
   const url = `/api/payments/claim/${productId}/${coupon}`;
   return request(url, {
-    method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    }
+    method: 'POST'
   });
 }

@@ -100,11 +100,6 @@ export default InvitedUsers;
 function revokeOrganisationInvite(id, email) {
   return request(`/api/organisation/${id}/invite`, {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
     body: JSON.stringify({ op: 'remove', value: email })
   });
 }

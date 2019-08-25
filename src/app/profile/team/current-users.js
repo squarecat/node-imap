@@ -183,11 +183,6 @@ function fetchStats(id) {
 function removeUser(id, email) {
   return request(`/api/organisation/${id}`, {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
     body: JSON.stringify({ op: 'remove-user', value: email })
   });
 }

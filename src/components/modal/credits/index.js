@@ -388,11 +388,7 @@ function onClickTweet(tweetText) {
 function sendReferralInvite(email) {
   return request(`/api/me/invite`, {
     method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ email })
   });
 }
