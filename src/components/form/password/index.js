@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { FormInput } from '../index';
 import Hashes from 'jshashes';
+import request from '../../../utils/request';
 
 const baseUrl = 'https://api.pwnedpasswords.com/range';
 
@@ -81,8 +82,8 @@ async function fetchPwnedStatus(password) {
   const digestFive = passwordDigest.substring(0, 5).toUpperCase();
   const queryUrl = `${baseUrl}/${digestFive}`;
   const checkDigest = passwordDigest.substring(5, 41).toUpperCase();
-  // TODO replace with request or check HTTP response code
-  const res = await fetch(queryUrl);
+
+  const res = await request(queryUrl, {}, true);
   const response = await res.text();
   const isPwned = response.search(checkDigest) > -1;
   return isPwned;

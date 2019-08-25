@@ -17,9 +17,15 @@ async function doRequest(url, params = {}) {
   }
 }
 
-export default async function request(url, params = {}) {
+export default async function request(url, params = {}, rawResponse = false) {
   try {
     const response = await doRequest(url, params);
+
+    // let the calling code use the entire response object
+    if (rawResponse) {
+      return response;
+    }
+
     if (response.status >= 400 && response.status < 600) {
       const err = await response.json();
       throw err;
