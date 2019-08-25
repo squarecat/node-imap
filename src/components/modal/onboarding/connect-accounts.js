@@ -177,11 +177,7 @@ function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
 async function removeAccount(email) {
   return request('/api/me', {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ op: 'remove-account', value: email })
   });
 }

@@ -263,11 +263,7 @@ export default injectStripe(OrganisationBillingForm);
 function validateVatNumber(vatNumber) {
   return request('/api/payments/vat', {
     method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ vatNumber })
   });
 }
@@ -275,11 +271,7 @@ function validateVatNumber(vatNumber) {
 function createSubscription(organisationId, { token, name, address }) {
   return request('/api/payments/subscription', {
     method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ organisationId, token, name, address })
   });
 }
@@ -287,11 +279,7 @@ function createSubscription(organisationId, { token, name, address }) {
 function updateBilling(organisationId, { token, name, address }) {
   return request(`/api/organisation/${organisationId}/billing`, {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({
       op: 'update',
       value: { token, name, address }
@@ -302,11 +290,7 @@ function updateBilling(organisationId, { token, name, address }) {
 function confirmSubscription(organisationId) {
   return request('/api/payments/subscription/confirm', {
     method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ organisationId })
   });
 }

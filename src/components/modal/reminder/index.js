@@ -174,11 +174,6 @@ async function toggleReminder(op, timeframe = '') {
   try {
     return request('/api/me/reminder', {
       method: 'PATCH',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      },
       body: JSON.stringify({ op, value: timeframe })
     });
   } catch (err) {

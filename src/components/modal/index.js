@@ -1,5 +1,6 @@
 import { CloseIcon, LockIcon } from '../icons';
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import { clearAllBodyScrollLocks, disableBodyScroll } from 'body-scroll-lock';
 
 import Button from '../btn';
 import LoadingOverlay from '../loading/overlay';
@@ -239,11 +240,26 @@ export const ModalDismissAction = React.memo(
 
 export const ModalBody = React.memo(
   ({ children, compact = false, loading = false }) => {
+    const { isShown } = useContext(ModalContext);
+    const bodyRef = useRef(null);
+
+    useEffect(
+      () => {
+        disableBodyScroll(bodyRef.current);
+
+        return function cleanup() {
+          clearAllBodyScrollLocks();
+        };
+      },
+      [isShown]
+    );
+
     const classes = cx(modalStyles.modalBody, {
       [modalStyles.modalBodyCompact]: compact
     });
+
     return (
-      <div className={classes}>
+      <div className={classes} ref={bodyRef}>
         <>
           {children}
           {loading ? <LoadingOverlay /> : null}

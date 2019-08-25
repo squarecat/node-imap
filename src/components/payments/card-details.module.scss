@@ -12,6 +12,7 @@
 :global(.StripeElement) {
   @extend .form-input;
   @extend .input-smaller;
+  padding: 14px 10px;
 
   .loading &,
   .disabled & {

@@ -119,11 +119,7 @@ export async function confirmIntent({ paymentIntent, productId, coupon }) {
   }
   return request(url, {
     method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ payment_intent_id: paymentIntent.id })
   });
 }

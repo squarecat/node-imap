@@ -248,11 +248,7 @@ function Content({
 export async function updateMilestone(milestone) {
   return request('/api/me/milestones', {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ op: 'update', value: milestone })
   });
 }

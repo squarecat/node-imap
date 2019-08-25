@@ -13,6 +13,7 @@ import { LoginContext } from './index';
 import PasswordInput from '../../components/form/password';
 import { getAuthError } from '../../utils/errors';
 import { navigate } from 'gatsby';
+import request from '../../utils/request';
 
 const Password = function({
   doValidation = true,
@@ -40,15 +41,14 @@ const Password = function({
         };
       }
       // TODO use request instead
-      const resp = await fetch(submitAction, {
-        method: 'POST',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
+      const resp = await request(
+        submitAction,
+        {
+          method: 'POST',
+          body: JSON.stringify(body)
         },
-        body: JSON.stringify(body)
-      });
+        true
+      );
       const { success, error, twoFactorRequired } = await resp.json();
       if (success !== true) {
         throw error;

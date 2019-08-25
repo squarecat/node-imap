@@ -215,7 +215,7 @@ function Packages({ onClickBuy }) {
 function Enterprise() {
   return (
     <div styleName="billing-section">
-      <h2>Enterprise</h2>
+      <h2>Teams</h2>
       <div styleName="plans-list">
         <PlanImage smaller compact type="enterprise" />
         <div>
@@ -270,15 +270,6 @@ function BillingDetails() {
     },
     [setCard]
   );
-
-  // const onClickUpdateAutoBuy = useCallback(
-  //   () => {
-  //     const updated = !autoBuy;
-  //     setAutoBuy(updated);
-  //     updateAutoBuy(updated);
-  //   },
-  //   [autoBuy]
-  // );
 
   return (
     <div styleName="billing-section">
@@ -409,11 +400,7 @@ async function fetchBillingHistory() {
 function removeUserBillingCard() {
   return request('/api/me/billing', {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ op: 'remove-card' })
   });
 }
@@ -442,15 +429,3 @@ function getStatus({ attempted, paid, refunded }) {
   }
   return <span styleName="invoice-status invoice--paid">Paid</span>;
 }
-
-// function updateAutoBuy(autoBuy) {
-//   return request('/api/me/billing', {
-//     method: 'PATCH',
-//     cache: 'no-cache',
-//     credentials: 'same-origin',
-//     headers: {
-//       'Content-Type': 'application/json; charset=utf-8'
-//     },
-//     body: JSON.stringify({ op: 'update-autobuy', value: autoBuy })
-//   });
-// }
