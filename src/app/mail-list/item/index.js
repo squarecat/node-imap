@@ -5,6 +5,8 @@ import { useMailItem, useOccurrence, useScore } from '../db/hooks';
 
 import IgnoreIcon from '../../../components/ignore-icon';
 import { MailContext } from '../provider';
+import MailItemDataModal from '../../../components/modal/mail-data';
+import { ModalContext } from '../../../providers/modal-provider';
 import Score from '../../../components/score';
 import Toggle from '../../../components/toggle';
 import Tooltip from '../../../components/tooltip';
@@ -19,6 +21,8 @@ const mailYearStamp = 'YYYY';
 
 function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
+  const { open: openModal } = useContext(ModalContext);
+
   const { actions } = useContext(MailContext);
 
   const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
@@ -82,13 +86,9 @@ function MailItem({ id, onLoad }) {
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
-        <Tooltip
-          placement="bottom"
-          destroyTooltipOnHide={true}
-          overlay={<span>{`Sent to ${m.to} from ${m.fromEmail}`}</span>}
-        >
+        <a onClick={() => openModal(<MailItemDataModal item={m} />)}>
           <span styleName="from-email">{`<${m.fromEmail}>`}</span>
-        </Tooltip>
+        </a>
       </td>
       <td styleName="cell tags-column">
         {m.isTrash ? (
