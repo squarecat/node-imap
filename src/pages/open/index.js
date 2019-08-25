@@ -5,7 +5,7 @@ import {
   CARBON_OFFSET_PER_TREE_PER_YEAR,
   CARBON_PER_EMAIL,
   formatWeight
-} from '../../utils/climate';
+} from '../../utils/climate-stats';
 import React, { useEffect, useRef } from 'react';
 import Table, { TableCell, TableRow } from '../../components/table';
 
@@ -839,7 +839,9 @@ function Open() {
           <div styleName="box big-stat">
             <span styleName="label">Carbon saved by unsubscribing</span>
             <span styleName="value">
-              {formatWeight(stats.unsubscriptions * CARBON_PER_EMAIL)}
+              {formatWeight(stats.unsubscriptions * CARBON_PER_EMAIL, {
+                rounded: true
+              })}
             </span>
 
             <div styleName="separator">
@@ -860,7 +862,8 @@ function Open() {
             <span styleName="label">Carbon offset by planting trees</span>
             <span styleName="value">
               {formatWeight(
-                totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR
+                totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR,
+                { rounded: true }
               )}
             </span>
 

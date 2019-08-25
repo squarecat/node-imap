@@ -2,19 +2,15 @@ import './donate.module.scss';
 
 import { FormCheckbox, FormGroup } from '../../form';
 import React, { useContext } from 'react';
+// numbers
+import {
+  TONNES_CARBON_PER_DAY,
+  formatNumber
+} from '../../../utils/climate-stats';
 import { TextImportant, TextLink } from '../../text';
 
 import { BillingModalContext } from './index';
-import numeral from 'numeral';
 import treeImg from '../../../assets/climate/tree.png';
-
-// numbers
-const EMAILS_SENT_PER_DAY = 246500000000;
-const CARBON_PER_EMAIL = 4;
-const TONNE_CONVERSION = 1e6;
-const TONNES_CARBON_PER_YEAR = numeral(
-  (EMAILS_SENT_PER_DAY * CARBON_PER_EMAIL) / TONNE_CONVERSION
-).format('0,0');
 
 // links
 const TREE_ORG_LINK = 'https://onetreeplanted.org';
@@ -34,8 +30,8 @@ export default function Donate() {
       <p>
         Emails contribute to{' '}
         <TextImportant>
-          {TONNES_CARBON_PER_YEAR} tonnes of carbon being dumped into the
-          atmosphere every year.
+          {formatNumber(TONNES_CARBON_PER_DAY)} tonnes of carbon being dumped
+          into the atmosphere every day.
         </TextImportant>{' '}
         <TextLink undecorated href="/save-the-planet#cite-1" target="_">
           <sup>[1]</sup>
