@@ -41,3 +41,5 @@ export function getOccurrenceScores({ senders }) {
 export function calculateOccurrenceScores() {
   return refreshScores();
 }
+
+export function setSenderAsDelinquent

@@ -663,6 +663,10 @@ export async function updateUnsubStatusById(
     const user = await col.findOne({
       'unsubscriptions.unsubscribeId': unsubId
     });
+    // user account has been removed perhaps
+    if (!user) {
+      return { mailId: unsub.id };
+    }
     const { id, unsubscriptions } = user;
     const unsub = unsubscriptions.find(
       ({ unsubscribeId }) => unsubscribeId === unsubId

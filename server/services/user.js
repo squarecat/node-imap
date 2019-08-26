@@ -1045,6 +1045,10 @@ export async function updateUserUnsubStatusById(
       message,
       ...data
     });
+    // user account may have been removed
+    if (!userId) {
+      return true;
+    }
     if (status === 'rejected' || status === 'failed') {
       incrementUserCredits(userId, 1);
     }
