@@ -5,6 +5,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../table';
 import { TextImportant, TextLink } from '../../text';
 
+import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
 import Tooltip from '../../tooltip';
 import cx from 'classnames';
@@ -249,6 +250,7 @@ const LastReceived = React.memo(function LastReceived({
   date,
   unsub = {}
 }) {
+  const { actions } = useContext(AlertContext);
   const [, { updateReportedUnsub }] = useUser();
   const [state, setState] = useState({
     loading: false,
@@ -270,8 +272,14 @@ const LastReceived = React.memo(function LastReceived({
       const d = Date.now();
       updateReportedUnsub({ ...unsub, reportedAt: d, reported: true });
       setState({ reportedAt: d, reported: true, loading: false });
+      actions.setAlert({
+        message: <span>{`Report sent`}</span>,
+        isDismissable: true,
+        autoDismiss: true,
+        level: 'info'
+      });
     },
-    [occurrences, unsub, date, updateReportedUnsub]
+    [occurrences, unsub, date, updateReportedUnsub, actions]
   );
 
   let lastSeen;
