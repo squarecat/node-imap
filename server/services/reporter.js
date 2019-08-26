@@ -15,8 +15,7 @@ export async function report(user, mailData) {
     // set the unsubscription as reported in the user collection
     await reportUnsub(userId, unsubscribeId);
     // set the sender as delinquent in the occurrences dao
-    const { fromEmail: sender } = parseEmail(mailData.from);
-    await setSenderAsDelinquent({ email: sender });
+    await setSenderAsDelinquent(mailData.from);
     return true;
   } catch (err) {
     logger.error('reporter: failed to report email');

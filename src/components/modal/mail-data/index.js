@@ -67,7 +67,6 @@ const Content = React.memo(function({
     spam: isSpam,
     trash: isTrash
   };
-  console.log(unsub);
   const labels = useMemo(
     () => {
       if (!isSpam && !isTrash) return null;
@@ -179,7 +178,6 @@ const UnsubscribeStatusText = React.memo(function UnsubscribeStatusText({
   openUnsubModal,
   unsub
 }) {
-  console.log('status text', unsub);
   if (!unsub) return null;
   const { estimatedSuccess, unsubscribeStrategy } = unsub;
   const text =
@@ -320,6 +318,7 @@ const LastReceived = React.memo(function LastReceived({
         <>
           <span styleName="report-btn">
             <Button
+              loading={state.loading}
               disabled={state.reported || state.loading}
               muted
               outlined
@@ -332,6 +331,7 @@ const LastReceived = React.memo(function LastReceived({
           </span>
           <ReportData
             reported={state.reported}
+            reportedAt={state.reportedAt}
             lastSeen={lastSeen}
             unsubscribedAt={unsub.unsubscribedAt}
           />

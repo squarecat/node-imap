@@ -37,6 +37,7 @@
 .from-column {
   white-space: nowrap;
   width: 240px;
+  overflow: hidden;
 
   @media (max-width: 800px) {
     width: 40%;
@@ -159,6 +160,13 @@
 .from-email {
   opacity: 0.75;
   font-size: 11px;
+  flex: 1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .from-datetime {
@@ -627,6 +635,7 @@ pre {
   display: inline-flex;
   position: relative;
   cursor: pointer;
+  overflow: visible;
 
   svg {
     stroke: currentColor;
@@ -635,20 +644,53 @@ pre {
     top: 6px;
     margin-right: 5px;
     min-width: 12px;
+    z-index: 2;
 
     @media (max-width: 480px) {
       top: 5px;
     }
   }
+  span {
+    position: relative;
+    z-index: 2;
+  }
 
-  &:hover::after {
+  &::after {
     position: absolute;
     content: '';
     left: -6px;
     right: -6px;
     top: 2px;
     bottom: 4px;
-    background-color: rgba(0, 0, 0, 0.05);
+    z-index: 1;
     border-radius: 12px;
+  }
+
+  &:hover::after {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &.delinquent {
+    svg {
+      stroke: white;
+      stroke-width: 3px;
+    }
+
+    &::after {
+      left: -4px;
+      width: 20px;
+      right: auto;
+      background-color: $color-red;
+      transition: width 100ms ease-in-out;
+    }
+
+    &:hover::after {
+      width: calc(100% + 6px);
+    }
+
+    &:hover span {
+      transition: color 100ms ease-in-out;
+      color: white;
+    }
   }
 }

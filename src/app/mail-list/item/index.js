@@ -13,6 +13,7 @@ import Toggle from '../../../components/toggle';
 import Tooltip from '../../../components/tooltip';
 import format from 'date-fns/format';
 import { toggleFromIgnoreList } from '../../../utils/ignore';
+import { useDelinquency } from '../db/hooks';
 import useUser from '../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM';
@@ -22,8 +23,16 @@ const mailYearStamp = 'YYYY';
 
 function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
-  const { open: openModal } = useContext(ModalContext);
-
+  const openUnsubModal = useCallback(
+    () => {
+      let strat = m.unsubStrategy;
+      if (!strat) {
+        strat = m.unsubscribeLink ? 'link' : 'mailto';
+      }
+      actions.setUnsubData({ ...m, unsubStrategy: strat });
+    },
+    [actions, m]
+  );
   const { actions } = useContext(MailContext);
 
   const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
@@ -58,17 +67,6 @@ function MailItem({ id, onLoad }) {
     [m, onLoad]
   );
 
-  const openUnsubModal = useCallback(
-    () => {
-      let strat = m.unsubStrategy;
-      if (!strat) {
-        strat = m.unsubscribeLink ? 'link' : 'mailto';
-      }
-      actions.setUnsubData({ ...m, unsubStrategy: strat });
-    },
-    [actions, m]
-  );
-
   return (
     <>
       <td styleName="cell timestamp-column">
@@ -98,17 +96,7 @@ function MailItem({ id, onLoad }) {
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
-        <a
-          styleName="mail-data-link"
-          onClick={() =>
-            openModal(
-              <MailItemDataModal item={m} openUnsubModal={openUnsubModal} />
-            )
-          }
-        >
-          <InfoIcon width="12" height="12" />
-          <span styleName="from-email">{`<${m.fromEmail}>`}</span>
-        </a>
+        <MailDataLink item={m} openUnsubModal={openUnsubModal} />
       </td>
       <td styleName="cell tags-column">
         {m.isTrash ? (
@@ -245,4 +233,36 @@ function DateCell({ date } = {}) {
   );
 }
 
+const MailDataLink = React.memo(function({ openUnsubModal, item }) {
+  const { open: openModal } = useContext(ModalContext);
+  const { delinquent, reported } = useDelinquency(item);
+  const content = (
+    <a
+      styleName={`mail-data-link ${delinquent ? 'delinquent' : ''}`}
+      onClick={() =>
+        openModal(
+          <MailItemDataModal item={item} openUnsubModal={openUnsubModal} />
+        )
+      }
+    >
+      <InfoIcon width="12" height="12" />
+      <span styleName="from-email">{`<${item.fromEmail}>`}</span>
+    </a>
+  );
+  if (delinquent && !reported) {
+    return (
+      <Tooltip
+        placement="bottom"
+        overlay={
+          <span>
+            We think this sender is behaving badly. Click for more info.
+          </span>
+        }
+      >
+        {content}
+      </Tooltip>
+    );
+  }
+  return content;
+});
 export default React.memo(MailItem);
