@@ -145,12 +145,23 @@ async function* readFromBox(client, mailbox, from) {
       return [];
     }
 
-    const iter = fetchUuids(client, uuids);
-    let next = await iter.next();
-    while (!next.done) {
-      const mail = next.value;
-      yield mail.map(m => ({ ...m, mailbox }));
-      next = await iter.next();
+    const pageSize = 100;
+    const uuidPages = uuids.reduce((resultArray, item, index) => {
+      const chunkIndex = Math.floor(index / pageSize);
+      if (!resultArray[chunkIndex]) {
+        resultArray[chunkIndex] = [];
+      }
+      resultArray[chunkIndex].push(item);
+      return resultArray;
+    }, []);
+    const iterators = uuidPages.map(page => fetchUuids(client, page));
+    for (let iter of iterators) {
+      let next = await iter.next();
+      while (!next.done) {
+        const mail = next.value;
+        yield mail.map(m => ({ ...m, mailbox }));
+        next = await iter.next();
+      }
     }
   } catch (err) {
     console.error(err);
