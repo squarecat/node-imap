@@ -1,6 +1,5 @@
 import { imageStoragePath } from 'getconfig';
-import logger from '../../build/utils/logger';
-import { parseEmail } from '../utils/parsers';
+import logger from '../utils/logger';
 import { reportUnsub } from '../dao/user';
 import { sendReportEmail } from '../utils/emails/report';
 import { setSenderAsDelinquent } from './occurrences';

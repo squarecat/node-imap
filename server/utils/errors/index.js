@@ -1,7 +1,7 @@
 import _omit from 'lodash.omit';
 import config from 'getconfig';
 import isBefore from 'date-fns/is_before';
-import logger from '../../../build/utils/logger';
+import logger from '../../utils/logger';
 import util from 'util';
 
 export const savedErrors = {};

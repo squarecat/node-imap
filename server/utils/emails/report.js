@@ -4,11 +4,6 @@ import { mailgun } from 'getconfig';
 import relative from 'tiny-relative-date';
 import { sendTransactionalMail } from './transactional';
 
-const options = {
-  from: `Leave Me Alone <noreply@${mailgun.domains.transactional}>`,
-  subject: 'User reported mailing list'
-};
-
 export function sendReportEmail(user, mailData) {
   logger.info('email-utils: sending report mail');
   const { id, email, billing, createdAt } = user;
@@ -68,7 +63,8 @@ User since:\t ${relative(createdAt)}
 </table>`;
 
   let opts = {
-    ...options,
+    from: `Leave Me Alone <noreply@${mailgun.domains.transactional}>`,
+    subject: `User reported mailing list ${from}`,
     to: 'hi@leavemealone.app',
     text,
     html
