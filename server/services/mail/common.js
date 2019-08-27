@@ -137,7 +137,7 @@ export function dedupeMailList(
         dupes: {
           ...out.dupes,
           [dupeKey]: {
-            lastSeen: mail.from > dupe.lastSeen ? mail.from : dupe.lastSeen,
+            lastSeen: mail.date > dupe.lastSeen ? mail.date : dupe.lastSeen,
             count: dupe.count + 1
           }
         },
