@@ -42,193 +42,192 @@ export function useMailSync() {
   const [unsubData, setUnsubData] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
 
-  useEffect(
-    () => {
-      if (isConnected) {
-        socket.on('mail', async (data, ack) => {
-          console.debug(`[db]: received ${data.length} new mail items`);
-          try {
-            const mailData = data.map(d => {
-              const { email: fromEmail, name: fromName } = parseAddress(d.from);
-              let status = d.subscribed ? 'subscribed' : 'unsubscribed';
-              if (d.estimatedSuccess === false && !d.resolved) {
-                status = 'failed';
-              }
-              return {
-                ...d,
-                score: -1,
-                to: parseAddress(d.to).email,
-                fromEmail,
-                fromName,
-                isLoading: false,
-                error: false,
-                status
-              };
-            });
-            await db.mail.bulkPut(mailData);
-            const count = await db.mail.count();
-            await db.prefs.put({ key: 'totalMail', value: count });
-            const senders = mailData.map(md => md.fromEmail);
-            emit('fetch-scores', { senders });
-          } catch (err) {
-            console.error(`[db]: failed setting new mail items`);
-            console.error(err);
-          }
-          ack && ack();
-        });
-        socket.on('scores', async data => {
-          console.debug(`[db]: received ${data.length} new mail scores`);
-          try {
-            await db.scores.bulkPut(
-              data.map(d => ({
-                address: d.address,
-                score: d.score,
-                rank: d.rank,
-                unsubscribePercentage: d.unsubscribePercentage,
-                senderScore: d.senderScore
-              }))
-            );
-            await data.reduce(async (p, d) => {
-              await p;
-              return db.mail
-                .where('fromEmail')
-                .equals(d.address)
-                .modify({ score: d.score });
-            }, Promise.resolve());
-          } catch (err) {
-            console.error(`[db]: failed setting new mail scores`);
-            console.error(err);
-          }
-        });
-        socket.on('mail:end', async scan => {
-          console.debug(`[db]: finished scan`);
-          setIsFetching(false);
-          try {
-            const { occurrences } = scan;
-            await db.occurrences.bulkPut(
-              Object.keys(occurrences).map(d => ({
-                key: d,
-                ...occurrences[d]
-              }))
-            );
-            await db.prefs.put({
-              key: 'lastFetchResult',
-              value: { ...scan, finishedAt: Date.now() }
-            });
-          } catch (err) {
-            console.error(`[db]: failed setting new occurrences`);
-            console.error(err);
-          }
-        });
-        socket.on('mail:err', err => {
-          console.error(`[db]: scan failed`);
-          actions.setAlert({
-            message: <span>{`Failed to fetch mail. Code: ${err.id}`}</span>,
-            isDismissable: true,
-            autoDismiss: false,
-            level: 'error'
-          });
-        });
-        socket.on('mail:progress', ({ progress, total }, ack) => {
-          // const percentage = (progress / total) * 100;
-          // setProgress((+percentage).toFixed());
-          // console.debug(progress, total);
-          ack && ack();
-        });
+  useEffect(() => {
+    if (isConnected) {
+      socket.on('mail', async (data, ack) => {
+        console.debug(`[db]: received ${data.length} new mail items`);
+        try {
+          let mailData = data.map(d => {
+            const { email: fromEmail, name: fromName } = parseAddress(d.from);
+            let status = d.subscribed ? 'subscribed' : 'unsubscribed';
+            if (d.estimatedSuccess === false && !d.resolved) {
+              status = 'failed';
+            }
+            const to = parseAddress(d.to).email;
 
-        socket.on('unsubscribe:success', async ({ id, data }) => {
-          console.debug(`[db]: successfully unsubscribed from ${id}`);
-          try {
-            const { estimatedSuccess, unsubStrategy, hasImage } = data;
-            let update = {
-              estimatedSuccess,
-              unsubStrategy,
-              hasImage,
+            return {
+              ...d,
+              score: -1,
+              to,
+              fromEmail,
+              fromName,
               isLoading: false,
-              status: estimatedSuccess ? 'unsubscribed' : 'failed'
+              error: false,
+              status
             };
-            if (unsubStrategy === 'mailto') {
-              const { emailStatus, emailData } = data;
-              update = {
-                ...update,
-                emailStatus,
-                emailData
-              };
-            }
-            addUnsub(data);
-            await db.mail.update(id, update);
-            const mail = await db.mail.get(id);
-            if (!estimatedSuccess) {
-              actions.queueAlert({
-                message: (
-                  <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>
-                ),
-                actions: [
-                  {
-                    label: 'See details',
-                    onClick: () => {
-                      // defensive code against an old bug where unsubStrategy can be null
-                      let strat = mail.unsubStrategy;
-                      if (!strat) {
-                        strat = mail.unsubscribeLink ? 'link' : 'mailto';
-                      }
-                      setUnsubData({ ...mail, unsubStrategy: strat });
-                    }
-                  }
-                ],
-                isDismissable: true,
-                level: 'warning'
-              });
-            }
-            incrementUnsubCount();
-          } catch (err) {
-            console.error(`[db]: failed to set successful unsubscribe`);
-            console.error(err);
-          }
-        });
+          });
 
-        socket.on('unsubscribe:err', async ({ id, err }) => {
-          console.debug(`[db]: received unsubscribe error`);
-          try {
-            // incrementCredits(1);
-            const { data } = err;
-
-            const mail = await db.mail.get(id);
-            const alert = getUnsubscribeAlert({
-              id: err.id,
-              reason: data.errKey,
-              mail,
-              alertActions: actions,
-              modalActions: { openModal },
-              credits
-            });
-
-            await db.mail.update(id, {
-              isLoading: false,
-              subscribed: true,
-              status: 'failed'
-            });
-            actions.queueAlert(alert);
-          } catch (err) {
-            console.error(`[db]: failed to set failed unsubscribe`);
-            console.error(err);
-          }
-        });
-      }
-      return () => {
-        if (socket) {
-          socket.off('mail');
-          socket.off('scores');
-          socket.off('mail:end');
-          socket.off('mail:err');
-          socket.off('mail:progress');
-          socket.off('unsubscribe:success');
-          socket.off('unsubscribe:err');
+          await db.mail.bulkPut(mailData);
+          const count = await db.mail.count();
+          await db.prefs.put({ key: 'totalMail', value: count });
+          const senders = mailData.map(md => md.fromEmail);
+          emit('fetch-scores', { senders });
+        } catch (err) {
+          console.error(`[db]: failed setting new mail items`);
+          console.error(err);
         }
-      };
-    },
-    [isConnected, error]
-  );
+        ack && ack();
+      });
+      socket.on('scores', async data => {
+        console.debug(`[db]: received ${data.length} new mail scores`);
+        try {
+          await db.scores.bulkPut(
+            data.map(d => ({
+              address: d.address,
+              score: d.score,
+              rank: d.rank,
+              unsubscribePercentage: d.unsubscribePercentage,
+              senderScore: d.senderScore
+            }))
+          );
+          await data.reduce(async (p, d) => {
+            await p;
+            return db.mail
+              .where('fromEmail')
+              .equals(d.address)
+              .modify({ score: d.score });
+          }, Promise.resolve());
+        } catch (err) {
+          console.error(`[db]: failed setting new mail scores`);
+          console.error(err);
+        }
+      });
+      socket.on('mail:end', async scan => {
+        console.debug(`[db]: finished scan`);
+        setIsFetching(false);
+        try {
+          const { occurrences } = scan;
+
+          await db.occurrences.bulkPut(
+            Object.keys(occurrences).map(d => ({
+              key: d,
+              ...occurrences[d]
+            }))
+          );
+          await db.prefs.put({
+            key: 'lastFetchResult',
+            value: { ...scan, finishedAt: Date.now() }
+          });
+        } catch (err) {
+          console.error(`[db]: failed setting new occurrences`);
+          console.error(err);
+        }
+      });
+      socket.on('mail:err', err => {
+        console.error(`[db]: scan failed`);
+        actions.setAlert({
+          message: <span>{`Failed to fetch mail. Code: ${err.id}`}</span>,
+          isDismissable: true,
+          autoDismiss: false,
+          level: 'error'
+        });
+      });
+      socket.on('mail:progress', ({ progress, total }, ack) => {
+        // const percentage = (progress / total) * 100;
+        // setProgress((+percentage).toFixed());
+        // console.debug(progress, total);
+        ack && ack();
+      });
+
+      socket.on('unsubscribe:success', async ({ id, data }) => {
+        console.debug(`[db]: successfully unsubscribed from ${id}`);
+        try {
+          const { estimatedSuccess, unsubStrategy, hasImage } = data;
+          let update = {
+            estimatedSuccess,
+            unsubStrategy,
+            hasImage,
+            isLoading: false,
+            status: estimatedSuccess ? 'unsubscribed' : 'failed'
+          };
+          if (unsubStrategy === 'mailto') {
+            const { emailStatus, emailData } = data;
+            update = {
+              ...update,
+              emailStatus,
+              emailData
+            };
+          }
+          addUnsub(data);
+          await db.mail.update(id, update);
+          const mail = await db.mail.get(id);
+          if (!estimatedSuccess) {
+            actions.queueAlert({
+              message: <span>{`Unsubscribe to ${mail.fromEmail} failed`}</span>,
+              actions: [
+                {
+                  label: 'See details',
+                  onClick: () => {
+                    // defensive code against an old bug where unsubStrategy can be null
+                    let strat = mail.unsubStrategy;
+                    if (!strat) {
+                      strat = mail.unsubscribeLink ? 'link' : 'mailto';
+                    }
+                    setUnsubData({ ...mail, unsubStrategy: strat });
+                  }
+                }
+              ],
+              isDismissable: true,
+              level: 'warning'
+            });
+          }
+          incrementUnsubCount();
+        } catch (err) {
+          console.error(`[db]: failed to set successful unsubscribe`);
+          console.error(err);
+        }
+      });
+
+      socket.on('unsubscribe:err', async ({ id, err }) => {
+        console.debug(`[db]: received unsubscribe error`);
+        try {
+          // incrementCredits(1);
+          const { data } = err;
+
+          const mail = await db.mail.get(id);
+          const alert = getUnsubscribeAlert({
+            id: err.id,
+            reason: data.errKey,
+            mail,
+            alertActions: actions,
+            modalActions: { openModal },
+            credits
+          });
+
+          await db.mail.update(id, {
+            isLoading: false,
+            subscribed: true,
+            status: 'failed'
+          });
+          actions.queueAlert(alert);
+        } catch (err) {
+          console.error(`[db]: failed to set failed unsubscribe`);
+          console.error(err);
+        }
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off('mail');
+        socket.off('scores');
+        socket.off('mail:end');
+        socket.off('mail:err');
+        socket.off('mail:progress');
+        socket.off('unsubscribe:success');
+        socket.off('unsubscribe:err');
+      }
+    };
+  }, [isConnected, error]);
   return {
     ready: isConnected,
     isFetching,
@@ -325,6 +324,29 @@ export function useMailSync() {
           }
         });
         await db.prefs.delete('lastFetchResult');
+        // add the occurrences data if available to the next fetch
+        let occurrences = await db.occurrences.orderBy('key').toArray();
+        const occurencesFrom = occurrences.map(oc => oc.key.match('<(.*)>')[1]);
+        // and add all the mail in the mail list that is not in the
+        // occurrences (because that means it's got an occurrence of 1)
+        const singleOccurrence = await db.mail
+          .where('fromEmail')
+          .noneOf(occurencesFrom)
+          .toArray();
+        occurrences = [
+          ...occurrences,
+          singleOccurrence.map(so => ({
+            count: 1,
+            key: `<${so.fromEmail}>-${so.to}`,
+            lastSeen: so.date
+          }))
+        ];
+        if (occurrences.length) {
+          fetchParams = {
+            ...fetchParams,
+            occurrences
+          };
+        }
         return emit('fetch', fetchParams);
       } catch (err) {
         console.error('[db]: failed to fetch mail');
