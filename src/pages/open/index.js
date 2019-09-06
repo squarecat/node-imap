@@ -5,7 +5,7 @@ import {
   CARBON_OFFSET_PER_TREE_PER_YEAR,
   CARBON_PER_EMAIL,
   formatWeight
-} from '../../utils/climate';
+} from '../../utils/climate-stats';
 import React, { useEffect, useRef } from 'react';
 import Table, { TableCell, TableRow } from '../../components/table';
 
@@ -26,6 +26,8 @@ import startOfMonth from 'date-fns/start_of_month';
 import subDays from 'date-fns/sub_days';
 import treeImg from '../../assets/climate/tree.png';
 import useAsync from 'react-use/lib/useAsync';
+
+const OPEN_STARTUP_LINK = `https://blog.leavemealone.app/what-does-it-mean-to-be-an-open-startup`;
 
 const lineColor = '#EB6C69';
 // const lineColorLight = '#fedbd5';
@@ -394,7 +396,9 @@ export default function OpenPage() {
           <h1>All of our metrics are public</h1>
           <h2>
             We're proud to share our stats as part of the{' '}
-            <TextLink href="https://openstartups.co/">Open Startups</TextLink>{' '}
+            <TextLink href={OPEN_STARTUP_LINK} target="_">
+              Open Startups
+            </TextLink>{' '}
             movement
           </h2>
         </div>
@@ -835,7 +839,9 @@ function Open() {
           <div styleName="box big-stat">
             <span styleName="label">Carbon saved by unsubscribing</span>
             <span styleName="value">
-              {formatWeight(stats.unsubscriptions * CARBON_PER_EMAIL)}
+              {formatWeight(stats.unsubscriptions * CARBON_PER_EMAIL, {
+                rounded: true
+              })}
             </span>
 
             <div styleName="separator">
@@ -856,7 +862,8 @@ function Open() {
             <span styleName="label">Carbon offset by planting trees</span>
             <span styleName="value">
               {formatWeight(
-                totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR
+                totalTreesPlanted * CARBON_OFFSET_PER_TREE_PER_YEAR,
+                { rounded: true }
               )}
             </span>
 

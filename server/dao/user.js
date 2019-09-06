@@ -9,6 +9,7 @@ import {
 } from './encryption';
 import db, { isoDate } from './db';
 
+import _omit from 'lodash.omit';
 import logger from '../utils/logger';
 import shortid from 'shortid';
 import { v4 } from 'node-uuid';
@@ -682,6 +683,10 @@ export async function updateUnsubStatusById(
     const user = await col.findOne({
       'unsubscriptions.unsubscribeId': unsubId
     });
+    // user account has been removed perhaps
+    if (!user) {
+      return { mailId: unsub.id };
+    }
     const { id, unsubscriptions } = user;
     const unsub = unsubscriptions.find(
       ({ unsubscribeId }) => unsubscribeId === unsubId
@@ -1081,14 +1086,8 @@ function decryptUser(user, options = {}) {
   } else {
     decryptedUser = {
       ...decryptedUser,
-      accounts: user.accounts.map(
-        ({ id, provider, email, addedAt, problem }) => ({
-          id,
-          provider,
-          email,
-          addedAt,
-          problem
-        })
+      accounts: user.accounts.map(account =>
+        _omit(account, ['keys', 'port', 'host'])
       )
     };
   }

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { FormInput } from '../index';
 import Hashes from 'jshashes';
+import request from '../../../utils/request';
 
 const baseUrl = 'https://api.pwnedpasswords.com/range';
 
@@ -12,14 +13,14 @@ If you use this password for any other services then you should change it immedi
 const minLength = 6;
 const passwordLengthText = 'Password must be greater than 6 characters';
 
-export default ({
+const PasswordField = function({
   doValidation = true,
   onChange = () => {},
   autoComplete = 'current-password',
   autoFocus = true,
   smaller = false,
   ...props
-}) => {
+}) {
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
 
@@ -43,16 +44,18 @@ export default ({
           }
         }
 
-        return setState({
-          isValid: true,
-          message: ''
-        });
+        if (!state.isValid) {
+          return setState({
+            isValid: true,
+            message: ''
+          });
+        }
       };
       if (value) {
         validate();
       }
     },
-    [doValidation, value]
+    [doValidation, state.isValid, value]
   );
   useEffect(
     () => {
@@ -60,11 +63,21 @@ export default ({
     },
     [value, state.isValid, state.message, onChange]
   );
+
+  const onInputChange = useCallback(
+    ({ currentTarget }) => {
+      if (value !== currentTarget.value) {
+        setValue(currentTarget.value);
+      }
+    },
+    [value]
+  );
+
   return (
     <FormInput
       {...props}
       smaller={smaller}
-      onChange={({ currentTarget }) => setValue(currentTarget.value)}
+      onChange={onInputChange}
       autoFocus={autoFocus}
       value={value}
       compact
@@ -81,9 +94,12 @@ async function fetchPwnedStatus(password) {
   const digestFive = passwordDigest.substring(0, 5).toUpperCase();
   const queryUrl = `${baseUrl}/${digestFive}`;
   const checkDigest = passwordDigest.substring(5, 41).toUpperCase();
-  // TODO replace with request or check HTTP response code
+
   const res = await fetch(queryUrl);
   const response = await res.text();
   const isPwned = response.search(checkDigest) > -1;
   return isPwned;
 }
+
+PasswordField.whyDidYouRender = true;
+export default PasswordField;

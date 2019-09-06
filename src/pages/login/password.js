@@ -13,15 +13,16 @@ import { LoginContext } from './index';
 import PasswordInput from '../../components/form/password';
 import { getAuthError } from '../../utils/errors';
 import { navigate } from 'gatsby';
+import request from '../../utils/request';
 
-export default ({
+const Password = function({
   doValidation = true,
   confirm = false,
   reset = false,
   submitText = 'Login',
   submitAction = '/auth/login',
   autoComplete
-}) => {
+}) {
   const { state, dispatch } = useContext(LoginContext);
 
   async function onSubmit(e) {
@@ -40,15 +41,14 @@ export default ({
         };
       }
       // TODO use request instead
-      const resp = await fetch(submitAction, {
-        method: 'POST',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
+      const resp = await request(
+        submitAction,
+        {
+          method: 'POST',
+          body: JSON.stringify(body)
         },
-        body: JSON.stringify(body)
-      });
+        true
+      );
       const { success, error, twoFactorRequired } = await resp.json();
       if (success !== true) {
         throw error;
@@ -84,9 +84,12 @@ export default ({
             name="reset-code"
             required
             compact
-            onChange={({ currentTarget }) =>
-              dispatch({ type: 'set-reset-code', data: currentTarget.value })
-            }
+            onChange={({ currentTarget }) => {
+              const { value } = currentTarget;
+              if (value !== state.resetCode) {
+                dispatch({ type: 'set-reset-code', data: value });
+              }
+            }}
           />
         </FormGroup>
       ) : null}
@@ -104,9 +107,11 @@ export default ({
         <PasswordInput
           autoComplete={autoComplete}
           doValidation={doValidation}
-          onChange={password =>
-            dispatch({ type: 'set-password', data: password })
-          }
+          onChange={password => {
+            if (state.password !== password) {
+              dispatch({ type: 'set-password', data: password });
+            }
+          }}
         />
       </FormGroup>
       {confirm ? (
@@ -148,8 +153,6 @@ export default ({
           type="submit"
           as="button"
           style={{ width: 150 }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
           loading={state.loading}
         >
@@ -164,8 +167,6 @@ export default ({
           outlined
           as="button"
           style={{ width: 150 }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           disabled={state.loading}
         >
           Back
@@ -174,3 +175,6 @@ export default ({
     </form>
   );
 };
+
+Password.whyDidYouRender = true;
+export default Password;

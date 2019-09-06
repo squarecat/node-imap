@@ -64,8 +64,6 @@ export default () => {
           as="button"
           loading={isLoading}
           style={{ width: 150 }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
         >
           Verify
@@ -78,8 +76,6 @@ export default () => {
           outlined
           as="button"
           style={{ width: 150 }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           disabled={isLoading}
         >
           Back

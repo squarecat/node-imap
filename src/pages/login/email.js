@@ -11,6 +11,7 @@ import React, { useContext } from 'react';
 import Button from '../../components/btn';
 import Hashes from 'jshashes';
 import { LoginContext } from './index';
+import request from '../../utils/request';
 
 export default ({ nextText = 'Next' }) => {
   const { state, dispatch } = useContext(LoginContext);
@@ -78,8 +79,6 @@ export default ({ nextText = 'Next' }) => {
         <Button
           as="button"
           type="submit"
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn"
           loading={state.loading}
           style={{ width: 150 }}
@@ -92,8 +91,6 @@ export default ({ nextText = 'Next' }) => {
           onClick={() => {
             dispatch({ type: 'set-step', data: 'select' });
           }}
-          onMouseEnter={() => dispatch({ type: 'set-active', data: true })}
-          onMouseLeave={() => dispatch({ type: 'set-active', data: false })}
           styleName="signup-btn back-btn"
           style={{ width: 150 }}
           muted
@@ -109,8 +106,7 @@ export default ({ nextText = 'Next' }) => {
 
 async function getUserLoginStrategy(username) {
   const userDigest = new Hashes.SHA1().hex(username);
-  // TODO use utils/request instead
-  const resp = await fetch(`/api/user/${userDigest}/provider`);
+  const resp = await request(`/api/user/${userDigest}/provider`, {}, true);
   if (resp.status === 404) {
     return null;
   } else if (resp.status === 200) {
@@ -121,7 +117,7 @@ async function getUserLoginStrategy(username) {
 
 async function sendPasswordReset(username) {
   const userDigest = new Hashes.SHA1().hex(username);
-  const resp = await fetch(`/api/user/${userDigest}/forgot`);
+  const resp = await request(`/api/user/${userDigest}/forgot`, {}, true);
   if (resp.status === 404) {
     return null;
   } else if (resp.status === 202) {

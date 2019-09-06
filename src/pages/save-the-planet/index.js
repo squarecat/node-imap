@@ -5,9 +5,10 @@ import {
   CARBON_OFFSET_PER_TREE_PER_YEAR,
   CARBON_PER_EMAIL,
   NEWSLETTERS_NEVER_OPENED,
-  TONNES_CARBON_PER_YEAR,
-  TONNE_CONVERSION
-} from '../../utils/climate';
+  TONNES_CARBON_PER_DAY,
+  formatNumber,
+  formatWeight
+} from '../../utils/climate-stats';
 import React, { useMemo } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
@@ -15,7 +16,6 @@ import { Arrow as ArrowIcon } from '../../components/icons';
 import CarbonEstimator from '../../components/estimator/carbon';
 import SubPageLayout from '../../layouts/subpage-layout';
 import downImg from '../../assets/climate/down.png';
-import numeral from 'numeral';
 import oneTreePlantedLogo from '../../assets/climate/one-tree-planted/OneTreePlanted-logo-square-green.png';
 import planeImg from '../../assets/climate/around-the-globe.png';
 import rainbowImg from '../../assets/climate/rainbow.png';
@@ -26,7 +26,9 @@ import useAsync from 'react-use/lib/useAsync';
 const TREE_ORG_LINK = 'https://onetreeplanted.org';
 
 const title = `Clean your Inbox and Save the Planet`;
-const description = `Emails contribute to ${TONNES_CARBON_PER_YEAR} tonnes of CO2 being dumped into the atmosphere every year. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
+const description = `Emails contribute to ${formatNumber(
+  TONNES_CARBON_PER_DAY
+)} tonnes of CO2 being dumped into the atmosphere every day. Unsubscribe from unwanted subscription emails and reduce your carbon footprint.`;
 const slug = `/save-the-planet`;
 
 const ClimatePage = () => {
@@ -71,8 +73,11 @@ const ClimatePage = () => {
             We have unsubscribed from {formatNumber(stats.unsubscriptions)}{' '}
             subscription emails,{' '}
             <TextImportant>
-              saving {formatWeightTonnes(stats.totalCarbonSavedInGrams)} in{' '}
-              <CO2 /> emissions
+              saving{' '}
+              {formatWeight(stats.totalCarbonSavedInGrams, {
+                rounded: true
+              })}{' '}
+              in <CO2 /> emissions
             </TextImportant>
             .{' '}
             <TextLink undecorated href="#cite-1">
@@ -149,8 +154,8 @@ const ClimatePage = () => {
             <p styleName="tagline">
               Emails contribute to{' '}
               <TextImportant>
-                {formatNumber(TONNES_CARBON_PER_YEAR)} tonnes of <CO2 /> being
-                dumped into the atmosphere every year
+                {formatNumber(TONNES_CARBON_PER_DAY)} tonnes of <CO2 /> being
+                dumped into the atmosphere every day
               </TextImportant>
               . Unsubscribe from unwanted subscription emails and reduce your
               carbon footprint.{' '}
@@ -161,18 +166,6 @@ const ClimatePage = () => {
                 <sup>[2]</sup>
               </TextLink>
             </p>
-            {/* <p styleName="tagline">
-              One email produces {CARBON_PER_EMAIL}g of carbon.{' '}
-              {EMAILS_SENT_PER_DAY} billion emails are sent every day.
-              Unsubscribe from unwanted subscription emails and reduce your
-              carbon footprint.{' '}
-              <TextLink undecorated href="#cite-1">
-                <sup>[1]</sup>
-              </TextLink>
-              <TextLink undecorated href="#cite-6">
-                <sup>[6]</sup>
-              </TextLink>
-            </p> */}
             <a href="/signup" className={`beam-me-up-cta`}>
               Make a difference
             </a>
@@ -229,8 +222,10 @@ const ClimatePage = () => {
               </p>
               <p>
                 One tree absorbs{' '}
-                {formatNumber(CARBON_OFFSET_PER_TREE_PER_YEAR / 100)}kg of
-                carbon in a single year{' '}
+                {formatWeight(CARBON_OFFSET_PER_TREE_PER_YEAR, {
+                  rounded: true
+                })}{' '}
+                of carbon in a single year{' '}
                 <TextLink undecorated inverted href="#cite-4">
                   <sup>[4]</sup>
                 </TextLink>
@@ -350,7 +345,7 @@ const ClimatePage = () => {
               <sup>[1]</sup>
               <cite>
                 <a href="https://img.en25.com/Web/McAfee/CarbonFootprint_12pagesfr_s_fnl2.pdf">
-                  A legitimate email emits on average 4 grams of CO2
+                  A legitimate email emits on average 4g of CO2
                 </a>
               </cite>
             </li>
@@ -359,7 +354,7 @@ const ClimatePage = () => {
               <cite>
                 <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
                   In 2019, the Total Worldwide Emails Sent/Received Per Day is
-                  246.5 (B)
+                  246.5 billion
                 </a>
               </cite>
             </li>
@@ -368,7 +363,7 @@ const ClimatePage = () => {
               <cite>
                 <a href="https://www.carbonfootprint.com">
                   Economy class direct one way flight from LON to PAR is 0.03
-                  tonnes (30000g) of CO2
+                  tonnes (30kg) of CO2
                 </a>
               </cite>
             </li>
@@ -378,13 +373,13 @@ const ClimatePage = () => {
                 <div>
                   <a href="https://trees.org/carboncalculator">
                     A tree in a Forest Garden sequesters a rate of 34.6 pounds
-                    (15694g) of carbon per tree
+                    (15.694kg) of carbon per tree
                   </a>
                 </div>
                 <div>
                   <a href="https://archpaper.com/2017/07/trees-sequester-carbon-myth/">
                     The average amount each tree was likely to sequester was 88
-                    pounds (39916g) per tree per year
+                    pounds (39.916kg) per tree per year
                   </a>
                 </div>
                 <div>
@@ -422,20 +417,6 @@ export default ClimatePage;
 
 function fetchStats() {
   return request('/api/stats?summary=true');
-}
-
-function formatNumber(num) {
-  return numeral(num).format('0,0');
-}
-
-function formatWeightTonnes(weight) {
-  const val = formatNumber(weight / TONNE_CONVERSION);
-  const text = val > 1 ? 'tonnes' : 'tonne';
-  return (
-    <span>
-      {val} {text}
-    </span>
-  );
 }
 
 function CO2() {

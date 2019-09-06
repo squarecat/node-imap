@@ -9,8 +9,9 @@ import React, { useContext, useMemo } from 'react';
 
 import { MailContext } from '../provider';
 import { OptionsIcon } from '../../../components/icons';
-import Spinner from '../../../components/loading/spinner';
-import Tooltip from '../../../components/tooltip';
+// import Spinner from '../../../components/loading/spinner';
+// import Tooltip from '../../../components/tooltip';
+import useUser from '../../../utils/hooks/use-user';
 
 export default React.memo(
   ({
@@ -20,8 +21,8 @@ export default React.memo(
     sortValues = [],
     sortByValue = 'date',
     sortByDirection = 'desc',
-    activeFilters = [],
-    showLoading = false
+    activeFilters = []
+    // showLoading = false
   }) => {
     return (
       <div styleName="filters">
@@ -59,9 +60,10 @@ function Filters({
   activeFilters
 }) {
   const { dispatch } = useContext(MailContext);
+  const [accounts] = useUser(u => u.accounts);
   const { recipients } = filterValues;
   const statusValue = activeFilters.find(v => v.field === 'status');
-  const recipientValues = getRecipientValues(recipients);
+  const recipientValues = getRecipientValues(recipients, accounts);
   let recipientValue = activeFilters.find(
     v => v.field === 'to' || v.field === 'forAccount'
   );
@@ -298,7 +300,7 @@ function OptionsDropdown() {
   );
 }
 
-function getRecipientValues(recipients) {
+function getRecipientValues(recipients, accounts) {
   return recipients.reduce((out, v) => {
     const [to, account, provider] = v;
     const existing = out.find(o => o.value === account);
@@ -317,10 +319,23 @@ function getRecipientValues(recipients) {
         }
       ];
     }
+
+    let providerName;
+    if (provider === 'imap') {
+      const { displayName } = accounts.find(a => a.email === account);
+      providerName = displayName || 'IMAP';
+    } else if (provider === 'google') {
+      providerName = 'Google';
+    } else if (provider === 'outlook') {
+      providerName = 'Microsoft';
+    } else {
+      providerName = provider;
+    }
+
     return [
       ...out,
       {
-        label: `${account} (${provider})`,
+        label: `${account} (${providerName})`,
         value: account,
         options: [
           {

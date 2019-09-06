@@ -299,13 +299,8 @@ function ChangePassword() {
 }
 
 function removeTwoFactorAuth(token) {
-  fetch('/api/me/2fa', {
+  return request('/api/me/2fa', {
     method: 'DELETE',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
     body: JSON.stringify({ token })
   });
 }
@@ -313,11 +308,6 @@ function removeTwoFactorAuth(token) {
 function updatePassword(oldPassword, password) {
   return request('/api/me/password', {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
     body: JSON.stringify({
       op: 'update',
       value: { oldPassword, password }

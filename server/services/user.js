@@ -42,6 +42,7 @@ import {
   addNewsletterUnsubscriptionToStats,
   addReferralPurchaseToStats,
   addReminderRequestToStats,
+  addRemovedAccountToStats,
   addUnsubStatusToStats,
   addUserAccountDeactivatedToStats,
   addUserToStats
@@ -502,7 +503,14 @@ async function connectUserAccount(userId, accountData = {}, keys, provider) {
 
 export async function connectImapAccount(userId, masterKey, imapData) {
   const audit = createAudit(userId, 'action/connect-imap');
-  const { username, password, port, host } = imapData;
+  const {
+    username,
+    password,
+    port,
+    host,
+    displayName,
+    providerType
+  } = imapData;
   try {
     const provider = 'imap';
 
@@ -549,6 +557,8 @@ export async function connectImapAccount(userId, masterKey, imapData) {
     const account = {
       id,
       provider,
+      displayName,
+      providerType,
       email: username,
       port,
       host
@@ -713,7 +723,7 @@ function addConnectAccountActivity(updatedUser, account) {
     provider: account.provider,
     email: account.email
   });
-  addConnectedAccountToStats(account.provider);
+  addConnectedAccountToStats(account);
 }
 
 export async function updateUserAccountToken({ userId, accountEmail }, keys) {
@@ -1035,6 +1045,10 @@ export async function updateUserUnsubStatusById(
       message,
       ...data
     });
+    // user account may have been removed
+    if (!userId) {
+      return true;
+    }
     if (status === 'rejected' || status === 'failed') {
       incrementUserCredits(userId, 1);
     }
@@ -1106,6 +1120,7 @@ export async function removeUserAccount(userId, accountEmail) {
       provider,
       email: accountEmail
     });
+    addRemovedAccountToStats(account);
 
     if (user.organisationId) {
       logger.debug(
@@ -1350,7 +1365,7 @@ function checkReward({ userActivity, activityData }) {
     // connectedAdditionalAccount can only be done once per additional email
     case 'connectedAdditionalAccount': {
       const alreadyConnected = userActivity.find(
-        a => a.type === type && a.data.id === data.id
+        a => a.type === type && a.data.email === data.email
       );
       if (alreadyConnected) {
         logger.debug(

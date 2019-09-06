@@ -9,9 +9,9 @@ import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import aolLogo from '../../../assets/providers/imap/aol-logo.png';
 import cx from 'classnames';
-import fastmailLogo from '../../../assets/providers/imap/fastmail-logo-small.jpg';
+import fastmailLogo from '../../../assets/providers/imap/fastmail-logo-small.png';
 import googleLogo from '../../../assets/providers/google-logo.png';
-import icloudLogo from '../../../assets/providers/imap/icloud-logo-small.jpg';
+import icloudLogo from '../../../assets/providers/imap/icloud-logo-small.png';
 import logoV2 from '../../../assets/logo-v2.png';
 import microsoftLogo from '../../../assets/providers/microsoft-logo.png';
 import { openChat } from '../../../utils/chat';
@@ -385,11 +385,7 @@ function FinishContent({ positionLabel, isMigrated }) {
 export async function updateMilestone(milestone) {
   return request('/api/me/milestones', {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({ op: 'update', value: milestone })
   });
 }

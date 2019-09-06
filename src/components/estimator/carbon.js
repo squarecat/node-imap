@@ -6,15 +6,16 @@ import {
   CARBON_PER_EMAIL,
   CARBON_PLASTIC_BAG,
   PECENTAGE_EMAILS_SPAM,
-  PERCENTAGE_UNSUBS
-} from '../../utils/climate';
+  PERCENTAGE_UNSUBS,
+  formatNumber,
+  formatWeight
+} from '../../utils/climate-stats';
 import React, { useMemo, useState } from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
 import RangeInput from '../../components/form/range';
 import _times from 'lodash.times';
 import mailBoxImg from '../../assets/mailbox.png';
-import numeral from 'numeral';
 import smallLogo from '../../assets/logo.png';
 import spamMailImg from '../../assets/spam-email.png';
 import treeImg from '../../assets/climate/tree.png';
@@ -108,10 +109,6 @@ export default function Estimator({
   );
 }
 
-function formatNumber(num) {
-  return numeral(num).format('0,00');
-}
-
 function getRecommendationContent(mailPerDay, unsubsPerMonth) {
   const carbonSavedPerMonth = unsubsPerMonth * CARBON_PER_EMAIL;
   const comparisonContent = getComparisonContent(carbonSavedPerMonth);
@@ -139,7 +136,7 @@ function getRecommendationContent(mailPerDay, unsubsPerMonth) {
         <p>
           We estimate that you can{' '}
           <TextImportant>
-            reduce your carbon footprint by {formatNumber(carbonSavedPerMonth)}g
+            reduce your carbon footprint by {formatWeight(carbonSavedPerMonth)}
           </TextImportant>{' '}
           if you unsubscribe from {formatNumber(unsubsPerMonth)} unwanted
           subscription emails.

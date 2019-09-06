@@ -507,11 +507,7 @@ function fetchOrganisation(id) {
 function toggleOrganisationType(id, allowAnyUserWithCompanyEmail) {
   return request(`/api/organisation/${id}`, {
     method: 'PATCH',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    },
+
     body: JSON.stringify({
       op: 'update',
       value: {
