@@ -234,52 +234,49 @@ function Filters({
 
 function OptionsDropdown() {
   const { state, dispatch } = useContext(MailContext);
-  const dropdownList = useMemo(
-    () => {
-      const { showSpam = true, showTrash = true } = state.options || {};
-      return (
-        <DropdownList>
-          <DropdownItem>
-            <span styleName="options-item">
-              <FormCheckbox
-                label="Show spam"
-                id="show-spam"
-                name="show-spam"
-                checked={showSpam}
-                onClick={e => {
-                  const { checked } = e.currentTarget;
-                  dispatch({
-                    type: 'set-show-spam-option',
-                    data: checked
-                  });
-                  e.stopPropagation();
-                }}
-              />
-            </span>
-          </DropdownItem>
-          <DropdownItem>
-            <span styleName="options-item">
-              <FormCheckbox
-                label="Show trash"
-                id="show-trash"
-                name="show-trash"
-                checked={showTrash}
-                onClick={e => {
-                  const { checked } = e.currentTarget;
-                  dispatch({
-                    type: 'set-show-trash-option',
-                    data: checked
-                  });
-                  e.stopPropagation();
-                }}
-              />
-            </span>
-          </DropdownItem>
-        </DropdownList>
-      );
-    },
-    [state.options, dispatch]
-  );
+  const dropdownList = useMemo(() => {
+    const { showSpam = true, showTrash = true } = state.options || {};
+    return (
+      <DropdownList>
+        <DropdownItem>
+          <span styleName="options-item">
+            <FormCheckbox
+              label="Show spam"
+              id="show-spam"
+              name="show-spam"
+              checked={showSpam}
+              onChange={e => {
+                const { checked } = e.currentTarget;
+                dispatch({
+                  type: 'set-show-spam-option',
+                  data: checked
+                });
+                e.stopPropagation();
+              }}
+            />
+          </span>
+        </DropdownItem>
+        <DropdownItem>
+          <span styleName="options-item">
+            <FormCheckbox
+              label="Show trash"
+              id="show-trash"
+              name="show-trash"
+              checked={showTrash}
+              onChange={e => {
+                const { checked } = e.currentTarget;
+                dispatch({
+                  type: 'set-show-trash-option',
+                  data: checked
+                });
+                e.stopPropagation();
+              }}
+            />
+          </span>
+        </DropdownItem>
+      </DropdownList>
+    );
+  }, [state.options, dispatch]);
   return (
     <Dropdown
       style={{

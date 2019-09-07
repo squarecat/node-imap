@@ -142,7 +142,17 @@ export function useMailSync() {
       socket.on('unsubscribe:success', async ({ id, data }) => {
         console.debug(`[db]: successfully unsubscribed from ${id}`);
         try {
-          const { estimatedSuccess, unsubStrategy, hasImage } = data;
+          const {
+            estimatedSuccess,
+            unsubStrategy,
+            hasImage,
+            mail: mailData,
+            unsubscribeId,
+            unsubscribeLink,
+            unsubscribeStrategy,
+            unsubscribeMailTo,
+            unsubscribedAt
+          } = data;
           let update = {
             estimatedSuccess,
             unsubStrategy,
@@ -158,7 +168,19 @@ export function useMailSync() {
               emailData
             };
           }
-          addUnsub(data);
+          addUnsub({
+            estimatedSuccess,
+            date: mailData.date,
+            from: mailData.from,
+            to: mailData.to,
+            hasImage,
+            id,
+            unsubscribeId,
+            unsubscribeLink,
+            unsubscribeMailTo,
+            unsubscribeStrategy,
+            unsubscribedAt
+          });
           await db.mail.update(id, update);
           const mail = await db.mail.get(id);
           if (!estimatedSuccess) {
@@ -227,7 +249,7 @@ export function useMailSync() {
         socket.off('unsubscribe:err');
       }
     };
-  }, [isConnected, error]);
+  }, [isConnected, error, socket, db.mail, db.prefs, db.scores, db.occurrences, emit, actions, addUnsub, incrementUnsubCount, openModal, credits]);
   return {
     ready: isConnected,
     isFetching,
