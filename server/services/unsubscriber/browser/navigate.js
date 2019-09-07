@@ -27,6 +27,7 @@ export async function goToPage(page, url) {
   } catch (e) {
     logger.error(e);
     logger.info(`browser: going to page failed`);
+    throw e;
   }
 }
 
