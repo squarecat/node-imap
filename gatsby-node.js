@@ -1,14 +1,56 @@
 const path = require('path');
 
-exports.onCreateWebpackConfig = ({ actions }) => {
-  actions.setWebpackConfig({
+exports.onCreateWebpackConfig = ({ stage, actions, getConfig }) => {
+  let config = {
+    ...getConfig(),
     devServer: {
       inline: false
     }
-  });
+  };
+  if (stage === 'build-javascript') {
+    config = {
+      ...config,
+      optimization: {
+        ...config.optimization,
+        runtimeChunk: {
+          name: `webpack-runtime`
+        },
+        splitChunks: {
+          name: false,
+          chunks: `all`,
+          cacheGroups: {
+            ...config.optimization.splitChunks.cacheGroups,
+            commonAppPages: {
+              name: `app-pages`,
+              chunks: `all`,
+              test: /[\\/]src[\\/]pages[\\/]app[\\/].*/,
+              priority: 0
+            },
+            dexie: {
+              name: `commons-app`,
+              chunks: `all`,
+              test: /[\\/]node_modules[\\/](dexie|socket.io-parser|socket.io-client)[\\/]/,
+              priority: -5
+            },
+            commons: {
+              name: `commons`,
+              chunks: `all`,
+              minChunks: 5,
+              priority: -10
+            }
+          }
+        }
+      }
+    };
+  }
+  console.log(JSON.stringify(config.optimization, null, 2));
+  actions.replaceWebpackConfig(config);
 };
 
 exports.createPages = ({ graphql, actions }) => {
+  if (process.env.SKIP_PAGES) {
+    return Promise.resolve();
+  }
   const { createPage } = actions;
   return graphql(`
     {
@@ -57,6 +99,7 @@ exports.createPages = ({ graphql, actions }) => {
       //   pages = [...pages, slug];
       // });
       console.log(pages.join('\n'));
+      return true;
     })
     .catch(e => console.error(e));
 };

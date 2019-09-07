@@ -7,7 +7,7 @@ import { getEstimateForTimeframe } from './estimator';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 
-export async function* fetchMail({ user, account, from }) {
+export async function* fetchMail({ user, account, from, prevDupeCache }) {
   const audit = createAudit(user.id, 'fetch/microsoft');
   const start = Date.now();
   try {
@@ -23,7 +23,7 @@ export async function* fetchMail({ user, account, from }) {
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
-    let dupeCache = {};
+    let dupeCache = prevDupeCache;
     let dupeSenders = [];
     logger.info(
       `outlook-fetcher: checking for new mail after ${getFilterString({
@@ -83,14 +83,10 @@ export async function* fetchMail({ user, account, from }) {
     }
     const timeTaken = (Date.now() - start) / 1000;
     logger.info(
-      `outlook-fetcher: finished scan (${
-        user.id
-      }) [took ${timeTaken}s, ${totalEmailsCount} results]`
+      `outlook-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`
     );
     audit.append(
-      `Scan finished on account ${
-        account.email
-      }. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
+      `Scan finished on account ${account.email}. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
     );
     return {
       totalMail: totalEmailsCount,

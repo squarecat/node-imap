@@ -114,6 +114,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+
+  @media (max-width: 450px) {
+    font-size: 14px;
+  }
 }
 
 .modal-subheader {
@@ -121,6 +125,10 @@
   padding: 0 0 5px 0;
   font-size: 18px;
   margin-top: 1.45rem;
+
+  @media (max-width: 450px) {
+    font-size: 14px;
+  }
 }
 
 .fluid {

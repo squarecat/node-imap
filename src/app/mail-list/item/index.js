@@ -4,12 +4,16 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useMailItem, useOccurrence, useScore } from '../db/hooks';
 
 import IgnoreIcon from '../../../components/ignore-icon';
+import { Info as InfoIcon } from '../../../components/icons';
 import { MailContext } from '../provider';
+import MailItemDataModal from '../../../components/modal/mail-data';
+import { ModalContext } from '../../../providers/modal-provider';
 import Score from '../../../components/score';
 import Toggle from '../../../components/toggle';
 import Tooltip from '../../../components/tooltip';
 import format from 'date-fns/format';
 import { toggleFromIgnoreList } from '../../../utils/ignore';
+import { useDelinquency } from '../db/hooks';
 import useUser from '../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM';
@@ -19,6 +23,16 @@ const mailYearStamp = 'YYYY';
 
 function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
+  const openUnsubModal = useCallback(
+    () => {
+      let strat = m.unsubStrategy;
+      if (!strat) {
+        strat = m.unsubscribeLink ? 'link' : 'mailto';
+      }
+      actions.setUnsubData({ ...m, unsubStrategy: strat });
+    },
+    [actions, m]
+  );
   const { actions } = useContext(MailContext);
 
   const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
@@ -82,13 +96,7 @@ function MailItem({ id, onLoad }) {
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
           ) : null}
         </div>
-        <Tooltip
-          placement="bottom"
-          destroyTooltipOnHide={true}
-          overlay={<span>{`Sent to ${m.to} from ${m.fromEmail}`}</span>}
-        >
-          <span styleName="from-email">{`<${m.fromEmail}>`}</span>
-        </Tooltip>
+        <MailDataLink item={m} openUnsubModal={openUnsubModal} />
       </td>
       <td styleName="cell tags-column">
         {m.isTrash ? (
@@ -129,14 +137,7 @@ function MailItem({ id, onLoad }) {
           mail={m}
           isIgnored={isIgnored}
           onUnsubscribe={actions.onUnsubscribe}
-          setUnsubModal={() => {
-            // defensive code against an old bug where unsubStrategy can be null
-            let strat = m.unsubStrategy;
-            if (!strat) {
-              strat = m.unsubscribeLink ? 'link' : 'mailto';
-            }
-            actions.setUnsubData({ ...m, unsubStrategy: strat });
-          }}
+          setUnsubModal={openUnsubModal}
         />
       </td>
     </>
@@ -190,20 +191,9 @@ function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
     );
   } else {
     content = (
-      <svg
-        onClick={() => setUnsubModal()}
-        styleName="failed-to-unsub-icon"
-        viewBox="0 0 32 32"
-        width="20"
-        height="20"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="3"
-      >
-        <path d="M16 14 L16 23 M16 8 L16 10" />
-        <circle cx="16" cy="16" r="14" />
-      </svg>
+      <span onClick={() => setUnsubModal()} styleName="failed-to-unsub-icon">
+        <InfoIcon width="20" height="20" />
+      </span>
     );
   }
 
@@ -243,4 +233,36 @@ function DateCell({ date } = {}) {
   );
 }
 
+const MailDataLink = React.memo(function({ openUnsubModal, item }) {
+  const { open: openModal } = useContext(ModalContext);
+  const { delinquent, reported } = useDelinquency(item);
+  const content = (
+    <a
+      styleName={`mail-data-link ${delinquent ? 'delinquent' : ''}`}
+      onClick={() =>
+        openModal(
+          <MailItemDataModal item={item} openUnsubModal={openUnsubModal} />
+        )
+      }
+    >
+      <InfoIcon width="12" height="12" />
+      <span styleName="from-email">{`<${item.fromEmail}>`}</span>
+    </a>
+  );
+  if (delinquent && !reported) {
+    return (
+      <Tooltip
+        placement="bottom"
+        overlay={
+          <span>
+            We think this sender is behaving badly. Click for more info.
+          </span>
+        }
+      >
+        {content}
+      </Tooltip>
+    );
+  }
+  return content;
+});
 export default React.memo(MailItem);

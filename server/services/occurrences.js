@@ -1,6 +1,7 @@
 import {
   getScores,
   refreshScores,
+  setSenderDelinquent,
   updateOccurrenceHearts,
   updateOccurrenceUnsubscribed,
   updateOccurrences,
@@ -20,6 +21,10 @@ export function addOrUpdateOccurrences(userId, dupeInfo = []) {
     ];
   }, []);
   return updateOccurrences(userId, occurrences, '6m');
+}
+
+export function setSenderAsDelinquent(sender) {
+  return setSenderDelinquent(sender);
 }
 
 export function updateOccurrenceHearted(sender, isHearted) {

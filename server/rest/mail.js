@@ -84,20 +84,20 @@ export default function(app, socket) {
 
   socket.on('fetch', async (userId, data = {}, { masterKey }) => {
     const { onMail, onError, onEnd, onProgress } = getSocketFunctions(userId);
-    let { accounts: accountFilters } = data;
-    // if we're already running a scan for an account then
-    // DO NOT run another one. Client should be waiting on
-    // the results of this scan already
-    // const alreadyRunning = runningScans.filter(rs =>
-    //   accountFilters.some(af => af.id === rs)
-    // );
-    // accountFilters = accountFilters.filter(af => !runningScans.includes(af.id));
-    // runningScans = [...runningScans, ...accountFilters.map(af => af.id)];
-    // if (alreadyRunning.length) {
-    //   logger.info(
-    //     `mail-rest: already running scans for accounts ${alreadyRunning.join()}, not running again`
-    //   );
-    // }
+    let { accounts: accountFilters, occurrences } = data;
+    let prevDupeCache = [];
+    if (occurrences.length) {
+      prevDupeCache = occurrences.reduce((out, oc) => {
+        const { count, key, lastSeen } = oc;
+        return {
+          ...out,
+          [key]: {
+            count,
+            lastSeen
+          }
+        };
+      }, {});
+    }
     if (!accountFilters.length) {
       return;
     }
@@ -106,6 +106,7 @@ export default function(app, socket) {
       const it = await fetchMail({
         userId,
         accountFilters,
+        prevDupeCache,
         masterKey
       });
       let next = await it.next();

@@ -13,6 +13,21 @@ export default globalReducer(
           user.milestones.completedOnboardingOrganisation
       };
     },
+    addUnsub: (state, data) => {
+      return {
+        ...state,
+        unsubscriptions: [...state.unsubscriptions, data]
+      };
+    },
+    updateReportedUnsub: (state, unsub) => {
+      return {
+        ...state,
+        unsubscriptions: [
+          ...state.unsubscriptions.filter(u => u.id !== unsub.id),
+          unsub
+        ]
+      };
+    },
     update: (state, user) => {
       return {
         ...state,

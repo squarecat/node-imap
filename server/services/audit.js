@@ -1,7 +1,7 @@
 import * as audit from '../dao/audit';
 
 import { isoDate } from '../dao/db';
-import logger from '../../build/utils/logger';
+import logger from '../utils/logger';
 import { v1 } from 'node-uuid';
 
 let auditBuffer = [];

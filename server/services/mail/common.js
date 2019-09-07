@@ -1,4 +1,5 @@
-import { getDupeKey } from '../../utils/parsers';
+import { getDupeKey, parseEmail } from '../../utils/parsers';
+
 import logger from '../../utils/logger';
 import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
@@ -70,9 +71,11 @@ export function getUnsubValue(str) {
  * this mail already
  */
 export function hasUnsubscribedAlready(mail, unsubscriptions = []) {
-  const unsubInfo = unsubscriptions.find(
-    u => mail.from === u.from && mail.to === u.to
-  );
+  const { fromEmail } = parseEmail(mail.from);
+  const unsubInfo = unsubscriptions.find(u => {
+    const { fromEmail: uFromEmail } = parseEmail(u.from);
+    return fromEmail === uFromEmail && mail.to === u.to;
+  });
   if (!unsubInfo) {
     return null;
   }
@@ -134,7 +137,7 @@ export function dedupeMailList(
         dupes: {
           ...out.dupes,
           [dupeKey]: {
-            lastSeen: mail.from > dupe.lastSeen ? mail.from : dupe.lastSeen,
+            lastSeen: mail.date > dupe.lastSeen ? mail.date : dupe.lastSeen,
             count: dupe.count + 1
           }
         },
