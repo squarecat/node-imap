@@ -4,6 +4,18 @@ require('dotenv').config({
 });
 
 console.log('sa: ', process.env.SIMPLE_ANALYTICS_DOMAIN);
+let plugins = [];
+if (process.env.ANALYZE) {
+  plugins = [
+    ...plugins,
+    {
+      resolve: `gatsby-plugin-webpack-bundle-analyzer`,
+      options: {
+        production: true
+      }
+    }
+  ];
+}
 module.exports = {
   siteMetadata: {
     title: 'Easily unsubscribe from unwanted emails - Leave Me Alone',
@@ -14,6 +26,7 @@ module.exports = {
     siteName: 'Leave Me Alone'
   },
   plugins: [
+    ...plugins,
     `gatsby-transformer-json`,
     'gatsby-plugin-react-helmet',
     `gatsby-transformer-sharp`,

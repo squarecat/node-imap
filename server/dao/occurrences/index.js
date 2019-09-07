@@ -3,6 +3,7 @@ import {
   refreshScores as refreshOccurrenceScores
 } from './scores';
 
+import { setDelinquent } from './delinquent';
 import { updateOccurrences as update } from './frequencies';
 import { updateHeart } from './hearts';
 import { updateOccurrencesSeen as updateSeen } from './seen';
@@ -14,3 +15,4 @@ export const updateOccurrenceUnsubscribed = updateUnsubscribed;
 export const updateOccurrences = update;
 export const updateOccurrencesSeen = updateSeen;
 export const updateOccurrenceHearts = updateHeart;
+export const setSenderDelinquent = setDelinquent;

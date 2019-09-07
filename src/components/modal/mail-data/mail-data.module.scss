@@ -1,0 +1,128 @@
+@import '../../../styles/common/colors.scss';
+@import '../../form/form.module.scss';
+
+.mail-data-modal {
+  max-width: 700px;
+}
+
+.mail-data-content {
+  tr {
+    border: 0;
+    border-top: 1px solid rgba($color-border-red, 0.25);
+    background-color: transparent;
+  }
+
+  tr:first-child {
+    border-top: 0;
+    td {
+      border: 0 !important;
+    }
+  }
+
+  td {
+    border: 0;
+    padding: 10px 15px;
+    height: auto;
+    vertical-align: top;
+
+    @media (max-width: 400px) {
+      padding: 5px 0px;
+    }
+  }
+
+  td:first-child {
+    width: 150px;
+  }
+}
+
+.labels {
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding: 0;
+  }
+}
+
+.label {
+  display: inline-block;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 15px;
+  vertical-align: top;
+  margin-left: 7px;
+  cursor: default;
+  background-color: $color-grey;
+
+  &:first-child {
+    margin-left: 0;
+  }
+  &:hover {
+    background-color: $color-grey-darker;
+  }
+}
+
+.data-pill {
+  @extend .pill;
+  padding: 0 10px;
+  max-width: 100%;
+
+  &.muted {
+    background-color: $color-grey-darker;
+  }
+  &.errored {
+    color: white;
+    background-color: $color-red-darker;
+  }
+}
+
+.relative-timestamp,
+.unsub-status-text,
+.occurrences,
+.report-text {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 22px;
+
+  @media (max-width: 400px) {
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+.relative-timestamp {
+  padding: 0 10px;
+}
+
+.unsub-status-text {
+  display: block;
+  padding: 5px 0 0 0;
+}
+
+.occurrences {
+  display: block;
+}
+
+.report-text {
+  padding: 15px 0px;
+  // line-height: 18px;
+  p {
+    margin-bottom: 15px;
+  }
+}
+
+.report-btn {
+  float: right;
+  width: 100px;
+  margin-right: 15px;
+  a {
+    margin: 0;
+    max-width: 100%;
+  }
+}
+
+.from-date,
+.from-time {
+  display: block;
+}

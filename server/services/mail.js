@@ -20,7 +20,12 @@ import logger from '../utils/logger';
 import { resolveUnsubscription as resolveUserUnsubscription } from '../dao/user';
 import subMonths from 'date-fns/sub_months';
 
-export async function* fetchMail({ userId, masterKey, accountFilters = [] }) {
+export async function* fetchMail({
+  userId,
+  masterKey,
+  accountFilters = [],
+  prevDupeCache
+}) {
   const user = await getUserById(userId, { withAccountKeys: true });
   let { accounts, preferences } = user;
   let accountScanData = [];
@@ -43,7 +48,9 @@ export async function* fetchMail({ userId, masterKey, accountFilters = [] }) {
   }
   try {
     const iterators = await Promise.all(
-      accounts.map(account => fetchMailByAccount({ account, user, masterKey }))
+      accounts.map(account =>
+        fetchMailByAccount({ account, user, masterKey, prevDupeCache })
+      )
     );
     for (let iter of iterators) {
       let next = await iter.next();
@@ -77,6 +84,7 @@ export async function* fetchMailByAccount({
   user,
   account,
   masterKey,
+  prevDupeCache,
   ignore = false
 }) {
   const { provider, filter } = account;
@@ -90,13 +98,19 @@ export async function* fetchMailByAccount({
   try {
     if (provider === 'google') {
       it = await fetchMailFromGmail(
-        { user, account, from },
+        { user, account, from, prevDupeCache },
         { strategy: 'api', batch: true }
       );
     } else if (provider === 'outlook') {
-      it = await fetchMailFromOutlook({ user, account, from });
+      it = await fetchMailFromOutlook({ user, account, from, prevDupeCache });
     } else if (provider === 'imap') {
-      it = await fetchMailFromImap({ user, account, from, masterKey });
+      it = await fetchMailFromImap({
+        user,
+        account,
+        from,
+        masterKey,
+        prevDupeCache
+      });
     } else {
       throw new Error('mail-service unknown provider');
     }

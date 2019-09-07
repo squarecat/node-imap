@@ -640,6 +640,26 @@ export async function updateUnsubStatus(
   }
 }
 
+export async function reportUnsub(id, unsubId) {
+  logger.info('updating unsub');
+  logger.info(`${id} - ${unsubId}`);
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'unsubscriptions.unsubscribeId': unsubId },
+      {
+        $set: {
+          'unsubscriptions.$.reported': true,
+          'unsubscriptions.$.reportedAt': isoDate()
+        }
+      }
+    );
+  } catch (err) {
+    logger.error('user-dao: failed to report unsub');
+    logger.error(err);
+    throw err;
+  }
+}
 export async function updateUnsubStatusById(
   unsubId,
   { status, message = '', ...data } = {}

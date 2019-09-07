@@ -7,7 +7,13 @@ import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 import util from 'util';
 
-export async function* fetchMail({ masterKey, user, account, from }) {
+export async function* fetchMail({
+  masterKey,
+  user,
+  account,
+  from,
+  prevDupeCache
+}) {
   const audit = createAudit(user.id, 'fetch/imap');
   const start = Date.now();
   let client;
@@ -28,7 +34,7 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     let totalUnsubCount = 0;
     let totalPrevUnsubbedCount = 0;
     let progress = 0;
-    let dupeCache = {};
+    let dupeCache = prevDupeCache;
     let dupeSenders = [];
 
     const searchableMailboxes = await getMailboxes(client);
@@ -72,14 +78,10 @@ export async function* fetchMail({ masterKey, user, account, from }) {
     }
     const timeTaken = (Date.now() - start) / 1000;
     logger.info(
-      `imap-fetcher: finished scan (${
-        user.id
-      }) [took ${timeTaken}s, ${totalEmailsCount} results]`
+      `imap-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`
     );
     audit.append(
-      `Scan finished on account ${
-        account.email
-      }. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
+      `Scan finished on account ${account.email}. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
     );
 
     return {
