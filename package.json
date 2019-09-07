@@ -1,7 +1,7 @@
 {
   "name": "leavemealone",
   "description": "See all of your subscription emails in one place and unsubscribe from them with a single click",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "Squarecat <admin@squarecat.io>",
   "dependencies": {
     "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
