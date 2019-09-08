@@ -6,8 +6,8 @@ import Credits from './credits';
 import { Link } from 'gatsby';
 import Reminder from './reminder';
 import SettingsDropdown from './settings';
-import useUser from '../../utils/hooks/use-user';
 import logo from '../../assets/logo.png';
+import useUser from '../../utils/hooks/use-user';
 
 // const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
@@ -17,21 +17,18 @@ const Header = React.memo(({ loaded }) => {
     isUserLoaded: u.loaded
   }));
 
-  const content = useMemo(
-    () => {
-      if (!isUserLoaded) {
-        return null;
-      }
-      return (
-        <>
-          <Reminder />
-          {hasOrganisation ? null : <Credits />}
-          <SettingsDropdown />
-        </>
-      );
-    },
-    [isUserLoaded, hasOrganisation]
-  );
+  const content = useMemo(() => {
+    if (!isUserLoaded) {
+      return null;
+    }
+    return (
+      <>
+        <Reminder />
+        {hasOrganisation ? null : <Credits />}
+        <SettingsDropdown />
+      </>
+    );
+  }, [isUserLoaded, hasOrganisation]);
 
   return (
     <div styleName={`header ${loaded ? 'loaded' : ''}`}>
@@ -43,7 +40,5 @@ const Header = React.memo(({ loaded }) => {
     </div>
   );
 });
-
-Header.whyDidYouRender = true;
 
 export default Header;

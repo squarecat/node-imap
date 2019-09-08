@@ -1,6 +1,5 @@
 import { CloseIcon, LockIcon } from '../icons';
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
-import { clearAllBodyScrollLocks, disableBodyScroll } from 'body-scroll-lock';
 
 import Button from '../btn';
 import LoadingOverlay from '../loading/overlay';
@@ -36,47 +35,44 @@ export default React.memo(({ children, opaque, shown = false, style }) => {
     modalRoot.appendChild(el);
   }, []);
 
-  const content = useMemo(
-    () => {
-      if (!children) {
-        return null;
-      }
-      return (
-        <Transition
-          component={null}
-          appear
-          timeout={100}
-          mountOnEnter
-          unmountOnExit
-          in={shown}
-        >
-          {state => {
-            const stateClass = _capitalize(state);
-            const hasStyle = !!modalStyles[`modalContainer${stateClass}`];
-            const classes = cx(modalStyles['modalContainer'], {
-              [modalStyles[`modalContainer${stateClass}`]]: hasStyle,
-              [modalStyles.opaque]: opaque
-            });
-            return (
-              <div className={classes} data-modal>
-                <div styleName="modal-wizard-wrapper" data-modal-wrapper>
-                  <div
-                    style={style}
-                    styleName="modal"
-                    ref={ref}
-                    data-modal-content
-                  >
-                    {children}
-                  </div>
+  const content = useMemo(() => {
+    if (!children) {
+      return null;
+    }
+    return (
+      <Transition
+        component={null}
+        appear
+        timeout={100}
+        mountOnEnter
+        unmountOnExit
+        in={shown}
+      >
+        {state => {
+          const stateClass = _capitalize(state);
+          const hasStyle = !!modalStyles[`modalContainer${stateClass}`];
+          const classes = cx(modalStyles['modalContainer'], {
+            [modalStyles[`modalContainer${stateClass}`]]: hasStyle,
+            [modalStyles.opaque]: opaque
+          });
+          return (
+            <div className={classes} data-modal>
+              <div styleName="modal-wizard-wrapper" data-modal-wrapper>
+                <div
+                  style={style}
+                  styleName="modal"
+                  ref={ref}
+                  data-modal-content
+                >
+                  {children}
                 </div>
               </div>
-            );
-          }}
-        </Transition>
-      );
-    },
-    [children, opaque, shown, style]
-  );
+            </div>
+          );
+        }}
+      </Transition>
+    );
+  }, [children, opaque, shown, style]);
 
   if (el) {
     return ReactDOM.createPortal(content, el);
@@ -242,17 +238,6 @@ export const ModalBody = React.memo(
   ({ children, compact = false, loading = false }) => {
     const { isShown } = useContext(ModalContext);
     const bodyRef = useRef(null);
-
-    useEffect(
-      () => {
-        disableBodyScroll(bodyRef.current);
-
-        return function cleanup() {
-          clearAllBodyScrollLocks();
-        };
-      },
-      [isShown]
-    );
 
     const classes = cx(modalStyles.modalBody, {
       [modalStyles.modalBodyCompact]: compact

@@ -3,9 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useReducer,
-  useRef,
-  useState
+  useReducer
 } from 'react';
 
 import Modal from '../components/modal';
@@ -66,23 +64,6 @@ export const ModalProvider = React.memo(({ children }) => {
     shown: false,
     options: {}
   });
-  // const [openState, setOpenState] = useState({ shown: false, data: {} });
-  // const [state, setState] = useState({
-  //   options: {},
-  //   modal: null
-  // });
-  // const previousOpenState = usePrevious(openState);
-  // const previousModalState = usePrevious(state);
-
-  // after the modal is closed, call the onClose
-  // function if one was provided
-  // useEffect(
-  //   () => {
-  //     if (previousOpenState && previousOpenState.shown && !openState.shown) {
-  //     }
-  //   },
-  //   [state.options, openState.shown, openState.data, previousOpenState]
-  // );
 
   const closeModal = useCallback(data => {
     dispatch({ type: 'close', data });
@@ -91,46 +72,53 @@ export const ModalProvider = React.memo(({ children }) => {
   const openModal = useCallback((modal, options = {}) => {
     const initialShown =
       typeof options.show !== 'undefined' ? options.show : true;
-    dispatch({ type: 'open', data: { shown: initialShown, modal, options } });
+    dispatch({
+      type: 'open',
+      data: { shown: initialShown, modal, options }
+    });
   }, []);
 
   const replaceModal = useCallback((modal, options = {}) => {
     dispatch({ type: 'replace', data: { modal, options } });
   }, []);
 
-  useEffect(
-    () => {
-      function closeModalByEsc({ key }) {
-        if (state.options.dismissable && key === 'Escape') {
-          closeModal();
-        }
+  useEffect(() => {
+    function closeModalByEsc({ key }) {
+      if (state.options.dismissable && key === 'Escape') {
+        closeModal();
       }
-      function closeModalByClickAway({ target }) {
-        if (state.options.dismissable) {
-          let t = target;
-          while (t && t.getAttribute('data-modal-content')) {
-            if (t === document.body) {
-              return closeModal();
-            }
-            t = t.parentElement;
+    }
+    function closeModalByClickAway({ target }) {
+      if (state.options.dismissable) {
+        let t = target;
+        while (t && t.getAttribute('data-modal-content')) {
+          if (t === document.body) {
+            return closeModal();
           }
+          t = t.parentElement;
         }
       }
-      function removeListeners() {
-        document.removeEventListener('keyup', closeModalByEsc);
-        document.removeEventListener('click', closeModalByClickAway);
-      }
-      if (state.shown) {
-        document.addEventListener('keyup', closeModalByEsc);
-        document.addEventListener('click', closeModalByClickAway);
-      } else {
-        removeListeners();
-      }
-      return () => removeListeners();
-    },
-    [closeModal, state.options.dismissable, state.shown]
-  );
+    }
+    function removeListeners() {
+      document.removeEventListener('keyup', closeModalByEsc);
+      document.removeEventListener('click', closeModalByClickAway);
+    }
+    if (state.shown) {
+      document.addEventListener('keyup', closeModalByEsc);
+      document.addEventListener('click', closeModalByClickAway);
+    } else {
+      removeListeners();
+    }
+    return () => removeListeners();
+  }, [closeModal, state.options.dismissable, state.shown]);
 
+  useEffect(() => {
+    if (state.shown) {
+      hideScrollbars();
+    } else {
+      showScrollbars();
+    }
+  }, [state.shown]);
   const value = useMemo(
     () => ({
       open: openModal,
@@ -151,3 +139,18 @@ export const ModalProvider = React.memo(({ children }) => {
     </ModalContext.Provider>
   );
 });
+
+function hideScrollbars() {
+  const top = document.documentElement.scrollTop;
+  document.documentElement.style.scrollBehavior = 'unset';
+  document.body.classList.add('no-scroll');
+  document.body.scrollTop = top;
+  document.body.setAttribute('data-scroll', top);
+}
+function showScrollbars() {
+  const top = document.body.getAttribute('data-scroll');
+  document.body.removeAttribute('data-scroll');
+  document.body.classList.remove('no-scroll');
+  document.documentElement.scrollTop = top;
+  document.documentElement.style.scrollBehavior = 'smooth';
+}

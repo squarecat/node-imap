@@ -1349,7 +1349,7 @@
     "@sentry/types" "5.6.1"
     tslib "^1.9.3"
 
-"@sentry/node@^5.6.3":
+"@sentry/node@^5.6.2":
   version "5.6.2"
   resolved "https://registry.yarnpkg.com/@sentry/node/-/node-5.6.2.tgz#4b62f056031da65cad78220d48c546b8bfbfaed7"
   integrity sha512-A9CELco6SjF4zt8iS1pO3KdUVI2WVhtTGhSH6X04OVf2en1fimPR+Vs8YVY/04udwd7o+3mI6byT+rS9+/Qzow==
@@ -2709,11 +2709,6 @@ body-parser@1.19.0:
     qs "6.7.0"
     raw-body "2.4.0"
     type-is "~1.6.17"
-
-body-scroll-lock@^2.6.4:
-  version "2.6.4"
-  resolved "https://registry.yarnpkg.com/body-scroll-lock/-/body-scroll-lock-2.6.4.tgz#567abc60ef4d656a79156781771398ef40462e94"
-  integrity sha512-NP08WsovlmxEoZP9pdlqrE+AhNaivlTrz9a0FF37BQsnOrpN48eNqivKkE7SYpM9N+YIPjsdVzfLAUQDBm6OQw==
 
 bonjour@^3.5.0:
   version "3.5.0"

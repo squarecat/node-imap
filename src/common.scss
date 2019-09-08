@@ -48,3 +48,11 @@ cite a:focus {
     border-bottom: 1px dashed $color-link-hover;
   }
 }
+
+.no-scroll {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
+  scroll-behavior: unset;
+}

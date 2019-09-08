@@ -39,24 +39,18 @@ const MailView = React.memo(function() {
   }, []);
 
   // scroll back to the top if the page changes
-  useEffect(
-    () => {
-      window.scrollTo(0, 0);
-    },
-    [page]
-  );
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
 
-  const { offset, totalOnPage, pageCount } = useMemo(
-    () => {
-      const os = page * perPage;
-      return {
-        pageCount: Math.ceil(totalCount / perPage),
-        totalOnPage: Math.min(os + perPage, totalCount),
-        offset: os
-      };
-    },
-    [perPage, totalCount, page]
-  );
+  const { offset, totalOnPage, pageCount } = useMemo(() => {
+    const os = page * perPage;
+    return {
+      pageCount: Math.ceil(totalCount / perPage),
+      totalOnPage: Math.min(os + perPage, totalCount),
+      offset: os
+    };
+  }, [perPage, totalCount, page]);
 
   const onSubmit = useCallback(
     ({ success, useImage, failReason = null }) => {
@@ -74,30 +68,24 @@ const MailView = React.memo(function() {
     [actions, unsubData]
   );
 
-  useEffect(
-    () => {
-      if (unsubData) {
-        openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
-          onClose: () => actions.setUnsubData(null)
-        });
-      }
-    },
-    [actions, onSubmit, openModal, unsubData]
-  );
+  useEffect(() => {
+    if (unsubData) {
+      openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
+        onClose: () => actions.setUnsubData(null)
+      });
+    }
+  }, [actions, onSubmit, openModal, unsubData]);
 
   const showLoading = (isLoading || isFetching) && !mail.length;
-  const content = useMemo(
-    () => {
-      if (showLoading) {
-        return <Loading />;
-      }
-      if (!mail.length || !accounts.length) {
-        return <Empty hasFilters={activeFilters.length} />;
-      }
-      return <MailList mail={mail} />;
-    },
-    [showLoading, mail, accounts.length, activeFilters.length]
-  );
+  const content = useMemo(() => {
+    if (showLoading) {
+      return <Loading />;
+    }
+    if (!mail.length || !accounts.length) {
+      return <Empty hasFilters={activeFilters.length} />;
+    }
+    return <MailList mail={mail} />;
+  }, [showLoading, mail, accounts.length, activeFilters.length]);
 
   return (
     <div styleName="mail-list">
@@ -149,5 +137,3 @@ export default () => {
     </MailProvider>
   );
 };
-
-MailView.whyDidYouRender = true;

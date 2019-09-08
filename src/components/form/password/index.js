@@ -24,45 +24,39 @@ const PasswordField = function({
   const [value, setValue] = useState('');
   const [state, setState] = useState({ isValid: false, message: '' });
 
-  useEffect(
-    () => {
-      const validate = async () => {
-        if (doValidation) {
-          if (value.length < minLength) {
-            return setState({
-              isValid: false,
-              message: passwordLengthText
-            });
-          }
-          const isPwned = await fetchPwnedStatus(value);
-          if (isPwned) {
-            console.log('password is pwned');
-            return setState({
-              isValid: false,
-              message: compromisedPasswordText
-            });
-          }
-        }
-
-        if (!state.isValid) {
+  useEffect(() => {
+    const validate = async () => {
+      if (doValidation) {
+        if (value.length < minLength) {
           return setState({
-            isValid: true,
-            message: ''
+            isValid: false,
+            message: passwordLengthText
           });
         }
-      };
-      if (value) {
-        validate();
+        const isPwned = await fetchPwnedStatus(value);
+        if (isPwned) {
+          console.log('password is pwned');
+          return setState({
+            isValid: false,
+            message: compromisedPasswordText
+          });
+        }
       }
-    },
-    [doValidation, state.isValid, value]
-  );
-  useEffect(
-    () => {
-      onChange(value, { isValid: state.isValid, message: state.message });
-    },
-    [value, state.isValid, state.message, onChange]
-  );
+
+      if (!state.isValid) {
+        return setState({
+          isValid: true,
+          message: ''
+        });
+      }
+    };
+    if (value) {
+      validate();
+    }
+  }, [doValidation, state.isValid, value]);
+  useEffect(() => {
+    onChange(value, { isValid: state.isValid, message: state.message });
+  }, [value, state.isValid, state.message, onChange]);
 
   const onInputChange = useCallback(
     ({ currentTarget }) => {
@@ -101,5 +95,4 @@ async function fetchPwnedStatus(password) {
   return isPwned;
 }
 
-PasswordField.whyDidYouRender = true;
 export default PasswordField;

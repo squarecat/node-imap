@@ -11,7 +11,8 @@
     "request complete",
     "Sorry to see you go",
     "have been removed",
-    "has been removed"
+    "has been removed",
+    "your request has been processed"
   ],
   "fail": ["You'll be unsubscribed", "You will be unsubscribed"],
   "buttonActions": ["confirm", "unsubscribe"],

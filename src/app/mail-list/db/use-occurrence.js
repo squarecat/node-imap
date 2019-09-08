@@ -2,54 +2,44 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 import { DatabaseContext } from '../../../providers/db-provider';
 
-export default function useOccurrence({
-  fromEmail,
-  toEmail,
-  withLastSeen = false
-}) {
+function useOccurrence({ fromEmail, toEmail }) {
   const db = useContext(DatabaseContext);
-  const [count, setCount] = useState(withLastSeen ? {} : 0);
+  const [count, setCount] = useState({});
   const dupeKey = `<${fromEmail}>-${toEmail}`;
-  const fetched = useRef(null);
 
   useEffect(() => {
     function onCreate(key, obj) {
       setTimeout(() => {
         if (dupeKey === key) {
-          setCount(withLastSeen ? obj : obj.count);
+          setCount(obj);
         }
       }, 0);
     }
     function onUpdate(modifications, key, obj) {
       setTimeout(() => {
-        if (dupeKey === key) {
-          if (withLastSeen) {
-            setCount(obj);
-          } else {
-            setCount(modifications.count);
-          }
+        if (dupeKey === key && obj.count !== count.count) {
+          setCount(obj);
         }
       }, 0);
     }
     async function get() {
       setTimeout(async () => {
         const value = await db.occurrences.get(dupeKey);
-        if (value) {
-          setCount(withLastSeen ? value : value.count);
+        if (value && value.count !== count.count) {
+          setCount(value);
         }
-        fetched.current = true;
       }, 0);
     }
     db.occurrences.hook('updating', onUpdate);
     db.occurrences.hook('creating', onCreate);
-    if (!fetched.current) {
-      get();
-    }
+    get();
+
     return () => {
       db.occurrences.hook('updating').unsubscribe(onUpdate);
       db.occurrences.hook('creating').unsubscribe(onCreate);
     };
-  }, [count, db.occurrences, dupeKey, withLastSeen]);
+  }, [count, db.occurrences, dupeKey]);
 
   return count;
 }
+export default useOccurrence;

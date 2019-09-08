@@ -68,23 +68,20 @@ const Content = React.memo(function({
     spam: isSpam,
     trash: isTrash
   };
-  const labels = useMemo(
-    () => {
-      if (!isSpam && !isTrash) return null;
-      return (
-        <ul styleName="labels">
-          {Object.keys(labelObj)
-            .filter(k => labelObj[k])
-            .map(label => (
-              <li key={label}>
-                <span styleName="label">{label}</span>
-              </li>
-            ))}
-        </ul>
-      );
-    },
-    [isSpam, isTrash, labelObj]
-  );
+  const labels = useMemo(() => {
+    if (!isSpam && !isTrash) return null;
+    return (
+      <ul styleName="labels">
+        {Object.keys(labelObj)
+          .filter(k => labelObj[k])
+          .map(label => (
+            <li key={label}>
+              <span styleName="label">{label}</span>
+            </li>
+          ))}
+      </ul>
+    );
+  }, [isSpam, isTrash, labelObj]);
 
   return (
     <div styleName="mail-data-content">
@@ -229,7 +226,7 @@ const UnsubStatus = React.memo(function UnsubStatus({ status, unsub }) {
 });
 
 const Occurences = React.memo(function Occurrences({ fromEmail, toEmail }) {
-  let occurrences = useOccurrence({ fromEmail, toEmail });
+  let { count: occurrences } = useOccurrence({ fromEmail, toEmail });
   if (!occurrences) {
     occurrences = 1;
   }
@@ -238,7 +235,12 @@ const Occurences = React.memo(function Occurrences({ fromEmail, toEmail }) {
       <span styleName="data-pill">x{occurrences}</span>
       <span styleName="occurrences">
         You have received mail from this sender{' '}
-        <TextImportant>{occurrences} times in the last 6 months</TextImportant>.
+        <TextImportant>
+          {occurrences > 1
+            ? `${occurrences} times in the last 6 months`
+            : `once in the last 6 months`}
+        </TextImportant>
+        .
       </span>
     </>
   );
@@ -260,27 +262,24 @@ const LastReceived = React.memo(function LastReceived({
 
   const occurrences = useOccurrence({ fromEmail, toEmail, withLastSeen: true });
 
-  const onReportClick = useCallback(
-    async () => {
-      setState({ reportedAt: null, reported: false, loading: true });
-      console.log('reporting....', occurrences);
-      await reportMail({
-        ...unsub,
-        lastReceived: occurrences ? occurrences.lastSeen : date,
-        occurrences: occurrences ? occurrences.count : 1
-      });
-      const d = Date.now();
-      updateReportedUnsub({ ...unsub, reportedAt: d, reported: true });
-      setState({ reportedAt: d, reported: true, loading: false });
-      actions.setAlert({
-        message: <span>{`Report sent`}</span>,
-        isDismissable: true,
-        autoDismiss: true,
-        level: 'info'
-      });
-    },
-    [occurrences, unsub, date, updateReportedUnsub, actions]
-  );
+  const onReportClick = useCallback(async () => {
+    setState({ reportedAt: null, reported: false, loading: true });
+    console.log('reporting....', occurrences);
+    await reportMail({
+      ...unsub,
+      lastReceived: occurrences ? occurrences.lastSeen : date,
+      occurrences: occurrences ? occurrences.count : 1
+    });
+    const d = Date.now();
+    updateReportedUnsub({ ...unsub, reportedAt: d, reported: true });
+    setState({ reportedAt: d, reported: true, loading: false });
+    actions.setAlert({
+      message: <span>{`Report sent`}</span>,
+      isDismissable: true,
+      autoDismiss: true,
+      level: 'info'
+    });
+  }, [occurrences, unsub, date, updateReportedUnsub, actions]);
 
   let lastSeen;
   if (!occurrences.lastSeen) {
@@ -289,17 +288,14 @@ const LastReceived = React.memo(function LastReceived({
     lastSeen = occurrences.lastSeen;
   }
 
-  const isDelinquent = useMemo(
-    () => {
-      if (unsub) {
-        const { unsubscribedAt } = unsub;
-        const delinquent = lastSeen > new Date(unsubscribedAt);
-        return delinquent;
-      }
-      return false;
-    },
-    [lastSeen, unsub]
-  );
+  const isDelinquent = useMemo(() => {
+    if (unsub) {
+      const { unsubscribedAt } = unsub;
+      const delinquent = lastSeen > new Date(unsubscribedAt);
+      return delinquent;
+    }
+    return false;
+  }, [lastSeen, unsub]);
 
   const styles = cx('data-pill', {
     errored: isDelinquent

@@ -23,49 +23,37 @@ const mailYearStamp = 'YYYY';
 
 function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
-  const openUnsubModal = useCallback(
-    () => {
-      let strat = m.unsubStrategy;
-      if (!strat) {
-        strat = m.unsubscribeLink ? 'link' : 'mailto';
-      }
-      actions.setUnsubData({ ...m, unsubStrategy: strat });
-    },
-    [actions, m]
-  );
+  const openUnsubModal = useCallback(() => {
+    let strat = m.unsubStrategy;
+    if (!strat) {
+      strat = m.unsubscribeLink ? 'link' : 'mailto';
+    }
+    actions.setUnsubData({ ...m, unsubStrategy: strat });
+  }, [actions, m]);
   const { actions } = useContext(MailContext);
 
   const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
     u => u.ignoredSenderList || []
   );
 
-  const isIgnored = useMemo(
-    () => {
-      return ignoredSenderList.includes(m.fromEmail);
-    },
-    [ignoredSenderList, m.fromEmail]
-  );
+  const isIgnored = useMemo(() => {
+    return ignoredSenderList.includes(m.fromEmail);
+  }, [ignoredSenderList, m.fromEmail]);
 
-  const clickIgnore = useCallback(
-    () => {
-      const newList = isIgnored
-        ? ignoredSenderList.filter(sender => sender !== m.fromEmail)
-        : [...ignoredSenderList, m.fromEmail];
-      toggleFromIgnoreList(m.fromEmail, isIgnored ? 'remove' : 'add');
-      setIgnoredSenderList(newList);
-      return false;
-    },
-    [ignoredSenderList, isIgnored, m.fromEmail, setIgnoredSenderList]
-  );
+  const clickIgnore = useCallback(() => {
+    const newList = isIgnored
+      ? ignoredSenderList.filter(sender => sender !== m.fromEmail)
+      : [...ignoredSenderList, m.fromEmail];
+    toggleFromIgnoreList(m.fromEmail, isIgnored ? 'remove' : 'add');
+    setIgnoredSenderList(newList);
+    return false;
+  }, [ignoredSenderList, isIgnored, m.fromEmail, setIgnoredSenderList]);
 
-  useEffect(
-    () => {
-      if (m) {
-        onLoad();
-      }
-    },
-    [m, onLoad]
-  );
+  useEffect(() => {
+    if (m) {
+      onLoad();
+    }
+  }, [m, onLoad]);
 
   return (
     <>
@@ -158,8 +146,8 @@ function ItemScore({ sender }) {
 }
 
 function Occurrences({ fromEmail, toEmail }) {
-  const occurrences = useOccurrence({ fromEmail, toEmail });
-  if (occurrences < 2) {
+  const { count: occurrences } = useOccurrence({ fromEmail, toEmail });
+  if (!occurrences || occurrences < 2) {
     return null;
   }
   return (
@@ -246,7 +234,7 @@ const MailDataLink = React.memo(function({ openUnsubModal, item }) {
       }
     >
       <InfoIcon width="12" height="12" />
-      <span styleName="from-email">{`<${item.fromEmail}>`}</span>
+      <span styleName="from-email">{`<${item.fromEmail || ''}>`}</span>
     </a>
   );
   if (delinquent && !reported) {
@@ -265,4 +253,5 @@ const MailDataLink = React.memo(function({ openUnsubModal, item }) {
   }
   return content;
 });
+
 export default React.memo(MailItem);

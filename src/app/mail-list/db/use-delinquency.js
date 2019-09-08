@@ -1,23 +1,25 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
+
 import useOccurrence from './use-occurrence';
 import useUser from '../../../utils/hooks/use-user';
 
-const useDelinquency = item => {
-  const { fromEmail, to: toEmail, date } = item;
-
-  const occurrences = useOccurrence({ fromEmail, toEmail, withLastSeen: true });
-
+function useDelinquency({ fromEmail, to: toEmail, date }) {
+  const occurrences = useOccurrence({
+    fromEmail,
+    toEmail
+  });
   const [{ unsubscriptions }] = useUser(u => ({
-    unsubscriptions: u.unsubscriptions,
-    showAccount: u.accounts.length > 1 && u.email !== toEmail
+    unsubscriptions: u.unsubscriptions
   }));
+  const unsub = useMemo(
+    () =>
+      unsubscriptions.find(un => {
+        return un.from.includes(`<${fromEmail}>`) && un.to === toEmail;
+      }),
+    [unsubscriptions, fromEmail, toEmail]
+  );
 
   return useMemo(() => {
-    console.log(unsubscriptions);
-    const unsub = unsubscriptions.find(u => {
-      debugger;
-      return u.from.includes(`<${fromEmail}>`) && u.to === toEmail;
-    });
     if (unsub) {
       let lastSeen;
       const { reported, reportedAt } = unsub;
@@ -31,7 +33,7 @@ const useDelinquency = item => {
       return { delinquent, reported, reportedAt };
     }
     return { delinquent: false, reported: false, reportedAt: null };
-  }, [date, fromEmail, occurrences.lastSeen, toEmail, unsubscriptions]);
-};
+  }, [date, fromEmail, occurrences.lastSeen, toEmail, unsub]);
+}
 
 export default useDelinquency;

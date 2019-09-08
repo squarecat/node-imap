@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState
 } from 'react';
@@ -27,7 +28,10 @@ export const MailProvider = React.memo(function({ children }) {
     setUnsubData,
     setOccurrencesSeen
   } = useMailSync();
-  const [filteredMail, setFilteredMail] = useState({ count: 0, mail: [] });
+  const [filteredMail, setFilteredMail] = useState({
+    count: 0,
+    mail: []
+  });
 
   // when we get new data we check all the filter values
   // and set them again for the filter drop downs
@@ -87,61 +91,43 @@ export const MailProvider = React.memo(function({ children }) {
   }, []);
 
   // when things change, filter the mail list
-  useEffect(
-    () => {
-      const filter = async () => {
-        const { mail, unseenSenders, count } = await filterMail(
-          state.activeFilters,
-          db,
-          {
-            orderBy: state.sortByValue,
-            sortDirection: state.sortByDirection,
-            page: state.page,
-            perPage: state.perPage,
-            ...state.options
-          }
-        );
-        // if it's diferent then set
-        if (
-          count !== filteredMail.count ||
-          mail.join() !== filteredMail.mail.join()
-        ) {
-          setFilteredMail({ count, mail });
+  useEffect(() => {
+    const filter = async () => {
+      const { mail, unseenSenders, count } = await filterMail(
+        state.activeFilters,
+        db,
+        {
+          orderBy: state.sortByValue,
+          sortDirection: state.sortByDirection,
+          page: state.page,
+          perPage: state.perPage,
+          ...state.options
         }
-        // if there are unseenSenders then emit
-        if (unseenSenders.length) {
-          setOccurrencesSeen({ senders: unseenSenders });
-        }
-      };
-      if (state.initialized) {
-        filter();
+      );
+      // if it's diferent then set
+      if (
+        count !== filteredMail.count ||
+        mail.join() !== filteredMail.mail.join()
+      ) {
+        setFilteredMail({ count, mail });
       }
-    },
-    [
-      state.initialized,
-      state.activeFilters,
-      state.sortByValue,
-      state.page,
-      state.perPage,
-      state.count,
-      state.sortByDirection,
-      state.options,
-      db,
-      setOccurrencesSeen,
-      filteredMail
-    ]
-  );
+      // if there are unseenSenders then emit
+      if (unseenSenders.length) {
+        setOccurrencesSeen({ senders: unseenSenders });
+      }
+    };
+    if (state.initialized) {
+      filter();
+    }
+  }, [state.initialized, state.activeFilters, state.sortByValue, state.page, state.perPage, state.count, state.sortByDirection, state.options, db, setOccurrencesSeen, filteredMail]);
 
   // save filter state to db to use as initial
   // state upon refresh
-  useEffect(
-    () => {
-      if (state.initialized) {
-        db.prefs.put({ key: 'filters', value: state });
-      }
-    },
-    [db.prefs, state]
-  );
+  useEffect(() => {
+    if (state.initialized) {
+      db.prefs.put({ key: 'filters', value: state });
+    }
+  }, [db.prefs, state]);
 
   const value = {
     isLoading: !ready || !state.initialized,
@@ -160,16 +146,20 @@ export const MailProvider = React.memo(function({ children }) {
     unsubData
   };
 
+  const actions = useMemo(() => {
+    return {
+      onUnsubscribe: unsubscribe,
+      resolveUnsubscribeError,
+      setUnsubData
+    };
+  }, [resolveUnsubscribeError, setUnsubData, unsubscribe]);
+
   return (
     <MailContext.Provider
       value={{
         state: value,
         dispatch,
-        actions: {
-          onUnsubscribe: unsubscribe,
-          resolveUnsubscribeError,
-          setUnsubData
-        }
+        actions
       }}
     >
       {children}
@@ -181,7 +171,10 @@ async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
   // apply filters
   if (activeFilters.length) {
-    const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
+    const { values, indexes } = _sortBy(
+      activeFilters,
+      'field'
+    ).reduce(
       (out, filter) => {
         const { value, field } = filter;
         return {
@@ -191,16 +184,21 @@ async function filterMail(activeFilters, db, options) {
       },
       { values: [], indexes: [] }
     );
-    const index = indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
+    const index =
+      indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
     const value = values.length > 1 ? values : values[0];
-    filteredCollection = filteredCollection.where(index).equals(value);
+    filteredCollection = filteredCollection
+      .where(index)
+      .equals(value);
   } else {
     filteredCollection = filteredCollection.toCollection();
   }
   // get total count of all filtered items
   const count = await filteredCollection.count();
   // sort all items
-  filteredCollection = await filteredCollection.sortBy(options.orderBy);
+  filteredCollection = await filteredCollection.sortBy(
+    options.orderBy
+  );
   if (options.sortDirection === 'desc') {
     filteredCollection = await filteredCollection.reverse();
   }
@@ -253,4 +251,3 @@ async function filterMail(activeFilters, db, options) {
   };
 }
 
-MailProvider.whyDidYouRender = true;

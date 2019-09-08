@@ -86,7 +86,7 @@ export default function(app, socket) {
     const { onMail, onError, onEnd, onProgress } = getSocketFunctions(userId);
     let { accounts: accountFilters, occurrences } = data;
     let prevDupeCache = [];
-    if (occurrences.length) {
+    if (occurrences && occurrences.length) {
       prevDupeCache = occurrences.reduce((out, oc) => {
         const { count, key, lastSeen } = oc;
         return {

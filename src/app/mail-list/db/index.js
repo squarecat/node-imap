@@ -9,7 +9,7 @@ import { navigate } from 'gatsby';
 import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
-export function useMailSync() {
+function useMailSyncFn() {
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
@@ -114,6 +114,7 @@ export function useMailSync() {
               ...occurrences[d]
             }))
           );
+          console.log('[db]: saving scan time');
           await db.prefs.put({
             key: 'lastFetchResult',
             value: { ...scan, finishedAt: Date.now() }
@@ -249,7 +250,7 @@ export function useMailSync() {
         socket.off('unsubscribe:err');
       }
     };
-  }, [isConnected, error, socket, db.mail, db.prefs, db.scores, db.occurrences, emit, actions, addUnsub, incrementUnsubCount, openModal, credits]);
+  }, [isConnected, error]);
   return {
     ready: isConnected,
     isFetching,
@@ -338,11 +339,14 @@ export function useMailSync() {
         console.debug('[db]: fetching mail', fetchParams);
         // save the fetch time to prefs, so we know what to search on
         // next time the user visits the page
-        db.prefs.put({
+        await db.prefs.put({
           key: 'lastFetchParams',
           value: {
             ...fetchParams,
-            accounts: fetchParams.accounts.map(a => ({ ...a, from: now }))
+            accounts: fetchParams.accounts.map(a => ({
+              ...a,
+              from: now
+            }))
           }
         });
         await db.prefs.delete('lastFetchResult');
@@ -461,3 +465,5 @@ function canUnsubscribe({ credits, organisationId, organisationActive }) {
   }
   return { allowed: true };
 }
+
+export const useMailSync = useMailSyncFn;

@@ -176,5 +176,4 @@ const Password = function({
   );
 };
 
-Password.whyDidYouRender = true;
 export default Password;
