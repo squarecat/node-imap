@@ -90,7 +90,7 @@ function parseMailItem(item) {
     return {
       id: lmaId,
       uid: id,
-      date: date,
+      date: +date,
       from: getHeaderValue(headers, 'from') || '',
       to,
       subject: getHeaderValue(headers, 'subject'),
