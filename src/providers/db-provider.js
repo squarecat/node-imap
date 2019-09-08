@@ -20,6 +20,7 @@ export const DatabaseProvider = ({ children }) => {
     if (email) {
       // clear last searched prefs
       const lastSearch = await db.prefs.get('lastFetchParams');
+      const filters = await db.prefs.get('filters');
       if (lastSearch) {
         const { value } = lastSearch;
         const newValue = {
@@ -27,6 +28,24 @@ export const DatabaseProvider = ({ children }) => {
           accounts: value.accounts.filter(() => id !== id)
         };
         await db.prefs.put({ key: 'lastFetchParams', value: newValue });
+      }
+      if (filters) {
+        const { value } = filters;
+        const { filterValues } = value;
+        const { recipients } = filterValues;
+        const newRecipients = recipients.filter(
+          ([, account]) => account !== email
+        );
+        await db.prefs.put({
+          key: 'filters',
+          value: {
+            ...value,
+            filterValues: {
+              ...filterValues,
+              recipients: newRecipients
+            }
+          }
+        });
       }
       // clear emails associated with
       // a specific account
