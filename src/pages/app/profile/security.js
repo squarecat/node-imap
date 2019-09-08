@@ -68,40 +68,36 @@ function TwoFactorAuth() {
     []
   );
 
-  const open2faSetup = useCallback(
-    () => {
-      const onClose = ({ verified }) => {
-        if (verified) {
-          setRequiresTwoFactorAuth(true);
-          alertActions.setAlert({
-            level: 'success',
-            message: `Two-factor authentication enabled`,
-            isDismissable: true,
-            autoDismiss: true
-          });
-        }
-      };
-      openModal(SetupModal, { dismissable: false, onClose });
-    },
-    [SetupModal, alertActions, openModal, setRequiresTwoFactorAuth]
-  );
-  const open2faVerify = useCallback(
-    () => {
-      const onClose = ({ verified }) => {
-        if (verified) {
-          setRequiresTwoFactorAuth(false);
-          alertActions.setAlert({
-            level: 'success',
-            message: `Two-factor authentication removed`,
-            isDismissable: true,
-            autoDismiss: true
-          });
-        }
-      };
-      openModal(VerifyModal, { dismissable: false, onClose });
-    },
-    [VerifyModal, openModal, setRequiresTwoFactorAuth]
-  );
+  const open2faSetup = useCallback(() => {
+    const onClose = ({ verified }) => {
+      if (verified) {
+        setRequiresTwoFactorAuth(true);
+        alertActions.setAlert({
+          level: 'success',
+          message: `Two-factor authentication enabled`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      }
+    };
+    openModal(SetupModal, { dismissable: false, onClose });
+  }, [SetupModal, alertActions, openModal, setRequiresTwoFactorAuth]);
+
+  const open2faVerify = useCallback(() => {
+    const onClose = ({ verified }) => {
+      if (verified) {
+        setRequiresTwoFactorAuth(false);
+        alertActions.setAlert({
+          level: 'success',
+          message: `Two-factor authentication removed`,
+          isDismissable: true,
+          autoDismiss: true
+        });
+      }
+    };
+    openModal(VerifyModal, { dismissable: false, onClose });
+  }, [VerifyModal, alertActions, openModal, setRequiresTwoFactorAuth]);
+
   return (
     <div styleName="security-section two-factor-auth">
       <div styleName="two-factor-auth-content">
@@ -252,12 +248,14 @@ function ChangePassword() {
             autoFocus={false}
             doValidation={true}
             value={state.password}
-            onChange={value =>
-              setState({
-                ...state,
-                password: value
-              })
-            }
+            onChange={password => {
+              if (state.password !== password) {
+                setState({
+                  ...state,
+                  password
+                });
+              }
+            }}
           />
         </FormGroup>
         <FormGroup>

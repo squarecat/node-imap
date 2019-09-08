@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { FormInput } from '../index';
 import Hashes from 'jshashes';
-import request from '../../../utils/request';
 
 const baseUrl = 'https://api.pwnedpasswords.com/range';
 
@@ -54,8 +53,12 @@ const PasswordField = function({
       validate();
     }
   }, [doValidation, state.isValid, value]);
+
   useEffect(() => {
-    onChange(value, { isValid: state.isValid, message: state.message });
+    onChange(value, {
+      isValid: state.isValid,
+      message: state.message
+    });
   }, [value, state.isValid, state.message, onChange]);
 
   const onInputChange = useCallback(
