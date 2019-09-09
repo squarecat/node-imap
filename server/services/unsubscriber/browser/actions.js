@@ -83,10 +83,15 @@ export async function unsubscribeFromHackerNoon(page) {
   logger.info('browser-actions: doing a bespoke unsub from hacker noon');
   try {
     await page.click('[id="unsubscribe_all"]');
-    const btn = await page.$('input[type="submit"]');
-    await btn.click();
-    await page.waitForSelector('.container.unsubscribe');
-    return true;
+    const $btn = await page.$('input[type="submit"]');
+    await clickButton(page, $btn);
+    const bodyText = await page.evaluate(() =>
+      document.body.innerText.toLowerCase()
+    );
+    if (bodyText.includes('email preferences updated')) {
+      return true;
+    }
+    return false;
   } catch (err) {
     logger.error('browser-actions: failed to unsubscribe from hacker noon');
     return false;
