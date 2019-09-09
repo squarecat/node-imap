@@ -88,10 +88,7 @@ export async function unsubscribeFromHackerNoon(page) {
     const bodyText = await page.evaluate(() =>
       document.body.innerText.toLowerCase()
     );
-    if (bodyText.includes('email preferences updated')) {
-      return true;
-    }
-    return false;
+    return bodyText.includes('email preferences updated');
   } catch (err) {
     logger.error('browser-actions: failed to unsubscribe from hacker noon');
     return false;
