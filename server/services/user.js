@@ -1202,7 +1202,7 @@ export async function verifyUserTotpToken(user, { token }) {
     encoding: 'base32',
     token
   });
-  if (unverified) {
+  if (verified && unverified) {
     verifyTotpSecret(user.id);
     addActivityForUser(user.id, 'addedTwoFactorAuth');
   }
