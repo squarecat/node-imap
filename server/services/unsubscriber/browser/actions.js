@@ -25,6 +25,9 @@ export async function doBespokeUnsubscribe(page, url) {
   if (url.includes('ebay.co.uk')) {
     return unsubscribeFromEbay(page);
   }
+  if (url.includes('community.hackernoon.com')) {
+    return unsubscribeFromHackerNoon(page);
+  }
   throw new Error(
     `browser-actions: bespoke unsubscribe from ${url} not implemented`
   );
@@ -72,6 +75,22 @@ export async function unsubscribeFromEbay(page) {
     return true;
   } catch (err) {
     logger.error('browser-actions: failed to unsubscribe from quora');
+    return false;
+  }
+}
+
+export async function unsubscribeFromHackerNoon(page) {
+  logger.info('browser-actions: doing a bespoke unsub from hacker noon');
+  try {
+    await page.click('[id="unsubscribe_all"]');
+    const $btn = await page.$('input[type="submit"]');
+    await clickButton(page, $btn);
+    const bodyText = await page.evaluate(() =>
+      document.body.innerText.toLowerCase()
+    );
+    return bodyText.includes('email preferences updated');
+  } catch (err) {
+    logger.error('browser-actions: failed to unsubscribe from hacker noon');
     return false;
   }
 }

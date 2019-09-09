@@ -16,5 +16,9 @@
   ],
   "fail": ["You'll be unsubscribed", "You will be unsubscribed"],
   "buttonActions": ["confirm", "unsubscribe"],
-  "bespokeDomains": ["quora.com", "marketing.ebay.co.uk/unsubscribe"]
+  "bespokeDomains": [
+    "quora.com",
+    "marketing.ebay.co.uk/unsubscribe",
+    "community.hackernoon.com/email/unsubscribe"
+  ]
 }
