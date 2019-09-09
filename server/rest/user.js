@@ -33,6 +33,7 @@ import { get as getAudit } from '../services/audit';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
 import rateLimit from '../middleware/rate-limit';
+import { setSessionProp } from '../session';
 import totpAuth from '../middleware/totp-auth';
 
 // import { validateBody } from '../middleware/validation';
@@ -366,10 +367,12 @@ export default app => {
       try {
         if (op === 'update') {
           const { oldPassword, password: newPassword } = value;
-          updatedUser = await updateUserPassword(
+          const { user, masterKey: newMasterKey } = await updateUserPassword(
             { id, email, password: oldPassword, masterKey },
             newPassword
           );
+          setSessionProp(req, 'passport.user.masterKey', newMasterKey);
+          updatedUser = user;
         } else {
           logger.error(`user-rest: password patch op not supported`);
         }

@@ -750,7 +750,10 @@ export async function authenticate({ email, password }) {
     // get master key for encrpting account passwords
     if (checkPassword(password, salt, hash)) {
       const masterKey = getMasterKey(password, salt);
-      return { ...user, masterKey };
+      return {
+        ...user,
+        masterKey
+      };
     }
     return null;
   } catch (err) {
