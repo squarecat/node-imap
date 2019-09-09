@@ -36,9 +36,8 @@ const lineColor2 = '#9D5AAC';
 // const lineColor2Light = '#CA9CD4';
 
 const barColor1 = 'rgba(157, 90, 172, 0.3)';
-// const barColor1 = 'rgba(0, 0, 0, 0.3)';
 const barColor2 = 'rgba(157, 90, 172, 0.7)';
-// const barColor2 = 'rgba(0, 0, 0, 0.5)';
+const barColorGreen = 'rgba(91, 173,134, 0.8)';
 
 function getStats() {
   return request('/api/stats');
@@ -109,21 +108,30 @@ function dailyRevChart(ctx, stats) {
 function monthlyProfitChart(ctx, stats, expenses) {
   if (!stats || !expenses) return null;
 
-  const grossRevenue = getMonthlyRevenueGraphStats(stats);
-  const costs = expenses.map(e => {
+  const monthly = getMonthlyRevenueGraphStats(stats, expenses);
+  console.log(monthly);
+  const revenue = monthly.map(month => {
     return {
-      x: startOfMonth(e.date),
-      y: e.total
+      x: month.date,
+      y: month.revenue
     };
   });
-  const profits = grossRevenue.map(r => {
-    const formatted = formatDate(r.x, 'YYYY-MM');
-    const costs = expenses.find(
-      e => formatDate(e.date, 'YYYY-MM') === formatted
-    );
+  const costs = monthly.map(month => {
     return {
-      x: r.x,
-      y: r.y - (costs ? costs.total : 0)
+      x: month.date,
+      y: month.costs
+    };
+  });
+  const profit = monthly.map(month => {
+    return {
+      x: month.date,
+      y: month.profit
+    };
+  });
+  const donations = monthly.map(month => {
+    return {
+      x: month.date,
+      y: month.donations
     };
   });
 
@@ -136,12 +144,12 @@ function monthlyProfitChart(ctx, stats, expenses) {
           fill: false,
           backgroundColor: lineColor,
           borderColor: lineColor,
-          data: profits,
+          data: profit,
           yAxisID: 'y-axis-1'
         },
         {
           label: 'Revenue',
-          data: getMonthlyRevenueGraphStats(stats),
+          data: revenue,
           backgroundColor: barColor1,
           yAxisID: 'y-axis-1'
         },
@@ -149,6 +157,12 @@ function monthlyProfitChart(ctx, stats, expenses) {
           label: 'Expenses',
           data: costs,
           backgroundColor: barColor2,
+          yAxisID: 'y-axis-1'
+        },
+        {
+          label: 'Donations',
+          data: donations,
+          backgroundColor: barColorGreen,
           yAxisID: 'y-axis-1'
         }
       ]
@@ -423,39 +437,36 @@ function Open() {
   const usersRef = useRef(null);
   // const providersRef = useRef(null);
 
-  useEffect(
-    () => {
-      if (subscriptionRef.current) {
-        unsubscriptionsChart(subscriptionRef.current.getContext('2d'), stats);
-      }
-      if (dailyRevRef.current) {
-        dailyRevChart(dailyRevRef.current.getContext('2d'), stats);
-      }
-      if (monthlyProfitRef.current) {
-        monthlyProfitChart(
-          monthlyProfitRef.current.getContext('2d'),
-          stats,
-          monthly
-        );
-      }
-      if (mrrRef.current) {
-        mrrChart(mrrRef.current, stats);
-      }
-      if (emailsRef.current) {
-        emailsChart(emailsRef.current.getContext('2d'), stats);
-      }
-      if (referralRef.current) {
-        referralChart(referralRef.current.getContext('2d'), stats);
-      }
-      if (mailtoLinkRef.current) {
-        mailtoLinkPieChart(mailtoLinkRef.current.getContext('2d'), stats);
-      }
-      if (usersRef.current) {
-        usersChart(usersRef.current.getContext('2d'), stats);
-      }
-    },
-    [stats, monthly]
-  );
+  useEffect(() => {
+    if (subscriptionRef.current) {
+      unsubscriptionsChart(subscriptionRef.current.getContext('2d'), stats);
+    }
+    if (dailyRevRef.current) {
+      dailyRevChart(dailyRevRef.current.getContext('2d'), stats);
+    }
+    if (monthlyProfitRef.current) {
+      monthlyProfitChart(
+        monthlyProfitRef.current.getContext('2d'),
+        stats,
+        monthly
+      );
+    }
+    if (mrrRef.current) {
+      mrrChart(mrrRef.current, stats);
+    }
+    if (emailsRef.current) {
+      emailsChart(emailsRef.current.getContext('2d'), stats);
+    }
+    if (referralRef.current) {
+      referralChart(referralRef.current.getContext('2d'), stats);
+    }
+    if (mailtoLinkRef.current) {
+      mailtoLinkPieChart(mailtoLinkRef.current.getContext('2d'), stats);
+    }
+    if (usersRef.current) {
+      usersChart(usersRef.current.getContext('2d'), stats);
+    }
+  }, [stats, monthly]);
 
   if (loading) {
     return (
@@ -948,7 +959,7 @@ function getGraphStats(stats, stat) {
   }, []);
 }
 
-function getMonthlyRevenueGraphStats(stats) {
+function getMonthlyRevenueGraphStats(stats, expenses) {
   if (!stats) return null;
   const { daily } = stats;
   const { histogram } = daily;
@@ -965,18 +976,16 @@ function getMonthlyRevenueGraphStats(stats) {
 
     const formatted = formatDate(date, 'YYYY-MM');
     // if y value is total revenue it calculates subscription rev minus refunds
-    const profit = getYValue(d, 'totalRevenue') + getYValue(d, 'giftRevenue');
+    const revenue = getYValue(d, 'totalRevenue') + getYValue(d, 'giftRevenue');
+    const donations = getYValue(d, 'totalDonated');
 
     if (!out[formatted]) {
-      // const costs = expenses.find(
-      //   e => formatDate(e.date, 'YYYY-MM') === formatted
-      // );
       return {
         ...out,
         [formatted]: {
           date,
-          profit
-          // expenses: costs ? costs.total : 0
+          revenue,
+          donations
         }
       };
     }
@@ -985,16 +994,28 @@ function getMonthlyRevenueGraphStats(stats) {
       ...out,
       [formatted]: {
         ...out[formatted],
-        profit: out[formatted].profit + profit
+        revenue: out[formatted].revenue + revenue,
+        donations: out[formatted].donations + donations
       }
     };
   }, {});
 
   return Object.keys(byMonth).map(key => {
     const month = byMonth[key];
+    const monthExpenses = expenses.find(
+      e => formatDate(e.date, 'YYYY-MM') === key
+    );
+    const revenue = month.revenue;
+    const donations = month.donations;
+    const costs = monthExpenses ? monthExpenses.total : 0;
+    const profit = month.revenue - costs;
+
     return {
-      x: month.date,
-      y: month.profit
+      date: key,
+      revenue,
+      donations,
+      profit,
+      costs
     };
   });
 }
