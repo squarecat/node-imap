@@ -935,12 +935,20 @@ export async function updateUserPassword(
   newPassword
 ) {
   try {
-    const user = await authenticateUser({ email, password });
+    await authenticateUser({ email, password });
+
+    // get the accounts from the updated user
     const updatedUser = await updatePassword(id, newPassword);
-    const { accounts, masterKey: newMasterKey } = user;
+
+    // generate a new master key by authenticating again
+    const { masterKey: newMasterKey } = await authenticateUser({
+      email,
+      password: newPassword
+    });
 
     // update any encrpyted imap details with
     // the new master key
+    const { accounts } = updatedUser;
     const imapAccounts = accounts.filter(
       account => account.provider === 'imap'
     );
@@ -954,7 +962,7 @@ export async function updateUserPassword(
       })
     );
 
-    return updatedUser;
+    return { user: updatedUser, masterKey: newMasterKey };
   } catch (err) {
     logger.error(`user-service: failed to update user password`);
     logger.error(err);
