@@ -111,3 +111,15 @@
     margin: 0 0 0 4px;
   }
 }
+
+.loader {
+  position: relative;
+  z-index: 2;
+  background: white;
+  width: 66px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: right 200ms ease-in-out;
+}

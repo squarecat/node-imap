@@ -38,7 +38,7 @@ function useMailSyncFn() {
   const { isConnected, socket, error, emit } = useSocket({
     token,
     userId: id,
-    onCreate(socket) {      
+    onCreate(socket) {
       socket.on('mail', async (data, ack) => {
         console.debug(`[db]: received ${data.length} new mail items`);
         try {
@@ -134,10 +134,18 @@ function useMailSyncFn() {
         });
         ack && ack();
       });
-      socket.on('mail:progress', ({ progress, total }, ack) => {
-        // const percentage = (progress / total) * 100;
-        // setProgress((+percentage).toFixed());
-        // console.debug(progress, total);
+
+      socket.on('mail:progress', async ({ account, progress, total }, ack) => {
+        const percentage = (progress / total) * 100;
+        const currentProgress = await db.prefs.get('progress');
+        await db.prefs.put({
+          key: 'progress',
+          value: {
+            ...(currentProgress ? currentProgress.value : {}),
+            [account]: percentage
+          }
+        });
+        console.debug('progress:', account, progress, total);
         ack && ack();
       });
 

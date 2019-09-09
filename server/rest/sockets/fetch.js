@@ -2,13 +2,16 @@ const Sentry = require('@sentry/node');
 
 import { RestError } from '../../utils/errors';
 import { fetchMail } from '../../services/mail';
+import { get as getSession } from '../../dao/sessions';
 import logger from '../../utils/logger';
 import { sendToUser } from './index';
 
 let runningScans = {};
 
 export default async function fetch(socket, userId, data = {}) {
-  const { masterKey, uuid } = socket;
+  const { uuid } = socket;
+  const session = await getSession(userId);
+  const { masterKey } = session.passport.user;
   let { accounts: accountFilters, occurrences } = data;
   let prevDupeCache = [];
   if (occurrences && occurrences.length) {

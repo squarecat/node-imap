@@ -6,6 +6,9 @@ import Filters from './filters';
 import MailList from './list';
 import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
+import Progress from '../../components/progress';
+import Spinner from '../../components/loading/spinner';
+import Tooltip from '../../components/tooltip';
 import UnsubModal from '../../components/modal/unsub-modal';
 import styles from './mail-list.module.scss';
 import useUser from '../../utils/hooks/use-user';
@@ -125,6 +128,11 @@ const MailView = React.memo(function() {
             of <span styleName="total-count">{totalCount}</span>
           </span>
         </div>
+        {/* <Tooltip placement="top" white progress overlay={<Progress />}>
+          <span styleName="loader" data-loading={isFetching}>
+            <Spinner shown={isFetching} />
+          </span>
+        </Tooltip> */}
       </div>
     </div>
   );

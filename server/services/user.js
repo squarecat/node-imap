@@ -961,7 +961,6 @@ export async function updateUserPassword(
         });
       })
     );
-
     return { user: updatedUser, masterKey: newMasterKey };
   } catch (err) {
     logger.error(`user-service: failed to update user password`);

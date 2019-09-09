@@ -82,7 +82,10 @@ export async function* fetchMail(
           dupeSenders = newDupeSenders;
           yield { type: 'mail', data: deduped };
         }
-        yield { type: 'progress', data: { progress, total: totalEstimate } };
+        yield {
+          type: 'progress',
+          data: { account: account.email, progress, total: totalEstimate }
+        };
         next = await iter.next();
       }
     }

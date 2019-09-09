@@ -96,12 +96,14 @@ const HOURLY = 60 * 1000;
 setInterval(async () => {
   const oneHourAgo = subHours(Date.now(), 1);
   const userIds = await hgetall('lastSeen');
-  Object.keys(userIds).forEach(userId => {
-    const timestamp = new Date(userId[userId]);
-    if (isBefore(timestamp, oneHourAgo)) {
-      logger.debug(`[socket]: ${userId} is idle, dropping events`);
-      dropBufferedEvents(userId);
-      hdel('lastSeen', userId);
-    }
-  });
+  if (userIds) {
+    Object.keys(userIds).forEach(userId => {
+      const timestamp = new Date(userId[userId]);
+      if (isBefore(timestamp, oneHourAgo)) {
+        logger.debug(`[socket]: ${userId} is idle, dropping events`);
+        dropBufferedEvents(userId);
+        hdel('lastSeen', userId);
+      }
+    });
+  }
 }, HOURLY);

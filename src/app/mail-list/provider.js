@@ -171,10 +171,7 @@ async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
   // apply filters
   if (activeFilters.length) {
-    const { values, indexes } = _sortBy(
-      activeFilters,
-      'field'
-    ).reduce(
+    const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
       (out, filter) => {
         const { value, field } = filter;
         return {
@@ -184,21 +181,16 @@ async function filterMail(activeFilters, db, options) {
       },
       { values: [], indexes: [] }
     );
-    const index =
-      indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
+    const index = indexes.length > 1 ? `[${indexes.join('+')}]` : indexes[0];
     const value = values.length > 1 ? values : values[0];
-    filteredCollection = filteredCollection
-      .where(index)
-      .equals(value);
+    filteredCollection = filteredCollection.where(index).equals(value);
   } else {
     filteredCollection = filteredCollection.toCollection();
   }
   // get total count of all filtered items
   const count = await filteredCollection.count();
   // sort all items
-  filteredCollection = await filteredCollection.sortBy(
-    options.orderBy
-  );
+  filteredCollection = await filteredCollection.sortBy(options.orderBy);
   if (options.sortDirection === 'desc') {
     filteredCollection = await filteredCollection.reverse();
   }
@@ -250,4 +242,3 @@ async function filterMail(activeFilters, db, options) {
     count
   };
 }
-
