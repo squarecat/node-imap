@@ -5,14 +5,14 @@ import logger from '../utils/logger';
 
 const COL_NAME = 'imap';
 
-export async function get(id, master) {
+export async function get(id, masterKey) {
   let projection = {
     _id: 0
   };
   try {
     const col = await db().collection(COL_NAME);
     const data = await col.findOne({ id }, { fields: projection });
-    return aes256.decrypt(master, data.password);
+    return aes256.decrypt(masterKey, data.password);
   } catch (err) {
     logger.error(`imap-dao: error getting imap data`);
     logger.error(err);
@@ -20,12 +20,12 @@ export async function get(id, master) {
   }
 }
 
-export async function set(id, master, password) {
+export async function set(id, { masterKey, password }) {
   try {
     const col = await db().collection(COL_NAME);
     return col.insertOne({
       id,
-      password: aes256.encrypt(master, password),
+      password: aes256.encrypt(masterKey, password),
       createdAt: isoDate()
     });
   } catch (err) {
@@ -48,7 +48,7 @@ export async function remove(id) {
   }
 }
 
-export async function update(id, master, newPassword) {
+export async function update(id, { masterKey, password }) {
   try {
     const col = await db().collection(COL_NAME);
     return col.updateOne(
@@ -57,30 +57,8 @@ export async function update(id, master, newPassword) {
       },
       {
         $set: {
-          password: aes256.encrypt(master, newPassword),
+          password: aes256.encrypt(masterKey, password),
           lastUpdatedAt: isoDate()
-        }
-      }
-    );
-  } catch (err) {
-    logger.error(`imap-dao: error setting imap data`);
-    logger.error(err);
-    throw err;
-  }
-}
-
-export async function updateMasterKey(id, oldMaster, newMaster) {
-  try {
-    const col = await db().collection(COL_NAME);
-    const password = await get(id, oldMaster);
-    return col.updateOne(
-      {
-        id
-      },
-      {
-        $set: {
-          password: aes256.encrypt(newMaster, password),
-          updatedAt: isoDate()
         }
       }
     );

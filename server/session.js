@@ -1,3 +1,5 @@
+import _get from 'lodash.get';
+import _set from 'lodash.set';
 import connectMongo from 'connect-mongo';
 import { http } from 'getconfig';
 import { url as mongoUrl } from './dao/db';
@@ -60,20 +62,20 @@ function serialize(session) {
 
 // push to an array prop in the session
 export function pushSessionProp(req, prop, value) {
-  const arr = req.session[prop] || [];
-  req.session[prop] = [...arr, value];
+  const arr = _get(req.session, prop, []);
+  _set(req.session, prop, [...arr, value]);
   return value;
 }
 
 // set a value prop on the session
 export function setSessionProp(req, prop, value) {
-  req.session[prop] = value;
+  _set(req.session, prop, value);
   return value;
 }
 
 // get a value from the session
 export function getSessionProp(req, prop) {
-  return req.session[prop];
+  return _get(req.session, prop);
 }
 
 export function hasSessionProp(req, prop) {
