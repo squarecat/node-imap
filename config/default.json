@@ -6,6 +6,10 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "buffer": {
+    "host": "localhost",
+    "port": 6379
+  },
   "admins": [
     "james@squarecat.io",
     "danielle@squarecat.io",
@@ -68,7 +72,7 @@
     }
   },
   "urls": {
-    "base": "http://local.leavemealone.xyz",
+    "base": "https://local.leavemealone.xyz",
     "roadmap": "https://trello.com/b/QvJsEk2F",
     "feedback": "https://airtable.com/shrQDekdFxsAmeOwe",
     "bugs": "https://airtable.com/shrIIYlZ5RrNK5oYf",

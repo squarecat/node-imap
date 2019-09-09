@@ -8,7 +8,12 @@ import io from 'socket.io-client';
 let SOCKET_INSTANCE = null;
 let attempts = 0;
 
-function useSocket({ token, userId }) {
+function useSocket({
+  token,
+  userId,
+  onCreate = () => {},
+  onDestroy = () => {}
+}) {
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(SOCKET_INSTANCE);
   const db = useContext(DatabaseContext);
@@ -47,44 +52,52 @@ function useSocket({ token, userId }) {
     [socket]
   );
   // set up socket on mount
-  useEffect(
-    () => {
-      function connectSocket() {
-        SOCKET_INSTANCE = io(process.env.WEBSOCKET_URL, {
-          query: {
-            token,
-            userId
-          }
-        });
-        console.debug('[socket]: connecting...');
-        const socket = SOCKET_INSTANCE.on('connect', async () => {
-          console.debug('[socket]: connected');
-          setSocket(socket);
-          // check queue and fire pending events
-          const queue = await db.queue.toArray();
-          if (queue.length) {
-            await db.queue.clear();
-            queue.forEach(({ data, event }) => emit(event, data));
-          }
-        });
-        SOCKET_INSTANCE.on('error', err => {
-          console.error('[socket]: errored');
-          setError(err);
-        });
-        SOCKET_INSTANCE.on('disconnect', () => {
-          console.debug('[socket]: disconnected');
-          setSocket(null);
-        });
-      }
+  useEffect(() => {
+    function connectSocket() {
+      SOCKET_INSTANCE = io(process.env.WEBSOCKET_URL, {
+        query: {
+          token,
+          userId
+        }
+      });
+      console.debug('[socket]: connecting...');
+      const socket = SOCKET_INSTANCE.on('connect', async () => {
+        console.debug('[socket]: connected');
+        console.debug('[socket]: attaching listeners to new socket...');
+        onCreate(SOCKET_INSTANCE);
+        setSocket(socket);
+        // check queue and fire pending events
+        const queue = await db.queue.toArray();
+        if (queue.length) {
+          await db.queue.clear();
+          queue.forEach(({ data, event }) => emit(event, data));
+        }
+      });
+      SOCKET_INSTANCE.on('reconnect', attemptNumber => {
+        checkBuffer(SOCKET_INSTANCE);
+      });
+      SOCKET_INSTANCE.on('error', err => {
+        console.error('[socket]: errored');
+        setError(err);
+      });
+      SOCKET_INSTANCE.on('disconnect', () => {
+        console.debug('[socket]: disconnected');
+        setSocket(null);
+      });
+    }
 
-      if (SOCKET_INSTANCE) {
-        return setSocket(SOCKET_INSTANCE);
-      } else {
-        connectSocket();
-      }
-    },
-    [token, userId]
-  );
+    if (SOCKET_INSTANCE) {
+      setSocket(SOCKET_INSTANCE);
+      console.debug('[socket]: attaching listeners to existing socket...');
+      onCreate(SOCKET_INSTANCE);
+    } else {
+      connectSocket();
+    }
+
+    return () => {
+      onDestroy(SOCKET_INSTANCE);
+    };
+  }, [token, userId]);
 
   return {
     isConnected: !!socket,
@@ -95,3 +108,21 @@ function useSocket({ token, userId }) {
 }
 
 export default useSocket;
+
+export function checkBuffer(socket) {
+  return new Promise(resolve => {
+    console.log('[socket]: checking buffer');
+    // if we are reconnecting then the server might
+    // have a buffer of events waiting for us
+    // now we're all setup we can request these.
+    socket.emit('request-buffer', scanInProgress => {
+      if (scanInProgress) {
+        console.log('[socket]: remote scan in progress');
+      }
+      // after we've received the buffer then we
+      // are fully ready, the server will tell us
+      // if there is already a scan in progress
+      resolve(scanInProgress);
+    });
+  });
+}

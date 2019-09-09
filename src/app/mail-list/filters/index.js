@@ -9,8 +9,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { MailContext } from '../provider';
 import { OptionsIcon } from '../../../components/icons';
-// import Spinner from '../../../components/loading/spinner';
-// import Tooltip from '../../../components/tooltip';
+
 import useUser from '../../../utils/hooks/use-user';
 
 export default React.memo(
@@ -21,8 +20,7 @@ export default React.memo(
     sortValues = [],
     sortByValue = 'date',
     sortByDirection = 'desc',
-    activeFilters = []
-    // showLoading = false
+    activeFilters = []    
   }) => {
     return (
       <div styleName="filters">
@@ -34,12 +32,7 @@ export default React.memo(
             filterValues={filterValues}
             activeFilters={activeFilters}
           />
-        </div>
-        {/* <Tooltip placement="left" overlay={<span>Syncing mail</span>}>
-          <span styleName="loader" data-loading={showLoading}>
-            <Spinner shown={showLoading} />
-          </span>
-        </Tooltip> */}
+        </div>        
         <div styleName="filter-options">
           <OptionsDropdown
             sortValues={sortValues}

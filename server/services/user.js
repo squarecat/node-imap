@@ -78,7 +78,7 @@ import logger from '../utils/logger';
 import { revokeToken as revokeTokenFromGoogle } from '../utils/gmail';
 import { revokeToken as revokeTokenFromOutlook } from '../utils/outlook';
 import { sendForgotPasswordMail } from '../utils/emails/forgot-password';
-import { sendToUser } from '../rest/socket';
+import { sendToUser } from '../rest/sockets';
 // import { sendVerifyEmailMail } from '../utils/emails/verify-email';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
@@ -961,7 +961,6 @@ export async function updateUserPassword(
         });
       })
     );
-
     return { user: updatedUser, masterKey: newMasterKey };
   } catch (err) {
     logger.error(`user-service: failed to update user password`);

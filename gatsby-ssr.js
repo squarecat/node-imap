@@ -76,7 +76,7 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
         __html: `(function () { let i = setInterval(function() { window.injectChat && (clearInterval(i) || window.injectChat())}, 3000) })()`
       }}
     />,
-    <noscript key="simple-noscript" data-micropolicy="analytics">
+    <noscript key="simple-noscript">
       <img src="https://stats.leavemealone.app/image.gif" alt="" />
     </noscript>
   ];

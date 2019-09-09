@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import useSocket, { checkBuffer } from '../../../utils/hooks/use-socket';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import { DatabaseContext } from '../../../providers/db-provider';
@@ -6,7 +7,6 @@ import { ModalContext } from '../../../providers/modal-provider';
 import React from 'react';
 import { getUnsubscribeAlert } from '../../../utils/errors';
 import { navigate } from 'gatsby';
-import useSocket from '../../../utils/hooks/use-socket';
 import useUser from '../../../utils/hooks/use-user';
 
 function useMailSyncFn() {
@@ -37,13 +37,8 @@ function useMailSyncFn() {
   }));
   const { isConnected, socket, error, emit } = useSocket({
     token,
-    userId: id
-  });
-  const [unsubData, setUnsubData] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
-
-  useEffect(() => {
-    if (isConnected) {
+    userId: id,
+    onCreate(socket) {
       socket.on('mail', async (data, ack) => {
         console.debug(`[db]: received ${data.length} new mail items`);
         try {
@@ -75,10 +70,11 @@ function useMailSyncFn() {
         } catch (err) {
           console.error(`[db]: failed setting new mail items`);
           console.error(err);
+        } finally {
+          ack && ack();
         }
-        ack && ack();
       });
-      socket.on('scores', async data => {
+      socket.on('scores', async (data, ack) => {
         console.debug(`[db]: received ${data.length} new mail scores`);
         try {
           await db.scores.bulkPut(
@@ -100,9 +96,11 @@ function useMailSyncFn() {
         } catch (err) {
           console.error(`[db]: failed setting new mail scores`);
           console.error(err);
+        } finally {
+          ack && ack();
         }
       });
-      socket.on('mail:end', async scan => {
+      socket.on('mail:end', async (scan, ack) => {
         console.debug(`[db]: finished scan`);
         setIsFetching(false);
         try {
@@ -122,9 +120,11 @@ function useMailSyncFn() {
         } catch (err) {
           console.error(`[db]: failed setting new occurrences`);
           console.error(err);
+        } finally {
+          ack && ack();
         }
       });
-      socket.on('mail:err', err => {
+      socket.on('mail:err', (err, ack) => {
         console.error(`[db]: scan failed`);
         actions.setAlert({
           message: <span>{`Failed to fetch mail. Code: ${err.id}`}</span>,
@@ -132,15 +132,24 @@ function useMailSyncFn() {
           autoDismiss: false,
           level: 'error'
         });
-      });
-      socket.on('mail:progress', ({ progress, total }, ack) => {
-        // const percentage = (progress / total) * 100;
-        // setProgress((+percentage).toFixed());
-        // console.debug(progress, total);
         ack && ack();
       });
 
-      socket.on('unsubscribe:success', async ({ id, data }) => {
+      socket.on('mail:progress', async ({ account, progress, total }, ack) => {
+        const percentage = (progress / total) * 100;
+        const currentProgress = await db.prefs.get('progress');
+        await db.prefs.put({
+          key: 'progress',
+          value: {
+            ...(currentProgress ? currentProgress.value : {}),
+            [account]: percentage
+          }
+        });
+        console.debug('progress:', account, progress, total);
+        ack && ack();
+      });
+
+      socket.on('unsubscribe:success', async ({ id, data }, ack) => {
         console.debug(`[db]: successfully unsubscribed from ${id}`);
         try {
           const {
@@ -208,10 +217,12 @@ function useMailSyncFn() {
         } catch (err) {
           console.error(`[db]: failed to set successful unsubscribe`);
           console.error(err);
+        } finally {
+          ack && ack();
         }
       });
 
-      socket.on('unsubscribe:err', async ({ id, err }) => {
+      socket.on('unsubscribe:err', async ({ id, err }, ack) => {
         console.debug(`[db]: received unsubscribe error`);
         try {
           // incrementCredits(1);
@@ -236,21 +247,25 @@ function useMailSyncFn() {
         } catch (err) {
           console.error(`[db]: failed to set failed unsubscribe`);
           console.error(err);
+        } finally {
+          ack && ack();
         }
       });
+    },
+    onDestroy(socket) {
+      socket.off('mail');
+      socket.off('scores');
+      socket.off('mail:end');
+      socket.off('mail:err');
+      socket.off('mail:progress');
+      socket.off('unsubscribe:success');
+      socket.off('unsubscribe:err');
     }
-    return () => {
-      if (socket) {
-        socket.off('mail');
-        socket.off('scores');
-        socket.off('mail:end');
-        socket.off('mail:err');
-        socket.off('mail:progress');
-        socket.off('unsubscribe:success');
-        socket.off('unsubscribe:err');
-      }
-    };
-  }, [isConnected, error]);
+  });
+
+  const [unsubData, setUnsubData] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+
   return {
     ready: isConnected,
     isFetching,
@@ -268,6 +283,13 @@ function useMailSyncFn() {
     fetch: async () => {
       try {
         setIsFetching(true);
+        console.debug('[db]: starting fetch');
+        const inProgress = await checkBuffer(socket);
+        if (inProgress) {
+          console.debug('[db]: fetch is already running');
+          return;
+        }
+
         if (hasAccountProblem) {
           actions.setAlert({
             message: (

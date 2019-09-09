@@ -5,14 +5,15 @@ import Tooltip from 'rc-tooltip';
 import cx from 'classnames';
 import styles from './tooltip.module.scss';
 
-export default ({ children, overlay, placement = 'top', white }) => {
+export default ({ children, overlay, placement = 'top', white, progress }) => {
   const classes = cx(styles.tooltip, {
-    [styles.white]: white
+    [styles.white]: white,
+    [styles.progress]: progress
   });
   return (
     <Tooltip
       placement={placement}
-      trigger={['hover']}
+      trigger={['click']}
       mouseLeaveDelay={0}
       overlayClassName={classes}
       destroyTooltipOnHide={true}

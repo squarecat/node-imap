@@ -62,23 +62,6 @@
 .filter-padding {
 }
 
-.loader {
-  position: fixed;
-  right: -70px;
-  top: 50px;
-  background: linear-gradient(to left, white 80%, rgba(255, 255, 255, 0));
-  width: 66px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: right 200ms ease-in-out;
-
-  &[data-loading='true'] {
-    right: 0;
-  }
-}
-
 .filter-text {
 }
 

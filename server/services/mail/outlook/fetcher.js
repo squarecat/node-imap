@@ -77,7 +77,10 @@ export async function* fetchMail({ user, account, from, prevDupeCache }) {
           totalUnsubCount = totalUnsubCount + deduped.length;
           yield { type: 'mail', data: deduped };
         }
-        yield { type: 'progress', data: { progress, total: totalEstimate } };
+        yield {
+          type: 'progress',
+          data: { account: account.email, progress, total: totalEstimate }
+        };
         next = await iter.next();
       }
     }
