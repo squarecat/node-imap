@@ -19,11 +19,24 @@ const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
 
 const MailData = ({ item, openUnsubModal }) => {
-  const { fromEmail, to } = item;
-  const [{ unsubscriptions, showAccount }] = useUser(u => ({
+  const { fromEmail, to, forAccount, provider } = item;
+  const [{ unsubscriptions, showAccount, accounts }] = useUser(u => ({
     unsubscriptions: u.unsubscriptions,
-    showAccount: u.accounts.length > 1 && u.email !== to
+    showAccount: u.accounts.length > 1 && u.email !== to,
+    accounts: u.accounts
   }));
+
+  let providerName;
+  if (provider === 'imap') {
+    const { displayName } = accounts.find(a => a.email === forAccount);
+    providerName = displayName || 'IMAP';
+  } else if (provider === 'google') {
+    providerName = 'Google';
+  } else if (provider === 'outlook') {
+    providerName = 'Microsoft';
+  } else {
+    providerName = provider;
+  }
 
   return (
     <div styleName="mail-data-modal">
@@ -33,7 +46,7 @@ const MailData = ({ item, openUnsubModal }) => {
           <ModalCloseIcon />
         </ModalHeader>
         <Content
-          item={item}
+          item={{ ...item, providerName }}
           unsubscriptions={unsubscriptions}
           showAccount={showAccount}
           openUnsubModal={openUnsubModal}
@@ -56,7 +69,7 @@ const Content = React.memo(function({
     fromName,
     isTrash,
     isSpam,
-    provider,
+    providerName,
     status,
     date
   } = item;
@@ -97,7 +110,7 @@ const Content = React.memo(function({
             <TableRow>
               <TableCell>Account</TableCell>
               <TableCell>
-                <span styleName="data-pill">{`${forAccount} (${provider})`}</span>
+                <span styleName="data-pill">{`${forAccount} (${providerName})`}</span>
               </TableCell>
             </TableRow>
           ) : null}
