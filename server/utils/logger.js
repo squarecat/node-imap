@@ -1,14 +1,19 @@
 // import winston from 'winston';
+import debug from 'debug';
 
 const isDev =
   process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'beta';
 
 const logger = {
+  // conditionally enable debug logs with env variables.
+  // eg
+  //   debug('[socket]: connected');
+  //   DEBUG=socket
   debug: msg => {
-    if (isDev) {
-      return console.log(msg);
+    const matchDebug = msg.match(/\[(.+)\]/);
+    if (!matchDebug || debug.enabled(matchDebug[1])) {
+      return console.debug(msg);
     }
-    return console.debug(msg);
   },
   info: msg => {
     return console.log(msg);

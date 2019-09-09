@@ -1,26 +1,24 @@
+import socketApi, { shutdown as shutdownSockets } from './rest/sockets';
+
 import auth from './auth';
 import config from 'getconfig';
 import { connect as connectDb } from './dao/db';
 import cookieParser from 'cookie-parser';
 import errorsApi from './rest/errors';
 import express from 'express';
-// import giftsApi from './rest/gifts';
 import http from 'http';
 import logger from './utils/logger';
 import mailApi from './rest/mail';
 import mailgunWebhooks from './rest/webhooks/mailgun';
 import milestonesApi from './rest/milestones';
-import notificationsApi from './rest/notifications';
 import orgApi from './rest/organisation';
 import path from 'path';
 import paymentsApi from './rest/payments';
 import { refreshScores } from './dao/occurrences';
 import reportApi from './rest/report';
 import schedule from './utils/scheduler';
-import scoresApi from './rest/scores';
 import sentryWebhooks from './rest/webhooks/sentry';
 import session from './session';
-import socketApi from './rest/socket';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
 
@@ -48,11 +46,9 @@ auth(app);
 
 app.get('/api', (req, res) => res.send('OK'));
 
-const socket = socketApi(server);
+socketApi(server);
 userApi(app);
-mailApi(app, socket);
-scoresApi(app, socket);
-notificationsApi(app, socket);
+mailApi(app);
 paymentsApi(app);
 statsApi(app);
 reportApi(app);
@@ -125,12 +121,7 @@ const App = {
   },
   async stop() {
     logger.info('server stopping');
-    // const runningScans = await getRunningScans();
-    // if (runningScans > 0) {
-    //   logger.info(`waiting for ${runningScans} scans to finish`);
-    //   await runningScans();
-    //   logger.info('done');
-    // }
+    await shutdownSockets();
     logger.info('server stopped');
   }
 };

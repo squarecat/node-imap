@@ -6,6 +6,10 @@
       "password": "$DB_ENCRYPT_PASSWORD"
     }
   },
+  "buffer": {
+    "host": "localhost",
+    "port": 6379
+  },
   "admins": [
     "james@squarecat.io",
     "danielle@squarecat.io",

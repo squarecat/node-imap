@@ -15,7 +15,7 @@ import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
 import logger from '../../utils/logger';
 import { recordUnsubscribeForOrganisation } from '../organisation';
-import { sendToUser } from '../../rest/socket';
+import { sendToUser } from '../../rest/sockets';
 import uuid from 'node-uuid';
 
 export const unsubscribeByLink = browserUnsub;

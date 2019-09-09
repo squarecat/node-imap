@@ -38,27 +38,21 @@ const Credits = () => {
     [incrementUserCredits]
   );
 
-  useEffect(
-    () => {
-      if (isConnected) {
-        socket.on('update-credits', update);
-        emit('fetch-credits');
+  useEffect(() => {
+    if (isConnected) {
+      socket.on('update-credits', update);
+      emit('fetch-credits');
+    }
+    return () => {
+      if (socket) {
+        socket.off('update-credits', update);
       }
-      return () => {
-        if (socket) {
-          socket.off('update-credits', update);
-        }
-      };
-    },
-    [isConnected, emit, credits, incrementUserCredits, socket, update]
-  );
+    };
+  }, [isConnected, emit, credits, incrementUserCredits, socket, update]);
 
-  const onClick = useCallback(
-    () => {
-      openModal(<CreditModal credits={credits} />);
-    },
-    [credits, openModal]
-  );
+  const onClick = useCallback(() => {
+    openModal(<CreditModal credits={credits} />);
+  }, [credits, openModal]);
 
   return (
     <>
