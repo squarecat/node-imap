@@ -262,9 +262,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
       organisation = await getOrganisationForUserEmail(inviteCode, email);
       if (organisation) {
         logger.debug(
-          `user-service: new user is invited to or has domain for org ${
-            organisation.id
-          }, adding...`
+          `user-service: new user is invited to or has domain for org ${organisation.id}, adding...`
         );
       }
       const referredBy = await getReferredByData(referralCode);
@@ -307,9 +305,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
         organisation = await getOrganisationForUserEmail(inviteCode, email);
         if (organisation) {
           logger.debug(
-            `user-service: user ${id} is invited to or has domain for org ${
-              organisation.id
-            }, adding...`
+            `user-service: user ${id} is invited to or has domain for org ${organisation.id}, adding...`
           );
           updates = {
             ...updates,
@@ -346,9 +342,7 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
 async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
   try {
     logger.debug(
-      `user-service: adding created or updated user ${
-        user.id
-      } to organisation ${organisation.id}`
+      `user-service: adding created or updated user ${user.id} to organisation ${organisation.id}`
     );
 
     // remove all the accounts which are not the primary account
@@ -391,9 +385,7 @@ async function addUserAccountToOrganisation({
 }) {
   try {
     logger.debug(
-      `user-service: adding user account ${
-        account.id
-      } to organisation ${organisationId}`
+      `user-service: adding user account ${account.id} to organisation ${organisationId}`
     );
 
     await addUserToOrganisation(organisationId, {
@@ -622,9 +614,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         organisation = await getOrganisationForUserEmail(inviteCode, email);
         if (organisation) {
           logger.debug(
-            `user-service: user ${id} is invited to or has domain for org ${
-              organisation.id
-            }, adding...`
+            `user-service: user ${id} is invited to or has domain for org ${organisation.id}, adding...`
           );
           updates = {
             ...updates,
@@ -923,9 +913,7 @@ export async function updateUserPreferences(id, preferences) {
 
     if (preferences.marketingConsent !== currentPreferences.marketingConsent) {
       logger.info(
-        `user-service: marketing consent changed for ${id} to ${
-          preferences.marketingConsent
-        }`
+        `user-service: marketing consent changed for ${id} to ${preferences.marketingConsent}`
       );
       addUpdateNewsletterSubscriber(email, {
         subscribed: preferences.marketingConsent
@@ -1124,9 +1112,7 @@ export async function removeUserAccount(userId, accountEmail) {
 
     if (user.organisationId) {
       logger.debug(
-        `user-service: removed user account belonging to an organisation ${
-          user.organisationId
-        }`
+        `user-service: removed user account belonging to an organisation ${user.organisationId}`
       );
       const organisation = await removeUserAccountFromOrganisation(
         user.organisationId,
@@ -1208,7 +1194,7 @@ export async function verifyUserTotpToken(user, { token }) {
     encoding: 'base32',
     token
   });
-  if (unverified) {
+  if (verified && unverified) {
     verifyTotpSecret(user.id);
     addActivityForUser(user.id, 'addedTwoFactorAuth');
   }
