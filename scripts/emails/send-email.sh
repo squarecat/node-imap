@@ -1,0 +1,1 @@
+node --inspect ./scripts/emails/send.js
