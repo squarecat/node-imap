@@ -61,6 +61,10 @@ export async function* fetchMail(
         const mail = next.value;
         totalEmailsCount = totalEmailsCount + mail.length;
         progress = progress + mail.length;
+        yield {
+          type: 'progress',
+          data: { account: account.email, progress, total: totalEstimate }
+        };
         const unsubscribableMail = parseMailList(mail, {
           ignoredSenderList,
           unsubscriptions
@@ -82,13 +86,18 @@ export async function* fetchMail(
           dupeSenders = newDupeSenders;
           yield { type: 'mail', data: deduped };
         }
-        yield {
-          type: 'progress',
-          data: { account: account.email, progress, total: totalEstimate }
-        };
         next = await iter.next();
       }
     }
+    // progress is complete
+    yield {
+      type: 'progress',
+      data: {
+        account: account.email,
+        progress: totalEstimate || 1,
+        total: totalEstimate || 1
+      }
+    };
     const timeTaken = (Date.now() - start) / 1000;
     logger.info(
       `gmail-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`

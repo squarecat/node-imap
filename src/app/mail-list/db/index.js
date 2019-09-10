@@ -136,16 +136,25 @@ function useMailSyncFn() {
       });
 
       socket.on('mail:progress', async ({ account, progress, total }, ack) => {
-        const percentage = (progress / total) * 100;
-        const currentProgress = await db.prefs.get('progress');
-        await db.prefs.put({
-          key: 'progress',
-          value: {
-            ...(currentProgress ? currentProgress.value : {}),
-            [account]: percentage
-          }
+        let percentage;
+        if (progress + total === 0) {
+          percentage = 0;
+        } else {
+          percentage = (progress / total) * 100;
+        }
+
+        setImmediate(async () => {
+          const currentProgress = await db.prefs.get('progress');
+          await db.prefs.put({
+            key: 'progress',
+            value: {
+              ...(currentProgress ? currentProgress.value : {}),
+              [account]: percentage
+            }
+          });
+          console.debug('progress:', account, progress, total);
         });
-        console.debug('progress:', account, progress, total);
+
         ack && ack();
       });
 
@@ -289,6 +298,11 @@ function useMailSyncFn() {
           console.debug('[db]: fetch is already running');
           return;
         }
+        // clear progress
+        db.prefs
+          .where('key')
+          .equals('progress')
+          .delete();
 
         if (hasAccountProblem) {
           actions.setAlert({

@@ -31,25 +31,19 @@ export default () => {
     setShowSettings(false);
   }, []);
 
-  useEffect(
-    () => {
-      if (showSettings) {
-        document.body.addEventListener('click', onClickBody);
-      } else {
-        document.body.removeEventListener('click', onClickBody);
-      }
-      return () => document.body.removeEventListener('click', onClickBody);
-    },
-    [onClickBody, showSettings]
-  );
+  useEffect(() => {
+    if (showSettings) {
+      document.body.addEventListener('click', onClickBody);
+    } else {
+      document.body.removeEventListener('click', onClickBody);
+    }
+    return () => document.body.removeEventListener('click', onClickBody);
+  }, [onClickBody, showSettings]);
 
-  const onLogout = useCallback(
-    async () => {
-      await db.clear();
-      window.location.href = '/auth/logout';
-    },
-    [db]
-  );
+  const onLogout = useCallback(async () => {
+    await db.clear();
+    window.location.href = '/auth/logout';
+  }, [db]);
 
   const accountLetter = email.length ? email[0] : '';
   return (

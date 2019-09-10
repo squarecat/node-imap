@@ -55,6 +55,10 @@ export async function* fetchMail({ user, account, from, prevDupeCache }) {
         const mail = next.value;
         totalEmailsCount = totalEmailsCount + mail.length;
         progress = progress + mail.length;
+        yield {
+          type: 'progress',
+          data: { account: account.email, progress, total: totalEstimate }
+        };
         let unsubscribableMail = parseMailList(mail, {
           ignoredSenderList,
           unsubscriptions,
@@ -77,13 +81,18 @@ export async function* fetchMail({ user, account, from, prevDupeCache }) {
           totalUnsubCount = totalUnsubCount + deduped.length;
           yield { type: 'mail', data: deduped };
         }
-        yield {
-          type: 'progress',
-          data: { account: account.email, progress, total: totalEstimate }
-        };
+
         next = await iter.next();
       }
     }
+    yield {
+      type: 'progress',
+      data: {
+        account: account.email,
+        progress: totalEstimate || 1,
+        total: totalEstimate || 1
+      }
+    };
     const timeTaken = (Date.now() - start) / 1000;
     logger.info(
       `outlook-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`

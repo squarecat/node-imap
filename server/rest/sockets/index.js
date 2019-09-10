@@ -7,7 +7,6 @@ import {
   fetchUnreadNotifications,
   setNotificationsRead
 } from './notifications';
-import { isAfter, subMinutes } from 'date-fns';
 import occurrences, { getScores } from './occurrences';
 import { unsubscribe, unsubscribeError } from './unsubscribe';
 
@@ -20,7 +19,7 @@ let io;
 
 export default function(server) {
   logger.info('socket: constructing sockets');
-  io = socketio(server, { pingInterval: 1000, pingTimeout: 1000 }).of('mail');
+  io = socketio(server).of('mail');
 
   io.use(authMiddleware);
   io.use(connectedUsersMiddleware(io));

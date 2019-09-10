@@ -45,11 +45,19 @@ export async function* fetchMail({
     );
 
     for (let iter of iterators) {
+      yield {
+        type: 'progress',
+        data: {
+          account: account.email,
+          progress,
+          total: searchableMailboxes.length
+        }
+      };
+      progress = progress + 1;
       let next = await iter.next();
       while (!next.done) {
         const mail = next.value;
         totalEmailsCount = totalEmailsCount + mail.length;
-        progress = progress + mail.length;
 
         const unsubscribableMail = parseMailList(mail, {
           ignoredSenderList,
@@ -72,14 +80,18 @@ export async function* fetchMail({
           dupeSenders = newDupeSenders;
           yield { type: 'mail', data: deduped };
         }
-        yield {
-          type: 'progress',
-          data: { account: account.email, progress, total: 0 }
-        };
         next = await iter.next();
       }
     }
     const timeTaken = (Date.now() - start) / 1000;
+    yield {
+      type: 'progress',
+      data: {
+        account: account.email,
+        progress: searchableMailboxes.length || 1,
+        total: searchableMailboxes.length || 1
+      }
+    };
     logger.info(
       `imap-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`
     );

@@ -6,10 +6,9 @@ import Filters from './filters';
 import MailList from './list';
 import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
-import Progress from '../../components/progress';
-import Spinner from '../../components/loading/spinner';
-import Tooltip from '../../components/tooltip';
+import Progress from './progress';
 import UnsubModal from '../../components/modal/unsub-modal';
+import cx from 'classnames';
 import styles from './mail-list.module.scss';
 import useUser from '../../utils/hooks/use-user';
 
@@ -90,6 +89,9 @@ const MailView = React.memo(function() {
     return <MailList mail={mail} />;
   }, [showLoading, mail, accounts.length, activeFilters.length]);
 
+  const countStyles = cx(styles.countText, {
+    [styles.shown]: !isFetching
+  });
   return (
     <div styleName="mail-list">
       <Filters
@@ -121,18 +123,14 @@ const MailView = React.memo(function() {
           forcePage={page}
         />
         <div styleName="count">
-          <span>
+          <span className={countStyles}>
             Showing{' '}
             <span styleName="page-count">{`${offset ||
               1}-${totalOnPage}`}</span>{' '}
             of <span styleName="total-count">{totalCount}</span>
           </span>
+          <Progress shown={isFetching} />
         </div>
-        {/* <Tooltip placement="top" white progress overlay={<Progress />}>
-          <span styleName="loader" data-loading={isFetching}>
-            <Spinner shown={isFetching} />
-          </span>
-        </Tooltip> */}
       </div>
     </div>
   );

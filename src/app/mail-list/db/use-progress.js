@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { DatabaseContext } from '../../../providers/db-provider';
+import _set from 'lodash.set';
 
 function useProgress() {
   const db = useContext(DatabaseContext);
@@ -9,6 +10,7 @@ function useProgress() {
   useEffect(() => {
     function onCreate(key, obj) {
       setTimeout(() => {
+        console.log('create progress', obj.value);
         if (key === 'progress') {
           setState(obj.value);
         }
@@ -17,9 +19,26 @@ function useProgress() {
     function onUpdate(modifications, key, obj) {
       setTimeout(() => {
         if (key === 'progress') {
-          setState(obj.value);
+          const k = Object.keys(modifications)[0];
+          const v = modifications[k];
+          const newObj = _set(obj, k, v);
+          setState(newObj.value);
         }
-      }, 0);
+      });
+    }
+    function onDelete(key) {
+      setTimeout(() => {
+        if (key === 'progress') {
+          const newState = Object.keys(state).reduce(
+            (k, o) => ({
+              ...o,
+              [k]: 0
+            }),
+            {}
+          );
+          setState(newState);
+        }
+      });
     }
     async function get() {
       setTimeout(async () => {
@@ -40,14 +59,19 @@ function useProgress() {
     }
     db.prefs.hook('updating', onUpdate);
     db.prefs.hook('creating', onCreate);
+    db.prefs.hook('deleting', onDelete);
     get();
 
     return () => {
       db.prefs.hook('updating').unsubscribe(onUpdate);
       db.prefs.hook('creating').unsubscribe(onCreate);
+      db.prefs.hook('deleting').unsubscribe(onDelete);
     };
   }, [state, db.prefs]);
 
   return state;
 }
+
+useProgress.whyDidYouRender = true;
+
 export default useProgress;

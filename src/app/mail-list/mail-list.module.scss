@@ -89,6 +89,24 @@
   padding: 0 15px;
   @extend .smaller;
   height: auto;
+  position: relative;
+  height: 50px;
+  flex: 1;
+}
+
+.count-text {
+  position: absolute;
+  right: 0;
+  opacity: 0;
+  pointer-events: none;
+  height: 50px;
+  padding: 10px;
+  transition: opacity 200ms 400ms ease-in-out;
+}
+
+.shown {
+  opacity: 1;
+  pointer-events: all;
 }
 
 .page-count {
