@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AlertContext } from '../../providers/alert-provider';
 import { DatabaseContext } from '../../providers/db-provider';
+import { getSocketError } from '../../utils/errors';
 import io from 'socket.io-client';
 
 // socket singleton
@@ -76,9 +77,15 @@ function useSocket({
       SOCKET_INSTANCE.on('reconnect', attemptNumber => {
         checkBuffer(SOCKET_INSTANCE);
       });
-      SOCKET_INSTANCE.on('error', err => {
-        console.error('[socket]: errored');
-        setError(err);
+      SOCKET_INSTANCE.on('error', (err = {}) => {
+        console.debug('[socket]: errored');
+        console.debug(err);
+        if (err && err.reason === 'not-authorized') {
+          window.location.href = `/login?error=true&reason=${err.reason}`;
+          return false;
+        }
+        const message = getSocketError(err);
+        setError(message);
       });
       SOCKET_INSTANCE.on('disconnect', () => {
         console.debug('[socket]: disconnected');

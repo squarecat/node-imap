@@ -169,6 +169,14 @@ export function getAuthError(err = {}, authType) {
           .
         </span>
       );
+    case 'not-authorized': {
+      return (
+        <span>
+          You were logged out because your session expired. Please log in again
+          to continue.
+        </span>
+      );
+    }
     default:
       return (
         <>
@@ -198,17 +206,13 @@ export function getUnsubscribeAlert({
     case 'organisation-inactive': {
       return {
         ...options,
-        message: `Unsubscribe to ${
-          mail.fromEmail
-        } failed because your team is inactive, please contact your administrator.`
+        message: `Unsubscribe to ${mail.fromEmail} failed because your team is inactive, please contact your administrator.`
       };
     }
     case 'insufficient-credits': {
       return {
         ...options,
-        message: `Unsubscribe to ${
-          mail.fromEmail
-        } failed because you have insufficient credits`,
+        message: `Unsubscribe to ${mail.fromEmail} failed because you have insufficient credits`,
         actions: [
           {
             label: 'Buy more',
@@ -239,4 +243,14 @@ export function getPaymentError(err = {}) {
   }
 
   return getBasicError();
+}
+
+export function getSocketError(err = {}) {
+  const defaultMsg = `Something went wrong with the socket. Please try again or send us a message.`;
+
+  if (err && err.message) {
+    return err.message;
+  }
+
+  return defaultMsg;
 }

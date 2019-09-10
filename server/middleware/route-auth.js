@@ -6,7 +6,7 @@ const adminUsers = config.admins;
 
 const middleware = (req, res, next) => {
   const { user } = req;
-  const isApiRequest = req.baseUrl.includes('/api');
+  const isApiRequest = req.url.includes('/api');
   const isAuthenticated = isUserAuthenticated(req);
   const isUnauthenticatedApiRequest = !isAuthenticated && isApiRequest;
 
@@ -16,14 +16,13 @@ const middleware = (req, res, next) => {
         req.baseUrl
       }, user not logged in ${user ? user.id : null}`
     );
-    return res.status(403).send({
-      message: 'Not authorized'
-    });
+    return notAuthorized(req, res);
   }
   // this is a regular page request, so redirect the user to
   // the login page
   if (!isAuthenticated) {
-    return res.redirect(config.urls.login);
+    logger.debug(`route-auth: user not authenticated, redirecting to login`);
+    return res.redirect('/login');
   }
   // continue the request chain
   return next();
@@ -48,9 +47,7 @@ function isUserAuthenticated(req) {
 
 export function adminOnly(req, res, next) {
   if (!isUserAuthenticated) {
-    return res.status(403).send({
-      message: 'Not authorized'
-    });
+    return notAuthorized(req, res);
   }
   const { user } = req;
   const { email } = user;
@@ -61,10 +58,16 @@ export function adminOnly(req, res, next) {
         req.baseUrl
       }, user not an admin ${user ? user.id : null}`
     );
-    return res.status(403).send({
-      message: 'Not authorized'
-    });
+    return notAuthorized(req, res);
   }
   return next();
 }
+
+function notAuthorized(req, res) {
+  return res.status(403).send({
+    message: 'Not authorized',
+    reason: 'not-authorized'
+  });
+}
+
 export default middleware;
