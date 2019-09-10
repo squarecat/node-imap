@@ -56,7 +56,6 @@ $textarea-font-size: 14px;
   }
 
   &[data-position='right'] {
-    flex-direction: row;
     > *:nth-child(1) {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
@@ -84,6 +83,11 @@ $textarea-font-size: 14px;
       border-bottom-left-radius: 0;
       line-height: 48px;
     }
+  }
+
+  > a,
+  > button {
+    border: 1px solid transparent;
   }
 
   input:focus + a,
