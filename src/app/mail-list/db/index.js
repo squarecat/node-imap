@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import useSocket, { checkBuffer } from '../../../utils/hooks/use-socket';
 
 import { AlertContext } from '../../../providers/alert-provider';
@@ -35,7 +35,7 @@ function useMailSyncFn() {
     hasAccountProblem: u.accounts.some(a => a.problem),
     preferences: u.preferences
   }));
-  const { isConnected, socket, error, emit } = useSocket({
+  const { isConnected, socket, emit } = useSocket({
     token,
     userId: id,
     onCreate(socket) {
