@@ -114,7 +114,6 @@ export const ModalSaveAction = React.memo(
           <Button
             basic
             compact
-            stretch
             type="submit"
             as="button"
             disabled={isDisabled || isLoading}
@@ -139,7 +138,7 @@ export const ModalPaymentSaveAction = React.memo(
     saveText = 'Save'
   }) => {
     return (
-      <ModalFooter>
+      <div styleName="modal-footer payment-footer">
         <div styleName="footer-info">
           <p styleName="secured-by">
             <LockIcon />
@@ -163,7 +162,7 @@ export const ModalPaymentSaveAction = React.memo(
             {saveText}
           </Button>
         </ModalActions>
-      </ModalFooter>
+      </div>
     );
   }
 );

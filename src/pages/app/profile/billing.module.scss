@@ -127,6 +127,11 @@
   text-align: center;
   white-space: nowrap;
   transition: opacity 200ms ease-in-out;
+
+  @media (max-width: 500px) {
+    top: 42px;
+    font-size: 12px;
+  }
 }
 
 .package-buy-btn:hover .package-discount {

@@ -7,6 +7,7 @@ $active-bg-color: #ffc7c1;
 .hold-onto-your-butts-we-are-logging-in {
   min-height: 100vh;
   width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,15 +44,16 @@ $active-bg-color: #ffc7c1;
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   max-height: 100vh;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   max-width: 500px;
   background-color: white;
   padding: 25px;
   border-radius: 7px;
   box-shadow: 0 7px 1em hsla(18, 100%, 38%, 0.25);
   text-align: center;
-  height: 100%;
   backface-visibility: hidden;
   transition: transform 500ms cubic-bezier(0.65, 0.05, 0.36, 1);
   transform: rotateY(-180deg);
@@ -63,6 +65,7 @@ $active-bg-color: #ffc7c1;
   @media (max-width: 500px) {
     border-radius: 0;
     transition: none;
+    padding: 25px 25px 45px 25px;
   }
 }
 
@@ -88,6 +91,7 @@ $active-bg-color: #ffc7c1;
   }
 
   @media (max-width: 500px) {
+    min-height: 100vh; // makes mobile work
     max-height: 100% !important;
   }
 }
@@ -138,6 +142,11 @@ $active-bg-color: #ffc7c1;
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
+
+  @media (max-width: 500px) {
+    // stops buttons being pushed to the bottom with too much whitespace on mobile
+    flex: none;
+  }
 }
 
 .sign-up-form {

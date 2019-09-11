@@ -53,8 +53,12 @@ function Organisation() {
   const content = useMemo(
     () => {
       if (loading) return <span>Loading...</span>;
-      if (!organisation) {
-        return <span>You are not part of a team.</span>;
+      if (!organisationId || !organisation) {
+        return (
+          <div styleName="organisation-section">
+            <span>You are not part of a team.</span>
+            </div>
+          )
       }
 
       const {
