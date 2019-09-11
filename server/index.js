@@ -18,6 +18,7 @@ import { refreshScores } from './dao/occurrences';
 import reportApi from './rest/report';
 import schedule from './utils/scheduler';
 import sentryWebhooks from './rest/webhooks/sentry';
+import serveStatic from 'serve-static';
 import session from './session';
 import statsApi from './rest/stats';
 import userApi from './rest/user';
@@ -93,7 +94,11 @@ app.get('/i/:code', (req, res) => {
   res.redirect('/login');
 });
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(
+  express.static(path.join(__dirname, '../public'), {
+    setHeaders: setStaticHeaders
+  })
+);
 
 app.get('*', (req, res) => {
   res.redirect(302, '/404');
@@ -135,4 +140,31 @@ if (process.env.NODE_ENV !== 'development') {
   process.on('unhandledRejection', error => {
     Sentry.captureException(error);
   });
+}
+
+// index.html: public, max-age=0, must-revalidate1
+// page-data:  public, max-age=0, must-revalidate1
+// public/static/: public, max-age=31536000, immutable
+// js/css: public, max-age=31536000, immutable
+// /sw.js public, max-age=0, must-revalidate
+function setStaticHeaders(res, path) {
+  if (process.env.NODE_ENV === 'development') {
+    res.setHeader('Cache-Control', 'public, max-age=0');
+    return;
+  }
+  if (
+    serveStatic.mime.lookup(path) === 'text/html' ||
+    path.includes('/page-data')
+  ) {
+    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate1');
+  } else if (
+    /^(text\/css)|(application\/javascript)$/.test(
+      serveStatic.mime.lookup(path)
+    ) ||
+    path.includes('public/static')
+  ) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  } else {
+    res.setHeader('Cache-Control', 'public, max-age=0');
+  }
 }

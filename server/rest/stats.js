@@ -4,6 +4,10 @@ import { getExpenses, getNews } from '../utils/airtable';
 import { RestError } from '../utils/errors';
 
 export default app => {
+  app.use('/api/stats/*', (req, res, next) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+    next();
+  });
   app.get('/api/stats', async (req, res, next) => {
     const { summary } = req.query;
     try {
@@ -37,6 +41,7 @@ export default app => {
   });
 
   app.get('/api/news', async (req, res, next) => {
+    res.setHeader('Cache-Control', 'public, max-age=2628000, immutable');
     try {
       const news = await getNews();
       res.send(news);

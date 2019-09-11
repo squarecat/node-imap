@@ -23,7 +23,9 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
       y = r.getElementsByTagName(v)[0];
       p.Metomic.script = c;
       c.src = a;
-      y.parentNode.insertBefore(c, y);
+      window.addEventListener('scroll', function() { 
+        y.parentNode.insertBefore(c, y);
+      }, { once: true })
     })(
       window,
       document,

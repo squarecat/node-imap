@@ -1,14 +1,7 @@
-import { addUnsubscribeErrorResponse, fetchMail } from '../services/mail';
-
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
 import fs from 'fs';
 import { imageStoragePath } from 'getconfig';
-import logger from '../utils/logger';
-import { unsubscribeFromMail } from '../services/unsubscriber';
-import { updateOccurrencesSeenByUser } from '../services/occurrences';
-
-const Sentry = require('@sentry/node');
 
 export default function(app) {
   app.get('/api/mail/image/:mailId', auth, async (req, res, next) => {
