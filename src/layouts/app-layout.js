@@ -19,8 +19,6 @@ const AppLayout = ({ pageName, children }) => {
     if (window.intergram && window.intergram.hide) {
       window.intergram.hide();
     }
-    const el = document.querySelector('#intergramRoot');
-    if (el) el.style.pointerEvents = 'none';
   }, []);
   return (
     <>
