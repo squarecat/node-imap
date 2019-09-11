@@ -63,16 +63,19 @@ export function sendReferralSignUpMail({
   reward
 }) {
   logger.info('email-utils: sending referral signup mail');
+
+  const person = refereeName || 'Someone';
+  let text = `${person} just signed up to Leave Me Alone using your referral link. You have earned ${reward} credits!\n\nLog in now and use your credits: ${baseUrl}/login\n\nKeep sharing your referral link to earn more credits: ${referralUrl}\n\nThank you for supporting Leave Me Alone and helping us grow.\n\n${SIGN_OFF}\n\n\n\nWe will stop notifying you by email when you reach 3 referrals.`;
+
+  if (toName) {
+    text = `${toName},\n\n${text}`;
+  }
+
   return sendTransactionalMail({
     from: FROM_NAME,
-    subject: `${refereeName ||
-      'Someone'} just signed up through your referral link!`,
+    subject: `${person} just signed up through your referral link!`,
     to: toAddress,
-    text: getPersonalisedText(
-      `${refereeName ||
-        'Someone'} just signed up to Leave Me Alone using your referral link. You have earned ${reward} credits!\n\nLog in now and use your credits: ${baseUrl}/login\n\nKeep sharing your referral link to earn more credits: ${referralUrl}\n\nThank you for supporting Leave Me Alone and helping us grow.\n\n${SIGN_OFF}\n\n\n\nWe will stop notifying you by email when you reach 3 referrals.`,
-      { toName }
-    )
+    text
   });
 }
 
@@ -83,23 +86,19 @@ export function sendReminderMail({
   coupon
 }) {
   logger.info('email-utils: sending reminder mail');
+
+  let text = `You set a reminder for your account (${toAddress}) on (${baseUrl}). It's been ${reminderPeriod} since you last unsubscribed from unwanted subscription emails.\n\nKeep your inbox clean by scanning again now. Use the coupon ${coupon} for 10% off your next purchase.\n\nHappy unsubscribing!\n\n${SIGN_OFF}`;
+
+  if (toName) {
+    text = `${toName},\n\n${text}`;
+  }
+
   return sendTransactionalMail({
     from: FROM_NAME,
     subject: `Reminder: it's been ${reminderPeriod} since your last scan`,
     to: toAddress,
-    text: getPersonalisedText(
-      `You set a reminder for your account (${toAddress}) on (${baseUrl}). It's been ${reminderPeriod} since you last unsubscribed from unwanted subscription emails.\n\nKeep your inbox clean by scanning again now. Use the coupon ${coupon} for 10% off your next purchase.\n\nHappy unsubscribing!\n\n${SIGN_OFF}`,
-      { toName }
-    )
+    text
   });
-}
-
-export function getPersonalisedText(content, { toName }) {
-  let text;
-  if (toName) {
-    text = `${toName},\n\n`;
-  }
-  return `${text}${content}`;
 }
 
 export function sendTransactionalMail(options) {
