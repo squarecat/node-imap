@@ -34,16 +34,13 @@ import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import { graphql } from 'gatsby';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
-import luke from '../assets/testimonials/luke-nobg.png';
 import mailImg from '../assets/example-spam-2.png';
 // import mailListImageLarge from '../assets/mail-list-illustation.png';
-import mailListMobileImage from '../assets/mail-list-iphone.png';
+// import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
-import steph from '../assets/testimonials/steph.jpg';
 import subscriberScore from '../assets/subscriber-score.png';
-import tom from '../assets/testimonials/tom.jpg';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
@@ -147,6 +144,8 @@ const IndexPage = ({ data }) => {
 
   const testimonialImages = data.testimonialImages.edges;
   const mailListIllustration = data.mailListIllustration.childImageSharp.fluid;
+  const mailListIllustrationMobile =
+    data.mailListIllustrationMobile.childImageSharp.fluid;
 
   return (
     <Layout>
@@ -269,16 +268,28 @@ const IndexPage = ({ data }) => {
           </div>
           <div className="main-image-container">
             <Browser large hideOnMobile>
-              {/* <picture className="browser-image">
-                <source
-                  srcSet={mailListMobileImage}
-                  media="(max-width: 600px)"
-                /> */}
-              <Img
-                fluid={[mailListIllustrationMobile, mailListIllustration]}
-                alt="list of subscription emails in Leave Me Alone"
-              />
-              {/* </picture> */}
+              <div className="browser-image">
+                <Img
+                  className="browser-image-mobile"
+                  fluid={mailListIllustrationMobile}
+                  style={{
+                    maxHeight: mailListIllustrationMobile.presentationHeight,
+                    width: '100%'
+                  }}
+                  alt="list of subscription emails in Leave Me Alone"
+                />
+                <Img
+                  className="browser-image-desktop"
+                  style={{
+                    maxHeight: mailListIllustration.presentationHeight,
+                    width: '100%'
+                  }}
+                  objectFit="contain"
+                  objectPosition="0 0"
+                  fluid={mailListIllustration}
+                  alt="list of subscription emails in Leave Me Alone"
+                />
+              </div>
             </Browser>
           </div>
         </div>
@@ -886,11 +897,21 @@ export const query = graphql`
         }
       }
     }
+    mailListIllustrationMobile: file(
+      relativePath: { eq: "mail-list-iphone.png" }
+    ) {
+      childImageSharp {
+        fluid(maxWidth: 600) {
+          presentationHeight
+          ...GatsbyImageSharpFluid_withWebp
+        }
+      }
+    }
     mailListIllustration: file(
       relativePath: { eq: "mail-list-illustation.png" }
     ) {
       childImageSharp {
-        fluid(maxWidth: 1600) {
+        fluid(maxWidth: 1600, quality: 100) {
           ...GatsbyImageSharpFluid_withWebp
         }
       }
