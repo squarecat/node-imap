@@ -32,6 +32,10 @@
 
   td:first-child {
     width: 150px;
+
+    @media (max-width: 500px) {
+      width: 100px;
+    }
   }
 }
 
@@ -69,6 +73,10 @@
   @extend .pill;
   padding: 0 10px;
   max-width: 100%;
+  height: auto;
+  word-break: break-word;
+  line-height: 20px;
+  padding: 5px 10px;
 
   &.muted {
     background-color: $color-grey-darker;

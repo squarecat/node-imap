@@ -24,59 +24,58 @@ export default () => {
     [ignoredSenderList, setIgnoredSenderList]
   );
 
-  const content = useMemo(
-    () => {
-      if (ignoredSenderList.length) {
-        return (
-          <>
-            <p styleName="content">
-              Showing{' '}
-              <TextImportant>
-                {ignoredSenderList.length} favorite senders
-              </TextImportant>
-              . Emails from these addresses will not show up in any future
-              scans.
-            </p>
-            <ErrorBoundary>
-              <Table>
-                <tbody>
-                  {ignoredSenderList.map(sender => {
-                    return (
-                      <TableRow key={sender}>
-                        <TableCell>{sender}</TableCell>
-                        <TableCell>
-                          <Button
-                            compact
-                            basic
-                            muted
-                            onClick={() => remove(sender)}
-                          >
-                            Remove
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </tbody>
-              </Table>
-            </ErrorBoundary>
-          </>
-        );
-      }
+  const content = useMemo(() => {
+    if (ignoredSenderList.length) {
       return (
         <>
           <p styleName="content">
-            Favorite a sender by{' '}
-            <TextImportant>clicking the heart</TextImportant> next to their name
-            in the mail list. Favorite senders will not show up in future so you
-            don't have to worry about unsubscribing from them accidentally.
+            Showing{' '}
+            <TextImportant>
+              {ignoredSenderList.length} favorite senders
+            </TextImportant>
+            . Emails from these addresses will not show up in any future scans.
           </p>
-          <p styleName="content">Your favorite senders will show up here.</p>
+          <ErrorBoundary>
+            <Table>
+              <tbody styleName="table">
+                {ignoredSenderList.map(sender => {
+                  return (
+                    <TableRow key={sender}>
+                      <TableCell>
+                        <span styleName="sender">{sender}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          compact
+                          basic
+                          muted
+                          onClick={() => remove(sender)}
+                        >
+                          <span styleName="desktop">Remove</span>
+                          <span styleName="mobile">x</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </ErrorBoundary>
         </>
       );
-    },
-    [ignoredSenderList, remove]
-  );
+    }
+    return (
+      <>
+        <p styleName="content">
+          Favorite a sender by <TextImportant>clicking the heart</TextImportant>{' '}
+          next to their name in the mail list. Favorite senders will not show up
+          in future so you don't have to worry about unsubscribing from them
+          accidentally.
+        </p>
+        <p styleName="content">Your favorite senders will show up here.</p>
+      </>
+    );
+  }, [ignoredSenderList, remove]);
 
   return (
     <ProfileLayout pageName="Favorite Senders">

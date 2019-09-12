@@ -17,7 +17,8 @@ const styleProps = [
   'stretch',
   'outlined',
   'fill',
-  'onDarkBg'
+  'onDarkBg',
+  'positive'
 ];
 
 export default ({
@@ -45,7 +46,8 @@ export default ({
     stretch: props.stretch,
     outlined: props.outlined,
     fill: props.fill,
-    'on-dark-bg': props.onDarkBg
+    'on-dark-bg': props.onDarkBg,
+    positive: props.positive
   });
 
   let elProps = _omit(props, styleProps);
