@@ -12,7 +12,6 @@ async function doRequest(url, params = {}) {
     });
     return response;
   } catch (err) {
-    console.log('request err');
     throw err;
   }
 }
@@ -20,6 +19,8 @@ async function doRequest(url, params = {}) {
 export default async function request(url, params = {}, rawResponse = false) {
   try {
     const response = await doRequest(url, params);
+    const contentType = response.headers.get('content-type');
+    const isJson = contentType && contentType.includes('application/json');
 
     // let the calling code use the entire response object
     if (rawResponse) {
@@ -27,18 +28,21 @@ export default async function request(url, params = {}, rawResponse = false) {
     }
 
     if (response.status >= 400 && response.status < 600) {
-      const err = await response.json();
-      throw err;
+      if (isJson) {
+        const err = await response.json();
+        throw err;
+      }
+      throw response.statusText;
     }
 
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    if (isJson) {
       return response.json();
     }
 
     return response.statusText;
   } catch (err) {
-    console.log('request err');
+    console.error('request err');
+    console.error(err);
     throw err;
   }
 }

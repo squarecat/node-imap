@@ -27,7 +27,7 @@ export default function paginatedResponse(req, res, next) {
   const url = Object.keys(queryParams).reduce(
     (partialUrl, queryKey) =>
       `${partialUrl}${queryKey}=${queryParams[queryKey]}&`,
-    `${req.protocol}://${req.hostname}${req.baseUrl}?`
+    `${req.protocol}://${req.hostname}${req.url}?`
   );
 
   let pageResponse = [
