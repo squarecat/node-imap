@@ -13,7 +13,7 @@ const middleware = (req, res, next) => {
   if (isUnauthenticatedApiRequest) {
     logger.info(
       `route-auth: access forbidden at ${req.protocol}://${req.hostname}${
-        req.baseUrl
+        req.url
       }, user not logged in ${user ? user.id : null}`
     );
     return notAuthorized(req, res);
@@ -55,7 +55,7 @@ export function adminOnly(req, res, next) {
   if (!isAdmin) {
     logger.info(
       `route-auth: access forbidden at ${req.protocol}://${req.hostname}${
-        req.baseUrl
+        req.url
       }, user not an admin ${user ? user.id : null}`
     );
     return notAuthorized(req, res);
