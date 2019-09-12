@@ -185,11 +185,24 @@
 }
 
 .trustbar-images {
-  display: flex;
+  display: grid;
+  grid-template-columns: 200px repeat(3, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding-top: 0;
   padding-bottom: 0;
+  max-width: 100%;
+  grid-gap: 20px;
+
+  @media (max-width: 900px) {
+    grid-gap: 10px;
+  }
+  @media (max-width: 600px) {
+    grid-gap: 10px;
+  }
+  @media (max-width: 650px) {
+    grid-template-columns: 50px repeat(3, minmax(0, 1fr));
+  }
 
   .spaced & {
     max-width: 1050px;
@@ -200,9 +213,15 @@
 .trustbar-img {
   display: flex;
   align-items: center;
-  margin: 0 40px;
-  max-width: 200px;
-  padding: 20px 0;
+  justify-content: center;
+
+  &:nth-child(2) {
+    justify-content: flex-end;
+  }
+
+  &:last-child {
+    justify-content: flex-start;
+  }
 
   .spaced & {
     max-width: 150px;
@@ -218,25 +237,14 @@
   }
 
   ~ .trustbar-img {
-    margin: 0 20px;
-    img {
-      max-height: 42px;
-    }
-
-    @media (max-width: 768px) {
-      margin: 0 20px;
-    }
-
-    @media (max-width: 500px) {
-      margin: 0 10px;
-    }
+    margin: 0;
 
     &:last-child {
       margin-right: 0;
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 650px) {
     margin-right: 0;
     .long-text {
       display: none;

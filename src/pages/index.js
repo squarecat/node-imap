@@ -29,38 +29,18 @@ import Toggle from '../components/toggle';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
 import aolImg from '../assets/providers/imap/aol-logo.png';
-import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
 import { graphql } from 'gatsby';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
-import mailImg from '../assets/example-spam-2.png';
-// import mailListImageLarge from '../assets/mail-list-illustation.png';
-// import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
-import subscriberScore from '../assets/subscriber-score.png';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
 
 const faker = require('../vendor/faker/locale/en');
-
-const companyLinks = [
-  {
-    name: 'Toptal',
-    link: 'https://cdn.leavemealone.app/images/companies/toptal.png'
-  },
-  {
-    name: 'TutorSeek',
-    link: 'https://cdn.leavemealone.app/images/companies/tutorseek.png'
-  },
-  {
-    name: 'Product Hunt',
-    link: 'https://cdn.leavemealone.app/images/companies/product-hunt.png'
-  }
-];
 
 let domContentLoaded = false;
 let initialScreenHeight = 0;
@@ -256,7 +236,7 @@ const IndexPage = ({ data }) => {
             ]}
           />
         </div>
-        <TrustBar logos={companyLinks} label="Used by employees at: " dark />
+        <TrustBar label="Used by employees at: " dark />
 
         <div className="dark-section main-image-section">
           <div className="home-container">
@@ -311,8 +291,8 @@ const IndexPage = ({ data }) => {
                 </p>
               </div>
               <div className="image-section-img shadowed">
-                <img
-                  src={mailImg}
+                <Img
+                  fluid={data.featureImages.edges[0].node.childImageSharp.fluid}
                   alt="An example subscription email item showing the sender and how many times it has been received"
                 />
               </div>
@@ -320,9 +300,9 @@ const IndexPage = ({ data }) => {
 
             <div className="image-section image-left">
               <div className="image-section-img">
-                <img
-                  src={subscriberScore}
-                  alt="Tooltip for Subscriber Score showing the ranking for an example email list"
+                <Img
+                  fluid={data.featureImages.edges[1].node.childImageSharp.fluid}
+                  alt="An example subscription email item showing the sender and how many times it has been received"
                 />
               </div>
               <div className="image-section-text">
@@ -357,9 +337,9 @@ const IndexPage = ({ data }) => {
                 </p>
               </div>
               <div className="image-section-img bordered shadowed">
-                <img
-                  src={connectAccounts}
-                  alt="List of connected email accounts"
+                <Img
+                  fluid={data.featureImages.edges[2].node.childImageSharp.fluid}
+                  alt="An example subscription email item showing the sender and how many times it has been received"
                 />
               </div>
             </div>
@@ -890,6 +870,20 @@ export const query = graphql`
         }
       }
     }
+    testimonialImages: allFile(
+      filter: { relativePath: { glob: "testimonials/*" } }
+    ) {
+      edges {
+        node {
+          name
+          childImageSharp {
+            fluid(maxWidth: 150) {
+              ...GatsbyImageSharpFluid_withWebp
+            }
+          }
+        }
+      }
+    }
     logo: file(relativePath: { eq: "logo.png" }) {
       childImageSharp {
         fixed(width: 60, height: 40) {
@@ -913,6 +907,23 @@ export const query = graphql`
       childImageSharp {
         fluid(maxWidth: 1600, quality: 100) {
           ...GatsbyImageSharpFluid_withWebp
+        }
+      }
+    }
+    featureImages: allFile(
+      filter: {
+        relativePath: {
+          in: ["example-spam-2.png", "subscriber-score.png", "accounts.png"]
+        }
+      }
+    ) {
+      edges {
+        node {
+          childImageSharp {
+            fluid(maxWidth: 500) {
+              ...GatsbyImageSharpFluid_withWebp
+            }
+          }
         }
       }
     }

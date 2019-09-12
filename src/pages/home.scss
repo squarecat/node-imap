@@ -287,6 +287,11 @@ a.more-info:visited {
 }
 
 .image-section-img {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+
   &.bordered img {
     border: 1px solid $color-red-light;
   }
