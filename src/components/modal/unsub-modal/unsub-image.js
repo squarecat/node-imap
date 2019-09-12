@@ -1,6 +1,7 @@
 import React, { useMemo, useReducer } from 'react';
 
 import Browser from '../../browser';
+import Pulse from '../../loading/pulse';
 import cx from 'classnames';
 import styles from './unsub-image.module.scss';
 
@@ -27,28 +28,25 @@ export default React.memo(({ mailId }) => {
     error: null
   });
   const { loading, error } = state;
-  const image = useMemo(
-    () => {
-      const classes = cx('unsub-img', {
-        [styles.loading]: loading,
-        [styles.errored]: error
-      });
-      return (
-        <img
-          alt="Screenshot of the page response after unsubscribing"
-          className={classes}
-          src={`/api/mail/image/${mailId}`}
-          onLoad={() => dispatch({ type: 'set-loading', data: false })}
-          onError={e => dispatch({ type: 'set-error', data: e })}
-        />
-      );
-    },
-    [error, loading, mailId]
-  );
+  const image = useMemo(() => {
+    const classes = cx('unsub-img', {
+      [styles.loading]: loading,
+      [styles.errored]: error
+    });
+    return (
+      <img
+        alt="Screenshot of the page response after unsubscribing"
+        className={classes}
+        src={`/api/mail/image/${mailId}`}
+        onLoad={() => dispatch({ type: 'set-loading', data: false })}
+        onError={e => dispatch({ type: 'set-error', data: e })}
+      />
+    );
+  }, [error, loading, mailId]);
   return (
     <Browser>
       {image}
-      {loading ? <div styleName="image-loading" /> : null}
+      {loading ? <Pulse /> : null}
       {error ? (
         <div styleName="image-error">
           <p>
