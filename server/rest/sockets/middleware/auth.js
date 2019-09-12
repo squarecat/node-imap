@@ -1,3 +1,4 @@
+import { AuthError } from '../../../utils/errors';
 import { get as getSession } from '../../../dao/sessions';
 import logger from '../../../utils/logger';
 
@@ -15,5 +16,10 @@ export default async (socket, next) => {
   logger.error(
     `[socket]: failed authentication, dropping socket for user ${userId}`
   );
-  return next(new Error('authentication error'));
+  return next(
+    new AuthError('authentication error', {
+      message: 'Not authorized',
+      reason: 'not-authorized'
+    })
+  );
 };

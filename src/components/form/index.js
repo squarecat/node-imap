@@ -28,12 +28,9 @@ export const FormInput = ({
 }) => {
   const ref = useRef(null);
   const [inputValue, setInputValue] = useState(value);
-  useEffect(
-    () => {
-      setInputValue(value);
-    },
-    [value]
-  );
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
   const classes = cx('form-input', {
     'input-compactt': compact,
     'input-smaller': smaller,
@@ -64,11 +61,12 @@ export const InlineFormInput = ({
   childrenPosition = 'right',
   ...props
 }) => {
-  const inline = <span styleName="inline-input-wrapper">{children}</span>;
   return (
-    <span styleName="inline-input" data-position={childrenPosition}>
-      <FormInput {...props} />
-      {inline}
+    <span styleName="inline-input-wrapper">
+      <span styleName="inline-input" data-position={childrenPosition}>
+        <FormInput {...props} />
+        {children}
+      </span>
     </span>
   );
 };
@@ -195,12 +193,9 @@ export const FormTextarea = ({
   ...props
 }) => {
   const [inputValue, setInputValue] = useState(value);
-  useEffect(
-    () => {
-      setInputValue(value);
-    },
-    [value]
-  );
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
   const classes = cx('form-textarea');
   return (
     <textarea

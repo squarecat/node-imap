@@ -12,7 +12,7 @@ export default async (req, res, next) => {
     }
   }
   logger.info(
-    `access forbidden at ${req.protocol}://${req.hostname}${req.baseUrl}, ${
+    `access forbidden at ${req.protocol}://${req.hostname}${req.url}, ${
       user ? ` for user ${user.id}` : ' not authed with required two factor'
     }`
   );
