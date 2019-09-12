@@ -246,7 +246,7 @@ export function getPaymentError(err = {}) {
 }
 
 export function getSocketError(err = {}) {
-  const defaultMsg = `Something went wrong with the socket. Please try again or send us a message.`;
+  const defaultMsg = `Couldn't connect to server, please refresh and try again. If the problem continues then send us a message.`;
 
   if (err && err.message) {
     return err.message;
