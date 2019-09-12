@@ -1,6 +1,7 @@
 import './testimonial.module.scss';
 
 import React, { useMemo } from 'react';
+import { StaticQuery, graphql } from 'gatsby';
 
 import Img from 'gatsby-image';
 import cx from 'classnames';
@@ -28,7 +29,7 @@ export function HeroTestimonial({
   return (
     <div styleName={styles}>
       <div styleName="image-container">
-        <Img critical fluid={image} alt={`${author} avatar`} />
+        <Img loading="auto" fluid={image} alt={`${author} avatar`} />
       </div>
       <blockquote styleName="blockquote">
         <p>"{text}"</p>
@@ -44,27 +45,76 @@ export function HeroTestimonial({
   );
 }
 
-export function TrustBar({ logos = [], label = false, ...visProps }) {
+const companies = [
+  {
+    name: 'Toptal',
+    path: 'toptal'
+  },
+  {
+    name: 'TutorSeek',
+    path: 'tutorseek'
+  },
+  {
+    name: 'Product Hunt',
+    path: 'product-hunt'
+  }
+];
+
+export function TrustBar({ label = false, ...visProps }) {
   const styles = cx('trustbar', {
     dark: visProps.dark,
     spaced: visProps.spaced
   });
   const content = useMemo(() => {
     return (
-      <>
-        {label ? (
-          <span styleName="trustbar-label">
-            Used by<span styleName="long-text"> employees at</span>:
-          </span>
-        ) : null}
-        {logos.map(({ name, link }, i) => (
-          <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-            <img src={link} alt={`${name} logo`} />
-          </span>
-        ))}
-      </>
+      <StaticQuery
+        query={graphql`
+          query {
+            companyImages: allFile(
+              filter: { relativePath: { glob: "companies/*" } }
+            ) {
+              edges {
+                node {
+                  name
+                  childImageSharp {
+                    fluid(maxHeight: 42) {
+                      presentationWidth
+                      ...GatsbyImageSharpFluid_withWebp
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `}
+        render={data => (
+          <>
+            {label ? (
+              <span styleName="trustbar-label">
+                Used by<span styleName="long-text"> employees at</span>:
+              </span>
+            ) : null}
+            {companies.map(({ name, path }, i) => {
+              const edges = data.companyImages.edges;
+              const edge = edges.find(e => e.node.name === path);
+              const node = edge.node.childImageSharp.fluid;
+              return (
+                <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
+                  <Img
+                    style={{
+                      width: node.presentationWidth
+                    }}
+                    fluid={node}
+                    alt={`${name} logo`}
+                  />
+                </span>
+              );
+            })}
+          </>
+        )}
+      />
     );
-  }, [label, logos]);
+  }, [label]);
   return (
     <div styleName={styles}>
       <div styleName="trustbar-images">{content}</div>
