@@ -47,13 +47,16 @@ export function HeroTestimonial({
 
 const companies = [
   {
-    name: 'Toptal'
+    name: 'Toptal',
+    path: 'toptal'
   },
   {
-    name: 'TutorSeek'
+    name: 'TutorSeek',
+    path: 'tutorseek'
   },
   {
-    name: 'Product Hunt'
+    name: 'Product Hunt',
+    path: 'product-hunt'
   }
 ];
 
@@ -91,9 +94,10 @@ export function TrustBar({ label = false, ...visProps }) {
                 Used by<span styleName="long-text"> employees at</span>:
               </span>
             ) : null}
-            {companies.map(({ name }, i) => {
-              const node =
-                data.companyImages.edges[i].node.childImageSharp.fluid;
+            {companies.map(({ name, path }, i) => {
+              const edges = data.companyImages.edges;
+              const edge = edges.find(e => e.node.name === path);
+              const node = edge.node.childImageSharp.fluid;
               return (
                 <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
                   <Img
