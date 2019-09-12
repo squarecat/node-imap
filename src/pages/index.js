@@ -127,6 +127,14 @@ const IndexPage = ({ data }) => {
   const mailListIllustrationMobile =
     data.mailListIllustrationMobile.childImageSharp.fluid;
 
+  const featuredImages = data.featureImages.edges.reduce(
+    (out, { node }) => ({
+      ...out,
+      [node.name]: node.childImageSharp.fluid
+    }),
+    []
+  );
+  console.log(featuredImages);
   return (
     <Layout>
       <div id="main">
@@ -292,7 +300,7 @@ const IndexPage = ({ data }) => {
               </div>
               <div className="image-section-img shadowed">
                 <Img
-                  fluid={data.featureImages.edges[0].node.childImageSharp.fluid}
+                  fluid={featuredImages['example-spam-2']}
                   alt="An example subscription email item showing the sender and how many times it has been received"
                 />
               </div>
@@ -301,7 +309,7 @@ const IndexPage = ({ data }) => {
             <div className="image-section image-left">
               <div className="image-section-img">
                 <Img
-                  fluid={data.featureImages.edges[1].node.childImageSharp.fluid}
+                  fluid={featuredImages['subscriber-score']}
                   alt="An example subscription email item showing the sender and how many times it has been received"
                 />
               </div>
@@ -338,7 +346,7 @@ const IndexPage = ({ data }) => {
               </div>
               <div className="image-section-img bordered shadowed">
                 <Img
-                  fluid={data.featureImages.edges[2].node.childImageSharp.fluid}
+                  fluid={featuredImages['accounts']}
                   alt="An example subscription email item showing the sender and how many times it has been received"
                 />
               </div>
@@ -919,6 +927,7 @@ export const query = graphql`
     ) {
       edges {
         node {
+          name
           childImageSharp {
             fluid(maxWidth: 500) {
               ...GatsbyImageSharpFluid_withWebp
