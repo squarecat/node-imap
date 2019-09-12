@@ -21,6 +21,7 @@ import { TextHighlight, TextImportant, TextLink } from '../components/text';
 import Browser from '../components/browser';
 import Footer from '../components/footer';
 import Header from '../components/landing/header';
+import Img from 'gatsby-image';
 import Layout from '../layouts/layout';
 import { Pricing } from './pricing';
 import Slider from '../components/landing/slider';
@@ -31,15 +32,15 @@ import aolImg from '../assets/providers/imap/aol-logo.png';
 import connectAccounts from '../assets/accounts.png';
 import envelope from '../assets/open-envelope-love.png';
 import fastmailImg from '../assets/providers/imap/fastmail-logo-white.png';
+import { graphql } from 'gatsby';
 import icloudImg from '../assets/providers/imap/icloud-logo-white.png';
 import luke from '../assets/testimonials/luke-nobg.png';
 import mailImg from '../assets/example-spam-2.png';
-import mailListImageLarge from '../assets/mail-list-illustation.png';
+// import mailListImageLarge from '../assets/mail-list-illustation.png';
 import mailListMobileImage from '../assets/mail-list-iphone.png';
 import numeral from 'numeral';
 import { openTweetIntent } from '../utils/tweet';
 import request from '../utils/request';
-import sa from '../../plugins/simple-analytics-gatsby-plugin';
 import steph from '../assets/testimonials/steph.jpg';
 import subscriberScore from '../assets/subscriber-score.png';
 import tom from '../assets/testimonials/tom.jpg';
@@ -118,7 +119,7 @@ const NEWS = [
 export const OAUTH_PROVIDERS = `Gmail, G Suite, Googlemail, Outlook, Office 365, Live, Hotmail, and MSN`;
 export const IMAP_PROVIDERS = `Fastmail, Yahoo Mail, iCloud, AOL, and all other mailboxes`;
 
-const IndexPage = () => {
+const IndexPage = ({ data }) => {
   const trashPileRef = useRef(null);
   const {
     error: statsError,
@@ -127,27 +128,25 @@ const IndexPage = () => {
   } = useAsync(fetchStats, []);
   const [isTruckShown, showTruck] = useState(false);
 
-  const statsContent = useMemo(
-    () => {
-      if (statsError) {
-        return null;
-      }
-      const userCount = statsData ? formatNumber(statsData.users) : 0;
-      const unsubCount = statsData
-        ? formatNumber(statsData.unsubscriptions)
-        : 0;
-      return (
-        <p className={`join-text ${statsLoading ? 'join-text-loading' : ''}`}>
-          Join <span className="join-stat">{userCount} users</span> who have
-          unsubscribed from a total of{' '}
-          <span className="join-stat">{unsubCount} spam</span> emails
-        </p>
-      );
-    },
-    [statsData, statsError, statsLoading]
-  );
+  const statsContent = useMemo(() => {
+    if (statsError) {
+      return null;
+    }
+    const userCount = statsData ? formatNumber(statsData.users) : 0;
+    const unsubCount = statsData ? formatNumber(statsData.unsubscriptions) : 0;
+    return (
+      <p className={`join-text ${statsLoading ? 'join-text-loading' : ''}`}>
+        Join <span className="join-stat">{userCount} users</span> who have
+        unsubscribed from a total of{' '}
+        <span className="join-stat">{unsubCount} spam</span> emails
+      </p>
+    );
+  }, [statsData, statsError, statsLoading]);
 
   const bannerShown = false;
+
+  const testimonialImages = data.testimonialImages.edges;
+  const mailListIllustration = data.mailListIllustration.childImageSharp.fluid;
 
   return (
     <Layout>
@@ -207,7 +206,10 @@ const IndexPage = () => {
                     </span>
                   }
                   author="Steph Smith, Head of Publications"
-                  image={steph}
+                  image={
+                    testimonialImages.find(ti => ti.node.name === 'steph').node
+                      .childImageSharp.fluid
+                  }
                   companyName="Toptal"
                   companyLogo={''}
                 />
@@ -222,7 +224,10 @@ const IndexPage = () => {
                     </span>
                   }
                   author="Luke Chadwick, Founder"
-                  image={luke}
+                  image={
+                    testimonialImages.find(ti => ti.node.name === 'luke-nobg')
+                      .node.childImageSharp.fluid
+                  }
                   companyName="GraphQL360"
                   companyLogo={''}
                 />
@@ -241,7 +246,10 @@ const IndexPage = () => {
                     </span>
                   }
                   author="Tom Haworth, CEO"
-                  image={tom}
+                  image={
+                    testimonialImages.find(ti => ti.node.name === 'tom').node
+                      .childImageSharp.fluid
+                  }
                   companyName="B13 Technology"
                   companyLogo={''}
                 />
@@ -261,16 +269,16 @@ const IndexPage = () => {
           </div>
           <div className="main-image-container">
             <Browser large hideOnMobile>
-              <picture className="browser-image">
+              {/* <picture className="browser-image">
                 <source
                   srcSet={mailListMobileImage}
                   media="(max-width: 600px)"
-                />
-                <img
-                  src={mailListImageLarge}
-                  alt="list of subscription emails in Leave Me Alone"
-                />
-              </picture>
+                /> */}
+              <Img
+                fluid={[mailListIllustrationMobile, mailListIllustration]}
+                alt="list of subscription emails in Leave Me Alone"
+              />
+              {/* </picture> */}
             </Browser>
           </div>
         </div>
@@ -667,55 +675,43 @@ function UnsubscribeDemo({ trashPileRef, onFirstClick }) {
     nodes: [items[0]]
   });
 
-  const onClick = useCallback(
-    () => {
-      if (state.count === 0) {
-        onFirstClick();
+  const onClick = useCallback(() => {
+    if (state.count === 0) {
+      onFirstClick();
+    }
+    dispatch({ type: 'next' });
+  }, [onFirstClick, state.count]);
+
+  const getFallLimit = useCallback(() => {
+    const top = trashPileRef.offsetTop;
+    const elTop = ref.current.offsetTop;
+    const bottom = top - elTop - 50;
+    return bottom;
+  }, [trashPileRef]);
+
+  useEffect(() => {
+    const fn = () => setLoad(true);
+    window.addEventListener('DOMContentLoaded', fn);
+    const interval = setInterval(() => {
+      const newFallLimit = getFallLimit();
+      if (fallLimit !== newFallLimit) {
+        setFallLimit(newFallLimit);
       }
-      dispatch({ type: 'next' });
-    },
-    [onFirstClick, state.count]
-  );
+    }, 1000);
+    return () => {
+      window.removeEventListener('DOMContentLoaded', fn);
+      clearInterval(interval);
+    };
+  }, [fallLimit, getFallLimit]);
 
-  const getFallLimit = useCallback(
-    () => {
-      const top = trashPileRef.offsetTop;
-      const elTop = ref.current.offsetTop;
-      const bottom = top - elTop - 50;
-      return bottom;
-    },
-    [trashPileRef]
-  );
-
-  useEffect(
-    () => {
-      const fn = () => setLoad(true);
-      window.addEventListener('DOMContentLoaded', fn);
-      const interval = setInterval(() => {
-        const newFallLimit = getFallLimit();
-        if (fallLimit !== newFallLimit) {
-          setFallLimit(newFallLimit);
-        }
-      }, 1000);
-      return () => {
-        window.removeEventListener('DOMContentLoaded', fn);
-        clearInterval(interval);
-      };
-    },
-    [fallLimit, getFallLimit]
-  );
-
-  useEffect(
-    () => {
-      if (isLoad && width && ref.current && trashPileRef) {
-        const newFallLimit = getFallLimit();
-        if (fallLimit !== newFallLimit) {
-          setFallLimit(newFallLimit);
-        }
+  useEffect(() => {
+    if (isLoad && width && ref.current && trashPileRef) {
+      const newFallLimit = getFallLimit();
+      if (fallLimit !== newFallLimit) {
+        setFallLimit(newFallLimit);
       }
-    },
-    [isLoad, width, trashPileRef, getFallLimit, fallLimit]
-  );
+    }
+  }, [isLoad, width, trashPileRef, getFallLimit, fallLimit]);
 
   return (
     <div className="example-container" ref={ref}>
@@ -752,77 +748,69 @@ function Item({
   const outerRef = useRef(null);
   const textRef = useRef(null);
 
-  const onChange = useCallback(
-    () => {
-      onClick();
-      if (!animate) {
-        return false;
+  const onChange = useCallback(() => {
+    onClick();
+    if (!animate) {
+      return false;
+    }
+    textRef.current.style.opacity = 0;
+    const v = 100;
+    const angle = rand(50, 90); // The angle of projection is a number between 80 and 89 degrees.
+    const theta = (angle * Math.PI) / 180; // Theta is the angle in radians
+    const g = -9.8; // And gravity is -9.8. If you live on another planet feel free to change
+
+    // time is initially zero, also set some random variables. It's higher than the total time for the projectile motion
+    // because we want the squares to go off screen.
+    let t = 0;
+    let nx;
+    let ny;
+
+    // The direction can either be left (1), right (-1) or center (0). This is the horizontal direction.
+    const negate = [1, -1, 1, -1, 0];
+    const direction = negate[Math.floor(Math.random() * negate.length)];
+
+    // Some random numbers for altering the shapes position
+    const randScale = Math.random().toFixed(2);
+    let randDeg2 = rand(360, 60);
+    if (direction !== 0) randDeg2 = randDeg2 * direction;
+    // And apply those
+    const baseTransform = `scale(${randScale}) rotateZ(${randDeg2}deg)`;
+    // console.log(`direction(${direction}) ${baseTransform}`);
+    ref.current.style.transform = baseTransform;
+
+    const frame = function() {
+      // Horizontal speed is constant (no wind resistance on the internet)
+      var ux = Math.cos(theta) * v * direction;
+      // Vertical speed decreases as time increases before reaching 0 at its peak
+      var uy = Math.sin(theta) * v - -g * t;
+      // The horizontal position
+      nx = ux * t;
+      // s = ut + 0.5at^2
+      ny = uy * t + 0.5 * g * Math.pow(t, 2);
+      // Apply the positions
+      outerRef.current.style.transform = `translate(${nx}px, ${-ny}px)`;
+      // Increase the time by 0.10
+      t = t + 0.15;
+
+      if (ny > -fallLimit) {
+        window.requestAnimationFrame(frame);
+      } else {
+        // remove will-change
+        ref.current.style.willChange = 'auto';
+        outerRef.current.style.willChange = 'auto';
       }
-      textRef.current.style.opacity = 0;
-      const v = 100;
-      const angle = rand(50, 90); // The angle of projection is a number between 80 and 89 degrees.
-      const theta = (angle * Math.PI) / 180; // Theta is the angle in radians
-      const g = -9.8; // And gravity is -9.8. If you live on another planet feel free to change
+    };
+    // add will-change
+    ref.current.style.willChange = 'transform, opacity';
+    outerRef.current.style.willChange = 'transform';
+    window.requestAnimationFrame(frame);
+    return true;
+  }, [ref, outerRef, onClick, fallLimit, animate]);
 
-      // time is initially zero, also set some random variables. It's higher than the total time for the projectile motion
-      // because we want the squares to go off screen.
-      let t = 0;
-      let nx;
-      let ny;
-
-      // The direction can either be left (1), right (-1) or center (0). This is the horizontal direction.
-      const negate = [1, -1, 1, -1, 0];
-      const direction = negate[Math.floor(Math.random() * negate.length)];
-
-      // Some random numbers for altering the shapes position
-      const randScale = Math.random().toFixed(2);
-      let randDeg2 = rand(360, 60);
-      if (direction !== 0) randDeg2 = randDeg2 * direction;
-      // And apply those
-      const baseTransform = `scale(${randScale}) rotateZ(${randDeg2}deg)`;
-      // console.log(`direction(${direction}) ${baseTransform}`);
-      ref.current.style.transform = baseTransform;
-
-      const frame = function() {
-        // Horizontal speed is constant (no wind resistance on the internet)
-        var ux = Math.cos(theta) * v * direction;
-        // Vertical speed decreases as time increases before reaching 0 at its peak
-        var uy = Math.sin(theta) * v - -g * t;
-        // The horizontal position
-        nx = ux * t;
-        // s = ut + 0.5at^2
-        ny = uy * t + 0.5 * g * Math.pow(t, 2);
-        // Apply the positions
-        outerRef.current.style.transform = `translate(${nx}px, ${-ny}px)`;
-        // Increase the time by 0.10
-        t = t + 0.15;
-
-        if (ny > -fallLimit) {
-          window.requestAnimationFrame(frame);
-        } else {
-          // remove will-change
-          ref.current.style.willChange = 'auto';
-          outerRef.current.style.willChange = 'auto';
-        }
-      };
-      // add will-change
-      ref.current.style.willChange = 'transform, opacity';
-      outerRef.current.style.willChange = 'transform';
-      window.requestAnimationFrame(frame);
-      return true;
-    },
-    [ref, outerRef, onClick, fallLimit, animate]
-  );
-
-  const onClickTweet = useCallback(
-    () => {
-      const text = `I'm loving the one-click unsubscribe button on @LeaveMeAloneApp... I've clicked it ${count} times! 🙅‍ ${
-        window.location.host
-      }`;
-      openTweetIntent(text);
-    },
-    [count]
-  );
+  const onClickTweet = useCallback(() => {
+    const text = `I'm loving the one-click unsubscribe button on @LeaveMeAloneApp... I've clicked it ${count} times! 🙅‍ ${window.location.host}`;
+    openTweetIntent(text);
+  }, [count]);
 
   return (
     <Transition timeout={200} appear in={true}>
@@ -874,3 +862,38 @@ function Item({
     </Transition>
   );
 }
+
+export const query = graphql`
+  query {
+    testimonialImages: allFile(
+      filter: { relativePath: { glob: "testimonials/*" } }
+    ) {
+      edges {
+        node {
+          name
+          childImageSharp {
+            fluid(maxWidth: 150) {
+              ...GatsbyImageSharpFluid_withWebp
+            }
+          }
+        }
+      }
+    }
+    logo: file(relativePath: { eq: "logo.png" }) {
+      childImageSharp {
+        fixed(width: 60, height: 40) {
+          ...GatsbyImageSharpFixed_withWebp
+        }
+      }
+    }
+    mailListIllustration: file(
+      relativePath: { eq: "mail-list-illustation.png" }
+    ) {
+      childImageSharp {
+        fluid(maxWidth: 1600) {
+          ...GatsbyImageSharpFluid_withWebp
+        }
+      }
+    }
+  }
+`;

@@ -64,9 +64,11 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `senders`,
-        path: `./src/senders/`
+        path: `${__dirname}/src/senders/`
       }
     },
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-plugin-react-css-modules`,
       options: {

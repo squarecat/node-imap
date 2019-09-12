@@ -117,6 +117,7 @@
 }
 
 .image-container {
+  position: relative;
   grid-area: image;
   display: flex;
   justify-content: center;
@@ -139,10 +140,14 @@
     margin: 0;
   }
 
-  img {
-    width: auto;
-    max-width: 999px;
+  > div {
+    width: 100%;
+    max-width: 150px;
   }
+  // img {
+  //   width: auto;
+  //   max-width: 999px;
+  // }
 }
 
 .company {

@@ -2,21 +2,23 @@ import { useContext, useEffect, useState } from 'react';
 
 import { DatabaseContext } from '../../../providers/db-provider';
 
-export default function useMailItem(id, reducer = v => v) {
+export default function useMailItem(id, reducer) {
   const db = useContext(DatabaseContext);
   const [item, setItem] = useState({});
 
   useEffect(() => {
     function onUpdate(modifications, key, obj) {
       if (key === id) {
-        const newItem = { ...obj, ...modifications };
-        setTimeout(() => setItem(reducer(newItem)), 0);
+        let newItem = { ...obj, ...modifications };
+        newItem = reducer ? reducer(newItem) : newItem;
+        setTimeout(() => setItem(newItem, 0));
       }
     }
 
     async function get() {
       const value = await db.mail.get(id);
-      setItem(reducer(value));
+      const newItem = reducer ? reducer(value) : value;
+      setItem(newItem);
     }
 
     db.mail.hook('updating', onUpdate);

@@ -2,6 +2,7 @@ import './testimonial.module.scss';
 
 import React, { useMemo } from 'react';
 
+import Img from 'gatsby-image';
 import cx from 'classnames';
 
 export default ({ text, author, image, ...visProps }) => (
@@ -27,7 +28,7 @@ export function HeroTestimonial({
   return (
     <div styleName={styles}>
       <div styleName="image-container">
-        <img src={image} alt={`${author} avatar`} />
+        <Img critical fluid={image} alt={`${author} avatar`} />
       </div>
       <blockquote styleName="blockquote">
         <p>"{text}"</p>
@@ -48,25 +49,22 @@ export function TrustBar({ logos = [], label = false, ...visProps }) {
     dark: visProps.dark,
     spaced: visProps.spaced
   });
-  const content = useMemo(
-    () => {
-      return (
-        <>
-          {label ? (
-            <span styleName="trustbar-label">
-              Used by<span styleName="long-text"> employees at</span>:
-            </span>
-          ) : null}
-          {logos.map(({ name, link }, i) => (
-            <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-              <img src={link} alt={`${name} logo`} />
-            </span>
-          ))}
-        </>
-      );
-    },
-    [label, logos]
-  );
+  const content = useMemo(() => {
+    return (
+      <>
+        {label ? (
+          <span styleName="trustbar-label">
+            Used by<span styleName="long-text"> employees at</span>:
+          </span>
+        ) : null}
+        {logos.map(({ name, link }, i) => (
+          <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
+            <img src={link} alt={`${name} logo`} />
+          </span>
+        ))}
+      </>
+    );
+  }, [label, logos]);
   return (
     <div styleName={styles}>
       <div styleName="trustbar-images">{content}</div>

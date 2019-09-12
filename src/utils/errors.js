@@ -198,17 +198,13 @@ export function getUnsubscribeAlert({
     case 'organisation-inactive': {
       return {
         ...options,
-        message: `Unsubscribe to ${
-          mail.fromEmail
-        } failed because your team is inactive, please contact your administrator.`
+        message: `Unsubscribe to ${mail.fromEmail} failed because your team is inactive, please contact your administrator.`
       };
     }
     case 'insufficient-credits': {
       return {
         ...options,
-        message: `Unsubscribe to ${
-          mail.fromEmail
-        } failed because you have insufficient credits`,
+        message: `Unsubscribe to ${mail.fromEmail} failed because you have insufficient credits`,
         actions: [
           {
             label: 'Buy more',
