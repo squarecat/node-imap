@@ -153,6 +153,11 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
   @include basic();
 }
 
+.positive {
+  color: white;
+  background-color: $color-bg-success;
+}
+
 .btn-loader {
   position: absolute;
   display: block;
