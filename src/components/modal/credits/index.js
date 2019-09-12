@@ -44,90 +44,77 @@ export default ({ credits }) => {
     getReferrals
   );
 
-  const referralCode = useMemo(
-    () => {
-      let referralCode = '';
-      if (referralValue) {
-        referralCode = referralValue.referralCode;
-      }
-      return referralCode;
-    },
-    [referralValue]
-  );
+  const referralCode = useMemo(() => {
+    let referralCode = '';
+    if (referralValue) {
+      referralCode = referralValue.referralCode;
+    }
+    return referralCode;
+  }, [referralValue]);
 
-  const socialContent = useMemo(
-    () => {
-      return getSocialContent(unsubCount, referralCode);
-    },
-    [unsubCount, referralCode]
-  );
+  const socialContent = useMemo(() => {
+    return getSocialContent(unsubCount, referralCode);
+  }, [unsubCount, referralCode]);
 
-  const { referredCredits, referralCredits, rewards } = useMemo(
-    () => {
-      if (loading) {
-        return {
-          referralCredits: '-',
-          referredCredits: '-',
-          rewards: []
-        };
-      }
-      const { referrals, rewardValues } = value.reduce(
-        (out, ms) => {
-          if (referralLabels[ms.name]) {
-            return {
-              referrals: [...out.referrals, ms],
-              rewardValues: out.rewardValues
-            };
-          }
-          return {
-            referrals: out.referrals,
-            rewardValues: [...out.rewardValues, ms]
-          };
-        },
-        { referrals: [], rewardValues: [] }
-      );
-
+  const { referredCredits, referralCredits, rewards } = useMemo(() => {
+    if (loading) {
       return {
-        referralCredits: referrals.find(r => r.name === 'referralSignUp')
-          .credits,
-        referredCredits: referrals.find(r => r.name === 'signedUpFromReferral')
-          .credits,
-        rewards: rewardValues
+        referralCredits: '-',
+        referredCredits: '-',
+        rewards: []
       };
-    },
-    [loading, value]
-  );
+    }
+    const { referrals, rewardValues } = value.reduce(
+      (out, ms) => {
+        if (referralLabels[ms.name]) {
+          return {
+            referrals: [...out.referrals, ms],
+            rewardValues: out.rewardValues
+          };
+        }
+        return {
+          referrals: out.referrals,
+          rewardValues: [...out.rewardValues, ms]
+        };
+      },
+      { referrals: [], rewardValues: [] }
+    );
+
+    return {
+      referralCredits: referrals.find(r => r.name === 'referralSignUp').credits,
+      referredCredits: referrals.find(r => r.name === 'signedUpFromReferral')
+        .credits,
+      rewards: rewardValues
+    };
+  }, [loading, value]);
 
   const [email, setEmail] = useState('');
   const [sendingInvite, setSendingInvite] = useState(false);
 
-  const onClickInvite = useCallback(
-    async () => {
-      try {
-        setSendingInvite(true);
-        await sendReferralInvite(email);
-        setEmail('');
-        alertActions.setAlert({
-          id: 'referral-invite-success',
-          level: 'success',
-          message: `Successfully invited ${email}!`,
-          isDismissable: true,
-          autoDismiss: true
-        });
-      } catch (err) {
-        alertActions.setAlert({
-          id: 'referral-invite-error',
-          level: 'error',
-          message: `Error inviting ${email}. Please try again or send us a message.`,
-          isDismissable: true,
-          autoDismiss: true
-        });
-      } finally {
-        setSendingInvite(false);
-      }
-    },
-    [email, alertActions]
-  );
+  const onClickInvite = useCallback(async () => {
+    try {
+      setSendingInvite(true);
+      await sendReferralInvite(email);
+      setEmail('');
+      alertActions.setAlert({
+        id: 'referral-invite-success',
+        level: 'success',
+        message: `Successfully invited ${email}!`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+    } catch (err) {
+      alertActions.setAlert({
+        id: 'referral-invite-error',
+        level: 'error',
+        message: `Error inviting ${email}. Please try again or send us a message.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+    } finally {
+      setSendingInvite(false);
+    }
+  }, [email, alertActions]);
 
   return (
     <div styleName="credits-modal">
@@ -169,27 +156,38 @@ export default ({ credits }) => {
         </p>
 
         <div styleName="invite-actions">
-          <InlineFormInput
-            smaller
-            compact
-            placeholder="Email address"
-            name="email"
-            value={email}
-            disabled={sendingInvite}
-            onChange={e => setEmail(e.currentTarget.value)}
+          <form
+            id="invite-user-form"
+            onSubmit={e => {
+              e.preventDefault();
+              onClickInvite();
+              return false;
+            }}
           >
-            <Button
-              fill
-              basic
+            <InlineFormInput
               smaller
-              inline
-              loading={sendingInvite}
-              disabled={sendingInvite || !email}
-              onClick={onClickInvite}
+              compact
+              placeholder="Email address"
+              name="email"
+              value={email}
+              disabled={sendingInvite}
+              onChange={e => setEmail(e.currentTarget.value)}
             >
-              Invite
-            </Button>
-          </InlineFormInput>
+              <Button
+                fill
+                basic
+                smaller
+                compact
+                inline
+                loading={sendingInvite}
+                disabled={sendingInvite || !email}
+                type="submit"
+                as="button"
+              >
+                Invite
+              </Button>
+            </InlineFormInput>
+          </form>
           <Button
             muted
             outlined
@@ -197,6 +195,7 @@ export default ({ credits }) => {
             fill
             basic
             smaller
+            compact
             inline
             onClick={() => onClickTweet(socialContent.tweet)}
           >
@@ -211,6 +210,7 @@ export default ({ credits }) => {
             fill
             basic
             smaller
+            compact
             inline
           >
             Copy link
@@ -302,9 +302,7 @@ function getReferralList({ referredBy, referrals }) {
             <span>Signed up from a referral</span>
           </div>
           <div styleName="earn-status">
-            <span styleName="earn-amount">{`${
-              referredBy.reward
-            } credits`}</span>
+            <span styleName="earn-amount">{`${referredBy.reward} credits`}</span>
             <span styleName="earn-checkbox" data-checked="true" />
           </div>
         </li>
