@@ -29,9 +29,9 @@ export default React.memo(({ mailId }) => {
   });
   const { loading, error } = state;
   const image = useMemo(() => {
-    const classes = cx('unsub-img', {
-      [styles.loading]: loading,
-      [styles.errored]: error
+    const classes = cx(styles['unsub-img'], {
+      [styles.imgloading]: loading,
+      [styles.imgerrored]: error
     });
     return (
       <img
@@ -43,18 +43,27 @@ export default React.memo(({ mailId }) => {
       />
     );
   }, [error, loading, mailId]);
+
+  const containerClasses = cx(styles['container'], {
+    [styles.loading]: loading,
+    [styles.errored]: error
+  });
+
   return (
-    <Browser>
-      {image}
-      {loading ? <Pulse /> : null}
-      {error ? (
-        <div styleName="image-error">
-          <p>
-            Sorry we couldn't load this image, it could be that the unsubscribe
-            page wouldn't load or something went wrong with the unsubscribe.
-          </p>
-        </div>
-      ) : null}
-    </Browser>
+    <div className={containerClasses}>
+      <Browser>
+        {image}
+        {loading ? <Pulse /> : null}
+        {error ? (
+          <div styleName="image-error">
+            <p>
+              Sorry we couldn't load this image, it could be that the
+              unsubscribe page wouldn't load or something went wrong with the
+              unsubscribe.
+            </p>
+          </div>
+        ) : null}
+      </Browser>
+    </div>
   );
 });

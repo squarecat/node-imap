@@ -129,6 +129,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  position: relative;
+  padding-right: 50px;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
 
   @media (max-width: 450px) {
     font-size: 14px;
@@ -209,9 +216,16 @@
   transition: opacity 200ms ease-in-out;
   z-index: 11; // higher than overlay so modal is closable
   font-size: 12px;
+  position: absolute;
+  right: 0;
+  top: 5px;
 
   &:hover {
     opacity: 1;
+  }
+
+  @media (max-width: 450px) {
+    top: 0;
   }
 }
 
