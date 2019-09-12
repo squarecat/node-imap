@@ -1,8 +1,9 @@
 import './footer.module.scss';
 
 import { FacebookIcon, LinkedInIcon, MailIcon, TwitterIcon } from '../icons';
+import { Link, StaticQuery, graphql } from 'gatsby';
 
-import { Link } from 'gatsby';
+import Img from 'gatsby-image';
 import React from 'react';
 import { TextLink } from '../text';
 import oneTreePlantedImg from '../../assets/climate/one-tree-planted/OneTreePlanted-horizontal-white.png';
@@ -12,7 +13,7 @@ import oneTreePlantedImg from '../../assets/climate/one-tree-planted/OneTreePlan
 const TREE_ORG_LINK = 'https://onetreeplanted.org';
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
-export default () => (
+export default ({ data }) => (
   <div styleName="footer">
     <div styleName="footer-inner">
       <div styleName="footer-intro">
@@ -169,9 +170,28 @@ export default () => (
           </li>
         </ul>
         <a styleName="one-tree-planted" href={TREE_ORG_LINK}>
-          <img
-            src={oneTreePlantedImg}
-            alt="One Tree Planted reforestation partner logo"
+          <StaticQuery
+            query={graphql`
+              query {
+                oneTreePlantedImg: file(
+                  relativePath: {
+                    eq: "climate/one-tree-planted/OneTreePlanted-horizontal-white.png"
+                  }
+                ) {
+                  childImageSharp {
+                    fixed(width: 173, height: 40) {
+                      ...GatsbyImageSharpFixed
+                    }
+                  }
+                }
+              }
+            `}
+            render={data => (
+              <Img
+                fixed={data.oneTreePlantedImg.childImageSharp.fixed}
+                alt="One Tree Planted reforestation partner logo"
+              />
+            )}
           />
         </a>
       </div>

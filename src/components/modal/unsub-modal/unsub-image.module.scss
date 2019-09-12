@@ -1,20 +1,38 @@
+.container {
+  position: relative;
+  width: 90%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+
+  &.loading,
+  &.errored {
+    height: 360px;
+  }
+}
+
 .unsub-img {
   opacity: 1;
   transition: opacity 200ms ease-in-out;
 }
 
-.loading {
+.imgloading {
   opacity: 0;
 }
 
-.errored {
+.imgerrored {
   display: none;
 }
 
 .image-error {
   margin: 0 auto;
   width: 50%;
-  height: 375px;
   display: flex;
   align-items: center;
+
+  @media (max-width: 500px) {
+    width: 80%;
+  }
 }

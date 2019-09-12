@@ -32,56 +32,53 @@ const UnsubModal = ({ onSubmit, mail }) => {
     },
     [close, onSubmit]
   );
-  const slideContent = useMemo(
-    () => {
-      const onClickPositive = () => {
-        if (error && !mail.resolved) {
-          return changeSlide('positive');
-        }
-        close();
-      };
-      const onClickNegative = () => changeSlide('negative');
-      const title = error
-        ? 'Something went wrong...'
-        : 'Successfully unsubscribed';
-      const {
-        id: mailId,
-        hasImage,
-        unsubscribeLink,
-        unsubscribeMailTo,
-        unsubStrategy,
-        resolved
-      } = mail;
-
-      if (slide === 'first') {
-        return slide1(
-          mailId,
-          onClickPositive,
-          onClickNegative,
-          error,
-          hasImage,
-          unsubStrategy,
-          resolved,
-          title
-        );
-      } else if (slide === 'negative') {
-        return slide2({
-          type: unsubStrategy,
-          link: unsubscribeLink,
-          mailTo: unsubscribeMailTo,
-          onSubmit: onClickSubmit,
-          onClickBack: () => changeSlide('first'),
-          selected,
-          setSelected,
-          hasImage,
-          title
-        });
-      } else if (slide === 'positive') {
-        return slide3(onClickSubmit);
+  const slideContent = useMemo(() => {
+    const onClickPositive = () => {
+      if (error && !mail.resolved) {
+        return changeSlide('positive');
       }
-    },
-    [close, error, mail, onClickSubmit, selected, slide]
-  );
+      close();
+    };
+    const onClickNegative = () => changeSlide('negative');
+    const title = error
+      ? 'Something went wrong...'
+      : 'Successfully unsubscribed';
+    const {
+      id: mailId,
+      hasImage,
+      unsubscribeLink,
+      unsubscribeMailTo,
+      unsubStrategy,
+      resolved
+    } = mail;
+
+    if (slide === 'first') {
+      return slide1(
+        mailId,
+        onClickPositive,
+        onClickNegative,
+        error,
+        hasImage,
+        unsubStrategy,
+        resolved,
+        title
+      );
+    } else if (slide === 'negative') {
+      return slide2({
+        type: unsubStrategy,
+        link: unsubscribeLink,
+        mailTo: unsubscribeMailTo,
+        onSubmit: onClickSubmit,
+        onClickBack: () => changeSlide('first'),
+        selected,
+        setSelected,
+        hasImage,
+        title
+      });
+    } else if (slide === 'positive') {
+      return slide3(onClickSubmit);
+    }
+  }, [close, error, mail, onClickSubmit, selected, slide]);
   return <div styleName="unsub-modal">{slideContent}</div>;
 };
 
@@ -150,28 +147,19 @@ function slide1(
     if (resolved) {
       actions = (
         <Button compact basic onClick={onClickPositive}>
-          Awesome!{' '}
-          <span styleName="emoji" role="img" aria-label="thumbs up emoji">
-            ️👍
-          </span>
+          Awesome!
         </Button>
       );
     } else {
       actions = (
         <>
-          <Button compact inline basic onClick={onClickNegative}>
-            It didn't work{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs-down emoji">
-              ️👎
-            </span>
-          </Button>
+          <a styleName="response-btn" onClick={onClickNegative}>
+            Didn't work ✗
+          </a>
 
-          <Button compact basic onClick={onClickPositive}>
-            It looks great{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs-up emoji">
-              ️️👍
-            </span>
-          </Button>
+          <a styleName="response-btn positive" onClick={onClickPositive}>
+            Looks good ✔
+          </a>
         </>
       );
     }
@@ -183,11 +171,7 @@ function slide1(
             <ModalCloseIcon />
           </ModalHeader>
           {lead}
-          {hasImage ? (
-            <div styleName="unsub-img-container">
-              <UnsubImage mailId={mailId} />
-            </div>
-          ) : null}
+          {hasImage ? <UnsubImage mailId={mailId} /> : null}
           {resolved ? (
             <p>
               You have already let us know this unsubscribe was{' '}
@@ -220,10 +204,7 @@ function slide1(
         </ModalBody>
         <ModalFooter>
           <Button basic compact onClick={onClickPositive}>
-            Awesome!{' '}
-            <span styleName="emoji" role="img" aria-label="thumbs up emoji">
-              ️👍
-            </span>
+            Awesome!
           </Button>
         </ModalFooter>
       </>
@@ -287,6 +268,7 @@ function slide2({
           disabled={!selected}
           compact
           basic
+          positive
           onClick={() =>
             onSubmit({
               success: false,
@@ -295,7 +277,7 @@ function slide2({
             })
           }
         >
-          Yes of course!
+          Yes!
         </Button>
       </>
     );
@@ -433,9 +415,10 @@ function slide3(onSubmit) {
         <Button
           basic
           compact
+          positive
           onClick={() => onSubmit({ success: true, useImage: true })}
         >
-          Yes of course!
+          Yes!
         </Button>
       </ModalFooter>
     </>

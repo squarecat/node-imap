@@ -4,14 +4,11 @@ import Dropdown, {
   DropdownItem,
   DropdownList
 } from '../../../components/dropdown';
+import { Link, StaticQuery, graphql } from 'gatsby';
 
-import { Link } from 'gatsby';
+import Img from 'gatsby-image';
 import React from 'react';
 import cx from 'classnames';
-
-// import logo from '../../../assets/logo.png';
-
-const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 export default ({ setActive = () => {}, inverted = false }) => (
   <div
@@ -27,7 +24,26 @@ export default ({ setActive = () => {}, inverted = false }) => (
     </div> */}
     <div styleName="landing-header-inner">
       <Link to="/" styleName="landing-header-logo">
-        <img alt="Leave Me Alone logo" src={logoUrl} />
+        <StaticQuery
+          query={graphql`
+            query {
+              logo: file(relativePath: { eq: "logo.png" }) {
+                childImageSharp {
+                  fixed(width: 60, height: 40) {
+                    ...GatsbyImageSharpFixed_withWebp
+                  }
+                }
+              }
+            }
+          `}
+          render={data => (
+            <Img
+              fixed={data.logo.childImageSharp.fixed}
+              alt="Leave Me Alone logo"
+            />
+          )}
+        />
+
         <span styleName="landing-header-title">Leave Me Alone</span>
       </Link>
       <ul styleName="nav">

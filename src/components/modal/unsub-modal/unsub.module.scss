@@ -1,4 +1,5 @@
 @import '../../btn/btn.module.scss';
+@import '../../../styles/common/colors.scss';
 
 .unsub-modal {
   max-width: 540px;
@@ -7,17 +8,6 @@
 
 .emoji {
   margin-left: 10px;
-}
-
-.unsub-img-container {
-  position: relative;
-  height: 375px;
-  // width: 500px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  max-width: 100%;
 }
 
 .manual-unsubscribe-btn {
@@ -87,4 +77,19 @@ p.unsubscribe-link-alt {
 
 .hidden {
   visibility: hidden;
+}
+
+.response-btn {
+  @extend .btn;
+  @extend .compact;
+  @extend .basic;
+
+  &.positive {
+    background-color: $color-bg-success;
+    color: white;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 14px;
+  }
 }
