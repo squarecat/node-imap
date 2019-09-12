@@ -90,7 +90,6 @@ function MailItem({ id, onLoad }) {
         {m.isTrash ? (
           <Tooltip
             placement="top"
-            trigger={['hover']}
             mouseLeaveDelay={0}
             overlayClassName="tooltip"
             destroyTooltipOnHide={true}
@@ -102,7 +101,6 @@ function MailItem({ id, onLoad }) {
         {m.isSpam ? (
           <Tooltip
             placement="top"
-            trigger={['hover']}
             mouseLeaveDelay={0}
             overlayClassName="tooltip"
             destroyTooltipOnHide={true}

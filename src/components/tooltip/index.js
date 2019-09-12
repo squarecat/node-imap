@@ -13,7 +13,7 @@ export default ({ children, overlay, placement = 'top', white, progress }) => {
   return (
     <Tooltip
       placement={placement}
-      trigger={['hover']}
+      trigger={['hover', 'click']}
       mouseLeaveDelay={0}
       overlayClassName={classes}
       destroyTooltipOnHide={true}
