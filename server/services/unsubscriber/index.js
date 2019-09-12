@@ -122,7 +122,8 @@ export const unsubscribeFromMail = async (userId, mail) => {
       id: output.id,
       estimatedSuccess: output.estimatedSuccess,
       hasImage,
-      unsubStrategy
+      unsubStrategy,
+      unsubscribedAt: Date.now()
     };
   } catch (err) {
     logger.error(

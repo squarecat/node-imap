@@ -11,7 +11,7 @@ export default function useMailItem(id, reducer) {
       if (key === id) {
         let newItem = { ...obj, ...modifications };
         newItem = reducer ? reducer(newItem) : newItem;
-        setTimeout(() => setItem(newItem, 0));
+        setTimeout(() => setItem(newItem), 0);
       }
     }
 

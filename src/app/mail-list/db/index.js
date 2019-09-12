@@ -168,7 +168,6 @@ function useMailSyncFn() {
             mail: mailData,
             unsubscribeId,
             unsubscribeLink,
-            unsubscribeStrategy,
             unsubscribeMailTo,
             unsubscribedAt
           } = data;
@@ -197,7 +196,7 @@ function useMailSyncFn() {
             unsubscribeId,
             unsubscribeLink,
             unsubscribeMailTo,
-            unsubscribeStrategy,
+            unsubscribeStrategy: unsubStrategy,
             unsubscribedAt
           });
           await db.mail.update(id, update);
