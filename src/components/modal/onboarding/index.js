@@ -25,6 +25,7 @@ import yahooLogo from '../../../assets/providers/imap/yahoo-logo.png';
 
 export default () => {
   const { context: modalContext } = useContext(ModalContext);
+  console.log(modalContext);
   const firstState = {
     ...initialState,
     ...modalContext
@@ -49,30 +50,21 @@ export default () => {
   const { value: startingCredits } = useAsync(() =>
     getMilestoneConnectedFirstAccount()
   );
-  useEffect(
-    () => {
-      dispatch({ type: 'set-starting-credits', data: startingCredits });
-    },
-    [startingCredits]
-  );
+  useEffect(() => {
+    dispatch({ type: 'set-starting-credits', data: startingCredits });
+  }, [startingCredits]);
 
-  useEffect(
-    () => {
-      if (state.step === 'accounts') {
-        dispatch({ type: 'can-proceed', data: !!accounts.length });
-      } else {
-        dispatch({ type: 'can-proceed', data: true });
-      }
-    },
-    [state.step, accounts.length]
-  );
+  useEffect(() => {
+    if (state.step === 'accounts') {
+      dispatch({ type: 'can-proceed', data: !!accounts.length });
+    } else {
+      dispatch({ type: 'can-proceed', data: true });
+    }
+  }, [state.step, accounts.length]);
 
-  useEffect(
-    () => {
-      dispatch({ type: 'organisation-member', data: !!organisationId });
-    },
-    [organisationId]
-  );
+  useEffect(() => {
+    dispatch({ type: 'organisation-member', data: !!organisationId });
+  }, [organisationId]);
 
   const onComplete = async () => {
     try {
@@ -132,71 +124,62 @@ function Content({
   organisation = {},
   startingCredits
 }) {
-  const content = useMemo(
-    () => {
-      if (step === 'welcome') {
-        return (
-          <WelcomeContent
-            isMigrated={isMigrated}
-            positionLabel={positionLabel}
-          />
-        );
-      }
-      if (step === 'accounts') {
-        return (
-          <>
-            <ModalHeader>
-              Connect account{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            <ConnectAccounts accounts={accounts} onboarding />
-            {accounts.length ? (
-              <p style={{ marginTop: '2em' }}>
-                If you have more accounts then you can connect them later.
-              </p>
-            ) : null}
-          </>
-        );
-      }
-      if (step === 'rewards') {
-        return (
-          <RewardsContent
-            positionLabel={positionLabel}
-            isBeta={isBeta}
-            isMigrated={isMigrated}
-            startingCredits={startingCredits}
-          />
-        );
-      }
-      if (step === 'organisation') {
-        return (
-          <>
-            <ModalHeader>
-              Organisation{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            <p>
-              You have joined the{' '}
-              <TextImportant>{organisation.name} organisation</TextImportant>!
+  const content = useMemo(() => {
+    if (step === 'welcome') {
+      return (
+        <WelcomeContent isMigrated={isMigrated} positionLabel={positionLabel} />
+      );
+    }
+    if (step === 'accounts') {
+      return (
+        <>
+          <ModalHeader>
+            Connect account{' '}
+            <span styleName="onboarding-position">{positionLabel}</span>
+          </ModalHeader>
+          <ConnectAccounts accounts={accounts} onboarding />
+          {accounts.length ? (
+            <p style={{ marginTop: '2em' }}>
+              If you have more accounts then you can connect them later.
             </p>
-            <p>
-              As a member of {organisation.name} you can unsubscribe from as
-              many unwanted subscription emails as you like.
-            </p>
-          </>
-        );
-      }
-      if (step === 'finish') {
-        return (
-          <FinishContent
-            positionLabel={positionLabel}
-            isMigrated={isMigrated}
-          />
-        );
-      }
-    },
-    [step, isMigrated, positionLabel, accounts, isBeta, organisation.name]
-  );
+          ) : null}
+        </>
+      );
+    }
+    if (step === 'rewards') {
+      return (
+        <RewardsContent
+          positionLabel={positionLabel}
+          isBeta={isBeta}
+          isMigrated={isMigrated}
+          startingCredits={startingCredits}
+        />
+      );
+    }
+    if (step === 'organisation') {
+      return (
+        <>
+          <ModalHeader>
+            Organisation{' '}
+            <span styleName="onboarding-position">{positionLabel}</span>
+          </ModalHeader>
+          <p>
+            You have joined the{' '}
+            <TextImportant>{organisation.name} organisation</TextImportant>!
+          </p>
+          <p>
+            As a member of {organisation.name} you can unsubscribe from as many
+            unwanted subscription emails as you like.
+          </p>
+        </>
+      );
+    }
+    if (step === 'finish') {
+      return (
+        <FinishContent positionLabel={positionLabel} isMigrated={isMigrated} />
+      );
+    }
+  }, [step, isMigrated, positionLabel, accounts, isBeta, organisation.name]);
 
   return (
     <Transition appear timeout={200} mountOnEnter unmountOnExit in={true}>

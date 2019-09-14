@@ -1,7 +1,6 @@
 import './onboarding.module.scss';
 
-import { Arrow as ArrowIcon, SearchIcon } from '../../icons';
-
+import { Arrow as ArrowIcon } from '../../icons';
 import { Gift as GiftIcon } from '../../icons';
 import React from 'react';
 

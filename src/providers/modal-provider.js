@@ -32,7 +32,10 @@ const modalReducer = (state, action) => {
         ...state,
         shown: true,
         modal: state.prevModal,
-        options: state.prevOptions,
+        options: {
+          ...state.options,
+          ...state.prevOptions
+        },
         prevModal: null,
         prevOptions: null
       };
@@ -125,9 +128,9 @@ export const ModalProvider = React.memo(({ children }) => {
       close: closeModal,
       replace: replaceModal,
       isShown: state.shown,
-      context: state.context
+      context: state.options.context
     }),
-    [closeModal, openModal, replaceModal, state.shown, state.context]
+    [closeModal, openModal, replaceModal, state.shown, state.options.context]
   );
 
   return (

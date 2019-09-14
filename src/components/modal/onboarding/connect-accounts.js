@@ -11,15 +11,14 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default ({ onboarding = false, enterprise = false }) => {
-  const [
-    { accounts, email, loginProvider, features },
-    { load: loadUser }
-  ] = useUser(u => ({
-    accounts: u.accounts,
-    email: u.email,
-    loginProvider: u.loginProvider,
-    features: u.features
-  }));
+  const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(
+    u => ({
+      accounts: u.accounts,
+      email: u.email,
+      loginProvider: u.loginProvider,
+      features: u.features
+    })
+  );
   const [error, setError] = useState(null);
 
   const onConnectSuccess = async () => {
@@ -33,47 +32,38 @@ export default ({ onboarding = false, enterprise = false }) => {
     setError({ message, level });
   };
 
-  const content = useMemo(
-    () => {
-      if (!accounts.length) {
-        return <NoAccounts enterprise={enterprise} />;
-      } else {
-        return (
-          <SomeAccounts
-            accounts={accounts}
-            primaryEmail={email}
-            loginProvider={loginProvider}
-            onboarding={onboarding}
-          />
-        );
-      }
-    },
-    [accounts, email, enterprise, loginProvider, onboarding]
-  );
+  const content = useMemo(() => {
+    if (!accounts.length) {
+      return <NoAccounts enterprise={enterprise} />;
+    } else {
+      return (
+        <SomeAccounts
+          accounts={accounts}
+          primaryEmail={email}
+          loginProvider={loginProvider}
+          onboarding={onboarding}
+        />
+      );
+    }
+  }, [accounts, email, enterprise, loginProvider, onboarding]);
   // show the provider buttons if user has yet
   // to add an account during onboarding, or if
   // not onboarding then always show
-  const showButtons = useMemo(
-    () => {
-      return !onboarding || !accounts.length;
-    },
-    [accounts.length, onboarding]
-  );
+  const showButtons = useMemo(() => {
+    return !onboarding || !accounts.length;
+  }, [accounts.length, onboarding]);
 
-  const errorContent = useMemo(
-    () => {
-      if (!error) return null;
-      return (
-        <FormNotification
-          error={error.level === 'error'}
-          warning={error.level === 'warning'}
-        >
-          {error.message}
-        </FormNotification>
-      );
-    },
-    [error]
-  );
+  const errorContent = useMemo(() => {
+    if (!error) return null;
+    return (
+      <FormNotification
+        error={error.level === 'error'}
+        warning={error.level === 'warning'}
+      >
+        {error.message}
+      </FormNotification>
+    );
+  }, [error]);
 
   return (
     <>
@@ -127,20 +117,17 @@ function SomeAccounts({ accounts, primaryEmail, loginProvider, onboarding }) {
     }
   };
 
-  const errorContent = useMemo(
-    () => {
-      if (!error) return null;
-      return (
-        <FormNotification
-          error={error.level === 'error'}
-          warning={error.level === 'warning'}
-        >
-          {error.message}
-        </FormNotification>
-      );
-    },
-    [error]
-  );
+  const errorContent = useMemo(() => {
+    if (!error) return null;
+    return (
+      <FormNotification
+        error={error.level === 'error'}
+        warning={error.level === 'warning'}
+      >
+        {error.message}
+      </FormNotification>
+    );
+  }, [error]);
 
   return (
     <>
