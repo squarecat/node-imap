@@ -1,3 +1,6 @@
+const Sentry = require('@sentry/node');
+
+import { RestError } from '../../utils/errors';
 import { addUnsubscribeErrorResponse } from '../../services/mail';
 import { unsubscribeFromMail } from '../../services/unsubscriber';
 
