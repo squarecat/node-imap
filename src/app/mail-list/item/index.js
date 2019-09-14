@@ -64,7 +64,7 @@ function MailItem({ id, onLoad }) {
       </td>
       <td styleName="cell from-column">
         <div styleName="from-name-container">
-          <span styleName="from-name" title={m.fromName}>
+          <span styleName="from-name">
             <Tooltip
               overlay={
                 <span>
@@ -78,7 +78,7 @@ function MailItem({ id, onLoad }) {
                 <IgnoreIcon ignored={isIgnored} />
               </a>
             </Tooltip>
-            {m.fromName}
+            <span title={m.fromName}>{m.fromName}</span>
           </span>
           {m.fromEmail ? (
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />

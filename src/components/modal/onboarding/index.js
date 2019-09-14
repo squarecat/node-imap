@@ -25,7 +25,6 @@ import yahooLogo from '../../../assets/providers/imap/yahoo-logo.png';
 
 export default () => {
   const { context: modalContext } = useContext(ModalContext);
-  console.log(modalContext);
   const firstState = {
     ...initialState,
     ...modalContext
