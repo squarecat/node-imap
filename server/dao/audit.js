@@ -13,10 +13,16 @@ async function createGroup(userId, groupId, { group, messages }) {
     {
       $push: {
         logs: {
-          startedAt: isoDate(),
-          group,
-          groupId,
-          messages: messages
+          $each: [
+            {
+              startedAt: isoDate(),
+              group,
+              groupId,
+              messages: messages
+            }
+          ],
+          $sort: { startedAt: 1 },
+          $slice: -100
         }
       }
     },
