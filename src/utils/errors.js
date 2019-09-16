@@ -99,8 +99,12 @@ export function getAccountProblem(reason) {
   switch (reason) {
     case 'password-invalidated':
       return `Since you reset your password your IMAP credentials are now invalid. Please remove this account and connect it again.`;
+    case 'mail-service-not-enabled':
+      return `Gmail is not enabled for this account. Please enable Gmail or remove this account.`;
+    case 'account-deleted':
+      return `This Gmail account has been deleted. Please remove this account.`;
     default:
-      return `There is a problem with this IMAP account. Please try removing this account and connecting it again, or send us a message.`;
+      return `There is a problem with this account. Please try removing this account and connecting it again, or send us a message.`;
   }
 }
 
@@ -253,4 +257,17 @@ export function getSocketError(err = {}) {
   }
 
   return defaultMsg;
+}
+
+export function getMailError(id, reason) {
+  const defaultMsg = `Failed to fetch mail. Code: ${id}`;
+
+  switch (reason) {
+    case 'mail-service-not-enabled':
+      return `Failed to fetch mail. Gmail is not enabled for one of your connected accounts.`;
+    case 'account-deleted':
+      return `Failed to fetch mail. Gmail has been deleted for one of your connected accounts.`;
+    default:
+      return defaultMsg;
+  }
 }

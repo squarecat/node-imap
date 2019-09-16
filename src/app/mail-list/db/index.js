@@ -1,3 +1,4 @@
+import { getMailError, getUnsubscribeAlert } from '../../../utils/errors';
 import { useContext, useState } from 'react';
 import useSocket, { checkBuffer } from '../../../utils/hooks/use-socket';
 
@@ -5,7 +6,6 @@ import { AlertContext } from '../../../providers/alert-provider';
 import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import React from 'react';
-import { getUnsubscribeAlert } from '../../../utils/errors';
 import { navigate } from 'gatsby';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -24,7 +24,7 @@ function useMailSyncFn() {
       hasAccountProblem,
       preferences
     },
-    { incrementUnsubCount, addUnsub }
+    { incrementUnsubCount, addUnsub, invalidateAccount }
   ] = useUser(u => ({
     id: u.id,
     token: u.token,
@@ -124,14 +124,35 @@ function useMailSyncFn() {
           ack && ack();
         }
       });
-      socket.on('mail:err', (err, ack) => {
+      socket.on('mail:err', (err = {}, ack) => {
         console.error(`[db]: scan failed`);
+
+        const { data } = err;
+        const { errKey, accountId, problem } = data;
+
+        const message = getMailError(err.id, errKey);
+
+        if (problem) {
+          invalidateAccount(accountId, problem);
+        }
+
         actions.setAlert({
-          message: <span>{`Failed to fetch mail. Code: ${err.id}`}</span>,
+          message: <span>{message}</span>,
           isDismissable: true,
           autoDismiss: false,
-          level: 'error'
+          level: 'error',
+          actions: !problem
+            ? []
+            : [
+                {
+                  label: 'Go to accounts',
+                  onClick: () => {
+                    navigate('/app/profile/accounts');
+                  }
+                }
+              ]
         });
+
         ack && ack();
       });
 

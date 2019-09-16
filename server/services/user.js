@@ -18,7 +18,7 @@ import {
   getUserByReferralCode,
   incrementCredits,
   incrementCreditsUsed,
-  invalidateImapAccounts,
+  invalidateAccounts,
   removeAccount,
   removeBillingCard,
   removeReminder,
@@ -1490,7 +1490,10 @@ export async function resetUserPassword({ email, password, resetCode }) {
     }
 
     const updatedUser = await updatePassword(user.id, password);
-    await invalidateImapAccounts(user.id, 'password-invalidated');
+    await invalidateAccounts(user.id, {
+      provider: 'imap',
+      problem: 'password-invalidated'
+    });
     return updatedUser;
   } catch (err) {
     throw err;

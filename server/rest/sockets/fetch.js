@@ -73,14 +73,16 @@ async function doFetch({
     }
     await onEnd(next.value, { userId });
   } catch (err) {
-    Sentry.captureException(err);
-    onError(
-      new RestError('Failed to fetch new mail', {
-        userId: userId,
-        cause: err
-      }).toJSON(),
-      { userId }
-    );
+    // if we haven't already handled this error then throw a rest error
+    if (!err.data || !err.data.errKey) {
+      Sentry.captureException(err);
+    }
+    const error = new RestError('Failed to fetch new mail', {
+      userId: userId,
+      cause: err,
+      ...err.data
+    }).toJSON();
+    onError(error, { userId });
   } finally {
     delete runningScans[uuid];
   }

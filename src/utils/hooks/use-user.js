@@ -110,6 +110,15 @@ export default globalReducer(
         ...state,
         organisationLastUpdated: lastUpdated
       };
+    },
+    invalidateAccount: (state, accountId, problem) => {
+      return {
+        ...state,
+        accounts: state.accounts.map(a => {
+          if (a.id !== accountId) return a;
+          return { ...a, problem };
+        })
+      };
     }
   }
 );
