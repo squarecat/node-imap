@@ -1,6 +1,7 @@
 import { findUsersNeedReminders, updateUsersReminded } from './user';
 
 import { addReminderSentToStats } from '../services/stats';
+import { addUserReminder } from '../services/user';
 import { createCoupon } from '../utils/stripe';
 import logger from '../utils/logger';
 import { sendReminderMail } from '../utils/emails/transactional';
@@ -21,14 +22,20 @@ export async function checkUserReminders() {
 
     await Promise.all(
       users.map(async ({ id, email, name, reminder }) => {
+        const { timeframe, recurring } = reminder;
         logger.info(`reminders-dao: generating reminder coupon for ${id}`);
-        const coupon = await generateCoupon(reminder.timeframe);
+        const coupon = await generateCoupon(timeframe);
         sendReminderMail({
           toAddress: email,
           toName: name,
-          reminderPeriod: getTimeframeText(reminder.timeframe),
+          reminderPeriod: getTimeframeText(timeframe),
           coupon
         });
+        // re-add the reminder for the current timeframe
+        // if it's set to reoccur
+        if (recurring) {
+          addUserReminder(id, timeframe, recurring);
+        }
       })
     );
 

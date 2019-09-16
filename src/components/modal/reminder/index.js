@@ -2,8 +2,15 @@ import './reminder-modal.module.scss';
 
 import { FormGroup, FormLabel, FormSelect } from '../../../components/form';
 import { ModalBody, ModalCloseIcon, ModalHeader } from '..';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
+import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
 import { ClockIcon } from '../../icons';
 import { DatabaseContext } from '../../../providers/db-provider';
@@ -35,127 +42,59 @@ const options = [
 ];
 
 export default () => {
-  const { close: closeModal } = useContext(ModalContext);
   const db = useContext(DatabaseContext);
 
-  const [state, setState] = useState({
-    loading: false,
-    error: false,
-    timeframe: '1m'
-  });
-
   const [mailCount, setMailCount] = useState('-');
-  useEffect(
-    () => {
-      db.mail.count().then(c => {
-        setMailCount(c);
-      });
-    },
-    [db]
-  );
+  useEffect(() => {
+    db.mail.count().then(c => {
+      setMailCount(c);
+    });
+  }, [db]);
 
   const [currentReminder, { setReminder: setUserReminder }] = useUser(
     u => u.reminder
   );
   const hasReminder = currentReminder && !currentReminder.sent;
-  let content = null;
 
-  const onSetReminder = async op => {
-    try {
-      setState({
-        ...state,
-        loading: true,
-        error: false
-      });
-      const { reminder } = await toggleReminder(op, state.timeframe);
+  const onReminderSet = useCallback(
+    async reminder => {
       setUserReminder(reminder);
-      setState({
-        ...state,
-        loading: false,
-        error: false
-      });
-    } catch (err) {
-      setState({
-        ...state,
-        loading: false,
-        error:
-          'Something went wrong setting your reminder, please try again or send us a message.'
-      });
-    }
-  };
+    },
+    [setUserReminder]
+  );
 
-  if (hasReminder) {
-    content = (
-      <div style={{ textAlign: 'center' }}>
-        <p>
-          Awesome! You currently have a reminder to unsubscribe again set for:
-        </p>
-        <TextImportant>
-          {format(currentReminder.remindAt, reminderDateFormat)}
-        </TextImportant>
-        <div styleName="reminder-cta">
-          <Button
-            basic
-            compact
-            muted
-            outlined
-            loading={state.loading}
-            disabled={state.loading}
-            onClick={() => onSetReminder('remove')}
-          >
-            Clear reminder
-          </Button>
-
-          <Button basic compact outlined onClick={() => closeModal()}>
-            Okay
-          </Button>
+  const content = useMemo(() => {
+    if (hasReminder) {
+      return (
+        <div style={{ textAlign: 'center' }}>
+          <p>You currently have a reminder to unsubscribe again set for:</p>
+          <TextImportant>
+            {format(currentReminder.remindAt, reminderDateFormat)}
+          </TextImportant>
+          <ClearReminder onReminderSet={onReminderSet} />
         </div>
-      </div>
-    );
-  } else {
-    content = (
-      <>
-        {mailCount ? (
+      );
+    } else {
+      return (
+        <>
+          {mailCount ? (
+            <p>
+              You could receive{' '}
+              <TextImportant>
+                {mailCount} more subscription emails
+              </TextImportant>{' '}
+              in the next 6 months.
+            </p>
+          ) : null}
           <p>
-            You could receive{' '}
-            <TextImportant>{mailCount} more subscription emails</TextImportant>{' '}
-            in the next 6 months.
+            We can send you an email reminder to unsubscribe again and keep your
+            inbox clear.
           </p>
-        ) : null}
-        <p>
-          We can send you an email reminder to unsubscribe again and keep your
-          inbox clear.
-        </p>
-        <FormGroup>
-          <FormLabel htmlFor="reminder">Remind me in:</FormLabel>
-          <FormSelect
-            name="reminder"
-            smaller
-            disabled={state.loading}
-            required
-            // basic
-            value={state.timeframe}
-            options={options}
-            onChange={e => {
-              setState({ ...state, timeframe: e.currentTarget.value });
-            }}
-          />
-        </FormGroup>
-        <div styleName="reminder-cta">
-          <Button
-            basic
-            compact
-            loading={state.loading}
-            disabled={state.loading}
-            onClick={() => onSetReminder('add')}
-          >
-            <ClockIcon />
-            Remind me in {options.find(o => o.value === state.timeframe).label}
-          </Button>
-        </div>
-      </>
-    );
-  }
+          <ReminderForm onReminderSet={onReminderSet} />
+        </>
+      );
+    }
+  }, [currentReminder, hasReminder, mailCount, onReminderSet]);
 
   return (
     <div styleName="reminder-modal">
@@ -170,14 +109,123 @@ export default () => {
   );
 };
 
-async function toggleReminder(op, timeframe = '') {
+async function toggleReminder(op, timeframe = '', recurring = false) {
   try {
     return request('/api/me/reminder', {
       method: 'PATCH',
-      body: JSON.stringify({ op, value: timeframe })
+      body: JSON.stringify({ op, value: { timeframe, recurring } })
     });
   } catch (err) {
     console.log('toggle reminder err');
     throw err;
   }
 }
+
+const ClearReminder = React.memo(function ClearReminder({ onReminderSet }) {
+  const { close: closeModal } = useContext(ModalContext);
+  const { actions } = useContext(AlertContext);
+  const [isLoading, setLoading] = useState(false);
+  const clear = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { reminder } = await toggleReminder('remove');
+      onReminderSet(reminder);
+    } catch (err) {
+      actions.setAlert({
+        message:
+          'Something went wrong setting your reminder, please try again or send us a message.',
+        isDismissable: true,
+        autoDismiss: false,
+        level: 'error'
+      });
+    }
+  }, [actions, onReminderSet]);
+  return (
+    <div styleName="reminder-cta">
+      <Button
+        basic
+        compact
+        muted
+        outlined
+        loading={isLoading}
+        disabled={isLoading}
+        onClick={clear}
+      >
+        Clear reminder
+      </Button>
+
+      <Button basic compact outlined onClick={() => closeModal()}>
+        Okay
+      </Button>
+    </div>
+  );
+});
+const ReminderForm = React.memo(function ReminderForm({ onReminderSet }) {
+  const { actions } = useContext(AlertContext);
+  const [isLoading, setLoading] = useState(false);
+  const [timeframe, setTimeframe] = useState('1m');
+  const [recurring, setRecurring] = useState(true);
+  const setReminder = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { reminder } = await toggleReminder('add', timeframe, recurring);
+      onReminderSet(reminder);
+    } catch (err) {
+      actions.setAlert({
+        message:
+          'Something went wrong setting your reminder, please try again or send us a message.',
+        isDismissable: true,
+        autoDismiss: false,
+        level: 'error'
+      });
+    }
+  }, [actions, onReminderSet, timeframe, recurring]);
+  return (
+    <>
+      <span>
+        <span htmlFor="reminder">Remind me</span>
+        <span styleName="input">
+          <FormSelect
+            pill
+            name="recurring"
+            smaller
+            disabled={isLoading}
+            required
+            value={recurring ? 'recurring' : 'once'}
+            options={[
+              { value: 'recurring', label: 'every' },
+              { value: 'once', label: 'once' }
+            ]}
+            onChange={e => setRecurring(e.currentTarget.value === 'recurring')}
+          />
+        </span>
+        {recurring ? null : <span>, after</span>}
+        <span styleName="input">
+          <FormSelect
+            pill
+            name="reminder"
+            smaller
+            disabled={isLoading}
+            required
+            value={timeframe}
+            options={options}
+            onChange={e => setTimeframe(e.currentTarget.value)}
+          />
+        </span>
+        {recurring ? <span>from now</span> : null}
+      </span>
+      <div styleName="reminder-cta">
+        <Button
+          basic
+          compact
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={setReminder}
+        >
+          <ClockIcon />
+          Remind me
+        </Button>
+      </div>
+    </>
+  );
+});
