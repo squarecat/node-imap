@@ -236,11 +236,12 @@ export default app => {
   app.patch('/api/me/reminder', auth, async (req, res, next) => {
     const { user, body } = req;
     const { id } = user;
-    const { op, value: timeframe } = body;
+    const { op, value } = body;
     let newUser = user;
     try {
       if (op === 'add') {
-        newUser = await addUserReminder(id, timeframe);
+        const { timeframe, recurring } = value;
+        newUser = await addUserReminder(id, timeframe, recurring);
       } else if (op === 'remove') {
         newUser = await removeUserReminder(id);
       } else {

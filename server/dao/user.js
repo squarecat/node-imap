@@ -12,6 +12,7 @@ import db, { isoDate } from './db';
 import _omit from 'lodash.omit';
 import logger from '../utils/logger';
 import shortid from 'shortid';
+import { subDays } from 'date-fns';
 import { v4 } from 'node-uuid';
 
 const encryptedUnsubCols = [
@@ -447,7 +448,10 @@ export async function updateIgnoreList(id, { action, value }) {
   }
 }
 
-export async function addReminder(id, { timeframe, remindAt }) {
+export async function addReminder(
+  id,
+  { timeframe, remindAt, recurring = false }
+) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
@@ -457,7 +461,8 @@ export async function addReminder(id, { timeframe, remindAt }) {
           reminder: {
             timeframe,
             remindAt,
-            sent: false
+            sent: false,
+            recurring
           }
         }
       }
@@ -522,11 +527,18 @@ export async function addReferral(id, { id: userId, email, reward }) {
 }
 
 export async function findUsersNeedReminders() {
+  // min recurring time is one week so we play it safe to make sure
+  // we wont spam anyone by accident by never sending another email
+  // if one has been sent in the last 5 days
+  const recent = subDays(Date.now(), 5);
   try {
     const col = await db().collection(COL_NAME);
     const query = {
       'reminder.remindAt': { $lt: new Date() },
-      'reminder.sent': { $ne: true }
+      $or: [
+        { 'reminder.lastSent': { $lt: recent } },
+        { 'reminder.sent': { $ne: true } }
+      ]
     };
     const users = await col.find(query);
     return users.toArray();
@@ -544,7 +556,8 @@ export async function updateUsersReminded(ids) {
       { _id: { $in: ids } },
       {
         $set: {
-          'reminder.sent': true
+          'reminder.sent': true,
+          'reminder.lastSent': isoDate()
         }
       },
       { multi: true }

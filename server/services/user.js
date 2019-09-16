@@ -870,7 +870,7 @@ export async function removeFromUserIgnoreList(id, email) {
   }
 }
 
-export async function addUserReminder(id, timeframe) {
+export async function addUserReminder(id, timeframe, recurring) {
   try {
     const now = new Date();
     let remindAt = null;
@@ -886,7 +886,7 @@ export async function addUserReminder(id, timeframe) {
     if (!remindAt) {
       throw new Error('invalid reminder timeframe');
     }
-    const user = await addReminder(id, { timeframe, remindAt });
+    const user = await addReminder(id, { timeframe, remindAt, recurring });
     addActivityForUser(id, 'setReminder', {
       id,
       timeframe,
