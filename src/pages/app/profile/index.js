@@ -1,6 +1,6 @@
 import './profile.module.scss';
 
-import { GoogleIcon, MicrosoftIcon } from '../../../components/icons';
+import { GoogleIcon, KeyIcon, MicrosoftIcon } from '../../../components/icons';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { AlertContext } from '../../../providers/alert-provider';
@@ -31,7 +31,7 @@ export default () => {
 
         <p styleName="email-container">
           <span>Signed in with: </span>
-          {loginProvider === 'password' ? null : getProviderIcon(loginProvider)}
+          {getProviderIcon(loginProvider)}
           <span styleName="email">
             <TextImportant>{email}</TextImportant>
           </span>
@@ -56,95 +56,89 @@ function DangerZone({ organisationAdmin, organisation }) {
   const db = useContext(DatabaseContext);
   const { actions: alertActions } = useContext(AlertContext);
 
-  const onClickClear = useCallback(
-    () => {
-      function onConfirm() {
-        db.clear();
+  const onClickClear = useCallback(() => {
+    function onConfirm() {
+      db.clear();
+      alertActions.setAlert({
+        id: 'deactivate-account-success',
+        level: 'success',
+        message: `Your local email data has been cleared!`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+    }
+    openModal(
+      <WarningModal
+        onConfirm={onConfirm}
+        content={
+          <>
+            <p>
+              <TextImportant>WARNING:</TextImportant> this will remove all of
+              the local email data that you see on the mail page. Re-scanning
+              will automatically take place when you return to that page but may
+              take a few minutes.
+            </p>
+            <p>
+              If you continue to have problems after this then please contact
+              support.
+            </p>
+          </>
+        }
+        confirmText="Confirm"
+      />,
+      {
+        dismissable: true
+      }
+    );
+  }, [openModal, db]);
+
+  const onClickDelete = useCallback(() => {
+    const deactivateUserAccount = async () => {
+      try {
+        toggleLoading(true);
+        await db.clear();
+        await deactivateAccount();
+        setTimeout(() => {
+          window.location.href = '/goodbye';
+        }, 300);
+      } catch (err) {
+        toggleLoading(false);
+        const message = getBasicError(err);
         alertActions.setAlert({
-          id: 'deactivate-account-success',
-          level: 'success',
-          message: `Your local email data has been cleared!`,
+          id: 'deactivate-account-error',
+          level: 'error',
+          message,
           isDismissable: true,
-          autoDismiss: true
+          autoDismiss: false
         });
       }
-      openModal(
-        <WarningModal
-          onConfirm={onConfirm}
-          content={
-            <>
-              <p>
-                <TextImportant>WARNING:</TextImportant> this will remove all of
-                the local email data that you see on the mail page. Re-scanning
-                will automatically take place when you return to that page but
-                may take a few minutes.
-              </p>
-              <p>
-                If you continue to have problems after this then please contact
-                support.
-              </p>
-            </>
-          }
-          confirmText="Confirm"
-        />,
-        {
-          dismissable: true
+    };
+    openModal(
+      <WarningModal
+        onConfirm={() => deactivateUserAccount()}
+        content={
+          <>
+            <p>
+              <TextImportant>WARNING:</TextImportant>
+              This will delete <TextImportant>
+                ALL OF YOUR DATA
+              </TextImportant>{' '}
+              including your account details, scan history, favorite senders,
+              reminders, and referral data.
+            </p>
+            <p>
+              However, you are not tied to our service in any way. Any mailing
+              lists you unsubscribed from are gone forever.
+            </p>
+          </>
         }
-      );
-    },
-    [openModal, db]
-  );
-
-  const onClickDelete = useCallback(
-    () => {
-      const deactivateUserAccount = async () => {
-        try {
-          toggleLoading(true);
-          await db.clear();
-          await deactivateAccount();
-          setTimeout(() => {
-            window.location.href = '/goodbye';
-          }, 300);
-        } catch (err) {
-          toggleLoading(false);
-          const message = getBasicError(err);
-          alertActions.setAlert({
-            id: 'deactivate-account-error',
-            level: 'error',
-            message,
-            isDismissable: true,
-            autoDismiss: false
-          });
-        }
-      };
-      openModal(
-        <WarningModal
-          onConfirm={() => deactivateUserAccount()}
-          content={
-            <>
-              <p>
-                <TextImportant>WARNING:</TextImportant>
-                This will delete <TextImportant>
-                  ALL OF YOUR DATA
-                </TextImportant>{' '}
-                including your account details, scan history, favorite senders,
-                reminders, and referral data.
-              </p>
-              <p>
-                However, you are not tied to our service in any way. Any mailing
-                lists you unsubscribed from are gone forever.
-              </p>
-            </>
-          }
-          confirmText="Yes delete everything"
-        />,
-        {
-          dismissable: true
-        }
-      );
-    },
-    [openModal, db]
-  );
+        confirmText="Yes delete everything"
+      />,
+      {
+        dismissable: true
+      }
+    );
+  }, [openModal, db]);
 
   return (
     <>
@@ -213,6 +207,8 @@ async function deactivateAccount() {
 }
 
 function getProviderIcon(provider) {
+  if (provider === 'password')
+    return <KeyIcon inline width="16" height="16" style={{ top: '-1px' }} />;
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
   if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
 }

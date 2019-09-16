@@ -503,9 +503,9 @@ export const ToggleIcon = ({ width = 32, height = 32, ...visProps }) => (
   </svg>
 );
 
-export const KeyIcon = ({ width = '30', height = '30' }) => (
+export const KeyIcon = ({ width = 30, height = 30, ...visProps }) => (
   <svg
-    className={getClasses('key')}
+    className={getClasses('key', visProps)}
     viewBox="0 0 24 24"
     version="1.1"
     width={width}

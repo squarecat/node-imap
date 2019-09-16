@@ -497,7 +497,7 @@ const AuthButtons = React.memo(({ dispatch, action }) => {
               }}
               styleName="login-me-in-dammit"
             >
-              <KeyIcon />
+              <KeyIcon inline />
               <span>{`${action} with Password`}</span>
             </a>
           )
