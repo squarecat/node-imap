@@ -1,6 +1,5 @@
 import { getGmailAccessToken, getMailClient } from './access';
 
-import { MailError } from '../../../utils/errors';
 import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { createAudit } from '../../audit';
@@ -9,6 +8,7 @@ import { getEstimateForTimeframe } from './estimator';
 import { getSearchString } from './utils';
 import httpMessageParser from 'http-message-parser';
 import logger from '../../../utils/logger';
+import { parseError } from './errors';
 import { parseMailList } from './parser';
 
 // todo convert to generator?
@@ -113,10 +113,11 @@ export async function* fetchMail(
       dupeSenders
     };
   } catch (err) {
-    throw new MailError('failed to fetch mail', {
-      provider: 'gmail',
-      cause: err
+    const error = await parseError(err, {
+      userId: user.id,
+      accountId: account.id
     });
+    throw error;
   }
 }
 

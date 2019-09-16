@@ -60,9 +60,7 @@ export const Strategy = new GoogleStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error('google-auth: error authenticating');
-      logger.error(err);
-      if (err.data && err.data.errKey) {
+      if (err.handled) {
         done(err);
       } else {
         done(
@@ -99,9 +97,7 @@ export const ConnectAccountStrategy = new GoogleStrategy(
       });
       done(null, { ...user });
     } catch (err) {
-      logger.error('google-auth: error connecting account');
-      logger.error(err);
-      if (err.data && err.data.errKey) {
+      if (err.handled) {
         done(err);
       } else {
         done(

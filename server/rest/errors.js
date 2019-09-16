@@ -2,6 +2,7 @@ import { RestError, savedErrors } from '../utils/errors';
 
 import { adminOnly } from '../middleware/route-auth';
 import config from 'getconfig';
+import logger from '../utils/logger';
 
 const Sentry = require('@sentry/node');
 
@@ -54,7 +55,11 @@ export default app => {
 
 function expressErrorHandler(err, req, res, next) {
   const json = err.toJSON ? err.toJSON() : err.stack;
-  Sentry.captureException(err);
+
+  // if we haven't already handled this error then throw a rest error
+  if (!json.handled) {
+    Sentry.captureException(err);
+  }
 
   if (res.headersSent) {
     return next(json);

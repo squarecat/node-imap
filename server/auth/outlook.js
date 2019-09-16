@@ -64,9 +64,7 @@ export const Strategy = new OutlookStrategy(
       );
       done(null, { ...user });
     } catch (err) {
-      logger.error('outlook-auth: error authenticating');
-      logger.error(err);
-      if (err.data && err.data.errKey) {
+      if (err.handled) {
         done(err);
       } else {
         done(
@@ -100,9 +98,7 @@ export const ConnectAccountStrategy = new OutlookStrategy(
       });
       done(null, { ...user });
     } catch (err) {
-      logger.error('outlook-auth: error connecting account');
-      logger.error(err);
-      if (err.data && err.data.errKey) {
+      if (err.handled) {
         done(err);
       } else {
         done(

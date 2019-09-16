@@ -1,8 +1,11 @@
+const Sentry = require('@sentry/node');
+
 import {
   getOccurrenceScores,
   updateOccurrencesSeenByUser
 } from '../../services/occurrences';
 
+import { RestError } from '../../utils/errors';
 import logger from '../../utils/logger';
 
 export default async function occurrences(socket, userId, data) {

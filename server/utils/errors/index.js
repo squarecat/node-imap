@@ -22,6 +22,7 @@ export function LMAError(message, data = {}) {
   this.data = _omit(data, 'cause');
   this.level = 'error';
   this.cause = data.cause;
+  this.handled = true;
   this.toString = function() {
     return `\n${this.name}: ${this.message}`;
   };
@@ -67,9 +68,7 @@ export function LMAError(message, data = {}) {
       };
     }
     logger.error(
-      `[error]: ${this.name} - ${this.message} ${
-        config.urls.base
-      }/api/errors/${id}`
+      `[error]: ${this.name} - ${this.message} ${config.urls.base}/api/errors/${id}`
     );
     return json;
   };
