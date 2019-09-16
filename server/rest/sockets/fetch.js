@@ -74,7 +74,7 @@ async function doFetch({
     await onEnd(next.value, { userId });
   } catch (err) {
     // if we haven't already handled this error then throw a rest error
-    if (!err.data || !err.data.errKey) {
+    if (!err.handled) {
       Sentry.captureException(err);
     }
     const error = new RestError('Failed to fetch new mail', {

@@ -57,7 +57,8 @@ function expressErrorHandler(err, req, res, next) {
   const json = err.toJSON ? err.toJSON() : err.stack;
 
   // if we haven't already handled this error then throw a rest error
-  if (!json.data || !json.data.errKey) {
+  console.log(json);
+  if (!json.handled) {
     Sentry.captureException(err);
   }
 
