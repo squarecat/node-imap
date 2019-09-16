@@ -1,7 +1,13 @@
 import './credits.module.scss';
 
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
@@ -43,6 +49,9 @@ export default ({ credits }) => {
   const { loading: referralsLoading, value: referralValue } = useAsync(
     getReferrals
   );
+  const [hasUserTweeted, setUserTweeted] = useState(false);
+  const [email, setEmail] = useState('');
+  const [sendingInvite, setSendingInvite] = useState(false);
 
   const referralCode = useMemo(() => {
     let referralCode = '';
@@ -55,6 +64,18 @@ export default ({ credits }) => {
   const socialContent = useMemo(() => {
     return getSocialContent(unsubCount, referralCode);
   }, [unsubCount, referralCode]);
+
+  const onClickTweet = useCallback(function onClickTweet(tweetText) {
+    try {
+      openTweetIntent(tweetText);
+      setTimeout(() => {
+        setTweeted();
+        setUserTweeted(true);
+      }, 5000);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
 
   const { referredCredits, referralCredits, rewards } = useMemo(() => {
     if (loading) {
@@ -88,8 +109,45 @@ export default ({ credits }) => {
     };
   }, [loading, value]);
 
-  const [email, setEmail] = useState('');
-  const [sendingInvite, setSendingInvite] = useState(false);
+  const rewardListContent = useMemo(() => {
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+    const rewardItems = rewards
+      .filter(r => {
+        const hasReward = rewardLabels[r.name];
+        if (r.name === 'addedTwoFactorAuth') {
+          return loginProvider === 'password' && hasReward;
+        }
+        return hasReward;
+      })
+      .map(r => {
+        let awarded = r.timesCompleted;
+        if (r.name === 'sharedOnTwitter' && hasUserTweeted) {
+          awarded = 1;
+        }
+        return {
+          ...rewardLabels[r.name],
+          reward: r.credits,
+          awarded,
+          name: r.name
+        };
+      });
+    return (
+      <RewardList
+        rewardItems={rewardItems}
+        socialContent={socialContent}
+        onClickTweet={onClickTweet}
+      />
+    );
+  }, [
+    loading,
+    rewards,
+    socialContent,
+    onClickTweet,
+    loginProvider,
+    hasUserTweeted
+  ]);
 
   const onClickInvite = useCallback(async () => {
     try {
@@ -218,7 +276,7 @@ export default ({ credits }) => {
         </div>
         {referralsLoading ? null : getReferralList(referralValue)}
         <ModalSubHeader>Other ways to Earn Credit</ModalSubHeader>
-        {loading ? null : getRewardList(rewards, socialContent, loginProvider)}
+        {rewardListContent}
       </ModalBody>
     </div>
   );
@@ -263,7 +321,7 @@ const rewardLabels = {
   sharedOnTwitter: {
     icon: <TwitterIcon />,
     text: 'Share on Twitter',
-    description: tweetText => (
+    description: (tweetText, onClickTweet) => (
       <span>
         <a onClick={() => onClickTweet(tweetText)}>Tweet about us</a> to your
         followers
@@ -322,27 +380,7 @@ function getReferralList({ referredBy, referrals }) {
   );
 }
 
-function getRewardList(rewards = [], socialContent, loginProvider) {
-  const rewardItems = rewards
-    .filter(r => {
-      const hasReward = rewardLabels[r.name];
-      if (r.name === 'addedTwoFactorAuth') {
-        return loginProvider === 'password' && hasReward;
-      }
-      return hasReward;
-    })
-    .map(r => {
-      return {
-        ...rewardLabels[r.name],
-        reward: r.credits,
-        awarded: r.timesCompleted,
-        name: r.name
-      };
-    });
-  return <RewardList rewardItems={rewardItems} socialContent={socialContent} />;
-}
-
-function RewardList({ rewardItems, socialContent }) {
+function RewardList({ rewardItems, socialContent, onClickTweet }) {
   const { replace: replaceModal } = useContext(ModalContext);
   return (
     <ul styleName="earn-credit">
@@ -351,7 +389,7 @@ function RewardList({ rewardItems, socialContent }) {
         if (name === 'setReminder') {
           descriptionText = description(replaceModal);
         } else if (name === 'sharedOnTwitter') {
-          descriptionText = description(socialContent.tweet);
+          descriptionText = description(socialContent.tweet, onClickTweet);
         } else {
           descriptionText = description;
         }
@@ -370,17 +408,6 @@ function RewardList({ rewardItems, socialContent }) {
       })}
     </ul>
   );
-}
-
-function onClickTweet(tweetText) {
-  try {
-    openTweetIntent(tweetText);
-    setTimeout(() => {
-      setTweeted();
-    }, 1000);
-  } catch (err) {
-    console.error(err);
-  }
 }
 
 function sendReferralInvite(email) {
