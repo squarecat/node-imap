@@ -3,24 +3,32 @@ import React, { useContext } from 'react';
 
 import { ModalContext } from '../../providers/modal-provider';
 
-export default ({ onConfirm, content, confirmText }) => {
+export default ({
+  onConfirm,
+  autoClose = true,
+  content,
+  confirmText,
+  headerText = 'Are you sure?',
+  loading
+}) => {
   const { close: closeModal } = useContext(ModalContext);
   return (
     <div style={{ width: 600, maxWidth: '100%' }}>
       <ModalBody compact>
         <ModalHeader>
-          Are you sure?
+          {headerText}
           <ModalCloseIcon />
         </ModalHeader>
         {content}
       </ModalBody>
       <ModalSaveAction
         onSave={() => {
-          closeModal();
+          if (autoClose) closeModal();
           onConfirm();
         }}
         onCancel={closeModal}
         saveText={confirmText}
+        isLoading={loading}
       />
     </div>
   );

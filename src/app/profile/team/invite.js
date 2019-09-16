@@ -28,7 +28,7 @@ function InviteSection({ organisation }) {
             </>
           ) : null}
           <p>
-            You can invite anyone inside or outside your company by email
+            You can always invite anyone inside or outside your company by email
             address:
           </p>
           <InviteFormMultiple organisationId={id} />

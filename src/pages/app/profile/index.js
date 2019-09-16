@@ -16,21 +16,13 @@ import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
   const [
-    {
-      email,
-      unsubCount,
-      organisationAdmin,
-      loginProvider,
-      organisation,
-      accountsCount
-    }
+    { email, unsubCount, organisationAdmin, loginProvider, organisation }
   ] = useUser(u => ({
     email: u.email,
     organisationAdmin: u.organisationAdmin,
     loginProvider: u.loginProvider,
     unsubCount: u.unsubCount,
-    organisation: u.organisation,
-    accountsCount: u.accounts.length
+    organisation: u.organisation
   }));
   return (
     <ProfileLayout pageName="Profile">

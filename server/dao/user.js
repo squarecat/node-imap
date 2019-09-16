@@ -1093,6 +1093,27 @@ export async function verifyEmail(id) {
   }
 }
 
+export async function enableOrganisation(id) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id },
+      {
+        $set: {
+          organisationAdmin: true,
+          lastUpdatedAt: isoDate()
+        }
+      }
+    );
+    const user = await getUser(id);
+    return user;
+  } catch (err) {
+    logger.error('user-dao: failed to enabled organisation');
+    logger.error(err);
+    throw err;
+  }
+}
+
 function decryptUser(user, options = {}) {
   let decryptedUser = {
     ...user,

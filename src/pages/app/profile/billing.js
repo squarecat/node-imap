@@ -21,9 +21,11 @@ import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import ProfileLayout from '../../../app/profile/layout';
+import WarningModal from '../../../components/modal/warning-modal';
 import cx from 'classnames';
 import format from 'date-fns/format';
-import { openChat } from '../../../utils/chat';
+import { navigate } from 'gatsby';
+// import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
@@ -165,18 +167,15 @@ function Packages({ onClickBuy }) {
   });
 
   const [count, setCount] = useState('-');
-  useEffect(
-    () => {
-      db.mail
-        .where('status')
-        .equals('subscribed')
-        .count()
-        .then(c => {
-          setCount(c);
-        });
-    },
-    [db]
-  );
+  useEffect(() => {
+    db.mail
+      .where('status')
+      .equals('subscribed')
+      .count()
+      .then(c => {
+        setCount(c);
+      });
+  }, [db]);
 
   return (
     <div styleName="billing-section" id="packages">
@@ -213,6 +212,62 @@ function Packages({ onClickBuy }) {
 }
 
 function Enterprise() {
+  const { open: openModal } = useContext(ModalContext);
+  const [loading, setLoading] = useState(false);
+
+  const onClickEnableTeam = useCallback(() => {
+    async function onConfirm() {
+      try {
+        setLoading(true);
+        await enableTeam();
+        setTimeout(() => {
+          window.location.href = '/app/profile/team';
+        }, 2000);
+      } catch (err) {
+        setLoading(false);
+        console.error('error enabling teams', err);
+      }
+    }
+    openModal(
+      <WarningModal
+        onConfirm={onConfirm}
+        autoClose={false}
+        content={
+          <>
+            <p>
+              Leave Me Alone for Teams lets your entire team keep their inbox
+              clean so they can focus on building your business.
+            </p>
+            <p>
+              <PlanImage smaller compact type="enterprise" />
+            </p>
+            <p style={{ textAlign: 'center', fontSize: '16px' }}>
+              <TextImportant>Unlimited unsubscribes</TextImportant> for{' '}
+              <TextImportant>
+                ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
+              </TextImportant>{' '}
+              per seat/month
+            </p>
+            <p>
+              <TextImportant>PLEASE READ:</TextImportant>
+              This account will become the admin account for your team. Your
+              connected accounts will be removed and you will need to activate
+              your team before you can start unsubscribing. Any credits you have
+              now will be preserved.
+            </p>
+            <p>Confirm to set up your new team account.</p>
+          </>
+        }
+        confirmText="Confirm"
+        headerText="Get Started with Leave Me Alone for Teams"
+        loading={loading}
+      />,
+      {
+        dismissable: true
+      }
+    );
+  }, [loading, openModal]);
+
   return (
     <div styleName="billing-section">
       <h2>Teams</h2>
@@ -220,13 +275,12 @@ function Enterprise() {
         <PlanImage smaller compact type="enterprise" />
         <div>
           <h3 styleName="plan-title">Unlimited unsubscribes</h3>
-          {/* <span>${ENTERPRISE.pricePerSeat}/seat</span> */}
         </div>
         <span>
           <Price price={ENTERPRISE.pricePerSeat} asterisk /> per seat
         </span>
-        <a styleName="billing-btn" onClick={() => openChat()}>
-          Contact
+        <a styleName="billing-btn" onClick={() => onClickEnableTeam()}>
+          Buy Teams
         </a>
       </div>
       <TextFootnote>* billed monthly.</TextFootnote>
@@ -243,33 +297,30 @@ function BillingDetails() {
 
   const [loading, setLoading] = useState(false);
 
-  const onClickRemoveCard = useCallback(
-    async () => {
-      try {
-        setLoading(true);
-        await removeUserBillingCard();
-        setCard(null);
-        alertActions.setAlert({
-          id: 'remove-billing-card-success',
-          level: 'success',
-          message: `Successfully removed stored payment method.`,
-          isDismissable: true,
-          autoDismiss: true
-        });
-      } catch (err) {
-        alertActions.setAlert({
-          id: 'remove-billing-card-error',
-          level: 'error',
-          message: `Error removing stored payment method. Please try again or send us a message.`,
-          isDismissable: true,
-          autoDismiss: true
-        });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [setCard]
-  );
+  const onClickRemoveCard = useCallback(async () => {
+    try {
+      setLoading(true);
+      await removeUserBillingCard();
+      setCard(null);
+      alertActions.setAlert({
+        id: 'remove-billing-card-success',
+        level: 'success',
+        message: `Successfully removed stored payment method.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+    } catch (err) {
+      alertActions.setAlert({
+        id: 'remove-billing-card-error',
+        level: 'error',
+        message: `Error removing stored payment method. Please try again or send us a message.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [alertActions, setCard]);
 
   return (
     <div styleName="billing-section">
@@ -308,82 +359,79 @@ function BillingHistory() {
   });
   const { value, loading, error } = useAsync(fetchBillingHistory, [credits]);
 
-  const content = useMemo(
-    () => {
-      const history = loading || error ? {} : value;
-      const { payments = [], has_more = false } = history;
-      let text;
-      if (loading) {
-        text = <span>Loading...</span>;
-      } else if (!payments.length) {
-        text = <p>No payments yet.</p>;
-      } else {
-        text = (
-          <p>
-            Showing{' '}
-            <TextImportant>
-              {`${payments.length} previous payment${
-                payments.length === 1 ? '' : 's'
-              }`}
-            </TextImportant>
-            .
-          </p>
-        );
-      }
-
-      return (
-        <>
-          <div styleName="content">
-            <h2>Payment history</h2>
-            {text}
-          </div>
-          <ErrorBoundary>
-            <Table>
-              <tbody>
-                {payments.map(invoice => {
-                  return (
-                    <TableRow key={invoice.date}>
-                      <TableCell>{getDate(invoice)}</TableCell>
-                      <TableCell>{invoice.description}</TableCell>
-                      <TableCell>
-                        <>
-                          {getPrice(invoice)} {getStatus(invoice)}
-                        </>
-                      </TableCell>
-                      {/* <TableCell>{}</TableCell> */}
-                      <TableCell>
-                        {invoice.invoice_pdf ? (
-                          <a
-                            styleName="invoice-btn"
-                            href={invoice.invoice_pdf}
-                            target="_"
-                          >
-                            Download
-                          </a>
-                        ) : null}
-                        {invoice.receipt_url ? (
-                          <a
-                            styleName="invoice-btn"
-                            href={invoice.receipt_url}
-                            target="_"
-                          >
-                            Receipt
-                          </a>
-                        ) : null}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </ErrorBoundary>
-
-          {has_more ? <p>For older invoices please contact support.</p> : null}
-        </>
+  const content = useMemo(() => {
+    const history = loading || error ? {} : value;
+    const { payments = [], has_more = false } = history;
+    let text;
+    if (loading) {
+      text = <span>Loading...</span>;
+    } else if (!payments.length) {
+      text = <p>No payments yet.</p>;
+    } else {
+      text = (
+        <p>
+          Showing{' '}
+          <TextImportant>
+            {`${payments.length} previous payment${
+              payments.length === 1 ? '' : 's'
+            }`}
+          </TextImportant>
+          .
+        </p>
       );
-    },
-    [error, loading, value]
-  );
+    }
+
+    return (
+      <>
+        <div styleName="content">
+          <h2>Payment history</h2>
+          {text}
+        </div>
+        <ErrorBoundary>
+          <Table>
+            <tbody>
+              {payments.map(invoice => {
+                return (
+                  <TableRow key={invoice.date}>
+                    <TableCell>{getDate(invoice)}</TableCell>
+                    <TableCell>{invoice.description}</TableCell>
+                    <TableCell>
+                      <>
+                        {getPrice(invoice)} {getStatus(invoice)}
+                      </>
+                    </TableCell>
+                    {/* <TableCell>{}</TableCell> */}
+                    <TableCell>
+                      {invoice.invoice_pdf ? (
+                        <a
+                          styleName="invoice-btn"
+                          href={invoice.invoice_pdf}
+                          target="_"
+                        >
+                          Download
+                        </a>
+                      ) : null}
+                      {invoice.receipt_url ? (
+                        <a
+                          styleName="invoice-btn"
+                          href={invoice.receipt_url}
+                          target="_"
+                        >
+                          Receipt
+                        </a>
+                      ) : null}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </tbody>
+          </Table>
+        </ErrorBoundary>
+
+        {has_more ? <p>For older invoices please contact support.</p> : null}
+      </>
+    );
+  }, [error, loading, value]);
 
   return <div styleName="billing-section history">{content}</div>;
 }
@@ -400,8 +448,14 @@ async function fetchBillingHistory() {
 function removeUserBillingCard() {
   return request('/api/me/billing', {
     method: 'PATCH',
-
     body: JSON.stringify({ op: 'remove-card' })
+  });
+}
+
+function enableTeam() {
+  return request('/api/me', {
+    method: 'PATCH',
+    body: JSON.stringify({ op: 'enable-team' })
   });
 }
 

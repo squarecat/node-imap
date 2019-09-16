@@ -4,6 +4,7 @@ import OrgOnboardingReducer, { initialState } from './reducer';
 import React, { useMemo, useReducer } from 'react';
 
 import ConnectAccounts from '../onboarding/connect-accounts';
+import OrganisationSetup from './setup';
 import { TextImportant } from '../../text';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
@@ -85,24 +86,10 @@ function Content({
       return (
         <>
           <ModalHeader>
-            Welcome to Leave Me Alone for Teams!{' '}
+            Let's set up your Team account
             <span styleName="onboarding-position">{positionLabel}</span>
           </ModalHeader>
-          <p>
-            <strong>Leave Me Alone</strong> makes it quick and easy to
-            unsubscribe from unwanted emails so that your team can focus on
-            building your business.
-          </p>
-          <p>
-            Members of the {organisation.name} team can unsubscribe from as many
-            emails as they like.
-          </p>
-          <img
-            styleName="onboarding-example-img"
-            src={unsubscribeSpamImage}
-            alt="an example subscription email in Leave Me Alone with a toggle to unsubscribe"
-          />
-          <p>Let's get started!</p>
+          <OrganisationSetup />
         </>
       );
     }
@@ -124,7 +111,7 @@ function Content({
             </>
           ) : null}
           <p>
-            You can invite anyone inside or outside your company by email
+            You can always invite anyone inside or outside your company by email
             address:
           </p>
           <InviteForm organisationId={organisationId} onSuccess={onInvite} />

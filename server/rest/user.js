@@ -21,7 +21,8 @@ import {
   updateUserActivityCompleted,
   updateUserAutoBuy,
   updateUserPassword,
-  updateUserPreferences
+  updateUserPreferences,
+  enableOrganisationForUser
 } from '../services/user';
 import { getReferralStats, inviteReferralUser } from '../services/referral';
 
@@ -411,6 +412,8 @@ export default app => {
           req.user.masterKey,
           value
         );
+      } else if (op === 'enable-team') {
+        updatedUser = await enableOrganisationForUser(userId);
       } else {
         logger.error(`user-rest: user patch op not supported`);
       }

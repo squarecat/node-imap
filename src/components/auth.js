@@ -25,16 +25,13 @@ function Auth({ children }) {
   );
   const [, { load }] = useUser(s => s.loaded);
 
-  useEffect(
-    () => {
-      if (!userLoading && !user) {
-        window.location.pathname = '/login';
-      } else if (!userLoading && user) {
-        load(user);
-      }
-    },
-    [load, user, userLoading]
-  );
+  useEffect(() => {
+    if (!userLoading && !user) {
+      window.location.pathname = '/login';
+    } else if (!userLoading && user) {
+      load(user);
+    }
+  }, [load, user, userLoading]);
 
   if (error) {
     return <span>{error}</span>;
@@ -65,113 +62,96 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     hasCompletedOrganisationOnboarding: s.hasCompletedOrganisationOnboarding,
     accounts: s.accounts
   }));
+
   const [isLoaded, setLoaded] = useState(isUserLoaded);
   const { open: openModal } = useContext(ModalContext);
 
-  const checkDb = useCallback(
-    async () => {
-      const prevId = await db.prefs.get('userId');
-      if (!prevId || prevId.value !== id) {
-        await db.clear();
-        db.prefs.put({ key: 'userId', value: id });
-      }
-      setLoaded(true);
-    },
-    [db, id]
-  );
+  const checkDb = useCallback(async () => {
+    const prevId = await db.prefs.get('userId');
+    if (!prevId || prevId.value !== id) {
+      await db.clear();
+      db.prefs.put({ key: 'userId', value: id });
+    }
+    setLoaded(true);
+  }, [db, id]);
 
-  useEffect(
-    () => {
-      if (isBrowserSupported === false) {
-        openModal(
-          <AlertModal>
-            <p>
-              We're sorry but due to the way we show your email data we don't
-              currently support the browser you're using.
-            </p>
-            <p>
-              Leave Me Alone should work in the latest versions of Edge,
-              Firefox, Chrome, Safari, or other modern browsers.
-            </p>
-            <p>
-              Think you are seeing this message by mistake? Please{' '}
-              <a onClick={() => window.intergram.open()}>let us know</a>.
-            </p>
-          </AlertModal>,
-          {
-            dismissable: false,
-            opaque: true
-          }
-        );
-      }
-
-      if (
-        isUserLoaded &&
-        (organisationAdmin && !hasCompletedOrganisationOnboarding)
-      ) {
-        openModal(<OrganisationOnboardingModal />, {
+  useEffect(() => {
+    if (isBrowserSupported === false) {
+      openModal(
+        <AlertModal>
+          <p>
+            We're sorry but due to the way we show your email data we don't
+            currently support the browser you're using.
+          </p>
+          <p>
+            Leave Me Alone should work in the latest versions of Edge, Firefox,
+            Chrome, Safari, or other modern browsers.
+          </p>
+          <p>
+            Think you are seeing this message by mistake? Please{' '}
+            <a onClick={() => window.intergram.open()}>let us know</a>.
+          </p>
+        </AlertModal>,
+        {
           dismissable: false,
           opaque: true
-        });
-      } else if (
-        isUserLoaded &&
-        (!organisationAdmin && !hasCompletedOnboarding)
-      ) {
-        openModal(<OnboardingModal />, {
-          dismissable: false,
-          opaque: true
-        });
-      }
-      if (isUserLoaded && !hasCompletedOnboarding && accounts.length) {
-        // clear old data from v1
-        console.log('removing old v1 data');
-        Object.keys(localStorage).forEach(key => {
-          if (/^leavemealone/.test(key)) {
-            localStorage.removeItem(key);
-          }
-          localStorage.removeItem('user');
-          localStorage.removeItem('userId');
-        });
-      }
-      if (isUserLoaded && isBrowserSupported) {
-        // check db is this users data
-        checkDb();
-      }
-    },
-    [
-      isUserLoaded,
-      hasCompletedOnboarding,
-      organisationAdmin,
-      hasCompletedOrganisationOnboarding,
-      openModal,
-      checkDb,
-      isBrowserSupported,
-      accounts
-    ]
-  );
+        }
+      );
+    }
 
-  const content = useMemo(
-    () => {
-      if (
-        isLoaded &&
-        (hasCompletedOnboarding ||
-          (organisationAdmin && hasCompletedOrganisationOnboarding)) &&
-        isBrowserSupported
-      ) {
-        return children;
-      } else {
-        return null;
-      }
-    },
-    [
-      children,
-      hasCompletedOnboarding,
-      organisationAdmin,
-      hasCompletedOrganisationOnboarding,
-      isBrowserSupported,
-      isLoaded
-    ]
-  );
+    if (
+      isUserLoaded &&
+      (organisationAdmin && !hasCompletedOrganisationOnboarding)
+    ) {
+      openModal(<OrganisationOnboardingModal />, {
+        dismissable: false,
+        opaque: true
+      });
+    } else if (
+      isUserLoaded &&
+      (!organisationAdmin && !hasCompletedOnboarding)
+    ) {
+      openModal(<OnboardingModal />, {
+        dismissable: false,
+        opaque: true
+      });
+    }
+    if (isUserLoaded && !hasCompletedOnboarding && accounts.length) {
+      // clear old data from v1
+      console.log('removing old v1 data');
+      Object.keys(localStorage).forEach(key => {
+        if (/^leavemealone/.test(key)) {
+          localStorage.removeItem(key);
+        }
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+      });
+    }
+    if (isUserLoaded && isBrowserSupported) {
+      // check db is this users data
+      checkDb();
+    }
+  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, hasCompletedOrganisationOnboarding, openModal, checkDb, isBrowserSupported, accounts]);
+
+  const content = useMemo(() => {
+    if (
+      isLoaded &&
+      (hasCompletedOnboarding ||
+        (organisationAdmin && hasCompletedOrganisationOnboarding)) &&
+      isBrowserSupported
+    ) {
+      return children;
+    } else {
+      return null;
+    }
+  }, [
+    children,
+    hasCompletedOnboarding,
+    organisationAdmin,
+    hasCompletedOrganisationOnboarding,
+    isBrowserSupported,
+    isLoaded
+  ]);
 
   return (
     <div styleName={`auth-loading ${!isLoaded ? '' : 'loaded'}`}>

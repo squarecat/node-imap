@@ -1,10 +1,10 @@
 export default (state, action) => {
   const { type, data } = action;
-  if (type === 'set-org-detail') {
+  if (type === 'set-organisation') {
     return {
       ...state,
-      orgDetails: {
-        ...state.orgDetails,
+      organisation: {
+        ...state.organisation,
         ...data
       }
     };

@@ -34,7 +34,8 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyEmail,
-  verifyTotpSecret
+  verifyTotpSecret,
+  enableOrganisation
 } from '../dao/user';
 import {
   addConnectedAccountToStats,
@@ -1499,4 +1500,8 @@ export async function resetUserPassword({ email, password, resetCode }) {
 
 export function verifyUserEmail(id) {
   return verifyEmail(id);
+}
+
+export function enableOrganisationForUser(id) {
+  return enableOrganisation(id);
 }

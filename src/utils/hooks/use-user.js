@@ -105,6 +105,20 @@ export default globalReducer(
         }
       };
     },
+    setOrganisation: (state, organisation) => {
+      return {
+        ...state,
+        organisationId: organisation.id,
+        organisation: {
+          name: organisation.name,
+          active: organisation.active,
+          domain: organisation.domain,
+          inviteCode: organisation.inviteCode,
+          allowAnyUserWithCompanyEmail:
+            organisation.allowAnyUserWithCompanyEmail
+        }
+      };
+    },
     setOrganisationLastUpdated: (state, lastUpdated) => {
       return {
         ...state,
