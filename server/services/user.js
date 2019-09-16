@@ -884,7 +884,7 @@ export async function addUserReminder(id, timeframe, recurring) {
       remindAt = addMonths(now, 6);
     }
     if (!remindAt) {
-      throw new Error('invalid reminder timeframe');
+      throw new Error(`invalid reminder timeframe ${timeframe}`);
     }
     const user = await addReminder(id, { timeframe, remindAt, recurring });
     addActivityForUser(id, 'setReminder', {

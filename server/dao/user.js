@@ -552,7 +552,7 @@ export async function findUsersNeedReminders() {
 export async function updateUsersReminded(ids) {
   try {
     const col = await db().collection(COL_NAME);
-    const users = await col.update(
+    const users = await col.updateMany(
       { _id: { $in: ids } },
       {
         $set: {

@@ -34,7 +34,7 @@ export async function checkUserReminders() {
         // re-add the reminder for the current timeframe
         // if it's set to reoccur
         if (recurring) {
-          addUserReminder(id, { timeframe, recurring });
+          addUserReminder(id, timeframe, recurring);
         }
       })
     );

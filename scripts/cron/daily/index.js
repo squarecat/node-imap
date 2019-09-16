@@ -1,9 +1,9 @@
 const pm2 = require('pm2');
 
-if (new Date().getHours() !== 0) {
-  console.log(`Started at wrong time (${new Date().getHours()}), stopping.`);
-  process.exit(0);
-}
+// if (new Date().getHours() !== 0) {
+//   console.log(`Started at wrong time (${new Date().getHours()}), stopping.`);
+//   process.exit(0);
+// }
 
 pm2.connect(function() {
   console.log('running daily cron');
