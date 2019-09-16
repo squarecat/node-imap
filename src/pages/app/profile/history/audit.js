@@ -25,61 +25,58 @@ const levels = {
 function AuditLogs() {
   const { value, loading } = useAsync(fetchAuditLogs);
 
-  const content = useMemo(
-    () => {
-      const logs = loading ? [] : value;
-      const sorted = _sortBy(logs, 'startedAt').reverse();
+  const content = useMemo(() => {
+    const logs = loading ? [] : value;
+    const sorted = _sortBy(logs, 'startedAt').reverse();
 
-      let text;
-      if (loading) {
-        text = <span>Loading...</span>;
-      } else if (!logs.length) {
-        text = (
-          <>
-            <p>No audit logs yet.</p>
-            <p>
-              As you use Leave Me Alone we log the events that we perform such
-              as connecting a new account. If you are having problems with your
-              account then these logs will help us to understand what is
-              happening and fix the problem more quickly.
-            </p>
-          </>
-        );
-      } else {
-        text = (
-          <>
-            <p>
-              Showing{' '}
-              <TextImportant>
-                {`${logs.length} ${
-                  logs.length === 1 ? 'audit log' : 'audit logs'
-                }`}
-              </TextImportant>
-              .
-            </p>
-            <p>
-              As you use Leave Me Alone we log the events that we perform such
-              as connecting a new account. If you are having problems with your
-              account then these logs will help us to understand what is
-              happening and fix the problem more quickly.
-            </p>
-          </>
-        );
-      }
-
-      return (
+    let text;
+    if (loading) {
+      text = <span>Loading...</span>;
+    } else if (!logs.length) {
+      text = (
         <>
-          <div styleName="content">{text}</div>
-          <ErrorBoundary>
-            {sorted.map((log, logIndex) => (
-              <Accordion log={log} key={`log-${logIndex}-${log.groupId}`} />
-            ))}
-          </ErrorBoundary>
+          <p>No audit logs yet.</p>
+          <p>
+            As you use Leave Me Alone we log the events that we perform such as
+            connecting a new account. If you are having problems with your
+            account then these logs will help us to understand what is happening
+            and fix the problem more quickly.
+          </p>
         </>
       );
-    },
-    [loading, value]
-  );
+    } else {
+      text = (
+        <>
+          <p>
+            Showing{' '}
+            <TextImportant>
+              {`${logs.length} ${
+                logs.length === 1 ? 'audit log' : 'audit logs'
+              }`}
+            </TextImportant>
+            .
+          </p>
+          <p>
+            As you use Leave Me Alone we log the events that we perform such as
+            connecting a new account. If you are having problems with your
+            account then these logs will help us to understand what is happening
+            and fix the problem more quickly.
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <div styleName="content">{text}</div>
+        <ErrorBoundary>
+          {sorted.map((log, logIndex) => (
+            <Accordion log={log} key={`log-${logIndex}-${log.groupId}`} />
+          ))}
+        </ErrorBoundary>
+      </>
+    );
+  }, [loading, value]);
 
   return <div styleName="section">{content}</div>;
 }
@@ -96,20 +93,23 @@ function fetchAuditLogs() {
 function Accordion({ log }) {
   const [isOpen, setOpen] = useState(false);
 
-  const onClick = useCallback(
-    () => {
-      setOpen(!isOpen);
-    },
-    [isOpen]
-  );
+  const onClick = useCallback(() => {
+    setOpen(!isOpen);
+  }, [isOpen]);
 
   const classes = cx('accordion', {
     open: isOpen
   });
+
+  const hasError = log.messages.some(({ level }) => level === 'error');
+
   return (
     <div styleName={classes}>
       <div styleName="accordion-header" onClick={onClick}>
-        <h3 styleName="log-group">{log.group}</h3>
+        <h3 styleName="log-group">
+          {log.group}
+          {hasError ? <span styleName="level-error small">Error</span> : null}
+        </h3>
         <div styleName="log-actions">
           <div styleName="log-date">
             <span styleName="date-relative">{relative(log.startedAt)}</span>
@@ -124,7 +124,7 @@ function Accordion({ log }) {
         {log.messages.map((message, msgIndex) => (
           <div
             key={`message-${msgIndex}-${message.timestamp}`}
-            styleName={`message message-${message.level}`}
+            styleName="message"
           >
             <span styleName="message-date date-muted">
               {formatDate(message.timestamp, logTimeFormat)}
@@ -135,7 +135,9 @@ function Accordion({ log }) {
               <span styleName="message-text">{message.message}</span>
             )}
 
-            <span styleName="message-level">{levels[message.level]}</span>
+            <span styleName={`message-level level-${message.level}`}>
+              {levels[message.level]}
+            </span>
           </div>
         ))}
       </div>

@@ -562,7 +562,7 @@ export async function connectImapAccount(userId, masterKey, imapData) {
     return updatedUser;
   } catch (err) {
     logger.error(`user-service: error adding imap account to ${userId}`);
-    audit.append('Failed to add IMAP account');
+    audit.appendError('Failed to add IMAP account');
     logger.error(err);
     throw err;
   }

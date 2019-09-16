@@ -110,26 +110,24 @@
 .message-level {
 }
 
-.message-log,
-.message-debug,
-.message-info {
-  .message-level {
-    color: $color-text-info;
-  }
+.level-log,
+.level-debug,
+.level-info {
+  color: $color-text-info;
 }
+.level-warn {
+  color: $color-text-warning;
+}
+.level-error {
+  background-color: $color-bg-error;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-weight: bold;
 
-.message-warn {
-  .message-level {
-    color: $color-text-warning;
-  }
-}
-.message-error {
-  .message-level {
-    background-color: $color-bg-error;
-    color: white;
-    padding: 2px 5px;
-    border-radius: 5px;
-    font-weight: bold;
+  &.small {
+    font-size: 12px;
+    margin-left: 10px;
   }
 }
 
