@@ -1,7 +1,13 @@
 import './credits.module.scss';
 
 import { ModalBody, ModalCloseIcon, ModalHeader, ModalSubHeader } from '..';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
@@ -43,7 +49,7 @@ export default ({ credits }) => {
   const { loading: referralsLoading, value: referralValue } = useAsync(
     getReferrals
   );
-  const [hasUserTweeted, setUserTweeted] = useState();
+  const [hasUserTweeted, setUserTweeted] = useState(false);
   const [email, setEmail] = useState('');
   const [sendingInvite, setSendingInvite] = useState(false);
 
