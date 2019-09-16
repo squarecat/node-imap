@@ -127,13 +127,12 @@ function useMailSyncFn() {
       socket.on('mail:err', (err = {}, ack) => {
         console.error(`[db]: scan failed`);
 
-        const { data } = err;
-        const { errKey, accountId, problem } = data;
+        const message = getMailError(err);
+        let problem = false;
 
-        const message = getMailError(err.id, errKey);
-
-        if (problem) {
-          invalidateAccount(accountId, problem);
+        if (err.data && err.data.problem && err.data.accountId) {
+          problem = err.data.problem;
+          invalidateAccount(err.data.accountId, err.data.problem);
         }
 
         actions.setAlert({

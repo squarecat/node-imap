@@ -259,10 +259,12 @@ export function getSocketError(err = {}) {
   return defaultMsg;
 }
 
-export function getMailError(id, reason) {
+export function getMailError(err = {}) {
+  const { id, data = {} } = err;
+
   const defaultMsg = `Failed to fetch mail. Code: ${id}`;
 
-  switch (reason) {
+  switch (data.errKey) {
     case 'mail-service-not-enabled':
       return `Failed to fetch mail. Gmail is not enabled for one of your connected accounts.`;
     case 'account-deleted':
