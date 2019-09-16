@@ -51,12 +51,35 @@ const AlertReducer = (state, action) => {
       };
     }
     case 'dismiss-alert': {
-      if (!state.current || (action.data && action.data !== state.current.id)) {
+      const dismissId = action.data;
+      const isExisting = !!state.current;
+      if (!isExisting) {
+        return state;
+      }
+      if (dismissId && dismissId !== state.current.id) {
         return state;
       }
       return {
         ...state,
         current: null
+      };
+    }
+    case 'hide-alert': {
+      const dismissId = action.data;
+      const isExisting = !!state.current;
+
+      if (!isExisting) {
+        return state;
+      }
+      if (dismissId && dismissId !== state.current.id) {
+        return state;
+      }
+      return {
+        ...state,
+        current: {
+          ...state.current,
+          isShown: false
+        }
       };
     }
     case 'set-next': {
@@ -87,50 +110,42 @@ export function AlertProvider({ children }) {
   const { current, queue } = state;
   const dismissTimeout = useRef(null);
   const nextTimeout = useRef(null);
+  const onDismiss = useCallback(id => {
+    dispatch({ type: 'hide-alert', data: id });
+    setTimeout(() => {
+      return dispatch({ type: 'dismiss-alert', data: id });
+    }, 500);
+  }, []);
   // if there's a new alert, then dismiss it
   // after a timeout
-  useEffect(
-    () => {
-      if (current && current.autoDismiss) {
-        clearTimeout(dismissTimeout.current);
-        dismissTimeout.current = setTimeout(() => {
-          dispatch({ type: 'dismiss-alert' });
-        }, current.dismissAfter);
-      }
-      if (!current && queue.length) {
-        clearTimeout(nextTimeout.current);
-        nextTimeout.current = setTimeout(() => {
-          dispatch({ type: 'set-next' });
-        }, 500);
-      }
-      return () => {
-        clearTimeout(dismissTimeout.current);
-        clearTimeout(nextTimeout.current);
-      };
-    },
-    [current, queue]
-  );
-
-  const onDismiss = useCallback(id => {
-    if (id) {
-      dispatch({ type: 'dismiss-alert', data: id });
+  useEffect(() => {
+    if (current && current.autoDismiss) {
+      clearTimeout(dismissTimeout.current);
+      dismissTimeout.current = setTimeout(onDismiss, current.dismissAfter);
     }
-    return dispatch({ type: 'dismiss-alert' });
-  }, []);
+    if (!current && queue.length) {
+      clearTimeout(nextTimeout.current);
+      nextTimeout.current = setTimeout(() => {
+        dispatch({ type: 'hide-alert' });
+        setTimeout(() => dispatch({ type: 'set-next' }), 500);
+      }, 500);
+    }
+    return () => {
+      clearTimeout(dismissTimeout.current);
+      clearTimeout(nextTimeout.current);
+    };
+  }, [current, onDismiss, queue]);
 
-  const value = useMemo(
-    () => {
-      const actions = {
-        setAlert: data => dispatch({ type: 'set-alert', data }),
-        dismiss: id => onDismiss(id),
-        queueAlert: data => dispatch({ type: 'queue-alert', data })
-      };
-      return {
-        actions
-      };
-    },
-    [onDismiss]
-  );
+  const value = useMemo(() => {
+    const actions = {
+      setAlert: data => dispatch({ type: 'set-alert', data }),
+      dismiss: id => onDismiss(id),
+      queueAlert: data => dispatch({ type: 'queue-alert', data })
+    };
+    return {
+      actions
+    };
+  }, [onDismiss]);
 
   return (
     <AlertContext.Provider value={value}>
@@ -139,3 +154,5 @@ export function AlertProvider({ children }) {
     </AlertContext.Provider>
   );
 }
+
+//AlertProvider.whyDidYouRender = true;
