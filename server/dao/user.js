@@ -890,11 +890,11 @@ export async function updatePassword(id, newPassword) {
 // can't update the IMAP passwords because we don't
 // know what the previous master key was, so we
 // mark them as invalid until the user updates them
-export async function invalidateAccounts(id, { provider, problem }) {
+export async function invalidateImapAccounts(id, problem) {
   try {
     const col = await db().collection(COL_NAME);
     await col.updateOne(
-      { id, 'accounts.provider': provider },
+      { id, 'accounts.provider': 'imap' },
       {
         $set: {
           'accounts.$.problem': problem
@@ -903,7 +903,27 @@ export async function invalidateAccounts(id, { provider, problem }) {
     );
   } catch (err) {
     logger.error(
-      `user-dao: failed to invalidate accounts for ${provider}, cause ${problem}`
+      `user-dao: failed to invalidate IMAP accounts for problem ${problem}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+export async function invalidateAccount(id, { accountId, problem }) {
+  try {
+    const col = await db().collection(COL_NAME);
+    await col.updateOne(
+      { id, 'accounts.id': accountId },
+      {
+        $set: {
+          'accounts.$.problem': problem
+        }
+      }
+    );
+  } catch (err) {
+    logger.error(
+      `user-dao: failed to invalidate accounts for ${accountId}, problem ${problem}`
     );
     logger.error(err);
     throw err;
