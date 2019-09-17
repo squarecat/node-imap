@@ -23,6 +23,12 @@ import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
 import yahooLogo from '../../../assets/providers/imap/yahoo-logo.png';
 
+import welcomeImg from '../../../assets/onboarding/party.png';
+import accountsImg from '../../../assets/onboarding/workflow.png';
+import rewardsImg from '../../../assets/onboarding/reward.png';
+import orgImg from '../../../assets/onboarding/collaboration.png';
+import doneImg from '../../../assets/onboarding/checklist.png';
+
 export default () => {
   const { context: modalContext } = useContext(ModalContext);
   const firstState = {
@@ -110,6 +116,12 @@ export default () => {
       <img styleName="preload" src={yahooLogo} />
       <img styleName="preload" src={googleLogo} />
       <img styleName="preload" src={microsoftLogo} />
+
+      <img styleName="preload" src={welcomeImg} />
+      <img styleName="preload" src={accountsImg} />
+      <img styleName="preload" src={rewardsImg} />
+      <img styleName="preload" src={orgImg} />
+      <img styleName="preload" src={doneImg} />
     </div>
   );
 };
@@ -136,6 +148,9 @@ function Content({
             Connect account{' '}
             <span styleName="onboarding-position">{positionLabel}</span>
           </ModalHeader>
+          <div styleName="onboarding-img">
+            <img alt="flowchart workflow image" src={accountsImg} />
+          </div>
           <ConnectAccounts accounts={accounts} onboarding />
           {accounts.length ? (
             <p style={{ marginTop: '2em' }}>
@@ -159,16 +174,21 @@ function Content({
       return (
         <>
           <ModalHeader>
-            Organisation{' '}
+            You have joined a team!{' '}
             <span styleName="onboarding-position">{positionLabel}</span>
           </ModalHeader>
+          <div styleName="onboarding-img">
+            <img alt="chat bubbles with happy emojis image" src={orgImg} />
+          </div>
           <p>
-            You have joined the{' '}
-            <TextImportant>{organisation.name} organisation</TextImportant>!
+            Congratulations, you have joined the{' '}
+            <TextImportant>{organisation.name}</TextImportant> team!
           </p>
           <p>
-            As a member of {organisation.name} you can unsubscribe from as many
-            unwanted subscription emails as you like.
+            As a member of this team you have{' '}
+            <TextImportant>unlimited unsubscribes</TextImportant> to clean your
+            inbox from unwanted spam, newsletters, and subscription emails. Go
+            get 'em!
           </p>
         </>
       );
@@ -207,7 +227,7 @@ function WelcomeContent({ isMigrated, positionLabel }) {
           <span styleName="onboarding-position">{positionLabel}</span>
         </ModalHeader>
         <img
-          styleName="v2-logo-img"
+          styleName="logo-img"
           src={logoV2}
           alt="Leave Me Alone logo version 2"
         />
@@ -252,6 +272,9 @@ function WelcomeContent({ isMigrated, positionLabel }) {
         Welcome to Leave Me Alone!{' '}
         <span styleName="onboarding-position">{positionLabel}</span>
       </ModalHeader>
+      <div styleName="onboarding-img">
+        <img alt="cartoon man and woman dancing" src={welcomeImg} />
+      </div>
       <p>
         <strong>Leave Me Alone</strong> connects to your email inboxes and scans
         for all your subscription mail so that you can unsubscribe easily! We'll
@@ -283,6 +306,9 @@ function RewardsContent({
         <ModalHeader>
           Credits <span styleName="onboarding-position">{positionLabel}</span>
         </ModalHeader>
+        <div styleName="onboarding-img">
+          <img alt="two coins falling into a hand image" src={rewardsImg} />
+        </div>
         <p>
           We have moved to{' '}
           <TextImportant>
@@ -310,6 +336,9 @@ function RewardsContent({
       <ModalHeader>
         Credits <span styleName="onboarding-position">{positionLabel}</span>
       </ModalHeader>
+      <div styleName="onboarding-img">
+        <img alt="two coins falling into a hand image" src={rewardsImg} />
+      </div>
       <p styleName="credit-text">
         <TextImportant>1 credit = 1 unsubscribe</TextImportant>
       </p>
@@ -341,6 +370,9 @@ function FinishContent({ positionLabel, isMigrated }) {
         Let's start unsubscribing!{' '}
         <span styleName="onboarding-position">{positionLabel}</span>
       </ModalHeader>
+      <div styleName="onboarding-img">
+        <img alt="clipboard with all items checked image" src={doneImg} />
+      </div>
       {isMigrated ? (
         <>
           <p>You're almost ready to use the new and improved mail list.</p>

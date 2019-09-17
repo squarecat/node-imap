@@ -604,6 +604,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
       addUpdateNewsletterSubscriber(email);
       // sendVerifyEmailMail({ toAddress: email, code: user.verificationCode });
     } else {
+      user = await getUserById(id);
       let updates = {
         name: displayName
       };

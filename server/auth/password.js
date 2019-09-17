@@ -45,7 +45,8 @@ export const Strategy = new LocalStrategy(
       if (!user) {
         return done(null, false);
       }
-      return done(null, user);
+      const updatedUser = await createOrUpdateUserFromPassword(user);
+      return done(null, updatedUser);
     } catch (err) {
       return done(err);
     }
