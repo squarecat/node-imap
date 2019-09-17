@@ -63,6 +63,7 @@ export async function createOrganisation(email, data) {
       ...data
     });
 
+
     const { id, name } = organisation;
 
     addOrganisationToStats();

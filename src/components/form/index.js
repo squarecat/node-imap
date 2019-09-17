@@ -20,6 +20,7 @@ export const FormInput = ({
   compact,
   smaller,
   basic,
+  nointeract,
   validation = () => '',
   onChange = () => {},
   errorMessage = '',
@@ -48,6 +49,7 @@ export const FormInput = ({
       required={required}
       spellCheck="false"
       onChange={e => {
+        if (nointeract) return false;
         setInputValue(e.currentTarget.value);
         validateInput(e, ref, validation, errorMessage);
         onChange(e);

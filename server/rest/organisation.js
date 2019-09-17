@@ -191,8 +191,8 @@ export default app => {
     const { organisation } = req.body;
 
     try {
-      const { adminEmail } = organisation;
-      const createdOrg = await createOrganisation(adminEmail, organisation);
+      const { adminUserEmail } = organisation;
+      const createdOrg = await createOrganisation(adminUserEmail, organisation);
       res.send(createdOrg);
     } catch (err) {
       logger.error('user-rest: error creating org');

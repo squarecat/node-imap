@@ -7,66 +7,15 @@ import {
   FormLabel,
   FormNotification
 } from '../../form';
-import React, { useCallback, useReducer } from 'react';
+import React, { useContext } from 'react';
 
-import orgSetupReducer from './setup-reducer';
-import request from '../../../utils/request';
-import useUser from '../../../utils/hooks/use-user';
+import { OnboardingContext } from './';
 
 export default () => {
-  const [
-    { organisationId, organisation, email },
-    { setOrganisation }
-  ] = useUser(u => ({
-    organisationId: u.organisationId,
-    organisation: u.organisation,
-    email: u.email
-  }));
-
-  console.log('setup organisation', organisation);
-
-  const [state, dispatch] = useReducer(orgSetupReducer, {
-    organisation: {
-      name: '',
-      domain: '',
-      allowAnyUserWithCompanyEmail: false,
-      adminEmail: email,
-      ...organisation
-    },
-    loading: false,
-    error: false
-  });
-
-  const onSubmit = useCallback(async () => {
-    try {
-      dispatch({ type: 'set-loading', data: true });
-      dispatch({ type: 'set-error', data: false });
-      const createdUpdatedOrg = await createUpdateOrganisation(
-        organisationId,
-        state.organisation
-      );
-      debugger;
-      // todo just set the organisation on the user?
-      setOrganisation(createdUpdatedOrg);
-    } catch (err) {
-      // const { message } = getCreateOrgError(err);
-      const message = 'Failed to set up organisation';
-      dispatch({ type: 'set-error', data: message });
-    } finally {
-      dispatch({ type: 'set-loading', data: false });
-    }
-  }, [organisationId, setOrganisation, state.organisation]);
+  const { state, dispatch } = useContext(OnboardingContext);
 
   return (
-    <form
-      id="org-setup-form"
-      name="org-setup-form"
-      onSubmit={e => {
-        e.preventDefault();
-        onSubmit();
-        return false;
-      }}
-    >
+    <form id="org-setup-form" name="org-setup-form">
       <FormGroup unpadded>
         <FormLabel htmlFor="email">Admin email</FormLabel>
         <FormInput
@@ -74,7 +23,7 @@ export default () => {
           smaller
           disabled={true}
           required
-          value={state.organisation.adminEmail}
+          value={state.organisation.adminUserEmail}
           onChange={() => {}}
         />
         <p>
@@ -152,7 +101,7 @@ export default () => {
           label={
             <span>
               Allow anyone with an email address at the above domain to
-              automatically join your Team
+              automatically join your team
             </span>
           }
         />
@@ -165,16 +114,3 @@ export default () => {
     </form>
   );
 };
-
-async function createUpdateOrganisation(id, data) {
-  if (!id) {
-    return request(`/api/organisation`, {
-      method: 'POST',
-      body: JSON.stringify({ organisation: data })
-    });
-  }
-  return request(`/api/organisation/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ op: 'update', value: data })
-  });
-}

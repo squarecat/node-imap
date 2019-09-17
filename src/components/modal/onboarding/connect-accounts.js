@@ -87,8 +87,8 @@ function NoAccounts({ enterprise = false }) {
   if (enterprise) {
     return (
       <p>
-        If you want to start scanning for your subscriptions you can connect
-        your own email account.
+        To scan for subscriptions in your own inboxes you can connect your email
+        account now:
       </p>
     );
   }
