@@ -7,7 +7,6 @@ export default async (socket, next) => {
   // check if user is currently logged in and that their
   // token is valid with the current session
   const session = await getSession(userId);
-  console.log(session.passport.user.token, token);
   if (session && session.passport.user.token === token) {
     socket.auth = true;
     socket.userId = userId;

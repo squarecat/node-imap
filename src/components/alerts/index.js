@@ -33,7 +33,6 @@ export default ({ alert, onDismiss }) => {
       >
         {state => {
           const classes = getTransitionClasses('alertBanner', state, styles);
-          console.log(state, classes);
 
           return (
             <div className={classes} data-shown={isShown} data-level={level}>
