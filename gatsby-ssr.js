@@ -9,6 +9,7 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
   console.log('pre-rendering body for', pathname);
   let components = [
     <div key="modal-root" id="modal-root" />,
+    <div key="alert-root" id="alert-root" />,
     <script
       key="metomic"
       dangerouslySetInnerHTML={{
