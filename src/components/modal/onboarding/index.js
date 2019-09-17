@@ -73,8 +73,14 @@ export default () => {
 
   const onComplete = async () => {
     try {
+      if (organisationId) {
+        setMilestoneCompleted('completedOnboardingOrganisation');
+        await updateMilestone('completedOnboardingOrganisation');
+      }
+
       setMilestoneCompleted('completedOnboarding');
       updateMilestone('completedOnboarding');
+
       return false;
     } catch (err) {
       console.error('failed to complete onboarding');
@@ -172,25 +178,10 @@ function Content({
     }
     if (step === 'organisation') {
       return (
-        <>
-          <ModalHeader>
-            You have joined a team!{' '}
-            <span styleName="onboarding-position">{positionLabel}</span>
-          </ModalHeader>
-          <div styleName="onboarding-img">
-            <img alt="chat bubbles with happy emojis image" src={orgImg} />
-          </div>
-          <p>
-            Congratulations, you have joined the{' '}
-            <TextImportant>{organisation.name}</TextImportant> team!
-          </p>
-          <p>
-            As a member of this team you have{' '}
-            <TextImportant>unlimited unsubscribes</TextImportant> to clean your
-            inbox from unwanted spam, newsletters, and subscription emails. Go
-            get 'em!
-          </p>
-        </>
+        <TeamContent
+          positionLabel={positionLabel}
+          organisationName={organisation.name}
+        />
       );
     }
     if (step === 'finish') {
@@ -198,7 +189,15 @@ function Content({
         <FinishContent positionLabel={positionLabel} isMigrated={isMigrated} />
       );
     }
-  }, [step, isMigrated, positionLabel, accounts, isBeta, organisation.name]);
+  }, [
+    step,
+    isMigrated,
+    positionLabel,
+    accounts,
+    isBeta,
+    startingCredits,
+    organisation.name
+  ]);
 
   return (
     <Transition appear timeout={200} mountOnEnter unmountOnExit in={true}>
@@ -359,6 +358,32 @@ function RewardsContent({
       )}
 
       <p>More credits can be purchased or earned for free if you run out.</p>
+    </>
+  );
+}
+
+export function TeamContent({ positionLabel, organisationName }) {
+  return (
+    <>
+      <ModalHeader>
+        You have joined a team!{' '}
+        {positionLabel ? (
+          <span styleName="onboarding-position">{positionLabel}</span>
+        ) : null}
+      </ModalHeader>
+      <div styleName="onboarding-img">
+        <img alt="chat bubbles with happy emojis image" src={orgImg} />
+      </div>
+      <p>
+        Congratulations, you have joined the{' '}
+        <TextImportant>{organisationName}</TextImportant> team!
+      </p>
+      <p>
+        As a member of this team you have{' '}
+        <TextImportant>unlimited unsubscribes</TextImportant> to clean your
+        inbox from unwanted spam, newsletters, and subscription emails. Go get
+        'em!
+      </p>
     </>
   );
 }

@@ -14,6 +14,7 @@ import Loading from './loading';
 import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
 import OrganisationOnboardingModal from './modal/organisation-onboarding';
+import JoinedTeamModal from './modal/onboarding/joined-team';
 import { fetchLoggedInUser } from '../utils/auth';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../utils/hooks/use-user';
@@ -51,14 +52,16 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       isUserLoaded,
       hasCompletedOnboarding,
       organisationAdmin,
+      organisationId,
       hasCompletedOrganisationOnboarding,
       accounts
     }
   ] = useUser(s => ({
     id: s.id,
     isUserLoaded: s.loaded,
-    hasCompletedOnboarding: s.hasCompletedOnboarding,
     organisationAdmin: s.organisationAdmin,
+    organisationId: s.organisationId,
+    hasCompletedOnboarding: s.hasCompletedOnboarding,
     hasCompletedOrganisationOnboarding: s.hasCompletedOrganisationOnboarding,
     accounts: s.accounts
   }));
@@ -74,6 +77,37 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     }
     setLoaded(true);
   }, [db, id]);
+
+  const {
+    teamAdminOnboarding,
+    teamMemberOnboarding,
+    userOnboarding
+  } = useMemo(() => {
+    // admin and not seen team onboarding
+    const teamAdminOnboarding =
+      isUserLoaded &&
+      (!!organisationAdmin && !hasCompletedOrganisationOnboarding);
+
+    // has seen regular onboarding, has recently joined a team, not seen team onboarding
+    const teamMemberOnboarding =
+      isUserLoaded &&
+      (!!hasCompletedOnboarding &&
+        !organisationAdmin &&
+        !!organisationId &&
+        !hasCompletedOrganisationOnboarding);
+
+    // team admins dont see normal onboarding
+    const userOnboarding =
+      isUserLoaded && (!organisationAdmin && !hasCompletedOnboarding);
+
+    return { teamAdminOnboarding, teamMemberOnboarding, userOnboarding };
+  }, [
+    isUserLoaded,
+    hasCompletedOnboarding,
+    hasCompletedOrganisationOnboarding,
+    organisationAdmin,
+    organisationId
+  ]);
 
   useEffect(() => {
     if (isBrowserSupported === false) {
@@ -99,23 +133,24 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       );
     }
 
-    if (
-      isUserLoaded &&
-      (organisationAdmin && !hasCompletedOrganisationOnboarding)
-    ) {
+    if (teamAdminOnboarding) {
+      // user is an organisation admin and needs the team onboarding
       openModal(<OrganisationOnboardingModal />, {
         dismissable: false,
         opaque: true
       });
-    } else if (
-      isUserLoaded &&
-      (!organisationAdmin && !hasCompletedOnboarding)
-    ) {
+    } else if (userOnboarding) {
       openModal(<OnboardingModal />, {
         dismissable: false,
         opaque: true
       });
+    } else if (teamMemberOnboarding) {
+      openModal(<JoinedTeamModal />, {
+        dismissable: false,
+        opaque: true
+      });
     }
+
     if (isUserLoaded && !hasCompletedOnboarding && accounts.length) {
       // clear old data from v1
       console.log('removing old v1 data');
@@ -131,13 +166,14 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       // check db is this users data
       checkDb();
     }
-  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, hasCompletedOrganisationOnboarding, openModal, checkDb, isBrowserSupported, accounts]);
+  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, organisationId, hasCompletedOrganisationOnboarding, openModal, checkDb, isBrowserSupported, accounts, teamAdminOnboarding, userOnboarding, teamMemberOnboarding]);
 
   const content = useMemo(() => {
+    if (!isLoaded) return null;
     if (
-      isLoaded &&
-      (hasCompletedOnboarding ||
-        (organisationAdmin && hasCompletedOrganisationOnboarding)) &&
+      !teamAdminOnboarding &&
+      !teamMemberOnboarding &&
+      !userOnboarding &&
       isBrowserSupported
     ) {
       return children;
@@ -145,12 +181,12 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       return null;
     }
   }, [
-    children,
-    hasCompletedOnboarding,
-    organisationAdmin,
-    hasCompletedOrganisationOnboarding,
+    isLoaded,
+    teamAdminOnboarding,
+    teamMemberOnboarding,
+    userOnboarding,
     isBrowserSupported,
-    isLoaded
+    children
   ]);
 
   return (

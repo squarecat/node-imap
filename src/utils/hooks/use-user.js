@@ -61,16 +61,26 @@ export default globalReducer(
       requiresTwoFactorAuth: bool
     }),
     setMilestoneCompleted: (state, milestone) => {
-      return {
+      let updates = {
         ...state,
         milestones: {
           ...state.milestones,
           [milestone]: true
-        },
-        hasCompletedOnboarding: milestone === 'completedOnboarding',
-        hasCompletedOrganisationOnboarding:
-          milestone === 'completedOnboardingOrganisation'
+        }
       };
+      if (milestone === 'completedOnboarding') {
+        updates = {
+          ...updates,
+          hasCompletedOnboarding: true
+        };
+      }
+      if (milestone === 'completedOnboardingOrganisation') {
+        updates = {
+          ...updates,
+          hasCompletedOrganisationOnboarding: true
+        };
+      }
+      return updates;
     },
     setBilling: (state, billing) => {
       return {
