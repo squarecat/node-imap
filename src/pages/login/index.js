@@ -22,6 +22,7 @@ let username = '';
 let defaultStep = 'select';
 let previousProvider;
 let previousUsername;
+let teams = false;
 
 if (typeof window !== 'undefined') {
   const urlParams = new URLSearchParams(window.location.search);
@@ -30,6 +31,7 @@ if (typeof window !== 'undefined') {
   username = urlParams.get('username');
   previousProvider = getCookie('remember-me-provider');
   previousUsername = getCookie('remember-me-username');
+  teams = urlParams.get('teams');
   if (previousUsername) {
     previousUsername = decodeURIComponent(previousUsername);
   }
@@ -37,7 +39,15 @@ if (typeof window !== 'undefined') {
 
 function resetUrlParams(action) {
   if (typeof window !== 'undefined') {
-    window.history.replaceState({}, '', `/${action}`);
+    let newState = {};
+    let url = `/${action}`;
+    if (teams) {
+      newState = {
+        teams: true
+      };
+      url = `${url}?teams=true`;
+    }
+    window.history.replaceState(newState, '', url);
   }
   error = null;
 }
@@ -113,47 +123,44 @@ export const LoginContext = createContext({ state: initialState });
 
 const LoginPage = React.memo(
   ({ register, transitionStatus, step = defaultStep }) => {
-    // resetUrlParams(register ? 'signup' : 'login');
     const activeRef = useRef(null);
     const [state, dispatch] = useReducer(loginReducer, {
       ...initialState,
       register: !!register,
+      teams: !!teams,
       step
     });
     const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
-    const windowHeight = useMemo(
-      () => {
-        let height;
-        if (state.step === 'signup') {
-          height = loginNewUserHeight;
-        } else if (state.step === 'enter-password') {
-          height = loginWithPasswordHeight;
-        } else if (
-          state.step === 'enter-email' &&
-          state.providerIntent === 'other'
-        ) {
-          height = loginEmailCardHeight + 40;
-        } else if (state.step === 'enter-email') {
-          height = loginEmailCardHeight;
-        } else if (state.step === 'select-existing') {
-          height = existingStratHeight;
-        } else if (state.step === '2fa') {
-          height = twoFactorAuthHeight;
-        } else if (state.step === 'forgot-password') {
-          height = forgotPasswordHeight;
-        } else if (state.step === 'reset-password') {
-          height = resetPasswordHeight;
-        } else {
-          height = selectCardHeight;
-        }
-        if (state.error) {
-          height = windowHeight + 50;
-        }
-        return height;
-      },
-      [state.error, state.step]
-    );
+    const windowHeight = useMemo(() => {
+      let height;
+      if (state.step === 'signup') {
+        height = loginNewUserHeight;
+      } else if (state.step === 'enter-password') {
+        height = loginWithPasswordHeight;
+      } else if (
+        state.step === 'enter-email' &&
+        state.providerIntent === 'other'
+      ) {
+        height = loginEmailCardHeight + 40;
+      } else if (state.step === 'enter-email') {
+        height = loginEmailCardHeight;
+      } else if (state.step === 'select-existing') {
+        height = existingStratHeight;
+      } else if (state.step === '2fa') {
+        height = twoFactorAuthHeight;
+      } else if (state.step === 'forgot-password') {
+        height = forgotPasswordHeight;
+      } else if (state.step === 'reset-password') {
+        height = resetPasswordHeight;
+      } else {
+        height = selectCardHeight;
+      }
+      if (state.error) {
+        height = windowHeight + 50;
+      }
+      return height;
+    }, [state.error, state.step]);
 
     const classes = cx('hold-onto-your-butts-we-are-logging-in', {
       errored: !!state.error
@@ -167,280 +174,293 @@ const LoginPage = React.memo(
     // all the divs to be in the DOM to start with and then transition
     // into view.
     // Could probably recreate the effect with react-transition-group
-    const content = useMemo(
-      () => {
-        let selectContent = null;
-        let emailContent = null;
-        let signupContent = null;
-        let enterPasswordContent = null;
-        let forgotPasswordContent = null;
-        let resetPasswordContent = null;
-        let twofaContent = null;
-        let existingContent = null;
-        if (isMaintenanceMode) {
-          selectContent = (
-            <>
-              <h1 styleName="title">Down for maintenance</h1>
-              <p>
-                We're currently upgrading the Leave Me Alone system, check back
-                in a little while for the updates!
-              </p>
-              <p>
-                We'll post about our progress and updates on our Twitter page{' '}
-                <a href="https://twitter.com/LeaveMeAloneApp">
-                  https://twitter.com/LeaveMeAloneApp
-                </a>
-                .
-              </p>
-            </>
-          );
-        } else if (state.step === 'select') {
-          selectContent = (
-            <>
-              <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
-              {register ? (
-                <p>Start unsubscribing now!</p>
-              ) : (
-                <p>Great to see you again!</p>
-              )}
-              <div styleName="buttons">
-                <AuthButtons dispatch={dispatch} action={action} />
-              </div>
-              {register ? (
-                <p style={{ marginBottom: '10px' }}>
-                  Already have an account?{' '}
-                  {/* <Link state={{ fromSignup: true }} to="/login">
-                Log in
-              </Link> */}
-                  <a styleName="switch-link" href="/login">
-                    Log in
-                  </a>
-                  .
-                </p>
-              ) : (
-                <p style={{ marginBottom: '10px' }}>
-                  Don't have an account yet?{' '}
-                  {/* <Link state={{ fromLogin: true }} to="/signup">
-                Sign up
-              </Link> */}
-                  <a styleName="switch-link" href="/signup">
-                    Sign up
-                  </a>
-                  .
-                </p>
-              )}
-
-              {getError(error)}
-              <p styleName="notice">
-                We only ask for the permissions we need to operate - read more{' '}
-                <TextLink href="/security" target="_">
-                  here
-                </TextLink>
-                . We will use your email to very occassionally send you product
-                updates. You can opt-out at any time. We will NEVER share your
-                data with anyone, for any reason, EVER.
-              </p>
-            </>
-          );
-        } else if (state.step === 'enter-email') {
-          emailContent = (
-            <>
-              <h1 styleName="title">{`${action} to Leave Me Alone`}</h1>
-              <p>You're one step away from a clean inbox!</p>
-              <EmailForm />
-            </>
-          );
-        } else if (state.step === 'signup') {
-          signupContent = (
-            <>
-              <h1 styleName="title">Welcome to Leave Me Alone!</h1>
-              <p>
-                Signing up with{' '}
-                <span styleName="email-label">{state.email}</span>
-              </p>
-
-              <PasswordForm
-                autoComplete="new-password"
-                confirm={true}
-                checkPwned={true}
-                submitAction="/auth/signup"
-                submitText="Sign up"
-              />
-            </>
-          );
-        } else if (state.step === 'enter-password') {
-          enterPasswordContent = (
-            <>
-              <h1 styleName="title">Login to Leave Me Alone</h1>
-              <p>Welcome back!</p>
-              <p>
-                Signing in with{' '}
-                <span styleName="email-label">{state.email}</span>
-              </p>
-              <PasswordForm
-                confirm={false}
-                autoComplete="current-password"
-                submitAction="/auth/login"
-                doValidation={false}
-              />
-            </>
-          );
-        } else if (state.step === 'forgot-password') {
-          forgotPasswordContent = (
-            <>
-              <h1 styleName="title">Forgot Password</h1>
-              <p>We will email you a password reset code.</p>
-              <EmailForm nextText="Send" />
-            </>
-          );
-        } else if (state.step === 'reset-password') {
-          resetPasswordContent = (
-            <>
-              <h1 styleName="title">Reset Password</h1>
-              <p>
-                Reset password for <TextImportant>{state.email}</TextImportant>
-              </p>
-              <PasswordForm
-                autoComplete="new-password"
-                confirm={true}
-                reset={true}
-                checkPwned={true}
-                submitAction="/auth/reset"
-              />
-            </>
-          );
-        } else if (state.step === '2fa') {
-          twofaContent = (
-            <>
-              <h1 styleName="title">Two-factor Auth Required</h1>
-              <p>
-                Signing in with{' '}
-                <span styleName="email-label">{state.email}</span>
-              </p>
-              <p>
-                Open your authentication app and enter the code for Leave Me
-                Alone.
-              </p>
-              <TwoFactorForm />
-            </>
-          );
-        } else if (state.step === 'select-existing') {
-          existingContent = (
-            <>
-              <h1 styleName="title">Login to Leave Me Alone</h1>
-              {state.existingProvider === 'connected-account' ? (
-                <p>
-                  That email address is already attached to another account, if
-                  you want to use it for password login then first remove it
-                  from the other account.
-                </p>
-              ) : (
-                <>
-                  <p>
-                    That email address has already been used to sign in with{' '}
-                    <span styleName="provider-label">
-                      {state.existingProvider}
-                    </span>
-                    .
-                  </p>
-                  <div styleName="existing-provider-btn">
-                    <AuthButton
-                      provider={state.existingProvider}
-                      action="Login"
-                    />
-                  </div>
-                </>
-              )}
-
-              <div styleName="signup-buttons">
-                <button
-                  type="button"
-                  onClick={() => dispatch({ type: 'set-step', data: 'select' })}
-                  styleName="signup-btn back-btn"
-                >
-                  Back
-                </button>
-              </div>
-            </>
-          );
+    const content = useMemo(() => {
+      let selectContent = null;
+      let emailContent = null;
+      let signupContent = null;
+      let enterPasswordContent = null;
+      let forgotPasswordContent = null;
+      let resetPasswordContent = null;
+      let twofaContent = null;
+      let existingContent = null;
+      if (isMaintenanceMode) {
+        selectContent = (
+          <>
+            <h1 styleName="title">Down for maintenance</h1>
+            <p>
+              We're currently upgrading the Leave Me Alone system, check back in
+              a little while for the updates!
+            </p>
+            <p>
+              We'll post about our progress and updates on our Twitter page{' '}
+              <a href="https://twitter.com/LeaveMeAloneApp">
+                https://twitter.com/LeaveMeAloneApp
+              </a>
+              .
+            </p>
+          </>
+        );
+      } else if (state.step === 'select') {
+        let tagline = 'Great to see you again!';
+        if (state.teams) {
+          tagline = `Get ready to give your team more time to focus on building your business!`;
+        } else if (register) {
+          tagline = null;
         }
 
-        return (
+        let switchContent;
+        if (state.teams) {
+          switchContent = (
+            <p styleName="switch-link">
+              <span>
+                Already have an account? <a href="/login">Log in</a>.
+              </span>
+              <span>
+                Not a team? <a href="/signup">Sign up for a personal account</a>
+                .
+              </span>
+            </p>
+          );
+        } else if (register) {
+          switchContent = (
+            <p styleName="switch-link">
+              <span>
+                Already have an account? <a href="/login">Log in</a>.
+              </span>
+              <span>
+                Let your entire team unsubscribe.{' '}
+                <a href="/signup?teams=true">Sign up for teams</a>.
+              </span>
+            </p>
+          );
+        } else {
+          switchContent = (
+            <p styleName="switch-link">
+              Don't have an account yet? <a href="/signup">Sign up</a>.
+            </p>
+          );
+        }
+        selectContent = (
           <>
-            <div
-              styleName="login-boxy-box"
-              data-active={state.step === 'select'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {selectContent}
+            <h1 styleName="title">{`${action} to Leave Me Alone${
+              state.teams ? ' for Teams' : ''
+            }`}</h1>
+            {tagline ? <p>{tagline}</p> : null}
+            <div styleName="buttons">
+              <AuthButtons
+                dispatch={dispatch}
+                action={action}
+                hideOther={state.teams}
+              />
             </div>
-            <div
-              styleName="email-login-box"
-              data-active={state.step === 'enter-email'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {emailContent}
-            </div>
-            <div
-              styleName="new-user-login-box"
-              data-active={state.step === 'signup'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {signupContent}
-            </div>
-            <div
-              styleName="existing-user-login-box"
-              data-active={state.step === 'enter-password'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {enterPasswordContent}
-            </div>
-            <div
-              styleName="forgot-password-box"
-              data-active={state.step === 'forgot-password'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {forgotPasswordContent}
-            </div>
-            <div
-              styleName="reset-password-box"
-              data-active={state.step === 'reset-password'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {resetPasswordContent}
-            </div>
-            <div styleName="two-factor-box" data-active={state.step === '2fa'}>
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {twofaContent}
-            </div>
-            <div
-              styleName="existing-user-suggestion-box"
-              data-active={state.step === 'select-existing'}
-            >
-              <div styleName="beautiful-logo">
-                <img src={logoUrl} alt="Leave Me Alone logo" />
-              </div>
-              {existingContent}
+            {switchContent}
+            {getError(error)}
+            <p styleName="notice">
+              We only ask for the permissions we need to operate - read more{' '}
+              <TextLink href="/security" target="_">
+                here
+              </TextLink>
+              . We will use your email to very occassionally send you product
+              updates. You can opt-out at any time. We will NEVER share your
+              data with anyone, for any reason, EVER.
+            </p>
+          </>
+        );
+      } else if (state.step === 'enter-email') {
+        emailContent = (
+          <>
+            <h1 styleName="title">{`${action} to Leave Me Alone${
+              state.teams ? ' for Teams' : ''
+            }`}</h1>
+              <p>You're one step away from a clean inbox!</p>
+            <EmailForm />
+          </>
+        );
+      } else if (state.step === 'signup') {
+        signupContent = (
+          <>
+            <h1 styleName="title">
+              Welcome to Leave Me Alone{state.teams ? ' for Teams' : ''}!
+            </h1>
+            <p>
+              Signing up with <span styleName="email-label">{state.email}</span>
+            </p>
+
+            <PasswordForm
+              autoComplete="new-password"
+              confirm={true}
+              checkPwned={true}
+              submitAction={`/auth/signup${state.teams ? '?teams=true' : ''}`}
+              submitText="Sign up"
+            />
+          </>
+        );
+      } else if (state.step === 'enter-password') {
+        enterPasswordContent = (
+          <>
+            <h1 styleName="title">Login to Leave Me Alone</h1>
+            <p>Welcome back!</p>
+            <p>
+              Signing in with <span styleName="email-label">{state.email}</span>
+            </p>
+            <PasswordForm
+              confirm={false}
+              autoComplete="current-password"
+              submitAction="/auth/login"
+              doValidation={false}
+            />
+          </>
+        );
+      } else if (state.step === 'forgot-password') {
+        forgotPasswordContent = (
+          <>
+            <h1 styleName="title">Forgot Password</h1>
+            <p>We will email you a password reset code.</p>
+            <EmailForm nextText="Send" />
+          </>
+        );
+      } else if (state.step === 'reset-password') {
+        resetPasswordContent = (
+          <>
+            <h1 styleName="title">Reset Password</h1>
+            <p>
+              Reset password for <TextImportant>{state.email}</TextImportant>
+            </p>
+            <PasswordForm
+              autoComplete="new-password"
+              confirm={true}
+              reset={true}
+              checkPwned={true}
+              submitAction="/auth/reset"
+            />
+          </>
+        );
+      } else if (state.step === '2fa') {
+        twofaContent = (
+          <>
+            <h1 styleName="title">Two-factor Auth Required</h1>
+            <p>
+              Signing in with <span styleName="email-label">{state.email}</span>
+            </p>
+            <p>
+              Open your authentication app and enter the code for Leave Me
+              Alone.
+            </p>
+            <TwoFactorForm />
+          </>
+        );
+      } else if (state.step === 'select-existing') {
+        existingContent = (
+          <>
+            <h1 styleName="title">Login to Leave Me Alone</h1>
+            {state.existingProvider === 'connected-account' ? (
+              <p>
+                That email address is already attached to another account, if
+                you want to use it for password login then first remove it from
+                the other account.
+              </p>
+            ) : (
+              <>
+                <p>
+                  That email address has already been used to sign in with{' '}
+                  <span styleName="provider-label">
+                    {state.existingProvider}
+                  </span>
+                  .
+                </p>
+                <div styleName="existing-provider-btn">
+                  <AuthButton
+                    provider={state.existingProvider}
+                    action="Login"
+                  />
+                </div>
+              </>
+            )}
+
+            <div styleName="signup-buttons">
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'set-step', data: 'select' })}
+                styleName="signup-btn back-btn"
+              >
+                Back
+              </button>
             </div>
           </>
         );
-      },
-      [action, register, state.email, state.existingProvider, state.step]
-    );
+      }
+
+      return (
+        <>
+          <div styleName="login-boxy-box" data-active={state.step === 'select'}>
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {selectContent}
+          </div>
+          <div
+            styleName="email-login-box"
+            data-active={state.step === 'enter-email'}
+          >
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {emailContent}
+          </div>
+          <div
+            styleName="new-user-login-box"
+            data-active={state.step === 'signup'}
+          >
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {signupContent}
+          </div>
+          <div
+            styleName="existing-user-login-box"
+            data-active={state.step === 'enter-password'}
+          >
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {enterPasswordContent}
+          </div>
+          <div
+            styleName="forgot-password-box"
+            data-active={state.step === 'forgot-password'}
+          >
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {forgotPasswordContent}
+          </div>
+          <div
+            styleName="reset-password-box"
+            data-active={state.step === 'reset-password'}
+          >
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {resetPasswordContent}
+          </div>
+          <div styleName="two-factor-box" data-active={state.step === '2fa'}>
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {twofaContent}
+          </div>
+          <div
+            styleName="existing-user-suggestion-box"
+            data-active={state.step === 'select-existing'}
+          >
+            <div styleName="beautiful-logo">
+              <img src={logoUrl} alt="Leave Me Alone logo" />
+            </div>
+            {existingContent}
+          </div>
+        </>
+      );
+    }, [action, register, state.email, state.existingProvider, state.step]);
 
     return (
       <Layout title={action} slug={register ? '/signup' : '/login'}>
@@ -482,62 +502,59 @@ function getError(error) {
   );
 }
 
-const AuthButtons = React.memo(({ dispatch, action }) => {
-  const btns = useMemo(
-    () => {
-      let buttons = [
+const AuthButtons = React.memo(({ dispatch, action, hideOther }) => {
+  const btns = useMemo(() => {
+    let buttons = [
+      {
+        type: 'password',
+        el: (
+          <a
+            key="pw"
+            onClick={() => {
+              dispatch({ type: 'set-provider-intent', data: 'password' });
+              dispatch({ type: 'set-step', data: 'enter-email' });
+            }}
+            styleName="login-me-in-dammit"
+          >
+            <KeyIcon inline />
+            <span>{`${action} with Password`}</span>
+          </a>
+        )
+      },
+      {
+        type: 'google',
+        el: <AuthButton action={action} provider="google" />
+      },
+      {
+        type: 'outlook',
+        el: <AuthButton action={action} provider="outlook" />
+      }
+    ];
+
+    if (action === 'Sign up' && !hideOther) {
+      buttons = [
+        ...buttons,
         {
-          type: 'password',
+          type: 'other',
           el: (
             <a
-              key="pw"
+              key="other"
               onClick={() => {
-                dispatch({ type: 'set-provider-intent', data: 'password' });
+                dispatch({ type: 'set-provider-intent', data: 'other' });
                 dispatch({ type: 'set-step', data: 'enter-email' });
               }}
               styleName="login-me-in-dammit"
             >
-              <KeyIcon inline />
-              <span>{`${action} with Password`}</span>
+              <AtSignIcon />
+              <span>{`Other email provider...`}</span>
             </a>
           )
-        },
-        {
-          type: 'google',
-          el: <AuthButton action={action} provider="google" />
-        },
-        {
-          type: 'outlook',
-          el: <AuthButton action={action} provider="outlook" />
         }
       ];
+    }
 
-      if (action === 'Sign up') {
-        buttons = [
-          ...buttons,
-          {
-            type: 'other',
-            el: (
-              <a
-                key="other"
-                onClick={() => {
-                  dispatch({ type: 'set-provider-intent', data: 'other' });
-                  dispatch({ type: 'set-step', data: 'enter-email' });
-                }}
-                styleName="login-me-in-dammit"
-              >
-                <AtSignIcon />
-                <span>{`Other email provider...`}</span>
-              </a>
-            )
-          }
-        ];
-      }
-
-      return buttons.map(b => <span key={b.type}>{b.el}</span>);
-    },
-    [action, dispatch]
-  );
+    return buttons.map(b => <span key={b.type}>{b.el}</span>);
+  }, [action, dispatch]);
   // let content = null;
   // if (previousProvider) {
   //   content = (

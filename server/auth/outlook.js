@@ -35,8 +35,10 @@ export const Strategy = new OutlookStrategy(
   },
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      const { cookies } = req;
+      const { cookies, query } = req;
       const { referrer, invite } = cookies;
+      const { team } = query;
+
       const parsedProfile = await parseProfile(profile);
 
       if (process.env.NODE_ENV === 'beta') {
@@ -53,7 +55,8 @@ export const Strategy = new OutlookStrategy(
         {
           ...parsedProfile,
           referralCode: referrer,
-          inviteCode: invite
+          inviteCode: invite,
+          enableTeam: team
         },
         {
           refreshToken,
@@ -169,7 +172,8 @@ export default app => {
   app.get('/auth/outlook/callback*', (req, res, next) => {
     const params = new URLSearchParams(req.params[0]);
     const query = {
-      code: params.get('code')
+      code: params.get('code'),
+      team: !!req.query.teams
     };
     req.query = query;
 

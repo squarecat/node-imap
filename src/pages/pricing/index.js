@@ -6,7 +6,6 @@ import SubPageLayout, { SubpageTagline } from '../../layouts/subpage-layout';
 import { TextImportant, TextLink } from '../../components/text';
 
 import Estimator from '../../components/estimator';
-import { Link } from 'gatsby';
 import RangeInput from '../../components/form/range';
 import packageImg from '../../assets/package.png';
 import truckImg from '../../assets/truck.png';
@@ -50,13 +49,12 @@ export function Enterprise({ readMore = false }) {
         </li>
         <li>Email, chat and phone support</li>
       </ul>
-      <TextLink
-        event="clicked-pricing-mailto"
-        href="mailto:teams@leavemealone.app"
+      <a
+        href="/signup?teams=true"
         className={`beam-me-up-cta beam-me-up-cta-center`}
       >
-        Contact us
-      </TextLink>
+        Get Started
+      </a>
       {readMore ? (
         <div styleName="read-more">
           <p>
@@ -262,6 +260,11 @@ export default () => {
         >
           Try now for FREE
         </TextLink>
+        <p style={{ maxWidth: 400, margin: '50px auto' }}>
+          Part of a team? Learn more about{' '}
+          <TextLink href="/teams">Leave Me Alone for Teams</TextLink> - refer
+          your company and we'll pay you $50.
+        </p>
       </div>
     </SubPageLayout>
   );
