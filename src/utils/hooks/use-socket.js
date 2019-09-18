@@ -50,7 +50,7 @@ function useSocket({
       dismiss('connection-warning');
       return SOCKET_INSTANCE.emit(event, data, cb);
     },
-    [socket]
+    [db.queue, dismiss, setAlert]
   );
   // set up socket on mount
   useEffect(() => {
