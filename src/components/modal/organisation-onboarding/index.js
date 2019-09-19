@@ -67,9 +67,7 @@ export default () => {
       const data = state.organisation;
 
       const response = await createUpdateOrganisation(organisationId, data);
-      console.log(response);
       setOrganisation(response);
-      console.log('success creating org');
       return dispatch({ type: 'next-step' });
     } catch (err) {
       throw err;

@@ -120,6 +120,7 @@ export default globalReducer(
         ...state,
         organisationId: organisation.id,
         organisation: {
+          id: organisation.id,
           name: organisation.name,
           active: organisation.active,
           domain: organisation.domain,
