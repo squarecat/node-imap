@@ -21,11 +21,9 @@ import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../../components/pricing/plan-image';
 import Price from '../../../components/pricing/price';
 import ProfileLayout from '../../../app/profile/layout';
-import WarningModal from '../../../components/modal/warning-modal';
+import TeamSwitchModal from '../../../components/modal/team-switch';
 import cx from 'classnames';
 import format from 'date-fns/format';
-import { navigate } from 'gatsby';
-// import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
@@ -213,60 +211,10 @@ function Packages({ onClickBuy }) {
 
 function Enterprise() {
   const { open: openModal } = useContext(ModalContext);
-  const [loading, setLoading] = useState(false);
 
-  const onClickEnableTeam = useCallback(() => {
-    async function onConfirm() {
-      try {
-        setLoading(true);
-        await enableTeam();
-        setTimeout(() => {
-          window.location.href = '/app/profile/team';
-        }, 2000);
-      } catch (err) {
-        setLoading(false);
-        console.error('error enabling teams', err);
-      }
-    }
-    openModal(
-      <WarningModal
-        onConfirm={onConfirm}
-        autoClose={false}
-        content={
-          <>
-            <p>
-              Leave Me Alone for Teams lets your entire team keep their inbox
-              clean so they can focus on building your business.
-            </p>
-            <p>
-              <PlanImage smaller compact type="enterprise" />
-            </p>
-            <p style={{ textAlign: 'center', fontSize: '16px' }}>
-              <TextImportant>Unlimited unsubscribes</TextImportant> for{' '}
-              <TextImportant>
-                ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
-              </TextImportant>{' '}
-              per seat/month
-            </p>
-            <p>
-              <TextImportant>PLEASE READ:</TextImportant>
-              This account will become the admin account for your team. Your
-              connected accounts will be removed and you will need to activate
-              your team before you can start unsubscribing. Any credits you have
-              now will be preserved.
-            </p>
-            <p>Confirm to set up your new team account.</p>
-          </>
-        }
-        confirmText="Confirm"
-        headerText="Get Started with Leave Me Alone for Teams"
-        loading={loading}
-      />,
-      {
-        dismissable: true
-      }
-    );
-  }, [loading, openModal]);
+  const onClickEnableTeam = useCallback(() => openModal(<TeamSwitchModal />), [
+    openModal
+  ]);
 
   return (
     <div styleName="billing-section">
@@ -280,7 +228,7 @@ function Enterprise() {
           <Price price={ENTERPRISE.pricePerSeat} asterisk /> per seat
         </span>
         <a styleName="billing-btn" onClick={() => onClickEnableTeam()}>
-          Buy Teams
+          Get Started
         </a>
       </div>
       <TextFootnote>* billed monthly.</TextFootnote>
@@ -449,13 +397,6 @@ function removeUserBillingCard() {
   return request('/api/me/billing', {
     method: 'PATCH',
     body: JSON.stringify({ op: 'remove-card' })
-  });
-}
-
-function enableTeam() {
-  return request('/api/me', {
-    method: 'PATCH',
-    body: JSON.stringify({ op: 'enable-team' })
   });
 }
 
