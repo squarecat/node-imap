@@ -73,6 +73,14 @@ export default () => {
                 data: { domain }
               });
             }
+            if (!domain) {
+              dispatch({
+                type: 'set-organisation',
+                data: {
+                  allowAnyUserWithCompanyEmail: false
+                }
+              })
+            }
           }}
           validation={value =>
             value.includes('http') || value.includes('www')
@@ -87,7 +95,7 @@ export default () => {
       <FormGroup>
         <FormCheckbox
           name="allowAnyUserWithCompanyEmail"
-          disabled={state.loading}
+          disabled={state.loading || !state.organisation.domain}
           onChange={() =>
             dispatch({
               type: 'set-organisation',
