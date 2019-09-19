@@ -183,7 +183,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
           <p>
             Click below to charge your card{' '}
             <TextImportant>${totalAmount}</TextImportant> now and on the{' '}
-            {format(new Date(), 'do')} of each month thereafter.
+            {format(new Date(), 'Do')} of each month thereafter.
           </p>
           <p>
             Your account will be instantly activated. Your subscription will be
