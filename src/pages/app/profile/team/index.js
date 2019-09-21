@@ -11,11 +11,11 @@ import CurrentUsers from '../../../../app/profile/team/current-users';
 import { EditIcon } from '../../../../components/icons';
 import ErrorBoundary from '../../../../components/error-boundary';
 import { FormCheckbox } from '../../../../components/form';
-import Invite from '../../../../app/profile/team/invite';
 import { ModalContext } from '../../../../providers/modal-provider';
 import OrganisationBillingModal from '../../../../components/modal/organisation-billing';
 import PendingInvites from '../../../../app/profile/team/invited-users';
 import ProfileLayout from '../../../../app/profile/layout';
+import TeamInvite from '../../../../components/form/team-invite';
 import WarningModal from '../../../../components/modal/warning-modal';
 import cx from 'classnames';
 import formatDate from 'date-fns/format';
@@ -50,84 +50,86 @@ function Organisation() {
     [organisationId, organisationLastUpdated]
   );
 
-  const content = useMemo(
-    () => {
-      if (loading) return <span>Loading...</span>;
-      if (!organisationId || !organisation) {
-        return (
-          <div styleName="organisation-section">
-            <span>You are not part of a team.</span>
-            </div>
-          )
-      }
-
-      const {
-        name,
-        active,
-        adminUserEmail,
-        invitedUsers = [],
-        billing
-      } = organisation;
-
+  const content = useMemo(() => {
+    if (loading) return <span>Loading...</span>;
+    if (!organisationId || !organisation) {
       return (
-        <>
-          <div styleName="organisation-section">
-            <h2>{name}</h2>
-            <p>
+        <div styleName="organisation-section">
+          <span>You are not part of a team.</span>
+        </div>
+      );
+    }
+
+    const {
+      name,
+      active,
+      adminUserEmail,
+      invitedUsers = [],
+      billing
+    } = organisation;
+
+    return (
+      <>
+        <div styleName="organisation-section">
+          <h2>{name}</h2>
+          <p>
+            <span
+              styleName={cx('org-status', {
+                active,
+                inactive: !active
+              })}
+            >
+              {active ? 'Active' : 'Inactive'}
+            </span>
+            {organisationAdmin ? (
               <span
                 styleName={cx('org-status', {
-                  active,
-                  inactive: !active
+                  active: true
                 })}
               >
-                {active ? 'Active' : 'Inactive'}
+                Admin
               </span>
-              {organisationAdmin ? (
-                <span
-                  styleName={cx('org-status', {
-                    active: true
-                  })}
-                >
-                  Admin
-                </span>
-              ) : null}
-            </p>
-            <OrganisationStatus
-              admin={organisationAdmin}
-              active={active}
-              billing={billing}
-            />
-          </div>
-
-          {organisationAdmin ? <Billing organisation={organisation} /> : null}
-
-          <CurrentUsers
-            organisationId={organisationId}
-            adminUserEmail={adminUserEmail}
-            organisationAdmin={organisationAdmin}
+            ) : null}
+          </p>
+          <OrganisationStatus
+            admin={organisationAdmin}
+            active={active}
+            billing={billing}
           />
+        </div>
 
-          {organisationAdmin ? (
-            <Settings loading={loading} organisation={organisation} />
-          ) : null}
+        {organisationAdmin ? <Billing organisation={organisation} /> : null}
 
-          {organisationAdmin ? <Invite organisation={organisation} /> : null}
+        <CurrentUsers
+          organisationId={organisationId}
+          adminUserEmail={adminUserEmail}
+          organisationAdmin={organisationAdmin}
+        />
 
-          {organisationAdmin ? (
-            <PendingInvites
-              organisationId={organisationId}
-              invitedUsers={invitedUsers}
-            />
-          ) : null}
+        {organisationAdmin ? (
+          <Settings loading={loading} organisation={organisation} />
+        ) : null}
 
-          {organisationAdmin ? (
-            <BillingHistory organisationId={organisationId} />
-          ) : null}
-        </>
-      );
-    },
-    [loading, organisation, organisationAdmin, organisationId]
-  );
+        {organisationAdmin ? (
+          <div styleName="organisation-section">
+            <h2>Invite Users</h2>
+            <TeamInvite organisation={organisation} />
+          </div>
+        ) : null}
+
+        {organisationAdmin ? (
+          <PendingInvites
+            organisationId={organisationId}
+            invitedUsers={invitedUsers}
+          />
+        ) : null}
+
+        {organisationAdmin ? (
+          <BillingHistory organisationId={organisationId} />
+        ) : null}
+      </>
+    );
+  }, [loading, organisation, organisationAdmin, organisationId]);
   return content;
 }
 
@@ -219,22 +221,21 @@ const Settings = React.memo(({ loading, organisation }) => {
   return (
     <div styleName="organisation-section">
       <h2>Invite Settings</h2>
-      {state.allowAnyUserWithCompanyEmail ? (
+      {state.allowAnyUserWithCompanyEmail && organisation.domain ? (
         <>
           <p>
-            Any user with the{' '}
-            <TextImportant>{organisation.domain}</TextImportant> domain can
-            join. This means they can sign-in and connect accounts with a{' '}
-            {organisation.domain} email address.
+            Anyone with the <TextImportant>{organisation.domain}</TextImportant>{' '}
+            domain can automatically join your team. This means they can sign-in
+            and connect accounts with a {organisation.domain} email address.
           </p>
           <p>
-            You can also invite users outside of your company using the form
+            You can invite anyone without your domain to join by using the form
             below.
           </p>
         </>
       ) : (
         <p>
-          Only users you invite with the form below can join your team. This
+          Only people you invite with the form below can join your team. This
           means{' '}
           <TextImportant>only email addresses on the invite list</TextImportant>{' '}
           can sign-in and be connected.
@@ -246,8 +247,9 @@ const Settings = React.memo(({ loading, organisation }) => {
         checked={state.allowAnyUserWithCompanyEmail}
         label={
           <span>
-            Allow any user with the{' '}
-            <TextImportant>{organisation.domain}</TextImportant> domain to join
+            Allow anyone with an email address at the{' '}
+            <TextImportant>{organisation.domain}</TextImportant> domain to
+            automatically join your team
           </span>
         }
       />
@@ -255,8 +257,8 @@ const Settings = React.memo(({ loading, organisation }) => {
 
       <p styleName="footnote">
         Only connected email provider accounts are counted as billed seats. When
-        someone logs in with or connects a Google/Microsoft account your plan
-        will be updated and prorated.
+        someone signs-in with or connects a Google, Microsoft, iCloud or any
+        other email account your plan will be updated and prorated.
       </p>
     </div>
   );
@@ -276,20 +278,17 @@ function Billing({ organisation }) {
     delinquent
   } = billing;
 
-  const onClickAddBilling = useCallback(
-    () => {
-      const addPaymentMethodSuccess = () => {
-        setOrganisationLastUpdated(Date.now());
-      };
-      openModal(
-        <OrganisationBillingModal
-          organisation={organisation}
-          onSuccess={addPaymentMethodSuccess}
-        />
-      );
-    },
-    [openModal, organisation, setOrganisationLastUpdated]
-  );
+  const onClickAddBilling = useCallback(() => {
+    const addPaymentMethodSuccess = () => {
+      setOrganisationLastUpdated(Date.now());
+    };
+    openModal(
+      <OrganisationBillingModal
+        organisation={organisation}
+        onSuccess={addPaymentMethodSuccess}
+      />
+    );
+  }, [openModal, organisation, setOrganisationLastUpdated]);
 
   let subscriptionStatusText;
   if (subscriptionStatus === 'incomplete') {
@@ -419,82 +418,77 @@ function BillingInformation({ organisationId, currentUsers }) {
     [openModal]
   );
 
-  const content = useMemo(
-    () => {
-      if (loading) return <span>Loading...</span>;
+  const content = useMemo(() => {
+    if (loading) return <span>Loading...</span>;
 
-      const {
-        canceled_at,
-        current_period_end,
-        ended_at,
-        quantity,
-        plan = {},
-        upcomingInvoiceAmount,
-        coupon
-      } = subscription;
+    const {
+      canceled_at,
+      current_period_end,
+      ended_at,
+      quantity,
+      plan = {},
+      upcomingInvoiceAmount,
+      coupon
+    } = subscription;
 
-      const periodEnd = formatDate(current_period_end * 1000, dateFormat);
+    const periodEnd = formatDate(current_period_end * 1000, dateFormat);
 
-      const discountText = getDiscountText(coupon);
+    const discountText = getDiscountText(coupon);
 
-      if (canceled_at) {
-        return (
-          <>
-            <p>Cancelled on: {formatDate(canceled_at * 1000, dateFormat)}</p>
-            {ended_at ? (
-              <p>Ended on: {formatDate(ended_at * 1000, dateFormat)}</p>
-            ) : (
-              <p>
-                Ends on: {formatDate(current_period_end * 1000, dateFormat)}
-              </p>
-            )}
-          </>
-        );
-      } else {
-        return (
-          <>
+    if (canceled_at) {
+      return (
+        <>
+          <p>Cancelled on: {formatDate(canceled_at * 1000, dateFormat)}</p>
+          {ended_at ? (
+            <p>Ended on: {formatDate(ended_at * 1000, dateFormat)}</p>
+          ) : (
+            <p>Ends on: {formatDate(current_period_end * 1000, dateFormat)}</p>
+          )}
+        </>
+      );
+    } else {
+      return (
+        <>
+          <p>
+            You are signed up for the <TextImportant>Teams plan</TextImportant>{' '}
+            billed at{' '}
+            <TextImportant>
+              ${(plan.amount / 100).toFixed(2)} per seat
+            </TextImportant>
+            .
+          </p>
+          <p>
+            You are currently using{' '}
+            <TextImportant>
+              {`${quantity} seat${quantity === 1 ? '' : 's'}`}
+            </TextImportant>
+            .
+          </p>
+          {discountText ? (
             <p>
-              You are signed up for the{' '}
-              <TextImportant>Teams plan</TextImportant> billed at{' '}
-              <TextImportant>
-                ${(plan.amount / 100).toFixed(2)} per seat
-              </TextImportant>
-              .
+              Your discount of <TextImportant>{discountText}</TextImportant> is
+              applied!
             </p>
-            <p>
-              You are currently using{' '}
-              <TextImportant>
-                {`${quantity} seat${quantity === 1 ? '' : 's'}`}
-              </TextImportant>
-              .
-            </p>
-            {discountText ? (
-              <p>
-                Your discount of <TextImportant>{discountText}</TextImportant>{' '}
-                is applied!
-              </p>
-            ) : null}
-            <p>
-              You'll next be billed{' '}
-              <TextImportant>
-                ${(upcomingInvoiceAmount / 100).toFixed(2)}
-              </TextImportant>{' '}
-              on the <TextImportant>{periodEnd}</TextImportant>.
-            </p>
-            <Button
-              basic
-              compact
-              stretch
-              onClick={() => onClickCancel({ periodEnd })}
-            >
-              Cancel Subscription
-            </Button>
-          </>
-        );
-      }
-    },
-    [loading, subscription]
-  );
+          ) : null}
+          <p>
+            You'll next be billed{' '}
+            <TextImportant>
+              ${(upcomingInvoiceAmount / 100).toFixed(2)}
+            </TextImportant>{' '}
+            on the <TextImportant>{periodEnd}</TextImportant>.
+          </p>
+          <Button
+            basic
+            compact
+            stretch
+            onClick={() => onClickCancel({ periodEnd })}
+          >
+            Cancel Subscription
+          </Button>
+        </>
+      );
+    }
+  }, [loading, subscription]);
 
   return <div>{content}</div>;
 }

@@ -18,6 +18,7 @@ import { StripeStateContext } from '../../../providers/stripe-provider';
 import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
+import format from 'date-fns/format';
 
 function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -116,86 +117,113 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     }
   }
 
-  const initialPayment = ENTERPRISE.pricePerSeat * currentUsers.length;
-  const infoText = useMemo(
-    () => {
-      if (subscriptionId) {
-        return (
-          <p>
-            Update your payment method, your billing cycle will not be affected.
-          </p>
-        );
-      }
+  const seats = currentUsers.length;
 
-      const lead = (
+  const {
+    totalAmount,
+    planPrice,
+    initialPlanPrice,
+    discountAmount
+  } = useMemo(() => {
+    const initialPayment = ENTERPRISE.pricePerSeat * seats;
+    let totalAmount = initialPayment / 100;
+    let planPrice = ENTERPRISE.pricePerSeat / 100;
+    let discountAmount = 0;
+    if (discountPercentOff) {
+      totalAmount = totalAmount - totalAmount * (discountPercentOff / 100);
+      planPrice = planPrice - planPrice * (discountPercentOff / 100);
+      discountAmount = initialPayment * (discountPercentOff / 100);
+    }
+    return {
+      totalAmount: totalAmount.toFixed(2),
+      planPrice: planPrice.toFixed(2),
+      initialPlanPrice: (ENTERPRISE.pricePerSeat / 100).toFixed(2),
+      discountAmount
+    };
+  }, [discountPercentOff, seats]);
+
+  const lead = (
+    <>
+      <p>
+        You are signing up for the <TextImportant>Teams plan</TextImportant>{' '}
+        billed monthly at{' '}
+        <TextImportant>
+          {discountAmount ? (
+            <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>
+              ${initialPlanPrice}
+            </span>
+          ) : null}{' '}
+          ${planPrice} per seat
+        </TextImportant>
+        . Awesome!
+      </p>
+    </>
+  );
+
+  const paymentText = useMemo(() => {
+    if (subscriptionId) {
+      return (
         <p>
-          You are signing up for the <TextImportant>Teams plan</TextImportant>{' '}
-          billed monthly at{' '}
-          <TextImportant>
-            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
-          </TextImportant>
-          .
+          Click below to update your card details, your subscription amount and
+          billing cycle will not be affected.
         </p>
       );
-      if (currentUsers.length) {
-        return (
-          <>
-            {lead}
-            <p>
-              You currently have{' '}
-              <TextImportant>
-                {`${currentUsers.length} member${
-                  currentUsers.length === 1 ? '' : 's'
-                }`}
-              </TextImportant>
-              . You will be billed{' '}
-              <TextImportant>
-                ${(initialPayment / 100).toFixed(2)} monthly starting today
-              </TextImportant>
-              . Your plan will be updated automatically and prorated when
-              members join or are removed.
-            </p>
-            {discountPercentOff ? (
-              <p>
-                Your discount of{' '}
-                <TextImportant>{discountPercentOff}% off</TextImportant> has
-                been applied!
-              </p>
-            ) : null}
-          </>
-        );
-      }
+    }
+
+    if (seats) {
       return (
         <>
-          {lead}
           <p>
-            You currently have no members. Your card will be{' '}
-            <TextImportant>authorised but not charged</TextImportant>. Your plan
-            will be updated automatically and prorated when members join or are
-            removed.
+            You are currently using{' '}
+            <TextImportant>
+              {`${seats} seat${seats === 1 ? '' : 's'}`}
+            </TextImportant>
+            .
+          </p>
+          <p>
+            Click below to charge your card{' '}
+            <TextImportant>${totalAmount}</TextImportant> now and on the{' '}
+            {format(new Date(), 'Do')} of each month thereafter.
+          </p>
+          <p>
+            Your account will be instantly activated. Your subscription will be
+            updated automatically and prorated when people join or leave your
+            team. You can cancel at any time.
           </p>
         </>
       );
-    },
-    [currentUsers.length, discountPercentOff, initialPayment, subscriptionId]
-  );
+    }
+    return (
+      <>
+        <p>
+          You are currently using no seats. Until people join your team you will
+          won't be billed.
+        </p>
+        <p>
+          Click below to{' '}
+          <TextImportant>
+            add your card details. You will not be charged
+          </TextImportant>{' '}
+          anything.
+        </p>
+        <p>
+          Your account will be instantly activated. Your subscription will be
+          updated automatically and prorated when people join or leave your
+          team. You can cancel at any time.
+        </p>
+      </>
+    );
+  }, [totalAmount, seats, subscriptionId]);
 
-  const saveText = useMemo(
-    () => {
-      if (subscriptionId) {
-        return `Update Payment Method`;
-      }
-      if (currentUsers.length) {
-        let amount = initialPayment / 100;
-        if (discountPercentOff) {
-          amount = amount - amount * (discountPercentOff / 100);
-        }
-        return `Save and Pay $${amount.toFixed(2)}`;
-      }
-      return `Save Payment Method`;
-    },
-    [currentUsers.length, discountPercentOff, initialPayment, subscriptionId]
-  );
+  const saveText = useMemo(() => {
+    if (subscriptionId) {
+      return `Update my card`;
+    }
+    if (currentUsers.length) {
+      return `Charge my card $${totalAmount}`;
+    }
+    return `Add my card and charge $0`;
+  }, [totalAmount, currentUsers.length, subscriptionId]);
 
   return (
     <form
@@ -207,10 +235,14 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     >
       <ModalBody loading={!stripeState.isReady} compact>
         <ModalHeader>
-          {subscriptionId ? 'Update Payment Method' : 'Add Payment Method'}
+          {subscriptionId
+            ? 'Update payment details'
+            : 'Complete your payment details'}
           <ModalCloseIcon />
         </ModalHeader>
-        {infoText}
+
+        {lead}
+
         <PaymentAddressDetails
           addressDetails={state.addressDetails}
           loading={state.loading}
@@ -224,16 +256,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 
         <PaymentCardDetails loading={state.loading} />
 
-        {/* <PaymentCompanyDetails
-              companyDetails={state.companyDetails}
-              loading={state.loading}
-              onChange={(key, value) =>
-                dispatch({
-                  type: 'set-company-detail',
-                  data: { key, value }
-                })
-              }
-            /> */}
+        {paymentText}
 
         {state.error ? (
           <FormGroup>

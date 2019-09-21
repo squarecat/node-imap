@@ -41,6 +41,7 @@ export default () => {
           <TextImportant>{unsubCount}</TextImportant> emails.
         </p>
       </div>
+
       <DangerZone
         organisationAdmin={organisationAdmin}
         organisation={organisation}
@@ -143,6 +144,8 @@ function DangerZone({ organisationAdmin, organisation }) {
   return (
     <>
       <div styleName="section">
+        <h2 styleName="danger-zone-title">Danger Zone</h2>
+
         <h2>Clear Local Data</h2>
         <p>
           We do not store any of your emails, everything is stored in your
@@ -152,9 +155,9 @@ function DangerZone({ organisationAdmin, organisation }) {
         <Button compact basic onClick={() => onClickClear()}>
           Clear Local Emails
         </Button>
-      </div>
 
-      <div styleName="section">
+        <span styleName="separator" />
+
         <h2>Deactivate Account</h2>
         <p styleName="warning">
           We NEVER store the content of your emails in any form.

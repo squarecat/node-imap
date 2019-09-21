@@ -61,16 +61,26 @@ export default globalReducer(
       requiresTwoFactorAuth: bool
     }),
     setMilestoneCompleted: (state, milestone) => {
-      return {
+      let updates = {
         ...state,
         milestones: {
           ...state.milestones,
           [milestone]: true
-        },
-        hasCompletedOnboarding: milestone === 'completedOnboarding',
-        hasCompletedOrganisationOnboarding:
-          milestone === 'completedOnboardingOrganisation'
+        }
       };
+      if (milestone === 'completedOnboarding') {
+        updates = {
+          ...updates,
+          hasCompletedOnboarding: true
+        };
+      }
+      if (milestone === 'completedOnboardingOrganisation') {
+        updates = {
+          ...updates,
+          hasCompletedOrganisationOnboarding: true
+        };
+      }
+      return updates;
     },
     setBilling: (state, billing) => {
       return {
@@ -102,6 +112,21 @@ export default globalReducer(
         billing: {
           ...state.billing,
           credits: state.billing.credits + credits
+        }
+      };
+    },
+    setOrganisation: (state, organisation) => {
+      return {
+        ...state,
+        organisationId: organisation.id,
+        organisation: {
+          id: organisation.id,
+          name: organisation.name,
+          active: organisation.active,
+          domain: organisation.domain,
+          inviteCode: organisation.inviteCode,
+          allowAnyUserWithCompanyEmail:
+            organisation.allowAnyUserWithCompanyEmail
         }
       };
     },

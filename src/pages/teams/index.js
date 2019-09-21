@@ -49,14 +49,13 @@ const TeamsPage = () => {
               The most efficient businesses work without interruption. Take back
               control of your office from unwanted emails.
             </p>
-
-            <TextLink
-              event="clicked-teams-mailto"
-              href="mailto:teams@leavemealone.app"
+            <a
+              event="clicked-teams-cta"
+              href="/signup?teams=true"
               className={`beam-me-up-cta`}
             >
-              Contact Us
-            </TextLink>
+              Get Started
+            </a>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -192,8 +191,9 @@ const TeamsPage = () => {
               <img styleName="gsuite" src={googleLogo} />
             </div>
             <p>
-              <a href="mailto:teams@leavemealone.app">Contact us</a> for more
-              information or to start setting up your account today!
+              <a href="/signup?teams=true">Sign up for teams</a> now, or{' '}
+              <a href="mailto:teams@leavemealone.app">contact us</a> for more
+              information.
             </p>
 
             <Testimonial
@@ -211,14 +211,14 @@ const TeamsPage = () => {
 
         <div styleName="end-stuff">
           <h2>Find out more about Leave Me Alone for your company</h2>
-          <TextLink
-            event="clicked-teams-company-mailto"
-            href="mailto:teams@leavemealone.app"
+          <a
+            event="clicked-teams-company-cta"
+            href="/signup?teams=true"
             className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
             style={{ margin: '50px auto' }}
           >
-            Contact Us
-          </TextLink>
+            Sign Up Now
+          </a>
           <p>
             Part of a charity or non-profit?{' '}
             <TextLink href="mailto:teams@leavemealone.app">

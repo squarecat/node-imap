@@ -21,3 +21,20 @@
 svg + .email {
   margin-left: 5px;
 }
+
+.danger-zone-title {
+  background: $color-red;
+  color: white;
+  margin: -20px -20px 30px -20px;
+  padding: 10px 20px;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+  border-bottom: 1px solid $color-border-red;
+}
+.separator {
+  display: block;
+  margin: 50px 0;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  width: 100%;
+}

@@ -5,11 +5,11 @@ import React from 'react';
 
 const steps = [
   {
-    value: 'welcome',
+    value: 'setup',
     position: '1',
     nextLabel: (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 10 }}>Next</span>
+        <span style={{ marginRight: 10 }}>Create Team</span>
         <ArrowIcon direction="right" />
       </span>
     )
@@ -50,10 +50,17 @@ const totalSteps = steps.length;
 
 export const initialState = {
   step: steps[0].value,
-  isLoading: false,
+  loading: false,
+  error: false,
+  canProceed: true,
   nextLabel: steps[0].nextLabel,
   positionLabel: `1 of ${totalSteps}`,
-  invitedUsersCount: 0
+  invitedUsersCount: 0,
+  organisation: {
+    name: '',
+    domain: '',
+    allowAnyUserWithCompanyEmail: false
+  }
 };
 
 export default (state, action) => {
@@ -76,10 +83,37 @@ export default (state, action) => {
         positionLabel: `${position} of ${totalSteps}`
       };
     }
-    case 'add-invited-user': {
+    case 'can-proceed': {
       return {
         ...state,
-        invitedUsersCount: state.invitedUsersCount + 1
+        canProceed: action.data
+      };
+    }
+    case 'add-invited-users': {
+      return {
+        ...state,
+        invitedUsersCount: state.invitedUsersCount + action.data
+      };
+    }
+    case 'set-organisation': {
+      return {
+        ...state,
+        organisation: {
+          ...state.organisation,
+          ...action.data
+        }
+      };
+    }
+    case 'set-loading': {
+      return {
+        ...state,
+        loading: action.data
+      };
+    }
+    case 'set-error': {
+      return {
+        ...state,
+        error: action.data
       };
     }
     default:

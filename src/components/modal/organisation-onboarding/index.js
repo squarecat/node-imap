@@ -1,9 +1,15 @@
-import { InviteForm, InviteLink } from '../../form/invite';
 import { ModalBody, ModalHeader, ModalWizardActions } from '..';
 import OrgOnboardingReducer, { initialState } from './reducer';
-import React, { useMemo, useReducer } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer
+} from 'react';
 
 import ConnectAccounts from '../onboarding/connect-accounts';
+import OrganisationSetup from './setup';
 import { TextImportant } from '../../text';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
@@ -12,21 +18,37 @@ import { navigate } from 'gatsby';
 import request from '../../../utils/request';
 import styles from './organisation-onboarding.module.scss';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
+import setupImg from '../../../assets/onboarding/create.png';
+import inviteImg from '../../../assets/onboarding/party.png';
+import accountsImg from '../../../assets/onboarding/workflow.png';
+import doneImg from '../../../assets/onboarding/checklist.png';
 import useUser from '../../../utils/hooks/use-user';
+import TeamInvite from '../../form/team-invite';
+
+export const OnboardingContext = createContext({ state: initialState });
 
 export default () => {
-  const [state, dispatch] = useReducer(OrgOnboardingReducer, initialState);
   const [
-    { accounts, isBeta, organisationId, organisation },
-    { setMilestoneCompleted }
+    { accounts, isBeta, email, organisationId, organisation },
+    { setMilestoneCompleted, setOrganisation }
   ] = useUser(u => ({
     accounts: u.accounts,
     isBeta: u.isBeta,
+    email: u.email,
     organisationId: u.organisationId,
     organisation: u.organisation
   }));
 
-  const onComplete = async () => {
+  const [state, dispatch] = useReducer(OrgOnboardingReducer, {
+    ...initialState,
+    organisation: {
+      ...initialState.organisation,
+      adminUserEmail: email,
+      ...organisation
+    }
+  });
+
+  const onComplete = useCallback(async () => {
     try {
       setMilestoneCompleted('completedOnboardingOrganisation');
       await updateMilestone('completedOnboardingOrganisation');
@@ -35,38 +57,75 @@ export default () => {
     } catch (err) {
       console.error('failed to complete onboarding team');
     }
-  };
+  }, [setMilestoneCompleted]);
+
+  const onSetupTeam = useCallback(async () => {
+    try {
+      dispatch({ type: 'set-loading', data: true });
+      dispatch({ type: 'set-error', data: false });
+
+      const data = state.organisation;
+
+      const response = await createUpdateOrganisation(organisationId, data);
+      setOrganisation(response);
+      return dispatch({ type: 'next-step' });
+    } catch (err) {
+      throw err;
+    } finally {
+      dispatch({ type: 'set-loading', data: false });
+    }
+  }, [organisationId, setOrganisation, state.organisation]);
+
+  useEffect(() => {
+    if (state.step === 'setup') {
+      dispatch({ type: 'can-proceed', data: !!state.organisation.name });
+    } else {
+      dispatch({ type: 'can-proceed', data: true });
+    }
+  }, [state.step, state.organisation.name]);
+
+  const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
   return (
-    <div styleName="org-onboarding-modal">
-      <ModalBody>
-        <Content
-          step={state.step}
-          positionLabel={state.positionLabel}
-          isBeta={isBeta}
-          accounts={accounts}
-          organisationId={organisationId}
-          organisation={organisation}
-          invitedUsersCount={state.invitedUsersCount}
-          onInvite={email => {
-            dispatch({ type: 'add-invited-user', data: email });
+    <OnboardingContext.Provider value={value}>
+      <div styleName="org-onboarding-modal">
+        <ModalBody>
+          <Content
+            step={state.step}
+            positionLabel={state.positionLabel}
+            isBeta={isBeta}
+            accounts={accounts}
+            organisationId={organisationId}
+            organisation={organisation}
+            invitedUsersCount={state.invitedUsersCount}
+            onInvite={() => {
+              dispatch({ type: 'add-invited-users', data: 1 });
+            }}
+          />
+        </ModalBody>
+        <ModalWizardActions
+          nextLabel={state.nextLabel}
+          onNext={() => {
+            if (state.step === 'setup') {
+              return onSetupTeam();
+            }
+            if (state.step === 'finish') {
+              return onComplete();
+            }
+            return dispatch({ type: 'next-step' });
           }}
+          onBack={() => dispatch({ type: 'prev-step' })}
+          isLoading={state.loading}
+          showBack={state.step !== 'setup'}
+          isNextDisabled={!state.canProceed}
         />
-      </ModalBody>
-      <ModalWizardActions
-        nextLabel={state.nextLabel}
-        onNext={() => {
-          if (state.step === 'finish') {
-            return onComplete();
-          }
-          return dispatch({ type: 'next-step' });
-        }}
-        onBack={() => dispatch({ type: 'prev-step' })}
-        isLoading={state.isLoading}
-        showBack={state.step !== 'welcome'}
-      />
-      <img styleName="preload" src={unsubscribeSpamImage} />
-    </div>
+        <img styleName="preload" src={unsubscribeSpamImage} />
+        <img styleName="preload" src={setupImg} />
+        <img styleName="preload" src={inviteImg} />
+        <img styleName="preload" src={accountsImg} />
+        <img styleName="preload" src={doneImg} />
+      </div>
+    </OnboardingContext.Provider>
   );
 };
 
@@ -80,152 +139,140 @@ function Content({
   onInvite,
   invitedUsersCount
 }) {
-  const content = useMemo(
-    () => {
-      if (step === 'welcome') {
-        return (
+  const content = useMemo(() => {
+    if (step === 'setup') {
+      return (
+        <>
+          <ModalHeader>
+            Let's set up your Team account
+            <span styleName="onboarding-position">{positionLabel}</span>
+          </ModalHeader>
+          <div styleName="onboarding-img">
+            <img alt="paper and pen image" src={setupImg} />
+          </div>
+          <OrganisationSetup />
+        </>
+      );
+    }
+    if (step === 'invite') {
+      return (
+        <>
+          <ModalHeader>
+            Invite your team members{' '}
+            <span styleName="onboarding-position">{positionLabel}</span>
+          </ModalHeader>
+          <div styleName="onboarding-img">
+            <img alt="cartoon man and woman dancing" src={inviteImg} />
+          </div>
+          <TeamInvite
+            organisation={organisation}
+            onSuccess={onInvite}
+            multiple={false}
+          />
+          {invitedUsersCount ? (
+            <p>
+              You have invited{' '}
+              <TextImportant>
+                {invitedUsersCount}{' '}
+                {invitedUsersCount > 1 ? 'people' : 'person'}
+              </TextImportant>{' '}
+              to join {organisation.name}!
+            </p>
+          ) : null}
+          <p>If you want to invite more people you can do this later.</p>
+        </>
+      );
+    }
+    if (step === 'accounts') {
+      return (
+        <>
+          <ModalHeader>
+            Connect your account{' '}
+            <span styleName="onboarding-position">{positionLabel}</span>
+          </ModalHeader>
+          <div styleName="onboarding-img">
+            <img alt="flowchart workflow image" src={accountsImg} />
+          </div>
+          <ConnectAccounts accounts={accounts} onboarding enterprise />
+          {accounts.length ? (
+            <p style={{ marginTop: '2em' }}>
+              If you have more accounts then you can connect them later.
+            </p>
+          ) : null}
+        </>
+      );
+    }
+    if (step === 'finish') {
+      let finishContent;
+      if (isBeta) {
+        finishContent = (
           <>
-            <ModalHeader>
-              Welcome to Leave Me Alone for Teams!{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
             <p>
-              <strong>Leave Me Alone</strong> makes it quick and easy to
-              unsubscribe from unwanted emails so that your team can focus on
-              building your business.
+              To say thanks for joining us during our beta period we have
+              activated your account for free!
             </p>
-            <p>
-              Members of the {organisation.name} team can unsubscribe from as
-              many emails as they like.
-            </p>
-            <img
-              styleName="onboarding-example-img"
-              src={unsubscribeSpamImage}
-              alt="an example subscription email in Leave Me Alone with a toggle to unsubscribe"
-            />
-            <p>Let's get started!</p>
+            <p>We'll now take you to your team management page.</p>
           </>
         );
       }
-      if (step === 'invite') {
-        return (
+      if (organisation.active) {
+        finishContent = (
           <>
-            <ModalHeader>
-              Invite your team members{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            {organisation.allowAnyUserWithCompanyEmail ? (
-              <>
-                <p>
-                  Any user with your company domain can join. Instead of
-                  inviting them all, you can share this link:
-                </p>
-                <InviteLink code={organisation.inviteCode} />
-                <span styleName="separator" />
-              </>
-            ) : null}
             <p>
-              You can invite anyone inside or outside your company by email
-              address:
+              Your team has been activated! Members can start unsubscribing and
+              saving time right away.
             </p>
-            <InviteForm organisationId={organisationId} onSuccess={onInvite} />
-            {invitedUsersCount ? (
-              <p>
-                You have invited{' '}
-                <TextImportant>
-                  {invitedUsersCount}{' '}
-                  {invitedUsersCount > 1 ? 'people' : 'person'}
-                </TextImportant>{' '}
-                to join {organisation.name}!
-              </p>
-            ) : null}
-            <p>If you want to invite more people you can do so later.</p>
+            <p>We'll now take you to your team management page.</p>
           </>
         );
-      }
-      if (step === 'accounts') {
-        return (
+      } else {
+        finishContent = (
           <>
-            <ModalHeader>
-              Connect your account{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
-            <ConnectAccounts accounts={accounts} onboarding enterprise />
-            {accounts.length ? (
-              <p style={{ marginTop: '2em' }}>
-                If you have more accounts then you can connect them later.
-              </p>
-            ) : null}
-          </>
-        );
-      }
-      if (step === 'finish') {
-        let finishContent;
-        if (isBeta) {
-          finishContent = (
-            <>
-              <p>
-                To say thanks for joining us during our beta period we have
-                activated your team for free!
-              </p>
-              <p>We'll now take you to your team management page.</p>
-            </>
-          );
-        }
-        if (organisation.active) {
-          finishContent = (
-            <>
-              <p>
-                Your team has been activated! Members can start unsubscribing
-                and saving time right away.
-              </p>
-              <p>We'll now take you to your team management page.</p>
-            </>
-          );
-        } else {
-          finishContent = (
-            <>
-              <p>
-                Before your team at {organisation.name} can start unsubscribing
-                you need to <TextImportant>activate your team</TextImportant> by
-                adding a payment method.
-              </p>
-              <p>We'll now take you to your team management page to do this.</p>
-            </>
-          );
-        }
-        return (
-          <>
-            <ModalHeader>
-              Activate your team{' '}
-              <span styleName="onboarding-position">{positionLabel}</span>
-            </ModalHeader>
             <p>
-              <span
-                styleName={cx('org-status', {
-                  active: organisation.active,
-                  inactive: !organisation.active
-                })}
-              >
-                {organisation.active ? 'Active' : 'Inactive'}
-              </span>
+              This means that you need to{' '}
+              <TextImportant>
+                activate your team by adding a payment method
+              </TextImportant>{' '}
+              before members can start unsubscribing and saving time.
             </p>
-            {finishContent}
+            <p>Let's go to your team management page to do this.</p>
           </>
         );
       }
-    },
-    [
-      step,
-      accounts,
-      onInvite,
-      isBeta,
-      positionLabel,
-      organisation,
-      organisationId,
-      invitedUsersCount
-    ]
-  );
+      return (
+        <>
+          <ModalHeader>
+            You are finished!{' '}
+            <span styleName="onboarding-position">{positionLabel}</span>
+          </ModalHeader>
+          <div styleName="onboarding-img">
+            <img alt="clipboard with all items checked image" src={doneImg} />
+          </div>
+          <p>
+            {organisation.name} is currently{' '}
+            <span
+              styleName={cx('org-status', {
+                active: organisation.active,
+                inactive: !organisation.active
+              })}
+            >
+              {organisation.active ? 'Active' : 'Inactive'}
+            </span>
+          </p>
+          {finishContent}
+        </>
+      );
+    }
+  }, [
+    step,
+    accounts,
+    onInvite,
+    isBeta,
+    positionLabel,
+    organisation,
+    organisationId,
+    invitedUsersCount
+  ]);
 
   return (
     <Transition appear timeout={200} mountOnEnter unmountOnExit in={true}>
@@ -250,5 +297,18 @@ export async function updateMilestone(milestone) {
     method: 'PATCH',
 
     body: JSON.stringify({ op: 'update', value: milestone })
+  });
+}
+
+async function createUpdateOrganisation(id, data) {
+  if (!id) {
+    return request(`/api/organisation`, {
+      method: 'POST',
+      body: JSON.stringify({ organisation: data })
+    });
+  }
+  return request(`/api/organisation/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ op: 'update', value: data })
   });
 }

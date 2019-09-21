@@ -2,6 +2,7 @@ import * as PaymentService from '../services/payments';
 
 import {
   bulkInviteUsersToOrganisation,
+  createOrganisation,
   getOrganisationById,
   getOrganisationPayments,
   getOrganisationSubscription,
@@ -179,6 +180,26 @@ export default app => {
         new RestError('failed to billing patch organisation', {
           organisationId: id,
           op,
+          cause: err
+        })
+      );
+    }
+  });
+
+  app.post('/api/organisation', auth, async (req, res, next) => {
+    const { id } = req.params;
+    const { organisation } = req.body;
+
+    try {
+      const { adminUserEmail } = organisation;
+      const createdOrg = await createOrganisation(adminUserEmail, organisation);
+      res.send(createdOrg);
+    } catch (err) {
+      logger.error('user-rest: error creating org');
+      logger.error(err);
+      next(
+        new RestError('failed to create organisation', {
+          userId: id,
           cause: err
         })
       );

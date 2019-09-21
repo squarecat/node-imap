@@ -45,7 +45,8 @@ export const Strategy = new LocalStrategy(
       if (!user) {
         return done(null, false);
       }
-      return done(null, user);
+      const updatedUser = await createOrUpdateUserFromPassword(user);
+      return done(null, updatedUser);
     } catch (err) {
       return done(err);
     }
@@ -88,7 +89,7 @@ export default app => {
       passthrough: true
     }),
     async (req, res) => {
-      const { cookies } = req;
+      const { cookies, query } = req;
       const { body: userData, err: validationError } = res.locals;
       const { referrer, invite } = cookies;
 
@@ -104,7 +105,8 @@ export default app => {
           email: username,
           password,
           referralCode: referrer,
-          inviteCode: invite
+          inviteCode: invite,
+          enableTeam: !!query.teams
         });
         req.logIn(user, err => {
           if (err) return errorHandler(res, err);

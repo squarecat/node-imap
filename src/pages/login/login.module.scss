@@ -113,6 +113,8 @@ $active-bg-color: #ffc7c1;
 .title {
   font-size: 1.62671rem;
   line-height: 1.1;
+  max-width: 420px;
+  margin: 0 auto 1.45rem auto;
 }
 
 .buttons {
@@ -254,6 +256,13 @@ $active-bg-color: #ffc7c1;
 }
 
 .switch-link {
+  font-size: 14px;
+  margin-bottom: 10px;
+
+  span {
+    display: block;
+  }
+
   @media (max-width: 400px) {
     display: inline-block;
   }

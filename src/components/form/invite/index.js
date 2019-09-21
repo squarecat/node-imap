@@ -19,15 +19,14 @@ export const InviteLink = React.memo(function InviteLink({ code }) {
       <InlineFormInput
         smaller
         compact
+        nointeract
         placeholder=""
         name="code"
         value={`${window.location.protocol}//${window.location.host}/i/${code}`}
         onChange={() => {}}
       >
         <CopyButton
-          string={`${window.location.protocol}//${
-            window.location.host
-          }/i/${code}`}
+          string={`${window.location.protocol}//${window.location.host}/i/${code}`}
           fill
           basic
           smaller
@@ -50,41 +49,38 @@ export const InviteForm = React.memo(function InviteForm({
   const [email, setEmail] = useState('');
   const [sendingInvite, setSendingInvite] = useState(false);
 
-  const onClickInvite = useCallback(
-    async () => {
-      try {
-        setSendingInvite(true);
-        await sendOrganisationInvite(organisationId, [email]);
-        setOrganisationLastUpdated(Date.now());
-        setEmail('');
-        alert.actions.setAlert({
-          id: 'org-invite-success',
-          level: 'success',
-          message: `Successfully invited ${email}!`,
-          isDismissable: true,
-          autoDismiss: true
-        });
-        onSuccess(email);
-      } catch (err) {
-        alert.actions.setAlert({
-          id: 'org-invite-error',
-          level: 'error',
-          message: `Error inviting ${email}. Please try again or send us a message.`,
-          isDismissable: true,
-          autoDismiss: true
-        });
-      } finally {
-        setSendingInvite(false);
-      }
-    },
-    [
-      alert.actions,
-      organisationId,
-      setOrganisationLastUpdated,
-      email,
-      onSuccess
-    ]
-  );
+  const onClickInvite = useCallback(async () => {
+    try {
+      setSendingInvite(true);
+      await sendOrganisationInvite(organisationId, [email]);
+      setOrganisationLastUpdated(Date.now());
+      setEmail('');
+      alert.actions.setAlert({
+        id: 'org-invite-success',
+        level: 'success',
+        message: `Successfully invited ${email}!`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+      onSuccess(email);
+    } catch (err) {
+      alert.actions.setAlert({
+        id: 'org-invite-error',
+        level: 'error',
+        message: `Error inviting ${email}. Please try again or send us a message.`,
+        isDismissable: true,
+        autoDismiss: true
+      });
+    } finally {
+      setSendingInvite(false);
+    }
+  }, [
+    alert.actions,
+    organisationId,
+    setOrganisationLastUpdated,
+    email,
+    onSuccess
+  ]);
 
   const onChange = useCallback(({ currentTarget }) => {
     setEmail(currentTarget.value);
@@ -130,7 +126,8 @@ export const InviteForm = React.memo(function InviteForm({
 });
 
 export const InviteFormMultiple = React.memo(function InviteForm({
-  organisationId
+  organisationId,
+  onSuccess = () => {}
 }) {
   const alert = useContext(AlertContext);
   const { open: openModal } = useContext(ModalContext);
@@ -139,15 +136,12 @@ export const InviteFormMultiple = React.memo(function InviteForm({
   const [text, setText] = useState('');
   const [sendingInvites, setSendingInvites] = useState(false);
 
-  const onClickInvite = useCallback(
-    () => {
-      const emails = parseEmails(text);
-      openModal(
-        <InviteModal emails={emails} onConfirm={() => onInvite(emails)} />
-      );
-    },
-    [text, openModal, onInvite]
-  );
+  const onClickInvite = useCallback(() => {
+    const emails = parseEmails(text);
+    openModal(
+      <InviteModal emails={emails} onConfirm={() => onInvite(emails)} />
+    );
+  }, [text, openModal, onInvite]);
 
   const onInvite = useCallback(
     async emails => {
@@ -165,6 +159,7 @@ export const InviteFormMultiple = React.memo(function InviteForm({
           isDismissable: true,
           autoDismiss: true
         });
+        onSuccess(emails);
       } catch (err) {
         alert.actions.setAlert({
           id: 'org-invite-error',

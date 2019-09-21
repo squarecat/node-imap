@@ -34,7 +34,8 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyEmail,
-  verifyTotpSecret
+  verifyTotpSecret,
+  enableOrganisation
 } from '../dao/user';
 import {
   addConnectedAccountToStats,
@@ -248,7 +249,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
     referralCode,
     inviteCode,
     profileImg,
-    displayName
+    displayName,
+    enableTeam = false
   } = userData;
   try {
     let user = await getUser(id);
@@ -258,6 +260,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
 
     if (!user) {
       logger.debug(`user-service: creating new user`);
+      if (enableTeam)
+        logger.debug(`user-service: user signed up for teams, enabling`);
       // new user account, check if they should be added to an org
       organisation = await getOrganisationForUserEmail(inviteCode, email);
       if (organisation) {
@@ -280,6 +284,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
           profileImg,
           referredBy,
           organisationId: organisation ? organisation.id : null,
+          // user can only be a new team user if they arent joining one
+          organisationAdmin: enableTeam && !organisation,
           loginProvider: provider,
           token: v4()
         },
@@ -322,7 +328,8 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
 
     // signing up or logging in with a provider counts as connecting
     // an account so we add this account to the organisation to be billed
-    if (organisation) {
+    // only do this if they havent just signed up to teams
+    if (organisation && !enableTeam) {
       await addCreatedOrUpdatedUserToOrganisation({
         user,
         organisation
@@ -397,21 +404,6 @@ async function addUserAccountToOrganisation({
       name: organisationName,
       email: account.email
     });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function updateUserOrganisation(
-  userId,
-  { organisationId, admin = false }
-) {
-  try {
-    const user = await updateUser(userId, {
-      organisationId: organisationId,
-      organisationAdmin: admin
-    });
-    return user;
   } catch (err) {
     throw err;
   }
@@ -577,12 +569,15 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     referralCode,
     inviteCode,
     displayName,
-    password
+    password,
+    enableTeam = false
   } = userData;
   let user;
   try {
     let organisation;
     if (!id) {
+      logger.debug(`user-service: creating new user from password`);
+      if (enableTeam) logger.debug(`user-service: user signed up for teams, enabling`);
       // new user account, check if they should be added to an org
       organisation = await getOrganisationForUserEmail(inviteCode, email);
       const referredBy = await getReferredByData(referralCode);
@@ -592,6 +587,8 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         password,
         referredBy,
         organisationId: organisation ? organisation.id : null,
+        // user can only be a new team user if they arent joining one
+        organisationAdmin: enableTeam && !organisation,
         loginProvider: 'password',
         token: v4(),
         accounts: []
@@ -603,6 +600,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
       addUpdateNewsletterSubscriber(email);
       // sendVerifyEmailMail({ toAddress: email, code: user.verificationCode });
     } else {
+      user = await getUserById(id);
       let updates = {
         name: displayName
       };
@@ -628,7 +626,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     // if user has joined an organisation add the joined activity
     // but do not add the email to the org current users
     // as only connected accounts count towards billed seats
-    if (organisation) {
+    if (organisation && !enableTeam) {
       addActivityForUser(user.id, 'joinedOrganisation', {
         id: organisation.id,
         name: organisation.name,
@@ -1499,4 +1497,8 @@ export async function resetUserPassword({ email, password, resetCode }) {
 
 export function verifyUserEmail(id) {
   return verifyEmail(id);
+}
+
+export function enableOrganisationForUser(id) {
+  return enableOrganisation(id);
 }

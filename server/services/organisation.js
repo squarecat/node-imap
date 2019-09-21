@@ -1,3 +1,4 @@
+import { addActivityForUser, removeUserAccount } from './user';
 import {
   addInvitedUser,
   addUser,
@@ -29,8 +30,6 @@ import {
   updateSubscription
 } from '../utils/stripe';
 
-import _isArray from 'lodash.isarray';
-import { addActivityForUser } from './user';
 import { listPaymentsForOrganisation } from './payments';
 import logger from '../utils/logger';
 import { sendOrganisationInviteMail } from '../utils/emails/transactional';
@@ -64,6 +63,7 @@ export async function createOrganisation(email, data) {
       ...data
     });
 
+
     const { id, name } = organisation;
 
     addOrganisationToStats();
@@ -74,6 +74,19 @@ export async function createOrganisation(email, data) {
       organisationAdmin: true,
       'milestones.completedOnboardingOrganisation': 0
     });
+
+    // remove all the accounts which are not the primary account
+    logger.debug(
+      `organisation-service: removing user ${user.id} connected accounts`
+    );
+    await Promise.all(
+      user.accounts.map(a => {
+        if (a.email === user.email) {
+          return true;
+        }
+        return removeUserAccount(user.id, a.email);
+      })
+    );
 
     // add the joined and added acount activities
     addActivityForUser(user.id, 'joinedOrganisation', {
@@ -276,9 +289,7 @@ export async function updateOrganisationSubscription({
     }
 
     logger.debug(
-      `organisation-service: updating organisation ${id} subscription to ${
-        currentUsers.length
-      } seats`
+      `organisation-service: updating organisation ${id} subscription to ${currentUsers.length} seats`
     );
     const seats = currentUsers.length;
     await updateSubscription({
@@ -374,9 +385,7 @@ export function getOrganisationByInvitedEmailOrValidDomain(email) {
 
 export function canUserJoinOrganisation({ email, organisation }) {
   logger.debug(
-    `organisation-service: checking if user can user join the organisation ${
-      organisation.id
-    }`
+    `organisation-service: checking if user can user join the organisation ${organisation.id}`
   );
   const {
     allowAnyUserWithCompanyEmail,
@@ -389,9 +398,7 @@ export function canUserJoinOrganisation({ email, organisation }) {
   const existingMember = currentUsers.includes(email);
   if (existingMember) {
     logger.info(
-      `organisation-service: user cannot join - is already a member of organisation ${
-        organisation.id
-      }`
+      `organisation-service: user cannot join - is already a member of organisation ${organisation.id}`
     );
     return {
       allowed: false,
@@ -416,18 +423,14 @@ export function canUserJoinOrganisation({ email, organisation }) {
     const userEmailDomain = email.split('@')[1];
     if (userEmailDomain === domain) {
       logger.info(
-        `organisation-service: user can join - email has matching domain ${domain} with allow users with company email ${
-          organisation.id
-        }`
+        `organisation-service: user can join - email has matching domain ${domain} with allow users with company email ${organisation.id}`
       );
       return {
         allowed: true
       };
     } else {
       logger.info(
-        `organisation-service: user cannot join - email domain ${userEmailDomain} does not match organisation ${
-          organisation.id
-        }`
+        `organisation-service: user cannot join - email domain ${userEmailDomain} does not match organisation ${organisation.id}`
       );
       return {
         allowed: false,

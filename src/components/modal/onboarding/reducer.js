@@ -41,7 +41,7 @@ export const steps = [
     position: '3',
     nextLabel: () => (
       <span styleName="onboarding-btn">
-        <span style={{ marginRight: 8 }}>Next</span>
+        <span style={{ marginRight: 8 }}>Awesome</span>
         <ArrowIcon direction="right" />
       </span>
     ),

@@ -14,6 +14,7 @@ import Loading from './loading';
 import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
 import OrganisationOnboardingModal from './modal/organisation-onboarding';
+import JoinedTeamModal from './modal/onboarding/joined-team';
 import { fetchLoggedInUser } from '../utils/auth';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../utils/hooks/use-user';
@@ -25,16 +26,13 @@ function Auth({ children }) {
   );
   const [, { load }] = useUser(s => s.loaded);
 
-  useEffect(
-    () => {
-      if (!userLoading && !user) {
-        window.location.pathname = '/login';
-      } else if (!userLoading && user) {
-        load(user);
-      }
-    },
-    [load, user, userLoading]
-  );
+  useEffect(() => {
+    if (!userLoading && !user) {
+      window.location.pathname = '/login';
+    } else if (!userLoading && user) {
+      load(user);
+    }
+  }, [load, user, userLoading]);
 
   if (error) {
     return <span>{error}</span>;
@@ -54,124 +52,142 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       isUserLoaded,
       hasCompletedOnboarding,
       organisationAdmin,
+      organisationId,
       hasCompletedOrganisationOnboarding,
       accounts
     }
   ] = useUser(s => ({
     id: s.id,
     isUserLoaded: s.loaded,
-    hasCompletedOnboarding: s.hasCompletedOnboarding,
     organisationAdmin: s.organisationAdmin,
+    organisationId: s.organisationId,
+    hasCompletedOnboarding: s.hasCompletedOnboarding,
     hasCompletedOrganisationOnboarding: s.hasCompletedOrganisationOnboarding,
     accounts: s.accounts
   }));
+
   const [isLoaded, setLoaded] = useState(isUserLoaded);
   const { open: openModal } = useContext(ModalContext);
 
-  const checkDb = useCallback(
-    async () => {
-      const prevId = await db.prefs.get('userId');
-      if (!prevId || prevId.value !== id) {
-        await db.clear();
-        db.prefs.put({ key: 'userId', value: id });
-      }
-      setLoaded(true);
-    },
-    [db, id]
-  );
+  const checkDb = useCallback(async () => {
+    const prevId = await db.prefs.get('userId');
+    if (!prevId || prevId.value !== id) {
+      await db.clear();
+      db.prefs.put({ key: 'userId', value: id });
+    }
+    setLoaded(true);
+  }, [db, id]);
 
-  useEffect(
-    () => {
-      if (isBrowserSupported === false) {
-        openModal(
-          <AlertModal>
-            <p>
-              We're sorry but due to the way we show your email data we don't
-              currently support the browser you're using.
-            </p>
-            <p>
-              Leave Me Alone should work in the latest versions of Edge,
-              Firefox, Chrome, Safari, or other modern browsers.
-            </p>
-            <p>
-              Think you are seeing this message by mistake? Please{' '}
-              <a onClick={() => window.intergram.open()}>let us know</a>.
-            </p>
-          </AlertModal>,
-          {
-            dismissable: false,
-            opaque: true
-          }
-        );
-      }
+  const {
+    teamAdminOnboarding,
+    teamMemberOnboarding,
+    userOnboarding
+  } = useMemo(() => {
+    // admin and not seen team onboarding
+    const teamAdminOnboarding =
+      isUserLoaded &&
+      (!!organisationAdmin && !hasCompletedOrganisationOnboarding);
 
-      if (
-        isUserLoaded &&
-        (organisationAdmin && !hasCompletedOrganisationOnboarding)
-      ) {
-        openModal(<OrganisationOnboardingModal />, {
+    // has seen regular onboarding, has recently joined a team, not seen team onboarding
+    const teamMemberOnboarding =
+      isUserLoaded &&
+      (!!hasCompletedOnboarding &&
+        !organisationAdmin &&
+        !!organisationId &&
+        !hasCompletedOrganisationOnboarding);
+
+    // team admins dont see normal onboarding
+    const userOnboarding =
+      isUserLoaded && (!organisationAdmin && !hasCompletedOnboarding);
+
+    return { teamAdminOnboarding, teamMemberOnboarding, userOnboarding };
+  }, [
+    isUserLoaded,
+    hasCompletedOnboarding,
+    hasCompletedOrganisationOnboarding,
+    organisationAdmin,
+    organisationId
+  ]);
+
+  useEffect(() => {
+    if (isBrowserSupported === false) {
+      openModal(
+        <AlertModal>
+          <p>
+            We're sorry but due to the way we show your email data we don't
+            currently support the browser you're using.
+          </p>
+          <p>
+            Leave Me Alone should work in the latest versions of Edge, Firefox,
+            Chrome, Safari, or other modern browsers.
+          </p>
+          <p>
+            Think you are seeing this message by mistake? Please{' '}
+            <a onClick={() => window.intergram.open()}>let us know</a>.
+          </p>
+        </AlertModal>,
+        {
           dismissable: false,
           opaque: true
-        });
-      } else if (
-        isUserLoaded &&
-        (!organisationAdmin && !hasCompletedOnboarding)
-      ) {
-        openModal(<OnboardingModal />, {
-          dismissable: false,
-          opaque: true
-        });
-      }
-      if (isUserLoaded && !hasCompletedOnboarding && accounts.length) {
-        // clear old data from v1
-        console.log('removing old v1 data');
-        Object.keys(localStorage).forEach(key => {
-          if (/^leavemealone/.test(key)) {
-            localStorage.removeItem(key);
-          }
-          localStorage.removeItem('user');
-          localStorage.removeItem('userId');
-        });
-      }
-      if (isUserLoaded && isBrowserSupported) {
-        // check db is this users data
-        checkDb();
-      }
-    },
-    [
-      isUserLoaded,
-      hasCompletedOnboarding,
-      organisationAdmin,
-      hasCompletedOrganisationOnboarding,
-      openModal,
-      checkDb,
-      isBrowserSupported,
-      accounts
-    ]
-  );
+        }
+      );
+    }
 
-  const content = useMemo(
-    () => {
-      if (
-        isLoaded &&
-        (hasCompletedOnboarding ||
-          (organisationAdmin && hasCompletedOrganisationOnboarding)) &&
-        isBrowserSupported
-      ) {
-        return children;
-      } else {
-        return null;
-      }
-    },
-    [
-      children,
-      hasCompletedOnboarding,
-      organisationAdmin,
-      hasCompletedOrganisationOnboarding,
-      isBrowserSupported,
-      isLoaded
-    ]
-  );
+    if (teamAdminOnboarding) {
+      // user is an organisation admin and needs the team onboarding
+      openModal(<OrganisationOnboardingModal />, {
+        dismissable: false,
+        opaque: true
+      });
+    } else if (userOnboarding) {
+      openModal(<OnboardingModal />, {
+        dismissable: false,
+        opaque: true
+      });
+    } else if (teamMemberOnboarding) {
+      openModal(<JoinedTeamModal />, {
+        dismissable: false,
+        opaque: true
+      });
+    }
+
+    if (isUserLoaded && !hasCompletedOnboarding && accounts.length) {
+      // clear old data from v1
+      console.log('removing old v1 data');
+      Object.keys(localStorage).forEach(key => {
+        if (/^leavemealone/.test(key)) {
+          localStorage.removeItem(key);
+        }
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+      });
+    }
+    if (isUserLoaded && isBrowserSupported) {
+      // check db is this users data
+      checkDb();
+    }
+  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, organisationId, hasCompletedOrganisationOnboarding, openModal, checkDb, isBrowserSupported, accounts, teamAdminOnboarding, userOnboarding, teamMemberOnboarding]);
+
+  const content = useMemo(() => {
+    if (!isLoaded) return null;
+    if (
+      !teamAdminOnboarding &&
+      !teamMemberOnboarding &&
+      !userOnboarding &&
+      isBrowserSupported
+    ) {
+      return children;
+    } else {
+      return null;
+    }
+  }, [
+    isLoaded,
+    teamAdminOnboarding,
+    teamMemberOnboarding,
+    userOnboarding,
+    isBrowserSupported,
+    children
+  ]);
 
   return (
     <div styleName={`auth-loading ${!isLoaded ? '' : 'loaded'}`}>

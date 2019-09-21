@@ -29,9 +29,10 @@ export const Strategy = new GoogleStrategy(
   },
   async function(req, accessToken, refreshToken, params, profile, done) {
     try {
-      const { cookies } = req;
+      const { cookies, query } = req;
       const { referrer, invite } = cookies;
       const { expires_in } = params;
+      const { team } = query;
 
       const parsedProfile = parseProfile(profile);
 
@@ -49,7 +50,8 @@ export const Strategy = new GoogleStrategy(
         {
           ...parsedProfile,
           referralCode: referrer,
-          inviteCode: invite
+          inviteCode: invite,
+          enableTeam: team
         },
         {
           refreshToken,
@@ -160,7 +162,8 @@ export default app => {
     passport.authenticate('google-login', {
       scope: google.scopes,
       prompt: 'select_account',
-      accessType: 'offline'
+      accessType: 'offline',
+      hello: 'world'
     })
   );
 
@@ -176,11 +179,13 @@ export default app => {
   app.get('/auth/google/callback*', (req, res, next) => {
     logger.debug('google-auth: /auth/google/callback');
     const params = new URLSearchParams(req.params[0]);
+
     const query = {
       code: params.get('code'),
       scope: params.get('scope'),
       session_state: params.get('session_state'),
-      prompt: params.get('prompt')
+      prompt: params.get('prompt'),
+      team: !!req.query.teams
     };
     req.query = query;
 
