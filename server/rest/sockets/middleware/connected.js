@@ -1,8 +1,5 @@
 import config from 'getconfig';
-import { del } from 'idb-keyval';
-import { flush } from 'pm2';
 import logger from '../../../utils/logger';
-import pm2 from '@pm2/io';
 import { promisify } from 'util';
 import redis from 'redis';
 let socketio;
