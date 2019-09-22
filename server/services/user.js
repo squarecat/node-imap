@@ -10,6 +10,7 @@ import {
   authenticate,
   createUser,
   createUserFromPassword,
+  enableOrganisation,
   getLoginProvider,
   getTotpSecret,
   getUser,
@@ -34,8 +35,7 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyEmail,
-  verifyTotpSecret,
-  enableOrganisation
+  verifyTotpSecret
 } from '../dao/user';
 import {
   addConnectedAccountToStats,
@@ -346,14 +346,12 @@ async function createOrUpdateUser(userData = {}, keys, provider) {
   }
 }
 
-async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
+async function removeNonPrimaryConnectedAccounts(user) {
   try {
-    logger.debug(
-      `user-service: adding created or updated user ${user.id} to organisation ${organisation.id}`
-    );
-
     // remove all the accounts which are not the primary account
-    logger.debug(`user-service: removing user ${user.id} connected accounts`);
+    logger.debug(
+      `user-service: removing user ${user.id} connected accounts that are not primary`
+    );
     await Promise.all(
       user.accounts.map(a => {
         if (a.email === user.email) {
@@ -362,6 +360,25 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
         return removeUserAccount(user.id, a.email);
       })
     );
+  } catch (err) {
+    logger.error(
+      `user-service: error removing user connected accounts ${user.id}`
+    );
+    logger.error(err);
+    throw err;
+  }
+}
+
+async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
+  try {
+    logger.debug(
+      `user-service: adding created or updated user ${user.id} to organisation ${organisation.id}`
+    );
+
+    // need to remove all accounts which are connected (and not primary)
+    // because adding them again adds them to the organisation and they will
+    // be billed for it
+    await removeNonPrimaryConnectedAccounts(user);
 
     // add the email to the organisations users to be billed
     await addUserToOrganisation(organisation.id, {
@@ -577,7 +594,8 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     let organisation;
     if (!id) {
       logger.debug(`user-service: creating new user from password`);
-      if (enableTeam) logger.debug(`user-service: user signed up for teams, enabling`);
+      if (enableTeam)
+        logger.debug(`user-service: user signed up for teams, enabling`);
       // new user account, check if they should be added to an org
       organisation = await getOrganisationForUserEmail(inviteCode, email);
       const referredBy = await getReferredByData(referralCode);
@@ -1499,6 +1517,13 @@ export function verifyUserEmail(id) {
   return verifyEmail(id);
 }
 
-export function enableOrganisationForUser(id) {
-  return enableOrganisation(id);
+export async function enableOrganisationForUser(id) {
+  try {
+    logger.debug(`user-service: enabling organsiation for user ${id}`);
+    const user = await getUserById(id);
+    await removeNonPrimaryConnectedAccounts(user);
+    return enableOrganisation(id);
+  } catch (err) {
+    throw err;
+  }
 }
