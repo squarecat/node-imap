@@ -29,5 +29,45 @@ module.exports.getRecommendation = function(num) {
 };
 
 module.exports.ENTERPRISE = {
+  basePrice: 600,
   pricePerSeat: 600
+};
+
+module.exports.getTeamsPaymentAmounts = function(
+  seats = 0,
+  discountPercentOff
+) {
+  const initialBasePrice = module.exports.ENTERPRISE.basePrice;
+  const initialPlanPrice = module.exports.ENTERPRISE.pricePerSeat;
+
+  const initialPaymentAmount = initialBasePrice + initialPlanPrice * seats;
+
+  let totalAmount = initialPaymentAmount;
+  let basePrice = initialBasePrice;
+  let planPrice = initialPlanPrice;
+  let discountAmount = 0;
+
+  if (discountPercentOff) {
+    totalAmount = totalAmount - totalAmount * (discountPercentOff / 100);
+    basePrice = basePrice - basePrice * (discountPercentOff / 100);
+    planPrice = planPrice - planPrice * (discountPercentOff / 100);
+    discountAmount = initialPaymentAmount * (discountPercentOff / 100);
+  }
+
+  return {
+    totalAmount,
+    planPrice,
+    basePrice,
+    initialPlanPrice,
+    initialBasePrice,
+    discountAmount
+  };
+};
+
+module.exports.getViewPrice = function(priceInCents) {
+  const priceInDollars = priceInCents / 100;
+  if (priceInDollars % 1 === 0) {
+    return priceInDollars;
+  }
+  return priceInDollars.toFixed(2);
 };

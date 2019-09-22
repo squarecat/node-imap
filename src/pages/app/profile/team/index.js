@@ -1,5 +1,6 @@
 import './organisation.module.scss';
 
+import { ENTERPRISE, getViewPrice } from '../../../../../shared/prices';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { TextImportant, TextLink } from '../../../../components/text';
 
@@ -435,6 +436,37 @@ function BillingInformation({ organisationId, currentUsers }) {
 
     const discountText = getDiscountText(coupon);
 
+    const planInfo = (
+      <>
+        <p>
+          You are currently using{' '}
+          <TextImportant>
+            {`${quantity} seat${quantity === 1 ? '' : 's'}`}
+          </TextImportant>
+          .
+        </p>
+        {discountText ? (
+          <p>
+            Your discount of <TextImportant>{discountText}</TextImportant> is
+            applied!
+          </p>
+        ) : null}
+        <p>
+          You'll next be billed{' '}
+          <TextImportant>${getViewPrice(upcomingInvoiceAmount)}</TextImportant>{' '}
+          on the <TextImportant>{periodEnd}</TextImportant>.
+        </p>
+        <Button
+          basic
+          compact
+          stretch
+          onClick={() => onClickCancel({ periodEnd })}
+        >
+          Cancel Subscription
+        </Button>
+      </>
+    );
+
     if (canceled_at) {
       return (
         <>
@@ -446,45 +478,31 @@ function BillingInformation({ organisationId, currentUsers }) {
           )}
         </>
       );
-    } else {
+    } else if (plan.id === '1') {
+      // legacy
       return (
         <>
           <p>
             You are signed up for the <TextImportant>Teams plan</TextImportant>{' '}
             billed at{' '}
+            <TextImportant>${getViewPrice(plan.amount)} per seat</TextImportant>
+            .
+          </p>
+          {planInfo}
+        </>
+      );
+    } else {
+      return (
+        <>
+          <p>
+            You are signed up for the <TextImportant>Teams plan</TextImportant>{' '}
+            billed monthly at ${getViewPrice(ENTERPRISE.basePrice)} +{' '}
             <TextImportant>
-              ${(plan.amount / 100).toFixed(2)} per seat
+              ${getViewPrice(ENTERPRISE.pricePerSeat)} per seat
             </TextImportant>
             .
           </p>
-          <p>
-            You are currently using{' '}
-            <TextImportant>
-              {`${quantity} seat${quantity === 1 ? '' : 's'}`}
-            </TextImportant>
-            .
-          </p>
-          {discountText ? (
-            <p>
-              Your discount of <TextImportant>{discountText}</TextImportant> is
-              applied!
-            </p>
-          ) : null}
-          <p>
-            You'll next be billed{' '}
-            <TextImportant>
-              ${(upcomingInvoiceAmount / 100).toFixed(2)}
-            </TextImportant>{' '}
-            on the <TextImportant>{periodEnd}</TextImportant>.
-          </p>
-          <Button
-            basic
-            compact
-            stretch
-            onClick={() => onClickCancel({ periodEnd })}
-          >
-            Cancel Subscription
-          </Button>
+          {planInfo}
         </>
       );
     }
@@ -541,7 +559,7 @@ function getDiscountText(coupon) {
   if (percent_off) {
     amountText = `${percent_off}% off`;
   } else if (amount_off) {
-    amountText = `$${(amount_off / 100).toFixed(2)} off`;
+    amountText = `$${getViewPrice(amount_off)} off`;
   }
   if (duration === 'forever') {
     return amountText;

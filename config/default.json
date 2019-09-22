@@ -68,7 +68,7 @@
     "secretKey": "$STRIPE_SK",
     "vatKey": "$VAT_KEY",
     "plans": {
-      "enterprise": "1"
+      "perSeatPlanId": "2"
     }
   },
   "urls": {

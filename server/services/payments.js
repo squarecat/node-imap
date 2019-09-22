@@ -37,7 +37,6 @@ import {
 import { PaymentError } from '../utils/errors';
 import { getPackage } from '../../shared/prices';
 import logger from '../utils/logger';
-import { payments } from 'getconfig';
 import { updateUser } from '../dao/user';
 
 const DONATE_AMOUNT = 100;
@@ -133,21 +132,19 @@ export async function listPaymentsForOrganisation(organisationId) {
     if (!customerId) {
       return [];
     }
-
     const response = await listInvoices(customerId);
-
     return {
       payments: response.data.map(invoice => {
-        const lineItem = invoice.lines.data[0];
         return {
           date: invoice.date,
           paid: invoice.paid,
           attempted: invoice.attempted,
           invoice_pdf: invoice.invoice_pdf,
-          description: lineItem.description,
-          price: lineItem.amount,
-          period_start: lineItem.period.start,
-          period_end: lineItem.period.end
+          // we now have 2 lines so it doesnt work anymore
+          description: '',
+          price: invoice.amount_paid,
+          period_start: invoice.period_start,
+          period_end: invoice.period_end
         };
       }),
       has_more: response.has_more
@@ -168,9 +165,7 @@ export async function createPaymentWithExistingCardForUser({
 }) {
   try {
     logger.info(
-      `payments-service: creating payment with existing card for user ${
-        user.id
-      }`
+      `payments-service: creating payment with existing card for user ${user.id}`
     );
 
     let intent;
@@ -188,9 +183,7 @@ export async function createPaymentWithExistingCardForUser({
 
     if (finalPrice < 50) {
       logger.debug(
-        `payments-service: payment is less than 50, returning success ${
-          user.id
-        }`
+        `payments-service: payment is less than 50, returning success ${user.id}`
       );
       intent = {
         status: 'succeeded',
@@ -452,9 +445,7 @@ export async function createPaymentForUser(
       // return success for beta users or amounts under 0.50c
       if (finalPrice < 50) {
         logger.debug(
-          `payments-service: payment is less than 50, returning success ${
-            user.id
-          }`
+          `payments-service: payment is less than 50, returning success ${user.id}`
         );
         intent = {
           status: 'succeeded',
@@ -590,7 +581,6 @@ export async function createSubscriptionForOrganisation(
     logger.debug(
       `payments-service: creating subscription for customer ${customerId}`
     );
-    const planId = payments.plans.enterprise;
     const seats = organisation.currentUsers.length;
     const {
       id: subscriptionId,
@@ -598,7 +588,6 @@ export async function createSubscriptionForOrganisation(
       latest_invoice
     } = await createSubscription({
       customerId,
-      planId,
       quantity: seats,
       coupon: discountCoupon
     });
@@ -895,9 +884,21 @@ export async function updateBillingForOrganisation(
 export async function getSubscriptionStats() {
   try {
     const subscriptions = await listSubscriptions({ status: 'active' });
+
     const amount = subscriptions.data.reduce((out, sub) => {
-      const { plan, quantity, discount } = sub;
-      const total = plan.amount * quantity;
+      const { plan = {}, quantity, discount } = sub;
+      let total;
+      if (!plan) return 0;
+      if (plan.id === '1') {
+        // legacy
+        total = plan.amount * quantity;
+        const discountedPrice = getSubscriptionDiscount(total, discount);
+        return out + discountedPrice;
+      } else {
+        const baseAmount = plan.tiers[0].flat_amount;
+        const perSeatAmount = plan.tiers[0].unit_amount;
+        total = baseAmount + perSeatAmount * quantity;
+      }
       const discountedPrice = getSubscriptionDiscount(total, discount);
       return out + discountedPrice;
     }, 0);

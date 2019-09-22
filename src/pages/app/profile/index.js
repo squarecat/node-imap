@@ -2,15 +2,16 @@ import './profile.module.scss';
 
 import { GoogleIcon, KeyIcon, MicrosoftIcon } from '../../../components/icons';
 import React, { useCallback, useContext, useState } from 'react';
+import { TextImportant, TextLink } from '../../../components/text';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
 import { DatabaseContext } from '../../../providers/db-provider';
 import { ModalContext } from '../../../providers/modal-provider';
 import ProfileLayout from '../../../app/profile/layout';
-import { TextImportant } from '../../../components/text';
 import WarningModal from '../../../components/modal/warning-modal';
 import { getBasicError } from '../../../utils/errors';
+import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
@@ -172,7 +173,8 @@ function DangerZone({ organisationAdmin, organisation }) {
         {organisationAdmin ? (
           <TextImportant>
             You are an admin of the {organisation.name} team. If you wish to
-            deactivate your account please contact us.
+            deactivate your account please{' '}
+            <TextLink onClick={() => openChat()}>contact us</TextLink>.
           </TextImportant>
         ) : (
           <>

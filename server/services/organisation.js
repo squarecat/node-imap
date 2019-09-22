@@ -63,7 +63,6 @@ export async function createOrganisation(email, data) {
       ...data
     });
 
-
     const { id, name } = organisation;
 
     addOrganisationToStats();
@@ -339,6 +338,7 @@ export async function getOrganisationSubscription(id) {
 
     if (!subscriptionId) return null;
 
+    const subscription = await getSubscription({ subscriptionId });
     const {
       canceled_at,
       current_period_start,
@@ -347,20 +347,21 @@ export async function getOrganisationSubscription(id) {
       quantity,
       plan,
       discount
-    } = await getSubscription({ subscriptionId });
+    } = subscription;
 
     const { total } = await getUpcomingInvoice({
       customerId,
       subscriptionId
     });
 
-    return {
+    const subscriptionData = {
       canceled_at,
       current_period_start,
       current_period_end,
       ended_at,
       quantity,
       plan: {
+        id: plan.id,
         amount: plan.amount
       },
       upcomingInvoiceAmount: total > 0 ? total : 0,
@@ -374,6 +375,8 @@ export async function getOrganisationSubscription(id) {
           }
         : null
     };
+
+    return subscriptionData;
   } catch (err) {
     throw err;
   }
