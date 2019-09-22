@@ -1312,7 +1312,12 @@ export async function addActivityForUser(userId, name, data = {}) {
     if (activity.rewardCredits) {
       await incrementUserCredits(userId, activity.rewardCredits);
       addCreditsRewardedToStats(activity.rewardCredits);
-      sendToUser(userId, 'update-credits', activity.rewardCredits);
+      logger.debug(
+        `user-service: sending credits to user, ${activity.type} - ${activity.rewardCredits} credits`
+      );
+      sendToUser(userId, 'update-credits', activity.rewardCredits, {
+        skipBuffer: true
+      });
     }
     if (typeof activity.notificationSeen !== 'undefined') {
       sendToUser(userId, 'notifications', [activity]);
