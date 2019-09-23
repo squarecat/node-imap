@@ -46,7 +46,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       `unsubscriber-service: preparing to unsubscribe decrementing user credits by 1`
     );
     incrementUserCredits(userId, -1);
-    sendToUser(userId, 'update-credits', -1);
+    sendToUser(userId, 'update-credits', -1, { skipBuffer: true });
   }
   const { unsubscribeLink, unsubscribeMailTo } = mail;
   logger.info(`unsubscriber-service: unsubscribe from ${mail.id}`);
@@ -110,7 +110,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
         `unsubscriber-service: estimated success is false, incrementing user credits by 1`
       );
       incrementUserCredits(userId, 1);
-      sendToUser(userId, 'update-credits', 1);
+      sendToUser(userId, 'update-credits', 1, { skipBuffer: true });
     }
     addNewUnsubscribeOccrurence(userId, mail.from);
     addUnsubscribeActivityToUser(userId, {
