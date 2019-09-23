@@ -73,6 +73,9 @@ function dailyRevChart(ctx, stats) {
       },
       tooltips: {
         callbacks: {
+          title: function(items) {
+            return formatDate(items[0].xLabel, 'MMM DD, YYYY');
+          },
           label: function(items) {
             return currency(items.yLabel);
           }
@@ -252,6 +255,16 @@ function simpleLineChart(ctx, stats, stat) {
     options: {
       legend: {
         display: false
+      },
+      tooltips: {
+        callbacks: {
+          title: function(items) {
+            return formatDate(items[0].xLabel, 'MMM DD, YYYY');
+          },
+          label: function(items) {
+            return formatNumber(items.yLabel);
+          }
+        }
       },
       scales: {
         xAxes: [
