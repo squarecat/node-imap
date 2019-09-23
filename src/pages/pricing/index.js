@@ -27,13 +27,19 @@ export function Enterprise({ readMore = false }) {
   return (
     <div styleName="pricing-box">
       <h3 styleName="pricing-title">For Teams</h3>
-      <img styleName="pricing-image" src={truckImg} alt="mail truck image" />
-      <span styleName="pricing-text">Starting at</span>
+      <img
+        styleName="pricing-image teams"
+        src={truckImg}
+        alt="mail truck image"
+      />
+      <span styleName="pricing-text">Monthly</span>
       <p styleName="pricing-price">
         <span styleName="currency">$</span>
-        {(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
+        {(ENTERPRISE.basePrice / 100).toFixed(2)}
       </p>
-      <span styleName="pricing-text">per seat/month</span>
+      <span styleName="pricing-text">
+        + ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
+      </span>
       <div styleName="pricing-separator-container">
         <span styleName="pricing-separator" />
       </div>

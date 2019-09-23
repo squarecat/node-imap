@@ -1,4 +1,3 @@
-import { ENTERPRISE, getTeamsPaymentAmounts } from '../../../../shared/prices';
 import { FormGroup, FormNotification } from '../../form';
 import {
   ModalBody,
@@ -8,6 +7,10 @@ import {
 } from '..';
 import React, { useContext, useMemo, useReducer } from 'react';
 import { TextFootnote, TextImportant } from '../../../components/text';
+import {
+  getTeamsPaymentAmounts,
+  getViewPrice
+} from '../../../../shared/prices';
 import reducer, { initialState } from './reducer';
 
 import { ModalContext } from '../../../providers/modal-provider';
@@ -138,18 +141,18 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         billed monthly at{' '}
         {discountAmount ? (
           <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>
-            ${displayPrice(initialBasePrice)}
+            ${getViewPrice(initialBasePrice)}
           </span>
         ) : null}{' '}
-        ${displayPrice(basePrice)} +{' '}
+        ${getViewPrice(basePrice)} +{' '}
         <TextImportant>
           {' '}
           {discountAmount ? (
             <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>
-              ${displayPrice(initialPlanPrice)}
+              ${getViewPrice(initialPlanPrice)}
             </span>
           ) : null}{' '}
-          ${displayPrice(planPrice)} per seat
+          ${getViewPrice(planPrice)} per seat
         </TextImportant>
         .
       </p>
@@ -177,7 +180,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
         </p>
         <p>
           Click below to charge your card{' '}
-          <TextImportant>${displayPrice(totalAmount)}</TextImportant> now and on
+          <TextImportant>${getViewPrice(totalAmount)}</TextImportant> now and on
           the {format(new Date(), 'Do')} of each month thereafter.
         </p>
         <p>
@@ -193,7 +196,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     if (subscriptionId) {
       return `Update my card`;
     }
-    return `Charge my card $${displayPrice(totalAmount)}`;
+    return `Charge my card $${getViewPrice(totalAmount)}`;
   }, [totalAmount, subscriptionId]);
 
   return (
@@ -252,14 +255,6 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
 }
 
 export default injectStripe(OrganisationBillingForm);
-
-function displayPrice(priceInCents) {
-  const priceInDollars = priceInCents / 100;
-  if (priceInDollars % 1 === 0) {
-    return priceInDollars;
-  }
-  return priceInDollars.toFixed(2);
-}
 
 // eslint-disable-next-line no-unused-vars
 function validateVatNumber(vatNumber) {

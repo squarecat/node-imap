@@ -218,20 +218,27 @@ function Enterprise() {
 
   return (
     <div styleName="billing-section">
-      <h2>Teams</h2>
-      <div styleName="plans-list">
+      <h2>For Teams</h2>
+      <p>Let your entire team unsubscribe!</p>
+      <div styleName="plans-list teams">
         <PlanImage smaller compact type="enterprise" />
         <div>
           <h3 styleName="plan-title">Unlimited unsubscribes</h3>
         </div>
         <span>
-          <Price price={ENTERPRISE.pricePerSeat} asterisk /> per seat
+          <Price price={ENTERPRISE.basePrice} inline>
+            <span styleName="plan-text">/mo</span>
+          </Price>
+          <span styleName="plan-text">
+            {' '}
+            + ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)} per seat
+          </span>
         </span>
         <a styleName="billing-btn" onClick={() => onClickEnableTeam()}>
           Get Started
         </a>
       </div>
-      <TextFootnote>* billed monthly.</TextFootnote>
+      <TextFootnote>Billed monthly. Cancel at any time.</TextFootnote>
     </div>
   );
 }

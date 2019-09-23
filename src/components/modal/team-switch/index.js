@@ -1,17 +1,26 @@
-import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from '..';
-import React, { useCallback, useContext, useState } from 'react';
+import './team-switch.module.scss';
 
-import { ENTERPRISE } from '../../../../shared/prices';
+import { ENTERPRISE, getViewPrice } from '../../../../shared/prices';
+import { ModalBody, ModalCloseIcon, ModalHeader, ModalSaveAction } from '..';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+
 import { FormCheckbox } from '../../form';
 import { ModalContext } from '../../../providers/modal-provider';
 import PlanImage from '../../pricing/plan-image';
 import { TextImportant } from '../../text';
 import request from '../../../utils/request';
+import useMedia from 'react-use/lib/useMedia';
 
 export default () => {
   const { close: closeModal } = useContext(ModalContext);
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const isMobile = useMedia('(max-width: 500px)');
+
+  const btnText = useMemo(() => {
+    if (isMobile) return 'Get Teams!';
+    return 'Yes! Take me to my team account';
+  }, [isMobile]);
 
   const onClickConfirm = useCallback(async () => {
     try {
@@ -40,12 +49,12 @@ export default () => {
         <p>
           <PlanImage smaller compact type="enterprise" />
         </p>
-        <p style={{ textAlign: 'center', fontSize: '16px' }}>
+        <p styleName="info">
           <TextImportant>Unlimited unsubscribes</TextImportant> for{' '}
           <TextImportant>
-            ${(ENTERPRISE.pricePerSeat / 100).toFixed(2)}
+            ${getViewPrice(ENTERPRISE.basePrice)}/mo
           </TextImportant>{' '}
-          per seat/month
+          + ${getViewPrice(ENTERPRISE.pricePerSeat)} per seat
         </p>
         <p>
           <TextImportant>PLEASE READ:</TextImportant>
@@ -67,7 +76,7 @@ export default () => {
       <ModalSaveAction
         onSave={onClickConfirm}
         onCancel={closeModal}
-        saveText="Yes! Take me to my team account"
+        saveText={btnText}
         isLoading={loading}
         isDisabled={!confirmed}
       />
