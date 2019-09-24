@@ -65,7 +65,9 @@ export async function sendToUser(userId, event, data, options = {}) {
           const t = setTimeout(async () => {
             // no ack was received after 2 seconds meaning this probably
             // wasn't sent to the client successfully, so buffer it for later
-            await bufferEvents(userId, [{ event, data }]);
+            if (!options.skipBuffer) {
+              await bufferEvents(userId, [{ event, data }]);
+            }
             timedOut = true;
             res();
           }, 2000);
@@ -82,7 +84,9 @@ export async function sendToUser(userId, event, data, options = {}) {
     return received;
   }
   logger.debug(`[socket]: = ${event} ${userId}`);
-  await bufferEvents(userId, [{ event, data }]);
+  if (!options.skipBuffer) {
+    await bufferEvents(userId, [{ event, data }]);
+  }
   if (options.onSuccess) options.onSuccess();
 }
 
