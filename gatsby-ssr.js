@@ -13,27 +13,19 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
     <script
       key="metomic"
       dangerouslySetInnerHTML={{
-        __html: `!(function(p, r, i, v, a, c, y) {
-      p.Metomic = { apiKey: i };
-      p[i] ||
-        (p[i] = function() {
-          (p[i].q = p[i].q || []).push(arguments);
-        });
-      p[i].l = +new Date();
-      c = r.createElement(v);
-      y = r.getElementsByTagName(v)[0];
-      p.Metomic.script = c;
-      c.src = a;
-      window.addEventListener('scroll', function() { 
-        y.parentNode.insertBefore(c, y);
-      }, { once: true })
-    })(
-      window,
-      document,
-      'prj:464f67cd-4c3b-4c54-bac2-d0513284a9a4',
-      'script',
-      'https://consent-manager.metomic.io/embed.js'
-    );`
+        __html: `!(function(p,r,i,v,a,c,y){
+          p['MetomicObject']=a;
+          p[a]=p[a]||function(){
+        (p[a].q=p[a].q||[]).push(arguments)},p[a].l=1*new Date();c=r.createElement(i),
+        y=r.getElementsByTagName(i)[0];
+        c.async=1;
+        c.src=v+'?d='+r.location.host;
+        window.addEventListener('scroll', function() { 
+          y.parentNode.insertBefore(c,y)
+          Metomic('load', { projectId: 'prj:464f67cd-4c3b-4c54-bac2-d0513284a9a4' });
+        }, { once: true })
+        })(window, document, 'script', 'https://consent-manager.metomic.io/embed.js', 'Metomic');
+        `
       }}
     />,
     <script

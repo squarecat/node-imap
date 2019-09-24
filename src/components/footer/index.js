@@ -89,7 +89,7 @@ export default ({ data }) => (
             </TextLink>
           </li>
           <li>
-            <TextLink href="javascript:window.Metomic.raise()">
+            <TextLink href="javascript:window.Metomic('ConsentManager:show')">
               Manage cookies
             </TextLink>
           </li>

@@ -13,8 +13,8 @@ const GoodbyePage = () => {
       <h1>Goodbye 👋</h1>
       <p>Thank you for using Leave Me Alone!</p>
       <p>
-        We have deleted <TextImportant>ALL OF YOUR DATA</TextImportant> and
-        revoked any API keys attached to your account.
+        We have deleted <TextImportant>ALL OF YOUR DATA</TextImportant> from our
+        systems and revoked any API keys attached to your account.
       </p>
       <p>
         You are not tied to our service in any way. Any mailing lists you
