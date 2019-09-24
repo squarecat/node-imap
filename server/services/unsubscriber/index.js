@@ -22,13 +22,9 @@ export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
 
 export const unsubscribeFromMail = async (userId, mail) => {
-  const {
-    billing,
-    organisationId,
-    organisationActive,
-    unsubscriptions,
-    milestones
-  } = await getUserById(userId);
+  const { billing, organisationId, organisationActive } = await getUserById(
+    userId
+  );
   const credits = billing ? billing.credits : 0;
   const { allowed, reason } = canUnsubscribe({
     credits,
@@ -67,7 +63,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       if (hasImage) {
         saveImageToDisk(userId, mail.id, output.image);
       }
-      addUnsubscriptionToUser(userId, {
+      await addUnsubscriptionToUser(userId, {
         ...mailData,
         hasImage,
         unsubscribeId,
@@ -113,10 +109,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
       sendToUser(userId, 'update-credits', 1, { skipBuffer: true });
     }
     addNewUnsubscribeOccrurence(userId, mail.from);
-    addUnsubscribeActivityToUser(userId, {
-      unsubCount: unsubscriptions.length + 1,
-      milestones
-    });
+    addUnsubscribeActivityToUser(userId);
     return {
       ...mailData,
       id: output.id,
