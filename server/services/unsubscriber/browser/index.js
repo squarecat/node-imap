@@ -55,11 +55,13 @@ export async function unsubscribeWithLink(unsubUrl) {
     }
     return { estimatedSuccess: false, err, image };
   } finally {
-    // clear tab memory
     logger.info('browser: clearing memory');
-    await page.goto('about:blank');
     currentTabsOpen.dec();
-    await page.close();
+    if (page) {
+      // clear tab memory
+      await page.goto('about:blank');
+      await page.close();
+    }
     await closeInstance();
   }
 }
