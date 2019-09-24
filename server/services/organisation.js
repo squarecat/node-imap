@@ -81,15 +81,8 @@ export async function createOrganisation(email, data) {
       email: user.email
     });
 
-    if (user.loginProvider === 'password') {
-      logger.debug(
-        `organisation-service: login provider is password, inviting primary account & adding connected accounts to organisation ${id}`
-      );
-      await addInvitedUser(id, email);
-    }
-
     logger.debug(
-      `organisation-service: adding user accounts to organisation ${id}`
+      `organisation-service: adding ${user.accounts.length} user accounts to organisation ${id}`
     );
     // this could be more efficient since `addUserToOrganisation` gets the org every time
     // but there will be so few accounts connected that it doesn't matter

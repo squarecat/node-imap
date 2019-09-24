@@ -59,8 +59,9 @@ export default () => {
         <p>
           <TextImportant>PLEASE READ:</TextImportant>
           This account will become the admin account for your team. Your
-          connected accounts will be removed and you will need to activate your
-          team by adding a payment method before you can start unsubscribing.
+          connected accounts will be counted as seats and you will need to
+          activate your team by adding a payment method before you can start
+          unsubscribing.
         </p>
         <p>Confirm this change to start setting up your new team account!</p>
         <FormCheckbox
