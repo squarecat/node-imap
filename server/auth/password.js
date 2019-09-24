@@ -41,12 +41,15 @@ export const Strategy = new LocalStrategy(
           return done(error, null);
         }
       }
+      // this returns the master key
       const user = await authenticateUser({ email: username, password });
       if (!user) {
         return done(null, false);
       }
+      // this does updates to the user record but NO master key
       const updatedUser = await createOrUpdateUserFromPassword(user);
-      return done(null, updatedUser);
+      // make sure the master key goes into the session on login
+      return done(null, { ...updatedUser, masterKey: user.masterKey });
     } catch (err) {
       return done(err);
     }
@@ -102,7 +105,8 @@ export default app => {
           });
         }
         const { username, password } = userData;
-
+        // this creates the user and will return with masterKey
+        // to set in the session
         const user = await createOrUpdateUserFromPassword({
           email: username,
           password,
