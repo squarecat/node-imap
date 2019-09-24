@@ -3,7 +3,7 @@ import {
   createOrUpdateUserFromGoogle,
   updateUserAccountToken
 } from '../services/user';
-import { isBetaUser, setRememberMeCookie } from './access';
+import { getReferrerUrlData, isBetaUser, setRememberMeCookie } from './access';
 
 import { AuthError } from '../utils/errors';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20-without-google-plus';
@@ -33,7 +33,7 @@ export const Strategy = new GoogleStrategy(
       const { referrer, invite } = cookies;
       const { expires_in } = params;
       const { team } = query;
-
+      const referralData = getReferrerUrlData(req);
       const parsedProfile = parseProfile(profile);
 
       if (process.env.NODE_ENV === 'beta') {
@@ -49,6 +49,7 @@ export const Strategy = new GoogleStrategy(
       const user = await createOrUpdateUserFromGoogle(
         {
           ...parsedProfile,
+          referrer: referralData,
           referralCode: referrer,
           inviteCode: invite,
           enableTeam: team

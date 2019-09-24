@@ -10,6 +10,7 @@ import {
   authenticate,
   createUser,
   createUserFromPassword,
+  enableOrganisation,
   getLoginProvider,
   getTotpSecret,
   getUser,
@@ -34,8 +35,7 @@ import {
   updateUser,
   updateUserWithAccount,
   verifyEmail,
-  verifyTotpSecret,
-  enableOrganisation
+  verifyTotpSecret
 } from '../dao/user';
 import {
   addConnectedAccountToStats,
@@ -570,6 +570,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     inviteCode,
     displayName,
     password,
+    referrer,
     enableTeam = false
   } = userData;
   let user;
@@ -577,7 +578,8 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     let organisation;
     if (!id) {
       logger.debug(`user-service: creating new user from password`);
-      if (enableTeam) logger.debug(`user-service: user signed up for teams, enabling`);
+      if (enableTeam)
+        logger.debug(`user-service: user signed up for teams, enabling`);
       // new user account, check if they should be added to an org
       organisation = await getOrganisationForUserEmail(inviteCode, email);
       const referredBy = await getReferredByData(referralCode);
@@ -590,6 +592,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         // user can only be a new team user if they arent joining one
         organisationAdmin: enableTeam && !organisation,
         loginProvider: 'password',
+        referrer,
         token: v4(),
         accounts: []
       });

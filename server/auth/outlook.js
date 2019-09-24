@@ -3,7 +3,7 @@ import {
   createOrUpdateUserFromOutlook,
   updateUserAccountToken
 } from '../services/user';
-import { isBetaUser, setRememberMeCookie } from './access';
+import { getReferrerUrlData, isBetaUser, setRememberMeCookie } from './access';
 
 import { AuthError } from '../utils/errors';
 import { Strategy as OutlookStrategy } from 'passport-outlook';
@@ -38,6 +38,7 @@ export const Strategy = new OutlookStrategy(
       const { cookies, query } = req;
       const { referrer, invite } = cookies;
       const { team } = query;
+      const referralData = getReferrerUrlData(req);
 
       const parsedProfile = await parseProfile(profile);
 
@@ -54,6 +55,7 @@ export const Strategy = new OutlookStrategy(
       const user = await createOrUpdateUserFromOutlook(
         {
           ...parsedProfile,
+          referrer: referralData,
           referralCode: referrer,
           inviteCode: invite,
           enableTeam: team
