@@ -426,6 +426,64 @@ export default [
     ),
     twitter: `designbykyle`,
     avatarPath: `image-20.jpg`
+  },
+
+  {
+    name: 'Elise',
+    text: (
+      <span>
+        <TextHighlight>
+          Leave Me Alone saved me so much time decluttering my inbox and freeing
+          myself from useless emails.
+        </TextHighlight>{' '}
+        It's a well-designed tool that actually makes unsubscribing from email
+        lists fun.
+      </span>
+    ),
+    twitter: `elivingston3`,
+    avatarPath: `image-21.jpeg`
+  },
+
+  {
+    name: 'Amie Chen',
+    text: (
+      <span>
+        The attention to detail of Leave Me Alone is awesome! Not only does it
+        work great but it is also well designed. The overall experience is very
+        welcoming and smooth --{' '}
+        <TextHighlight>
+          I especially love the quality score of each email address.
+        </TextHighlight>{' '}
+        This tool made unsubscribing emails so addictive!
+      </span>
+    ),
+    twitter: `hyper_yolo`,
+    avatarPath: `image-23.jpeg`
+  },
+
+  {
+    name: 'Andrea Hernández',
+    text: (
+      <span>
+        Leave Me Alone helped me easily unsubscribe and brought a lot of relief
+        to my life. Email shouldn't feel like you're being harassed and{' '}
+        <TextHighlight>
+          most companies make it hard to unsubscribe. Being able to see it all
+          in one place, just one click away is amazing.
+        </TextHighlight>{' '}
+        More products should be like this and care about your privacy, empower
+        you to take back your inbox, and put the user first!
+      </span>
+    ),
+    twitter: `iiiitsandrea`,
+    avatarPath: `image-22.jpeg`,
+    company: (
+      <img
+        styleName="company-logo"
+        src={`${BASE_IMG_URL}/companies/mood-food.png`}
+        alt="Mood Food Snacks logo"
+      />
+    )
   }
 
   // {
