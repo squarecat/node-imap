@@ -7,7 +7,9 @@ let socketio;
 const client = redis.createClient({
   host: config.buffer.host,
   port: config.buffer.port,
-  prefix: 'lma.clients_'
+  prefix: 'lma.clients_',
+  password: config.buffer.password,
+  username: config.buffer.username
 });
 
 const lpush = promisify(client.lpush).bind(client);
