@@ -13,7 +13,9 @@ const bufferedEvents = io.counter({
 const client = redis.createClient({
   host: config.buffer.host,
   port: config.buffer.port,
-  prefix: 'lma.event.buffer_'
+  prefix: 'lma.event.buffer_',
+  password: config.buffer.password,
+  username: config.buffer.username
 });
 
 const lpush = promisify(client.lpush).bind(client);
