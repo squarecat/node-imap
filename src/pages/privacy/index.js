@@ -18,8 +18,8 @@ export default function Terms() {
       </p>
       <h4>Personal information</h4>
       <p>
-        We only ask for personal information when we truly need it to provide a
-        service to you. We collect it by fair and lawful means, with your
+        We only ask for personal information when we truly need it to provide
+        the service to you. We collect it by fair and lawful means, with your
         knowledge and consent. We also let you know why we’re collecting it and
         how it will be used.
       </p>
@@ -41,10 +41,10 @@ export default function Terms() {
 
       <h4>GDPR</h4>
       <p>
-        If you are an EU resident then you are free at any time to request any
-        personal information we have for you as dictated by the General Data
-        Protection Regulation (GDPR). Under the same regulation, we will also
-        delete any or all of this information at your request.
+        If you are an EU resident then you have the right at any time to request
+        all the personal information we have for you as dictated by the General
+        Data Protection Regulation (GDPR). Under the same regulation, we will
+        also delete any or all of this information at your request.
       </p>
       <p>
         If you are not an EU resident then we will still provide this
@@ -144,7 +144,7 @@ export default function Terms() {
         responsibility or liability for their content.
       </p>
       <p>
-        These images can only seen by you unless you specifically share them
+        These images can only seen by you, unless you specifically share them
         with us for product improvement purposes. If you want us to remove a
         specific image from our systems then let us know.
       </p>
@@ -157,8 +157,8 @@ export default function Terms() {
         was seen in your spam or trash, and if you chose to unsubscribe from it.
       </p>
       <p>
-        We only ever store metadata about your subscription emails. We never see
-        or touch any other emails.
+        We only ever use metadata derived from your subscription emails. We
+        never see or touch any other emails.
       </p>
       <p>
         This data is stored without any personally identifiable information and
@@ -176,28 +176,30 @@ export default function Terms() {
         domains are typically associated with good or bad email subscriptions.
       </p>
       <p>
-        It is currently only used to improve the service, but we retain the
-        right to make this information available in a restricted manner (such as
-        through an API) in the future in order to develop other systems to help
-        people unsubscribe from mailing lists or determine details about their
-        email subscriptions.
+        It is currently only used to improve the service, but we may make this
+        information available in a restricted manner (such as through an API) in
+        the future in order to develop other systems to help people unsubscribe
+        from mailing lists or determine details about their email subscriptions.
       </p>
 
       <h3>Open Startup statistics</h3>
       <p>
-        We collect aggregated information such as the total quantity of emails
+        We collect statistical information such as the total quantity of emails
         we have scanned and the total number of subscriptions that have been
-        unsubscribed from. As well as various financial statistics.
+        unsubscribed from. As well as various financial details.
       </p>
       <p>
-        This data does not contain any personal identifying details and is only
-        stored as counts or percentages.
+        This data does not contain any personal identifying information and is
+        only stored as counts or percentages.
       </p>
       <p>
         We periodically share this information publicly with our followers on
         social media for the sole purpose of documenting and sharing our
-        successes and failures as an "open startup" for the benefit of others
-        interested in these details.
+        successes and failures as an{' '}
+        <a href="https://blog.leavemealone.app/what-does-it-mean-to-be-an-open-startup/">
+          "open startup"
+        </a>
+        , for the benefit of others and to keep ourselves accountable.
       </p>
       <p>
         You can see an example of what we do with this data on our{' '}
@@ -207,18 +209,17 @@ export default function Terms() {
       <hr />
       <p>
         We believe that by following these rules we can keep your data as safe
-        as possible, but if you any suggestions on how we can improve then{' '}
+        as possible, but if you have any suggestions on how we can improve then{' '}
         <a href="https://twitter.com/leavemealoneapp">let us know!</a>
       </p>
 
       <p>
         Your continued use of our website will be regarded as acceptance of our
         practices around privacy and personal information. If you have any
-        questions about how we handle user data and personal information, feel
-        free to contact us.
+        questions about how we handle any of our data, feel free to contact us.
       </p>
       <hr />
-      <p>This policy was last updated on the 24th September 2019.</p>
+      <p>This policy was last updated on the 25th September 2019.</p>
       <h4>Previous versions:</h4>
       <p>
         For accountability we keep the old versions of our privacy policy around
