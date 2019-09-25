@@ -52,9 +52,9 @@ async function unsubscribe(unsubUrl) {
   let page;
   try {
     lastTouched = Date.now();
+    currentTabsOpen.inc();
     page = await getNewPage();
     logger.info('browser: opened new tab');
-    currentTabsOpen.inc();
     tabsOpen = tabsOpen + 1;
     await goToPage(page, unsubUrl);
     image = await takeScreenshot(page);
