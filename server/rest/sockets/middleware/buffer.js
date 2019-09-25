@@ -1,18 +1,15 @@
 import { isBefore, subHours } from 'date-fns';
 
-import config from 'getconfig';
+import { createClient } from '../../../utils/redis';
 import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { promisify } from 'util';
-import redis from 'redis';
 
 const bufferedEvents = io.counter({
   name: 'Buffered events'
 });
 
-const client = redis.createClient({
-  host: config.buffer.host,
-  port: config.buffer.port,
+const client = createClient({
   prefix: 'lma.event.buffer_'
 });
 

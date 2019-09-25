@@ -1,15 +1,21 @@
 import { doBespokeUnsubscribe, doUnsubscribeActions } from './actions';
 
 import config from 'getconfig';
+import { exec } from 'child_process';
 import { goToPage } from './navigate';
 import io from '@pm2/io';
 import { isBespoke } from './checks';
 import logger from '../../../utils/logger';
 import puppeteer from 'puppeteer';
+import { takeScreenshot } from './utils';
+
+const Sentry = require('@sentry/node');
 
 const currentTabsOpen = io.counter({
   name: 'Current Tabs Open'
 });
+let tabsOpen = 0;
+let lastTouched = 0;
 
 const isDebug = process.env.BROWSER_DEBUG;
 let puppeteerConfig;
@@ -28,14 +34,31 @@ if (isDebug) {
 let puppeteerInstance;
 
 export async function unsubscribeWithLink(unsubUrl) {
+  try {
+    return unsubscribe(unsubUrl);
+  } catch (err) {
+    logger.info('browser: critical issue with browser');
+    Sentry.withScope(function(scope) {
+      scope.setTag('tabs-open', tabsOpen);
+      scope.setLevel('error');
+      Sentry.captureException(err);
+    });
+    return { estimatedSuccess: false, err, image: null };
+  }
+}
+
+async function unsubscribe(unsubUrl) {
   let image;
   let page;
   try {
+    lastTouched = Date.now();
     page = await getNewPage();
     logger.info('browser: opened new tab');
     currentTabsOpen.inc();
+    tabsOpen = tabsOpen + 1;
     await goToPage(page, unsubUrl);
     image = await takeScreenshot(page);
+    lastTouched = Date.now();
     let isSuccessful;
     if (isBespoke(unsubUrl)) {
       isSuccessful = await doBespokeUnsubscribe(page, unsubUrl);
@@ -47,165 +70,63 @@ export async function unsubscribeWithLink(unsubUrl) {
   } catch (err) {
     logger.error('browser: error opening page or searching for content');
     logger.error(`${err.name}: ${err.message}`);
+    lastTouched = Date.now();
     try {
+      logger.info('browser: taking screenshot');
       // try one more time to take a screenshot
       image = await takeScreenshot(page);
+      logger.info('browser: taken screenshot');
     } catch (e) {
+      logger.error(e);
       // it failed
     }
     return { estimatedSuccess: false, err, image };
   } finally {
-    // clear tab memory
     logger.info('browser: clearing memory');
-    await page.goto('about:blank');
+    if (page) {
+      // clear tab memory
+      await page.goto('about:blank');
+      await page.close();
+      logger.info('browser: closed page');
+    }
+    lastTouched = Date.now();
     currentTabsOpen.dec();
-    await page.close();
+    tabsOpen = tabsOpen - 1;
     await closeInstance();
   }
 }
 
-// async function goToPage(page, url) {
-//   logger.info(`browser: going to ${url}`);
-//   return new Promise(async (resolve, reject) => {
-//     let reqDone = false;
-//     let handlerDone = false;
-//     const responseHandler = async response => {
-//       // some other request, like javascript and that.
-//       if (response.url() !== url) {
-//         return;
-//       }
-//       const status = response.status();
-//       // check for page redirects [301, 302, 303, 307, 308]
-//       logger.info(`browser: got status code ${status}`);
-//       if (status >= 300 && status <= 399) {
-//         const redirectUrl = response.headers().location;
-//         logger.info(`browser: redirecting to ${redirectUrl}`);
-//         logger.info(`browser: waiting for redirect`);
-//         try {
-//           // wait for the rediect to happen
-//           await goToPage(page, redirectUrl);
-//           logger.info(`browser: redirect finished`);
-//           if (reqDone) {
-//             logger.info(`browser: resolve redirect`);
-//             resolve();
-//           }
-//         } catch (e) {
-//           handlerDone = true;
-//           if (reqDone) {
-//             logger.info(`browser: reject redirect`);
-//             reject(e);
-//           }
-//         }
-//       } else {
-//         logger.info(`browser: no redirect`);
-//         // no redirect so we're done
-//         if (reqDone) {
-//           logger.info(`browser: resolve no redirect`);
-//           resolve();
-//         }
-//       }
-//       handlerDone = true;
-//     };
+setInterval(() => {
+  // when there is a free minute with no activity, check if
+  // we have any zombie processes and kill them
+  // make sure this number is higher than the navigation timeout
+  // by a significant margin
+  const inactiveFor = Date.now() - lastTouched;
+  const isInactive = inactiveFor > 60000;
+  if (isInactive && tabsOpen > 0) {
+    const pid = puppeteerInstance.process().pid;
+    exec(`kill -9 ${pid}`, error => {
+      if (error) {
+        logger.error(`browser: failed killing zombie process with ${tabsOpen}`);
+      }
+      tabsOpen = 0;
+      logger.info(`browser: killed zombie process with ${tabsOpen}`);
+      if (process.env.NODE_ENV !== 'development') {
+        const err =
+          error ||
+          new Error(
+            `Browser became unresponsive and ${tabsOpen} were forcibly killed `
+          );
+        Sentry.withScope(function(scope) {
+          scope.setTag('tabs-open', tabsOpen);
+          scope.setLevel('error');
+          Sentry.captureException(err);
+        });
+      }
+    });
+  }
+}, 5000);
 
-//     try {
-//       page.on('response', responseHandler);
-//       // goto page
-//       logger.info(`browser: going to page`);
-//       await page.goto(url, {
-//         timeout: 20000,
-//         waitUntil: 'domcontentloaded'
-//       });
-//       page.removeListener('response', responseHandler);
-//       reqDone = true;
-//       if (handlerDone) {
-//         logger.info(`browser: resolve page done`);
-//         resolve();
-//       }
-//     } catch (e) {
-//       reqDone = true;
-//       logger.info(e);
-//       logger.info(`browser: going to page failed`);
-//       if (handlerDone) {
-//         logger.info(`browser: reject page done`);
-//         reject(e);
-//       }
-//     }
-//   });
-// }
-
-// async function redirect(page) {
-//   let redirectUrl;
-//   const responseHandler = async response => {
-//     // some other request, like javascript and that.
-//     if (response.url() !== url) {
-//       return;
-//     }
-//     const status = response.status();
-//     // check for page redirects [301, 302, 303, 307, 308]
-//     logger.info(`browser: got status code ${status}`);
-//     if (status >= 300 && status <= 399) {
-//       logger.info(`browser: waiting for redirect`);
-//       try {
-//         // wait for the rediect to happen
-//         await page.waitForNavigation({
-//           timeout: 20000,
-//           waitUntil: 'networkidle0'
-//         });
-//         logger.info(`browser: redirect finished`);
-//         if (reqDone) {
-//           logger.info(`browser: resolve redirect`);
-//           resolve();
-//         }
-//       } catch (e) {
-//         handlerDone = true;
-//         if (reqDone) {
-//           logger.info(`browser: reject redirect`);
-//           reject(e);
-//         }
-//       }
-//     } else {
-//       logger.info(`browser: no redirect`);
-//       // no redirect so we're done
-//       if (reqDone) {
-//         logger.info(`browser: resolve no redirect`);
-//         resolve();
-//       }
-//     }
-//     handlerDone = true;
-//     logger.info(`browser: removing listener`);
-//     // remove the listener in case we reuse this page
-//     page.removeListener('response', responseHandler);
-//   };
-//   try {
-//     page.on('response', responseHandler);
-//     // goto page
-//     logger.info(`browser: being redirected`);
-//     await page.waitForNavigation({
-//       timeout: 20000,
-//       waitUntil: 'networkidle0'
-//     });
-//     reqDone = true;
-//     if (handlerDone) {
-//       logger.info(`browser: resolve page done`);
-//       resolve();
-//     }
-//   } catch (e) {
-//     reqDone = true;
-//     logger.info(e);
-//     logger.info(`browser: going to page failed`);
-//     if (handlerDone) {
-//       logger.info(`browser: reject page done`);
-//       reject(e);
-//     }
-//   }
-// }
-
-function takeScreenshot(page) {
-  return page.screenshot({
-    encoding: 'binary',
-    type: 'png'
-  });
-}
 async function getNewPage() {
   const browser = await getPuppeteerInstance();
   const page = await browser.newPage();

@@ -35,8 +35,16 @@ export function updateOccurrencesSeenByUser(userId, senders) {
   return updateOccurrencesSeen(userId, senders);
 }
 
-export function addNewUnsubscribeOccrurence(userId, from) {
-  return updateOccurrenceUnsubscribed(userId, from);
+export function addNewUnsubscribeOccrurence(
+  userId,
+  { from, strategy, providerHostname, successful }
+) {
+  return updateOccurrenceUnsubscribed(userId, {
+    from,
+    strategy,
+    providerHostname,
+    successful
+  });
 }
 
 export function getOccurrenceScores({ senders }) {

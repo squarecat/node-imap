@@ -44,10 +44,10 @@ async function doFetch({
 }) {
   // if scan was run in (todo in the last 5 minutes?)
   // then ignore this scan event
-  // if (runningScans[uuid]) {
-  //   logger.debug('[socket]: scan is already running');
-  //   return;
-  // }
+  if (runningScans[uuid]) {
+    logger.debug('[socket]: scan is already running');
+    return;
+  }
   runningScans = {
     ...runningScans,
     [uuid]: Date.now()
@@ -71,8 +71,8 @@ async function doFetch({
       }
       next = await it.next();
     }
-    await onEnd(next.value, { userId });
     delete runningScans[uuid];
+    await onEnd(next.value, { userId });
   } catch (err) {
     delete runningScans[uuid];
     // if we haven't already handled this error then throw a rest error

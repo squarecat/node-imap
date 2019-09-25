@@ -7,8 +7,11 @@
     }
   },
   "buffer": {
-    "host": "localhost",
-    "port": 6379
+    "host": "$BUFFER_HOST",
+    "port": "$BUFFER_PORT",
+    "password": "$$BUFFER_PASSWORD",
+    "username": "$$BUFFER_USERNAME",
+    "ca": "$$BUFFER_CA"
   },
   "admins": [
     "james@squarecat.io",
