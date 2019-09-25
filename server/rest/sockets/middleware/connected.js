@@ -1,15 +1,10 @@
-import config from 'getconfig';
+import { createClient } from '../../../utils/redis';
 import logger from '../../../utils/logger';
 import { promisify } from 'util';
-import redis from 'redis';
 let socketio;
 
-const client = redis.createClient({
-  host: config.buffer.host,
-  port: config.buffer.port,
-  prefix: 'lma.clients_',
-  password: config.buffer.password,
-  username: config.buffer.username
+const client = createClient({
+  prefix: 'lma.clients_'
 });
 
 const lpush = promisify(client.lpush).bind(client);

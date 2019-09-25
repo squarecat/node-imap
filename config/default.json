@@ -9,8 +9,9 @@
   "buffer": {
     "host": "$BUFFER_HOST",
     "port": "$BUFFER_PORT",
-    "password": "$BUFFER_PASSWORD",
-    "username": "$BUFFER_USERNAME"
+    "password": "$$BUFFER_PASSWORD",
+    "username": "$$BUFFER_USERNAME",
+    "ca": "$$BUFFER_CA"
   },
   "admins": [
     "james@squarecat.io",
