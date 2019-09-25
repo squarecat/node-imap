@@ -28,6 +28,9 @@ export async function doBespokeUnsubscribe(page, url) {
   if (url.includes('community.hackernoon.com')) {
     return unsubscribeFromHackerNoon(page);
   }
+  if (url.includes('etrack03.com')) {
+    return unsubscribeFromETrack(page);
+  }
   throw new Error(
     `browser-actions: bespoke unsubscribe from ${url} not implemented`
   );
@@ -50,6 +53,22 @@ export async function clickButton(page, btn) {
   }
 }
 
+export async function unsubscribeFromETrack(page) {
+  logger.info('browser-actions: doing a bespoke unsub from etrack');
+  try {
+    await page.click('[name=reason][value="0"]');
+    await page.evaluate(() => {
+      window.sure();
+    });
+    await page.waitForSelector('#showAlert', {
+      visible: true
+    });
+    return true;
+  } catch (err) {
+    logger.error('browser-actions: failed to unsubscribe from etrack');
+    return false;
+  }
+}
 // bespoke unsub from quora
 export async function unsubscribeFromQuora(page) {
   logger.info('browser-actions: doing a bespoke unsub from quora');
