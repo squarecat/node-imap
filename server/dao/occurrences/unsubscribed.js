@@ -6,7 +6,10 @@ import logger from '../../utils/logger';
 
 const COL_NAME = 'occurrences';
 
-export async function updateOccurrenceUnsubscribed(userId, from) {
+export async function updateOccurrenceUnsubscribed(
+  userId,
+  { from, strategy, providerHostname, successful }
+) {
   const now = isoDate();
   try {
     const col = await db().collection(COL_NAME);
@@ -20,6 +23,12 @@ export async function updateOccurrenceUnsubscribed(userId, from) {
     logger.info(
       `occurrences-dao: updating existing occurrence as <unsubscribed>`
     );
+    let outcome = {};
+    if (!successful) {
+      outcome = {
+        [`failed.${hashedAddress}`]: 1
+      };
+    }
     await col.updateOne(
       {
         hashedSender: hash(domain),
@@ -35,10 +44,13 @@ export async function updateOccurrenceUnsubscribed(userId, from) {
           unsubscribedBy: hashedUser,
           addresses: senderAddress,
           hashedAddresses: hashedAddress,
-          friendlyNames: friendlyName
+          friendlyNames: friendlyName,
+          strategy,
+          providerHostname
         },
         $inc: {
-          [`addressUnsubscribes.${hashedAddress}`]: 1
+          [`addressUnsubscribes.${hashedAddress}`]: 1,
+          ...outcome
         }
       },
       {

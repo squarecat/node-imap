@@ -16,6 +16,7 @@ import { imageStoragePath } from 'getconfig';
 import logger from '../../utils/logger';
 import { recordUnsubscribeForOrganisation } from '../organisation';
 import { sendToUser } from '../../rest/sockets';
+import url from 'url';
 import uuid from 'node-uuid';
 
 export const unsubscribeByLink = browserUnsub;
@@ -112,7 +113,22 @@ export const unsubscribeFromMail = async (userId, mail) => {
       incrementUserCredits(userId, 1);
       sendToUser(userId, 'update-credits', 1, { skipBuffer: true });
     }
-    addNewUnsubscribeOccrurence(userId, mail.from);
+    if (unsubStrategy === 'link') {
+      // save domain in stats so we can fix it later
+      const { hostname } = url.parse(unsubscribeLink);
+      addNewUnsubscribeOccrurence(userId, {
+        from: mail.from,
+        strategy: 'link',
+        providerHostname: hostname,
+        successful: output.estimatedSuccess
+      });
+    } else {
+      addNewUnsubscribeOccrurence(userId, {
+        from: mail.from,
+        strategy: 'mailto',
+        successful: true
+      });
+    }
     addUnsubscribeActivityToUser(userId, {
       unsubCount: unsubscriptions.length + 1,
       milestones
