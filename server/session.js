@@ -62,8 +62,7 @@ function serialize(session) {
 
 // push to an array prop in the session
 export function pushSessionProp(req, prop, value) {
-  let arr = _get(req.session, prop, []);
-  if (!arr) arr = [];
+  const arr = _get(req.session, prop) || [];
   _set(req.session, prop, [...arr, value]);
   return value;
 }
