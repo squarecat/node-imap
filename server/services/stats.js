@@ -36,9 +36,6 @@ export function addUnsubscriptionToStats({ unsubStrategy = 'link' } = {}) {
   if (unsubStrategy === 'mailto') return addUnsubscriptionByEmail();
   return false;
 }
-// export function addScanToStats(count) {
-//   return addScan(count);
-// }
 export function addFailedUnsubscriptionToStats(count) {
   return addFailedUnsubscription(count);
 }
