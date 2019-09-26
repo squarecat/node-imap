@@ -26,6 +26,7 @@ export default function(server) {
   io.use(bufferMiddleware);
 
   io.on('connection', socket => {
+    logger.info('socket: connection');
     const { userId } = socket;
     const onFetch = fetch.bind(this, socket, userId);
     const onUnsubscribe = unsubscribe.bind(this, socket, userId);
@@ -51,6 +52,7 @@ export default function(server) {
     socket.on('notifications:fetch-unread', onFetchNotificationsUnread);
     socket.on('notifications:set-read', onSetNotificationsRead);
   });
+  logger.info('socket: ready');
 }
 
 export async function sendToUser(userId, event, data, options = {}) {

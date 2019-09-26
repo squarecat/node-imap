@@ -15,17 +15,17 @@ import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
 // import PaymentCompanyDetails from '../../payments/company-details';
 import { StripeStateContext } from '../../../providers/stripe-provider';
+import format from 'date-fns/format';
 import { getPaymentError } from '../../../utils/errors';
 import { injectStripe } from 'react-stripe-elements';
 import request from '../../../utils/request';
-import format from 'date-fns/format';
 
 function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { state: stripeState } = useContext(StripeStateContext);
   const { close: closeModal } = useContext(ModalContext);
 
-  const { id, billing = {}, currentUsers } = organisation;
+  const { id, billing = {}, currentUsers, adminUserEmail } = organisation;
   const { subscriptionId, discountPercentOff } = billing;
 
   const onPaymentSuccess = organisation => {
@@ -39,7 +39,7 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
       dispatch({ type: 'set-error', data: false });
 
       const { addressDetails } = state;
-      const customer = getCustomer(state);
+      const customer = getCustomer({ addressDetails, email: adminUserEmail });
 
       const { token, tokenError } = await stripe.createToken({
         // the createToken address arguments are named differently to create customer...
@@ -94,7 +94,10 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   }
 
   async function handleRequiresAction(response) {
-    const customer = getCustomer(state);
+    const customer = getCustomer({
+      addressDetails: state.addressDetails,
+      email: adminUserEmail
+    });
     // Use Stripe.js to handle the required card action
     // this is a different function to the charges
     const { error: errorAction } = await stripe.handleCardPayment(
@@ -318,7 +321,7 @@ function confirmSubscription(organisationId) {
   });
 }
 
-function getCustomer({ addressDetails }) {
+function getCustomer({ addressDetails, email }) {
   return {
     name: addressDetails.name,
     address: {
@@ -327,6 +330,7 @@ function getCustomer({ addressDetails }) {
       city: addressDetails.city,
       country: addressDetails.country,
       postal_code: addressDetails.postal_code
-    }
+    },
+    email
   };
 }
