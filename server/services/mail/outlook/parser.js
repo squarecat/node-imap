@@ -5,7 +5,14 @@ import {
   isMailUnsubscribable
 } from './utils';
 
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
+
+const meter = io.meter({
+  name: 'Outlook mail/hour',
+  samples: 1,
+  timeframe: 3600
+});
 
 const ignoreMailFrom = ['Outbox', 'Sent Items', 'Drafts'];
 export function parseMailList(
@@ -14,6 +21,7 @@ export function parseMailList(
 ) {
   return mailList.reduce((out, mailItem) => {
     try {
+      meter.mark();
       if (!mailItem || !isMailUnsubscribable(mailItem, ignoredSenderList)) {
         return out;
       }

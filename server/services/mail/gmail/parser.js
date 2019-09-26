@@ -5,8 +5,15 @@ import {
   isMailUnsubscribable
 } from './utils';
 
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
+
+const meter = io.meter({
+  name: 'Gmail mail/hour',
+  samples: 1,
+  timeframe: 60
+});
 
 /**
  * Parser considerations
@@ -24,6 +31,7 @@ export function parseMailList(
   { ignoredSenderList, unsubscriptions }
 ) {
   return mailList.reduce((out, mailItem) => {
+    meter.mark();
     if (!mailItem || !isMailUnsubscribable(mailItem, ignoredSenderList)) {
       return out;
     }
@@ -55,9 +63,9 @@ function mapMail(mail) {
     if (!payload) {
       throw new Error('mail object has no payload', id);
     }
-    const { parts, headers } = payload;
+    const { parts } = payload;
     // check headers first
-    const unsubHeader = headers.find(h => h.name === 'List-Unsubscribe');
+    const unsubHeader = getHeader(payload, 'List-Unsubscribe');
     let unsubscribeMailTo, unsubscribeLink;
     if (unsubHeader) {
       ({ unsubscribeMailTo, unsubscribeLink } = getUnsubValuesFromHeader(
@@ -94,10 +102,11 @@ function mapMail(mail) {
 }
 
 function getUnsubValuesFromHeader(header) {
-  return getUnsubValues(header.value);
+  return getUnsubValues(header);
 }
 
 function getUnsubValuesFromContent(mailParts) {
+  if (!mailParts) return null;
   const html = mailParts.find(mp => mp.mimeType === 'text/html');
   if (!html) return false;
   const buff = new Buffer.from(html.body.data, 'base64');

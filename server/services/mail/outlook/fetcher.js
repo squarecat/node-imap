@@ -4,8 +4,14 @@ import { getFilterString, getSearchString } from './utils';
 import { createAudit } from '../../audit';
 import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
+
+const histogram = io.histogram({
+  name: 'Outlook Scan Time',
+  measurement: 'mean'
+});
 
 export async function* fetchMail({ user, account, from, prevDupeCache }) {
   const audit = createAudit(user.id, 'fetch/microsoft');
@@ -94,12 +100,14 @@ export async function* fetchMail({ user, account, from, prevDupeCache }) {
       }
     };
     const timeTaken = (Date.now() - start) / 1000;
+    const minutes = (timeTaken / 60).toFixed(2);
     logger.info(
-      `outlook-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`
+      `outlook-fetcher: finished scan (${user.id}) [took ${minutes} minutes, ${totalEmailsCount} results]`
     );
     audit.append(
-      `Scan finished on account ${account.email}. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
+      `Scan finished on account ${account.email}. ${totalUnsubCount} subscriptions found. [took ${minutes} minutes]`
     );
+    histogram.update(timeTaken);
     return {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,

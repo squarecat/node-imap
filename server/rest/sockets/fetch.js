@@ -3,10 +3,13 @@ const Sentry = require('@sentry/node');
 import { RestError } from '../../utils/errors';
 import { fetchMail } from '../../services/mail';
 import { get as getSession } from '../../dao/sessions';
-import logger from '../../utils/logger';
+import io from '@pm2/io';
 import { sendToUser } from './index';
 
 let runningScans = {};
+const scansRunning = io.counter({
+  name: 'Scans Running'
+});
 
 export default async function fetch(socket, userId, data = {}) {
   const { uuid } = socket;
@@ -52,6 +55,7 @@ async function doFetch({
     ...runningScans,
     [uuid]: Date.now()
   };
+  scansRunning.inc();
   try {
     // get mail data for user
     const it = await fetchMail({
@@ -71,9 +75,11 @@ async function doFetch({
       }
       next = await it.next();
     }
+    scansRunning.dec();
     delete runningScans[uuid];
     await onEnd(next.value, { userId });
   } catch (err) {
+    scansRunning.dec();
     delete runningScans[uuid];
     // if we haven't already handled this error then throw a rest error
     if (!err.handled) {

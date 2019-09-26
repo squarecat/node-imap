@@ -3,9 +3,15 @@ import { createAudit } from '../../audit';
 import { dedupeMailList } from './utils';
 import { getMailClient } from './access';
 import { getMailboxes } from './mailboxes';
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 import util from 'util';
+
+const histogram = io.histogram({
+  name: 'IMAP Scan Time',
+  measurement: 'mean'
+});
 
 export async function* fetchMail({
   masterKey,
@@ -93,11 +99,17 @@ export async function* fetchMail({
       }
     };
     logger.info(
-      `imap-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`
+      `imap-fetcher: finished scan (${user.id}) [took ${timeTaken /
+        60} minutes, ${totalEmailsCount} results]`
     );
     audit.append(
-      `Scan finished on account ${account.email}. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
+      `Scan finished on account ${
+        account.email
+      }. ${totalUnsubCount} subscriptions found. [took ${timeTaken /
+        60} minutes]`
     );
+
+    histogram.update(timeTaken);
 
     return {
       totalMail: totalEmailsCount,

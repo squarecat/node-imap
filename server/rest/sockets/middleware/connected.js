@@ -1,6 +1,8 @@
 import { createClient } from '../../../utils/redis';
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { promisify } from 'util';
+
 let socketio;
 
 const client = createClient({
@@ -13,6 +15,9 @@ const lrange = promisify(client.lrange).bind(client);
 const llen = promisify(client.llen).bind(client);
 const flushdb = promisify(client.flushdb).bind(client);
 
+const socketsOpen = io.counter({
+  name: 'Sockets Open'
+});
 /**
  * Saves the socket ID against the User ID into redis
  * so that we can send messages to this specific user
@@ -28,6 +33,8 @@ export default io => {
     let { userId } = socket;
     await lpush(userId, socket.id);
     logger.info(`[socket]: connect ${socket.id}`);
+    socketsOpen.inc();
+
     socket.on('error', () => {
       logger.info(`[socket]: error ${socket.id}`);
     });
@@ -38,6 +45,7 @@ export default io => {
 
     socket.on('disconnect', async reason => {
       logger.info(`[socket]: disconnect ${socket.id} ${reason}`);
+      socketsOpen.dec();
       const exists = await llen(userId);
       if (exists) {
         // remove all instances of this socket id

@@ -7,9 +7,15 @@ import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import { getSearchString } from './utils';
 import httpMessageParser from 'http-message-parser';
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { parseError } from './errors';
 import { parseMailList } from './parser';
+
+const histogram = io.histogram({
+  name: 'Gmail Scan Time',
+  measurement: 'mean'
+});
 
 // todo convert to generator?
 export async function* fetchMail(
@@ -100,11 +106,16 @@ export async function* fetchMail(
     };
     const timeTaken = (Date.now() - start) / 1000;
     logger.info(
-      `gmail-fetcher: finished scan (${user.id}) [took ${timeTaken}s, ${totalEmailsCount} results]`
+      `gmail-fetcher: finished scan (${user.id}) [took ${timeTaken /
+        60} minutes, ${totalEmailsCount} results]`
     );
     audit.append(
-      `Scan finished on account ${account.email}. ${totalUnsubCount} subscriptions found. [took ${timeTaken}s]`
+      `Scan finished on account ${
+        account.email
+      }. ${totalUnsubCount} subscriptions found. [took ${timeTaken /
+        60} minutes]`
     );
+    histogram.update(timeTaken);
     return {
       totalMail: totalEmailsCount,
       totalUnsubscribableMail: totalUnsubCount,
