@@ -5,6 +5,8 @@ import Stripe from 'stripe';
 import logger from './logger';
 import { payments } from 'getconfig';
 
+const { perSeatPlanId } = payments.plans;
+
 const stripe = Stripe(payments.secretKey);
 
 export async function getPaymentCoupon(name) {
@@ -292,18 +294,14 @@ export const generatePaymentResponse = intent => {
 
 // Multiple quantities of a plan are still billed using one invoice, and are prorated
 // when the subscription changes, including when you change just the quantities involved
-export async function createSubscription({
-  customerId,
-  planId,
-  quantity = 1,
-  coupon
-}) {
+export async function createSubscription({ customerId, quantity = 1, coupon }) {
   try {
+    logger.debug(`stripe: creating subscription`);
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [
         {
-          plan: planId,
+          plan: perSeatPlanId,
           quantity
         }
       ],

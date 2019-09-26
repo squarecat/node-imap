@@ -63,7 +63,6 @@ export async function createOrganisation(email, data) {
       ...data
     });
 
-
     const { id, name } = organisation;
 
     addOrganisationToStats();
@@ -75,19 +74,6 @@ export async function createOrganisation(email, data) {
       'milestones.completedOnboardingOrganisation': 0
     });
 
-    // remove all the accounts which are not the primary account
-    logger.debug(
-      `organisation-service: removing user ${user.id} connected accounts`
-    );
-    await Promise.all(
-      user.accounts.map(a => {
-        if (a.email === user.email) {
-          return true;
-        }
-        return removeUserAccount(user.id, a.email);
-      })
-    );
-
     // add the joined and added acount activities
     addActivityForUser(user.id, 'joinedOrganisation', {
       id,
@@ -95,24 +81,23 @@ export async function createOrganisation(email, data) {
       email: user.email
     });
 
-    if (user.loginProvider !== 'password') {
-      logger.debug(
-        `organisation-service: login provider is not password, adding account to organisation ${id}`
-      );
-      await addUserToOrganisation(id, {
-        email: user.email
-      });
-      addActivityForUser(user.id, 'addedAccountToOrganisation', {
-        id,
-        name,
-        email: user.email
-      });
-    } else {
-      logger.debug(
-        `organisation-service: login provider is password, inviting account to organisation ${id}`
-      );
-      await addInvitedUser(id, email);
-    }
+    logger.debug(
+      `organisation-service: adding ${user.accounts.length} user accounts to organisation ${id}`
+    );
+    // this could be more efficient since `addUserToOrganisation` gets the org every time
+    // but there will be so few accounts connected that it doesn't matter
+    await Promise.all(
+      user.accounts.map(async account => {
+        await addUserToOrganisation(id, {
+          email: account.email
+        });
+        await addActivityForUser(user.id, 'addedAccountToOrganisation', {
+          id,
+          name,
+          email: account.email
+        });
+      })
+    );
 
     logger.debug(`organisation-service: created organisation ${id}!`);
     return organisation;
@@ -283,7 +268,7 @@ export async function updateOrganisationSubscription({
   try {
     if (!billing.subscriptionId) {
       logger.debug(
-        `organisation-service: organisation ${id} has no active subscription`
+        `organisation-service: cannot update subscription, organisation ${id} has no active subscription`
       );
       return false;
     }
@@ -339,6 +324,7 @@ export async function getOrganisationSubscription(id) {
 
     if (!subscriptionId) return null;
 
+    const subscription = await getSubscription({ subscriptionId });
     const {
       canceled_at,
       current_period_start,
@@ -347,20 +333,21 @@ export async function getOrganisationSubscription(id) {
       quantity,
       plan,
       discount
-    } = await getSubscription({ subscriptionId });
+    } = subscription;
 
     const { total } = await getUpcomingInvoice({
       customerId,
       subscriptionId
     });
 
-    return {
+    const subscriptionData = {
       canceled_at,
       current_period_start,
       current_period_end,
       ended_at,
       quantity,
       plan: {
+        id: plan.id,
         amount: plan.amount
       },
       upcomingInvoiceAmount: total > 0 ? total : 0,
@@ -374,6 +361,8 @@ export async function getOrganisationSubscription(id) {
           }
         : null
     };
+
+    return subscriptionData;
   } catch (err) {
     throw err;
   }

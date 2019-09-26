@@ -23,7 +23,7 @@ async function run() {
     name,
     domain,
     allowAnyUserWithCompanyEmail: false,
-    active: true
+    active: false
   });
   console.log('success!');
 

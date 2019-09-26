@@ -7,9 +7,12 @@ import {
 } from '..';
 import React, { useContext, useMemo, useReducer } from 'react';
 import { TextFootnote, TextImportant } from '../../../components/text';
+import {
+  getTeamsPaymentAmounts,
+  getViewPrice
+} from '../../../../shared/prices';
 import reducer, { initialState } from './reducer';
 
-import { ENTERPRISE } from '../../../../shared/prices';
 import { ModalContext } from '../../../providers/modal-provider';
 import PaymentAddressDetails from '../../payments/address-details';
 import PaymentCardDetails from '../../payments/card-details';
@@ -125,40 +128,36 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
   const {
     totalAmount,
     planPrice,
+    basePrice,
+    initialBasePrice,
     initialPlanPrice,
     discountAmount
-  } = useMemo(() => {
-    const initialPayment = ENTERPRISE.pricePerSeat * seats;
-    let totalAmount = initialPayment / 100;
-    let planPrice = ENTERPRISE.pricePerSeat / 100;
-    let discountAmount = 0;
-    if (discountPercentOff) {
-      totalAmount = totalAmount - totalAmount * (discountPercentOff / 100);
-      planPrice = planPrice - planPrice * (discountPercentOff / 100);
-      discountAmount = initialPayment * (discountPercentOff / 100);
-    }
-    return {
-      totalAmount: totalAmount.toFixed(2),
-      planPrice: planPrice.toFixed(2),
-      initialPlanPrice: (ENTERPRISE.pricePerSeat / 100).toFixed(2),
-      discountAmount
-    };
-  }, [discountPercentOff, seats]);
+  } = useMemo(() => getTeamsPaymentAmounts(seats, discountPercentOff), [
+    discountPercentOff,
+    seats
+  ]);
 
   const lead = (
     <>
       <p>
         You are signing up for the <TextImportant>Teams plan</TextImportant>{' '}
         billed monthly at{' '}
+        {discountAmount ? (
+          <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>
+            ${getViewPrice(initialBasePrice)}
+          </span>
+        ) : null}{' '}
+        ${getViewPrice(basePrice)} +{' '}
         <TextImportant>
+          {' '}
           {discountAmount ? (
             <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>
-              ${initialPlanPrice}
+              ${getViewPrice(initialPlanPrice)}
             </span>
           ) : null}{' '}
-          ${planPrice} per seat
+          ${getViewPrice(planPrice)} per seat
         </TextImportant>
-        . Awesome!
+        .
       </p>
     </>
   );
@@ -173,41 +172,19 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
       );
     }
 
-    if (seats) {
-      return (
-        <>
-          <p>
-            You are currently using{' '}
-            <TextImportant>
-              {`${seats} seat${seats === 1 ? '' : 's'}`}
-            </TextImportant>
-            .
-          </p>
-          <p>
-            Click below to charge your card{' '}
-            <TextImportant>${totalAmount}</TextImportant> now and on the{' '}
-            {format(new Date(), 'Do')} of each month thereafter.
-          </p>
-          <p>
-            Your account will be instantly activated. Your subscription will be
-            updated automatically and prorated when people join or leave your
-            team. You can cancel at any time.
-          </p>
-        </>
-      );
-    }
     return (
       <>
         <p>
-          You are currently using no seats. Until people join your team you will
-          won't be billed.
+          You are currently using{' '}
+          <TextImportant>
+            {`${seats} seat${seats === 1 ? '' : 's'}`}
+          </TextImportant>
+          .
         </p>
         <p>
-          Click below to{' '}
-          <TextImportant>
-            add your card details. You will not be charged
-          </TextImportant>{' '}
-          anything.
+          Click below to charge your card{' '}
+          <TextImportant>${getViewPrice(totalAmount)}</TextImportant> now and on
+          the {format(new Date(), 'Do')} of each month thereafter.
         </p>
         <p>
           Your account will be instantly activated. Your subscription will be
@@ -222,11 +199,8 @@ function OrganisationBillingForm({ stripe, organisation, onSuccess }) {
     if (subscriptionId) {
       return `Update my card`;
     }
-    if (currentUsers.length) {
-      return `Charge my card $${totalAmount}`;
-    }
-    return `Add my card and charge $0`;
-  }, [totalAmount, currentUsers.length, subscriptionId]);
+    return `Charge my card $${getViewPrice(totalAmount)}`;
+  }, [totalAmount, subscriptionId]);
 
   return (
     <form
@@ -297,7 +271,6 @@ function validateVatNumber(vatNumber) {
 function createSubscription(organisationId, { token, name, address }) {
   return request('/api/payments/subscription', {
     method: 'POST',
-
     body: JSON.stringify({ organisationId, token, name, address })
   });
 }

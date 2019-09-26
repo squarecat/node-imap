@@ -215,7 +215,7 @@ const LoginPage = React.memo(
               <span>
                 Already have an account? <a href="/login">Log in</a>.
               </span>
-              <span>
+              <span>{' '}
                 Not a team? <a href="/signup">Sign up for a personal account</a>
                 .
               </span>
@@ -227,7 +227,7 @@ const LoginPage = React.memo(
               <span>
                 Already have an account? <a href="/login">Log in</a>.
               </span>
-              <span>
+              <span>{' '}
                 Let your entire team unsubscribe.{' '}
                 <a href="/signup?teams=true">Sign up for teams</a>.
               </span>

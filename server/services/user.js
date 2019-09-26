@@ -376,8 +376,8 @@ async function addCreatedOrUpdatedUserToOrganisation({ user, organisation }) {
     );
 
     // need to remove all accounts which are connected (and not primary)
-    // because adding them again adds them to the organisation and they will
-    // be billed for it
+    // because adding them again adds them to the organisation and we need
+    // to check if the accounts are allowed/invited by the admin
     await removeNonPrimaryConnectedAccounts(user);
 
     // add the email to the organisations users to be billed
@@ -1526,11 +1526,10 @@ export function verifyUserEmail(id) {
   return verifyEmail(id);
 }
 
+// switch a users account to an organisation account
 export async function enableOrganisationForUser(id) {
   try {
     logger.debug(`user-service: enabling organsiation for user ${id}`);
-    const user = await getUserById(id);
-    await removeNonPrimaryConnectedAccounts(user);
     return enableOrganisation(id);
   } catch (err) {
     throw err;
