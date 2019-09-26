@@ -5,6 +5,7 @@ import {
   connectImapAccount,
   createUserTotpToken,
   deactivateUserAccount,
+  enableOrganisationForUser,
   getUserActivity,
   getUserById,
   getUserLoginProvider,
@@ -21,8 +22,7 @@ import {
   updateUserActivityCompleted,
   updateUserAutoBuy,
   updateUserPassword,
-  updateUserPreferences,
-  enableOrganisationForUser
+  updateUserPreferences
 } from '../services/user';
 import { getReferralStats, inviteReferralUser } from '../services/referral';
 
@@ -369,12 +369,15 @@ export default app => {
       try {
         if (op === 'update') {
           const { oldPassword, password: newPassword } = value;
-          const { user, masterKey: newMasterKey } = await updateUserPassword(
+          const {
+            user: newUserData,
+            masterKey: newMasterKey
+          } = await updateUserPassword(
             { id, email, password: oldPassword, masterKey },
             newPassword
           );
           setSessionProp(req, 'passport.user.masterKey', newMasterKey);
-          updatedUser = user;
+          updatedUser = newUserData;
         } else {
           logger.error(`user-rest: password patch op not supported`);
         }

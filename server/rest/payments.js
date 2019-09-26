@@ -1,16 +1,21 @@
-import * as PaymentService from '../services/payments';
+import {
+  claimCreditsWithCoupon,
+  confirmSubscriptionForOrganisation,
+  createPaymentForUser,
+  createPaymentWithExistingCardForUser,
+  createSubscriptionForOrganisation,
+  getCoupon
+} from '../services/payments';
 
 import { RestError } from '../utils/errors';
-import { addRefundToStats } from '../services/stats';
 import auth from '../middleware/route-auth';
 import countries from '../utils/countries.json';
-import logger from '../utils/logger';
 
 export default app => {
   app.get('/api/payments/coupon/:coupon', auth, async (req, res, next) => {
     const { coupon } = req.params;
     try {
-      const c = await PaymentService.getCoupon(coupon);
+      const c = await getCoupon(coupon);
       res.send(c);
     } catch (err) {
       next(
@@ -37,7 +42,7 @@ export default app => {
         donate
       } = req.body;
       try {
-        const response = await PaymentService.createPaymentForUser(
+        const response = await createPaymentForUser(
           {
             paymentMethodId: payment_method_id,
             paymentIntentId: payment_intent_id
@@ -66,9 +71,12 @@ export default app => {
       const { productId, coupon } = req.params;
       const { donate } = req.body;
       try {
-        const response = await PaymentService.createPaymentWithExistingCardForUser(
-          { user, productId, coupon, donate }
-        );
+        const response = await createPaymentWithExistingCardForUser({
+          user,
+          productId,
+          coupon,
+          donate
+        });
         return res.send(response);
       } catch (err) {
         next(
@@ -90,7 +98,7 @@ export default app => {
       const { user } = req;
       const { productId, coupon } = req.params;
       try {
-        const response = await PaymentService.claimCreditsWithCoupon({
+        const response = await claimCreditsWithCoupon({
           user,
           productId,
           coupon
@@ -112,7 +120,7 @@ export default app => {
   app.post('/api/payments/subscription', auth, async (req, res, next) => {
     const { organisationId, token, name, address } = req.body;
     try {
-      const subscription = await PaymentService.createSubscriptionForOrganisation(
+      const subscription = await createSubscriptionForOrganisation(
         organisationId,
         { token, name, address }
       );
@@ -135,7 +143,7 @@ export default app => {
     async (req, res, next) => {
       const { organisationId } = req.body;
       try {
-        await PaymentService.confirmSubscriptionForOrganisation(organisationId);
+        await confirmSubscriptionForOrganisation(organisationId);
         res.send({ success: true });
       } catch (err) {
         next(
@@ -149,77 +157,6 @@ export default app => {
       }
     }
   );
-
-  // stripe webhooks
-  app.post('/api/payments/refund', async (req, res) => {
-    res.sendStatus(200);
-
-    try {
-      logger.info('payments-rest: got refund webhook');
-      const { body } = req;
-      const { type, data } = body;
-      if (type === 'charge.refunded') {
-        let price = 0;
-        const { object } = data;
-        const { amount_refunded } = object;
-        if (amount_refunded) {
-          price = amount_refunded / 100;
-        }
-        logger.debug(`payments-rest: refund amount - ${price}`);
-        return addRefundToStats({ price });
-      }
-    } catch (err) {
-      logger.error('payments-rest: error with refund webhook');
-      logger.error(err);
-    }
-  });
-
-  app.post('/api/payments/subscriptions', async (req, res) => {
-    res.sendStatus(200);
-
-    try {
-      logger.info('payments-rest: got subscriptions webhook');
-      const { body } = req;
-      const { type, data } = body;
-
-      // this event will fire if an invoice is incomplete and then succeeds
-      if (
-        type === 'invoice.payment_succeeded' &&
-        data.billing_reason === 'subscription_create'
-      ) {
-        const { object } = data;
-        const { subscription: subscriptionId } = object;
-        return PaymentService.handleSubscriptionCreated({ subscriptionId });
-      }
-
-      if (type === 'invoice.payment_succeeded') {
-        const { object } = data;
-        const { subscription: subscriptionId, total } = object;
-        return PaymentService.handleInvoicePaymentSuccess({
-          subscriptionId,
-          total
-        });
-      }
-
-      if (type === 'invoice.payment_failed') {
-        const { object } = data;
-        const { subscription: subscriptionId } = object;
-        return PaymentService.handleInvoicePaymentFailed({ subscriptionId });
-      }
-
-      if (type === 'customer.subscription.deleted') {
-        const { request, object } = data;
-        const { subscription: subscriptionId } = object;
-        return PaymentService.handleSubscriptionDeleted({
-          subscriptionId,
-          request
-        });
-      }
-    } catch (err) {
-      logger.error('payments-rest: error with invoice webhook');
-      logger.error(err);
-    }
-  });
 
   app.get('/api/countries.json', (req, res) => res.send(countries));
 };

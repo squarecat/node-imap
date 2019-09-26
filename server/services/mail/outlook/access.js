@@ -17,7 +17,7 @@ export async function getOutlookAccessToken(userId, account) {
 }
 
 export async function doRequest(url, token) {
-  logger.debug(`outlook-request: fetching mail (${url})`);
+  logger.debug(`outlook-access: fetching mail (${url})`);
   try {
     const reqOpts = {
       url: `${apiRootUrl}/${url}`,
@@ -29,13 +29,15 @@ export async function doRequest(url, token) {
     };
     const { status, data } = await axios.request(reqOpts);
     if (status !== 200) {
-      throw new Error('outlook-fetcher: failed requesting mail');
+      throw new Error('outlook-access: failed requesting mail');
     }
     return data;
   } catch (err) {
     logger.error(`outlook-access: failed to send request to api (${url})`);
-    const { response } = err;
-    const { error } = response.data;
-    throw new Error(`${error.code}: ${error.message}`);
+    if (err && err.response && err.response.data) {
+      const { error } = err.response.data;
+      throw new Error(`${error.code}: ${error.message}`);
+    }
+    throw new Error(err);
   }
 }

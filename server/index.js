@@ -21,6 +21,7 @@ import sentryWebhooks from './rest/webhooks/sentry';
 import serveStatic from 'serve-static';
 import session from './session';
 import statsApi from './rest/stats';
+import stripeWebhooks from './rest/webhooks/stripe';
 import userApi from './rest/user';
 
 const Sentry = require('@sentry/node');
@@ -59,6 +60,7 @@ orgApi(app);
 
 mailgunWebhooks(app);
 sentryWebhooks(app);
+stripeWebhooks(app);
 
 errorsApi(app);
 
