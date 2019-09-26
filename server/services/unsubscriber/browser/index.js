@@ -53,9 +53,9 @@ async function unsubscribe(unsubUrl) {
   try {
     lastTouched = Date.now();
     currentTabsOpen.inc();
+    tabsOpen = tabsOpen + 1;
     page = await getNewPage();
     logger.info('browser: opened new tab');
-    tabsOpen = tabsOpen + 1;
     await goToPage(page, unsubUrl);
     image = await takeScreenshot(page);
     lastTouched = Date.now();
@@ -109,6 +109,7 @@ setInterval(() => {
       if (error) {
         logger.error(`browser: failed killing zombie process with ${tabsOpen}`);
       }
+      currentTabsOpen.dec(tabsOpen);
       tabsOpen = 0;
       logger.info(`browser: killed zombie process with ${tabsOpen}`);
       if (process.env.NODE_ENV !== 'development') {
