@@ -587,6 +587,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
     inviteCode,
     displayName,
     password,
+    referrer,
     enableTeam = false
   } = userData;
   let user;
@@ -608,6 +609,7 @@ export async function createOrUpdateUserFromPassword(userData = {}) {
         // user can only be a new team user if they arent joining one
         organisationAdmin: enableTeam && !organisation,
         loginProvider: 'password',
+        referrer,
         token: v4(),
         accounts: []
       });

@@ -4,7 +4,7 @@ import {
   createOrUpdateUserFromPassword,
   resetUserPassword
 } from '../services/user';
-import { isBetaUser, setRememberMeCookie } from './access';
+import { getReferrerUrlData, isBetaUser, setRememberMeCookie } from './access';
 
 import { AuthError } from '../utils/errors';
 import Joi from 'joi';
@@ -95,6 +95,7 @@ export default app => {
       const { cookies, query } = req;
       const { body: userData, err: validationError } = res.locals;
       const { referrer, invite } = cookies;
+      const referralData = getReferrerUrlData(req);
 
       try {
         if (validationError) {
@@ -111,7 +112,8 @@ export default app => {
           password,
           referralCode: referrer,
           inviteCode: invite,
-          enableTeam: !!query.teams
+          enableTeam: !!query.teams,
+          referrer: referralData
         });
         req.logIn(user, err => {
           if (err) return errorHandler(res, err);
