@@ -44,10 +44,10 @@ async function doFetch({
 }) {
   // if scan was run in (todo in the last 5 minutes?)
   // then ignore this scan event
-  if (runningScans[uuid]) {
-    logger.debug('[socket]: scan is already running');
-    return;
-  }
+  // if (runningScans[uuid]) {
+  //   logger.debug('[socket]: scan is already running');
+  //   return;
+  // }
   runningScans = {
     ...runningScans,
     [uuid]: Date.now()
