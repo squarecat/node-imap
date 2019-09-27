@@ -94,22 +94,18 @@ export default app => {
 
       if (type === 'charge.succeeded') {
         sendMessage(
-          `✅ New Payment! $${(amount / 100).toFixed(2)}
-${description}
-Email: ${email}
-Stripe: https://dashboard.stripe.com/search?query=${email}
-  `
+          `✅ New Payment - $${(amount / 100).toFixed(2)} from ${email}
+${description}`
         );
       }
 
       if (type === 'charge.failed') {
         const { failure_code, failure_message } = object;
         sendMessage(
-          `❌ Payment Failed - $${(amount / 100).toFixed(2)} (${failure_code})
-${description}
-Reason: ${failure_message}
-Email: ${email}
-Stripe: https://dashboard.stripe.com/search?query=${email}
+          `❌ Payment Failed - $${(amount / 100).toFixed(
+            2
+          )} from ${email} (${failure_code})
+${failure_message}
   `
         );
       }
@@ -117,10 +113,10 @@ Stripe: https://dashboard.stripe.com/search?query=${email}
       if (type === 'charge.refunded') {
         const { amount_refunded } = object;
         sendMessage(
-          `➖ Payment Refunded - $${(amount_refunded / 100).toFixed(2)}
+          `➖ Payment Refunded - $${(amount_refunded / 100).toFixed(
+            2
+          )} to ${email}
 ${description}
-Email: ${email}
-Stripe: https://dashboard.stripe.com/search?query=${email}
   `
         );
       }
