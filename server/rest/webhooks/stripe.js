@@ -94,7 +94,7 @@ export default app => {
 
       if (type === 'charge.succeeded') {
         sendMessage(
-          `✅ New Payment - $${(amount / 100).toFixed(2)} from ${email}
+          `✅ New Payment! $${(amount / 100).toFixed(2)} from ${email}
 ${description}`
         );
       }
