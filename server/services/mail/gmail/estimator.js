@@ -35,13 +35,11 @@ export async function getEstimateForTimeframe(userId, account, { from }) {
   }
   const searchStr = getSearchString({ from: after });
   let total = await getEstimatedEmails(searchStr, account, userId);
-  console.log('total', total);
   // if the number of weeks was > 1 then we only searched 1 week
   // so multiple the result by the number of weeks to get the estimate
   if (numWeeksOfSearch > 1) {
     total = total * numWeeksOfSearch;
   }
-  console.log('real total', total);
   return total;
 }
 

@@ -7,9 +7,15 @@ import {
   isMailUnsubscribable
 } from './utils';
 
+import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { parseEmail } from '../../../utils/parsers';
 
+const meter = io.meter({
+  name: 'IMAP mail/hour',
+  samples: 1,
+  timeframe: 3600
+});
 /**
  * Parser considerations
  *
@@ -29,6 +35,7 @@ export function parseMailList(
     if (!mailItem) {
       return out;
     }
+    meter.mark();
     const headers = getHeaders(mailItem);
     const isUnsubscribable = isMailUnsubscribable(headers, ignoredSenderList);
     if (!isUnsubscribable) {

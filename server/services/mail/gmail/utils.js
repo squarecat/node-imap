@@ -21,14 +21,13 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
   }
 
   try {
-    const { headers = [], parts } = payload;
+    const { parts } = payload;
     // check if ignored sender
-    const fromHeader = headers.find(h => h.name === 'From');
-    if (!fromHeader) {
+    const from = getHeader(payload, 'from');
+    if (!from) {
       logger.warn('gmail-utils: email has no from header');
       return false;
     }
-    const from = fromHeader.value;
     let pureFromEmail;
     if (from.match(/^.*<.*>/)) {
       const [, , email] = /^(.*)<(.*)>/.exec(from);
@@ -40,7 +39,7 @@ export function isMailUnsubscribable(mail = {}, ignoredSenderList = []) {
       sender => sender === pureFromEmail
     );
     // check list unsubscribe header
-    let isUnsubscribable = headers.some(h => h.name === 'List-Unsubscribe');
+    let isUnsubscribable = getHeader(payload, 'List-Unsubscribe');
     // check body content for "unsubscribe" if we have fetched the content
     if (!isUnsubscribable && parts) {
       isUnsubscribable = isMailContentUnsubscribable(parts);

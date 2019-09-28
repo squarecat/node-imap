@@ -124,6 +124,12 @@ export default function Terms() {
             Error handling (<a href="https://sentry.io/privacy">Sentry</a>)
           </p>
         </li>
+        <li>
+          <p>
+            Payment processing (
+            <a href="https://stripe.com/en-ee/privacy">Stripe</a>)
+          </p>
+        </li>
       </ol>
       <p>
         We have ensured that the respective privacy policies of these companies

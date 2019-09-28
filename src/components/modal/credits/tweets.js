@@ -42,11 +42,7 @@ export function getSocialContent(unsubCount = 0, referralCode) {
       if (unsubCount >= progress.val) {
         return {
           text: progress.text.replace('NUM', unsubCount),
-          tweet: encodeURIComponent(
-            progress.tweet
-              .replace('NUM', unsubCount)
-              .replace('REFERRAL', referralCode)
-          )
+          tweet: `I've been using @LeaveMeAloneApp to easily unsubscribe from emails! 🙌 Join me and get 5 extra unsubscribe credits for free! 💌 leavemealone.app/r/${referralCode}`
         };
       }
       return out;

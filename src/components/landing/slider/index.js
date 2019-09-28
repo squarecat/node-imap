@@ -10,14 +10,22 @@ const Slider = React.memo(({ slides }) => {
     e.preventDefault();
     clicked.current = true;
     slideRef.current.setAttribute('data-slide', num);
-    slideRef.current
-      .querySelector(`.${styles.slidesContainer}`)
-      .scrollTo(window.innerWidth * num, 0);
+    const $slide = slideRef.current.querySelector(`[data-index="${num}"]`);
+    const $slideContainer = slideRef.current.querySelector(
+      `.${styles.slidesContainer}`
+    );
+    if ($slideContainer.scrollTo) {
+      $slideContainer.scrollTo(window.innerWidth * num, 0);
+    } else if ($slide.scrollIntoView) {
+      // scrollTo not supported in Edge
+      $slide.scrollIntoView();
+    }
+
     setTimeout(() => {
       clicked.current = false;
     }, 700);
     // change focus for screenreaders
-    slideRef.current.querySelector(`[data-index="${num}"]`).focus();
+    $slide.focus();
     return false;
   };
 
