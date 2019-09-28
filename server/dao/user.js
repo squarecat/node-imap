@@ -890,8 +890,13 @@ export async function updatePassword(id, newPassword) {
         }
       }
     );
+
+    const masterKey = getMasterKey(newPassword, password.salt);
     const user = await getUser(id);
-    return user;
+    return {
+      ...user,
+      masterKey
+    };
   } catch (err) {
     logger.error('user-dao: failed to update password');
     logger.error(err);

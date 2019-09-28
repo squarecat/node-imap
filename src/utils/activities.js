@@ -70,7 +70,8 @@ const activityEnum = {
   removedAccountFromOrganisation: ({ data }) =>
     `You removed the account ${data.email} from your team ${data.name}.`,
   addBillingCard: () => `You added a saved payment method.`,
-  removeBillingCard: () => `You removed your saved payment method.`
+  removeBillingCard: () => `You removed your saved payment method.`,
+  switchLoginToPassword: () => `You switched to log in with password`
 };
 
 const reminderTimeframes = {

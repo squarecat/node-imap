@@ -11,6 +11,7 @@ import { ModalContext } from '../../../providers/modal-provider';
 import PasswordInput from '../../../components/form/password';
 import ProfileLayout from '../../../app/profile/layout';
 import SetupTwoFactorAuthModal from '../../../components/modal/2fa/create-2fa';
+import SwitchLoginModal from '../../../components/modal/login-provider-switch';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
 import { getAuthError } from '../../../utils/errors';
@@ -32,22 +33,39 @@ export default () => {
           <ChangePassword />
         </>
       ) : (
-        <div styleName="security-section">
-          <h2>Details</h2>
-          <p>
-            You currently log in with{' '}
-            <TextImportant>{_capitalize(loginProvider)}</TextImportant>.
-          </p>
-          <p>
-            Want to switch to email and password? We don't automate this yet but
-            you can <TextLink onClick={() => openChat()}>contact us</TextLink>{' '}
-            if you'd like to change your account.
-          </p>
-        </div>
+        <Details loginProvider={loginProvider} />
       )}
     </ProfileLayout>
   );
 };
+
+function Details({ loginProvider }) {
+  const { open: openModal } = useContext(ModalContext);
+
+  const onClickSwitchLogin = useCallback(
+    () => openModal(<SwitchLoginModal />),
+    [openModal]
+  );
+
+  return (
+    <div styleName="security-section">
+      <h2>Details</h2>
+      <p>
+        You currently log in with{' '}
+        <TextImportant>{_capitalize(loginProvider)}</TextImportant>.
+      </p>
+      <p>Want to switch to email and password?</p>
+      <ul styleName="switch-list">
+        <li>Password login is generally more secure</li>
+        <li>Two-factor authentication will be available</li>
+        <li>Required to connect iCloud/Fastmail/Yahoo/AOL and IMAP accounts</li>
+      </ul>
+      <Button smaller compact basic onClick={() => onClickSwitchLogin()}>
+        Switch to password log in
+      </Button>
+    </div>
+  );
+}
 
 function TwoFactorAuth() {
   const [{ requiresTwoFactorAuth }, { setRequiresTwoFactorAuth }] = useUser(
