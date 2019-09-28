@@ -1,9 +1,9 @@
 import './testimonial.module.scss';
 
-import React, { useMemo } from 'react';
-import { StaticQuery, graphql } from 'gatsby';
-
-import Img from 'gatsby-image';
+import HeroTestimonialComponent from './testimonial-bar';
+import NewsBarComponent from './news-bar';
+import React from 'react';
+import TrustBarComponent from './trust-bar';
 import cx from 'classnames';
 
 export default ({ text, author, image, ...visProps }) => (
@@ -18,106 +18,6 @@ export default ({ text, author, image, ...visProps }) => (
   </div>
 );
 
-export function HeroTestimonial({
-  text,
-  author,
-  image,
-  companyName,
-  companyLogo
-}) {
-  const styles = cx('hero-testimonial');
-  return (
-    <div styleName={styles}>
-      <div styleName="image-container">
-        <Img loading="auto" fluid={image} alt={`${author} avatar`} />
-      </div>
-      <blockquote styleName="blockquote">
-        <p>"{text}"</p>
-      </blockquote>
-      <cite styleName="author">
-        <span>{author}</span>
-        <span styleName="company">
-          <span>{companyName}</span>
-          <span>{companyLogo}</span>
-        </span>
-      </cite>
-    </div>
-  );
-}
-
-const companies = [
-  {
-    name: 'Toptal',
-    path: 'toptal'
-  },
-  {
-    name: 'TutorSeek',
-    path: 'tutorseek'
-  },
-  {
-    name: 'Product Hunt',
-    path: 'product-hunt'
-  }
-];
-
-export function TrustBar({ label = false, ...visProps }) {
-  const styles = cx('trustbar', {
-    dark: visProps.dark,
-    spaced: visProps.spaced
-  });
-  const content = useMemo(() => {
-    return (
-      <StaticQuery
-        query={graphql`
-          query {
-            companyImages: allFile(
-              filter: { relativePath: { glob: "companies/*" } }
-            ) {
-              edges {
-                node {
-                  name
-                  childImageSharp {
-                    fluid(maxHeight: 42) {
-                      presentationWidth
-                      ...GatsbyImageSharpFluid_withWebp
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `}
-        render={data => (
-          <>
-            {label ? (
-              <span styleName="trustbar-label">
-                Used by<span styleName="long-text"> employees at</span>:
-              </span>
-            ) : null}
-            {companies.map(({ name, path }, i) => {
-              const edges = data.companyImages.edges;
-              const edge = edges.find(e => e.node.name === path);
-              const node = edge.node.childImageSharp.fluid;
-              return (
-                <span key={`trustbar-logo-${i}`} styleName="trustbar-img">
-                  <Img
-                    style={{
-                      width: node.presentationWidth
-                    }}
-                    fluid={node}
-                    alt={`${name} logo`}
-                  />
-                </span>
-              );
-            })}
-          </>
-        )}
-      />
-    );
-  }, [label]);
-  return (
-    <div styleName={styles}>
-      <div styleName="trustbar-images">{content}</div>
-    </div>
-  );
-}
+export const NewsBar = NewsBarComponent;
+export const HeroTestimonial = HeroTestimonialComponent;
+export const TrustBar = TrustBarComponent;

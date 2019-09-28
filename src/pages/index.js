@@ -7,7 +7,11 @@ import {
   MicrosoftIcon,
   PointyArrow
 } from '../components/icons';
-import { HeroTestimonial, TrustBar } from '../components/landing/testimonial';
+import {
+  HeroTestimonial,
+  NewsBar,
+  TrustBar
+} from '../components/landing/testimonial';
 import React, {
   useCallback,
   useEffect,
@@ -175,7 +179,7 @@ const IndexPage = ({ data }) => {
             </div>
           </div>
         </div>
-
+        <NewsBar />
         <div className="testimonial-section">
           <Slider
             slides={[
