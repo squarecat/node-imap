@@ -1,15 +1,13 @@
 import './header.module.scss';
 
-import Dropdown, {
-  DropdownItem,
-  DropdownList
-} from '../../../components/dropdown';
+import Dropdown, { DropdownItem, DropdownList } from '../../dropdown';
 import { Link, StaticQuery, graphql } from 'gatsby';
 import React, { useCallback, useState } from 'react';
 import { differenceInCalendarDays, isBefore } from 'date-fns';
 
 import { CloseIcon } from '../../icons';
 import Img from 'gatsby-image';
+import { TextLink } from '../../text';
 import cx from 'classnames';
 
 export default ({ setActive = () => {}, inverted = false }) => {
@@ -29,7 +27,9 @@ export default ({ setActive = () => {}, inverted = false }) => {
       <span>
         We are live streaming the official launch of Leave Me Alone v2.0 in{' '}
         {+timeLeft} days time!{' '}
-        <a href="/live">Follow us on Twitch to get notified when it starts!</a>{' '}
+        <TextLink inverted href="/live">
+          Follow us on Twitch to get notified when it starts!
+        </TextLink>{' '}
         ❤
       </span>
     );
@@ -38,7 +38,11 @@ export default ({ setActive = () => {}, inverted = false }) => {
     bannerText = (
       <span>
         We are live streaming the official launch of Leave Me Alone v2.0 RIGHT
-        NOW! <a href="/live">Tune in and join us!</a> ❤
+        NOW!{' '}
+        <TextLink inverted href="/live">
+          Tune in and join us!
+        </TextLink>{' '}
+        ❤
       </span>
     );
   }
