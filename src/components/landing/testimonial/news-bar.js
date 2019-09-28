@@ -1,5 +1,5 @@
+import { Link, StaticQuery, graphql } from 'gatsby';
 import React, { useMemo } from 'react';
-import { StaticQuery, graphql } from 'gatsby';
 
 import Img from 'gatsby-image';
 import styles from './testimonial.module.scss';
@@ -51,13 +51,15 @@ export default function NewsBar() {
                   key={`trustbar-logo-${i}`}
                   styleName="trustbar-img newsbar-img"
                 >
-                  <Img
-                    style={{
-                      width: node.presentationWidth
-                    }}
-                    fluid={node}
-                    alt={`${name} logo`}
-                  />
+                  <Link to="/news">
+                    <Img
+                      style={{
+                        width: node.presentationWidth
+                      }}
+                      fluid={node}
+                      alt={`${name} logo`}
+                    />
+                  </Link>
                 </span>
               );
             })}
