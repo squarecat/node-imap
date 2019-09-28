@@ -153,7 +153,7 @@ export default ({ actions, onConfirm, providerType }) => {
           </p>
           <p>
             Please{' '}
-            <TextLink href="/app/profile/security">
+            <TextLink as="link" linkTo="/app/profile/security">
               visit the security page
             </TextLink>{' '}
             to switch your account to log in with email and password.
