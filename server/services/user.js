@@ -958,13 +958,11 @@ export async function updateUserPassword(
     await authenticateUser({ email, password });
 
     // get the accounts from the updated user
-    const updatedUser = await updatePassword(id, newPassword);
-
-    // generate a new master key by authenticating again
-    const { masterKey: newMasterKey } = await authenticateUser({
-      email,
-      password: newPassword
-    });
+    // this has the new master key on
+    const { masterKey: newMasterKey, ...updatedUser } = await updatePassword(
+      id,
+      newPassword
+    );
 
     // update any encrpyted imap details with
     // the new master key
@@ -981,6 +979,8 @@ export async function updateUserPassword(
         });
       })
     );
+    // send it separated from the user because they key is set on the session
+    // and the user will be returned to the front end
     return { user: updatedUser, masterKey: newMasterKey };
   } catch (err) {
     logger.error(`user-service: failed to update user password`);
@@ -1514,6 +1514,7 @@ export async function resetUserPassword({ email, password, resetCode }) {
       });
     }
 
+    // this will have the master key on
     const updatedUser = await updatePassword(user.id, password);
     await invalidateImapAccounts(user.id, 'password-invalidated');
     return updatedUser;
@@ -1531,6 +1532,27 @@ export async function enableOrganisationForUser(id) {
   try {
     logger.debug(`user-service: enabling organsiation for user ${id}`);
     return enableOrganisation(id);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function setUserLoginProviderToPassword(id) {
+  try {
+    logger.debug(`user-service: setting user login provider to password ${id}`);
+    const resetCode = shortid.generate();
+
+    const user = await updateUser(id, {
+      loginProvider: 'password',
+      password: {},
+      resetCode,
+      resetCodeExpires: addHours(Date.now(), 2)
+    });
+
+    // send email
+    sendForgotPasswordMail({ toAddress: user.email, resetCode });
+    addActivityForUser(id, 'switchLoginToPassword');
+    return user;
   } catch (err) {
     throw err;
   }

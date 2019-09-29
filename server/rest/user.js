@@ -17,6 +17,7 @@ import {
   removeUserBillingCard,
   removeUserReminder,
   removeUserTotpToken,
+  setUserLoginProviderToPassword,
   setUserMilestoneCompleted,
   updateImapAccount,
   updateUserActivityCompleted,
@@ -30,6 +31,7 @@ import Joi from 'joi';
 import QRCode from 'qrcode';
 import { RestError } from '../utils/errors';
 import auth from '../middleware/route-auth';
+import { destroySession } from '../session';
 import { get as getAudit } from '../services/audit';
 import { internalOnly } from '../middleware/host-validation';
 import logger from '../utils/logger';
@@ -365,23 +367,28 @@ export default app => {
       const { user, body } = req;
       const { id, email, masterKey } = user;
       const { op, value } = body;
-      let updatedUser = user;
+
       try {
         if (op === 'update') {
           const { oldPassword, password: newPassword } = value;
           const {
-            user: newUserData,
+            user: updatedUser,
             masterKey: newMasterKey
           } = await updateUserPassword(
             { id, email, password: oldPassword, masterKey },
             newPassword
           );
           setSessionProp(req, 'passport.user.masterKey', newMasterKey);
-          updatedUser = newUserData;
+          res.send(updatedUser);
+        } else if (op === 'set-password-login') {
+          const updatedUser = await setUserLoginProviderToPassword(id);
+          req.logout();
+          destroySession(req);
+          res.send(updatedUser);
         } else {
           logger.error(`user-rest: password patch op not supported`);
+          res.send(user);
         }
-        res.send(updatedUser);
       } catch (err) {
         next(
           new RestError('failed to patch user password', {
