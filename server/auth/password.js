@@ -145,6 +145,8 @@ export default app => {
           });
         }
         const { username, password, resetCode } = userData;
+        // this updates the user password will return with masterKey
+        // to set in the session
         const user = await resetUserPassword({
           email: username,
           password,

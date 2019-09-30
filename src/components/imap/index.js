@@ -13,7 +13,6 @@ import { TextImportant, TextLink } from '../text';
 import PasswordInput from '../form/password';
 import { getConnectError } from '../../utils/errors';
 import imapReducer from './reducer';
-import { openChat } from '../../utils/chat';
 import request from '../../utils/request';
 import useUser from '../../utils/hooks/use-user';
 
@@ -77,270 +76,260 @@ export default ({ actions, onConfirm, providerType }) => {
     loading: false
   });
 
-  const onSubmit = useCallback(
-    async () => {
-      try {
-        dispatch({ type: 'set-loading', data: true });
-        dispatch({ type: 'set-error', data: false });
-        // if (state.imap.host.startsWith('http')) {
-        // return dispatch({
-        //   type: 'set-error',
-        //   data: 'HTTP(S) protocol is not required'
-        // });
-        // }
-        await saveImapConnection(state.imap);
-        onConfirm();
-      } catch (err) {
-        const { message } = getConnectError(err);
-        dispatch({ type: 'set-error', data: message });
-      } finally {
-        dispatch({ type: 'set-loading', data: false });
-      }
-    },
-    [onConfirm, state.imap]
-  );
+  const onSubmit = useCallback(async () => {
+    try {
+      dispatch({ type: 'set-loading', data: true });
+      dispatch({ type: 'set-error', data: false });
+      // if (state.imap.host.startsWith('http')) {
+      // return dispatch({
+      //   type: 'set-error',
+      //   data: 'HTTP(S) protocol is not required'
+      // });
+      // }
+      await saveImapConnection(state.imap);
+      onConfirm();
+    } catch (err) {
+      const { message } = getConnectError(err);
+      dispatch({ type: 'set-error', data: message });
+    } finally {
+      dispatch({ type: 'set-loading', data: false });
+    }
+  }, [onConfirm, state.imap]);
 
-  const notification = useMemo(
-    () => {
-      const { imap } = state;
-      let content;
-      if (state.error) {
-        content = <FormNotification error>{state.error}</FormNotification>;
-      } else if (isWeirdHost(imap.host)) {
-        content = (
-          <FormNotification warning>
-            We support OAuth for this host which is generally more secure and
-            simpler to setup. Consider using this instead of IMAP.
-          </FormNotification>
-        );
-      } else if (isUnsupportedHost(imap.host)) {
-        content = (
-          <FormNotification error>
-            Connecting Google hosts using IMAP is not supported right now due to
-            Google's tight security model. Please use our "Connect Google"
-            button instead.
-          </FormNotification>
-        );
-      }
-      return <FormGroup>{content}</FormGroup>;
-    },
-    [state]
-  );
-
-  const lead = useMemo(
-    () => {
-      if (providerType) {
-        return getProviderLead(providerType);
-      }
-      return (
-        <p>
-          The Internet Message Access Protocol (IMAP) is a mail protocol used
-          for accessing email on a remote web server from a local client. This
-          should be supported by all modern email clients and web servers, but{' '}
-          <TextImportant>may need to be enabled first</TextImportant> from
-          within your mail client.
-        </p>
+  const notification = useMemo(() => {
+    const { imap } = state;
+    let content;
+    if (state.error) {
+      content = <FormNotification error>{state.error}</FormNotification>;
+    } else if (isWeirdHost(imap.host)) {
+      content = (
+        <FormNotification warning>
+          We support OAuth for this host which is generally more secure and
+          simpler to setup. Consider using this instead of IMAP.
+        </FormNotification>
       );
-    },
-    [providerType]
-  );
+    } else if (isUnsupportedHost(imap.host)) {
+      content = (
+        <FormNotification error>
+          Connecting Google hosts using IMAP is not supported right now due to
+          Google's tight security model. Please use our "Connect Google" button
+          instead.
+        </FormNotification>
+      );
+    }
+    return <FormGroup>{content}</FormGroup>;
+  }, [state]);
 
-  const content = useMemo(
-    () => {
-      if (!isImapEnabled) {
-        return (
-          <>
-            <p>
-              Connecting other mailboxes is{' '}
-              <TextImportant>
-                only available for accounts created with password
-              </TextImportant>
-              .
-            </p>
-            <p>
-              This is because we want to keep your IMAP credentials as secure as
-              possible and the best way to do this is by encrypting your
-              information using the password you log in with.
-            </p>
-            <p>
-              Please <TextLink onClick={() => openChat()}>contact us</TextLink>{' '}
-              and we will switch your account to using email and password.
-            </p>
-          </>
-        );
-      }
+  const lead = useMemo(() => {
+    if (providerType) {
+      return getProviderLead(providerType);
+    }
+    return (
+      <p>
+        The Internet Message Access Protocol (IMAP) is a mail protocol used for
+        accessing email on a remote web server from a local client. This should
+        be supported by all modern email clients and web servers, but{' '}
+        <TextImportant>may need to be enabled first</TextImportant> from within
+        your mail client.
+      </p>
+    );
+  }, [providerType]);
 
-      const { imap } = state;
-
+  const content = useMemo(() => {
+    if (!isImapEnabled) {
       return (
         <>
-          {lead}
-          <FormGroup unpadded>
-            <FormLabel htmlFor="imap-username">
-              {providerType
-                ? `${CONFIG[providerType].imap.displayName} email address:`
-                : 'Username:'}
-            </FormLabel>
-            <FormInput
-              name="imap-username"
-              smaller
-              placeholder="you@example.com"
-              disabled={state.loading}
-              required
-              value={imap.username}
-              onChange={e => {
-                const username = e.currentTarget.value;
-                if (username !== imap.username) {
-                  dispatch({
-                    type: 'set-imap',
-                    data: { username }
-                  });
-                }
-              }}
-            />
-            {providerType ? null : <p>Usually your email address.</p>}
-          </FormGroup>
-          <FormGroup unpadded>
-            <FormLabel htmlFor="imap-password">
-              {providerType
-                ? `${CONFIG[providerType].imap.displayName} password:`
-                : 'Password:'}
-            </FormLabel>
-            <PasswordInput
-              name="imap-password"
-              doValidation={false}
-              smaller
-              disabled={state.loading}
-              required
-              value={imap.password}
-              autoFocus={false}
-              onChange={value => {
-                if (value !== imap.password) {
-                  dispatch({
-                    type: 'set-imap',
-                    data: { password: value }
-                  });
-                }
-              }}
-            />
-            {providerType ? null : (
-              <p>Usually the password you use to sign into the mail client.</p>
-            )}
-          </FormGroup>
+          <p>
+            Connecting other mailboxes is{' '}
+            <TextImportant>
+              only available for accounts created with password
+            </TextImportant>
+            .
+          </p>
+          <p>
+            This is because we want to keep your IMAP credentials as secure as
+            possible and the best way to do this is by encrypting your
+            information using the password you log in with.
+          </p>
+          <p>
+            Please{' '}
+            <TextLink as="link" linkTo="/app/profile/security">
+              visit the security page
+            </TextLink>{' '}
+            to switch your account to log in with email and password.
+          </p>
+        </>
+      );
+    }
+
+    const { imap } = state;
+
+    return (
+      <>
+        {lead}
+        <FormGroup unpadded>
+          <FormLabel htmlFor="imap-username">
+            {providerType
+              ? `${CONFIG[providerType].imap.displayName} email address:`
+              : 'Username:'}
+          </FormLabel>
+          <FormInput
+            name="imap-username"
+            smaller
+            placeholder="you@example.com"
+            disabled={state.loading}
+            required
+            value={imap.username}
+            onChange={e => {
+              const username = e.currentTarget.value;
+              if (username !== imap.username) {
+                dispatch({
+                  type: 'set-imap',
+                  data: { username }
+                });
+              }
+            }}
+          />
+          {providerType ? null : <p>Usually your email address.</p>}
+        </FormGroup>
+        <FormGroup unpadded>
+          <FormLabel htmlFor="imap-password">
+            {providerType
+              ? `${CONFIG[providerType].imap.displayName} password:`
+              : 'Password:'}
+          </FormLabel>
+          <PasswordInput
+            name="imap-password"
+            doValidation={false}
+            smaller
+            disabled={state.loading}
+            required
+            value={imap.password}
+            autoFocus={false}
+            onChange={value => {
+              if (value !== imap.password) {
+                dispatch({
+                  type: 'set-imap',
+                  data: { password: value }
+                });
+              }
+            }}
+          />
           {providerType ? null : (
-            <>
-              <FormGroup unpadded>
-                <FormLabel htmlFor="imap-host">Host:</FormLabel>
-                <FormInput
-                  name="imap-host"
-                  smaller
-                  disabled={state.loading}
-                  required
-                  placeholder="imap.example.com"
-                  value={imap.host}
-                  onChange={e => {
-                    const host = e.currentTarget.value;
-                    if (host !== imap.host) {
-                      dispatch({
-                        type: 'set-imap',
-                        data: { host }
-                      });
-                    }
-                  }}
-                />
-                <p>Your mail client should tell you what this is.</p>
-              </FormGroup>
-              <FormGroup unpadded>
-                <FormLabel htmlFor="imap-port">Port:</FormLabel>
-                <FormInput
-                  name="imap-port"
-                  smaller
-                  disabled={state.loading}
-                  required
-                  value={imap.port}
-                  onChange={e => {
-                    const port = e.currentTarget.value;
-                    if (port !== imap.port) {
-                      dispatch({
-                        type: 'set-imap',
-                        data: { port }
-                      });
-                    }
-                  }}
-                />
-                <p>Usually either 993 or 143</p>
-              </FormGroup>
-            </>
+            <p>Usually the password you use to sign into the mail client.</p>
           )}
-          {providerType ? null : (
+        </FormGroup>
+        {providerType ? null : (
+          <>
             <FormGroup unpadded>
-              <FormLabel htmlFor="imap-display-name">Display name:</FormLabel>
+              <FormLabel htmlFor="imap-host">Host:</FormLabel>
               <FormInput
-                name="imap-display-name"
+                name="imap-host"
                 smaller
-                placeholder="Example Mail"
                 disabled={state.loading}
-                value={imap.displayName}
+                required
+                placeholder="imap.example.com"
+                value={imap.host}
                 onChange={e => {
-                  const displayName = e.currentTarget.value;
-                  if (displayName !== imap.displayName) {
+                  const host = e.currentTarget.value;
+                  if (host !== imap.host) {
                     dispatch({
                       type: 'set-imap',
-                      data: { displayName }
+                      data: { host }
                     });
                   }
                 }}
               />
-              <p>
-                Optional. Name of this IMAP provider to help you identify it.
-              </p>
+              <p>Your mail client should tell you what this is.</p>
             </FormGroup>
-          )}
+            <FormGroup unpadded>
+              <FormLabel htmlFor="imap-port">Port:</FormLabel>
+              <FormInput
+                name="imap-port"
+                smaller
+                disabled={state.loading}
+                required
+                value={imap.port}
+                onChange={e => {
+                  const port = e.currentTarget.value;
+                  if (port !== imap.port) {
+                    dispatch({
+                      type: 'set-imap',
+                      data: { port }
+                    });
+                  }
+                }}
+              />
+              <p>Usually either 993 or 143</p>
+            </FormGroup>
+          </>
+        )}
+        {providerType ? null : (
           <FormGroup unpadded>
-            <FormCheckbox
-              name="imap-tls"
+            <FormLabel htmlFor="imap-display-name">Display name:</FormLabel>
+            <FormInput
+              name="imap-display-name"
+              smaller
+              placeholder="Example Mail"
               disabled={state.loading}
-              label="Use TLS"
-              checked={imap.tls}
+              value={imap.displayName}
               onChange={e => {
-                const tls = e.currentTarget.checked;
-                if (tls !== imap.tls) {
+                const displayName = e.currentTarget.value;
+                if (displayName !== imap.displayName) {
                   dispatch({
                     type: 'set-imap',
-                    data: { tls }
+                    data: { displayName }
                   });
                 }
               }}
             />
+            <p>Optional. Name of this IMAP provider to help you identify it.</p>
           </FormGroup>
-          <FormGroup unpadded>
-            <FormCheckbox
-              name="imap-ssl"
-              disabled={state.loading}
-              label="Use SSL"
-              checked={imap.ssl}
-              onChange={e => {
-                const ssl = e.currentTarget.checked;
-                if (ssl !== imap.ssl) {
-                  dispatch({
-                    type: 'set-imap',
-                    data: { ssl }
-                  });
-                }
-              }}
-            />
-          </FormGroup>
-          {notification}
-        </>
-      );
-    },
-    [isImapEnabled, lead, notification, providerType, state]
-  );
+        )}
+        <FormGroup unpadded>
+          <FormCheckbox
+            name="imap-tls"
+            disabled={state.loading}
+            label="Use TLS"
+            checked={imap.tls}
+            onChange={e => {
+              const tls = e.currentTarget.checked;
+              if (tls !== imap.tls) {
+                dispatch({
+                  type: 'set-imap',
+                  data: { tls }
+                });
+              }
+            }}
+          />
+        </FormGroup>
+        <FormGroup unpadded>
+          <FormCheckbox
+            name="imap-ssl"
+            disabled={state.loading}
+            label="Use SSL"
+            checked={imap.ssl}
+            onChange={e => {
+              const ssl = e.currentTarget.checked;
+              if (ssl !== imap.ssl) {
+                dispatch({
+                  type: 'set-imap',
+                  data: { ssl }
+                });
+              }
+            }}
+          />
+        </FormGroup>
+        {notification}
+      </>
+    );
+  }, [isImapEnabled, lead, notification, providerType, state]);
   return (
     <form
       id="imap-form"
       name="imap-form"
       onSubmit={e => {
+        if (!isImapEnabled) return false;
         e.preventDefault();
         onSubmit();
         return false;

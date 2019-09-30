@@ -23,6 +23,7 @@ let defaultStep = 'select';
 let previousProvider;
 let previousUsername;
 let teams = false;
+let resetCode = '';
 
 if (typeof window !== 'undefined') {
   const urlParams = new URLSearchParams(window.location.search);
@@ -50,16 +51,6 @@ function resetUrlParams(action) {
     window.history.replaceState(newState, '', url);
   }
   error = null;
-}
-
-if (strategy === 'password') {
-  defaultStep = 'enter-email';
-} else if (strategy === 'reset') {
-  defaultStep = 'reset-password';
-} else if (strategy === 'signup') {
-  defaultStep = 'signup';
-} else if (strategy === 'forgot') {
-  defaultStep = 'forgot-password';
 }
 
 const selectCardHeight = 690;
@@ -108,12 +99,26 @@ function loginReducer(state, action) {
   }
 }
 
+if (strategy === 'password') {
+  defaultStep = 'enter-email';
+} else if (strategy === 'reset') {
+  defaultStep = 'reset-password';
+} else if (strategy === 'signup') {
+  defaultStep = 'signup';
+} else if (strategy === 'forgot') {
+  defaultStep = 'forgot-password';
+}
+
+let email = username || '';
+if (previousProvider === 'password') {
+  email = previousUsername || '';
+}
 const initialState = {
   loading: false,
   step: defaultStep,
   register: false,
   password: '',
-  email: username || previousProvider === 'password' ? previousUsername : '',
+  email,
   resetCode: '',
   error,
   existingProvider: null
@@ -215,7 +220,8 @@ const LoginPage = React.memo(
               <span>
                 Already have an account? <a href="/login">Log in</a>.
               </span>
-              <span>{' '}
+              <span>
+                {' '}
                 Not a team? <a href="/signup">Sign up for a personal account</a>
                 .
               </span>
@@ -227,7 +233,8 @@ const LoginPage = React.memo(
               <span>
                 Already have an account? <a href="/login">Log in</a>.
               </span>
-              <span>{' '}
+              <span>
+                {' '}
                 Let your entire team unsubscribe.{' '}
                 <a href="/signup?teams=true">Sign up for teams</a>.
               </span>
@@ -272,7 +279,7 @@ const LoginPage = React.memo(
             <h1 styleName="title">{`${action} to Leave Me Alone${
               state.teams ? ' for Teams' : ''
             }`}</h1>
-              <p>You're one step away from a clean inbox!</p>
+            <p>You're one step away from a clean inbox!</p>
             <EmailForm />
           </>
         );
