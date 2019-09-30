@@ -1,4 +1,7 @@
 export function takeScreenshot(page) {
+  if (!page) {
+    return null;
+  }
   const ss = Promise.race([
     page.screenshot({
       encoding: 'binary',
