@@ -16,6 +16,7 @@ setConfig({ pureSFC: true });
 
 const AppLayout = ({ pageName, children }) => {
   useEffect(() => {
+    loadMetomicScripts();
     if (window.intergram && window.intergram.hide) {
       window.intergram.hide();
     }
@@ -48,3 +49,19 @@ const AppLayout = ({ pageName, children }) => {
 };
 
 export default AppLayout;
+
+function loadMetomicScripts() {
+  [...document.querySelectorAll('[type="text/x-metomic"]')].forEach(e => {
+    const newNode = document.createElement('script');
+    newNode.type = 'text/javascript';
+    if (e.src) {
+      newNode.src = `${e.src}?${Date.now()}`;
+    }
+    if (e.innerHTML) {
+      newNode.innerHTML = e.innerHTML;
+    }
+    const p = e.parentElement;
+    p.removeChild(e);
+    document.body.appendChild(newNode);
+  });
+}

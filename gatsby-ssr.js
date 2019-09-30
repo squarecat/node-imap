@@ -20,10 +20,14 @@ exports.onRenderBody = function({ setPostBodyComponents, pathname }) {
         y=r.getElementsByTagName(i)[0];
         c.async=1;
         c.src=v+'?d='+r.location.host;
-        window.addEventListener('scroll', function() { 
+        function load() {
           y.parentNode.insertBefore(c,y)
           Metomic('load', { projectId: 'prj:464f67cd-4c3b-4c54-bac2-d0513284a9a4' });
-        }, { once: true })
+          Metomic.loaded = true;
+        }        
+        if (!window.location.pathname.startsWith('/app')) {          
+          window.addEventListener('scroll', load, { once: true })
+        }
         })(window, document, 'script', 'https://consent-manager.metomic.io/embed.js', 'Metomic');
         `
       }}

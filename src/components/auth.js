@@ -10,12 +10,13 @@ import React, {
 
 import AlertModal from './modal/alert-modal';
 import { DatabaseContext } from '../providers/db-provider';
+import JoinedTeamModal from './modal/onboarding/joined-team';
 import Loading from './loading';
 import { ModalContext } from '../providers/modal-provider';
 import OnboardingModal from './modal/onboarding';
 import OrganisationOnboardingModal from './modal/organisation-onboarding';
-import JoinedTeamModal from './modal/onboarding/joined-team';
 import { fetchLoggedInUser } from '../utils/auth';
+import { openChat } from '../utils/chat';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../utils/hooks/use-user';
 
@@ -111,6 +112,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
 
   useEffect(() => {
     if (isBrowserSupported === false) {
+      setLoaded(true);
       openModal(
         <AlertModal>
           <p>
@@ -122,8 +124,12 @@ const UserAuth = React.memo(function UserAuth({ children }) {
             Chrome, Safari, or other modern browsers.
           </p>
           <p>
+            If you are using Firefox or Chrome in Incognito/Private mode, then
+            you also may experience issues.
+          </p>
+          <p>
             Think you are seeing this message by mistake? Please{' '}
-            <a onClick={() => window.intergram.open()}>let us know</a>.
+            <a onClick={() => openChat()}>let us know</a>.
           </p>
         </AlertModal>,
         {
@@ -131,9 +137,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
           opaque: true
         }
       );
-    }
-
-    if (teamAdminOnboarding) {
+    } else if (teamAdminOnboarding) {
       // user is an organisation admin and needs the team onboarding
       openModal(<OrganisationOnboardingModal />, {
         dismissable: false,
