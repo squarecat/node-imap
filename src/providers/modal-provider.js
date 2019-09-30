@@ -69,6 +69,9 @@ export const ModalProvider = React.memo(({ children }) => {
   });
 
   const closeModal = useCallback(data => {
+    if (window.location.hash === '#modal') {
+      window.history.back();
+    }
     dispatch({ type: 'close', data });
   }, []);
 
@@ -105,10 +108,13 @@ export const ModalProvider = React.memo(({ children }) => {
     function removeListeners() {
       document.removeEventListener('keyup', closeModalByEsc);
       document.removeEventListener('click', closeModalByClickAway);
+      window.removeEventListener('popstate', closeModal);
     }
     if (state.shown) {
       document.addEventListener('keyup', closeModalByEsc);
       document.addEventListener('click', closeModalByClickAway);
+      window.history.pushState('forward', null, './#modal');
+      window.addEventListener('popstate', closeModal);
     } else {
       removeListeners();
     }
