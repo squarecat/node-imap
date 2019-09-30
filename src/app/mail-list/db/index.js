@@ -312,11 +312,12 @@ function useMailSyncFn() {
       try {
         setIsFetching(true);
         console.debug('[db]: starting fetch');
-        const inProgress = await checkBuffer(socket);
+        const inProgress = await checkBuffer(emit);
         if (inProgress) {
           console.debug('[db]: fetch is already running');
           return;
         }
+        console.debug('[db]: fetching....');
         // clear progress
         db.prefs
           .where('key')
