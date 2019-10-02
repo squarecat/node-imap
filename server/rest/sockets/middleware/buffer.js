@@ -42,7 +42,7 @@ export default async (socket, next) => {
     return { isRunning, isScan };
   }
   // send buffered events if the client requests them
-  socket.on('request-buffer', async ack => {
+  socket.on('request-buffer', async (data, ack) => {
     const { isRunning, isScan } = await sendEvents();
     // if the buffer has mail events, but it doesn't have
     // an end event then there is a scan running, so we

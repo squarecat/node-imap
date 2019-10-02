@@ -1,7 +1,13 @@
 import '../login/login.module.scss';
 
 import { AtSignIcon, KeyIcon } from '../../components/icons';
-import React, { createContext, useMemo, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef
+} from 'react';
 import { TextImportant, TextLink } from '../../components/text';
 
 import AuthButton from './auth-btn';
@@ -17,28 +23,8 @@ const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 const isMaintenanceMode = false;
 let error;
-let strategy;
-let username = '';
-let defaultStep = 'select';
-let previousProvider;
-let previousUsername;
-let teams = false;
-let resetCode = '';
 
-if (typeof window !== 'undefined') {
-  const urlParams = new URLSearchParams(window.location.search);
-  error = urlParams.get('error');
-  strategy = urlParams.get('strategy');
-  username = urlParams.get('username');
-  previousProvider = getCookie('remember-me-provider');
-  previousUsername = getCookie('remember-me-username');
-  teams = urlParams.get('teams');
-  if (previousUsername) {
-    previousUsername = decodeURIComponent(previousUsername);
-  }
-}
-
-function resetUrlParams(action) {
+function resetUrlParams(action, teams) {
   if (typeof window !== 'undefined') {
     let newState = {};
     let url = `/${action}`;
@@ -74,7 +60,7 @@ function loginReducer(state, action) {
     case 'set-loading':
       return { ...state, loading: data };
     case 'set-step': {
-      resetUrlParams(state.register ? 'signup' : 'login');
+      resetUrlParams(state.register ? 'signup' : 'login', state.teams);
       return {
         ...state,
         step: action.data,
@@ -94,32 +80,20 @@ function loginReducer(state, action) {
       return { ...state, existingProvider: action.data };
     case 'set-provider-intent':
       return { ...state, providerIntent: action.data };
+    case 'reset':
+      return action.data;
     default:
       return state;
   }
 }
 
-if (strategy === 'password') {
-  defaultStep = 'enter-email';
-} else if (strategy === 'reset') {
-  defaultStep = 'reset-password';
-} else if (strategy === 'signup') {
-  defaultStep = 'signup';
-} else if (strategy === 'forgot') {
-  defaultStep = 'forgot-password';
-}
-
-let email = username || '';
-if (previousProvider === 'password') {
-  email = previousUsername || '';
-}
 const initialState = {
   loading: false,
-  step: defaultStep,
   register: false,
   password: '',
-  email,
+  email: '',
   resetCode: '',
+  teams: false,
   error,
   existingProvider: null
 };
@@ -127,14 +101,52 @@ const initialState = {
 export const LoginContext = createContext({ state: initialState });
 
 const LoginPage = React.memo(
-  ({ register, transitionStatus, step = defaultStep }) => {
+  ({ register, transitionStatus, step = 'select' }) => {
     const activeRef = useRef(null);
     const [state, dispatch] = useReducer(loginReducer, {
       ...initialState,
-      register: !!register,
-      teams: !!teams,
       step
     });
+
+    useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const previousProvider = getCookie('remember-me-provider');
+      let previousUsername = getCookie('remember-me-username');
+      let defaultStep = 'select';
+      if (previousUsername) {
+        previousUsername = decodeURIComponent(previousUsername);
+      }
+      const username = urlParams.get('username');
+      const strategy = urlParams.get('strategy');
+      let email = username || '';
+      if (previousProvider === 'password') {
+        email = previousUsername || '';
+      }
+      if (strategy === 'password') {
+        defaultStep = 'enter-email';
+      } else if (strategy === 'reset') {
+        defaultStep = 'reset-password';
+      } else if (strategy === 'signup') {
+        defaultStep = 'signup';
+      } else if (strategy === 'forgot') {
+        defaultStep = 'forgot-password';
+      }
+
+      dispatch({
+        type: 'reset',
+        data: {
+          email,
+          error: urlParams.get('error'),
+          strategy,
+          username,
+          teams: urlParams.get('teams'),
+          previousProvider,
+          previousUsername,
+          step: defaultStep
+        }
+      });
+    }, []);
     const value = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
     const windowHeight = useMemo(() => {

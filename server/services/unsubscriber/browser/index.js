@@ -103,27 +103,41 @@ setInterval(() => {
   // by a significant margin
   const inactiveFor = Date.now() - lastTouched;
   const isInactive = inactiveFor > 60000;
-  if (isInactive && tabsOpen > 0) {
-    const pid = puppeteerInstance.process().pid;
-    exec(`kill -9 ${pid}`, error => {
-      if (error) {
-        logger.error(`browser: failed killing zombie process with ${tabsOpen}`);
-      }
+  try {
+    if (!puppeteerInstance) {
       currentTabsOpen.dec(tabsOpen);
       tabsOpen = 0;
-      logger.info(`browser: killed zombie process with ${tabsOpen}`);
-      if (process.env.NODE_ENV !== 'development') {
-        const err =
-          error ||
-          new Error(
-            `Browser became unresponsive and ${tabsOpen} were forcibly killed `
+    } else if (isInactive && tabsOpen > 0) {
+      const pid = puppeteerInstance.process().pid;
+      exec(`kill -9 ${pid}`, error => {
+        if (error) {
+          logger.error(
+            `browser: failed killing zombie process with ${tabsOpen}`
           );
-        Sentry.withScope(function(scope) {
-          scope.setTag('tabs-open', tabsOpen);
-          scope.setLevel('error');
-          Sentry.captureException(err);
-        });
-      }
+        }
+        currentTabsOpen.dec(tabsOpen);
+        tabsOpen = 0;
+        logger.info(`browser: killed zombie process with ${tabsOpen}`);
+        if (process.env.NODE_ENV !== 'development') {
+          const err =
+            error ||
+            new Error(
+              `Browser became unresponsive and ${tabsOpen} were forcibly killed `
+            );
+          Sentry.withScope(function(scope) {
+            scope.setTag('tabs-open', tabsOpen);
+            scope.setLevel('error');
+            Sentry.captureException(err);
+          });
+        }
+      });
+    }
+  } catch (err) {
+    logger.error('browser: tried to destroy browser but failed');
+    Sentry.withScope(function(scope) {
+      scope.setTag('tabs-open', tabsOpen);
+      scope.setLevel('error');
+      Sentry.captureException(err);
     });
   }
 }, 5000);

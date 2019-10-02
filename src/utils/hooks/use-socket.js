@@ -44,10 +44,13 @@ function useSocket({
             data
           });
         }
+        console.log(`[socket]: pending emit ${event}`);
         return setTimeout(emit.bind(null, event, data, cb), 2000);
       }
       attempts = 0;
       dismiss('connection-warning');
+      console.log(`[socket]: emit ${event}`);
+
       return SOCKET_INSTANCE.emit(event, data, cb);
     },
     [db.queue, dismiss, setAlert]
@@ -71,11 +74,12 @@ function useSocket({
         const queue = await db.queue.toArray();
         if (queue.length) {
           await db.queue.clear();
-          queue.forEach(({ data, event }) => emit(event, data));
+          queue.forEach(({ data, event, cb }) => emit(event, data, cb));
         }
       });
       SOCKET_INSTANCE.on('reconnect', attemptNumber => {
-        checkBuffer(SOCKET_INSTANCE);
+        console.debug(`[socket]: reconnect ${attemptNumber}`);
+        checkBuffer(emit);
       });
       SOCKET_INSTANCE.on('error', (err = {}) => {
         console.debug('[socket]: errored');
@@ -104,7 +108,7 @@ function useSocket({
     return () => {
       onDestroy(SOCKET_INSTANCE);
     };
-  }, [token, userId]);
+  }, [token, userId, emit]);
 
   return {
     isConnected: !!socket,
@@ -116,13 +120,13 @@ function useSocket({
 
 export default useSocket;
 
-export function checkBuffer(socket) {
+export function checkBuffer(emit) {
   return new Promise(resolve => {
     console.log('[socket]: checking buffer');
     // if we are reconnecting then the server might
     // have a buffer of events waiting for us
     // now we're all setup we can request these.
-    socket.emit('request-buffer', scanInProgress => {
+    emit('request-buffer', {}, scanInProgress => {
       if (scanInProgress) {
         console.log('[socket]: remote scan in progress');
       }
