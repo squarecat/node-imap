@@ -97,7 +97,10 @@ export const ModalProvider = React.memo(({ children }) => {
     function closeModalByClickAway({ target }) {
       if (state.options.dismissable) {
         let t = target;
-        while (t && t.getAttribute('data-modal-content')) {
+        while (t) {
+          if (t.getAttribute('data-modal-content')) {
+            return false;
+          }
           if (t === document.body) {
             return closeModal();
           }
