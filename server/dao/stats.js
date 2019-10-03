@@ -419,9 +419,10 @@ export async function recordStats() {
 }
 
 export async function recordStatsMonthly() {
+  const subscriptionStats = await getSubscriptionStats();
   const thisMonth = {
     timestamp: isoDate(),
-    ...getSubscriptionStats()
+    ...subscriptionStats
   };
 
   const col = await db().collection(COL_NAME);
