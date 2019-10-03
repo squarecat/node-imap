@@ -55,14 +55,14 @@ export default ({ setActive = () => {}, inverted = false }) => {
     <div
       styleName={cx('landing-header', { 'landing-header-inverted': inverted })}
     >
-      {showBanner ? (
+      {/* {showBanner ? (
         <div styleName="ref-banner">
           <p>{bannerText}</p>
           <a styleName="close" onClick={dismissBanner}>
             <CloseIcon width="8" height="8" />
           </a>
         </div>
-      ) : null}
+      ) : null} */}
       <div styleName="landing-header-inner">
         <Link to="/" styleName="landing-header-logo">
           <StaticQuery
