@@ -130,6 +130,7 @@ setInterval(() => {
             Sentry.captureException(err);
           });
         }
+        puppeteerInstance = null;
       });
     }
   } catch (err) {
@@ -161,6 +162,10 @@ async function getPuppeteerInstance() {
     return puppeteerInstance;
   }
   puppeteerInstance = await puppeteer.launch(puppeteerConfig);
+  puppeteerInstance.on('disconnected', () => {
+    puppeteerInstance = null;
+  });
+
   logger.info('browser: launched new browser');
   return puppeteerInstance;
 }
