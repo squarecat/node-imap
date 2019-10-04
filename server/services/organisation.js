@@ -325,6 +325,7 @@ export async function getOrganisationSubscription(id) {
     if (!subscriptionId) return null;
 
     const subscription = await getSubscription({ subscriptionId });
+
     const {
       canceled_at,
       current_period_start,
@@ -335,10 +336,16 @@ export async function getOrganisationSubscription(id) {
       discount
     } = subscription;
 
-    const { total } = await getUpcomingInvoice({
-      customerId,
-      subscriptionId
-    });
+    // only fetch the upcoming invoice if the subscription
+    // is not cancelled
+    let total = 0;
+    if (!canceled_at) {
+      const upcomingInvoice = await getUpcomingInvoice({
+        customerId,
+        subscriptionId
+      });
+      total = upcomingInvoice.total;
+    }
 
     const subscriptionData = {
       canceled_at,
