@@ -120,7 +120,7 @@ export async function* fetchMail({
     };
   } catch (err) {
     throw new MailError('failed to fetch mail', {
-      provider: 'gmail',
+      provider: 'imap',
       cause: err
     });
   } finally {

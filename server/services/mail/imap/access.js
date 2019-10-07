@@ -72,7 +72,7 @@ function connect({ username, password, host, port, tls = true, audit }) {
 
     imap.once('close', function() {
       connections.dec();
-      audit.appendDebug(`IMAP LOG:\n${log}`);
+      // audit.appendDebug(`IMAP LOG:\n${log}`);
       audit.append(`IMAP connection closed`);
     });
 
