@@ -47,11 +47,8 @@ export default function NewsBar() {
               const edge = edges.find(e => e.node.name === path);
               const node = edge.node.childImageSharp.fluid;
               return (
-                <span
-                  key={`trustbar-logo-${i}`}
-                  styleName="trustbar-img newsbar-img"
-                >
-                  <Link to="/news">
+                <Link to="/news" key={`trustbar-logo-${i}`}>
+                  <span styleName="trustbar-img newsbar-img">
                     <Img
                       style={{
                         width: node.presentationWidth
@@ -59,8 +56,8 @@ export default function NewsBar() {
                       fluid={node}
                       alt={`${name} logo`}
                     />
-                  </Link>
-                </span>
+                  </span>
+                </Link>
               );
             })}
           </>
