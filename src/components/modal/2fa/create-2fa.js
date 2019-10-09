@@ -49,7 +49,7 @@ export default () => {
             <p>Secure your account by setting up two-factor authentication.</p>
             <p>
               Scan the image below with the two-factor authentication app on
-              your phone. If you can’t use a barcode,{' '}
+              your phone. If you can't use a barcode,{' '}
               <a onClick={() => setMethod('code')}>enter this text code</a>{' '}
               instead.
             </p>

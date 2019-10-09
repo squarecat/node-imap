@@ -204,11 +204,11 @@ export default ({ credits }) => {
         </div>
         <ModalSubHeader>Invite friends and Earn Credit</ModalSubHeader>
         <p>
-          You’ll receive{' '}
+          You'll receive{' '}
           <TextImportant>
             {referralCredits} free unsubscribe credits
           </TextImportant>{' '}
-          when the person you invite signs up for an account, and they’ll also
+          when the person you invite signs up for an account, and they'll also
           get <TextImportant>{referredCredits} extra credits</TextImportant> to
           get started.
         </p>
@@ -371,7 +371,7 @@ function getReferralList({ referredBy, referrals }) {
             <span>Referred {referrals.length} people</span>
           </div>
           <div styleName="earn-status">
-            <span styleName="earn-amount">{`${referralsCredits} credits`}</span>
+            <span styleName="earn-amount">{referralsCredits} credits</span>
             <span styleName="earn-checkbox" data-checked="true" />
           </div>
         </li>

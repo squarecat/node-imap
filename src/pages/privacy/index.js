@@ -20,7 +20,7 @@ export default function Terms() {
       <p>
         We only ask for personal information when we truly need it to provide
         the service to you. We collect it by fair and lawful means, with your
-        knowledge and consent. We also let you know why we’re collecting it and
+        knowledge and consent. We also let you know why we're collecting it and
         how it will be used.
       </p>
       <p>
@@ -92,7 +92,7 @@ export default function Terms() {
 
       <h4>Third parties</h4>
       <p>
-        We don’t share any user data publicly or with third-parties, except when
+        We don't share any user data publicly or with third-parties, except when
         required to by law. To date this has never been requested and we can't
         imagine why it would be.
       </p>

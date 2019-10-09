@@ -62,7 +62,7 @@ const NEWS = [
     quote: (
       <span>
         Leave Me Alone{' '}
-        <TextHighlight>doesn’t sell your email data</TextHighlight> to marketers
+        <TextHighlight>doesn't sell your email data</TextHighlight> to marketers
         as some other unsubscribe services do.
       </span>
     ),

@@ -312,7 +312,7 @@ export default [
         email to get to the important stuff, then Leave Me Alone is your
         solution. Added to that,{' '}
         <TextHighlight>
-          it’s privacy-focused, simple and easy to use
+          it's privacy-focused, simple and easy to use
         </TextHighlight>
         , and beautifully designed.
       </span>
