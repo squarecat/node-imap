@@ -39,7 +39,7 @@ const FaqPage = () => (
         </h2>
         <p>
           We never read the content of any of your emails but we do have access
-          to some metadata - information about an email which you don’t usually
+          to some metadata - information about an email which you don't usually
           see.
         </p>
         <p>

@@ -8,22 +8,22 @@ import {
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
+import ProvidersBar from './providers-bar';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
-import { TrustBar } from '../../components/landing/testimonial';
-import gmailLogo from '../../assets/providers/gmail-logo.png';
-import googleLogo from '../../assets/providers/google-logo.png';
+import gmailLogo from '../../assets/providers/google/gmail-logo.png';
+import googleLogo from '../../assets/providers/google/google-logo.png';
 import googleScopes from '../../assets/security/security-gmail-scopes.png';
-import gsuiteLogo from '../../assets/providers/gsuite-logo.png';
+import gsuiteLogo from '../../assets/providers/google/gsuite-logo.png';
 
 const PROVIDER_NAME = 'Google';
 const VARIATIONS = ['Gmail', 'Googlemail', 'G Suite'];
 const META_VARIATIONS = `Gmail, Googlemail, and G Suite`;
 
 const TRUSTBAR_LOGOS = [
-  { name: 'Gmail', link: gmailLogo },
-  { name: 'Google', link: googleLogo },
-  { name: 'G Suite', link: gsuiteLogo }
+  { name: 'Gmail', img: gmailLogo },
+  { name: 'Google', img: googleLogo },
+  { name: 'G Suite', img: gsuiteLogo }
 ];
 
 const ProviderGoogle = () => {
@@ -61,7 +61,7 @@ const ProviderGoogle = () => {
         </div>
       </div>
 
-      <TrustBar logos={TRUSTBAR_LOGOS} dark spaced />
+      <ProvidersBar logos={TRUSTBAR_LOGOS} dark spaced />
 
       <div styleName="security">
         <div styleName="provider-inner">
