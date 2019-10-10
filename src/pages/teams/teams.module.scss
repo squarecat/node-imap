@@ -165,39 +165,12 @@
   border-bottom: 0;
 }
 
-.trustbar {
-  margin-top: 90px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  background: #eee;
-  height: 84px;
-  display: flex;
-  align-items: center;
+.featured {
+  margin-top: 50px;
 }
 
-.trustbar-images {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  filter: grayscale(1);
-
-  @media (max-width: 900px) {
-    padding: 20px;
-  }
-}
-
-.trustbar-img {
-  display: flex;
-  margin-right: 15px;
-  opacity: 0.6;
-  transition: opacity 200ms ease-in-out;
-
-  &:last-child {
-    margin: 0;
-  }
-
-  &:hover {
-    opacity: 0.7;
-  }
+.testimonial {
+  margin: 50px auto;
+  padding-top: 0;
+  padding-bottom: 0;
 }
