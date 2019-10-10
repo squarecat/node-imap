@@ -1,6 +1,10 @@
 import './teams.module.scss';
 
-import { TextImportant, TextLink } from '../../components/text';
+import Testimonial, {
+  NewsBar,
+  TrustBar
+} from '../../components/landing/testimonial';
+import { TextHighlight, TextImportant, TextLink } from '../../components/text';
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import { Enterprise } from '../pricing';
@@ -8,30 +12,14 @@ import EnterpriseEstimator from '../../components/estimator/enterprise';
 import MailListIllustration from '../../components/landing/illustration';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
-import Testimonial from '../../components/landing/testimonial';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
 import googleLogo from '../../assets/providers/gsuite-logo.png';
 import happy from '../../assets/enterprise/happy.png';
-import luke from '../../assets/luke.jpeg';
+import luke from '../../assets/testimonials/luke.jpeg';
 import officeLogo from '../../assets/providers/office-365-logo.png';
 import securityImg from '../../assets/security/security.png';
-
-const companies = [
-  {
-    url:
-      'https://www.fastcompany.com/90326825/the-25-best-new-productivity-apps-for-2019',
-    logoUrl: 'https://cdn.leavemealone.app/images/news/fast-company-logo.png'
-  },
-  {
-    url: 'https://gen.xyz/blog/leavemealonexyz',
-    logoUrl: 'https://cdn.leavemealone.app/images/news/xyz.png'
-  },
-  {
-    url: 'https://www.theregister.co.uk/2019/02/11/google_gmail_developer/',
-    logoUrl: 'https://cdn.leavemealone.app/images/news/the-register-logo.png'
-  }
-];
+import steph from '../../assets/testimonials/steph.jpg';
 
 const TeamsPage = () => {
   return (
@@ -101,19 +89,30 @@ const TeamsPage = () => {
         </div>
       </div>
 
-      <div styleName="trustbar">
-        <div styleName="enterprise-inner trustbar-images">
-          {companies.map((company, index) => (
-            <a
-              key={`company-${index}`}
-              styleName="trustbar-img"
-              href={company.url}
-            >
-              <img src={company.logoUrl} />
-            </a>
-          ))}
-        </div>
+      <div styleName="featured">
+        <NewsBar />
       </div>
+
+      <div styleName="enterprise-inner testimonial">
+        <Testimonial
+          text={
+            <span>
+              I love how Leave Me Alone{' '}
+              <TextHighlight>
+                seamlessly allows you to visualize your inbox and then remove
+                the junk - permanently
+              </TextHighlight>
+              ! I found the product so valuable that I ended up buying scans for
+              my entire team.
+            </span>
+          }
+          author="Steph Smith, Head of Publications - Toptal"
+          image={steph}
+          centered
+        />
+      </div>
+
+      <TrustBar label="Used by employees at: " dark />
 
       <div styleName="security">
         <div styleName="enterprise-inner">
@@ -197,8 +196,13 @@ const TeamsPage = () => {
             </p>
 
             <Testimonial
-              text={`Using Leave Me Alone has resulted in a 17% reduction in my
-                emails, saving me hours of time each month.`}
+              text={
+                <span>
+                  Using Leave Me Alone has resulted in a{' '}
+                  <TextHighlight>17% reduction in my emails</TextHighlight>,
+                  saving me hours of time each month.
+                </span>
+              }
               author="Luke Chadwick, Founder - GraphQL360"
               image={luke}
             />
