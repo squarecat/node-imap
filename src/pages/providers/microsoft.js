@@ -8,7 +8,7 @@ import {
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
-import ProvidersBar from './providers-bar';
+import ProvidersBar from '../../components/landing/providers-bar';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import hotmailLogo from '../../assets/providers/microsoft/hotmail-logo.png';
