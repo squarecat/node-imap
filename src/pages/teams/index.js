@@ -14,10 +14,10 @@ import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import broom from '../../assets/enterprise/broom.png';
 import envelope from '../../assets/open-envelope-love.png';
-import googleLogo from '../../assets/providers/gsuite-logo.png';
+import googleLogo from '../../assets/providers/google/gsuite-logo.png';
 import happy from '../../assets/enterprise/happy.png';
 import luke from '../../assets/testimonials/luke.jpeg';
-import officeLogo from '../../assets/providers/office-365-logo.png';
+import officeLogo from '../../assets/providers/microsoft/office-365-logo.png';
 import securityImg from '../../assets/security/security.png';
 import steph from '../../assets/testimonials/steph.jpg';
 
