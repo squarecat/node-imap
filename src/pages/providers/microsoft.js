@@ -8,14 +8,14 @@ import {
 
 import { Arrow as ArrowIcon } from '../../components/icons';
 import MailListIllustration from '../../components/landing/illustration';
+import ProvidersBar from './providers-bar';
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
-import { TrustBar } from '../../components/landing/testimonial';
-import hotmailLogo from '../../assets/providers/hotmail-logo.png';
-import microsoftLogo from '../../assets/providers/microsoft-logo.png';
-import msnLogo from '../../assets/providers/msn-logo.png';
-import officeLogo from '../../assets/providers/office-365-logo.png';
-import outlookLogo from '../../assets/providers/outlook-logo.png';
+import hotmailLogo from '../../assets/providers/microsoft/hotmail-logo.png';
+import microsoftLogo from '../../assets/providers/microsoft/microsoft-logo.png';
+import msnLogo from '../../assets/providers/microsoft/msn-logo.png';
+import officeLogo from '../../assets/providers/microsoft/office-365-logo.png';
+import outlookLogo from '../../assets/providers/microsoft/outlook-logo.png';
 import outlookScopesImg from '../../assets/security/security-outlook-scopes.png';
 
 const PROVIDER_NAME = 'Microsoft';
@@ -23,11 +23,11 @@ const VARIATIONS = ['Hotmail', 'Outlook', 'Office 365', 'Live', 'MSN'];
 const META_VARIATIONS = `Hotmail, Outlook, Office 365, Live, and MSN`;
 
 const TRUSTBAR_LOGOS = [
-  { name: 'Microsoft', link: microsoftLogo },
-  { name: 'Hotmail', link: hotmailLogo },
-  { name: 'Outlook', link: outlookLogo },
-  { name: 'Office 365', link: officeLogo },
-  { name: 'MSN', link: msnLogo }
+  { name: 'Microsoft', img: microsoftLogo },
+  { name: 'Hotmail', img: hotmailLogo },
+  { name: 'Outlook', img: outlookLogo },
+  { name: 'Office 365', img: officeLogo },
+  { name: 'MSN', img: msnLogo }
 ];
 
 const ProviderMicrosoft = () => {
@@ -65,7 +65,7 @@ const ProviderMicrosoft = () => {
         </div>
       </div>
 
-      <TrustBar logos={TRUSTBAR_LOGOS} spaced />
+      <ProvidersBar logos={TRUSTBAR_LOGOS} spaced />
 
       <div styleName="security">
         <div styleName="provider-inner">

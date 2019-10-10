@@ -7,27 +7,26 @@ import ConnectAccounts from './connect-accounts';
 import { ModalContext } from '../../../providers/modal-provider';
 import { Transition } from 'react-transition-group';
 import _capitalize from 'lodash.capitalize';
+import accountsImg from '../../../assets/onboarding/workflow.png';
 import aolLogo from '../../../assets/providers/imap/aol-logo.png';
 import cx from 'classnames';
+import doneImg from '../../../assets/onboarding/checklist.png';
 import fastmailLogo from '../../../assets/providers/imap/fastmail-logo-small.png';
-import googleLogo from '../../../assets/providers/google-logo.png';
+import googleLogo from '../../../assets/providers/google/google-logo.png';
 import icloudLogo from '../../../assets/providers/imap/icloud-logo-small.png';
 import logoV2 from '../../../assets/logo-v2.png';
-import microsoftLogo from '../../../assets/providers/microsoft-logo.png';
+import microsoftLogo from '../../../assets/providers/microsoft/microsoft-logo.png';
 import { openChat } from '../../../utils/chat';
+import orgImg from '../../../assets/onboarding/collaboration.png';
 import request from '../../../utils/request';
+import rewardsImg from '../../../assets/onboarding/reward.png';
 import styles from './onboarding.module.scss';
 import unsubscribeGif from '../../../assets/unsub-btn.gif';
 import unsubscribeSpamImage from '../../../assets/example-spam-2.png';
 import useAsync from 'react-use/lib/useAsync';
 import useUser from '../../../utils/hooks/use-user';
-import yahooLogo from '../../../assets/providers/imap/yahoo-logo.png';
-
 import welcomeImg from '../../../assets/onboarding/party.png';
-import accountsImg from '../../../assets/onboarding/workflow.png';
-import rewardsImg from '../../../assets/onboarding/reward.png';
-import orgImg from '../../../assets/onboarding/collaboration.png';
-import doneImg from '../../../assets/onboarding/checklist.png';
+import yahooLogo from '../../../assets/providers/imap/yahoo-logo.png';
 
 export default () => {
   const { context: modalContext } = useContext(ModalContext);

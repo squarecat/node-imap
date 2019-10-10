@@ -73,6 +73,7 @@
 
 .alert-message {
   padding: 15px 15px 15px 0;
+  word-break: break-all;
 
   @media (max-width: 400px) {
     padding: 5px 5px 5px 0;

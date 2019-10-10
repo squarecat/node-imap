@@ -279,7 +279,7 @@ export const generatePaymentResponse = intent => {
       payment_intent_client_secret: intent.client_secret
     };
   } else if (intent.status === 'succeeded') {
-    // The payment didn’t need any additional actions and completed!
+    // The payment didn't need any additional actions and completed!
     // Handle post-payment fulfillment
     return {
       success: true
@@ -306,7 +306,7 @@ export async function createSubscription({ customerId, quantity = 1, coupon }) {
         }
       ],
       // When creating the subscription, expand the latest_invoice.payment_intent field in order to
-      // determine payment outcome using the invoice’s associated PaymentIntent.
+      // determine payment outcome using the invoice's associated PaymentIntent.
       expand: ['latest_invoice.payment_intent'],
       enable_incomplete_payments: true,
       coupon

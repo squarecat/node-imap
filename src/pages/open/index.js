@@ -57,13 +57,13 @@ function dailyRevChart(ctx, stats) {
           backgroundColor: lineColor,
           borderColor: lineColor,
           data: getGraphStats(stats, 'totalRevenue')
-        },
-        {
-          fill: false,
-          backgroundColor: lineColor2,
-          borderColor: lineColor2,
-          data: getGraphStats(stats, 'giftRevenue')
         }
+        // {
+        //   fill: false,
+        //   backgroundColor: lineColor2,
+        //   borderColor: lineColor2,
+        //   data: getGraphStats(stats, 'giftRevenue')
+        // }
       ]
     },
     type: 'line',
@@ -513,10 +513,7 @@ function Open() {
     <ErrorBoundary>
       <div styleName="revenue">
         <div styleName="chart box">
-          <h2>
-            Daily Revenue - <span style={{ color: lineColor }}>Sales</span> vs{' '}
-            <span style={{ color: lineColor2 }}>Gift Sales</span>
-          </h2>
+          <h2>Daily Revenue</h2>
           <canvas ref={dailyRevRef} />
         </div>
         <div styleName="boxes">
@@ -663,13 +660,17 @@ function Open() {
 
         <div styleName="chart box">
           <h2>
-            <span style={{ color: lineColor }}>Monthly Profit</span> -{' '}
+            <span style={{ color: lineColor }}>Monthly Profit</span> ={' '}
             <span styleName="title-colored" style={{ color: barColor1 }}>
               Revenue
             </span>{' '}
-            vs{' '}
+            -{' '}
             <span styleName="title-colored" style={{ color: barColor2 }}>
               Expenses
+            </span>{' '}
+            -{' '}
+            <span styleName="title-colored" style={{ color: barColorGreen }}>
+              Donations
             </span>
           </h2>
           <canvas ref={monthlyProfitRef} />

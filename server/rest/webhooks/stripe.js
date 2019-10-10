@@ -82,12 +82,12 @@ export default app => {
   });
 
   app.post('/api/payments', async (req, res) => {
+    res.sendStatus(200);
+
     const { body } = req;
     const { type, data } = body;
 
     try {
-      res.send(200);
-
       const { object } = data;
       const { amount, description, billing_details, receipt_email } = object;
       const email = billing_details.email || receipt_email;

@@ -20,7 +20,7 @@ ${message}
 ${url}
 `
       );
-      res.send(200);
+      res.sendStatus(200);
     } catch (err) {
       logger.error(err);
     }

@@ -1,0 +1,63 @@
+@import '../../styles/common/colors.scss';
+
+.providers-bar {
+  border-top: 1px solid $color-border-grey;
+  background: $color-grey-trustbar;
+  margin-top: 90px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 50px;
+  white-space: nowrap;
+
+  &.dark {
+    background: #373737;
+  }
+
+  @media (max-width: 900px) {
+    padding: 0 20px;
+    font-size: 14px;
+  }
+
+  &.spaced {
+    padding: 0;
+  }
+}
+
+.providers-bar-images {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  .spaced & {
+    max-width: 1050px;
+    width: 100%;
+  }
+}
+
+.providers-bar-img {
+  display: flex;
+  align-items: center;
+  margin: 0 40px;
+  max-width: 200px;
+  padding: 20px 0;
+
+  .spaced & {
+    max-width: 150px;
+  }
+
+  img {
+    max-height: 42px;
+  }
+
+  @media (max-width: 768px) {
+    margin: 0 20px;
+  }
+
+  @media (max-width: 500px) {
+    margin: 0 10px;
+  }
+}

@@ -21,7 +21,7 @@ import reminderImg from '../../assets/learn/reminder.png';
 import searchbarImg from '../../assets/learn/searchbar.png';
 import spamLabelImg from '../../assets/learn/spam.png';
 import subscriberScoreImg from '../../assets/subscriber-score.png';
-import tom from '../../assets/tom.jpg';
+import tom from '../../assets/testimonials/tom.jpg';
 
 export default function Learn() {
   return (
