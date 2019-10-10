@@ -3,7 +3,7 @@ import './providers-bar.module.scss';
 import React from 'react';
 import cx from 'classnames';
 
-export default function ProviderBar({ logos, ...visProps }) {
+export default function ProvidersBar({ logos, ...visProps }) {
   const classes = cx('providers-bar', {
     dark: visProps.dark,
     spaced: visProps.spaced
