@@ -84,13 +84,20 @@ export async function* fetchMail(
         if (unsubscribableMail.length) {
           const {
             dupes: newDupeCache,
+            newDupes,
             deduped,
             dupeSenders: newDupeSenders
           } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
           totalUnsubCount = totalUnsubCount + deduped.length;
           dupeCache = newDupeCache;
           dupeSenders = newDupeSenders;
-          yield { type: 'mail', data: deduped };
+          yield {
+            type: 'mail',
+            data: {
+              duplicateSubscriptions: newDupes,
+              newSubscriptions: deduped
+            }
+          };
         }
         next = await iter.next();
       }

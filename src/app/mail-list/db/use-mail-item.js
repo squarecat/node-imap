@@ -4,7 +4,9 @@ import { DatabaseContext } from '../../../providers/db-provider';
 
 export default function useMailItem(id, reducer) {
   const db = useContext(DatabaseContext);
-  const [item, setItem] = useState({});
+  const [item, setItem] = useState({
+    occurrences: []
+  });
 
   useEffect(() => {
     function onUpdate(modifications, key, obj) {
@@ -32,7 +34,7 @@ export default function useMailItem(id, reducer) {
     () => ({
       ...item,
       getLatest() {
-        return item.occurrences[0];
+        return item.occurrences[0] || {};
       },
       toJSON() {
         return item;

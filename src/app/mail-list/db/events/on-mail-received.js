@@ -5,26 +5,56 @@ export default (socket, db, emit) => {
     async function onMail(data, ack) {
       console.debug(`[db]: received ${data.length} new mail items`);
       try {
-        let mailData = data.map(d => {
+        const { newSubscriptions, duplicateSubscriptions } = data;
+        let mailData = newSubscriptions.map(d => {
           const { email: fromEmail, name: fromName } = parseAddress(d.from);
           let status = d.subscribed ? 'subscribed' : 'unsubscribed';
           if (d.estimatedSuccess === false && !d.resolved) {
             status = 'failed';
           }
           const to = parseAddress(d.to).email;
+          const mail = d;
           return {
-            occurrences: [d],
+            forAccount: mail.forAccount,
+            provider: mail.provider,
+            id: mail.id,
+            from: mail.from,
+            to: to,
+            unsubscribeLink: mail.unsubscribeLink,
+            unsubscribeMailTo: mail.unsubscribeMailTo,
+            isTrash: mail.isTrash,
+            isSpam: mail.isSpam,
             score: -1,
-            to,
-            fromEmail,
-            fromName,
+            subscribed: mail.subscribed,
+            fromEmail: fromEmail,
+            fromName: fromName,
             isLoading: false,
             error: false,
-            status
+            status,
+            occurrenceCount: 1,
+            lastSeenDate: mail.date,
+            __migratedFrom: 'v1',
+            occurrences: [
+              {
+                subject: mail.subject,
+                snippet: mail.snippet,
+                date: mail.date,
+                id: mail.id
+              }
+            ]
           };
         });
-
         await db.mail.bulkPut(mailData);
+        await db.mail
+          .where('key')
+          .anyOf(duplicateSubscriptions.map(ds => ds.key))
+          .modify(item => {
+            const { mail } = duplicateSubscriptions.find(
+              ds => ds.key === item.key
+            );
+            item.occurrenceCount += mail.length;
+            item.occurrences = [...item.occurrences, ...mail];
+          });
         const count = await db.mail.count();
         await db.prefs.put({ key: 'totalMail', value: count });
         const senders = mailData.map(md => md.fromEmail);

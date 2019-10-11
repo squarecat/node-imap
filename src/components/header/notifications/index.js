@@ -1,173 +1,161 @@
-import './notifications.module.scss';
+// import './notifications.module.scss';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState
-} from 'react';
+// import React, {
+//   useCallback,
+//   useEffect,
+//   useMemo,
+//   useReducer,
+//   useState
+// } from 'react';
 
-import { BellIcon } from '../../../components/icons';
-import { Link } from 'gatsby';
-import cx from 'classnames';
-import { parseActivity } from '../../../utils/activities';
-import useSocket from '../../../utils/hooks/use-socket';
-import useUser from '../../../utils/hooks/use-user';
+// import { BellIcon } from '../../../components/icons';
+// import { Link } from 'gatsby';
+// import cx from 'classnames';
+// import { parseActivity } from '../../../utils/activities';
+// import useSocket from '../../../utils/hooks/use-socket';
+// import useUser from '../../../utils/hooks/use-user';
 
-const notificationReducer = (state = [], action) => {
-  if (action.type === 'add') {
-    const { data } = action;
-    const updated = [
-      ...state.filter(n => !data.find(d => d.id === n.id)),
-      ...data
-    ];
-    return [...state, ...updated];
-  }
-  if (action.type === 'reset' && state.length) {
-    return [];
-  }
-  return state;
-};
-const Notifications = () => {
-  const [showSettings, setShowSettings] = useState(false);
-  const [notifications, dispatch] = useReducer(notificationReducer, []);
+// const notificationReducer = (state = [], action) => {
+//   if (action.type === 'add') {
+//     const { data } = action;
+//     const updated = [
+//       ...state.filter(n => !data.find(d => d.id === n.id)),
+//       ...data
+//     ];
+//     return [...state, ...updated];
+//   }
+//   if (action.type === 'reset' && state.length) {
+//     return [];
+//   }
+//   return state;
+// };
+// const Notifications = () => {
+//   const [showSettings, setShowSettings] = useState(false);
+//   const [notifications, dispatch] = useReducer(notificationReducer, []);
 
-  const [{ token, id }] = useUser(u => ({
-    id: u.id,
-    token: u.token
-  }));
-  const { isConnected, socket, emit, error } = useSocket({
-    token,
-    userId: id
-  });
+//   const [{ token, id }] = useUser(u => ({
+//     id: u.id,
+//     token: u.token
+//   }));
+//   const { isConnected, socket, emit, error } = useSocket({
+//     token,
+//     userId: id
+//   });
 
-  // socket setup when connected
-  useEffect(
-    () => {
-      async function onNotification(data) {
-        try {
-          console.log('notifications', data);
-          // remove jank
-          requestAnimationFrame(() => {
-            dispatch({ type: 'set', data });
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      if (isConnected) {
-        socket.on('notifications', onNotification);
-        emit('notifications:fetch-unread');
-      }
+//   // socket setup when connected
+//   useEffect(() => {
+//     async function onNotification(data) {
+//       try {
+//         console.log('notifications', data);
+//         // remove jank
+//         requestAnimationFrame(() => {
+//           dispatch({ type: 'set', data });
+//         });
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     }
+//     if (isConnected) {
+//       socket.on('notifications', onNotification);
+//       emit('notifications:fetch-unread');
+//     }
 
-      return () => {
-        if (socket) {
-          socket.off('notifications', onNotification);
-        }
-      };
-    },
-    [isConnected, error, socket, emit]
-  );
+//     return () => {
+//       if (socket) {
+//         socket.off('notifications', onNotification);
+//       }
+//     };
+//   }, [isConnected, error, socket, emit]);
 
-  const onDropdownOpen = () => {
-    setShowSettings(!showSettings);
-  };
+//   const onDropdownOpen = () => {
+//     setShowSettings(!showSettings);
+//   };
 
-  const onDropdownClose = useCallback(
-    () => {
-      setShowSettings(false);
-      if (notifications.length) {
-        socket.emit('notifications:set-read');
-      }
-      dispatch({ type: 'reset' });
-    },
-    [notifications.length, socket]
-  );
+//   const onDropdownClose = useCallback(() => {
+//     setShowSettings(false);
+//     if (notifications.length) {
+//       socket.emit('notifications:set-read');
+//     }
+//     dispatch({ type: 'reset' });
+//   }, [notifications.length, socket]);
 
-  const unread = notifications.filter(n => !n.notificationSeen).length;
+//   const unread = notifications.filter(n => !n.notificationSeen).length;
 
-  const onClickBody = useCallback(
-    ({ target }) => {
-      let { parentElement } = target;
-      if (!parentElement) return;
-      while (parentElement && parentElement !== document.body) {
-        if (parentElement.classList.contains('settings-dropdown-toggle')) {
-          return;
-        }
-        parentElement = parentElement.parentElement;
-      }
-      onDropdownClose();
-    },
-    [onDropdownClose]
-  );
+//   const onClickBody = useCallback(
+//     ({ target }) => {
+//       let { parentElement } = target;
+//       if (!parentElement) return;
+//       while (parentElement && parentElement !== document.body) {
+//         if (parentElement.classList.contains('settings-dropdown-toggle')) {
+//           return;
+//         }
+//         parentElement = parentElement.parentElement;
+//       }
+//       onDropdownClose();
+//     },
+//     [onDropdownClose]
+//   );
 
-  useEffect(
-    () => {
-      if (showSettings) {
-        document.body.addEventListener('click', onClickBody);
-      } else {
-        document.body.removeEventListener('click', onClickBody);
-      }
-      return () => document.body.removeEventListener('click', onClickBody);
-    },
-    [onClickBody, showSettings]
-  );
+//   useEffect(() => {
+//     if (showSettings) {
+//       document.body.addEventListener('click', onClickBody);
+//     } else {
+//       document.body.removeEventListener('click', onClickBody);
+//     }
+//     return () => document.body.removeEventListener('click', onClickBody);
+//   }, [onClickBody, showSettings]);
 
-  const notificationsContent = useMemo(
-    () => {
-      if (!notifications.length) {
-        return (
-          <li styleName="notification-item empty">
-            <p>
-              No new notifications!{' '}
-              <span role="img" aria-label="Tada">
-                🎉
-              </span>
-            </p>
-          </li>
-        );
-      }
-      return notifications.map(n => {
-        const parsedActivity = parseActivity(n);
-        if (!parsedActivity) return null;
-        return (
-          <li key={n.id} styleName="notification-item">
-            <span
-              styleName={cx('notification', {
-                unread: !n.notificationSeen
-              })}
-            >
-              {parsedActivity}
-            </span>
-          </li>
-        );
-      });
-    },
-    [notifications]
-  );
+//   const notificationsContent = useMemo(() => {
+//     if (!notifications.length) {
+//       return (
+//         <li styleName="notification-item empty">
+//           <p>
+//             No new notifications!{' '}
+//             <span role="img" aria-label="Tada">
+//               🎉
+//             </span>
+//           </p>
+//         </li>
+//       );
+//     }
+//     return notifications.map(n => {
+//       const parsedActivity = parseActivity(n);
+//       if (!parsedActivity) return null;
+//       return (
+//         <li key={n.id} styleName="notification-item">
+//           <span
+//             styleName={cx('notification', {
+//               unread: !n.notificationSeen
+//             })}
+//           >
+//             {parsedActivity}
+//           </span>
+//         </li>
+//       );
+//     });
+//   }, [notifications]);
 
-  return (
-    <div styleName="notifications">
-      <button
-        styleName={cx('btn', { unread: unread })}
-        data-count={unread}
-        onClick={onDropdownOpen}
-      >
-        <div styleName="notification-icon">
-          <BellIcon width="20" height="20" inline />
-        </div>
-      </button>
-      <ul styleName={`notifications-list ${showSettings ? 'shown' : ''}`}>
-        {notificationsContent}
-        <li styleName="view-all-link">
-          <Link to="/app/profile/history/notifications">
-            View all notifications
-          </Link>
-        </li>
-      </ul>
-    </div>
-  );
-};
+//   return (
+//     <div styleName="notifications">
+//       <button
+//         styleName={cx('btn', { unread: unread })}
+//         data-count={unread}
+//         onClick={onDropdownOpen}
+//       >
+//         <div styleName="notification-icon">
+//           <BellIcon width="20" height="20" inline />
+//         </div>
+//       </button>
+//       <ul styleName={`notifications-list ${showSettings ? 'shown' : ''}`}>
+//         {notificationsContent}
+//         <li styleName="view-all-link">
+//           <Link to="/app/profile/history/notifications">
+//             View all notifications
+//           </Link>
+//         </li>
+//       </ul>
+//     </div>
+//   );
+// };
 
-export default Notifications;
+// export default Notifications;

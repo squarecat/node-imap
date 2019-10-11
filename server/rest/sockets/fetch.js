@@ -57,6 +57,7 @@ async function doFetch({
   };
   scansRunning.inc();
   try {
+    await onStart({ startedAt: Date.now() }, { userId });
     // get mail data for user
     const it = await fetchMail({
       userId,
@@ -121,4 +122,8 @@ function onEnd(stats, { userId }) {
 
 function onProgress(progress, { userId }) {
   return sendToUser(userId, 'mail:progress', progress);
+}
+
+function onStart(data, { userId }) {
+  return sendToUser(userId, 'mail:start', data);
 }

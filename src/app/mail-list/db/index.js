@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { DatabaseContext } from '../../../providers/db-provider';
 import { SocketContext } from '../../../providers/socket-provider';
@@ -29,15 +29,19 @@ export default function useMailSocket() {
   const unsubscribe = useUnsubscribe();
   const setOccurrencesSeen = useUpdateOccurrences();
 
-  return {
-    socket,
-    emit,
-    actions: {
+  const actions = useMemo(
+    () => ({
       fetch,
       resolveUnsubscribe,
       unsubscribe,
       setOccurrencesSeen
-    }
+    }),
+    [fetch, resolveUnsubscribe, setOccurrencesSeen, unsubscribe]
+  );
+  return {
+    socket,
+    emit,
+    actions
   };
 }
 

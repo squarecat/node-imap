@@ -21,12 +21,10 @@ export function SocketProvider({ children }) {
     userId: u.id,
     token: u.token
   }));
-  // const [socket, setSocket] = useState(null);
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
   const { dismiss, setAlert } = actions;
   const attemptsRef = useRef(0);
-
   // set up socket on mount
   const { socket, error } = useSocket(token, userId);
 
@@ -35,8 +33,9 @@ export function SocketProvider({ children }) {
       const attempts = attemptsRef.current;
       if (!socket || socket.disconnected) {
         console.warn(
-          `no socket to emit event "${event}", waiting for socket to open`
+          `[socket]: no socket to emit event "${event}", waiting for socket to open`
         );
+        console.warn('[socket]: ', socket);
         if (attempts > 1) {
           setAlert({
             id: 'connection-warning',
@@ -55,7 +54,7 @@ export function SocketProvider({ children }) {
           });
         }
         console.log(`[socket]: pending emit ${event}`);
-        return setTimeout(emit.bind(null, event, data, cb), 2000);
+        return setTimeout(emit.bind(this, event, data, cb), 2000);
       }
       attemptsRef.current = 0;
       dismiss('connection-warning');
@@ -66,26 +65,23 @@ export function SocketProvider({ children }) {
     [db.queue, dismiss, setAlert, socket]
   );
 
-  const checkBuffer = useCallback(
-    function checkBuffer() {
-      return new Promise(resolve => {
-        console.log('[socket]: checking buffer');
-        // if we are reconnecting then the server might
-        // have a buffer of events waiting for us
-        // now we're all setup we can request these.
-        emit('request-buffer', {}, scanInProgress => {
-          if (scanInProgress) {
-            console.log('[socket]: remote scan in progress');
-          }
-          // after we've received the buffer then we
-          // are fully ready, the server will tell us
-          // if there is already a scan in progress
-          resolve(scanInProgress);
-        });
+  const checkBuffer = useCallback(() => {
+    return new Promise(resolve => {
+      console.log('[socket]: checking buffer');
+      // if we are reconnecting then the server might
+      // have a buffer of events waiting for us
+      // now we're all setup we can request these.
+      emit('request-buffer', {}, scanInProgress => {
+        if (scanInProgress) {
+          console.log('[socket]: remote scan in progress');
+        }
+        // after we've received the buffer then we
+        // are fully ready, the server will tell us
+        // if there is already a scan in progress
+        resolve(scanInProgress);
       });
-    },
-    [emit]
-  );
+    });
+  }, [emit]);
 
   useEffect(() => {
     async function checkQueue() {
@@ -95,9 +91,11 @@ export function SocketProvider({ children }) {
         queue.forEach(({ data, event, cb }) => emit(event, data, cb));
       }
     }
-    // check queue and fire pending events
-    checkQueue();
-  }, [db.queue, emit]);
+    if (socket && !socket.disconnected) {
+      // check queue and fire pending events
+      checkQueue();
+    }
+  }, [db.queue, emit, socket]);
 
   useEffect(() => {
     if (socket) {
@@ -120,7 +118,9 @@ export function SocketProvider({ children }) {
   );
 
   return (
-    <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={value}>
+      {value.socket ? children : null}
+    </SocketContext.Provider>
   );
 }
 
@@ -140,7 +140,6 @@ function useSocket(token, userId) {
     console.debug('[socket]: connecting...');
     sock.on('connect', async () => {
       console.debug('[socket]: connected');
-      console.debug('[socket]: attaching listeners to new socket...');
       setSocket(sock);
     });
     sock.on('error', (err = {}) => {
@@ -164,6 +163,7 @@ function useSocket(token, userId) {
       sock.off('connect');
     };
   }, [token, userId]);
-
   return { socket, error };
 }
+
+useSocket.whyDidYouRender = true;

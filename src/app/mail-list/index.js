@@ -7,14 +7,15 @@ import MailList from './list';
 import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
 import Progress from './progress';
-import UnsubModal from '../../components/modal/unsub-modal';
 import cx from 'classnames';
 import styles from './mail-list.module.scss';
+import useProgress from './db/use-progress';
 import useUser from '../../utils/hooks/use-user';
 
-const MailView = React.memo(function() {
+const MailView = React.memo(function MailView() {
   const { state, dispatch, actions } = useContext(MailContext);
-  const { open: openModal } = useContext(ModalContext);
+  // const { open: openModal } = useContext(ModalContext);
+  const progress = useProgress();
   const [accounts] = useUser(u => u.accounts);
   const {
     totalCount,
@@ -28,6 +29,7 @@ const MailView = React.memo(function() {
     sortByDirection,
     activeFilters
   } = state;
+  const { inProgress } = progress;
 
   // fetch new messages on load and
   // TODO check for new messages each 30 seconds?
@@ -51,31 +53,31 @@ const MailView = React.memo(function() {
     };
   }, [perPage, totalCount, page]);
 
-  const onSubmit = useCallback(
-    ({ success, useImage, failReason = null }) => {
-      const { id, from, unsubStrategy } = unsubData;
-      actions.setUnsubData(null);
-      actions.resolveUnsubscribeError({
-        success,
-        mailId: id,
-        useImage,
-        from: from,
-        reason: failReason,
-        unsubStrategy
-      });
-    },
-    [actions, unsubData]
-  );
+  // const onSubmit = useCallback(
+  //   ({ success, useImage, failReason = null }) => {
+  //     const { id, from, unsubStrategy } = unsubData;
+  //     actions.setUnsubData(null);
+  //     actions.resolveUnsubscribeError({
+  //       success,
+  //       mailId: id,
+  //       useImage,
+  //       from: from,
+  //       reason: failReason,
+  //       unsubStrategy
+  //     });
+  //   },
+  //   [actions, unsubData]
+  // );
 
-  useEffect(() => {
-    if (unsubData) {
-      openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
-        onClose: () => actions.setUnsubData(null)
-      });
-    }
-  }, [actions, onSubmit, openModal, unsubData]);
+  // useEffect(() => {
+  //   if (unsubData) {
+  //     openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
+  //       onClose: () => actions.setUnsubData(null)
+  //     });
+  //   }
+  // }, [actions, onSubmit, openModal, unsubData]);
 
-  const showLoading = (isLoading || isFetching) && !mail.length;
+  const showLoading = (isLoading || inProgress) && !mail.length;
   const content = useMemo(() => {
     if (showLoading) {
       return <Loading />;
@@ -87,7 +89,7 @@ const MailView = React.memo(function() {
   }, [showLoading, mail, accounts.length, activeFilters.length]);
 
   const countStyles = cx(styles.countText, {
-    [styles.shown]: !isFetching
+    [styles.shown]: !inProgress
   });
   return (
     <div styleName="mail-list">
@@ -97,7 +99,6 @@ const MailView = React.memo(function() {
         sortByValue={sortByValue}
         sortByDirection={sortByDirection}
         activeFilters={activeFilters}
-        showLoading={isFetching}
       />
       <div styleName="content">{content}</div>
       <div styleName="footer">
@@ -126,12 +127,14 @@ const MailView = React.memo(function() {
               1}-${totalOnPage}`}</span>{' '}
             of <span styleName="total-count">{totalCount}</span>
           </span>
-          <Progress shown={isFetching} />
+          <Progress shown={inProgress} />
         </div>
       </div>
     </div>
   );
 });
+
+MailView.whyDidYouRender = true;
 
 export default () => {
   return (

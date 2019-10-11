@@ -20,7 +20,7 @@ export default function() {
   const fetch = useCallback(async () => {
     try {
       console.debug('[db]: starting fetch');
-      const inProgress = await checkBuffer(emit);
+      const inProgress = await checkBuffer();
       if (inProgress) {
         console.debug('[db]: fetch is already running');
         return;

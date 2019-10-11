@@ -4,7 +4,7 @@ export default (socket, db) => {
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    async function onEnd(ack) {
+    async function onEnd(d, ack) {
       if (isFetching) {
         setIsFetching(false);
         setImmediate(async () => {
@@ -20,9 +20,9 @@ export default (socket, db) => {
           console.debug('progress: finished');
         });
       }
-      ack();
+      ack && ack();
     }
-    async function onStart(ack) {
+    async function onStart(data, ack) {
       if (!isFetching) {
         setIsFetching(true);
         setImmediate(async () => {
@@ -31,14 +31,14 @@ export default (socket, db) => {
             key: 'progress',
             value: {
               ...(currentProgress ? currentProgress.value : {}),
-              startedAt: Date.now(),
+              startedAt: data.startedAt,
               inProgress: true
             }
           });
           console.debug('progress: finished');
         });
       }
-      ack();
+      ack && ack();
     }
 
     if (socket) {

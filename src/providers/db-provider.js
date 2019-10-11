@@ -19,7 +19,7 @@ db.version(1).stores({
 // mail occurrence
 db.version(2)
   .stores({
-    mail: `&id, fromEmail, date, *labels, score, to, status, [status+to], [forAccount+status], forAccount, [to+forAccount+provider], occurrenceCount`,
+    mail: `&id, key, fromEmail, lastSeenDate, *labels, score, to, status, [status+to], [forAccount+status], forAccount, [to+forAccount+provider], occurrenceCount`,
     scores: `&address, score`,
     prefs: `key`,
     queue: '++id'
@@ -31,11 +31,11 @@ db.version(2)
       .toArray()
       .then(occurrences => {
         return tx.mail.toCollection().modify(function(mail) {
-          const occ = occurrences.find(
-            o => o.key === `<${mail.fromEmail}>-${mail.to}`
-          );
+          const key = `<${mail.fromEmail}>-${mail.to}`;
+          const occ = occurrences.find(o => o.key === key);
           updated++;
           this.value = {
+            key,
             forAccount: mail.forAccount,
             provider: mail.provider,
             id: mail.id,
@@ -53,6 +53,7 @@ db.version(2)
             error: mail.error,
             status: mail.status,
             occurrenceCount: occ ? occ.count : 1,
+            lastSeenDate: mail.date,
             __migratedFrom: 'v1',
             occurrences: [
               {
@@ -67,7 +68,7 @@ db.version(2)
       })
       .then(() => {
         console.log(`updated ${updated} records`);
-        tx.occurrences.delete();
+        tx.delete('occurrences');
       })
       .catch(err => {
         console.error(err);

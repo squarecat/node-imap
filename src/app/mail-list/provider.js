@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState
 } from 'react';
@@ -11,7 +12,7 @@ import { DatabaseContext } from '../../providers/db-provider';
 import _sortBy from 'lodash.sortby';
 import useMailSocket from './db';
 
-const sortByValues = ['date', 'score'];
+const sortByValues = ['lastSeenDate', 'score'];
 export const MailContext = createContext({});
 
 export const MailProvider = function({ children }) {
@@ -128,20 +129,34 @@ export const MailProvider = function({ children }) {
     }
   }, [db.prefs, state]);
 
-  const value = {
-    isLoading: !state.initialized,
-    page: state.page,
-    perPage: state.perPage,
-    fetch,
-    filterValues: state.filterValues,
-    activeFilters: state.activeFilters,
-    mail: filteredMail.mail,
-    totalCount: filteredMail.count,
-    sortValues: sortByValues,
-    sortByValue: state.sortByValue,
-    sortByDirection: state.sortByDirection,
-    options: state.options
-  };
+  const value = useMemo(
+    () => ({
+      isLoading: !state.initialized,
+      page: state.page,
+      perPage: state.perPage,
+      fetch,
+      filterValues: state.filterValues,
+      activeFilters: state.activeFilters,
+      mail: filteredMail.mail,
+      totalCount: filteredMail.count,
+      sortValues: sortByValues,
+      sortByValue: state.sortByValue,
+      sortByDirection: state.sortByDirection,
+      options: state.options
+    }),
+    [
+      filteredMail.count,
+      filteredMail.mail,
+      state.activeFilters,
+      state.filterValues,
+      state.initialized,
+      state.options,
+      state.page,
+      state.perPage,
+      state.sortByDirection,
+      state.sortByValue
+    ]
+  );
 
   return (
     <MailContext.Provider
@@ -155,6 +170,8 @@ export const MailProvider = function({ children }) {
     </MailContext.Provider>
   );
 };
+
+MailProvider.whyDidYouRender = true;
 
 async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
