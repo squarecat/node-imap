@@ -13,6 +13,67 @@ db.version(1).stores({
   prefs: `key`,
   queue: '++id'
 });
+
+// version 2 combines occurrences into the mail
+// table, and provides the ability to sort by
+// mail occurrence
+db.version(2)
+  .stores({
+    mail: `&id, fromEmail, date, *labels, score, to, status, [status+to], [forAccount+status], forAccount, [to+forAccount+provider], occurrenceCount`,
+    scores: `&address, score`,
+    prefs: `key`,
+    queue: '++id'
+  })
+  .upgrade(tx => {
+    let updated = 0;
+    console.log('upgrade: started db upgrade');
+    tx.occurrences
+      .toArray()
+      .then(occurrences => {
+        return tx.mail.toCollection().modify(function(mail) {
+          const occ = occurrences.find(
+            o => o.key === `<${mail.fromEmail}>-${mail.to}`
+          );
+          updated++;
+          this.value = {
+            forAccount: mail.forAccount,
+            provider: mail.provider,
+            id: mail.id,
+            from: mail.from,
+            to: mail.to,
+            unsubscribeLink: mail.unsubscribeLink,
+            unsubscribeMailTo: mail.unsubscribeMailTo,
+            isTrash: mail.isTrash,
+            isSpam: mail.isSpam,
+            score: mail.score,
+            subscribed: mail.subscribed,
+            fromEmail: mail.fromEmail,
+            fromName: mail.fromName,
+            isLoading: mail.isLoading,
+            error: mail.error,
+            status: mail.status,
+            occurrenceCount: occ ? occ.count : 1,
+            __migratedFrom: 'v1',
+            occurrences: [
+              {
+                subject: mail.subject,
+                snippet: mail.snippet,
+                date: mail.date,
+                id: mail.id
+              }
+            ]
+          };
+        });
+      })
+      .then(() => {
+        console.log(`updated ${updated} records`);
+        tx.occurrences.delete();
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  });
+
 db.open();
 
 export const DatabaseProvider = ({ children }) => {

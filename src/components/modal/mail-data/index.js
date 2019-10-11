@@ -12,7 +12,6 @@ import cx from 'classnames';
 import format from 'date-fns/format';
 import relative from 'tiny-relative-date';
 import request from '../../../utils/request';
-import useOccurrence from '../../../app/mail-list/db/use-occurrence';
 import useUser from '../../../utils/hooks/use-user';
 
 const mailDateFormat = 'Do MMM';
@@ -141,18 +140,18 @@ const Content = React.memo(function({
           <TableRow>
             <TableCell>Occurrences</TableCell>
             <TableCell>
-              <Occurences fromEmail={fromEmail} toEmail={to} />
+              {/* <Occurences fromEmail={fromEmail} toEmail={to} /> */}
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Last recevied</TableCell>
             <TableCell>
-              <LastReceived
+              {/* <LastReceived
                 fromEmail={fromEmail}
                 toEmail={to}
                 date={date}
                 unsub={unsub}
-              />
+              /> */}
             </TableCell>
           </TableRow>
         </tbody>
@@ -238,26 +237,26 @@ const UnsubStatus = React.memo(function UnsubStatus({ status, unsub }) {
   return <span styleName={styles}>{label}</span>;
 });
 
-const Occurences = React.memo(function Occurrences({ fromEmail, toEmail }) {
-  let { count: occurrences } = useOccurrence({ fromEmail, toEmail });
-  if (!occurrences) {
-    occurrences = 1;
-  }
-  return (
-    <>
-      <span styleName="data-pill">x{occurrences}</span>
-      <span styleName="occurrences">
-        You have received mail from this sender{' '}
-        <TextImportant>
-          {occurrences > 1
-            ? `${occurrences} times in the last 6 months`
-            : `once in the last 6 months`}
-        </TextImportant>
-        .
-      </span>
-    </>
-  );
-});
+// const Occurences = React.memo(function Occurrences({ fromEmail, toEmail }) {
+//   let { count: occurrences } = useOccurrence({ fromEmail, toEmail });
+//   if (!occurrences) {
+//     occurrences = 1;
+//   }
+//   return (
+//     <>
+//       <span styleName="data-pill">x{occurrences}</span>
+//       <span styleName="occurrences">
+//         You have received mail from this sender{' '}
+//         <TextImportant>
+//           {occurrences > 1
+//             ? `${occurrences} times in the last 6 months`
+//             : `once in the last 6 months`}
+//         </TextImportant>
+//         .
+//       </span>
+//     </>
+//   );
+// });
 
 const LastReceived = React.memo(function LastReceived({
   fromEmail,

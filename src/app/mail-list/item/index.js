@@ -1,7 +1,7 @@
 import './item.module.scss';
 
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import { useMailItem, useOccurrence, useScore } from '../db/hooks';
+import { useMailItem, useScore } from '../db/hooks';
 
 import IgnoreIcon from '../../../components/ignore-icon';
 import { Info as InfoIcon } from '../../../components/icons';
@@ -80,9 +80,9 @@ function MailItem({ id, onLoad }) {
             </Tooltip>
             <span title={m.fromName}>{m.fromName}</span>
           </span>
-          {m.fromEmail ? (
+          {/* {m.fromEmail ? (
             <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
-          ) : null}
+          ) : null} */}
         </div>
         <MailDataLink item={m} openUnsubModal={openUnsubModal} />
       </td>
@@ -143,24 +143,24 @@ function ItemScore({ sender }) {
   );
 }
 
-function Occurrences({ fromEmail, toEmail }) {
-  const { count: occurrences } = useOccurrence({ fromEmail, toEmail });
-  if (!occurrences || occurrences < 2) {
-    return null;
-  }
-  return (
-    <Tooltip
-      overlay={
-        <span>
-          You received {occurrences} emails from this sender in the past 6
-          months
-        </span>
-      }
-    >
-      <span styleName="occurrences">x{occurrences}</span>
-    </Tooltip>
-  );
-}
+// function Occurrences({ fromEmail, toEmail }) {
+//   const { count: occurrences } = useOccurrence({ fromEmail, toEmail });
+//   if (!occurrences || occurrences < 2) {
+//     return null;
+//   }
+//   return (
+//     <Tooltip
+//       overlay={
+//         <span>
+//           You received {occurrences} emails from this sender in the past 6
+//           months
+//         </span>
+//       }
+//     >
+//       <span styleName="occurrences">x{occurrences}</span>
+//     </Tooltip>
+//   );
+// }
 
 function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
   const isSubscribed = !!mail.subscribed;

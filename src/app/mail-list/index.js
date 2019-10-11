@@ -17,7 +17,6 @@ const MailView = React.memo(function() {
   const { open: openModal } = useContext(ModalContext);
   const [accounts] = useUser(u => u.accounts);
   const {
-    fetch,
     totalCount,
     isLoading,
     mail,
@@ -27,18 +26,16 @@ const MailView = React.memo(function() {
     sortValues,
     sortByValue,
     sortByDirection,
-    activeFilters,
-    isFetching,
-    unsubData
+    activeFilters
   } = state;
 
   // fetch new messages on load and
   // TODO check for new messages each 30 seconds?
   useEffect(() => {
     if (accounts.length) {
-      fetch();
+      actions.fetch();
     }
-  }, []);
+  }, [accounts.length, actions, actions.fetch]);
 
   // scroll back to the top if the page changes
   useEffect(() => {

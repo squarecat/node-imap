@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { DatabaseContext } from '../../../providers/db-provider';
 
@@ -27,5 +27,17 @@ export default function useMailItem(id, reducer) {
       db.mail.hook('updating').unsubscribe(onUpdate);
     };
   }, [db.mail, id, reducer]);
-  return item;
+
+  return useMemo(
+    () => ({
+      ...item,
+      getLatest() {
+        return item.occurrences[0];
+      },
+      toJSON() {
+        return item;
+      }
+    }),
+    [item]
+  );
 }
