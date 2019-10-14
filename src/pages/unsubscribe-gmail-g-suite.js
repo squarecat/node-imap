@@ -1,20 +1,20 @@
 import './providers.module.scss';
 
-import { HeaderHighlight, TextLink } from '../../components/text';
+import { HeaderHighlight, TextLink } from '../components/text';
 import {
   ProviderFooter,
   getVariationsText
-} from '../../components/landing/providers';
+} from '../components/landing/providers';
 
-import { Arrow as ArrowIcon } from '../../components/icons';
-import MailListIllustration from '../../components/landing/illustration';
-import ProvidersBar from '../../components/landing/providers-bar';
+import { Arrow as ArrowIcon } from '../components/icons';
+import MailListIllustration from '../components/landing/illustration';
+import ProvidersBar from '../components/landing/providers-bar';
 import React from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
-import gmailLogo from '../../assets/providers/google/gmail-logo.png';
-import googleLogo from '../../assets/providers/google/google-logo.png';
-import googleScopes from '../../assets/security/security-gmail-scopes.png';
-import gsuiteLogo from '../../assets/providers/google/gsuite-logo.png';
+import SubPageLayout from '../layouts/subpage-layout';
+import gmailLogo from '../assets/providers/google/gmail-logo.png';
+import googleLogo from '../assets/providers/google/google-logo.png';
+import googleScopes from '../assets/security/security-gmail-scopes.png';
+import gsuiteLogo from '../assets/providers/google/gsuite-logo.png';
 
 const PROVIDER_NAME = 'Google';
 const VARIATIONS = ['Gmail', 'Googlemail', 'G Suite'];
@@ -33,7 +33,7 @@ const ProviderGoogle = () => {
       title={`Leave Me Alone for ${PROVIDER_NAME}`}
       description={`Easily unsubscribe from unwanted spam, subscription emails, and newsletters in your ${PROVIDER_NAME}, ${META_VARIATIONS} inboxes today.`}
       withContent={false}
-      slug="/providers/google"
+      slug="/unsubscribe-gmail-g-suite"
     >
       <div styleName="provider-inner hero">
         <div styleName="container">

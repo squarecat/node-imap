@@ -1,21 +1,21 @@
 import './providers.module.scss';
 
-import { HeaderHighlight, TextLink } from '../../components/text';
+import { HeaderHighlight, TextLink } from '../components/text';
 
-import { Arrow as ArrowIcon } from '../../components/icons';
-import MailListIllustration from '../../components/landing/illustration';
-import ProvidersBar from '../../components/landing/providers-bar';
+import { Arrow as ArrowIcon } from '../components/icons';
+import MailListIllustration from '../components/landing/illustration';
+import ProvidersBar from '../components/landing/providers-bar';
 import React from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
-import aolLogo from '../../assets/providers/imap/aol-logo.png';
-import broom from '../../assets/enterprise/broom.png';
-import envelope from '../../assets/open-envelope-love.png';
-import fastmailLogo from '../../assets/providers/imap/fastmail-logo.png';
-import { getVariationsText } from '../../components/landing/providers';
-import happy from '../../assets/enterprise/happy.png';
-import icloudLogo from '../../assets/providers/imap/icloud-logo.png';
-import securityImg from '../../assets/security/security.png';
-import yahooLogo from '../../assets/providers/imap/yahoo-logo.png';
+import SubPageLayout from '../layouts/subpage-layout';
+import aolLogo from '../assets/providers/imap/aol-logo.png';
+import broom from '../assets/enterprise/broom.png';
+import envelope from '../assets/open-envelope-love.png';
+import fastmailLogo from '../assets/providers/imap/fastmail-logo.png';
+import { getVariationsText } from '../components/landing/providers';
+import happy from '../assets/enterprise/happy.png';
+import icloudLogo from '../assets/providers/imap/icloud-logo.png';
+import securityImg from '../assets/security/security.png';
+import yahooLogo from '../assets/providers/imap/yahoo-logo.png';
 
 const VARIATIONS = [
   'Fastmail',
@@ -40,7 +40,7 @@ const ProviderIMAP = () => {
       description={`Easily unsubscribe from unwanted spam, subscription emails, and
       newsletters in ${META_VARIATIONS} today.`}
       withContent={false}
-      slug="/providers/imap"
+      slug="/unsubscribe-imap-fastmail-icloud"
     >
       <div styleName="provider-inner">
         <div styleName="container">

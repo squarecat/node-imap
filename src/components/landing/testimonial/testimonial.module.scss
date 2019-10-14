@@ -30,6 +30,18 @@
   }
 }
 
+.publication-quote {
+  &.centered .blockquote {
+    text-align: center;
+  }
+}
+
+.publication-logo {
+  display: block;
+  width: 150px;
+  margin: 0 auto;
+}
+
 .hero-testimonial {
   display: grid;
   grid-column-gap: 2em;

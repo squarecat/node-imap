@@ -119,7 +119,7 @@ const IndexPage = ({ data }) => {
       <p className={`join-text ${statsLoading ? 'join-text-loading' : ''}`}>
         Join <span className="join-stat">{userCount} users</span> who have
         unsubscribed from a total of{' '}
-        <span className="join-stat">{unsubCount} spam</span> emails
+        <span className="join-stat">{unsubCount} unwanted</span> emails
       </p>
     );
   }, [statsData, statsError, statsLoading]);

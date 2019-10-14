@@ -121,9 +121,9 @@ export default function Learn() {
             </p>
             <p>
               Learn more about how we authenticate with{' '}
-              <TextLink href="/providers/google">Google</TextLink>,{' '}
-              <TextLink href="/providers/microsoft">Microsoft</TextLink>, and{' '}
-              <TextLink href="/providers/imap">IMAP</TextLink>.
+              <TextLink href="/unsubscribe-gmail-g-suite">Google</TextLink>,{' '}
+              <TextLink href="/unsubscribe-outlook-hotmail">Microsoft</TextLink>, and{' '}
+              <TextLink href="/unsubscribe-imap-fastmail-icloud">IMAP</TextLink>.
             </p>
           </div>
         </div>

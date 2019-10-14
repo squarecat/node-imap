@@ -8,7 +8,7 @@ import React from 'react';
 import { setConfig } from 'react-hot-loader';
 
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
-const metaImgUrl = `${process.env.CDN_URL}/images/meta/meta-img-v2.png`;
+const defaultMetaImgUrl = `${process.env.CDN_URL}/images/meta/meta-img-v2.png`;
 const logoSquareUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 setConfig({ pureSFC: true });
@@ -17,6 +17,7 @@ const Layout = ({
   title: pageTitle,
   description: pageDescription,
   slug: pageSlug,
+  imgUrl: pageImgUrl,
   children
 }) => {
   return (
@@ -46,6 +47,7 @@ const Layout = ({
         const metaTitle = pageTitle ? `${pageTitle} - ${siteName}` : baseTitle;
         const metaDescription = pageDescription || baseDescription;
         const metaFullUrl = pageSlug ? `${baseUrl}${pageSlug}` : baseUrl;
+        const metaImgUrl = pageImgUrl || defaultMetaImgUrl;
 
         return (
           <>

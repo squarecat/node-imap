@@ -1,0 +1,162 @@
+@import '../layouts/subpage-layout.module.scss';
+@import '../styles/common/colors.scss';
+
+.container {
+  @extend .subpage-header-container;
+}
+
+.hero {
+  min-height: calc(100vh - 130px);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 0 40px;
+
+  @media (max-width: 900px) {
+    padding-top: 40px;
+  }
+}
+
+.join-text {
+  padding: 0 5px;
+  font-size: 12px;
+  line-height: 18px;
+  max-width: 280px;
+  margin-top: 20px;
+
+  @media (max-width: 900px) {
+    margin: 20px auto 0 auto;
+  }
+}
+
+.container-text {
+  @extend .subpage-header-container-text;
+}
+
+.container-image {
+  @extend .subpage-header-container-image;
+  justify-content: flex-end;
+}
+
+.title {
+  @extend .subpage-landing-title;
+}
+
+.tagline {
+  @extend .subpage-landing-tagline;
+}
+
+.alternative-inner {
+  @extend .subpage-content;
+}
+
+.end-stuff {
+  @extend .subpage-end-stuff;
+}
+
+.image-section {
+  @extend .subpage-image-section;
+}
+
+.image-left {
+  @extend .subpage-image-section--image-left;
+}
+
+.image-section-text {
+  @extend .subpage-image-section-text;
+}
+
+.image-section-img {
+  @extend .subpage-image-section-img;
+}
+
+.bordered {
+  @extend .subpage-image-section-img--bordered;
+}
+
+.features {
+  @extend .subpage-features;
+  margin-top: 0;
+}
+.feature {
+  @extend .subpage-feature;
+}
+.feature-title {
+  @extend .subpage-feature-title;
+}
+.feature-img {
+  @extend .subpage-feature-img;
+}
+.feature-text {
+  @extend .subpage-feature-text;
+}
+
+.testimonial {
+}
+
+.table {
+  font-size: 14px;
+  margin-bottom: 0;
+  width: 100%;
+  border-collapse: collapse;
+
+  @media (max-width: 400px) {
+    font-size: 12px;
+  }
+}
+
+tbody .row {
+  &:last-child .cell {
+    border-bottom: none;
+  }
+}
+
+.head-cell,
+.cell {
+  width: 200px;
+  height: 60px;
+  padding: 5px 25px;
+  border-bottom: 1px solid $color-border-red;
+
+  &:first-child {
+    width: 150px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+
+.cell {
+  width: 200px;
+  height: 60px;
+  padding: 5px 25px;
+  border-right: 1px solid $color-border-red;
+
+  &:first-child {
+    width: 150px;
+    font-size: 16px;
+    font-weight: bold;
+    border-left: 1px solid $color-border-red;
+  }
+}
+
+.table-logo {
+  display: flex;
+  align-items: center;
+  img {
+    height: 20px;
+  }
+}
+.col-title {
+  font-size: 18px;
+  line-height: 24px;
+
+  &.lma {
+    font-weight: bold;
+    margin-left: 5px;
+    white-space: nowrap;
+  }
+  &.alternative {
+    font-family: sans-serif;
+    opacity: 0.7;
+  }
+}
