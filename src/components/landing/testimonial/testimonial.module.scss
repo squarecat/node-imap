@@ -276,7 +276,8 @@
   }
 }
 
-.newsbar-img {
+.newsbar-img,
+.publication-img {
   filter: grayscale(100%);
   opacity: 0.5;
   transition: filter 300ms ease-in-out, opacity 300ms ease-in-out;

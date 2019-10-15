@@ -400,12 +400,20 @@ const IndexPage = ({ data }) => {
                 covered. This includes {OAUTH_PROVIDERS}.
               </p>
               <div className="provider-logos">
-                <TextLink undecorated as="link" linkTo="/providers/google">
+                <TextLink
+                  undecorated
+                  as="link"
+                  linkTo="/unsubscribe-gmail-g-suite"
+                >
                   <span className="provider-logo">
                     <GoogleIcon width="60" height="60" />
                   </span>
                 </TextLink>
-                <TextLink undecorated as="link" linkTo="/providers/microsoft">
+                <TextLink
+                  undecorated
+                  as="link"
+                  linkTo="/unsubscribe-outlook-hotmail"
+                >
                   <span className="provider-logo">
                     <MicrosoftIcon width="60" height="60" />
                   </span>
@@ -415,7 +423,11 @@ const IndexPage = ({ data }) => {
                 <p>
                   Or you can also connect {IMAP_PROVIDERS} that work with IMAP.
                 </p>
-                <TextLink undecorated as="link" linkTo="/providers/imap">
+                <TextLink
+                  undecorated
+                  as="link"
+                  linkTo="/unsubscribe-imap-fastmail-icloud"
+                >
                   <div className="provider-logos">
                     <span className="provider-logo imap" title="Fastmail">
                       <img src={fastmailImg} alt="Fastmail logo" />
