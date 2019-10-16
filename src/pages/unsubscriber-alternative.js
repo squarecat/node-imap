@@ -15,13 +15,13 @@ import lockImg from '../assets/security/lock.png';
 import logo from '../assets/logo.png';
 import numeral from 'numeral';
 import request from '../utils/request';
-import terrance from '../assets/testimonials/terrance.png';
+import luke from '../assets/testimonials/luke.jpeg';
 import useAsync from 'react-use/lib/useAsync';
 
 const cdnUrl = `${process.env.CDN_URL}/images`;
-const metaImgUrl = `${cdnUrl}/meta/leave-me-alone-vs-unroll-me.png`;
+const metaImgUrl = `${cdnUrl}/meta/leave-me-alone-vs-unsubscriber.png`;
 
-function UnrollMeAlternative() {
+function UnsubscriberAlternative() {
   const { error: statsError, value: statsData } = useAsync(fetchStats, []);
 
   const joinContent = useMemo(() => {
@@ -32,16 +32,16 @@ function UnrollMeAlternative() {
     return (
       <p styleName="join-text">
         Join <TextImportant>{userCount} people</TextImportant> using{' '}
-        <TextImportant>Leave Me Alone</TextImportant> instead of Unroll.Me.
+        <TextImportant>Leave Me Alone</TextImportant> instead of Unsubscriber.
       </p>
     );
   }, [statsData, statsError]);
 
   return (
     <SubpageLayout
-      title={`A Better Unroll.Me Alternative (that values your privacy) - Leave Me Alone`}
-      description={`Leave Me Alone is an Unroll.Me alternative that makes it easier to unsubscribe from emails without selling your data. See why people are switching from Unroll.Me. Try Leave Me Alone free today!`}
-      slug="/unroll-me-alternative"
+      title={`A Better Unsubscriber Alternative (that values your privacy) - Leave Me Alone`}
+      description={`Leave Me Alone is an Unsubscriber alternative that works with all of your email accounts (including Gmail). See why people are switching from Unsubscriber. Try Leave Me Alone free today!`}
+      slug="/unsubscriber-alternative"
       imgUrl={metaImgUrl}
       withContent={false}
     >
@@ -49,12 +49,13 @@ function UnrollMeAlternative() {
         <div styleName="container">
           <div styleName="container-text">
             <h1 styleName="title">
-              The Unroll.Me alternative that doesn't sell your data. Ever.
+              A simple, affordable Unsubscriber alternative for every inbox
             </h1>
+            {/* A simple, affordable Unsubscriber alternative that works with Gmail */}
             <p styleName="tagline">
-              Leave Me Alone is an Unroll.Me alternative that's{' '}
-              <TextImportant>privacy-focused</TextImportant>, easy to use, and
-              available in the EU.
+              Leave Me Alone is an Unsubscriber alternative that{' '}
+              <TextImportant>works with Gmail</TextImportant>, has one-click
+              unsubscribes, and support from the team who built the service.
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
               Get Started for Free
@@ -68,17 +69,7 @@ function UnrollMeAlternative() {
       </div>
 
       <div styleName="publication-section">
-        <PublicationQuote
-          centered
-          bordered
-          publication="lifehacker"
-          text={
-            <span>
-              Unlike Unroll.me, Leave Me Alone is{' '}
-              <TextHighlight>not also collecting your data</TextHighlight>.
-            </span>
-          }
-        />
+        <PublicationQuote centered bordered publication="fastcompany" />
       </div>
 
       {/* Comparison table */}
@@ -94,7 +85,7 @@ function UnrollMeAlternative() {
                 </div>
               </th>
               <th styleName="head-cell">
-                <span styleName="col-title alternative">Unroll.Me</span>
+                <span styleName="col-title alternative">Unsubscriber</span>
               </th>
             </tr>
           </thead>
@@ -105,19 +96,29 @@ function UnrollMeAlternative() {
               <td styleName="cell">Free</td>
             </tr>
             <tr>
-              <td styleName="cell">Privacy policy</td>
-              <td styleName="cell">Never stores or sells your data</td>
-              <td styleName="cell">Aggregates and sells data for marketing</td>
+              <td styleName="cell">Works with Gmail</td>
+              <td styleName="cell">Yes</td>
+              <td styleName="cell">No</td>
             </tr>
             <tr>
-              <td styleName="cell">Connect multiple emails</td>
-              <td styleName="cell">Yes, unlimited</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">Privacy policy</td>
+              <td styleName="cell">
+                You own your data and email content is never stored
+              </td>
+              <td styleName="cell">
+                Requires consent to collect and sell your data to their
+                customers
+              </td>
+            </tr>
+            <tr>
+              <td styleName="cell">Support team</td>
+              <td styleName="cell">Yes - from the founders</td>
+              <td styleName="cell">No, discontinued indefinitely</td>
             </tr>
             <tr>
               <td styleName="cell">Instant unsubscribes</td>
               <td styleName="cell">Yes</td>
-              <td styleName="cell">No, takes 24 hours</td>
+              <td styleName="cell">Yes</td>
             </tr>
             <tr>
               <td styleName="cell">Sender rating</td>
@@ -125,37 +126,28 @@ function UnrollMeAlternative() {
               <td styleName="cell">No</td>
             </tr>
             <tr>
-              <td styleName="cell">Available in the EU & EEA</td>
-              <td styleName="cell">Yes</td>
+              <td styleName="cell">Unsubscribe feedback</td>
               <td styleName="cell">
-                No, stopped providing service to all EU residents on May 23
+                Yes, failed unsubscribe alerts (+ failures don't cost credits)
               </td>
-            </tr>
-            <tr>
-              <td styleName="cell">Live chat support</td>
-              <td styleName="cell">Yes</td>
               <td styleName="cell">No</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      {/* Alternative specific social proof/testimonial */}
       <div styleName="alternative-inner">
         <Testimonial
+          author="Luke Chadwick, Founder - GraphQL360"
           text={
             <span>
-              I've used Leave Me Alone. It's great! They{' '}
-              <TextHighlight>
-                don't use your email data like Unroll.Me
-              </TextHighlight>
-              .
+              Using Leave Me Alone has resulted in a{' '}
+              <TextHighlight>17% reduction in my emails</TextHighlight>, saving
+              me hours of time each month.
             </span>
           }
-          author="Terrance Kwok, Product Manager - Chili Piper"
-          image={terrance}
           centered
-          alternative
+          image={luke}
         />
       </div>
 
@@ -163,20 +155,19 @@ function UnrollMeAlternative() {
         <div styleName="features">
           <div styleName="feature">
             <div styleName="feature-img">
-              <img src={lockImg} alt="lock face image" />
+              <img src={broomImg} alt="broom sweeping image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Your data is yours</h3>
+              <h3 styleName="feature-title">Unsubscribe everywhere</h3>
               <p>
-                At Leave Me Alone, we charge for our service so that you can be
-                sure we will never exploit your data in order to keep our lights
-                on. We don't store the content of your emails. All of your
-                emails are sent directly to you, and stored in your browser, not
-                our servers.
+                Connect all of your email addresses, including different mail
+                providers, to one Leave Me Alone account. Unsubscribe from
+                emails in Gmail, G Suite, Outlook, and Hotmail. Plus, Yahoo,
+                iCloud, Fastmail, AOL and your IMAP accounts all together.
               </p>
               <p>
-                <TextLink as="link" linkTo="/security">
-                  Security at Leave Me Alone{' '}
+                <TextLink href="/supported-email-providers">
+                  Supported email providers{' '}
                   <ArrowIcon inline width="12" height="12" />
                 </TextLink>
               </p>
@@ -184,19 +175,19 @@ function UnrollMeAlternative() {
           </div>
           <div styleName="feature">
             <div styleName="feature-img">
-              <img src={broomImg} alt="broom sweeping image" />
+              <img src={lockImg} alt="lock face image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Unsubscribe instantly</h3>
+              <h3 styleName="feature-title">Your data is safe</h3>
               <p>
-                Leave Me Alone unsubscribes you from unwanted emails instantly.
-                When you click unsubscribe there are no rules, bundles, or
-                rollup features hiding the junk from you. Those subscriptions
-                are gone forever, even if you decide to stop using our service.
+                At Leave Me Alone we take privacy and data-security very
+                seriously. We never store the content of your emails on our
+                servers, we only request the permissions we need to help you
+                unsubscribe, and you can deactivate your account at any time.
               </p>
               <p>
-                <TextLink as="link" linkTo="/learn">
-                  How Leave Me Alone works{' '}
+                <TextLink as="link" linkTo="/security">
+                  Our security commitment{' '}
                   <ArrowIcon inline width="12" height="12" />
                 </TextLink>
               </p>
@@ -207,16 +198,17 @@ function UnrollMeAlternative() {
               <img src={envelopeImg} alt="private envelope image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Clean all accounts together</h3>
+              <h3 styleName="feature-title">Love your inbox again</h3>
               <p>
-                Connect all of your email accounts to Leave Me Alone, and clear
-                out the unwanted mail in one go. We support all Google and
-                Microsoft accounts, including Gmail, G Suite, Outlook, and
-                Hotmail. Plus, Yahoo, iCloud, Fastmail, AOL & all IMAP accounts.
+                When you unsubscribe using Leave Me Alone we instantly
+                unsubscribe you. We use the mailing list's own instructions, so
+                if they obey the rules, you will no longer receive emails from
+                them. Those emails are gone forever, even if you don't use our
+                service again.
               </p>
               <p>
-                <TextLink href="/supported-email-providers">
-                  Leave Me Alone supported providers{' '}
+                <TextLink as="link" linkTo="/learn">
+                  How Leave Me Alone works{' '}
                   <ArrowIcon inline width="12" height="12" />
                 </TextLink>
               </p>
@@ -227,48 +219,38 @@ function UnrollMeAlternative() {
 
       <div styleName="alternative-inner">
         <Testimonial
-          author="Tamara Sredojevic, Freelance Marketing Strategist"
           text={
             <span>
-              I love to <TextHighlight>know that my data is safe</TextHighlight>
-              . Leave Me Alone is user friendly, it's beautiful and it does the
-              job well. What more could I ask for?
+              The overall experience is very welcoming and smooth.{' '}
+              <TextHighlight>
+                I especially love the quality score of each email address
+              </TextHighlight>
+              .
             </span>
           }
+          author="AmieChen, Founder - Hyperyolo"
+          image={`${cdnUrl}/testimonials/image-23.jpeg`}
           centered
-          image={`${cdnUrl}/testimonials/image-18.jpg`}
         />
       </div>
 
       <div styleName="questions">
         <div styleName="alternative-inner">
-          <h2>I have more questions...</h2>
+          <h2>But, what about...</h2>
           <div styleName="questions-grid">
             <div styleName="question">
               <h3>
                 <span styleName="question-icon">
                   <SearchIcon width={20} height={20} />
                 </span>{' '}
-                How do you unsubscribe me instantly?
+                Do you have support if I need help?
               </h3>
               <p>
-                We follow the unsubscribe links provided in the newsletters and
-                subscription emails to unsubscribe you. If there's no link, then
-                we send an email to their unsubscribe mailing address. Providing
-                they obey the rules, you will be unsubscribed.
-              </p>
-            </div>
-            <div styleName="question">
-              <h3>
-                <span styleName="question-icon">
-                  <SearchIcon width={20} height={20} />
-                </span>{' '}
-                What about migration, do you offer that?
-              </h3>
-              <p>
-                You don't need to migrate from Unroll.Me, we will show you all
-                of the subscription emails in your inbox and Rollup folders. You
-                can start using Leave Me Alone straight away!
+                Yes! Support requests are handled by us (the founders and
+                developers) - so you are in good hands. We have live chat which
+                you can access any time within the app, and if we are awake we
+                will reply in minutes. If not, you can always reach out to us on
+                Twitter or by email.
               </p>
             </div>
 
@@ -277,23 +259,14 @@ function UnrollMeAlternative() {
                 <span styleName="question-icon">
                   <SearchIcon width={20} height={20} />
                 </span>{' '}
-                Do you really value my privacy?
+                Is my data really mine?
               </h3>
               <p>
-                Yes! Privacy is at the core of our business. We never store the
-                content of your emails, we only ask for the mailbox{' '}
-                <TextLink inverted href="/security">
-                  permissions we need
-                </TextLink>{' '}
-                to operate, and we are completely open and transparent about our{' '}
-                <TextLink inverted href="/open">
-                  revenue
-                </TextLink>{' '}
-                and{' '}
-                <TextLink inverted href="/privacy">
-                  how we operate
-                </TextLink>
-                .
+                Absolutely! The content of your emails is never stored on our
+                servers - when we scan your mailbox your emails are sent
+                directly to you and stored in your browser where only you have
+                access to them. Plus, deactivate your account at any time to
+                delete all of your data.
               </p>
             </div>
             <div styleName="question">
@@ -301,13 +274,27 @@ function UnrollMeAlternative() {
                 <span styleName="question-icon">
                   <SearchIcon width={20} height={20} />
                 </span>{' '}
-                Can I try Leave Me Alone for free?
+                How long does it take to setup?
               </h3>
               <p>
-                As soon as you log-in and connect an account you we show you all
-                of the subscription emails in your inbox. Every new account
-                receives 5 free credits to try out our super quick and easy
-                unsubscribing!
+                It's super fast to get started with Leave Me Alone! Simply
+                log-in, connect your email accounts, and we will show you all of
+                your subscription emails. You can start unsubscribing from
+                unwanted emails straight away!
+              </p>
+            </div>
+            <div styleName="question">
+              <h3>
+                <span styleName="question-icon">
+                  <SearchIcon width={20} height={20} />
+                </span>{' '}
+                How do know which emails are subscriptions?
+              </h3>
+              <p>
+                When we scan your inbox we can identify subscription emails by
+                searching for a flag that senders include to mark it as
+                unsubscribable. This contains information on how to unsubscribe
+                from that email - which we can use!
               </p>
             </div>
           </div>
@@ -315,29 +302,30 @@ function UnrollMeAlternative() {
       </div>
 
       <div styleName="alternative-inner end-stuff">
-        <h2>We're the Unroll.Me alternative you can trust.</h2>
+        <h2>
+          Finally, an Unsubscriber alternative that works withs with Gmail.
+        </h2>
         <p>
-          Sign up to Leave Me Alone to unsubscribe from unwanted emails
-          instantly without compromising your personal information.
+          Sign up to Leave Me Alone and start unsubscribing from unwanted emails
+          with the knowledge that your data is safe, and the founders are here
+          to help.
         </p>
         <a
           href="/signup"
-          event={'clicked-unroll-me-alternative-cta'}
+          event={'clicked-unsubscriber-alternative-cta'}
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-          style={{ margin: '50px auto 90px auto' }}
+          style={{ margin: '50px auto' }}
         >
-          Start Unsubscribing
+          Clean My Inbox
         </a>
         <PublicationQuote
           centered
-          publication="makeuseof"
+          publication="lifehacker"
           text={
             <span>
-              Leave Me Alone is a{' '}
-              <TextHighlight>
-                privacy-friendly way of doing the same thing that Unroll.me did
-              </TextHighlight>{' '}
-              while knowing your data is safe.
+              Leave Me Alone{' '}
+              <TextHighlight>sells none of its user data</TextHighlight>, even
+              anonymized. You’re the customer, not the service.
             </span>
           }
         />
@@ -346,7 +334,7 @@ function UnrollMeAlternative() {
   );
 }
 
-export default UnrollMeAlternative;
+export default UnsubscriberAlternative;
 
 function fetchStats() {
   return request('/api/stats?summary=true');

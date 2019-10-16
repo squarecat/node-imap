@@ -44,7 +44,7 @@ const PUBLICATIONS = {
   }
 };
 
-export default function PublicationQuote({ publication, ...visProps }) {
+export default function PublicationQuote({ publication, text, ...visProps }) {
   const content = useMemo(() => {
     return (
       <StaticQuery
@@ -76,9 +76,10 @@ export default function PublicationQuote({ publication, ...visProps }) {
         render={data => {
           const info = PUBLICATIONS[publication];
           if (!info) return null;
+          const cite = text || info.text;
           return (
             <>
-              <p styleName="text">{info.text}</p>
+              <p styleName="text">{cite}</p>
               <cite styleName="publication-logo">
                 <TextLink as="link" linkTo="/news" undecorated>
                   <span styleName="publication-img">
@@ -94,7 +95,7 @@ export default function PublicationQuote({ publication, ...visProps }) {
         }}
       />
     );
-  }, [publication]);
+  }, [publication, text]);
 
   return (
     <div
