@@ -10,7 +10,6 @@ import cx from 'classnames';
 const PUBLICATIONS = {
   lifehacker: {
     name: 'LifeHacker',
-    path: 'lifehacker',
     text: (
       <span>
         You should pay money for Leave Me Alone,{' '}
@@ -23,12 +22,23 @@ const PUBLICATIONS = {
   },
   fastcompany: {
     name: 'FastCompany',
-    path: 'fast-company',
     text: (
       <span>
         Leave Me Alone{' '}
         <TextHighlight>doesn’t sell your email data to marketers</TextHighlight>{' '}
         as some other unsubscribe services do.
+      </span>
+    )
+  },
+  makeuseof: {
+    name: 'MakeUseOf',
+    text: (
+      <span>
+        Leave Me Alone is a{' '}
+        <TextHighlight>
+          privacy-friendly way of doing the same thing that Unroll.me did
+        </TextHighlight>{' '}
+        while knowing your data is safe.
       </span>
     )
   }
@@ -54,15 +64,21 @@ export default function PublicationQuote({ publication, ...visProps }) {
                 }
               }
             }
+            makeuseof: file(relativePath: { eq: "news/makeuseof.png" }) {
+              childImageSharp {
+                fixed(height: 44) {
+                  ...GatsbyImageSharpFixed_noBase64
+                }
+              }
+            }
           }
         `}
         render={data => {
           const info = PUBLICATIONS[publication];
-          console.log(info);
           if (!info) return null;
           return (
             <>
-              <p>"{info.text}"</p>
+              <p styleName="text">{info.text}</p>
               <cite styleName="publication-logo">
                 <TextLink as="link" linkTo="/news" undecorated>
                   <span styleName="publication-img">
@@ -83,7 +99,8 @@ export default function PublicationQuote({ publication, ...visProps }) {
   return (
     <div
       styleName={cx('testimonial publication-quote', {
-        centered: visProps.centered
+        centered: visProps.centered,
+        bordered: visProps.bordered
       })}
     >
       <blockquote styleName="blockquote">{content}</blockquote>

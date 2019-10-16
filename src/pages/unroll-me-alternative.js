@@ -22,17 +22,19 @@ const cdnUrl = `${process.env.CDN_URL}/images`;
 const metaImgUrl = `${cdnUrl}/meta/leave-me-alone-vs-unroll-me.png`;
 
 function UnrollMeAlternative() {
-  const {
-    error: statsError,
-    // loading: statsLoading,
-    value: statsData
-  } = useAsync(fetchStats, []);
+  const { error: statsError, value: statsData } = useAsync(fetchStats, []);
 
-  const userCount = useMemo(() => {
+  const joinContent = useMemo(() => {
     if (statsError) {
       return null;
     }
-    return statsData ? formatNumber(statsData.users) : 0;
+    const userCount = statsData ? formatNumber(statsData.users) : 0;
+    return (
+      <p styleName="join-text">
+        Join <TextImportant>{userCount} people</TextImportant> using{' '}
+        <TextImportant>Leave Me Alone</TextImportant> instead of Unroll.Me.
+      </p>
+    );
   }, [statsData, statsError]);
 
   return (
@@ -57,11 +59,7 @@ function UnrollMeAlternative() {
             <a href="/signup" className={`beam-me-up-cta`}>
               Get Started for Free
             </a>
-            <p styleName="join-text">
-              Join <TextImportant>{userCount} people</TextImportant> using{' '}
-              <TextImportant>Leave Me Alone</TextImportant> instead of
-              Unroll.Me.
-            </p>
+            {joinContent}
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -69,8 +67,8 @@ function UnrollMeAlternative() {
         </div>
       </div>
 
-      <div styleName="alternative-inner">
-        <PublicationQuote centered publication="lifehacker" />
+      <div styleName="publication-section">
+        <PublicationQuote centered bordered publication="lifehacker" />
       </div>
 
       {/* Comparison table */}
@@ -134,22 +132,21 @@ function UnrollMeAlternative() {
 
       {/* Alternative specific social proof/testimonial */}
       <div styleName="alternative-inner">
-        <div styleName="testimonial">
-          <Testimonial
-            text={
-              <span>
-                I've used Leave Me Alone. It's great! They{' '}
-                <TextHighlight>
-                  don't use your email data like Unroll.Me
-                </TextHighlight>
-                .
-              </span>
-            }
-            author="Terrance Kwok, Product Manager, Chili Piper"
-            image={terrance}
-            centered
-          />
-        </div>
+        <Testimonial
+          text={
+            <span>
+              I've used Leave Me Alone. It's great! They{' '}
+              <TextHighlight>
+                don't use your email data like Unroll.Me
+              </TextHighlight>
+              .
+            </span>
+          }
+          author="Terrance Kwok, Product Manager - Chili Piper"
+          image={terrance}
+          centered
+          alternative
+        />
       </div>
 
       <div styleName="alternative-inner">
@@ -317,10 +314,11 @@ function UnrollMeAlternative() {
           href="/signup"
           event={'clicked-unroll-me-alternative-cta'}
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
-          style={{ margin: '50px auto' }}
+          style={{ margin: '50px auto 90px auto' }}
         >
           Start Unsubscribing
         </a>
+        <PublicationQuote centered publication="makeuseof" />
       </div>
     </SubpageLayout>
   );

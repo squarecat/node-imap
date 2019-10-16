@@ -150,7 +150,17 @@
   @extend .subpage-feature-text;
 }
 
-.testimonial {
+.publication-section {
+  background-color: rgba(255, 217, 214, 0.2);
+  border-top: 1px solid $color-testimonial-border;
+  border-bottom: 1px solid $color-testimonial-border;
+  padding: 70px 0;
+  margin: 90px 0 50px 0;
+
+  @media (max-width: 960px) {
+    margin-bottom: 60px;
+    padding: 50px 0;
+  }
 }
 
 .table {
@@ -174,6 +184,7 @@ tbody {
 .head-cell,
 .cell {
   width: 200px;
+  height: 60px;
   padding: 5px 25px;
   border-bottom: 1px solid $color-border-red;
 
@@ -184,12 +195,7 @@ tbody {
   }
 }
 
-.head-cell {
-  height: 60px;
-}
-
 .cell {
-  min-height: 60px;
   border-right: 1px solid $color-border-red;
 
   &:first-child {
@@ -256,6 +262,7 @@ tbody {
     .head-cell,
     .cell {
       width: 100%;
+      height: auto;
       display: flex;
       align-items: center;
     }
