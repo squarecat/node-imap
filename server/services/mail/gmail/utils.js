@@ -96,3 +96,4 @@ export const getUnsubValues = CommonUtils.getUnsubValues;
 export const getUnsubValue = CommonUtils.getUnsubValue;
 export const hasUnsubscribedAlready = CommonUtils.hasUnsubscribedAlready;
 export const getTimeRange = CommonUtils.getTimeRange;
+export const appendScores = CommonUtils.appendScores;

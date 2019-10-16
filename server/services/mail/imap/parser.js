@@ -91,14 +91,17 @@ function parseMailItem(item) {
       isTrash = mailbox.box.attribs.includes('\\Trash');
       isSpam = mailbox.box.attribs.includes('\\Junk');
     }
-    const toHeader = getHeaderValue(headers, 'to');
+    const toHeader = getHeaderValue(headers, 'to') || '';
+    const fromHeader = getHeader(headers, 'from') || '';
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
+    const { fromEmail } = parseEmail(fromHeader, { unwrap: true });
     const lmaId = `${id}-${+date}`;
     return {
       id: lmaId,
       uid: id,
       date: +date,
-      from: getHeaderValue(headers, 'from') || '',
+      from: fromHeader,
+      fromEmail,
       to,
       subject: getHeaderValue(headers, 'subject'),
       unsubscribeLink,

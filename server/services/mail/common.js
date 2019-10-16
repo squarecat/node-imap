@@ -1,5 +1,6 @@
 import { getDupeKey, parseEmail } from '../../utils/parsers';
 
+import { fetchScores } from '../../services/scores';
 import logger from '../../utils/logger';
 import subDays from 'date-fns/sub_days';
 import subMonths from 'date-fns/sub_months';
@@ -156,4 +157,24 @@ export function dedupeMailList(
   );
 
   return { deduped, dupes, dupeSenders };
+}
+
+export async function appendScores(mailList) {
+  const start = Date.now();
+  const senderAddresses = mailList.map(({ fromEmail }) => fromEmail);
+  const end = Date.now();
+  const scoredAddresses = await fetchScores({ senderAddresses });
+  const percentage = (scoredAddresses.length / senderAddresses.length) * 100;
+  logger.debug(
+    `[scoring]: appended ${
+      Object.keys(scoredAddresses).length
+    } scores (${percentage}% found) [took ${end - start}ms]`
+  );
+  return mailList.map(mail => {
+    const score = scoredAddresses[mail.fromEmail];
+    return {
+      ...mail,
+      score
+    };
+  });
 }

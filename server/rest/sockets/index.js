@@ -7,12 +7,12 @@ import {
   fetchUnreadNotifications,
   setNotificationsRead
 } from './notifications';
-import occurrences, { getScores } from './occurrences';
 import { unsubscribe, unsubscribeError } from './unsubscribe';
 
 import authMiddleware from './middleware/auth';
 import fetch from './fetch';
 import logger from '../../utils/logger';
+import occurrences from './occurrences';
 import socketio from 'socket.io';
 
 let io;
@@ -31,7 +31,6 @@ export default function(server) {
     const onFetch = fetch.bind(this, socket, userId);
     const onUnsubscribe = unsubscribe.bind(this, socket, userId);
     const onUnsubError = unsubscribeError.bind(this, socket, userId);
-    const onGetScores = getScores.bind(this, socket, userId);
     const onOccurrences = occurrences.bind(this, socket, userId);
     const onFetchNotificationsUnread = fetchUnreadNotifications.bind(
       this,
@@ -48,7 +47,6 @@ export default function(server) {
     socket.on('unsubscribe', onUnsubscribe);
     socket.on('unsubscribe-error-response', onUnsubError);
     socket.on('occurrences', onOccurrences);
-    socket.on('fetch-scores', onGetScores);
     socket.on('notifications:fetch-unread', onFetchNotificationsUnread);
     socket.on('notifications:set-read', onSetNotificationsRead);
   });

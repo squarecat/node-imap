@@ -1,6 +1,4 @@
 import {
-  getScores,
-  refreshScores,
   setSenderDelinquent,
   updateOccurrenceHearts,
   updateOccurrenceUnsubscribed,
@@ -45,12 +43,4 @@ export function addNewUnsubscribeOccrurence(
     providerHostname,
     successful
   });
-}
-
-export function getOccurrenceScores({ senders }) {
-  return getScores(senders);
-}
-
-export function calculateOccurrenceScores() {
-  return refreshScores();
 }

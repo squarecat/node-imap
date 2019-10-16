@@ -14,7 +14,6 @@ import milestonesApi from './rest/milestones';
 import orgApi from './rest/organisation';
 import path from 'path';
 import paymentsApi from './rest/payments';
-import { refreshScores } from './dao/occurrences';
 import reportApi from './rest/report';
 import schedule from './utils/scheduler';
 import sentryWebhooks from './rest/webhooks/sentry';
@@ -123,8 +122,6 @@ const App = {
         }
       });
     }
-
-    refreshScores();
   },
   async stop() {
     logger.info('server stopping');

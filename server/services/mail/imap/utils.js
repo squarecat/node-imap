@@ -57,3 +57,4 @@ export function getUnsubValuesFromHeader(header) {
 
 export const hasUnsubscribedAlready = CommonUtils.hasUnsubscribedAlready;
 export const dedupeMailList = CommonUtils.dedupeMailList;
+export const appendScores = CommonUtils.appendScores;

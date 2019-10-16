@@ -12,7 +12,7 @@ export function parseSenderEmail(email) {
     senderAddress = senderAddress.substr(0, senderAddress.length - 1);
   }
   return {
-    senderAddress,
+    senderAddress: senderAddress.toLowerCase(),
     friendlyName: fromName.trim()
   };
 }

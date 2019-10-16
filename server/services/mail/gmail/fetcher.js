@@ -1,9 +1,9 @@
+import { appendScores, dedupeMailList } from '../common';
 import { getGmailAccessToken, getMailClient } from './access';
 
 import { URLSearchParams } from 'url';
 import axios from 'axios';
 import { createAudit } from '../../audit';
-import { dedupeMailList } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import { getSearchString } from './utils';
 import httpMessageParser from 'http-message-parser';
@@ -91,11 +91,12 @@ export async function* fetchMail(
           totalUnsubCount = totalUnsubCount + deduped.length;
           dupeCache = newDupeCache;
           dupeSenders = newDupeSenders;
+          const newSubscriptions = await appendScores(deduped);
           yield {
             type: 'mail',
             data: {
               duplicateSubscriptions: newDupes,
-              newSubscriptions: deduped
+              newSubscriptions
             }
           };
         }

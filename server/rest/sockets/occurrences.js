@@ -1,12 +1,8 @@
 const Sentry = require('@sentry/node');
 
-import {
-  getOccurrenceScores,
-  updateOccurrencesSeenByUser
-} from '../../services/occurrences';
-
 import { RestError } from '../../utils/errors';
 import logger from '../../utils/logger';
+import { updateOccurrencesSeenByUser } from '../../services/occurrences';
 
 export default async function occurrences(socket, userId, data) {
   try {
@@ -18,10 +14,4 @@ export default async function occurrences(socket, userId, data) {
     });
     Sentry.captureException(error);
   }
-}
-
-export async function getScores(socket, userId, { senders }) {
-  const scores = await getOccurrenceScores({ senders });
-  logger.debug(`[socket]: => scores ${userId}`);
-  return socket.emit('scores', scores);
 }

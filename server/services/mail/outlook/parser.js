@@ -83,6 +83,7 @@ function mapMail(mailItem, { isSpam, isTrash }) {
     snippet: BodyPreview,
     date: +new Date(date),
     from: `${name}<${from}>`,
+    fromEmail: from,
     to,
     subject: Subject,
     unsubscribeLink,

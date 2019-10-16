@@ -44,19 +44,24 @@ export default (socket, db, emit) => {
             ]
           };
         });
-        await db.mail.bulkPut(mailData);
-        await db.mail
-          .where('key')
-          .anyOf(duplicateSubscriptions.map(ds => ds.key))
-          .modify(item => {
-            const { mail } = duplicateSubscriptions.find(
-              ds => ds.key === item.key
-            );
-            item.occurrenceCount += mail.length;
-            item.occurrences = [...item.occurrences, ...mail];
-          });
-        const count = await db.mail.count();
-        await db.prefs.put({ key: 'totalMail', value: count });
+
+        db.transaction('rw', 'mail', async () => {
+          await db.mail.bulkPut(mailData);
+          await db.mail
+            .where('key')
+            .anyOf(duplicateSubscriptions.map(ds => ds.key))
+            .modify(item => {
+              const { mail } = duplicateSubscriptions.find(
+                ds => ds.key === item.key
+              );
+              const newOccurrences = [...item.occurrences, ...mail];
+              item.occurrences = newOccurrences;
+              item.occurrenceCount = newOccurrences.length;
+            });
+          const count = await db.mail.count();
+          await db.prefs.put({ key: 'totalMail', value: count });
+        });
+
         const senders = mailData.map(md => md.fromEmail);
         emit('fetch-scores', { senders });
       } catch (err) {

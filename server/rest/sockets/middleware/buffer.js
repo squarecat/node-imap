@@ -1,6 +1,6 @@
 import { isBefore, subHours } from 'date-fns';
 
-import { createClient } from '../../../utils/redis';
+import { createBufferClient } from '../../../utils/redis';
 import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { promisify } from 'util';
@@ -9,7 +9,7 @@ const bufferedEvents = io.counter({
   name: 'Buffered events'
 });
 
-const client = createClient({
+const client = createBufferClient({
   prefix: 'lma.event.buffer_'
 });
 

@@ -1,11 +1,11 @@
-import { createClient } from '../../../utils/redis';
+import { createBufferClient } from '../../../utils/redis';
 import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { promisify } from 'util';
 
 let socketio;
 
-const client = createClient({
+const client = createBufferClient({
   prefix: 'lma.clients_'
 });
 

@@ -33,9 +33,7 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
       col
     });
     logger.info(
-      `occurrences-dao: adding ${
-        newOccurrences.length
-      } new occurrences <frequency>`
+      `occurrences-dao: adding ${newOccurrences.length} new occurrences <frequency>`
     );
     await addNew({
       occurrences: newOccurrences,
@@ -45,9 +43,7 @@ export async function updateOccurrences(userId, occurrences, timeframe) {
       col
     });
     logger.info(
-      `occurrences-dao: updating ${
-        existingOccurences.length
-      } existing occurrences <frequency>`
+      `occurrences-dao: updating ${existingOccurences.length} existing occurrences <frequency>`
     );
     await updateExisting({
       occurrences: existingOccurences,

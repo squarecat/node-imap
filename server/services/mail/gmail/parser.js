@@ -81,12 +81,15 @@ function mapMail(mail) {
     const isTrash = labelIds && labelIds.includes('TRASH');
     const isSpam = labelIds && labelIds.includes('SPAM');
     const toHeader = getHeader(payload, 'to') || '';
+    const fromHeader = getHeader(payload, 'from') || '';
     const { fromEmail: to } = parseEmail(toHeader, { unwrap: true });
+    const { fromEmail } = parseEmail(fromHeader, { unwrap: true });
     return {
       id,
       snippet,
       date: +internalDate,
-      from: getHeader(payload, 'from') || '',
+      from: fromHeader,
+      fromEmail,
       to,
       subject: getHeader(payload, 'subject'),
       unsubscribeLink,

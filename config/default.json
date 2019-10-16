@@ -13,6 +13,13 @@
     "username": "$$BUFFER_USERNAME",
     "ca": "$$BUFFER_CA"
   },
+  "cache": {
+    "host": "$CACHE_HOST",
+    "port": "$CACHE_PORT",
+    "password": "$$CACHE_PASSWORD",
+    "username": "$$CACHE_USERNAME",
+    "ca": "$$CACHE_CA"
+  },
   "admins": [
     "james@squarecat.io",
     "danielle@squarecat.io",
