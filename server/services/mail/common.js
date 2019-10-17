@@ -104,14 +104,15 @@ export function dedupeMailList(
   mailList = [],
   dupeSenderCache = []
 ) {
-  const { deduped, dupes, dupeSenders } = mailList.reduce(
+  const { seenMail, newMail, dupes, dupeSenders } = mailList.reduce(
     (out, mail) => {
       const dupeKey = getDupeKey(mail.from, mail.to);
       const dupe = out.dupes[dupeKey];
       if (!dupe) {
         const { isSpam, isTrash } = mail;
         return {
-          deduped: [...out.deduped, mail],
+          seenMail: out.seenMail,
+          newMail: [...out.newMail, { ...mail, key: dupeKey }],
           dupes: {
             ...out.dupes,
             [dupeKey]: {
@@ -135,13 +136,8 @@ export function dedupeMailList(
 
       return {
         ...out,
-        dupes: {
-          ...out.dupes,
-          [dupeKey]: {
-            lastSeen: mail.date > dupe.lastSeen ? mail.date : dupe.lastSeen,
-            count: dupe.count + 1
-          }
-        },
+        seenMail: [...out.seenMail, { key: dupeKey, date: mail.date }],
+        dupes: out.dupes,
         dupeSenders: {
           ...out.dupeSenders,
           [mail.from.toLowerCase()]: {
@@ -153,25 +149,31 @@ export function dedupeMailList(
         }
       };
     },
-    { dupes: dupeCache, deduped: [], dupeSenders: dupeSenderCache }
+    {
+      dupes: dupeCache,
+      newMail: [],
+      seenMail: [],
+      dupeSenders: dupeSenderCache
+    }
   );
 
-  return { deduped, dupes, dupeSenders };
+  return { seenMail, newMail, dupes, dupeSenders };
 }
 
 export async function appendScores(mailList) {
   const start = Date.now();
   const senderAddresses = mailList.map(({ fromEmail }) => fromEmail);
-  const end = Date.now();
   const scoredAddresses = await fetchScores({ senderAddresses });
-  const percentage = (scoredAddresses.length / senderAddresses.length) * 100;
-  logger.debug(
+  const percentage =
+    (Object.keys(scoredAddresses).length / senderAddresses.length) * 100;
+  const end = Date.now();
+  logger.info(
     `[scoring]: appended ${
       Object.keys(scoredAddresses).length
     } scores (${percentage}% found) [took ${end - start}ms]`
   );
   return mailList.map(mail => {
-    const score = scoredAddresses[mail.fromEmail];
+    const score = scoredAddresses[mail.fromEmail] || null;
     return {
       ...mail,
       score

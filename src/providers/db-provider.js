@@ -19,8 +19,7 @@ db.version(1).stores({
 // mail occurrence
 db.version(2)
   .stores({
-    mail: `&id, key, fromEmail, lastSeenDate, *labels, score, to, status, [status+to], [forAccount+status], forAccount, [to+forAccount+provider], occurrenceCount`,
-    scores: `&address, score`,
+    mail: `&id, key, fromEmail, lastSeenDate, *labels, score.score, to, status, [status+to], [forAccount+status], forAccount, [to+forAccount+provider], occurrenceCount`,
     prefs: `key`,
     queue: '++id'
   })

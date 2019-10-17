@@ -12,7 +12,7 @@ import { DatabaseContext } from '../../providers/db-provider';
 import _sortBy from 'lodash.sortby';
 import useMailSocket from './db';
 
-const sortByValues = ['lastSeenDate', 'score'];
+const sortByValues = ['lastSeenDate', 'score.score', 'occurrenceCount'];
 export const MailContext = createContext({});
 
 export const MailProvider = function({ children }) {
@@ -175,6 +175,7 @@ MailProvider.whyDidYouRender = true;
 
 async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
+  console.log(activeFilters);
   // apply filters
   if (activeFilters.length) {
     const { values, indexes } = _sortBy(activeFilters, 'field').reduce(
@@ -202,18 +203,18 @@ async function filterMail(activeFilters, db, options) {
   }
   // if sorting by score then move all those
   // without score to the end
-  if (options.orderBy === 'score') {
-    const { scored, unscored } = filteredCollection.reduce(
-      (out, item) => {
-        if (item.score === -1) {
-          return { ...out, unscored: [...out.unscored, item] };
-        }
-        return { ...out, scored: [...out.scored, item] };
-      },
-      { scored: [], unscored: [] }
-    );
-    filteredCollection = [...scored, ...unscored];
-  }
+  // if (options.orderBy === 'score.score') {
+  //   const { scored, unscored } = filteredCollection.reduce(
+  //     (out, item) => {
+  //       if (item.score === -1) {
+  //         return { ...out, unscored: [...out.unscored, item] };
+  //       }
+  //       return { ...out, scored: [...out.scored, item] };
+  //     },
+  //     { scored: [], unscored: [] }
+  //   );
+  //   filteredCollection = [...scored, ...unscored];
+  // }
 
   // filter options
   if (!options.showSpam) {

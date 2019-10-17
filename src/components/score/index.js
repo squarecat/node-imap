@@ -4,9 +4,10 @@ import React from 'react';
 import { TextImportant } from '../text';
 import Tooltip from '../tooltip';
 
-export default React.memo(({ score, address, rank, unsubscribePercentage }) => {
+export default React.memo(({ score = {}, address }) => {
   let label;
-  if (rank === null || typeof rank === 'undefined') {
+  const { rank } = score;
+  if (!rank) {
     label = 'unknown';
   } else {
     label = rank;
@@ -18,10 +19,8 @@ export default React.memo(({ score, address, rank, unsubscribePercentage }) => {
       placement="left"
       overlay={tooltipContent({
         score,
-        rank,
         address,
-        label,
-        percentage: unsubscribePercentage
+        label
       })}
     >
       <span styleName="score" data-score={label}>
@@ -40,15 +39,16 @@ const ranks = {
   'A+': 90
 };
 
-function tooltipContent({ score, rank, address, label, percentage = 0 }) {
+function tooltipContent({ score: scoreData, address, label }) {
   let content;
   let rankLabel;
-  if (!rank) {
+  if (!scoreData) {
     rankLabel = '-Unknown';
     content = (
       <p>We don't have enough data on this sender to give it a rank.</p>
     );
   } else {
+    const { rank, unsubscribeRate, score } = scoreData;
     const percentile = ranks[rank];
     const asArray = Object.keys(ranks);
     const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
@@ -65,8 +65,8 @@ function tooltipContent({ score, rank, address, label, percentage = 0 }) {
           of known senders, based on email frequency and reputation.
         </p>
         <p>
-          <TextImportant>{(percentage * 100).toFixed(0)}%</TextImportant> of
-          users unsubscribe from these emails.
+          <TextImportant>{(unsubscribeRate * 100).toFixed(0)}%</TextImportant>{' '}
+          of users unsubscribe from these emails.
         </p>
       </>
     );

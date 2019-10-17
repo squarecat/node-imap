@@ -2,7 +2,6 @@ export const initialState = {
   mail: [],
   page: 0,
   count: 0,
-  orderBy: 'date',
   perPage: 20,
   filterValues: {
     recipients: []
@@ -12,7 +11,7 @@ export const initialState = {
     showTrash: true
   },
   activeFilters: [],
-  sortByValue: 'date',
+  sortByValue: 'lastSeenDate',
   sortByDirection: 'desc'
 };
 

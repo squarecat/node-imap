@@ -12,15 +12,20 @@ import { OptionsIcon } from '../../../components/icons';
 
 import useUser from '../../../utils/hooks/use-user';
 
+const filterLabels = {
+  lastSeenDate: 'last received',
+  'score.score': 'score',
+  occurrenceCount: 'times received'
+};
 export default React.memo(
   ({
     filterValues = {
       recipients: []
     },
     sortValues = [],
-    sortByValue = 'date',
+    sortByValue = 'lastSeenDate',
     sortByDirection = 'desc',
-    activeFilters = []    
+    activeFilters = []
   }) => {
     return (
       <div styleName="filters">
@@ -32,7 +37,7 @@ export default React.memo(
             filterValues={filterValues}
             activeFilters={activeFilters}
           />
-        </div>        
+        </div>
         <div styleName="filter-options">
           <OptionsDropdown
             sortValues={sortValues}
@@ -47,7 +52,7 @@ export default React.memo(
 
 function Filters({
   sortValues = [],
-  sortByValue = 'date',
+  sortByValue = 'lastSeenDate',
   sortByDirection = 'desc',
   filterValues,
   activeFilters
@@ -160,7 +165,7 @@ function Filters({
               if (!value) {
                 return dispatch({
                   type: 'set-sort-by',
-                  data: 'date'
+                  data: 'lastSeenDate'
                 });
               }
               dispatch({
@@ -172,9 +177,9 @@ function Filters({
             compact
             options={sortValues.map(v => ({
               value: v,
-              label: v
+              label: filterLabels[v]
             }))}
-            value={sortByValue ? sortByValue : 'date'}
+            value={sortByValue ? sortByValue : 'lastSeenDate'}
             basic
           />
         </span>
@@ -194,7 +199,7 @@ function Filters({
             name="sort-by-direction"
             compact
             options={
-              sortByValue === 'date'
+              sortByValue === 'lastSeenDate'
                 ? [
                     {
                       value: 'asc',

@@ -116,7 +116,7 @@ function MailItem({ id, onLoad }) {
         </span>
       </td>
       <td styleName="cell score-column">
-        <ItemScore sender={m.fromEmail} />
+        <ItemScore mail={m} />
       </td>
       <td styleName="cell actions-column">
         <UnsubToggle
@@ -130,17 +130,10 @@ function MailItem({ id, onLoad }) {
   );
 }
 
-function ItemScore({ sender }) {
-  const { rank, score, unsubscribePercentage } = useScore(sender);
+function ItemScore({ mail }) {
+  const { score, fromEmail: sender } = mail;
 
-  return (
-    <Score
-      rank={rank}
-      address={sender}
-      score={score}
-      unsubscribePercentage={unsubscribePercentage}
-    />
-  );
+  return <Score address={sender} score={score} />;
 }
 
 // function Occurrences({ fromEmail, toEmail }) {

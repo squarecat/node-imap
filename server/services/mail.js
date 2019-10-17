@@ -121,11 +121,14 @@ export async function* fetchMailByAccount({
       if (value.type === 'mail') {
         yield {
           type: value.type,
-          data: value.data.map(v => ({
-            forAccount: account.email,
-            provider,
-            ...v
-          }))
+          data: {
+            ...value.data,
+            newSubscriptions: value.data.newSubscriptions.map(v => ({
+              forAccount: account.email,
+              provider,
+              ...v
+            }))
+          }
         };
       } else {
         yield value;

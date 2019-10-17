@@ -13,7 +13,8 @@ const lpush = promisify(client.lpush).bind(client);
 const lrem = promisify(client.lrem).bind(client);
 const lrange = promisify(client.lrange).bind(client);
 const llen = promisify(client.llen).bind(client);
-const flushdb = promisify(client.flushdb).bind(client);
+const scan = promisify(client.scan).bind(client);
+const del = promisify(client.del).bind(client);
 
 const socketsOpen = io.counter({
   name: 'Sockets Open'
@@ -78,5 +79,16 @@ export async function getConnectedSockets(userId) {
 }
 
 export async function flushConnections() {
-  await flushdb();
+  let cursor = 0;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const [cur, keys] = await scan(cursor, 'COUNT', '10');
+    console.log('clearing socket connections', keys);
+    debugger;
+    await del(keys);
+    if (cur === 0) {
+      break;
+    }
+    cursor = cur;
+  }
 }
