@@ -195,7 +195,7 @@ const FaqPage = () => (
         !
       </p>
       <TextLink event="clicked-faq-cta" href="/signup" styleName="cta">
-        Get Started For Free!
+        Clean My Inbox
       </TextLink>
     </div>
   </SubPageLayout>

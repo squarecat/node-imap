@@ -43,6 +43,7 @@ import request from '../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
+import PublicationQuote from '../components/landing/testimonial/publication-quote';
 
 const faker = require('../vendor/faker/locale/en');
 
@@ -165,7 +166,7 @@ const IndexPage = ({ data }) => {
                     event={'clicked-hero-cta'}
                     className={`beam-me-up-cta`}
                   >
-                    Get Started for Free
+                    Start Unsubscribing
                   </TextLink>
                   {statsContent}
                 </div>
@@ -321,12 +322,12 @@ const IndexPage = ({ data }) => {
                 <h3>Quickly see the worst spammers</h3>
                 <p>
                   We rank each of your subscriptions based on our unique
-                  Subscriber Score, so you can quickly tell if it's worth
+                  Subscription Score, so you can quickly tell if it's worth
                   hanging on to.
                 </p>
                 <p className="image-section-link">
-                  <TextLink as="link" linkTo="/security#subscriber-score">
-                    <span>Learn more about Subscriber Score</span>{' '}
+                  <TextLink as="link" linkTo="/security#subscription-score">
+                    <span>Learn more about Subscription Score</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -527,9 +528,10 @@ const IndexPage = ({ data }) => {
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               style={{ margin: '50px auto' }}
             >
-              Get Started For Free
+              Clean My Inbox
             </TextLink>
           </div>
+          <PublicationQuote centered publication="lifehacker" />
         </div>
         <Footer />
       </div>

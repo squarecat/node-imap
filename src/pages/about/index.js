@@ -83,7 +83,7 @@ export default function About() {
             subscriptions in the first place.
           </p>
           <p>
-            We think that the new Subscriber Score is a powerful way of
+            We think that the new Subscription Score is a powerful way of
             addressing this and we will be looking at ways we can use it to
             bring our users closer to this vision.
           </p>
