@@ -1,7 +1,7 @@
 import './item.module.scss';
 
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import { useMailItem, useScore } from '../db/hooks';
+import { useMailItem } from '../db/hooks';
 
 import IgnoreIcon from '../../../components/ignore-icon';
 import { Info as InfoIcon } from '../../../components/icons';
@@ -15,14 +15,22 @@ import format from 'date-fns/format';
 import { toggleFromIgnoreList } from '../../../utils/ignore';
 import { useDelinquency } from '../db/hooks';
 import useUser from '../../../utils/hooks/use-user';
+import { HotKeys } from 'react-hotkeys';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
 const mailDayStamp = 'Do MMM';
 const mailYearStamp = 'YYYY';
 
+const keyMap = {
+  UNSUBSCRIBE: 'u',
+  HEART: 'h'
+};
+
 function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
+  const { actions } = useContext(MailContext);
+
   const openUnsubModal = useCallback(() => {
     let strat = m.unsubStrategy;
     if (!strat) {
@@ -30,7 +38,6 @@ function MailItem({ id, onLoad }) {
     }
     actions.setUnsubData({ ...m, unsubStrategy: strat });
   }, [actions, m]);
-  const { actions } = useContext(MailContext);
 
   const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
     u => u.ignoredSenderList || []
@@ -49,6 +56,15 @@ function MailItem({ id, onLoad }) {
     return false;
   }, [ignoredSenderList, isIgnored, m.fromEmail, setIgnoredSenderList]);
 
+  const expand = useCallback(() => {}, []);
+
+  const handlers = useMemo(() => {
+    return {
+      UNSUBSCRIBE: () => actions.unsubscribe(m),
+      HEART: clickIgnore
+    };
+  }, [actions, clickIgnore, m]);
+
   useEffect(() => {
     if (m) {
       onLoad();
@@ -59,7 +75,7 @@ function MailItem({ id, onLoad }) {
     <>
       <td styleName="cell timestamp-column">
         <span styleName="from-datetime">
-          <DateCell date={m.date} />
+          <DateCell date={m.getLatest().date} />
         </span>
       </td>
       <td styleName="cell from-column">
@@ -80,11 +96,15 @@ function MailItem({ id, onLoad }) {
             </Tooltip>
             <span title={m.fromName}>{m.fromName}</span>
           </span>
-          {/* {m.fromEmail ? (
-            <Occurrences fromEmail={m.fromEmail} toEmail={m.to} />
-          ) : null} */}
+
+          <Occurrences onClick={expand} mail={m} />
         </div>
         <MailDataLink item={m} openUnsubModal={openUnsubModal} />
+      </td>
+      <td styleName="cell subject-column">
+        <span styleName="subject" title={m.getLatest().subject}>
+          {m.getLatest().subject}
+        </span>
       </td>
       <td styleName="cell tags-column">
         {m.isTrash ? (
@@ -110,21 +130,18 @@ function MailItem({ id, onLoad }) {
           </Tooltip>
         ) : null}
       </td>
-      <td styleName="cell subject-column">
-        <span styleName="subject" title={m.subject}>
-          {m.subject}
-        </span>
-      </td>
       <td styleName="cell score-column">
         <ItemScore mail={m} />
       </td>
-      <td styleName="cell actions-column">
-        <UnsubToggle
-          mail={m}
-          isIgnored={isIgnored}
-          onUnsubscribe={actions.onUnsubscribe}
-          setUnsubModal={openUnsubModal}
-        />
+      <td styleName="cell actions-column" data-focus>
+        <HotKeys handlers={handlers} keyMap={keyMap} allowChanges={true}>
+          <UnsubToggle
+            mail={m}
+            isIgnored={isIgnored}
+            onUnsubscribe={actions.unsubscribe}
+            setUnsubModal={openUnsubModal}
+          />
+        </HotKeys>
       </td>
     </>
   );
@@ -136,24 +153,24 @@ function ItemScore({ mail }) {
   return <Score address={sender} score={score} />;
 }
 
-// function Occurrences({ fromEmail, toEmail }) {
-//   const { count: occurrences } = useOccurrence({ fromEmail, toEmail });
-//   if (!occurrences || occurrences < 2) {
-//     return null;
-//   }
-//   return (
-//     <Tooltip
-//       overlay={
-//         <span>
-//           You received {occurrences} emails from this sender in the past 6
-//           months
-//         </span>
-//       }
-//     >
-//       <span styleName="occurrences">x{occurrences}</span>
-//     </Tooltip>
-//   );
-// }
+function Occurrences({ mail }) {
+  const { occurrenceCount } = mail;
+
+  return (
+    <span styleName="occurrences-wrapper" data-occurrences={occurrenceCount}>
+      <Tooltip
+        overlay={
+          <span>
+            You received {occurrenceCount} emails from this sender in the past 6
+            months
+          </span>
+        }
+      >
+        <span styleName="occurrences">x{occurrenceCount}</span>
+      </Tooltip>
+    </span>
+  );
+}
 
 function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
   const isSubscribed = !!mail.subscribed;

@@ -36,6 +36,11 @@ export default function useMailItem(id, reducer) {
       getLatest() {
         return item.occurrences[0] || {};
       },
+      getPrevious(count) {
+        return item.occurrences.filter(
+          (it, index) => index !== 0 && index <= count
+        );
+      },
       toJSON() {
         return item;
       }

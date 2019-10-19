@@ -84,6 +84,7 @@
     "rc-tooltip": "^3.7.3",
     "react-animated-number": "^0.4.4",
     "react-hook-utils": "^1.0.6",
+    "react-hotkeys": "^2.0.0",
     "react-on-screen": "^2.1.0",
     "react-paginate": "^6.3.0",
     "react-stripe-elements": "^2.0.1",
