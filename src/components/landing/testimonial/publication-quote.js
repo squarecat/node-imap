@@ -41,6 +41,18 @@ const PUBLICATIONS = {
         while knowing your data is safe.
       </span>
     )
+  },
+  makermag: {
+    name: 'Maker Mag',
+    text: (
+      <span>
+        Leave Me Alone let’s you clean your inbox from these spam emails,
+        <TextHighlight>
+          without ever storing or sharing any of your data
+        </TextHighlight>
+        .
+      </span>
+    )
   }
 };
 
@@ -65,6 +77,13 @@ export default function PublicationQuote({ publication, text, ...visProps }) {
               }
             }
             makeuseof: file(relativePath: { eq: "news/makeuseof.png" }) {
+              childImageSharp {
+                fixed(height: 44) {
+                  ...GatsbyImageSharpFixed_noBase64
+                }
+              }
+            }
+            makermag: file(relativePath: { eq: "news/makermag.png" }) {
               childImageSharp {
                 fixed(height: 44) {
                   ...GatsbyImageSharpFixed_noBase64

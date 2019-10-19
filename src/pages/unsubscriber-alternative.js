@@ -58,7 +58,7 @@ function UnsubscriberAlternative() {
               unsubscribes, and support from the team who built the service.
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
-              Get Started for Free
+            Start Unsubscribing
             </a>
             {joinContent}
           </div>
@@ -98,6 +98,11 @@ function UnsubscriberAlternative() {
             <tr>
               <td styleName="cell">Works with Gmail</td>
               <td styleName="cell">Yes</td>
+              <td styleName="cell">No</td>
+            </tr>
+            <tr>
+              <td styleName="cell">Connect multiple accounts</td>
+              <td styleName="cell">Yes, unlimited</td>
               <td styleName="cell">No</td>
             </tr>
             <tr>
@@ -228,7 +233,7 @@ function UnsubscriberAlternative() {
               .
             </span>
           }
-          author="AmieChen, Founder - Hyperyolo"
+          author="Amie Chen, Founder - Hyperyolo"
           image={`${cdnUrl}/testimonials/image-23.jpeg`}
           centered
         />

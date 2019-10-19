@@ -57,7 +57,7 @@ function UnrollMeAlternative() {
               available in the EU.
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
-              Get Started for Free
+            Start Unsubscribing
             </a>
             {joinContent}
           </div>
