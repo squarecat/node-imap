@@ -57,7 +57,7 @@ function UnrollMeAlternative() {
               available in the EU.
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
-            Start Unsubscribing
+              Start Unsubscribing
             </a>
             {joinContent}
           </div>
@@ -81,8 +81,7 @@ function UnrollMeAlternative() {
         />
       </div>
 
-      {/* Comparison table */}
-      <div styleName="alternative-inner comparison">
+      <div styleName="alternative-inner collapsible">
         <table styleName="table">
           <thead>
             <tr>

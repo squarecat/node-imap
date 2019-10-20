@@ -74,8 +74,7 @@ function CleanfoxAlternative() {
         <PublicationQuote centered bordered publication="lifehacker" />
       </div>
 
-      {/* Comparison table */}
-      <div styleName="alternative-inner comparison">
+      <div styleName="alternative-inner collapsible">
         <table styleName="table">
           <thead>
             <tr>
@@ -286,8 +285,11 @@ function CleanfoxAlternative() {
               <p>
                 Yes! Leave Me Alone is built real people who want to help you
                 get a cleaner inbox. If you're having trouble with anything,
-                then the creators James or Danielle (hi!) will personally help
-                you.
+                then the creators James or Danielle (
+                <TextLink as="link" linkTo="/about">
+                  hi!
+                </TextLink>
+                ) will personally help you.
               </p>
             </div>
             <div styleName="question">
@@ -315,7 +317,7 @@ function CleanfoxAlternative() {
         </p>
         <a
           href="/signup"
-          event={'clicked-unsubscriber-alternative-cta'}
+          event={'clicked-cleanfox-alternative-cta'}
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
           style={{ margin: '50px auto' }}
         >

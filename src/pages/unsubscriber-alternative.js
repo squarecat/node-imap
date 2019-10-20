@@ -72,8 +72,7 @@ function UnsubscriberAlternative() {
         <PublicationQuote centered bordered publication="fastcompany" />
       </div>
 
-      {/* Comparison table */}
-      <div styleName="alternative-inner comparison">
+      <div styleName="alternative-inner collapsible">
         <table styleName="table">
           <thead>
             <tr>

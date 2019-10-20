@@ -1,0 +1,66 @@
+@import '../../../styles/common/colors.scss';
+
+.alternative-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 25px;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  border: 1px solid $color-red-light;
+  border-radius: 6px;
+  padding: 25px;
+  transition: transform 150ms ease-in-out;
+  box-shadow: 2px 2px 5px rgba(253, 219, 215, 0.5);
+
+  p {
+    color: $color-primary-font;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    @media (max-width: 960px) {
+      display: none;
+    }
+  }
+}
+
+.image {
+  border-radius: 6px;
+}
+
+.title {
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: $color-primary-font;
+}
+
+.lma {
+}
+
+.vs {
+  color: rgba(231, 57, 48, 0.649);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: sans-serif;
+  letter-spacing: 1px;
+  font-size: 16px;
+}
+
+.alternative-name {
+  font-family: sans-serif;
+  opacity: 0.7;
+}

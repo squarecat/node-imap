@@ -215,8 +215,6 @@ tbody {
 
   &:first-child {
     font-family: 'Gotham-Rounded-Bold';
-    width: 150px;
-    font-size: 16px;
     border-left: 1px solid $color-border-red;
   }
 }
@@ -249,8 +247,41 @@ tbody {
   }
 }
 
+.all-comparisons {
+  max-width: 1400px;
+
+  .table-inner {
+    min-width: 1000px;
+  }
+
+  .head-cell,
+  .cell {
+    width: 200px;
+    padding: 5px 15px;
+  }
+
+  @media (max-width: 1100px) {
+    .cell:first-child {
+      border-left: none;
+    }
+    .cell:last-child {
+      border-right: none;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      box-shadow: inset -5px 0 5px -5px $color-border-red,
+        inset 5px 0 5px -5px $color-border-red;
+      border-top: 1px solid $color-border-red;
+    }
+  }
+}
+
+.cards {
+  margin-top: 90px;
+}
+
 @media (max-width: 768px) {
-  .comparison {
+  .collapsible {
     table,
     thead,
     tbody,
