@@ -13,6 +13,7 @@ import format from 'date-fns/format';
 import relative from 'tiny-relative-date';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
+import useMailItem from '../../../app/mail-list/db/use-mail-item';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
@@ -70,7 +71,9 @@ const Content = React.memo(function({
     isSpam,
     providerName,
     status,
-    date
+    occurrences,
+    occurrenceCount,
+    lastSeenDate
   } = item;
 
   const unsub = unsubscriptions.find(u => {
@@ -140,18 +143,18 @@ const Content = React.memo(function({
           <TableRow>
             <TableCell>Occurrences</TableCell>
             <TableCell>
-              {/* <Occurences fromEmail={fromEmail} toEmail={to} /> */}
+              <Occurrences occurrenceCount={occurrenceCount} />
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Last recevied</TableCell>
+            <TableCell>History</TableCell>
             <TableCell>
-              {/* <LastReceived
-                fromEmail={fromEmail}
-                toEmail={to}
-                date={date}
+              <History
+                lastSeenDate={lastSeenDate}
+                occurrences={occurrences}
+                occurrenceCount={occurrenceCount}
                 unsub={unsub}
-              /> */}
+              />
             </TableCell>
           </TableRow>
         </tbody>
@@ -237,31 +240,27 @@ const UnsubStatus = React.memo(function UnsubStatus({ status, unsub }) {
   return <span styleName={styles}>{label}</span>;
 });
 
-// const Occurences = React.memo(function Occurrences({ fromEmail, toEmail }) {
-//   let { count: occurrences } = useOccurrence({ fromEmail, toEmail });
-//   if (!occurrences) {
-//     occurrences = 1;
-//   }
-//   return (
-//     <>
-//       <span styleName="data-pill">x{occurrences}</span>
-//       <span styleName="occurrences">
-//         You have received mail from this sender{' '}
-//         <TextImportant>
-//           {occurrences > 1
-//             ? `${occurrences} times in the last 6 months`
-//             : `once in the last 6 months`}
-//         </TextImportant>
-//         .
-//       </span>
-//     </>
-//   );
-// });
+const Occurrences = React.memo(function Occurrences({ occurrenceCount }) {
+  return (
+    <>
+      <span styleName="data-pill">x{occurrenceCount}</span>
+      <span styleName="occurrences">
+        You have received mail from this sender{' '}
+        <TextImportant>
+          {occurrenceCount > 1
+            ? `${occurrenceCount} times in the last 6 months`
+            : `once in the last 6 months`}
+        </TextImportant>
+        .
+      </span>
+    </>
+  );
+});
 
-const LastReceived = React.memo(function LastReceived({
-  fromEmail,
-  toEmail,
-  date,
+const History = React.memo(function History({
+  lastSeenDate,
+  occurrences = [],
+  occurrenceCount = 1,
   unsub = {}
 }) {
   const { actions } = useContext(AlertContext);
@@ -272,15 +271,13 @@ const LastReceived = React.memo(function LastReceived({
     reportedAt: unsub.reportedAt || null
   });
 
-  const occurrences = useOccurrence({ fromEmail, toEmail, withLastSeen: true });
-
   const onReportClick = useCallback(async () => {
     setState({ reportedAt: null, reported: false, loading: true });
     console.log('reporting....', occurrences);
     await reportMail({
       ...unsub,
-      lastReceived: occurrences ? occurrences.lastSeen : date,
-      occurrences: occurrences ? occurrences.count : 1
+      lastReceived: lastSeenDate,
+      occurrences: occurrenceCount
     });
     const d = Date.now();
     updateReportedUnsub({ ...unsub, reportedAt: d, reported: true });
@@ -291,44 +288,58 @@ const LastReceived = React.memo(function LastReceived({
       autoDismiss: true,
       level: 'info'
     });
-  }, [occurrences, unsub, date, updateReportedUnsub, actions]);
-
-  let lastSeen;
-  if (!occurrences.lastSeen) {
-    lastSeen = date;
-  } else {
-    lastSeen = occurrences.lastSeen;
-  }
+  }, [
+    occurrences,
+    unsub,
+    lastSeenDate,
+    occurrenceCount,
+    updateReportedUnsub,
+    actions
+  ]);
 
   const isDelinquent = useMemo(() => {
     if (unsub) {
       const { unsubscribedAt } = unsub;
-      const delinquent = lastSeen > new Date(unsubscribedAt);
+      const delinquent = lastSeenDate > new Date(unsubscribedAt);
       return delinquent;
     }
     return false;
-  }, [lastSeen, unsub]);
+  }, [lastSeenDate, unsub]);
 
-  const styles = cx('data-pill', {
-    errored: isDelinquent
-  });
   return (
     <>
-      <Tooltip
-        placement="bottom"
-        overlay={
-          <>
-            <span styleName="from-date">
-              {format(lastSeen, mailDateFormat)}
-            </span>
-            <span styleName="from-time">
-              {format(lastSeen, mailTimeFormat)}
-            </span>
-          </>
-        }
-      >
-        <span styleName={styles}>{relative(new Date(lastSeen))}</span>
-      </Tooltip>
+      <table>
+        <tbody>
+          {occurrences.map(oc => {
+            return (
+              <tr key={oc.id}>
+                <td>
+                  <Tooltip
+                    placement="bottom"
+                    overlay={
+                      <>
+                        <span styleName="from-date">
+                          {format(oc.date, mailDateFormat)}
+                        </span>
+                        <span styleName="from-time">
+                          {format(oc.date, mailTimeFormat)}
+                        </span>
+                      </>
+                    }
+                  >
+                    <span styleName="timestamp">
+                      {relative(new Date(oc.date))}
+                    </span>
+                  </Tooltip>
+                </td>
+                <td>
+                  <span>{oc.subject}</span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
 
       {isDelinquent ? (
         <>
@@ -348,7 +359,7 @@ const LastReceived = React.memo(function LastReceived({
           <ReportData
             reported={state.reported}
             reportedAt={state.reportedAt}
-            lastSeen={lastSeen}
+            lastSeen={lastSeenDate}
             unsubscribedAt={unsub.unsubscribedAt}
           />
         </>

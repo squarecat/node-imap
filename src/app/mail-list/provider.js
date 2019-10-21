@@ -72,8 +72,10 @@ export const MailProvider = function({ children }) {
       return dispatch({ type: 'init', data: value });
     }
     loadPreferences();
+    db.prefs.hook('creating', onCountUpdate);
     db.prefs.hook('updating', onCountUpdate);
     return () => {
+      db.prefs.hook('creating').unsubscribe(onCountUpdate);
       db.prefs.hook('updating').unsubscribe(onCountUpdate);
     };
   }, [db.mail, db.prefs]);

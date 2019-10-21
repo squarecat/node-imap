@@ -136,7 +136,10 @@ export function dedupeMailList(
 
       return {
         ...out,
-        seenMail: [...out.seenMail, { key: dupeKey, date: mail.date }],
+        seenMail: [
+          ...out.seenMail,
+          { key: dupeKey, date: mail.date, subject: mail.subject }
+        ],
         dupes: out.dupes,
         dupeSenders: {
           ...out.dupeSenders,

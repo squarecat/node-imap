@@ -3,6 +3,7 @@ import './item.module.scss';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useMailItem } from '../db/hooks';
 
+import UnsubModal from '../../../components/modal/unsub-modal';
 import IgnoreIcon from '../../../components/ignore-icon';
 import { Info as InfoIcon } from '../../../components/icons';
 import { MailContext } from '../provider';
@@ -30,14 +31,7 @@ const keyMap = {
 function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
   const { actions } = useContext(MailContext);
-
-  const openUnsubModal = useCallback(() => {
-    let strat = m.unsubStrategy;
-    if (!strat) {
-      strat = m.unsubscribeLink ? 'link' : 'mailto';
-    }
-    actions.setUnsubData({ ...m, unsubStrategy: strat });
-  }, [actions, m]);
+  const { open: openModal } = useContext(ModalContext);
 
   const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
     u => u.ignoredSenderList || []
@@ -57,6 +51,25 @@ function MailItem({ id, onLoad }) {
   }, [ignoredSenderList, isIgnored, m.fromEmail, setIgnoredSenderList]);
 
   const expand = useCallback(() => {}, []);
+
+  const onSubmit = useCallback(
+    ({ success, useImage, failReason = null }) => {
+      const { id, from, unsubStrategy } = m;
+      debugger;
+      actions.resolveUnsubscribe({
+        success,
+        mailId: id,
+        useImage,
+        from: from,
+        reason: failReason,
+        unsubStrategy
+      });
+    },
+    [actions, m]
+  );
+  const openUnsubModal = useCallback(() => {
+    openModal(<UnsubModal onSubmit={onSubmit} mail={m} />);
+  }, [m, onSubmit, openModal]);
 
   const handlers = useMemo(() => {
     return {
@@ -139,7 +152,7 @@ function MailItem({ id, onLoad }) {
             mail={m}
             isIgnored={isIgnored}
             onUnsubscribe={actions.unsubscribe}
-            setUnsubModal={openUnsubModal}
+            openUnsubModal={openUnsubModal}
           />
         </HotKeys>
       </td>
@@ -172,7 +185,7 @@ function Occurrences({ mail }) {
   );
 }
 
-function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
+function UnsubToggle({ mail, isIgnored, onUnsubscribe, openUnsubModal }) {
   const isSubscribed = !!mail.subscribed;
   let content;
   const everythingOk = mail.estimatedSuccess !== false || mail.resolved;
@@ -187,7 +200,7 @@ function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
     );
   } else {
     content = (
-      <span onClick={() => setUnsubModal()} styleName="failed-to-unsub-icon">
+      <span onClick={openUnsubModal} styleName="failed-to-unsub-icon">
         <InfoIcon width="20" height="20" />
       </span>
     );
@@ -198,7 +211,7 @@ function UnsubToggle({ mail, isIgnored, onUnsubscribe, setUnsubModal }) {
     status = null;
   } else if (!isSubscribed) {
     status = (
-      <a styleName="status" onClick={() => setUnsubModal(mail)}>
+      <a styleName="status" onClick={openUnsubModal}>
         See details
       </a>
     );

@@ -23,6 +23,10 @@ export default (socket, db, emit) => {
             to: to,
             unsubscribeLink: mail.unsubscribeLink,
             unsubscribeMailTo: mail.unsubscribeMailTo,
+            unsubStrategy: mail.unsubStrategy,
+            estimatedSuccess: mail.estimatedSuccess,
+            resolved: mail.resolved,
+            hasImage: mail.hasImage,
             isTrash: mail.isTrash,
             isSpam: mail.isSpam,
             score: mail.score || {
@@ -39,6 +43,7 @@ export default (socket, db, emit) => {
             occurrenceCount: 1,
             lastSeenDate: mail.date,
             __migratedFrom: 'v1',
+
             occurrences: [
               {
                 subject: mail.subject,

@@ -81,14 +81,14 @@ export async function getConnectedSockets(userId) {
 export async function flushConnections() {
   let cursor = 0;
   // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const [cur, keys] = await scan(cursor, 'COUNT', '10');
-    console.log('clearing socket connections', keys);
-    debugger;
-    await del(keys);
-    if (cur === 0) {
-      break;
-    }
-    cursor = cur;
-  }
+  // while (true) {
+  //   const [cur, keys] = await scan(cursor, 'COUNT', '10');
+  //   console.log('clearing socket connections', keys);
+  //   debugger;
+  //   await del(keys);
+  //   if (cur === 0) {
+  //     break;
+  //   }
+  //   cursor = cur;
+  // }
 }

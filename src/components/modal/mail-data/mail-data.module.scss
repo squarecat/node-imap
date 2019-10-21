@@ -39,6 +39,25 @@
   }
 }
 
+.mail-data-content table table {
+  font-size: 12px;
+
+  .timestamp {
+    opacity: 0.5;
+    font-size: 11px;
+    line-height: 14px;
+    cursor: pointer;
+  }
+  td:first-child {
+    width: 100px;
+  }
+  td {
+    width: auto;
+    padding: 8px 5px 8px 0;
+    line-height: 16px;
+  }
+}
+
 .labels {
   margin: 0;
   padding: 0;
