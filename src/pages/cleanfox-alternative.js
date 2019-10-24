@@ -286,7 +286,7 @@ function CleanfoxAlternative() {
                 Yes! Leave Me Alone is built real people who want to help you
                 get a cleaner inbox. If you're having trouble with anything,
                 then the creators James or Danielle (
-                <TextLink as="link" linkTo="/about">
+                <TextLink inverted as="link" linkTo="/about">
                   hi!
                 </TextLink>
                 ) will personally help you.
