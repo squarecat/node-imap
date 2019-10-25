@@ -4,7 +4,10 @@ import logger from '../utils/logger';
 
 export const { url } = config.db;
 
-const client = new MongoClient(url, { useNewUrlParser: true });
+const client = new MongoClient(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 let connection = null;
 
