@@ -1,21 +1,25 @@
 import './alternatives.module.scss';
 
+import {
+  AlternativeCheck,
+  AlternativeCross
+} from '../components/landing/alternatives/icons';
+import { Arrow as ArrowIcon, SearchIcon } from '../components/icons';
 import React, { useMemo } from 'react';
 import Testimonial, {
   PublicationQuote
 } from '../components/landing/testimonial';
 import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
-import { Arrow as ArrowIcon, SearchIcon } from '../components/icons';
 import MailListIllustration from '../components/landing/illustration';
 import SubpageLayout from '../layouts/subpage-layout';
 import broomImg from '../assets/enterprise/broom.png';
 import envelopeImg from '../assets/open-envelope-love.png';
 import lockImg from '../assets/security/lock.png';
 import logo from '../assets/logo.png';
+import luke from '../assets/testimonials/luke.jpeg';
 import numeral from 'numeral';
 import request from '../utils/request';
-import luke from '../assets/testimonials/luke.jpeg';
 import useAsync from 'react-use/lib/useAsync';
 
 const cdnUrl = `${process.env.CDN_URL}/images`;
@@ -39,7 +43,7 @@ function UnsubscriberAlternative() {
 
   return (
     <SubpageLayout
-      title={`A Better Unsubscriber Alternative (that values your privacy) - Leave Me Alone`}
+      title={`A Better Unsubscriber Alternative (that values your privacy)`}
       description={`Leave Me Alone is an Unsubscriber alternative that works with all of your email accounts (including Gmail). See why people are switching from Unsubscriber. Try Leave Me Alone free today!`}
       slug="/unsubscriber-alternative"
       imgUrl={metaImgUrl}
@@ -58,7 +62,7 @@ function UnsubscriberAlternative() {
               unsubscribes, and support from the team who built the service.
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
-            Start Unsubscribing
+              Start Unsubscribing
             </a>
             {joinContent}
           </div>
@@ -96,45 +100,69 @@ function UnsubscriberAlternative() {
             </tr>
             <tr>
               <td styleName="cell">Works with Gmail</td>
-              <td styleName="cell">Yes</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Connect multiple accounts</td>
-              <td styleName="cell">Yes, unlimited</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCheck text="Unlimited" />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Privacy policy</td>
               <td styleName="cell">
-                You own your data and email content is never stored
+                <AlternativeCheck text="You own your data and email content is never stored" />
               </td>
               <td styleName="cell">
-                Requires consent to collect and sell your data to their
-                customers
+                <AlternativeCross
+                  text="Requires consent to collect and sell your data to their
+                customers"
+                />
               </td>
             </tr>
             <tr>
               <td styleName="cell">Support team</td>
-              <td styleName="cell">Yes - from the founders</td>
-              <td styleName="cell">No, discontinued indefinitely</td>
+              <td styleName="cell">
+                <AlternativeCheck text="From the founders" />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross text="Discontinued indefinitely" />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Instant unsubscribes</td>
-              <td styleName="cell">Yes</td>
-              <td styleName="cell">Yes</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Sender rating</td>
-              <td styleName="cell">Yes</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Unsubscribe feedback</td>
               <td styleName="cell">
-                Yes, failed unsubscribe alerts (+ failures don't cost credits)
+                <AlternativeCheck text="Failed unsubscribe alerts (+ failures don't cost credits)" />
               </td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCross />
+              </td>
             </tr>
           </tbody>
         </table>

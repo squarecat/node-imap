@@ -1,12 +1,16 @@
 import './alternatives.module.scss';
 
+import {
+  AlternativeCheck,
+  AlternativeCross
+} from '../components/landing/alternatives/icons';
+import { Arrow as ArrowIcon, SearchIcon } from '../components/icons';
 import React, { useMemo } from 'react';
 import Testimonial, {
   PublicationQuote
 } from '../components/landing/testimonial';
 import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
-import { Arrow as ArrowIcon, SearchIcon } from '../components/icons';
 import MailListIllustration from '../components/landing/illustration';
 import SubpageLayout from '../layouts/subpage-layout';
 import broomImg from '../assets/enterprise/broom.png';
@@ -39,7 +43,7 @@ function UnrollMeAlternative() {
 
   return (
     <SubpageLayout
-      title={`A Better Unroll.Me Alternative (that values your privacy) - Leave Me Alone`}
+      title={`A Better Unroll.Me Alternative (that values your privacy)`}
       description={`Leave Me Alone is an Unroll.Me alternative that makes it easier to unsubscribe from emails without selling your data. See why people are switching from Unroll.Me. Try Leave Me Alone free today!`}
       slug="/unroll-me-alternative"
       imgUrl={metaImgUrl}
@@ -105,35 +109,62 @@ function UnrollMeAlternative() {
             </tr>
             <tr>
               <td styleName="cell">Privacy policy</td>
-              <td styleName="cell">Never stores or sells your data</td>
-              <td styleName="cell">Aggregates and sells data for marketing</td>
+              <td styleName="cell">
+                <AlternativeCheck text="Never stores or sells your data" />
+              </td>
+              <td styleName="cell">
+                {' '}
+                <AlternativeCross text="Aggregates and sells data for marketing" />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Connect multiple emails</td>
-              <td styleName="cell">Yes, unlimited</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCheck text="Unlimited" />
+              </td>
+              <td styleName="cell">
+                {' '}
+                <AlternativeCross />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Instant unsubscribes</td>
-              <td styleName="cell">Yes</td>
-              <td styleName="cell">No, takes 24 hours</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                {' '}
+                <AlternativeCross text="Takes 24 hours" />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Sender rating</td>
-              <td styleName="cell">Yes</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                {' '}
+                <AlternativeCross />
+              </td>
             </tr>
             <tr>
               <td styleName="cell">Available in the EU & EEA</td>
-              <td styleName="cell">Yes</td>
               <td styleName="cell">
-                No, stopped providing service to all EU residents on May 23
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross text="Stopped providing service to all EU residents on May 23 2018" />
               </td>
             </tr>
             <tr>
               <td styleName="cell">Live chat support</td>
-              <td styleName="cell">Yes</td>
-              <td styleName="cell">No</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                {' '}
+                <AlternativeCross />
+              </td>
             </tr>
           </tbody>
         </table>

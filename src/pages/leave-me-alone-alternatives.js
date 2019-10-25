@@ -1,19 +1,23 @@
 import './alternatives.module.scss';
 
+import {
+  AlternativeCheck,
+  AlternativeCross
+} from '../components/landing/alternatives/icons';
 import React, { useMemo } from 'react';
-import { TextHighlight, TextImportant, TextLink } from '../components/text';
 
+import AlternativeCards from '../components/landing/alternatives/cards';
 import MailListIllustration from '../components/landing/illustration';
 import SubpageLayout from '../layouts/subpage-layout';
-import logo from '../assets/logo.png';
-import numeral from 'numeral';
-import request from '../utils/request';
-import useAsync from 'react-use/lib/useAsync';
-import AlternativeCards from '../components/landing/alternative-cards';
-import { openChat } from '../utils/chat';
+import { TextImportant } from '../components/text';
 import broomImg from '../assets/enterprise/broom.png';
 import envelopeImg from '../assets/open-envelope-love.png';
 import lockImg from '../assets/security/lock.png';
+import logo from '../assets/logo.png';
+import numeral from 'numeral';
+import { openChat } from '../utils/chat';
+import request from '../utils/request';
+import useAsync from 'react-use/lib/useAsync';
 
 function LeaveMeAloneAlternatives() {
   const { error: statsError, value: statsData } = useAsync(fetchStats, []);
@@ -153,53 +157,109 @@ function LeaveMeAloneAlternatives() {
                   <td styleName="cell">Free</td>
                 </tr>
                 <tr>
-                  <td styleName="cell">Sells anonymized data</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">Yes</td>
+                  <td styleName="cell">Never sells anonymized data</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
                 </tr>
                 <tr>
                   <td styleName="cell">Connect multiple accounts</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
                 </tr>
                 <tr>
                   <td styleName="cell">Instant unsubscribes</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">Yes</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
                 </tr>
                 <tr>
                   <td styleName="cell">Ranking of subscriptions</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">Yes</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
                 </tr>
                 <tr>
                   <td styleName="cell">Available in the EU & EEA</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">Yes</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
                 </tr>
                 <tr>
                   <td styleName="cell">Live chat support</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
                 </tr>
                 <tr>
                   <td styleName="cell">Fighting digital pollution</td>
-                  <td styleName="cell">Yes</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">No</td>
-                  <td styleName="cell">Yes</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
                 </tr>
               </tbody>
             </table>
