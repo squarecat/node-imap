@@ -133,7 +133,7 @@ export default function SecurityPage() {
                 <span style={{ textDecoration: 'underline' }}>
                   Algorithmic data
                 </span>{' '}
-                which powers features like Subscriber Score. This consists of
+                which powers features like Subscription Score. This consists of
                 metadata about senders such as email frequencies and unsubscribe
                 rates.
               </li>
@@ -144,18 +144,18 @@ export default function SecurityPage() {
           </div>
         </div>
 
-        <div styleName="image-section image-left" id="subscriber-score">
+        <div styleName="image-section image-left" id="subscription-score">
           <div styleName="image-section-img">
             <img
               src={subscriberScoreImg}
-              alt="subscriber score for a subscription email showing a rating of C"
+              alt="Subscription Score for a subscription email showing a rating of C"
             />
           </div>
           <div styleName="image-section-text">
-            <h2>How do we power Subscriber Score?</h2>
+            <h2>How do we power Subscription Score?</h2>
             <p>
-              The metadata powering Subscriber Score is derived from the sender
-              of the email.
+              The metadata powering Subscription Score is derived from the
+              sender of the email.
             </p>
             <p>So that we can generate the score we record:</p>
             <ul styleName="list">

@@ -121,9 +121,11 @@ export default function Learn() {
             </p>
             <p>
               Learn more about how we authenticate with{' '}
-              <TextLink href="/providers/google">Google</TextLink>,{' '}
-              <TextLink href="/providers/microsoft">Microsoft</TextLink>, and{' '}
-              <TextLink href="/providers/imap">IMAP</TextLink>.
+              <TextLink href="/unsubscribe-gmail-g-suite">Google</TextLink>,{' '}
+              <TextLink href="/unsubscribe-outlook-hotmail">Microsoft</TextLink>
+              , and{' '}
+              <TextLink href="/unsubscribe-imap-fastmail-icloud">IMAP</TextLink>
+              .
             </p>
           </div>
         </div>
@@ -179,7 +181,7 @@ export default function Learn() {
 
         <div styleName="feature">
           <div styleName="feature-text">
-            <h3 styleName="feature-title">Subscriber Score</h3>
+            <h3 styleName="feature-title">Subscription Score</h3>
             <p>
               Quickly determine which emails are worth keeping using our
               revolutionary ranking system.
@@ -191,7 +193,7 @@ export default function Learn() {
             </p>
             <p>
               <TextLink href="/security">
-                Learn more about how we power Subscriber Score{' '}
+                Learn more about how we power Subscription Score{' '}
                 <ArrowIcon inline width="14" height="14" />
               </TextLink>
             </p>
@@ -199,7 +201,7 @@ export default function Learn() {
           <div styleName="feature-img">
             <img
               src={subscriberScoreImg}
-              alt="subscriber score for a subscription email showing a rating of C"
+              alt="Subscription Score for a subscription email showing a rating of C"
             />
           </div>
         </div>
@@ -293,7 +295,7 @@ export default function Learn() {
           className={`beam-me-up-cta beam-me-up-cta-center`}
           style={{ marginTop: '50px' }}
         >
-          Get Started For Free!
+          Start Unsubscribing
         </TextLink>
       </div>
     </SubPageLayout>

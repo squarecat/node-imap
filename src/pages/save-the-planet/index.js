@@ -38,107 +38,99 @@ const ClimatePage = () => {
     value: statsData
   } = useAsync(fetchStats, []);
 
-  const featuresContent = useMemo(
-    () => {
-      if (statsError) {
-        return {
-          one: null,
-          two: null,
-          three: null
-        };
-      }
-
-      if (statsLoading) {
-        return {
-          one: <p>Loading...</p>,
-          two: <p>Loading...</p>,
-          three: <p>Loading...</p>
-        };
-      }
-
-      const { users, unsubscriptions } = statsData;
-      const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
-      const stats = {
-        users,
-        unsubscriptions,
-        totalCarbonSavedInGrams,
-        londonToParis: (totalCarbonSavedInGrams / CARBON_LONDON_PARIS).toFixed(
-          0
-        )
-      };
-
+  const featuresContent = useMemo(() => {
+    if (statsError) {
       return {
-        one: (
-          <p>
-            We have unsubscribed from {formatNumber(stats.unsubscriptions)}{' '}
-            subscription emails,{' '}
-            <TextImportant>
-              saving{' '}
-              {formatWeight(stats.totalCarbonSavedInGrams, {
-                rounded: true
-              })}{' '}
-              in <CO2 /> emissions
-            </TextImportant>
-            .{' '}
-            <TextLink undecorated href="#cite-1">
-              <sup>[1]</sup>
-            </TextLink>
-          </p>
-        ),
-        two: (
-          <p>
-            Receiving those emails is equivalent to{' '}
-            <TextImportant>
-              {formatNumber(stats.londonToParis)} flights from London to Paris
-            </TextImportant>{' '}
-            in carbon emissions.{' '}
-            <TextLink undecorated href="#cite-3">
-              <sup>[3]</sup>
-            </TextLink>
-          </p>
-        ),
-        three: (
-          <p>
-            Unsubscribing from those emails is the same carbon reduction as{' '}
-            <TextImportant>
-              planting{' '}
-              {formatNumber(
-                stats.totalCarbonSavedInGrams / CARBON_OFFSET_PER_TREE_PER_YEAR
-              )}{' '}
-              trees every year
-            </TextImportant>
-            .{' '}
-            <TextLink undecorated href="#cite-4">
-              <sup>[4]</sup>
-            </TextLink>
-          </p>
-        )
+        one: null,
+        two: null,
+        three: null
       };
-    },
-    [statsData, statsError, statsLoading]
-  );
+    }
 
-  const joinStatsContent = useMemo(
-    () => {
-      if (statsError) {
-        return null;
-      }
-      if (statsLoading) {
-        return <p>Loading...</p>;
-      }
-      return (
-        <p styleName="join-text">
-          Join{' '}
-          <TextImportant>{formatNumber(statsData.users)} users</TextImportant>{' '}
-          who have unsubscribed from a total of{' '}
+    if (statsLoading) {
+      return {
+        one: <p>Loading...</p>,
+        two: <p>Loading...</p>,
+        three: <p>Loading...</p>
+      };
+    }
+
+    const { users, unsubscriptions } = statsData;
+    const totalCarbonSavedInGrams = unsubscriptions * CARBON_PER_EMAIL;
+    const stats = {
+      users,
+      unsubscriptions,
+      totalCarbonSavedInGrams,
+      londonToParis: (totalCarbonSavedInGrams / CARBON_LONDON_PARIS).toFixed(0)
+    };
+
+    return {
+      one: (
+        <p>
+          We have unsubscribed from {formatNumber(stats.unsubscriptions)}{' '}
+          subscription emails,{' '}
           <TextImportant>
-            {formatNumber(statsData.unsubscriptions)} emails
+            saving{' '}
+            {formatWeight(stats.totalCarbonSavedInGrams, {
+              rounded: true
+            })}{' '}
+            in <CO2 /> emissions
           </TextImportant>
+          .{' '}
+          <TextLink undecorated href="#cite-1">
+            <sup>[1]</sup>
+          </TextLink>
         </p>
-      );
-    },
-    [statsData, statsError, statsLoading]
-  );
+      ),
+      two: (
+        <p>
+          Receiving those emails is equivalent to{' '}
+          <TextImportant>
+            {formatNumber(stats.londonToParis)} flights from London to Paris
+          </TextImportant>{' '}
+          in carbon emissions.{' '}
+          <TextLink undecorated href="#cite-3">
+            <sup>[3]</sup>
+          </TextLink>
+        </p>
+      ),
+      three: (
+        <p>
+          Unsubscribing from those emails is the same carbon reduction as{' '}
+          <TextImportant>
+            planting{' '}
+            {formatNumber(
+              stats.totalCarbonSavedInGrams / CARBON_OFFSET_PER_TREE_PER_YEAR
+            )}{' '}
+            trees every year
+          </TextImportant>
+          .{' '}
+          <TextLink undecorated href="#cite-4">
+            <sup>[4]</sup>
+          </TextLink>
+        </p>
+      )
+    };
+  }, [statsData, statsError, statsLoading]);
+
+  const joinStatsContent = useMemo(() => {
+    if (statsError) {
+      return null;
+    }
+    if (statsLoading) {
+      return <p>Loading...</p>;
+    }
+    return (
+      <p styleName="join-text">
+        Join{' '}
+        <TextImportant>{formatNumber(statsData.users)} users</TextImportant> who
+        have unsubscribed from a total of{' '}
+        <TextImportant>
+          {formatNumber(statsData.unsubscriptions)} emails
+        </TextImportant>
+      </p>
+    );
+  }, [statsData, statsError, statsLoading]);
 
   return (
     <SubPageLayout
@@ -344,66 +336,66 @@ const ClimatePage = () => {
             <li id="cite-1">
               <sup>[1]</sup>
               <cite>
-                <a href="https://img.en25.com/Web/McAfee/CarbonFootprint_12pagesfr_s_fnl2.pdf">
+                <TextLink href="https://img.en25.com/Web/McAfee/CarbonFootprint_12pagesfr_s_fnl2.pdf">
                   A legitimate email emits on average 4g of CO2
-                </a>
+                </TextLink>
               </cite>
             </li>
             <li id="cite-2">
               <sup>[2]</sup>
               <cite>
-                <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
+                <TextLink href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
                   In 2019, the Total Worldwide Emails Sent/Received Per Day is
                   246.5 billion
-                </a>
+                </TextLink>
               </cite>
             </li>
             <li id="cite-3">
               <sup>[3]</sup>
               <cite>
-                <a href="https://www.carbonfootprint.com">
+                <TextLink href="https://www.carbonfootprint.com">
                   Economy class direct one way flight from LON to PAR is 0.03
                   tonnes (30kg) of CO2
-                </a>
+                </TextLink>
               </cite>
             </li>
             <li id="cite-4" styleName="multiple">
               <sup>[4]</sup>
               <cite>
                 <div>
-                  <a href="https://trees.org/carboncalculator">
+                  <TextLink href="https://trees.org/carboncalculator">
                     A tree in a Forest Garden sequesters a rate of 34.6 pounds
                     (15.694kg) of carbon per tree
-                  </a>
+                  </TextLink>
                 </div>
                 <div>
-                  <a href="https://archpaper.com/2017/07/trees-sequester-carbon-myth/">
+                  <TextLink href="https://archpaper.com/2017/07/trees-sequester-carbon-myth/">
                     The average amount each tree was likely to sequester was 88
                     pounds (39.916kg) per tree per year
-                  </a>
+                  </TextLink>
                 </div>
                 <div>
-                  <a href="http://www.unm.edu/~jbrink/365/Documents/Calculating_tree_carbon.pdf">
+                  <TextLink href="http://www.unm.edu/~jbrink/365/Documents/Calculating_tree_carbon.pdf">
                     How to calculate the amount of CO2 sequestered in a tree per
                     year
-                  </a>
+                  </TextLink>
                 </div>
               </cite>
             </li>
             <li id="cite-5">
               <sup>[5]</sup>
               <cite>
-                <a href="https://phys.org/news/2015-11-carbon-footprint-email.html">
+                <TextLink href="https://phys.org/news/2015-11-carbon-footprint-email.html">
                   The environmental impact of some common activities
-                </a>
+                </TextLink>
               </cite>
             </li>
             <li id="cite-6">
               <sup>[6]</sup>
               <cite>
-                <a href="https://www.smartinsights.com/email-marketing/email-communications-strategy/statistics-sources-for-email-marketing/">
+                <TextLink href="https://www.smartinsights.com/email-marketing/email-communications-strategy/statistics-sources-for-email-marketing/">
                   In 2018, the average open rate across all industries is 24.8%
-                </a>
+                </TextLink>
               </cite>
             </li>
           </ul>

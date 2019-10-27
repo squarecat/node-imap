@@ -1,22 +1,22 @@
 import './providers.module.scss';
 
-import { HeaderHighlight, TextLink } from '../../components/text';
+import { HeaderHighlight, TextLink } from '../components/text';
 import {
   ProviderFooter,
   getVariationsText
-} from '../../components/landing/providers';
+} from '../components/landing/providers';
 
-import { Arrow as ArrowIcon } from '../../components/icons';
-import MailListIllustration from '../../components/landing/illustration';
-import ProvidersBar from '../../components/landing/providers-bar';
+import { Arrow as ArrowIcon } from '../components/icons';
+import MailListIllustration from '../components/landing/illustration';
+import ProvidersBar from '../components/landing/providers-bar';
 import React from 'react';
-import SubPageLayout from '../../layouts/subpage-layout';
-import hotmailLogo from '../../assets/providers/microsoft/hotmail-logo.png';
-import microsoftLogo from '../../assets/providers/microsoft/microsoft-logo.png';
-import msnLogo from '../../assets/providers/microsoft/msn-logo.png';
-import officeLogo from '../../assets/providers/microsoft/office-365-logo.png';
-import outlookLogo from '../../assets/providers/microsoft/outlook-logo.png';
-import outlookScopesImg from '../../assets/security/security-outlook-scopes.png';
+import SubPageLayout from '../layouts/subpage-layout';
+import hotmailLogo from '../assets/providers/microsoft/hotmail-logo.png';
+import microsoftLogo from '../assets/providers/microsoft/microsoft-logo.png';
+import msnLogo from '../assets/providers/microsoft/msn-logo.png';
+import officeLogo from '../assets/providers/microsoft/office-365-logo.png';
+import outlookLogo from '../assets/providers/microsoft/outlook-logo.png';
+import outlookScopesImg from '../assets/security/security-outlook-scopes.png';
 
 const PROVIDER_NAME = 'Microsoft';
 const VARIATIONS = ['Hotmail', 'Outlook', 'Office 365', 'Live', 'MSN'];
@@ -37,7 +37,7 @@ const ProviderMicrosoft = () => {
       title={`Leave Me Alone for ${PROVIDER_NAME}`}
       description={`Easily unsubscribe from unwanted spam, subscription emails, and newsletters in your ${PROVIDER_NAME}, ${META_VARIATIONS} inboxes today.`}
       withContent={false}
-      slug="/providers/microsoft"
+      slug="/unsubscribe-outlook-hotmail"
     >
       <div styleName="provider-inner hero">
         <div styleName="container">

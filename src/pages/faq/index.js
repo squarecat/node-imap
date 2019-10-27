@@ -28,9 +28,9 @@ const FaqPage = () => (
           ).
         </p>
         <p>
-          We actually unsubscribe you from the lists rather than just moving
-          them to trash or applying a label. Those subscriptions are gone
-          forever, even if you decide to stop using our service.
+          We unsubscribe you instantly from the lists and don't move them to
+          trash or apply any labels. Those subscriptions are gone forever, even
+          if you decide to stop using our service.
         </p>
       </div>
       <div styleName="faq-box">
@@ -195,7 +195,7 @@ const FaqPage = () => (
         !
       </p>
       <TextLink event="clicked-faq-cta" href="/signup" styleName="cta">
-        Get Started For Free!
+        Clean My Inbox
       </TextLink>
     </div>
   </SubPageLayout>

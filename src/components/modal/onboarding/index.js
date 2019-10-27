@@ -251,7 +251,7 @@ function WelcomeContent({ isMigrated, positionLabel }) {
             what you unsubscribe from
           </li>
           <li>
-            <TextImportant>Subscriber Score</TextImportant> showing you a brand
+            <TextImportant>Subscription Score</TextImportant> showing you a brand
             new ranking for senders
           </li>
         </ul>

@@ -237,16 +237,17 @@ const TeamsPage = () => {
             <li id="cite-1">
               <sup>[1]</sup>
               <cite>
-                <a href="https://www.mckinsey.com/industries/high-tech/our-insights/the-social-economy">
+                <TextLink href="https://www.mckinsey.com/industries/high-tech/our-insights/the-social-economy">
                   "The average interaction worker spends an estimated 28 percent
                   of the workweek managing e-mail"
-                </a>
+                </TextLink>
               </cite>
             </li>
             <li id="cite-2">
               <sup>[2]</sup>
               <cite>
-                Directly from our <a href="/open">anonymous usage stats</a>, on
+                Directly from our{' '}
+                <TextLink href="/open">anonymous usage stats</TextLink>, on
                 average between 8 and 10% of all emails we see are subscription
                 emails.
               </cite>
@@ -255,9 +256,9 @@ const TeamsPage = () => {
               <sup>[3]</sup>
               <cite>
                 An{' '}
-                <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
+                <TextLink href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
                   average of 96 business emails is received per worker every day
-                </a>{' '}
+                </TextLink>{' '}
                 in 2019.
               </cite>
             </li>
@@ -265,9 +266,9 @@ const TeamsPage = () => {
               <sup>[4]</sup>
               <cite>
                 Based on{' '}
-                <a href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
+                <TextLink href="https://www.radicati.com/wp/wp-content/uploads/2015/02/Email-Statistics-Report-2015-2019-Executive-Summary.pdf">
                   1.1 minutes spent on each email
-                </a>{' '}
+                </TextLink>{' '}
                 in 2019.
               </cite>
             </li>
