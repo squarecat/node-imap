@@ -166,7 +166,7 @@ const IndexPage = ({ data }) => {
                     event={'clicked-hero-cta'}
                     className={`beam-me-up-cta`}
                   >
-                    Start Unsubscribing
+                    Get Started for Free
                   </TextLink>
                   {statsContent}
                 </div>
