@@ -1,9 +1,9 @@
-import React from 'react';
+import './alternative-cards.module.scss';
 
 import { Arrow as ArrowIcon } from '../../icons';
-import './alternative-cards.module.scss';
-import { TextLink } from '../../text';
 import { Link } from 'gatsby';
+import React from 'react';
+import { TextLink } from '../../text';
 import { openChat } from '../../../utils/chat';
 
 const alternatives = [
@@ -30,11 +30,11 @@ const alternatives = [
   }
 ];
 
-export default function AlternativeCards() {
-  return (
-    <div styleName="alternative-cards">
-      {alternatives.map(({ name, slug, description }) => (
-        <Link to={slug} styleName="card" key={`alternative-card-${name}`}>
+export default () => (
+  <div styleName="alternative-cards">
+    {alternatives.map(({ name, slug, description }) => (
+      <Link to={slug} key={`alternative-card-${name}`}>
+        <div styleName="card">
           <h3 styleName="title">
             <span styleName="lma">Leave Me Alone</span>{' '}
             <span styleName="vs">vs.</span>{' '}
@@ -45,12 +45,12 @@ export default function AlternativeCards() {
             Compare Leave Me Alone vs. {name}{' '}
             <ArrowIcon inline width="12" height="12" />
           </TextLink>
-        </Link>
-      ))}
-      <div styleName="card empty">
-        <p>Are we missing an alternative?</p>
-        <TextLink onClick={() => openChat()}>Let us know</TextLink>
-      </div>
+        </div>
+      </Link>
+    ))}
+    <div styleName="card empty">
+      <p>Are we missing an alternative?</p>
+      <TextLink onClick={() => openChat()}>Let us know</TextLink>
     </div>
-  );
-}
+  </div>
+);
