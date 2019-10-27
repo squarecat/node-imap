@@ -1,4 +1,5 @@
 @import '../../../styles/common/colors.scss';
+@import '../../text/text.module.scss';
 
 .alternative-cards {
   display: grid;
@@ -20,6 +21,9 @@
   p {
     color: $color-primary-font;
   }
+  a {
+    display: block;
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -35,6 +39,10 @@
       display: none;
     }
   }
+}
+
+.compare-text {
+  @extend .link;
 }
 
 .image {

@@ -33,20 +33,20 @@ const alternatives = [
 export default () => (
   <div styleName="alternative-cards">
     {alternatives.map(({ name, slug, description }) => (
-      <Link to={slug} key={`alternative-card-${name}`}>
-        <div styleName="card">
+      <div styleName="card" key={`alternative-card-${name}`}>
+        <Link to={slug}>
           <h3 styleName="title">
             <span styleName="lma">Leave Me Alone</span>{' '}
             <span styleName="vs">vs.</span>{' '}
             <span styleName="alternative-name">{name}</span>
           </h3>
           <p>{description}</p>
-          <TextLink>
+          <span styleName="compare-text">
             Compare Leave Me Alone vs. {name}{' '}
             <ArrowIcon inline width="12" height="12" />
-          </TextLink>
-        </div>
-      </Link>
+          </span>
+        </Link>
+      </div>
     ))}
     <div styleName="card empty">
       <p>Are we missing an alternative?</p>
