@@ -1,5 +1,12 @@
 import './news.module.scss';
 
+import {
+  EditIcon,
+  LinkIcon,
+  SearchIcon,
+  StarIcon
+} from '../../components/icons';
+
 import React from 'react';
 import SubPageLayout from '../../layouts/subpage-layout';
 import { TextLink } from '../../components/text';
@@ -57,30 +64,32 @@ const InTheNewsPage = () => {
 };
 
 function News() {
-  const { value: news = [], loading } = useAsync(getNews);
-
-  const [quotes, list] = news.reduce(
-    (out, n) => {
-      if (n.simple) {
-        return [out[0], [...out[1], n]];
-      }
-      return [[...out[0], n], out[1]];
-    },
-    [[], []]
-  );
+  const { value: news, loading } = useAsync(getNews);
 
   if (loading) {
-    return <p styleName="loading">Getting Leave Me Alone news...</p>;
+    return (
+      <p styleName="loading">
+        Hold tight, we're just fetching the articles, interviews, and case
+        studies...
+      </p>
+    );
   }
 
-  if (!news.length) {
-    return <p styleName="loading">Something went wrong fetching the news.</p>;
+  if (!news) {
+    return (
+      <p styleName="loading">
+        Whoops! Something went wrong fetching the news, please try again or send
+        us a message.
+      </p>
+    );
   }
+
+  const { featured, caseStudies, directories, lmaInterviews, other } = news;
 
   return (
     <>
-      <div styleName="news-list">
-        {quotes.map(({ quote, logoUrl, url, name }) => (
+      <div styleName="list">
+        {featured.map(({ quote, logoUrl, url, name }) => (
           <div key={url} styleName="item">
             <p>"{quote}"</p>
             <a target="_" styleName="logo" href={url}>
@@ -89,17 +98,82 @@ function News() {
           </div>
         ))}
       </div>
-      <div styleName="simple">
-        <h2>Plus we are mentioned here:</h2>
-        <ul>
-          {list.map(({ url, name }) => (
-            <li key={name}>
-              <TextLink target="_" href={url}>
+
+      <div styleName="section">
+        <h2>Case Studies</h2>
+        <p>
+          Read more from our customers about the impact Leave Me Alone has had
+          on their inboxes.
+        </p>
+        <div styleName="cards">
+          {caseStudies.map(({ url, name }) => (
+            <a href={url} target="_" styleName="card" key={url}>
+              <span styleName="icon">
+                <SearchIcon width="32" height="32" />
+              </span>
+              <TextLink href={url} target="_">
                 {name}
               </TextLink>
-            </li>
+            </a>
           ))}
-        </ul>
+        </div>
+      </div>
+
+      <div styleName="section">
+        <h2>Behind the Scenes</h2>
+        <p>
+          First-hand accounts from Danielle and James on how Leave Me Alone was
+          created.
+        </p>
+        <div styleName="cards">
+          {lmaInterviews.map(({ url, name }) => (
+            <a href={url} target="_" styleName="card" key={url}>
+              <span styleName="icon">
+                <EditIcon width="32" height="32" />
+              </span>
+              <TextLink href={url} target="_">
+                {name}
+              </TextLink>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div styleName="section">
+        <h2>Recommendations</h2>
+        <p>
+          Leave Me Alone is listed among other top products in all of these
+          places.
+        </p>
+        <div styleName="cards">
+          {directories.map(({ url, name }) => (
+            <a href={url} target="_" styleName="card" key={url}>
+              <span styleName="icon">
+                <StarIcon width="32" height="32" />
+              </span>
+              <TextLink href={url} target="_">
+                {name}
+              </TextLink>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div styleName="section">
+        <h2>Extras</h2>
+        <p>Plus, we are mentioned in all of these places too!</p>
+        <div styleName="cards">
+          {other.map(({ url, name }) => (
+            <a href={url} target="_" styleName="card" key={url}>
+              <span styleName="icon">
+                <LinkIcon width="32" height="32" />
+              </span>
+              <TextLink href={url} target="_">
+                {name}
+              </TextLink>
+            </a>
+          ))}
+        </div>
       </div>
     </>
   );

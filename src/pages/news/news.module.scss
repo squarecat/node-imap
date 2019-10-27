@@ -1,21 +1,14 @@
 @import '../../layouts/subpage-layout.module.scss';
+@import '../../styles/common/colors.scss';
 
 .title {
   text-align: center;
 }
 
-.news-list {
+.list {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 60px;
-}
-
-.simple {
-  text-align: center;
-
-  ul {
-    margin: 0;
-  }
 }
 
 .item {
@@ -33,6 +26,44 @@
   }
 }
 
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 25px;
+  text-align: center;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  border: 1px solid $color-red-light;
+  border-radius: 6px;
+  padding: 50px 25px;
+  transition: transform 150ms ease-in-out;
+  box-shadow: 2px 2px 5px rgba(253, 219, 215, 0.5);
+
+  p {
+    color: $color-primary-font;
+  }
+
+  svg {
+    color: $color-red;
+    opacity: 0.5;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.icon {
+  display: block;
+  text-align: center;
+  margin: 0 auto 20px auto;
+}
+
 .logo {
   display: inline-block;
   height: 44px;
@@ -44,6 +75,12 @@
 }
 
 .loading {
+  text-align: center;
+}
+
+.section {
+  padding-top: 100px;
+  margin-top: 100px;
   text-align: center;
 }
 

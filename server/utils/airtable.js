@@ -16,7 +16,7 @@ const betaBase = airtable.base(beta.baseId);
 const newsBase = airtable.base(news.baseId);
 
 let newsItems = {
-  results: [],
+  results: {},
   lastFetched: null
 };
 let expensesItems = {
@@ -124,24 +124,7 @@ export function getNews() {
           logger.error(err);
           return reject(err);
         }
-        const news = records.reduce(
-          (out, r) =>
-            r.get('Hidden')
-              ? out
-              : [
-                  ...out,
-                  {
-                    name: r.get('Name'),
-                    quote: r.get('Quote'),
-                    shortQuote: r.get('Short Quote'),
-                    url: r.get('Article URL'),
-                    logoUrl: r.get('Logo URL'),
-                    featured: r.get('Featured'),
-                    simple: r.get('Listing')
-                  }
-                ],
-          []
-        );
+        const news = sortNews(records);
         newsItems = {
           results: news,
           lastFetched: new Date()
@@ -149,6 +132,68 @@ export function getNews() {
         return resolve(news);
       });
   });
+}
+
+function sortNews(records) {
+  const shownItems = records.reduce(
+    (out, r) =>
+      r.get('Hidden')
+        ? out
+        : [
+            ...out,
+            {
+              name: r.get('Name'),
+              quote: r.get('Quote'),
+              shortQuote: r.get('Short Quote'),
+              url: r.get('Article URL'),
+              logoUrl: r.get('Logo URL'),
+              featured: r.get('Featured'),
+              simple: r.get('Listing'),
+              category: r.get('Type')
+            }
+          ],
+    []
+  );
+
+  return shownItems.reduce(
+    (out, item) => {
+      if (item.featured) {
+        return {
+          ...out,
+          featured: [...out.featured, item]
+        };
+      }
+      if (item.category === 'Case Study') {
+        return {
+          ...out,
+          caseStudies: [...out.caseStudies, item]
+        };
+      }
+      if (item.category === 'Directory') {
+        return {
+          ...out,
+          directories: [...out.directories, item]
+        };
+      }
+      if (item.category === 'LMA Interview') {
+        return {
+          ...out,
+          lmaInterviews: [...out.lmaInterviews, item]
+        };
+      }
+      return {
+        ...out,
+        other: [...out.other, item]
+      };
+    },
+    {
+      featured: [],
+      caseStudies: [],
+      directories: [],
+      lmaInterviews: [],
+      other: []
+    }
+  );
 }
 
 export function getBetaUser({ email }) {
