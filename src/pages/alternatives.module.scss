@@ -302,8 +302,14 @@ tbody {
       grid-template-areas:
         'header header'
         'left right';
-      grid-template-rows: 60px 1fr;
+
       grid-template-columns: 1fr 1fr;
+    }
+    tbody tr {
+      grid-template-rows: 60px 1fr;
+    }
+    thead tr {
+      grid-template-rows: 0 1fr;
     }
 
     .head-cell,
@@ -350,14 +356,17 @@ tbody {
   }
 }
 
+@media (max-width: 500px) {
+  .col-title.lma {
+    display: none;
+  }
+}
+
 @media (max-width: 400px) {
   .table {
     font-size: 14px;
   }
   .cell:first-child {
     font-size: 14px;
-  }
-  .col-title.lma {
-    display: none;
   }
 }
