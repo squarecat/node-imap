@@ -1,5 +1,7 @@
 import { globalReducer } from 'react-hook-utils';
 
+
+
 export default globalReducer(
   {},
   {
@@ -59,6 +61,10 @@ export default globalReducer(
     setRequiresTwoFactorAuth: (state, bool) => ({
       ...state,
       requiresTwoFactorAuth: bool
+    }),
+    setBrowserId: (state, browserId) => ({
+      ...state,
+      browserId
     }),
     setMilestoneCompleted: (state, milestone) => {
       let updates = {

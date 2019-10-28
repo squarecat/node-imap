@@ -72,6 +72,4 @@ function useProgress() {
   return state;
 }
 
-useProgress.whyDidYouRender = true;
-
 export default useProgress;

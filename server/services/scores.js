@@ -57,7 +57,7 @@ export async function fetchScores({
         )
       ];
     }
-    const scores = (await getAll(addresses)).reduce((out, data) => {
+    const scores = (await getAll(addresses.join())).reduce((out, data) => {
       const s = JSON.parse(data);
       if (!s) return out;
       return {

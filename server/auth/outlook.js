@@ -16,7 +16,7 @@ import { pushSessionProp } from '../session';
 import refresh from 'passport-oauth2-refresh';
 
 const { outlook } = auth;
-logger.info(`outlook-auth: redirecting to ${outlook.loginRedirect}`);
+logger.info(`[outlook-auth]: redirecting to ${outlook.loginRedirect}`);
 
 // https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow
 // login: The user should be prompted to reauthenticate.

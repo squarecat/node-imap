@@ -81,14 +81,24 @@ export async function getConnectedSockets(userId) {
 export async function flushConnections() {
   let cursor = 0;
   // eslint-disable-next-line no-constant-condition
-  // while (true) {
-  //   const [cur, keys] = await scan(cursor, 'COUNT', '10');
-  //   console.log('clearing socket connections', keys);
-  //   debugger;
-  //   await del(keys);
-  //   if (cur === 0) {
-  //     break;
-  //   }
-  //   cursor = cur;
-  // }
+  while (true) {
+    // scan doesn't work with prefix, so we have to manually add
+    // it here for this scan
+    const [cur, keys] = await scan(
+      cursor,
+      'COUNT',
+      '1000',
+      'MATCH',
+      'lma.clients_*'
+    );
+    if (keys.length) {
+      // scan does work with the prefix, so we have to manually remove
+      // it here for this del *rolls eyes*
+      await del(keys.map(k => k.replace('lma.clients_', '')));
+    }
+    if (cur === '0') {
+      break;
+    }
+    cursor = cur;
+  }
 }

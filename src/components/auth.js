@@ -43,10 +43,8 @@ function Auth({ children }) {
 
 const UserAuth = React.memo(function UserAuth({ children }) {
   const db = useContext(DatabaseContext);
-  const { value: isBrowserSupported, loading, error } = useAsync(
-    () => checkBrowserSupported(db),
-    [db]
-  );
+  const { testingBrowser, browserId } = useBrowserSupported(db);
+  console.log('use browser support', browserId);
   const [
     {
       id,
@@ -56,7 +54,8 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       organisationId,
       hasCompletedOrganisationOnboarding,
       accounts
-    }
+    },
+    { setBrowserId }
   ] = useUser(s => ({
     id: s.id,
     isUserLoaded: s.loaded,
@@ -70,9 +69,16 @@ const UserAuth = React.memo(function UserAuth({ children }) {
   const [isLoaded, setLoaded] = useState(isUserLoaded);
   const { open: openModal } = useContext(ModalContext);
 
+  useEffect(() => {
+    if (browserId) {
+      setBrowserId(browserId);
+    }
+  }, [browserId, setBrowserId]);
+
   const checkDb = useCallback(async () => {
     const prevId = await db.prefs.get('userId');
     if (!prevId || prevId.value !== id) {
+      console.log('clearing db');
       await db.clear();
       db.prefs.put({ key: 'userId', value: id });
     }
@@ -111,7 +117,11 @@ const UserAuth = React.memo(function UserAuth({ children }) {
   ]);
 
   useEffect(() => {
-    if (isBrowserSupported === false) {
+    console.log('browser id inner ', browserId);
+    if (testingBrowser) {
+      return;
+    }
+    if (browserId === null) {
       setLoaded(true);
       openModal(
         <AlertModal>
@@ -166,11 +176,11 @@ const UserAuth = React.memo(function UserAuth({ children }) {
         localStorage.removeItem('userId');
       });
     }
-    if (isUserLoaded && isBrowserSupported) {
+    if (isUserLoaded && browserId) {
       // check db is this users data
       checkDb();
     }
-  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, organisationId, hasCompletedOrganisationOnboarding, openModal, checkDb, isBrowserSupported, accounts, teamAdminOnboarding, userOnboarding, teamMemberOnboarding]);
+  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, organisationId, hasCompletedOrganisationOnboarding, openModal, checkDb, accounts, teamAdminOnboarding, userOnboarding, teamMemberOnboarding, browserId, testingBrowser]);
 
   const content = useMemo(() => {
     if (!isLoaded) return null;
@@ -178,7 +188,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       !teamAdminOnboarding &&
       !teamMemberOnboarding &&
       !userOnboarding &&
-      isBrowserSupported
+      browserId
     ) {
       return children;
     } else {
@@ -189,7 +199,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     teamAdminOnboarding,
     teamMemberOnboarding,
     userOnboarding,
-    isBrowserSupported,
+    browserId,
     children
   ]);
 
@@ -203,18 +213,52 @@ const UserAuth = React.memo(function UserAuth({ children }) {
 
 export default Auth;
 
-async function checkBrowserSupported(db) {
-  let unsupported = [];
-  try {
-    await db.prefs.put({ key: 'browser-supported', value: true });
-  } catch (err) {
-    console.error(err);
-    unsupported = [...unsupported, 'indexDB'];
-  }
+function useBrowserSupported(db) {
+  console.log('checking browser');
+  const [state, setState] = useState({ testingBrowser: true, browserId: null });
 
-  if (unsupported.length) {
-    console.warn(`browser does not support ${unsupported.join(', ')}`);
-    return false;
-  }
-  return true;
+  useEffect(() => {
+    db.transaction('rw', 'prefs', async () => {
+      await db.prefs.put({ key: 'browser-supported', value: true });
+      console.log('browser supported');
+      const res = await db.prefs.get({
+        key: 'browser-id'
+      });
+      let id = res ? res.value : null;
+      console.log('browserId: ', id);
+      // create a random ID for this browser if one doesn't exist
+      // browser id is used with the sockets to determine if we need
+      // to send the user buffered events or not
+      if (!id) {
+        console.log('no browser ID creating');
+        id = Math.random()
+          .toString(36)
+          .substring(2, 15);
+        console.log('putting browser ID into db', id);
+        await db.prefs.put({
+          key: 'browser-id',
+          value: id
+        });
+      }
+      return id;
+    })
+      .then(browserId => {
+        return { browserId };
+      })
+      .catch(err => {
+        console.error(err);
+        let unsupported = ['indexDB'];
+        return { unsupported };
+      })
+      .then(({ browserId, unsupported = [] }) => {
+        console.log('browser all good', browserId, unsupported);
+        if (unsupported.length) {
+          console.warn(`browser does not support ${unsupported.join(', ')}`);
+          return false;
+        }
+        setState({ browserId, testingBrowser: false });
+      });
+  }, [db]);
+
+  return state;
 }

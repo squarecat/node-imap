@@ -7,7 +7,7 @@ export const initialState = {
     recipients: []
   },
   options: {
-    showSpam: true,
+    showSpam: false,
     showTrash: true
   },
   activeFilters: [],

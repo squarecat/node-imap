@@ -43,6 +43,7 @@ function MailList({ mail }) {
       ) {
         const scroll = tr.offsetTop - window.innerHeight + 320;
         window.scrollTo(0, scroll);
+        console.log('scroll because of nav change');
       }
       tableRef.current.setAttribute('data-active', current + 1);
       tr.querySelector('[data-focus] > div').focus();

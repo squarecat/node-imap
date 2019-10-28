@@ -1070,6 +1070,7 @@ export async function updateUserUnsubStatusById(
     const estimatedSuccess = status === 'delivered';
     sendToUser(userId, 'unsubscribe:success', {
       id: mailId,
+      skipBuffer: true,
       data: {
         estimatedSuccess,
         unsubStrategy: 'mailto',
@@ -1095,6 +1096,7 @@ export async function updateUserUnsubStatus(
     const estimatedSuccess = status === 'delivered';
     sendToUser(userId, 'unsubscribe:success', {
       id: mailId,
+      skipBuffer: true,
       data: {
         estimatedSuccess,
         unsubStrategy: 'mailto',
@@ -1324,7 +1326,7 @@ export async function addActivityForUser(userId, name, data = {}) {
       });
     }
     if (typeof activity.notificationSeen !== 'undefined') {
-      sendToUser(userId, 'notifications', [activity]);
+      sendToUser(userId, 'notifications', [activity], { skipBuffer: true });
     }
 
     return activity;

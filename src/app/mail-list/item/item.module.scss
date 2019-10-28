@@ -36,7 +36,7 @@
 }
 .from-column {
   white-space: nowrap;
-  width: 240px;
+  width: 300px;
   overflow: hidden;
 
   @media (max-width: 800px) {
@@ -44,7 +44,7 @@
   }
 }
 .subject-column {
-  width: 50%;
+  width: 70%;
 
   @media (max-width: 650px) {
     width: 30%;

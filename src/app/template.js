@@ -8,13 +8,13 @@ import React from 'react';
 import { SocketProvider } from '../providers/socket-provider';
 import useUser from '../utils/hooks/use-user';
 
-export default ({ pageName, children }) => {
+function AppLayoutContainer({ pageName, children }) {
   return (
     <AppLayout pageName={pageName}>
       <App>{children}</App>
     </AppLayout>
   );
-};
+}
 
 function App({ children }) {
   const [user] = useUser();
@@ -29,11 +29,9 @@ function App({ children }) {
             <div styleName="app-content">{loaded ? children : null}</div>
           </ErrorBoundary>
         </SocketProvider>
-        {/* {showReferrerModal ? (
-<ReferralModal onClose={() => toggleReferrerModal(false)} />
-) : null}
-*/}
       </Auth>
     </>
   );
 }
+
+export default AppLayoutContainer;

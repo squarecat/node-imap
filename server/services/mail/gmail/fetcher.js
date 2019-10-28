@@ -92,7 +92,6 @@ export async function* fetchMail(
           dupeCache = newDupeCache;
           dupeSenders = newDupeSenders;
           const newSubscriptions = await appendScores(newMail);
-          debugger;
           yield {
             type: 'mail',
             data: {

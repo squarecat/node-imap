@@ -13,7 +13,6 @@ import format from 'date-fns/format';
 import relative from 'tiny-relative-date';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
-import useMailItem from '../../../app/mail-list/db/use-mail-item';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
@@ -305,14 +304,14 @@ const History = React.memo(function History({
     }
     return false;
   }, [lastSeenDate, unsub]);
-
+  debugger;
   return (
     <>
       <table>
         <tbody>
           {occurrences.map(oc => {
             return (
-              <tr key={oc.id}>
+              <tr key={oc.date}>
                 <td>
                   <Tooltip
                     placement="bottom"

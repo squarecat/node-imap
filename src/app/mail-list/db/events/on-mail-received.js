@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
-export default (socket, db, emit) => {
-  useEffect(() => {
+export default (socket, db) => {
+  const onMail = useCallback(
     async function onMail(data, ack) {
       console.debug(`[db]: received ${data.length} new mail items`);
       try {
@@ -43,7 +43,6 @@ export default (socket, db, emit) => {
             occurrenceCount: 1,
             lastSeenDate: mail.date,
             __migratedFrom: 'v1',
-
             occurrences: [
               {
                 subject: mail.subject,
@@ -63,10 +62,18 @@ export default (socket, db, emit) => {
               .where('key')
               .anyOf(duplicateSubscriptions.map(ds => ds.key))
               .modify(item => {
-                const mail = duplicateSubscriptions.find(
+                const mails = duplicateSubscriptions.filter(
                   ds => ds.key === item.key
                 );
-                const newOccurrences = [...item.occurrences, mail];
+                const newOccurrences = Object.values(
+                  [...item.occurrences, ...mails].reduce((out, m) => {
+                    return {
+                      ...out,
+                      [m.date]: m
+                    };
+                  }, {})
+                );
+
                 item.occurrences = newOccurrences;
                 console.log('[fetcher]: adding new occ');
                 item.occurrenceCount = newOccurrences.length;
@@ -75,40 +82,36 @@ export default (socket, db, emit) => {
           const count = await db.mail.count();
           await db.prefs.put({ key: 'totalMail', value: count });
         });
-
-        const senders = mailData.map(md => md.fromEmail);
-        emit('fetch-scores', { senders });
       } catch (err) {
         console.error(`[db]: failed setting new mail items`);
         console.error(err);
       } finally {
         ack && ack();
       }
-    }
+    },
+    [db]
+  );
+
+  const onEnd = useCallback(
     async function onEnd(scan, ack) {
       console.debug(`[db]: finished scan`);
       try {
-        const { occurrences } = scan;
-
-        await db.occurrences.bulkPut(
-          Object.keys(occurrences).map(d => ({
-            key: d,
-            ...occurrences[d]
-          }))
-        );
         console.log('[db]: saving scan time');
         await db.prefs.put({
           key: 'lastFetchResult',
           value: { ...scan, finishedAt: Date.now() }
         });
       } catch (err) {
-        console.error(`[db]: failed setting new occurrences`);
+        console.error(`[db]: failed finishing scan`);
         console.error(err);
       } finally {
         ack && ack();
       }
-    }
+    },
+    [db.prefs]
+  );
 
+  useEffect(() => {
     if (socket) {
       socket.on('mail:end', onEnd);
       socket.on('mail', onMail);
@@ -119,7 +122,12 @@ export default (socket, db, emit) => {
         socket.off('mail:end');
       }
     };
-  }, [socket, db, emit]);
+  }, [socket, onEnd, onMail]);
+
+  return {
+    onMail,
+    onEnd
+  };
 };
 
 function parseAddress(str = '') {

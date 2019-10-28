@@ -119,7 +119,11 @@ export const DatabaseProvider = ({ children }) => {
       db.mail.clear(),
       db.scores.clear(),
       db.occurrences.clear(),
-      db.prefs.clear()
+      db.prefs.delete('lastFetchParams'),
+      db.prefs.delete('lastFetchResult'),
+      db.prefs.delete('progress'),
+      db.prefs.delete('filters'),
+      db.prefs.delete('totalMail')
     ]);
   };
 

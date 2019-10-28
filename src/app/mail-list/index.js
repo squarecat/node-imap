@@ -1,10 +1,9 @@
 import { Empty, Loading } from './states';
 import { MailContext, MailProvider } from './provider';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 
 import Filters from './filters';
 import MailList from './list';
-import { ModalContext } from '../../providers/modal-provider';
 import Pagination from 'react-paginate';
 import Progress from './progress';
 import cx from 'classnames';
@@ -14,7 +13,6 @@ import useUser from '../../utils/hooks/use-user';
 
 const MailView = React.memo(function MailView() {
   const { state, dispatch, actions } = useContext(MailContext);
-  // const { open: openModal } = useContext(ModalContext);
   const progress = useProgress();
   const [accounts] = useUser(u => u.accounts);
   const {
@@ -52,30 +50,6 @@ const MailView = React.memo(function MailView() {
       offset: os
     };
   }, [perPage, totalCount, page]);
-
-  // const onSubmit = useCallback(
-  //   ({ success, useImage, failReason = null }) => {
-  //     const { id, from, unsubStrategy } = unsubData;
-  //     actions.setUnsubData(null);
-  //     actions.resolveUnsubscribeError({
-  //       success,
-  //       mailId: id,
-  //       useImage,
-  //       from: from,
-  //       reason: failReason,
-  //       unsubStrategy
-  //     });
-  //   },
-  //   [actions, unsubData]
-  // );
-
-  // useEffect(() => {
-  //   if (unsubData) {
-  //     openModal(<UnsubModal onSubmit={onSubmit} mail={unsubData} />, {
-  //       onClose: () => actions.setUnsubData(null)
-  //     });
-  //   }
-  // }, [actions, onSubmit, openModal, unsubData]);
 
   const showLoading = (isLoading || inProgress) && !mail.length;
   const content = useMemo(() => {
@@ -136,10 +110,10 @@ const MailView = React.memo(function MailView() {
 
 MailView.whyDidYouRender = true;
 
-export default () => {
+export default React.memo(() => {
   return (
     <MailProvider>
       <MailView />
     </MailProvider>
   );
-};
+});

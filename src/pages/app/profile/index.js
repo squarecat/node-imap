@@ -15,7 +15,7 @@ import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
-export default () => {
+function Profile() {
   const [
     { email, unsubCount, organisationAdmin, loginProvider, organisation }
   ] = useUser(u => ({
@@ -32,7 +32,7 @@ export default () => {
 
         <p styleName="email-container">
           <span>Signed in with: </span>
-          {getProviderIcon(loginProvider)}
+          <ProviderIcon loginProvider={loginProvider} />
           <span styleName="email">
             <TextImportant>{email}</TextImportant>
           </span>
@@ -49,9 +49,11 @@ export default () => {
       />
     </ProfileLayout>
   );
-};
+}
 
-function DangerZone({ organisationAdmin, organisation }) {
+export default Profile;
+
+const DangerZone = React.memo(({ organisationAdmin, organisation }) => {
   const [loading, toggleLoading] = useState(false);
 
   const { open: openModal } = useContext(ModalContext);
@@ -92,7 +94,7 @@ function DangerZone({ organisationAdmin, organisation }) {
         dismissable: true
       }
     );
-  }, [openModal, db]);
+  }, [openModal, db, alertActions]);
 
   const onClickDelete = useCallback(() => {
     const deactivateUserAccount = async () => {
@@ -140,7 +142,7 @@ function DangerZone({ organisationAdmin, organisation }) {
         dismissable: true
       }
     );
-  }, [openModal, db]);
+  }, [openModal, db, alertActions]);
 
   return (
     <>
@@ -195,7 +197,8 @@ function DangerZone({ organisationAdmin, organisation }) {
       </div>
     </>
   );
-}
+});
+
 async function deactivateAccount() {
   try {
     return request('/api/me', {
@@ -211,9 +214,9 @@ async function deactivateAccount() {
   }
 }
 
-function getProviderIcon(provider) {
+const ProviderIcon = React.memo(provider => {
   if (provider === 'password')
     return <KeyIcon inline width="16" height="16" style={{ top: '-1px' }} />;
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
   if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
-}
+});

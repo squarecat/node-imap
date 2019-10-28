@@ -52,14 +52,17 @@ export const MailProvider = function({ children }) {
     }
     // called whenever we get a chunk of emails from the server
     // this is whta triggers a refresh of all the other stuff
-    function onCountUpdate(modifications, key) {
+    function onCountUpdate(modifications, key, obj, transaction) {
       const { value } = modifications;
       if (key === 'totalMail' && value) {
-        setTimeout(() => {
+        transaction.on('complete', () => {
           setMailCount(value);
           setFilterValues();
-        }, 0);
+        });
       }
+    }
+    function onCountCreate(key, obj, transaction) {
+      return onCountUpdate(obj, key, obj, transaction);
     }
 
     // load previous values
@@ -72,10 +75,10 @@ export const MailProvider = function({ children }) {
       return dispatch({ type: 'init', data: value });
     }
     loadPreferences();
-    db.prefs.hook('creating', onCountUpdate);
+    db.prefs.hook('creating', onCountCreate);
     db.prefs.hook('updating', onCountUpdate);
     return () => {
-      db.prefs.hook('creating').unsubscribe(onCountUpdate);
+      db.prefs.hook('creating').unsubscribe(onCountCreate);
       db.prefs.hook('updating').unsubscribe(onCountUpdate);
     };
   }, [db.mail, db.prefs]);
@@ -160,24 +163,22 @@ export const MailProvider = function({ children }) {
     ]
   );
 
+  const context = useMemo(() => {
+    return {
+      state: value,
+      actions,
+      dispatch
+    };
+  }, [actions, value]);
+
   return (
-    <MailContext.Provider
-      value={{
-        state: value,
-        actions,
-        dispatch
-      }}
-    >
-      {children}
-    </MailContext.Provider>
+    <MailContext.Provider value={context}>{children}</MailContext.Provider>
   );
 };
 
-MailProvider.whyDidYouRender = true;
 
 async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
-  console.log(activeFilters);
   // apply filters
   if (activeFilters.length) {
     const { values, indexes } = _sortBy(activeFilters, 'field').reduce(

@@ -17,52 +17,42 @@ import useUser from '../utils/hooks/use-user';
 export const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
-  const [{ token, userId }] = useUser(u => ({
+  const [{ token, userId, browserId }] = useUser(u => ({
     userId: u.id,
-    token: u.token
+    token: u.token,
+    browserId: u.browserId
   }));
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
   const { dismiss, setAlert } = actions;
-  const attemptsRef = useRef(0);
   // set up socket on mount
-  const { socket, error } = useSocket(token, userId);
+  const { socket, error, connected } = useSocket(token, userId, browserId);
 
   const emit = useCallback(
     (event, data, cb) => {
-      const attempts = attemptsRef.current;
-      if (!socket || socket.disconnected) {
+      if (!socket || (!connected && !socket.connected)) {
         console.warn(
           `[socket]: no socket to emit event "${event}", waiting for socket to open`
         );
-        console.warn('[socket]: ', socket);
-        if (attempts > 1) {
-          setAlert({
-            id: 'connection-warning',
-            level: 'warning',
-            message: 'Connection lost. Trying to reconnect...',
-            isDismissable: false,
-            autoDismiss: false
-          });
-        }
-        attemptsRef.current = attempts + 1;
-        if (attempts > 2) {
-          // save event to queue for later
-          return db.queue.put({
-            event,
-            data
-          });
-        }
-        console.log(`[socket]: pending emit ${event}`);
-        return setTimeout(emit.bind(this, event, data, cb), 2000);
+        console.warn('[socket]: ', socket, connected);
+        setAlert({
+          id: 'connection-warning',
+          level: 'warning',
+          message: 'Connection lost. Trying to reconnect...',
+          isDismissable: false,
+          autoDismiss: false
+        });
+        return db.queue.put({
+          event,
+          data
+        });
       }
-      attemptsRef.current = 0;
       dismiss('connection-warning');
       console.log(`[socket]: emit ${event}`);
 
       return socket.emit(event, data, cb);
     },
-    [db.queue, dismiss, setAlert, socket]
+    [connected, db.queue, dismiss, setAlert, socket]
   );
 
   const checkBuffer = useCallback(() => {
@@ -98,72 +88,84 @@ export function SocketProvider({ children }) {
   }, [db.queue, emit, socket]);
 
   useEffect(() => {
+    const reconnect = attemptNumber => {
+      console.debug(`[socket]: reconnect ${attemptNumber}`);
+      dismiss('connection-warning');
+      checkBuffer();
+    };
     if (socket) {
-      socket.on('reconnect', attemptNumber => {
-        console.debug(`[socket]: reconnect ${attemptNumber}`);
-        checkBuffer();
-      });
+      socket.on('reconnect', reconnect);
     }
-  }, [socket, checkBuffer]);
+    return () => {
+      if (socket) {
+        socket.on('reconnect', reconnect);
+      }
+    };
+  }, [socket, checkBuffer, dismiss]);
 
   const value = useMemo(
     () => ({
-      isConnected: !!socket,
+      isConnected: connected,
       error,
       emit,
       socket,
       checkBuffer
     }),
-    [checkBuffer, emit, error, socket]
+    [checkBuffer, connected, emit, error, socket]
   );
 
   return (
-    <SocketContext.Provider value={value}>
-      {value.socket ? children : null}
-    </SocketContext.Provider>
+    <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
   );
 }
 
-SocketProvider.whyDidYouRender = true;
+function useSocket(token, userId, browserId) {
+  const [state, setState] = useState({
+    socket: null,
+    connected: false,
+    error: null
+  });
 
-function useSocket(token, userId) {
-  const [socket, setSocket] = useState(null);
-  const [error, setError] = useState(null);
-
-  useMemo(() => {
-    const sock = io(process.env.WEBSOCKET_URL, {
-      query: {
-        token,
-        userId
-      }
-    });
-    console.debug('[socket]: connecting...');
-    sock.on('connect', async () => {
-      console.debug('[socket]: connected');
-      setSocket(sock);
-    });
-    sock.on('error', (err = {}) => {
-      console.debug('[socket]: errored');
-      console.debug(err);
-      if (err && err.reason === 'not-authorized') {
-        window.location.href = `/login?error=true&reason=${err.reason}`;
-        return false;
-      }
-      const message = getSocketError(err);
-      setError(message);
-    });
-    sock.on('disconnect', () => {
-      console.debug('[socket]: disconnected');
-      setSocket(null);
-    });
+  useEffect(() => {
+    let sock;
+    if (browserId) {
+      sock = io(process.env.WEBSOCKET_URL, {
+        query: {
+          token,
+          userId,
+          browserId
+        }
+      });
+      console.debug('[socket]: connecting...');
+      sock.on('connect', async () => {
+        console.debug('[socket]: connected');
+        setState({ error: null, socket: sock, connected: true });
+      });
+      sock.on('error', (err = {}) => {
+        console.debug('[socket]: errored');
+        console.debug(err);
+        if (err && err.reason === 'not-authorized') {
+          window.location.href = `/login?error=true&reason=${err.reason}`;
+          return false;
+        }
+        const message = getSocketError(err);
+        setState({ socket: sock, error: message, connected: false });
+      });
+      sock.on('disconnect', () => {
+        console.debug('[socket]: disconnected');
+        setState({ socket: sock, error: null, connected: false });
+      });
+    }
 
     return () => {
-      sock.off('error');
-      sock.off('disconnect');
-      sock.off('connect');
+      if (sock) {
+        sock.off('error');
+        sock.off('disconnect');
+        sock.off('connect');
+        sock.disconnect();
+      }
     };
-  }, [token, userId]);
-  return { socket, error };
-}
+  }, [browserId, token, userId]);
 
-useSocket.whyDidYouRender = true;
+  return state;
+}

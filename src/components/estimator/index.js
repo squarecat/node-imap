@@ -21,52 +21,49 @@ export default function Estimator({ title, startFrom = 20 }) {
   const spamPerMonth = mailPerMonth * 0.08;
   const unsubsPerMonth = spamPerMonth * 0.36;
 
-  const recommendationContent = useMemo(
-    () => {
-      const recommendedPackage = getRecommendation(unsubsPerMonth);
-      if (recommendedPackage) {
-        return (
-          <>
-            <div styleName="recommendation-package">
-              <PlanImage type="package" compact />
-              <div>
-                <p>
-                  We recommend a package of{' '}
-                  <TextImportant>
-                    {recommendedPackage.credits} credits for $
-                    {(recommendedPackage.price / 100).toFixed(2)}
-                  </TextImportant>
-                  .
-                </p>
-                {recommendedPackage.discount ? (
-                  <p>
-                    You'll get a {recommendedPackage.discount * 100}% bulk
-                    discount!
-                  </p>
-                ) : null}
-              </div>
-            </div>
-            <a href="/signup" className={`beam-me-up-cta`}>
-              Start Unsubscribing
-            </a>
-          </>
-        );
-      }
+  const recommendationContent = useMemo(() => {
+    const recommendedPackage = getRecommendation(unsubsPerMonth);
+    if (recommendedPackage) {
       return (
         <>
           <div styleName="recommendation-package">
-            <PlanImage type="enterprise" compact />
-            Wow, that's a lot of emails! We recommend you contact us for a{' '}
-            <TextImportant>custom package</TextImportant> rate.
+            <PlanImage type="package" compact />
+            <div>
+              <p>
+                We recommend a package of{' '}
+                <TextImportant>
+                  {recommendedPackage.credits} credits for $
+                  {(recommendedPackage.price / 100).toFixed(2)}
+                </TextImportant>
+                .
+              </p>
+              {recommendedPackage.discount ? (
+                <p>
+                  You'll get a {recommendedPackage.discount * 100}% bulk
+                  discount!
+                </p>
+              ) : null}
+            </div>
           </div>
-          <a href="mailto:hello@leavemealone.app" className={`beam-me-up-cta`}>
-            Contact Us
+          <a href="/signup" className={`beam-me-up-cta`}>
+            Start Unsubscribing
           </a>
         </>
       );
-    },
-    [unsubsPerMonth]
-  );
+    }
+    return (
+      <>
+        <div styleName="recommendation-package">
+          <PlanImage type="enterprise" compact />
+          Wow, that's a lot of emails! We recommend you contact us for a{' '}
+          <TextImportant>custom package</TextImportant> rate.
+        </div>
+        <a href="mailto:hello@leavemealone.app" className={`beam-me-up-cta`}>
+          Contact Us
+        </a>
+      </>
+    );
+  }, [unsubsPerMonth]);
 
   return (
     <div styleName="pricing-estimates">

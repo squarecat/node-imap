@@ -40,7 +40,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.errorHandler());
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(session);
 
 auth(app);
@@ -107,15 +107,15 @@ app.get('*', (req, res) => {
 
 const App = {
   async start() {
-    logger.info('server starting');
+    logger.info('[server]: starting');
     await connectDb();
     server.listen(2345);
-    logger.info('server started');
+    logger.info('[server]: started');
     // tell pm2 that the server is ready
     // to start receiving requests
     if (process.send) {
       process.send('ready');
-      console.log('listening for pm2 msg');
+      console.log('[pm2]: listening for pm2 msg');
       process.on('message', function(packet) {
         if (packet.type === 'cron') {
           schedule(packet.data.timeframe);
@@ -124,9 +124,9 @@ const App = {
     }
   },
   async stop() {
-    logger.info('server stopping');
+    logger.info('[server]: stopping');
     await shutdownSockets();
-    logger.info('server stopped');
+    logger.info('[server]: stopped');
   }
 };
 export default App;

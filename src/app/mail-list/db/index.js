@@ -7,7 +7,7 @@ import useMailErrorEvent from './events/on-mail-error';
 import useMailProgressEvent from './events/on-progress';
 import useMailReceievedEvent from './events/on-mail-received';
 import useResolveUnsubscribe from './actions/use-resolve-unsubscribe';
-import useScoresEvent from './events/on-scores-received';
+import useBuffer from './events/on-buffered-events';
 import useUnsubscribe from './actions/use-unsubscribe';
 import useUnsubscribeErrorEvent from './events/on-unsubscribe-error';
 import useUnsubscribeSuccessEvent from './events/on-unsubscribe-success';
@@ -17,12 +17,21 @@ export default function useMailSocket() {
   const { socket, emit } = useContext(SocketContext);
   const db = useContext(DatabaseContext);
 
-  useMailErrorEvent(socket, db);
-  useMailReceievedEvent(socket, db, emit);
+  const { onErr } = useMailErrorEvent(socket, db);
+  const { onMail, onEnd } = useMailReceievedEvent(socket, db, emit);
   useUnsubscribeErrorEvent(socket, db);
   useUnsubscribeSuccessEvent(socket, db);
-  useScoresEvent(socket, db);
-  useMailProgressEvent(socket, db);
+  const { onProgress, onProgressEnd } = useMailProgressEvent(socket, db);
+
+  const events = {
+    onMail,
+    onErr,
+    onEnd,
+    onProgress,
+    onProgressEnd
+  };
+
+  useBuffer(socket, events);
 
   const fetch = useFetch();
   const resolveUnsubscribe = useResolveUnsubscribe();

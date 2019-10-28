@@ -16,7 +16,7 @@ import { pushSessionProp } from '../session';
 import refresh from 'passport-oauth2-refresh';
 
 const { google } = auth;
-logger.info(`google-auth: redirecting to ${google.loginRedirect}`);
+logger.info(`[google-auth]: redirecting to ${google.loginRedirect}`);
 
 export const Strategy = new GoogleStrategy(
   {

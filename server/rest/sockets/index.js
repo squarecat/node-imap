@@ -18,7 +18,7 @@ import socketio from 'socket.io';
 let io;
 
 export default function(server) {
-  logger.info('socket: constructing sockets');
+  logger.info('[socket]: constructing sockets');
   io = socketio(server).of('mail');
 
   io.use(authMiddleware);
@@ -26,7 +26,7 @@ export default function(server) {
   io.use(bufferMiddleware);
 
   io.on('connection', socket => {
-    logger.info('socket: connection');
+    logger.info('[socket]: connection');
     const { userId } = socket;
     const onFetch = fetch.bind(this, socket, userId);
     const onUnsubscribe = unsubscribe.bind(this, socket, userId);
@@ -50,7 +50,7 @@ export default function(server) {
     socket.on('notifications:fetch-unread', onFetchNotificationsUnread);
     socket.on('notifications:set-read', onSetNotificationsRead);
   });
-  logger.info('socket: ready');
+  logger.info('[socket]: ready');
 }
 
 export async function sendToUser(userId, event, data, options = {}) {
@@ -65,8 +65,8 @@ export async function sendToUser(userId, event, data, options = {}) {
           const t = setTimeout(async () => {
             // no ack was received after 2 seconds meaning this probably
             // wasn't sent to the client successfully, so buffer it for later
-            if (!options.skipBuffer) {
-              await bufferEvents(userId, [{ event, data }]);
+            if (!options.skipBuffer && options.browserId) {
+              await bufferEvents(options.browserId, [{ event, data }]);
             }
             timedOut = true;
             res();
@@ -84,8 +84,8 @@ export async function sendToUser(userId, event, data, options = {}) {
     return received;
   }
   logger.debug(`[socket]: = ${event} ${userId}`);
-  if (!options.skipBuffer) {
-    await bufferEvents(userId, [{ event, data }]);
+  if (!options.skipBuffer && options.browserId) {
+    await bufferEvents(options.browserId, [{ event, data }]);
   }
   if (options.onSuccess) options.onSuccess();
 }

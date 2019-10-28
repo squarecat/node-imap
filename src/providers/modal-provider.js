@@ -69,9 +69,9 @@ export const ModalProvider = React.memo(({ children }) => {
   });
 
   const closeModal = useCallback(data => {
-    if (window.location.hash === '#modal') {
-      window.history.back();
-    }
+    // if (window.location.hash === '#modal') {
+    //   window.history.back();
+    // }
     dispatch({ type: 'close', data });
   }, []);
 
@@ -116,8 +116,8 @@ export const ModalProvider = React.memo(({ children }) => {
     if (state.shown) {
       document.addEventListener('keyup', closeModalByEsc);
       document.addEventListener('click', closeModalByClickAway);
-      window.history.pushState('forward', null, './#modal');
-      window.addEventListener('popstate', closeModal);
+      // window.history.pushState('forward', null, './#modal');
+      // window.addEventListener('popstate', closeModal);
     } else {
       removeListeners();
     }
@@ -157,6 +157,7 @@ function hideScrollbars() {
   document.documentElement.style.scrollBehavior = 'unset';
   document.body.classList.add('no-scroll');
   document.body.scrollTop = top;
+  console.log('save scroll to', top);
   document.body.setAttribute('data-scroll', top);
 }
 function showScrollbars() {
@@ -164,5 +165,6 @@ function showScrollbars() {
   document.body.removeAttribute('data-scroll');
   document.body.classList.remove('no-scroll');
   document.documentElement.scrollTop = top;
+  console.log('scrolled to', top);
   document.documentElement.style.scrollBehavior = 'smooth';
 }

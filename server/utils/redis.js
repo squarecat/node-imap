@@ -42,16 +42,16 @@ export function createCacheClient({ prefix }) {
 }
 
 function createClient({ prefix, options }) {
-  logger.info(`redis: creating client ${prefix}`);
+  logger.info(`[redis]: creating client ${prefix}`);
   const client = redis.createClient({
     prefix,
     ...options
   });
   client.set('1', '1', err => {
     if (err) {
-      return logger.info(`redis: failed to connect ${prefix}`);
+      return logger.info(`[redis]: failed to connect ${prefix}`);
     }
-    logger.info(`redis: connected ${prefix}`);
+    logger.info(`[redis]: connected ${prefix}`);
   });
   return client;
 }
