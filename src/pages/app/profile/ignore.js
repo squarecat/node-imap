@@ -7,8 +7,8 @@ import Button from '../../../components/btn';
 import ErrorBoundary from '../../../components/error-boundary';
 import ProfileLayout from '../../../app/profile/layout';
 import { TextImportant } from '../../../components/text';
-import { toggleFromIgnoreList } from '../../../utils/ignore';
 import useUser from '../../../utils/hooks/use-user';
+import { toggleFromIgnoreList } from '../../../app/mail-list/db/use-ignore';
 
 export default () => {
   const [user, { setIgnoredSenderList }] = useUser();

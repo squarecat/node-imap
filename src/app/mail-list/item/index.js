@@ -10,13 +10,14 @@ import { MailContext } from '../provider';
 import MailItemDataModal from '../../../components/modal/mail-data';
 import { ModalContext } from '../../../providers/modal-provider';
 import Score from '../../../components/score';
-import Toggle from '../../../components/toggle';
 import Tooltip from '../../../components/tooltip';
 import format from 'date-fns/format';
-import { toggleFromIgnoreList } from '../../../utils/ignore';
+
 import { useDelinquency } from '../db/hooks';
-import useUser from '../../../utils/hooks/use-user';
+
 import { HotKeys } from 'react-hotkeys';
+import useIgnore from '../db/use-ignore';
+import UnsubToggle from '../../../components/unsub-toggle';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
@@ -33,29 +34,13 @@ function MailItem({ id, onLoad }) {
   const { actions } = useContext(MailContext);
   const { open: openModal } = useContext(ModalContext);
 
-  const [ignoredSenderList, { setIgnoredSenderList }] = useUser(
-    u => u.ignoredSenderList || []
-  );
-
-  const isIgnored = useMemo(() => {
-    return ignoredSenderList.includes(m.fromEmail);
-  }, [ignoredSenderList, m.fromEmail]);
-
-  const clickIgnore = useCallback(() => {
-    const newList = isIgnored
-      ? ignoredSenderList.filter(sender => sender !== m.fromEmail)
-      : [...ignoredSenderList, m.fromEmail];
-    toggleFromIgnoreList(m.fromEmail, isIgnored ? 'remove' : 'add');
-    setIgnoredSenderList(newList);
-    return false;
-  }, [ignoredSenderList, isIgnored, m.fromEmail, setIgnoredSenderList]);
+  const [{ isIgnored }, { setIgnored }] = useIgnore({ fromEmail: m.fromEmail });
 
   const expand = useCallback(() => {}, []);
 
   const onSubmit = useCallback(
     ({ success, useImage, failReason = null }) => {
       const { id, from, unsubStrategy } = m;
-      debugger;
       actions.resolveUnsubscribe({
         success,
         mailId: id,
@@ -74,9 +59,9 @@ function MailItem({ id, onLoad }) {
   const handlers = useMemo(() => {
     return {
       UNSUBSCRIBE: () => actions.unsubscribe(m),
-      HEART: clickIgnore
+      HEART: setIgnored
     };
-  }, [actions, clickIgnore, m]);
+  }, [actions, setIgnored, m]);
 
   useEffect(() => {
     if (m) {
@@ -103,7 +88,7 @@ function MailItem({ id, onLoad }) {
                 </span>
               }
             >
-              <a onClick={() => clickIgnore()}>
+              <a onClick={() => setIgnored()}>
                 <IgnoreIcon ignored={isIgnored} />
               </a>
             </Tooltip>
@@ -112,7 +97,11 @@ function MailItem({ id, onLoad }) {
 
           <Occurrences onClick={expand} mail={m} />
         </div>
-        <MailDataLink item={m} openUnsubModal={openUnsubModal} />
+        <MailDataLink
+          item={m}
+          onUnsubscribe={actions.unsubscribe}
+          openUnsubModal={openUnsubModal}
+        />
       </td>
       <td styleName="cell subject-column">
         <span styleName="subject" title={m.getLatest().subject}>
@@ -185,48 +174,6 @@ function Occurrences({ mail }) {
   );
 }
 
-function UnsubToggle({ mail, isIgnored, onUnsubscribe, openUnsubModal }) {
-  const isSubscribed = !!mail.subscribed;
-  let content;
-  const everythingOk = mail.estimatedSuccess !== false || mail.resolved;
-  if (everythingOk) {
-    content = (
-      <Toggle
-        status={isSubscribed}
-        loading={mail.isLoading}
-        disabled={isIgnored}
-        onChange={() => onUnsubscribe(mail)}
-      />
-    );
-  } else {
-    content = (
-      <span onClick={openUnsubModal} styleName="failed-to-unsub-icon">
-        <InfoIcon width="20" height="20" />
-      </span>
-    );
-  }
-
-  let status;
-  if (mail.isLoading) {
-    status = null;
-  } else if (!isSubscribed) {
-    status = (
-      <a styleName="status" onClick={openUnsubModal}>
-        See details
-      </a>
-    );
-  } else {
-    status = <span styleName="status subscribed">Subscribed</span>;
-  }
-
-  return (
-    <>
-      {content}
-      {status}
-    </>
-  );
-}
-
 function DateCell({ date } = {}) {
   if (!date) return null;
   const mailDate = new Date(date);
@@ -242,7 +189,11 @@ function DateCell({ date } = {}) {
   );
 }
 
-const MailDataLink = React.memo(function({ openUnsubModal, item }) {
+const MailDataLink = React.memo(function({
+  openUnsubModal,
+  item,
+  onUnsubscribe
+}) {
   const { open: openModal } = useContext(ModalContext);
   const { delinquent, reported } = useDelinquency(item);
   const content = (
@@ -250,7 +201,11 @@ const MailDataLink = React.memo(function({ openUnsubModal, item }) {
       styleName={`mail-data-link ${delinquent ? 'delinquent' : ''}`}
       onClick={() =>
         openModal(
-          <MailItemDataModal item={item} openUnsubModal={openUnsubModal} />
+          <MailItemDataModal
+            item={item}
+            onUnsubscribe={onUnsubscribe}
+            openUnsubModal={openUnsubModal}
+          />
         )
       }
     >

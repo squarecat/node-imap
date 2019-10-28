@@ -155,3 +155,10 @@
 .from-time {
   display: block;
 }
+
+.unsub-data,
+.from-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

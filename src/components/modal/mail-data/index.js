@@ -5,6 +5,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../table';
 import { TextImportant, TextLink } from '../../text';
 
+import UnsubToggle from '../../unsub-toggle';
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../btn';
 import Tooltip from '../../tooltip';
@@ -13,17 +14,20 @@ import format from 'date-fns/format';
 import relative from 'tiny-relative-date';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
+import useIgnore from '../../../app/mail-list/db/use-ignore';
+import IgnoreIcon from '../../ignore-icon';
 
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
 
-const MailData = ({ item, openUnsubModal }) => {
+const MailData = ({ item, openUnsubModal, onUnsubscribe }) => {
   const { fromEmail, to, forAccount, provider } = item;
   const [{ unsubscriptions, showAccount, accounts }] = useUser(u => ({
     unsubscriptions: u.unsubscriptions,
     showAccount: u.accounts.length > 1 && u.email !== to,
     accounts: u.accounts
   }));
+  const [{ isIgnored }, { setIgnored }] = useIgnore({ fromEmail: fromEmail });
 
   let providerName;
   if (provider === 'imap') {
@@ -49,6 +53,9 @@ const MailData = ({ item, openUnsubModal }) => {
           unsubscriptions={unsubscriptions}
           showAccount={showAccount}
           openUnsubModal={openUnsubModal}
+          isIgnored={isIgnored}
+          setIgnored={setIgnored}
+          onUnsubscribe={onUnsubscribe}
         />
       </ModalBody>
     </div>
@@ -59,7 +66,10 @@ const Content = React.memo(function({
   item,
   unsubscriptions,
   showAccount,
-  openUnsubModal
+  isIgnored,
+  setIgnored,
+  openUnsubModal,
+  onUnsubscribe
 }) {
   const {
     to,
@@ -118,7 +128,22 @@ const Content = React.memo(function({
           <TableRow>
             <TableCell>From</TableCell>
             <TableCell>
-              <span styleName="data-pill">{`${fromName} <${fromEmail}>`}</span>
+              <span styleName="from-cell">
+                <span styleName="data-pill">{`${fromName} <${fromEmail}>`}</span>
+                <Tooltip
+                  overlay={
+                    <span>
+                      {isIgnored
+                        ? 'This sender is on your favorite list'
+                        : 'Click to ignore this sender in future scans'}
+                    </span>
+                  }
+                >
+                  <a onClick={() => setIgnored()}>
+                    <IgnoreIcon ignored={isIgnored} />
+                  </a>
+                </Tooltip>
+              </span>
             </TableCell>
           </TableRow>
           {labels ? (
@@ -130,8 +155,18 @@ const Content = React.memo(function({
           <TableRow>
             <TableCell>Status</TableCell>
             <TableCell>
-              <UnsubStatus unsub={unsub} status={status} />
-              <UnsubscribedAt status={status} unsub={unsub} />
+              <span styleName="unsub-data">
+                <span>
+                  <UnsubStatus unsub={unsub} status={status} />
+                  <UnsubscribedAt status={status} unsub={unsub} />
+                </span>
+                <UnsubToggle
+                  mail={item}
+                  isIgnored={isIgnored}
+                  onUnsubscribe={onUnsubscribe}
+                  openUnsubModal={openUnsubModal}
+                />
+              </span>
               <UnsubscribeStatusText
                 openUnsubModal={openUnsubModal}
                 status={status}
