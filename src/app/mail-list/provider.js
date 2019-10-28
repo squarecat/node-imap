@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useCallback,
   useState
 } from 'react';
 import mailReducer, { initialState } from './reducer';
@@ -24,7 +25,41 @@ export const MailProvider = function({ children }) {
     mail: []
   });
 
+  // when we get new data we check all the filter values
+  // and set them again for the filter drop downs
+  const setFilterValues = useCallback(async () => {
+    db.mail
+      .orderBy('[to+forAccount+provider]')
+      .uniqueKeys(function(recipients) {
+        if (
+          recipients.sort().join('') !==
+          state.filterValues.recipients.sort().join('')
+        ) {
+          return dispatch({
+            type: 'set-filter-values',
+            data: {
+              name: 'recipients',
+              value: recipients
+            }
+          });
+        }
+      });
+  }, [db.mail, state.filterValues.recipients]);
+
   // run once on mount
+  useEffect(() => {
+    // load previous values
+    async function loadPreferences() {
+      const filters = await db.prefs.get('filters');
+      let value = null;
+      if (filters) {
+        value = filters.value;
+      }
+      return dispatch({ type: 'init', data: value });
+    }
+    loadPreferences();
+  }, [db.prefs]);
+
   useEffect(() => {
     // setting the mail count will cause the mail list to
     // re-render once
@@ -35,21 +70,7 @@ export const MailProvider = function({ children }) {
       }
       return dispatch({ type: 'set-count', data: count });
     }
-    // when we get new data we check all the filter values
-    // and set them again for the filter drop downs
-    async function setFilterValues() {
-      db.mail
-        .orderBy('[to+forAccount+provider]')
-        .uniqueKeys(function(recipients) {
-          return dispatch({
-            type: 'set-filter-values',
-            data: {
-              name: 'recipients',
-              value: recipients
-            }
-          });
-        });
-    }
+
     // called whenever we get a chunk of emails from the server
     // this is whta triggers a refresh of all the other stuff
     function onCountUpdate(modifications, key, obj, transaction) {
@@ -65,23 +86,13 @@ export const MailProvider = function({ children }) {
       return onCountUpdate(obj, key, obj, transaction);
     }
 
-    // load previous values
-    async function loadPreferences() {
-      const filters = await db.prefs.get('filters');
-      let value = null;
-      if (filters) {
-        value = filters.value;
-      }
-      return dispatch({ type: 'init', data: value });
-    }
-    loadPreferences();
     db.prefs.hook('creating', onCountCreate);
     db.prefs.hook('updating', onCountUpdate);
     return () => {
       db.prefs.hook('creating').unsubscribe(onCountCreate);
       db.prefs.hook('updating').unsubscribe(onCountUpdate);
     };
-  }, [db.mail, db.prefs]);
+  }, [db.mail, db.prefs, setFilterValues]);
 
   // when things change, filter the mail list
   useEffect(() => {
@@ -175,7 +186,6 @@ export const MailProvider = function({ children }) {
     <MailContext.Provider value={context}>{children}</MailContext.Provider>
   );
 };
-
 
 async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;

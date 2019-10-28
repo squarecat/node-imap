@@ -39,16 +39,16 @@ const ranks = {
   'A+': 90
 };
 
-function tooltipContent({ score: scoreData, address, label }) {
+function tooltipContent({ score: scoreData = {}, address, label }) {
   let content;
   let rankLabel;
-  if (!scoreData) {
+  const { rank, unsubscribeRate, score } = scoreData;
+  if (!rank) {
     rankLabel = '-Unknown';
     content = (
       <p>We don't have enough data on this sender to give it a rank.</p>
     );
   } else {
-    const { rank, unsubscribeRate, score } = scoreData;
     const percentile = ranks[rank];
     const asArray = Object.keys(ranks);
     const negativePercentile = ranks[asArray[asArray.indexOf(rank) + 1]];
