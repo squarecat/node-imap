@@ -22,6 +22,7 @@ const scansRunningCounter = io.counter({
 const exists = promisify(runningScans.exists).bind(runningScans);
 const set = promisify(runningScans.set).bind(runningScans);
 const del = promisify(runningScans.del).bind(runningScans);
+const scan = promisify(runningScans.scan).bind(runningScans);
 
 export default async function fetch(socket, userId, data = {}) {
   const { browserUuid } = socket;
@@ -159,4 +160,29 @@ function setScanRunning(browserUuid) {
 function setScanFinished(browserUuid) {
   scansRunningCounter.dec();
   return del(browserUuid);
+}
+
+export async function flushScans() {
+  let cursor = 0;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    // scan doesn't work with prefix, so we have to manually add
+    // it here for this scan
+    const [cur, keys] = await scan(
+      cursor,
+      'COUNT',
+      '1000',
+      'MATCH',
+      'lma.running_scans_*'
+    );
+    if (keys.length) {
+      // scan does work with the prefix, so we have to manually remove
+      // it here for this del *rolls eyes*
+      await del(keys.map(k => k.replace('lma.running_scans_', '')));
+    }
+    if (cur === '0') {
+      break;
+    }
+    cursor = cur;
+  }
 }

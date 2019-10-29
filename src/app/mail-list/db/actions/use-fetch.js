@@ -127,6 +127,7 @@ const useFetch = function() {
           occurrences
         };
       }
+
       return emit('fetch', fetchParams);
     } catch (err) {
       console.error('[db]: failed to fetch mail');

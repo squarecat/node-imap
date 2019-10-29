@@ -10,7 +10,7 @@ import {
 import { unsubscribe, unsubscribeError } from './unsubscribe';
 
 import authMiddleware from './middleware/auth';
-import fetch from './fetch';
+import fetch, { flushScans } from './fetch';
 import logger from '../../utils/logger';
 import occurrences from './occurrences';
 import socketio from 'socket.io';
@@ -93,6 +93,7 @@ export async function sendToUser(userId, event, data, options = {}) {
 export async function shutdown() {
   try {
     await flushConnections();
+    await flushScans();
   } catch (err) {
     logger.error(err);
   }

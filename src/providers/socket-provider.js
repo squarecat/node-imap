@@ -98,7 +98,7 @@ export function SocketProvider({ children }) {
     }
     return () => {
       if (socket) {
-        socket.on('reconnect', reconnect);
+        socket.off('reconnect', reconnect);
       }
     };
   }, [socket, checkBuffer, dismiss]);

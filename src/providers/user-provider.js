@@ -67,7 +67,7 @@ const userReducer = (state, action) => {
       unsubCount: state.unsubCount + count
     };
   }
-  if (type === 'set-ignored-sender-list') {
+  if (type === 'set-ignored') {
     return {
       ...state,
       ignoredSenderList: data
@@ -111,13 +111,13 @@ const userReducer = (state, action) => {
         [data]: true
       }
     };
-    if (data === 'completedOnboarding') {
+    if (type === 'completed-onboarding') {
       updates = {
         ...updates,
         hasCompletedOnboarding: true
       };
     }
-    if (data === 'completedOnboardingOrganisation') {
+    if (type === 'completed-onboarding-organisation') {
       updates = {
         ...updates,
         hasCompletedOrganisationOnboarding: true
