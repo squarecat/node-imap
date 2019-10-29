@@ -11,10 +11,11 @@ import { ModalContext } from '../../../../providers/modal-provider';
 import ProfileLayout from '../../../../app/profile/layout';
 import { TextImportant } from '../../../../components/text';
 import WarningModal from '../../../../components/modal/warning-modal';
-import { fetchLoggedInUser } from '../../../../utils/auth';
+
 import { getConnectError } from '../../../../utils/errors';
 import request from '../../../../utils/request';
 import useUser from '../../../../utils/hooks/use-user';
+import { fetchLoggedInUser } from '../../../../providers/user-provider';
 
 const revokeUrlForGoogle =
   'https://security.google.com/settings/security/permissions';
@@ -24,7 +25,7 @@ const Accounts = () => {
   const { actions: alertActions } = useContext(AlertContext);
   const db = useContext(DatabaseContext);
   const [
-    { accounts = [], primaryEmail, loginProvider, features },
+    { accounts = [], primaryEmail, loginProvider },
     { update: updateUser, load: loadUser }
   ] = useUser(({ accounts, email, loginProvider, features }) => ({
     accounts,

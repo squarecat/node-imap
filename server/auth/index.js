@@ -15,7 +15,7 @@ import initTotp from './totp';
 import logger from '../utils/logger';
 import passport from 'passport';
 import refresh from 'passport-oauth2-refresh';
-import { v4 } from 'node-uuid';
+import v4 from 'uuid/v4';
 
 passport.use('google-login', GoogleStrategy);
 refresh.use('google-login', GoogleStrategy);

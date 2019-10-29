@@ -1,7 +1,7 @@
 import { get, remove, set, update } from '../dao/imap';
 
 import { testConnection } from './mail/imap/access';
-import { v4 } from 'node-uuid';
+import v4 from 'uuid/v4';
 
 export function getImapAccessDetails(accountId, masterKey) {
   return get(accountId, masterKey);

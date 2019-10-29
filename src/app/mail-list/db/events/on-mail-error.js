@@ -18,7 +18,10 @@ export default socket => {
 
       if (err.data && err.data.problem && err.data.accountId) {
         problem = err.data.problem;
-        invalidateAccount(err.data.accountId, err.data.problem);
+        invalidateAccount({
+          accountId: err.data.accountId,
+          problem: err.data.problem
+        });
       }
 
       actions.setAlert({

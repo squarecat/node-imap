@@ -5,10 +5,11 @@ import ConnectedAccountList from '../../connect-account/list';
 import { FormNotification } from '../../form';
 import { TextImportant } from '../../text';
 import _capitalize from 'lodash.capitalize';
-import { fetchLoggedInUser } from '../../../utils/auth';
+
 import { getConnectError } from '../../../utils/errors';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
+import { fetchLoggedInUser } from '../../../providers/user-provider';
 
 export default ({ onboarding = false, enterprise = false }) => {
   const [{ accounts, email, loginProvider }, { load: loadUser }] = useUser(

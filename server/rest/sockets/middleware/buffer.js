@@ -21,18 +21,18 @@ const hgetall = promisify(client.hgetall).bind(client);
 // runs once when client connects, checks the buffer and sets
 // a keepalive record in redis
 export default async (socket, next) => {
-  const { browserId } = socket;
+  const { browserUuid } = socket;
 
   async function sendEvents() {
-    const hasEvents = await hasBufferedEvents(browserId);
+    const hasEvents = await hasBufferedEvents(browserUuid);
     let isRunning = false;
     let isScan = false;
     if (hasEvents) {
-      const events = await getBufferedEvents(browserId);
+      const events = await getBufferedEvents(browserUuid);
       // is there any scan events buffered?
       isScan = events.some(({ event }) => /^mail/.test(event));
       // is there any end or error events buffered?
-      isRunning = await isScanAlreadyRunning(browserId);
+      isRunning = await isScanAlreadyRunning(browserUuid);
       // merge the events and emit them together
       socket.emit('buffered', events);
     }
@@ -51,8 +51,8 @@ export default async (socket, next) => {
   // should drop this users buffered packets
   socket.use((packet, next) => {
     const now = Date.now();
-    logger.debug(`[socket]: <= ${packet[0]} ${browserId}`);
-    hset('lastSeen', browserId, now);
+    logger.debug(`[socket]: <= ${packet[0]} ${browserUuid}`);
+    hset('lastSeen', browserUuid, now);
     next();
   });
   // send any events if the client drops and reconnects
@@ -60,31 +60,31 @@ export default async (socket, next) => {
   return next();
 };
 
-export function bufferEvents(browserId, events) {
+export function bufferEvents(browserUuid, events) {
   return lpush.apply(client, [
-    browserId,
+    browserUuid,
     ...events.map(e => JSON.stringify(e))
   ]);
 }
 
-export function getNextBufferedEvent(browserId) {
-  return rpop(browserId);
+export function getNextBufferedEvent(browserUuid) {
+  return rpop(browserUuid);
 }
 
-export async function getBufferedEvents(browserId) {
-  const all = await lrange(browserId, 0, -1);
+export async function getBufferedEvents(browserUuid) {
+  const all = await lrange(browserUuid, 0, -1);
   logger.debug(`[socket]: = sending ${all.length} buffered events`);
-  await del(browserId);
+  await del(browserUuid);
   return all.map(a => JSON.parse(a));
 }
 
-export async function hasBufferedEvents(browserId) {
-  const len = await llen(browserId);
+export async function hasBufferedEvents(browserUuid) {
+  const len = await llen(browserUuid);
   return len > 0;
 }
 
-async function dropBufferedEvents(browserId) {
-  return del(browserId);
+async function dropBufferedEvents(browserUuid) {
+  return del(browserUuid);
 }
 
 const HOURLY = 60 * 1000;
@@ -93,9 +93,9 @@ const HOURLY = 60 * 1000;
 // and has buffered events then drop them
 setInterval(async () => {
   const oneHourAgo = subHours(Date.now(), 1);
-  const browserId = await hgetall('lastSeen');
-  if (browserId) {
-    Object.keys(browserId).forEach(userId => {
+  const browserUuid = await hgetall('lastSeen');
+  if (browserUuid) {
+    Object.keys(browserUuid).forEach(userId => {
       const timestamp = new Date(userId[userId]);
       if (isBefore(timestamp, oneHourAgo)) {
         logger.debug(`[socket]: ${userId} is idle, dropping events`);

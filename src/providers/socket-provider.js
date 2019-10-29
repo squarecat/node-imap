@@ -4,7 +4,6 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState
 } from 'react';
 
@@ -17,16 +16,17 @@ import useUser from '../utils/hooks/use-user';
 export const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
-  const [{ token, userId, browserId }] = useUser(u => ({
+  const [{ token, userId, browserUuid }] = useUser(u => ({
     userId: u.id,
     token: u.token,
-    browserId: u.browserId
+    browserUuid: u.browserUuid
   }));
+  console.debug('[browser]: ', browserUuid);
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
   const { dismiss, setAlert } = actions;
   // set up socket on mount
-  const { socket, error, connected } = useSocket(token, userId, browserId);
+  const { socket, error, connected } = useSocket(token, userId, browserUuid);
 
   const emit = useCallback(
     (event, data, cb) => {
@@ -119,21 +119,21 @@ export function SocketProvider({ children }) {
   );
 }
 
-function useSocket(token, userId, browserId) {
+function useSocket(token, userId, browserUuid) {
   const [state, setState] = useState({
     socket: null,
     connected: false,
     error: null
   });
-
+  console.debug('[socket]: initializing', browserUuid, userId);
   useEffect(() => {
     let sock;
-    if (browserId) {
+    if (browserUuid) {
       sock = io(process.env.WEBSOCKET_URL, {
         query: {
           token,
           userId,
-          browserId
+          browserUuid
         }
       });
       console.debug('[socket]: connecting...');
@@ -165,7 +165,7 @@ function useSocket(token, userId, browserId) {
         sock.disconnect();
       }
     };
-  }, [browserId, token, userId]);
+  }, [browserUuid, token, userId]);
 
   return state;
 }

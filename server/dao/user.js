@@ -13,7 +13,7 @@ import _omit from 'lodash.omit';
 import logger from '../utils/logger';
 import shortid from 'shortid';
 import { subDays } from 'date-fns';
-import { v4 } from 'node-uuid';
+import v4 from 'uuid/v4';
 
 const encryptedUnsubCols = [
   'unsubscribeLink',

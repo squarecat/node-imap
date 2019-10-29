@@ -2,7 +2,7 @@ import db, { isoDate } from './db';
 
 import logger from '../utils/logger';
 import shortid from 'shortid';
-import { v4 } from 'node-uuid';
+import v4 from 'uuid';
 
 const COL_NAME = 'organisations';
 

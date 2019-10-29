@@ -1,155 +1,46 @@
-import { globalReducer } from 'react-hook-utils';
+import { UserContext } from '../../providers/user-provider';
+import { useContext, useMemo } from 'react';
 
+export default (reduce = a => a) => {
+  const context = useContext(UserContext);
 
+  const [user, dispatch] = context;
 
-export default globalReducer(
-  {},
-  {
-    load: (state, user) => {
+  const state = useMemo(() => {
+    return reduce(user);
+  }, [reduce, user]);
+
+  const actions = useMemo(() => {
+    return Object.keys(functions).reduce((out, name) => {
+      const type = functions[name];
       return {
-        ...user,
-        loaded: true,
-        unsubCount: user.unsubscriptions.length || 0,
-        hasCompletedOnboarding: user.milestones.completedOnboarding,
-        hasCompletedOrganisationOnboarding:
-          user.milestones.completedOnboardingOrganisation
+        ...out,
+        [name]: data => dispatch({ type, data })
       };
-    },
-    addUnsub: (state, data) => {
-      return {
-        ...state,
-        unsubscriptions: [...state.unsubscriptions, data]
-      };
-    },
-    updateReportedUnsub: (state, unsub) => {
-      return {
-        ...state,
-        unsubscriptions: [
-          ...state.unsubscriptions.filter(u => u.id !== unsub.id),
-          unsub
-        ]
-      };
-    },
-    update: (state, user) => {
-      return {
-        ...state,
-        ...user
-      };
-    },
-    incrementUnsubCount: (state, count = 1) => {
-      return {
-        ...state,
-        unsubCount: state.unsubCount + count
-      };
-    },
-    setIgnoredSenderList: (state, list) => ({
-      ...state,
-      ignoredSenderList: list
-    }),
-    setReminder: (state, reminder) => ({
-      ...state,
-      reminder
-    }),
-    setLastScan: (state, scan) => ({
-      ...state,
-      lastScan: scan
-    }),
-    setPreferences: (state, preferences) => ({
-      ...state,
-      preferences
-    }),
-    setRequiresTwoFactorAuth: (state, bool) => ({
-      ...state,
-      requiresTwoFactorAuth: bool
-    }),
-    setBrowserId: (state, browserId) => ({
-      ...state,
-      browserId
-    }),
-    setMilestoneCompleted: (state, milestone) => {
-      let updates = {
-        ...state,
-        milestones: {
-          ...state.milestones,
-          [milestone]: true
-        }
-      };
-      if (milestone === 'completedOnboarding') {
-        updates = {
-          ...updates,
-          hasCompletedOnboarding: true
-        };
-      }
-      if (milestone === 'completedOnboardingOrganisation') {
-        updates = {
-          ...updates,
-          hasCompletedOrganisationOnboarding: true
-        };
-      }
-      return updates;
-    },
-    setBilling: (state, billing) => {
-      return {
-        ...state,
-        billing
-      };
-    },
-    setCard: (state, card) => {
-      return {
-        ...state,
-        billing: {
-          ...state.billing,
-          card
-        }
-      };
-    },
-    setCredits: (state, credits) => {
-      return {
-        ...state,
-        billing: {
-          ...state.billing,
-          credits
-        }
-      };
-    },
-    incrementCredits: (state, credits) => {
-      return {
-        ...state,
-        billing: {
-          ...state.billing,
-          credits: state.billing.credits + credits
-        }
-      };
-    },
-    setOrganisation: (state, organisation) => {
-      return {
-        ...state,
-        organisationId: organisation.id,
-        organisation: {
-          id: organisation.id,
-          name: organisation.name,
-          active: organisation.active,
-          domain: organisation.domain,
-          inviteCode: organisation.inviteCode,
-          allowAnyUserWithCompanyEmail:
-            organisation.allowAnyUserWithCompanyEmail
-        }
-      };
-    },
-    setOrganisationLastUpdated: (state, lastUpdated) => {
-      return {
-        ...state,
-        organisationLastUpdated: lastUpdated
-      };
-    },
-    invalidateAccount: (state, accountId, problem) => {
-      return {
-        ...state,
-        accounts: state.accounts.map(a => {
-          if (a.id !== accountId) return a;
-          return { ...a, problem };
-        })
-      };
-    }
-  }
-);
+    }, {});
+  }, [dispatch]);
+
+  return [state, actions];
+};
+
+const functions = {
+  load: 'load',
+  addUnsub: 'add-unsub',
+  updateReportedUnsub: 'update-reported-unsub',
+  update: 'update',
+  incrementUnsubCount: 'increment-unsub-count',
+  setIgnoredSenderList: 'set-ignored',
+  setReminder: 'set-reminder',
+  setLastScan: 'set-last-scan',
+  setPreferences: 'set-preferences',
+  setRequiresTwoFactorAuth: 'set-requires-two-factor-auth',
+  setbrowserUuid: 'set-browser-id',
+  setMilestoneCompleted: 'set-milestone-completed',
+  setBilling: 'set-billing',
+  setCard: 'set-card',
+  setCredits: 'set-credits',
+  incrementCredits: 'increment-credits',
+  setOrganisation: 'set-organisation',
+  setOrganisationLastUpdated: 'set-organisation-last-updated',
+  invalidateAccount: 'invalidate-account'
+};

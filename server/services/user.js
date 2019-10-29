@@ -84,7 +84,7 @@ import { sendToUser } from '../rest/sockets';
 import shortid from 'shortid';
 import speakeasy from 'speakeasy';
 import { updateOccurrenceHearted } from './occurrences';
-import { v4 } from 'node-uuid';
+import v4 from 'uuid/v4';
 
 export async function getUserById(id, options = {}) {
   try {

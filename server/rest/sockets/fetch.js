@@ -24,7 +24,7 @@ const set = promisify(runningScans.set).bind(runningScans);
 const del = promisify(runningScans.del).bind(runningScans);
 
 export default async function fetch(socket, userId, data = {}) {
-  const { browserId } = socket;
+  const { browserUuid } = socket;
   const session = await getSession(userId);
   const { masterKey } = session.passport.user;
   let { accounts: accountFilters, occurrences } = data;
@@ -46,28 +46,28 @@ export default async function fetch(socket, userId, data = {}) {
   }
 
   return setImmediate(() =>
-    doFetch({ browserId, userId, accountFilters, prevDupeCache, masterKey })
+    doFetch({ browserUuid, userId, accountFilters, prevDupeCache, masterKey })
   );
 }
 
 async function doFetch({
-  browserId,
+  browserUuid,
   userId,
   accountFilters,
   prevDupeCache,
   masterKey
 }) {
   // if scan is already running then ignore this event
-  const alreadyRunning = await isScanAlreadyRunning(browserId);
+  const alreadyRunning = await isScanAlreadyRunning(browserUuid);
   if (alreadyRunning) {
     logger.debug('[socket]: scan is already running');
     return;
   }
 
-  await setScanRunning(browserId);
+  await setScanRunning(browserUuid);
 
   try {
-    await onStart({ startedAt: Date.now() }, { userId, browserId });
+    await onStart({ startedAt: Date.now() }, { userId, browserUuid });
     // get mail data for user
     const it = await fetchMail({
       userId,
@@ -80,16 +80,16 @@ async function doFetch({
       const { value } = next;
       const { type, data } = value;
       if (type === 'mail') {
-        await onMail(data, { userId, browserId });
+        await onMail(data, { userId, browserUuid });
       } else if (type === 'progress') {
-        await onProgress(data, { userId, browserId });
+        await onProgress(data, { userId, browserUuid });
       }
       next = await it.next();
     }
-    await setScanFinished(browserId);
-    await onEnd(next.value, { userId, browserId });
+    await setScanFinished(browserUuid);
+    await onEnd(next.value, { userId, browserUuid });
   } catch (err) {
-    await setScanFinished(browserId);
+    await setScanFinished(browserUuid);
     // if we haven't already handled this error then throw a rest error
     if (!err.handled) {
       Sentry.captureException(err);
@@ -99,19 +99,19 @@ async function doFetch({
       cause: err,
       ...err.data
     }).toJSON();
-    onError(error, { userId, browserId });
+    onError(error, { userId, browserUuid });
   }
 }
 
-async function onMail(m, { userId, browserId }) {
-  return sendToUser(userId, 'mail', m, { browserId });
+async function onMail(m, { userId, browserUuid }) {
+  return sendToUser(userId, 'mail', m, { browserUuid });
 }
 
-function onError(err, { userId, browserId }) {
-  return sendToUser(userId, 'mail:err', err, { browserId });
+function onError(err, { userId, browserUuid }) {
+  return sendToUser(userId, 'mail:err', err, { browserUuid });
 }
 
-function onEnd(stats, { userId, browserId }) {
+function onEnd(stats, { userId, browserUuid }) {
   const { occurrences } = stats;
   const filteredoccurrences = Object.keys(occurrences).reduce((out, k) => {
     if (occurrences[k].count > 1) {
@@ -129,26 +129,26 @@ function onEnd(stats, { userId, browserId }) {
       ...stats,
       occurrences: filteredoccurrences
     },
-    { browserId }
+    { browserUuid }
   );
 }
 
-function onProgress(progress, { userId, browserId }) {
-  return sendToUser(userId, 'mail:progress', progress, { browserId });
+function onProgress(progress, { userId, browserUuid }) {
+  return sendToUser(userId, 'mail:progress', progress, { browserUuid });
 }
 
-function onStart(data, { userId, browserId }) {
-  return sendToUser(userId, 'mail:start', data, { browserId });
+function onStart(data, { userId, browserUuid }) {
+  return sendToUser(userId, 'mail:start', data, { browserUuid });
 }
 
-export function isScanAlreadyRunning(browserId) {
-  return exists(browserId);
+export function isScanAlreadyRunning(browserUuid) {
+  return exists(browserUuid);
 }
 
-function setScanRunning(browserId) {
+function setScanRunning(browserUuid) {
   scansRunningCounter.inc();
   return set(
-    browserId,
+    browserUuid,
     JSON.stringify({
       startedAt: Date.now()
     }),
@@ -157,7 +157,7 @@ function setScanRunning(browserId) {
   );
 }
 
-function setScanFinished(browserId) {
+function setScanFinished(browserUuid) {
   scansRunningCounter.dec();
-  return del(browserId);
+  return del(browserUuid);
 }
