@@ -183,7 +183,7 @@ function LeaveMeAloneAlternatives() {
                     <AlternativeCross />
                   </td>
                   <td styleName="cell">
-                    <AlternativeCross />
+                    <AlternativeCheck />
                   </td>
                 </tr>
                 <tr>
@@ -203,6 +203,21 @@ function LeaveMeAloneAlternatives() {
                 </tr>
                 <tr>
                   <td styleName="cell">Ranking of subscriptions</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                </tr>
+                <tr>
+                  <td styleName="cell">Sort by most requently received</td>
                   <td styleName="cell">
                     <AlternativeCheck />
                   </td>

@@ -53,9 +53,8 @@ function CleanfoxAlternative() {
         <div styleName="container">
           <div styleName="container-text">
             <h1 styleName="title">
-              The Cleanfox alternative for unsubscribing in all your accounts
+              The Cleanfox alternative for unsubscribing from unwanted emails
             </h1>
-            {/* The Cleanfox alternative for all of your mailboxes */}
             <p styleName="tagline">
               Leave Me Alone is a Cleanfox alternative that{' '}
               <TextImportant>
@@ -105,10 +104,10 @@ function CleanfoxAlternative() {
                 Unsubscribe from emails in all mailboxes together
               </td>
               <td styleName="cell">
-                <AlternativeCheck text="Connects all email addresses to one Leave Me Alone account" />
+                <AlternativeCheck />
               </td>
               <td styleName="cell">
-                <AlternativeCross />
+                <AlternativeCheck />
               </td>
             </tr>
             <tr>
@@ -163,6 +162,15 @@ function CleanfoxAlternative() {
             </tr>
             <tr>
               <td styleName="cell">Ranking of subscriptions</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross />
+              </td>
+            </tr>
+            <tr>
+              <td styleName="cell">Sort by most requently received</td>
               <td styleName="cell">
                 <AlternativeCheck />
               </td>
