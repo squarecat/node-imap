@@ -652,3 +652,15 @@ pre tt:after {
   text-transform: none;
   opacity: 1;
 }
+
+.skip-to-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.skip-to-content:focus {
+  z-index: 99;
+  outline: 1px solid blue;
+}

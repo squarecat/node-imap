@@ -31,7 +31,7 @@ const Header = React.memo(({ loaded }) => {
   }, [isUserLoaded, hasOrganisation]);
 
   return (
-    <div styleName={`header ${loaded ? 'loaded' : ''}`}>
+    <div role="banner" styleName={`header ${loaded ? 'loaded' : ''}`}>
       <Link to="/app" styleName="header-logo">
         <img alt="Leave Me Alone logo" src={logo} />
         <span styleName="header-title">Leave Me Alone</span>

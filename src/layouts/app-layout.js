@@ -40,6 +40,10 @@ const AppLayout = ({ pageName, children }) => {
         link={[{ rel: 'icon', type: 'image/png', href: faviconUrl }]}
       />
 
+      <a href="#main" className="skip-to-content">
+        Skip to mail list
+      </a>
+
       <DatabaseProvider>
         <AlertProvider>
           <UserProvider>

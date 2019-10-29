@@ -33,9 +33,14 @@ export default ({ alert, onDismiss }) => {
       >
         {state => {
           const classes = getTransitionClasses('alertBanner', state, styles);
-
+          const live = level === 'error' ? 'assertive' : 'polite';
           return (
-            <div className={classes} data-shown={isShown} data-level={level}>
+            <div
+              aria-live={live}
+              className={classes}
+              data-shown={isShown}
+              data-level={level}
+            >
               <span styleName="alert-message">{message}</span>
               {(actions || []).map(({ onClick, label }) => (
                 <button styleName="alert-btn" key={label} onClick={onClick}>

@@ -4,7 +4,7 @@ import AppLayout from '../layouts/app-layout';
 import Auth from '../components/auth';
 import ErrorBoundary from '../components/error-boundary';
 import Header from '../components/header';
-import React from 'react';
+import React, { useRef } from 'react';
 import { SocketProvider } from '../providers/socket-provider';
 import useUser from '../utils/hooks/use-user';
 
@@ -17,16 +17,18 @@ function AppLayoutContainer({ pageName, children }) {
 }
 
 function App({ children }) {
-  const [user] = useUser();
-  const loaded = !!user;
+  const [isLoaded] = useUser(u => u.loaded);
+  const mainRef = useRef(null);
 
   return (
     <>
-      <Header loaded={loaded} />
-      <Auth loaded={loaded}>
+      <Header loaded={isLoaded} />
+      <Auth loaded={isLoaded}>
         <SocketProvider>
           <ErrorBoundary>
-            <div styleName="app-content">{loaded ? children : null}</div>
+            <main role="main" ref={mainRef} styleName="app-content">
+              {isLoaded ? children : null}
+            </main>
           </ErrorBoundary>
         </SocketProvider>
       </Auth>

@@ -78,7 +78,7 @@ function MailList({ mail }) {
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
-      <table styleName="list" ref={tableRef} data-active={0}>
+      <table styleName="list" ref={tableRef} data-active={0} aria-live="off">
         <tbody>
           <TransitionGroup component={null}>
             {mail.map((id, i) => {
