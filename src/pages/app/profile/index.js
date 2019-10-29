@@ -223,9 +223,10 @@ async function deactivateAccount() {
   }
 }
 
-const ProviderIcon = React.memo(provider => {
-  if (provider === 'password')
+const ProviderIcon = React.memo(({ loginProvider }) => {
+  if (loginProvider === 'password')
     return <KeyIcon inline width="16" height="16" style={{ top: '-1px' }} />;
-  if (provider === 'google') return <GoogleIcon width="16" height="16" />;
-  if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
+  if (loginProvider === 'google') return <GoogleIcon width="16" height="16" />;
+  if (loginProvider === 'outlook')
+    return <MicrosoftIcon width="16" height="16" />;
 });
