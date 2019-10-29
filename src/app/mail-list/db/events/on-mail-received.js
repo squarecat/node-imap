@@ -42,7 +42,6 @@ export default (socket, db) => {
             status,
             occurrenceCount: 1,
             lastSeenDate: mail.date,
-            __migratedFrom: 'v1',
             occurrences: [
               {
                 subject: mail.subject,
