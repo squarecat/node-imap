@@ -49,8 +49,10 @@ export default () => (
       </div>
     ))}
     <div styleName="card empty">
-      <p>Are we missing an alternative?</p>
-      <TextLink onClick={() => openChat()}>Let us know</TextLink>
+      <a onClick={() => openChat()}>
+        <p>Are we missing an alternative?</p>
+        <span styleName="compare-text">Let us know</span>
+      </a>
     </div>
   </div>
 );
