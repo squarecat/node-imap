@@ -4,16 +4,11 @@ import useUser from '../../../utils/hooks/use-user';
 function useDelinquency(mailItem) {
   const latestOccurrence = mailItem.getLatest();
   const { fromEmail, to: toEmail, date } = latestOccurrence;
-  const [{ unsubscriptions }] = useUser(u => ({
-    unsubscriptions: u.unsubscriptions
-  }));
-  const unsub = useMemo(
-    () =>
-      unsubscriptions.find(un => {
-        return un.from.includes(`<${fromEmail}>`) && un.to === toEmail;
-      }),
-    [unsubscriptions, fromEmail, toEmail]
-  );
+  const [unsub] = useUser(u => {
+    return u.unsubscriptions.find(un => {
+      return un.from.includes(`<${fromEmail}>`) && un.to === toEmail;
+    });
+  });
 
   return useMemo(() => {
     if (unsub) {

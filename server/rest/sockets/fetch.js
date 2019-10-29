@@ -30,13 +30,12 @@ export default async function fetch(socket, userId, data = {}) {
   let { accounts: accountFilters, occurrences } = data;
   let prevDupeCache = [];
   if (occurrences && occurrences.length) {
-    prevDupeCache = occurrences.reduce((out, oc) => {
-      const { count, key, lastSeen } = oc;
+    prevDupeCache = occurrences.reduce((out, key) => {
       return {
         ...out,
         [key]: {
-          count,
-          lastSeen
+          count: 1,
+          lastSeen: 1
         }
       };
     }, {});

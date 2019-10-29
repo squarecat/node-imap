@@ -17,7 +17,7 @@ import logger from '../../utils/logger';
 import { recordUnsubscribeForOrganisation } from '../organisation';
 import { sendToUser } from '../../rest/sockets';
 import url from 'url';
-import uuid from 'node-uuid';
+import v1 from 'uuid/v1';
 
 export const unsubscribeByLink = browserUnsub;
 export const unsubscribeByMailTo = emailUnsub;
@@ -50,7 +50,7 @@ export const unsubscribeFromMail = async (userId, mail) => {
   let unsubStrategy;
   let output;
   let hasImage = false;
-  const unsubscribeId = uuid.v1();
+  const unsubscribeId = v1();
   try {
     const mailData = {
       mail,

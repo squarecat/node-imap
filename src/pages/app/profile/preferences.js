@@ -10,7 +10,6 @@ import useUser from '../../../utils/hooks/use-user';
 export async function savePreferences(data) {
   return request('/api/me/preferences', {
     method: 'PATCH',
-
     body: JSON.stringify({ op: 'update', value: data })
   });
 }
@@ -21,6 +20,13 @@ const DEFAULTS = {
 };
 
 export default () => {
+  return (
+    <ProfileLayout pageName="Preferences">
+      <Preferences />
+    </ProfileLayout>
+  );
+};
+function Preferences() {
   const [user, { setPreferences }] = useUser();
   const preferences = {
     marketingConsent: getPref(user.preferences, 'marketingConsent'),
@@ -34,7 +40,7 @@ export default () => {
   };
 
   return (
-    <ProfileLayout pageName="Preferences">
+    <>
       <div styleName="preferences-section">
         <h2>Help other Leave Me Alone users</h2>
         <p>
@@ -77,9 +83,9 @@ export default () => {
           label="Receive product updates"
         />
       </div>
-    </ProfileLayout>
+    </>
   );
-};
+}
 
 function getPref(prefs = {}, key) {
   const val = prefs[key];

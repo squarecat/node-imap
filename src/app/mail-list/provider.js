@@ -187,6 +187,8 @@ export const MailProvider = function({ children }) {
   );
 };
 
+MailProvider.whyDidYouRender = true;
+
 async function filterMail(activeFilters, db, options) {
   let filteredCollection = db.mail;
   // apply filters

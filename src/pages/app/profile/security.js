@@ -3,7 +3,7 @@ import './security.module.scss';
 import { FormGroup, FormInput, FormLabel } from '../../../components/form';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import Table, { TableCell, TableRow } from '../../../components/table';
-import { TextImportant, TextLink } from '../../../components/text';
+import { TextImportant } from '../../../components/text';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
@@ -15,18 +15,25 @@ import SwitchLoginModal from '../../../components/modal/login-provider-switch';
 import VerifyTwoFacorAuthModal from '../../../components/modal/2fa/verify-2fa';
 import _capitalize from 'lodash.capitalize';
 import { getAuthError } from '../../../utils/errors';
-import { openChat } from '../../../utils/chat';
 import relativeDate from 'tiny-relative-date';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 export default () => {
+  return (
+    <ProfileLayout pageName="Security">
+      <Security />
+    </ProfileLayout>
+  );
+};
+
+function Security() {
   const [{ loginProvider }] = useUser(u => ({
     loginProvider: u.loginProvider
   }));
 
   return (
-    <ProfileLayout pageName="Security">
+    <>
       {loginProvider === 'password' ? (
         <>
           <TwoFactorAuth />
@@ -35,10 +42,9 @@ export default () => {
       ) : (
         <Details loginProvider={loginProvider} />
       )}
-    </ProfileLayout>
+    </>
   );
-};
-
+}
 function Details({ loginProvider }) {
   const { open: openModal } = useContext(ModalContext);
 

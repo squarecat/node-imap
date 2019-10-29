@@ -11,6 +11,14 @@ import useUser from '../../../utils/hooks/use-user';
 import { toggleFromIgnoreList } from '../../../app/mail-list/db/use-ignore';
 
 export default () => {
+  return (
+    <ProfileLayout pageName="Favorite Senders">
+      <IgnorePage />
+    </ProfileLayout>
+  );
+};
+
+function IgnorePage() {
   const [user, { setIgnoredSenderList }] = useUser();
   const ignoredSenderList = user.ignoredSenderList || [];
 
@@ -77,9 +85,5 @@ export default () => {
     );
   }, [ignoredSenderList, remove]);
 
-  return (
-    <ProfileLayout pageName="Favorite Senders">
-      <div styleName="ignore-section">{content}</div>
-    </ProfileLayout>
-  );
-};
+  return <div styleName="ignore-section">{content}</div>;
+}

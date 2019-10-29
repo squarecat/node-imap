@@ -60,14 +60,16 @@ const UserAuth = React.memo(function UserAuth({ children }) {
   }, [browserUuid, setbrowserUuid, isUserLoaded]);
 
   const checkDb = useCallback(async () => {
-    const prevId = await db.prefs.get('userId');
-    if (!prevId || prevId.value !== id) {
-      console.log('clearing db');
-      await db.clear();
-      db.prefs.put({ key: 'userId', value: id });
+    if (isUserLoaded) {
+      const prevId = await db.prefs.get('userId');
+      if (!prevId || prevId.value !== id) {
+        console.log('clearing db');
+        await db.clear();
+        db.prefs.put({ key: 'userId', value: id });
+      }
+      setLoaded(true);
     }
-    setLoaded(true);
-  }, [db, id]);
+  }, [db, id, isUserLoaded]);
 
   const {
     teamAdminOnboarding,
@@ -186,6 +188,12 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     browserUuid,
     children
   ]);
+
+  if (content) {
+    console.log('[auth]: rendering content', id);
+  } else {
+    console.log('[auth]: not loaded yet', id);
+  }
 
   return (
     <div styleName={`auth-loading ${!isLoaded ? '' : 'loaded'}`}>

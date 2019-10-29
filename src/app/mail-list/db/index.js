@@ -38,15 +38,16 @@ export default function useMailSocket() {
   const unsubscribe = useUnsubscribe();
   const setOccurrencesSeen = useUpdateOccurrences();
 
-  const actions = useMemo(
-    () => ({
+  const actions = useMemo(() => {
+    return {
       fetch,
       resolveUnsubscribe,
       unsubscribe,
       setOccurrencesSeen
-    }),
-    [fetch, resolveUnsubscribe, setOccurrencesSeen, unsubscribe]
-  );
+    };
+  }, [fetch, resolveUnsubscribe, setOccurrencesSeen, unsubscribe]);
+
+  console.log('[db]: re-rendering socket functions');
   return {
     socket,
     emit,

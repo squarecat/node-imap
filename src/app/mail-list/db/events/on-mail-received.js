@@ -16,9 +16,9 @@ export default (socket, db) => {
           const mail = d;
           return {
             key: mail.key,
+            id: mail.key,
             forAccount: mail.forAccount,
             provider: mail.provider,
-            id: mail.id,
             from: mail.from,
             to: to,
             unsubscribeLink: mail.unsubscribeLink,

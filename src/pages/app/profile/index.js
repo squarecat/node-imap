@@ -16,6 +16,16 @@ import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
 
 function Profile() {
+  return (
+    <ProfileLayout pageName="Profile">
+      <ProfilePage />
+    </ProfileLayout>
+  );
+}
+
+export default Profile;
+
+const ProfilePage = () => {
   const [
     { email, unsubCount, organisationAdmin, loginProvider, organisation }
   ] = useUser(u => ({
@@ -25,8 +35,9 @@ function Profile() {
     unsubCount: u.unsubCount,
     organisation: u.organisation
   }));
+
   return (
-    <ProfileLayout pageName="Profile">
+    <>
       <div styleName="section">
         <h2>Details</h2>
 
@@ -47,11 +58,9 @@ function Profile() {
         organisationAdmin={organisationAdmin}
         organisation={organisation}
       />
-    </ProfileLayout>
+    </>
   );
-}
-
-export default Profile;
+};
 
 const DangerZone = React.memo(({ organisationAdmin, organisation }) => {
   const [loading, toggleLoading] = useState(false);

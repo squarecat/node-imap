@@ -9,6 +9,7 @@ import { DatabaseProvider } from '../providers/db-provider';
 import Helmet from 'react-helmet';
 import { ModalProvider } from '../providers/modal-provider';
 import { setConfig } from 'react-hot-loader';
+import { UserProvider } from '../providers/user-provider';
 
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
 
@@ -41,7 +42,9 @@ const AppLayout = ({ pageName, children }) => {
 
       <DatabaseProvider>
         <AlertProvider>
-          <ModalProvider>{children}</ModalProvider>
+          <UserProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </UserProvider>
         </AlertProvider>
       </DatabaseProvider>
     </>

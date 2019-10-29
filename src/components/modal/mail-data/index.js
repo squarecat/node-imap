@@ -20,13 +20,14 @@ import IgnoreIcon from '../../ignore-icon';
 const mailDateFormat = 'Do MMM';
 const mailTimeFormat = 'HH:mm YYYY';
 
-const MailData = ({ item, openUnsubModal, onUnsubscribe }) => {
-  const { fromEmail, to, forAccount, provider } = item;
+const MailData = React.memo(({ item, openUnsubModal, onUnsubscribe }) => {
+  const { fromEmail, to, forAccount, provider } = item;  
   const [{ unsubscriptions, showAccount, accounts }] = useUser(u => ({
     unsubscriptions: u.unsubscriptions,
     showAccount: u.accounts.length > 1 && u.email !== to,
     accounts: u.accounts
   }));
+
   const [{ isIgnored }, { setIgnored }] = useIgnore({ fromEmail: fromEmail });
 
   let providerName;
@@ -60,7 +61,7 @@ const MailData = ({ item, openUnsubModal, onUnsubscribe }) => {
       </ModalBody>
     </div>
   );
-};
+});
 
 const Content = React.memo(function({
   item,
@@ -339,7 +340,6 @@ const History = React.memo(function History({
     }
     return false;
   }, [lastSeenDate, unsub]);
-  debugger;
   return (
     <>
       <table>
@@ -442,6 +442,7 @@ const ReportData = React.memo(function ReportData({
   return null;
 });
 
+MailData.whyDidYouRender = true;
 export default MailData;
 
 function reportMail(item) {

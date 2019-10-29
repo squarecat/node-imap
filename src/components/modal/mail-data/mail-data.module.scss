@@ -162,3 +162,7 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.unsub-data [data-status] {
+  display: none;
+}

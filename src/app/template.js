@@ -7,14 +7,11 @@ import Header from '../components/header';
 import React from 'react';
 import { SocketProvider } from '../providers/socket-provider';
 import useUser from '../utils/hooks/use-user';
-import { UserProvider } from '../providers/user-provider';
 
 function AppLayoutContainer({ pageName, children }) {
   return (
     <AppLayout pageName={pageName}>
-      <UserProvider>
-        <App>{children}</App>
-      </UserProvider>
+      <App>{children}</App>
     </AppLayout>
   );
 }

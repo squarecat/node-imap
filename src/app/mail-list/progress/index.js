@@ -31,7 +31,10 @@ export default ({ shown }) => {
 };
 
 function AccountProgress() {
-  const [accounts] = useUser(({ accounts }) => accounts);
+  const [accounts] = useUser(user => {
+    return user.accounts || [];
+  });
+
   const progress = useProgress();
 
   const accountProgress = Object.keys(progress).map(account => ({

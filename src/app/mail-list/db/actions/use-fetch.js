@@ -7,15 +7,19 @@ import { navigate } from 'gatsby';
 import { useContext } from 'react';
 import useUser from '../../../../utils/hooks/use-user';
 
-export default function() {
+const useFetch = function() {
   const { checkBuffer, emit } = useContext(SocketContext);
   const db = useContext(DatabaseContext);
   const { actions } = useContext(AlertContext);
 
-  const [{ accountIds, hasAccountProblem }] = useUser(u => ({
-    accountIds: u.accounts.map(a => a.id).filter(a => !a.problem),
-    hasAccountProblem: u.accounts.some(a => a.problem)
-  }));
+  const [{ accountIds, hasAccountProblem }] = useUser(u => {
+    return {
+      accountIds: u.accounts.map(a => a.id).filter(a => !a.problem),
+      hasAccountProblem: u.accounts.some(a => a.problem)
+    };
+  });
+
+  console.log('[fetch]: rerender');
 
   const fetch = useCallback(async () => {
     try {
@@ -115,22 +119,8 @@ export default function() {
       });
       await db.prefs.delete('lastFetchResult');
       // add the occurrences data if available to the next fetch
-      let occurrences = await db.occurrences.orderBy('key').toArray();
-      const occurencesFrom = occurrences.map(oc => oc.key.match('<(.*)>')[1]);
-      // and add all the mail in the mail list that is not in the
-      // occurrences (because that means it's got an occurrence of 1)
-      const singleOccurrence = await db.mail
-        .where('fromEmail')
-        .noneOf(occurencesFrom)
-        .toArray();
-      occurrences = [
-        ...occurrences,
-        singleOccurrence.map(so => ({
-          count: 1,
-          key: `<${so.fromEmail}>-${so.to}`,
-          lastSeen: so.date
-        }))
-      ];
+      let occurrences = await db.mail.orderBy('key').uniqueKeys();
+
       if (occurrences.length) {
         fetchParams = {
           ...fetchParams,
@@ -147,11 +137,14 @@ export default function() {
     actions,
     checkBuffer,
     db.mail,
-    db.occurrences,
     db.prefs,
     emit,
     hasAccountProblem
   ]);
 
   return fetch;
-}
+};
+
+useFetch.whyDidYouRender = true;
+
+export default useFetch;
