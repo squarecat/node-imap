@@ -1,7 +1,13 @@
 import './profile.module.scss';
 
 import { GoogleIcon, KeyIcon, MicrosoftIcon } from '../../../components/icons';
-import React, { useCallback, useContext, useState, useMemo } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useState,
+  useMemo,
+  useEffect
+} from 'react';
 import { TextImportant, TextLink } from '../../../components/text';
 import { TwitterIcon } from '../../../components/icons';
 
@@ -26,6 +32,7 @@ import treeImg from '../../../assets/climate/tree.png';
 import envelopeImg from '../../../assets/open-envelope-love.png';
 import { openTweetIntent } from '../../../utils/tweet';
 import { Link } from 'gatsby';
+import useAsync from 'react-use/lib/useAsync';
 
 export default () => {
   const [{ email, organisationAdmin, loginProvider, organisation }] = useUser(
@@ -73,6 +80,20 @@ function Stats() {
       referralCode: u.referralCode
     })
   );
+
+  const { loading: milestoneLoading, value: milestoneValue } = useAsync(
+    getMilestone
+  );
+
+  const referralContent = useMemo(() => {
+    if (milestoneLoading) return null;
+    return (
+      <p styleName="helper">
+        Each friend that signs up via your referral link will earn you{' '}
+        {milestoneValue.credits} extra credits
+      </p>
+    );
+  }, [milestoneLoading, milestoneValue]);
 
   const carbonSaved = useMemo(
     () => formatWeight(unsubCount * CARBON_PER_EMAIL),
@@ -149,12 +170,19 @@ Join me and get 5 extra unsubscribe credits for free! 🙌leavemealone.app/r/${r
         </div>
 
         <Button compact basic long onClick={onClickTweet}>
-          <TwitterIcon width="16" height="16" /> Share with your friends for
-          more free credits!
+          <TwitterIcon width="16" height="16" /> Share with your friends!
         </Button>
+        {referralContent}
       </>
     );
-  }, [accountsCount, carbonSaved, creditsEarned, onClickTweet, unsubCount]);
+  }, [
+    accountsCount,
+    carbonSaved,
+    creditsEarned,
+    onClickTweet,
+    referralContent,
+    unsubCount
+  ]);
 
   return (
     <div styleName="section">
@@ -336,4 +364,8 @@ async function setTweeted() {
     method: 'PATCH',
     body: JSON.stringify({ op: 'add', value: 'tweet' })
   });
+}
+
+async function getMilestone() {
+  return request('/api/milestones/referralSignUp');
 }
