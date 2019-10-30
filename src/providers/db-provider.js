@@ -31,12 +31,6 @@ db.version(2)
       tx.prefs.clear(),
       tx.queue.clear()
     ]);
-  })
-  .then(() => {
-    console.log('[db]: upgrade finished');
-  })
-  .catch(err => {
-    console.error(err);
   });
 
 db.open();
