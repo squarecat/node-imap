@@ -205,6 +205,8 @@ const UserAuth = React.memo(function UserAuth({ children }) {
 
 export default Auth;
 
+UserAuth.whyDidYouRender = true;
+
 function useBrowserSupported(db) {
   const [state, setState] = useState({
     testingBrowser: true,

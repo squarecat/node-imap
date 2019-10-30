@@ -4,8 +4,8 @@ import AppLayout from '../layouts/app-layout';
 import Auth from '../components/auth';
 import ErrorBoundary from '../components/error-boundary';
 import Header from '../components/header';
-import React, { useRef } from 'react';
-import { SocketProvider } from '../providers/socket-provider';
+import React, { useMemo } from 'react';
+
 import useUser from '../utils/hooks/use-user';
 
 function AppLayoutContainer({ pageName, children }) {
@@ -16,24 +16,25 @@ function AppLayoutContainer({ pageName, children }) {
   );
 }
 
-function App({ children }) {
+const App = React.memo(({ children }) => {
   const [isLoaded] = useUser(u => u.loaded);
-  const mainRef = useRef(null);
+
+  const content = useMemo(() => {
+    return (
+      <main role="main" styleName="app-content">
+        {isLoaded ? children : null}
+      </main>
+    );
+  }, [children, isLoaded]);
 
   return (
     <>
       <Header loaded={isLoaded} />
       <Auth loaded={isLoaded}>
-        <SocketProvider>
-          <ErrorBoundary>
-            <main role="main" ref={mainRef} styleName="app-content">
-              {isLoaded ? children : null}
-            </main>
-          </ErrorBoundary>
-        </SocketProvider>
+        <ErrorBoundary>{content}</ErrorBoundary>
       </Auth>
     </>
   );
-}
+});
 
 export default AppLayoutContainer;

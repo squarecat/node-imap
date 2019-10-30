@@ -22,7 +22,6 @@ export default function() {
     async mailItem => {
       try {
         console.debug(`[db]: unsubscribing from ${mailItem.id}`);
-
         const { allowed, reason } = canUnsubscribe({
           credits,
           organisationId,

@@ -5,49 +5,39 @@ import React, { useCallback, useContext, useEffect } from 'react';
 import CreditModal from '../../modal/credits';
 import { ModalContext } from '../../../providers/modal-provider';
 import useUser from '../../../utils/hooks/use-user';
+import { SocketContext } from '../../../providers/socket-provider';
 
 const Credits = () => {
   const { open: openModal } = useContext(ModalContext);
-  const [
-    { id, token, credits },
-    { incrementCredits: incrementUserCredits }
-  ] = useUser(({ id, token, billing }) => ({
-    id,
-    token,
-    credits: billing ? billing.credits : 0
-  }));
+  const { emit, socket, isConnected } = useContext(SocketContext);
 
-  // const { isConnected, socket, emit } = useSocket({
-  //   token,
-  //   userId: id
-  // });
+  const [credits, { incrementCredits: incrementUserCredits }] = useUser(
+    ({ billing }) => (billing ? billing.credits : 0)
+  );
 
-  // const update = useCallback(
-  //   async amount => {
-  //     let frameRequestId;
+  const update = useCallback(
+    async amount => {
+      let frameRequestId;
+      // remove jank
+      frameRequestId = requestAnimationFrame(() => {
+        incrementUserCredits(amount);
+      });
+      return () => cancelAnimationFrame(frameRequestId);
+    },
+    [incrementUserCredits]
+  );
 
-  //     console.log('update-credits', amount);
-  //     // remove jank
-  //     frameRequestId = requestAnimationFrame(() => {
-  //       incrementUserCredits(amount);
-  //     });
-
-  //     return () => cancelAnimationFrame(frameRequestId);
-  //   },
-  //   [incrementUserCredits]
-  // );
-
-  // useEffect(() => {
-  //   if (isConnected) {
-  //     socket.on('update-credits', update);
-  //     emit('fetch-credits');
-  //   }
-  //   return () => {
-  //     if (socket) {
-  //       socket.off('update-credits', update);
-  //     }
-  //   };
-  // }, [isConnected, emit, credits, incrementUserCredits, socket, update]);
+  useEffect(() => {
+    if (socket && isConnected) {
+      socket.on('update-credits', update);
+      emit('fetch-credits');
+    }
+    return () => {
+      if (socket) {
+        socket.off('update-credits', update);
+      }
+    };
+  }, [isConnected, emit, credits, incrementUserCredits, socket, update]);
 
   const onClick = useCallback(() => {
     openModal(<CreditModal credits={credits} />);

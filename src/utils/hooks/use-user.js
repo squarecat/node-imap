@@ -2,7 +2,7 @@ import { UserContext } from '../../providers/user-provider';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import _isEqual from 'lodash.isequal';
 
-export default (reduce = a => a) => {
+export default (reduce = a => a, deps = []) => {
   const context = useContext(UserContext);
   const [user, dispatch] = context;
   const [state, setState] = useState(reduce(user) || null);
@@ -13,7 +13,7 @@ export default (reduce = a => a) => {
     if (!_isEqual(props, state)) {
       setState(props);
     }
-  }, [reduce, state, user]);
+  }, [reduce, state, user, deps]);
 
   const actions = useMemo(() => {
     return Object.keys(functions).reduce((out, name) => {

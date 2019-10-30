@@ -11,6 +11,8 @@ import { ModalProvider } from '../providers/modal-provider';
 import { setConfig } from 'react-hot-loader';
 import { UserProvider } from '../providers/user-provider';
 
+import { SocketProvider } from '../providers/socket-provider';
+
 const faviconUrl = `${process.env.CDN_URL}/images/meta/favicon.png`;
 
 setConfig({ pureSFC: true });
@@ -47,7 +49,9 @@ const AppLayout = ({ pageName, children }) => {
       <DatabaseProvider>
         <AlertProvider>
           <UserProvider>
-            <ModalProvider>{children}</ModalProvider>
+            <SocketProvider>
+              <ModalProvider>{children}</ModalProvider>
+            </SocketProvider>
           </UserProvider>
         </AlertProvider>
       </DatabaseProvider>
