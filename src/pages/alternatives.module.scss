@@ -248,6 +248,14 @@ tbody {
   }
 }
 
+.helper-text {
+  font-size: 12px;
+  opacity: 0.8;
+  margin: 10px 0;
+  font-style: italic;
+  display: none;
+}
+
 .all-comparisons {
   max-width: 1400px;
 
@@ -273,6 +281,9 @@ tbody {
       box-shadow: inset -5px 0 5px -5px $color-border-red,
         inset 5px 0 5px -5px $color-border-red;
       border-top: 1px solid $color-border-red;
+    }
+    .helper-text {
+      display: block;
     }
   }
 }
