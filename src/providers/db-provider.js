@@ -24,54 +24,16 @@ db.version(2)
     queue: '++id'
   })
   .upgrade(tx => {
-    let updated = 0;
-    console.log('upgrade: started db upgrade');
-    tx.occurrences
-      .toArray()
-      .then(occurrences => {
-        return tx.mail.toCollection().modify(function(mail) {
-          const key = `<${mail.fromEmail}>-${mail.to}`;
-          const occ = occurrences.find(o => o.key === key);
-          updated++;
-          this.value = {
-            key,
-            forAccount: mail.forAccount,
-            provider: mail.provider,
-            id: mail.id,
-            from: mail.from,
-            to: mail.to,
-            unsubscribeLink: mail.unsubscribeLink,
-            unsubscribeMailTo: mail.unsubscribeMailTo,
-            isTrash: mail.isTrash,
-            isSpam: mail.isSpam,
-            score: mail.score,
-            subscribed: mail.subscribed,
-            fromEmail: mail.fromEmail,
-            fromName: mail.fromName,
-            isLoading: mail.isLoading,
-            error: mail.error,
-            status: mail.status,
-            occurrenceCount: occ ? occ.count : 1,
-            lastSeenDate: mail.date,
-            __migratedFrom: 'v1',
-            occurrences: [
-              {
-                subject: mail.subject,
-                snippet: mail.snippet,
-                date: mail.date,
-                id: mail.id
-              }
-            ]
-          };
-        });
-      })
-      .then(() => {
-        console.log(`updated ${updated} records`);
-        tx.delete('occurrences');
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    return Promise.all([
+      tx.mail.clear(),
+      tx.scores.clear(),
+      tx.occurrences.clear(),
+      tx.prefs.clear(),
+      tx.queue.clear()
+    ]);
+  })
+  .catch(err => {
+    console.error(err);
   });
 
 db.open();
