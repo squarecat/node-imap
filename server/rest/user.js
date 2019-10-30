@@ -95,7 +95,11 @@ export default app => {
         }, {}),
         requiresTwoFactorAuth,
         token,
-        features: user.features || []
+        features: user.features || [],
+        creditsEarned: user.activity.reduce(
+          (out, a) => out + (a.rewardCredits || 0),
+          0
+        )
       };
       if (isBeta) {
         response = {

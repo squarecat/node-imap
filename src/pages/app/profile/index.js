@@ -1,8 +1,9 @@
 import './profile.module.scss';
 
 import { GoogleIcon, KeyIcon, MicrosoftIcon } from '../../../components/icons';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useMemo } from 'react';
 import { TextImportant, TextLink } from '../../../components/text';
+import { TwitterIcon } from '../../../components/icons';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
@@ -14,17 +15,27 @@ import { getBasicError } from '../../../utils/errors';
 import { openChat } from '../../../utils/chat';
 import request from '../../../utils/request';
 import useUser from '../../../utils/hooks/use-user';
+import {
+  CARBON_PER_EMAIL,
+  formatWeight,
+  formatNumber
+} from '../../../utils/climate-stats';
+import broomImg from '../../../assets/enterprise/broom.png';
+import rewardsImg from '../../../assets/onboarding/reward.png';
+import treeImg from '../../../assets/climate/tree.png';
+import envelopeImg from '../../../assets/open-envelope-love.png';
+import { openTweetIntent } from '../../../utils/tweet';
+import { Link } from 'gatsby';
 
 export default () => {
-  const [
-    { email, unsubCount, organisationAdmin, loginProvider, organisation }
-  ] = useUser(u => ({
-    email: u.email,
-    organisationAdmin: u.organisationAdmin,
-    loginProvider: u.loginProvider,
-    unsubCount: u.unsubCount,
-    organisation: u.organisation
-  }));
+  const [{ email, organisationAdmin, loginProvider, organisation }] = useUser(
+    u => ({
+      email: u.email,
+      organisationAdmin: u.organisationAdmin,
+      loginProvider: u.loginProvider,
+      organisation: u.organisation
+    })
+  );
   return (
     <ProfileLayout pageName="Profile">
       <div styleName="section">
@@ -37,11 +48,13 @@ export default () => {
             <TextImportant>{email}</TextImportant>
           </span>
         </p>
-        <p>
+        {/* <p>
           You have unsubscribed from a total of{' '}
           <TextImportant>{unsubCount}</TextImportant> emails.
-        </p>
+        </p> */}
       </div>
+
+      <Stats />
 
       <DangerZone
         organisationAdmin={organisationAdmin}
@@ -50,6 +63,106 @@ export default () => {
     </ProfileLayout>
   );
 };
+
+function Stats() {
+  const [{ unsubCount, creditsEarned, accountsCount, referralCode }] = useUser(
+    u => ({
+      unsubCount: u.unsubCount,
+      creditsEarned: u.creditsEarned,
+      accountsCount: u.accounts.length,
+      referralCode: u.referralCode
+    })
+  );
+
+  const carbonSaved = useMemo(
+    () => formatWeight(unsubCount * CARBON_PER_EMAIL),
+    [unsubCount]
+  );
+
+  const onClickTweet = useCallback(() => {
+    const tweetText = `My unsubscribing achievements on @LeaveMeAloneApp:‍%0a
+💌 ${unsubCount} mailing lists unsubscribed from%0a
+🧹 ${accountsCount} email addresses cleaned%0a
+💰 ${creditsEarned} free credits earned%0a
+🌳 ${carbonSaved} CO2 saved%0a
+%0a
+Join me and get 5 extra unsubscribe credits for free! 🙌leavemealone.app/r/${referralCode}`;
+    try {
+      openTweetIntent(tweetText);
+      setTimeout(() => {
+        setTweeted();
+      }, 5000);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [accountsCount, carbonSaved, creditsEarned, referralCode, unsubCount]);
+
+  const content = useMemo(() => {
+    if (unsubCount <= 0) {
+      <>
+        <p>You haven't unsubscribed from any mailing lists yet.</p>
+        <Link to="/app">
+          Start cleaning your inboxes to see your achievements here!
+        </Link>
+      </>;
+    }
+    return (
+      <>
+        <p>
+          Congratulations, this is really awesome! Don't forget to come back to
+          keep your mailboxes clutter free.
+        </p>
+        <div styleName="boxes">
+          <div styleName="box">
+            <div styleName="box-img">
+              <img src={envelopeImg} alt="envelope with a heart image" />
+            </div>
+            <span styleName="box-value">{formatNumber(unsubCount)}</span>
+            <span styleName="box-label">Mailing lists unsubscribed from</span>
+          </div>
+          <div styleName="box">
+            <div styleName="box-img">
+              <img alt="two coins falling into a hand image" src={rewardsImg} />
+            </div>
+            <span styleName="box-value">{formatNumber(creditsEarned)}</span>
+            <span styleName="box-label">Free credits earned</span>
+          </div>
+          <div styleName="box">
+            <div styleName="box-img">
+              <img alt="deciduous tree in a cloud" src={treeImg} />
+            </div>
+            <span styleName="box-value">{carbonSaved}</span>
+            <span styleName="box-label">
+              <span>
+                CO<sub>2</sub>
+              </span>{' '}
+              saved
+            </span>
+          </div>
+          <div styleName="box">
+            <div styleName="box-img">
+              <img alt="broom sweeping image" src={broomImg} />
+            </div>
+            <span styleName="box-value">{accountsCount}</span>
+            <span styleName="box-label">Email addresses cleaned</span>
+          </div>
+        </div>
+
+        <Button compact basic long onClick={onClickTweet}>
+          <TwitterIcon width="16" height="16" /> Share with your friends for
+          more free credits!
+        </Button>
+      </>
+    );
+  }, [accountsCount, carbonSaved, creditsEarned, onClickTweet, unsubCount]);
+
+  return (
+    <div styleName="section">
+      <h2>Achievements</h2>
+      {content}
+    </div>
+  );
+}
 
 function DangerZone({ organisationAdmin, organisation }) {
   const [loading, toggleLoading] = useState(false);
@@ -216,4 +329,11 @@ function getProviderIcon(provider) {
     return <KeyIcon inline width="16" height="16" style={{ top: '-1px' }} />;
   if (provider === 'google') return <GoogleIcon width="16" height="16" />;
   if (provider === 'outlook') return <MicrosoftIcon width="16" height="16" />;
+}
+
+async function setTweeted() {
+  return request('/api/me/activity', {
+    method: 'PATCH',
+    body: JSON.stringify({ op: 'add', value: 'tweet' })
+  });
 }
