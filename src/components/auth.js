@@ -20,11 +20,15 @@ import v4 from 'uuid/v4';
 
 import useUser from '../utils/hooks/use-user';
 
-function Auth({ children }) {
-  return <UserAuth>{children}</UserAuth>;
+function Auth({ children, showLoading }) {
+  return <UserAuth showLoading={showLoading}>{children}</UserAuth>;
 }
 
-const UserAuth = React.memo(function UserAuth({ children }) {
+const UserAuth = React.memo(function UserAuth({
+  children,
+  showLoading = true
+}) {
+  console.log('[loading]: show loading', showLoading);
   const db = useContext(DatabaseContext);
 
   const [
@@ -166,10 +170,24 @@ const UserAuth = React.memo(function UserAuth({ children }) {
       // check db is this users data
       checkDb();
     }
-  }, [isUserLoaded, hasCompletedOnboarding, organisationAdmin, organisationId, hasCompletedOrganisationOnboarding, openModal, checkDb, accounts, teamAdminOnboarding, userOnboarding, teamMemberOnboarding, browserUuid, testingBrowser]);
+  }, [
+    isUserLoaded,
+    hasCompletedOnboarding,
+    organisationAdmin,
+    organisationId,
+    hasCompletedOrganisationOnboarding,
+    openModal,
+    checkDb,
+    accounts,
+    teamAdminOnboarding,
+    userOnboarding,
+    teamMemberOnboarding,
+    browserUuid,
+    testingBrowser
+  ]);
 
   const content = useMemo(() => {
-    if (!isLoaded) return null;
+    if (!isLoaded && showLoading) return null;
     if (
       !teamAdminOnboarding &&
       !teamMemberOnboarding &&
@@ -182,6 +200,7 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     }
   }, [
     isLoaded,
+    showLoading,
     teamAdminOnboarding,
     teamMemberOnboarding,
     userOnboarding,
@@ -195,9 +214,16 @@ const UserAuth = React.memo(function UserAuth({ children }) {
     console.log('[auth]: not loaded yet', id);
   }
 
+  const showLoadStyles = !isLoaded && showLoading;
+  console.log(
+    '[loading]: showloadstyles',
+    isLoaded,
+    showLoading,
+    showLoadStyles
+  );
   return (
-    <div styleName={`auth-loading ${!isLoaded ? '' : 'loaded'}`}>
-      <Loading loaded={isLoaded} />
+    <div styleName={`auth-loading ${showLoadStyles ? '' : 'loaded'}`}>
+      <Loading loaded={!showLoadStyles} />
       <div styleName="loaded-content">{content}</div>
     </div>
   );
