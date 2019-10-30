@@ -9,8 +9,6 @@ import SettingsDropdown from './settings';
 import logo from '../../assets/logo.png';
 import useUser from '../../utils/hooks/use-user';
 
-// const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
-
 const Header = React.memo(({ loaded }) => {
   const [{ hasOrganisation, isUserLoaded }] = useUser(u => ({
     hasOrganisation: !!u.organisationId,

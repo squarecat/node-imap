@@ -43,6 +43,7 @@ import request from '../utils/request';
 import useAsync from 'react-use/lib/useAsync';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import yahooImg from '../assets/providers/imap/yahoo-logo-white.png';
+import PublicationQuote from '../components/landing/testimonial/publication-quote';
 
 const faker = require('../vendor/faker/locale/en');
 
@@ -119,7 +120,7 @@ const IndexPage = ({ data }) => {
       <p className={`join-text ${statsLoading ? 'join-text-loading' : ''}`}>
         Join <span className="join-stat">{userCount} users</span> who have
         unsubscribed from a total of{' '}
-        <span className="join-stat">{unsubCount} spam</span> emails
+        <span className="join-stat">{unsubCount} unwanted</span> emails
       </p>
     );
   }, [statsData, statsError, statsLoading]);
@@ -321,12 +322,12 @@ const IndexPage = ({ data }) => {
                 <h3>Quickly see the worst spammers</h3>
                 <p>
                   We rank each of your subscriptions based on our unique
-                  Subscriber Score, so you can quickly tell if it's worth
+                  Subscription Score, so you can quickly tell if it's worth
                   hanging on to.
                 </p>
                 <p className="image-section-link">
-                  <TextLink as="link" linkTo="/security#subscriber-score">
-                    <span>Learn more about Subscriber Score</span>{' '}
+                  <TextLink as="link" linkTo="/security#subscription-score">
+                    <span>Learn more about Subscription Score</span>{' '}
                     <ArrowIcon inline />
                   </TextLink>
                 </p>
@@ -400,12 +401,20 @@ const IndexPage = ({ data }) => {
                 covered. This includes {OAUTH_PROVIDERS}.
               </p>
               <div className="provider-logos">
-                <TextLink undecorated as="link" linkTo="/providers/google">
+                <TextLink
+                  undecorated
+                  as="link"
+                  linkTo="/unsubscribe-gmail-g-suite"
+                >
                   <span className="provider-logo">
                     <GoogleIcon width="60" height="60" />
                   </span>
                 </TextLink>
-                <TextLink undecorated as="link" linkTo="/providers/microsoft">
+                <TextLink
+                  undecorated
+                  as="link"
+                  linkTo="/unsubscribe-outlook-hotmail"
+                >
                   <span className="provider-logo">
                     <MicrosoftIcon width="60" height="60" />
                   </span>
@@ -415,7 +424,11 @@ const IndexPage = ({ data }) => {
                 <p>
                   Or you can also connect {IMAP_PROVIDERS} that work with IMAP.
                 </p>
-                <TextLink undecorated as="link" linkTo="/providers/imap">
+                <TextLink
+                  undecorated
+                  as="link"
+                  linkTo="/unsubscribe-imap-fastmail-icloud"
+                >
                   <div className="provider-logos">
                     <span className="provider-logo imap" title="Fastmail">
                       <img src={fastmailImg} alt="Fastmail logo" />
@@ -515,9 +528,10 @@ const IndexPage = ({ data }) => {
               className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
               style={{ margin: '50px auto' }}
             >
-              Get Started For Free
+              Clean My Inbox
             </TextLink>
           </div>
+          <PublicationQuote centered publication="lifehacker" />
         </div>
         <Footer />
       </div>

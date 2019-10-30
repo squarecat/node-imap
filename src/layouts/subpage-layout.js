@@ -9,6 +9,7 @@ export default ({
   title,
   description,
   slug,
+  imgUrl,
   children,
   withContent = true,
   ...visProps
@@ -17,7 +18,7 @@ export default ({
     [styles.centered]: visProps.centered
   });
   return (
-    <Layout title={title} description={description} slug={slug}>
+    <Layout title={title} description={description} slug={slug} imgUrl={imgUrl}>
       <Header inverted />
       <div className={classes}>
         {withContent ? (

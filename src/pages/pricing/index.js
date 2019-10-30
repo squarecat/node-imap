@@ -223,7 +223,7 @@ export default () => {
         <p>
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
-          power our Subscriber Score algorithm. You can read more about this and
+          power our Subscription Score algorithm. You can read more about this and
           how we manage all our data{' '}
           <TextLink as="link" linkTo="/security">
             here

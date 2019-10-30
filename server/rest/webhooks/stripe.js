@@ -69,7 +69,7 @@ export default app => {
 
       if (type === 'customer.subscription.deleted') {
         const { request, object } = data;
-        const { subscription: subscriptionId } = object;
+        const { id: subscriptionId } = object;
         return handleSubscriptionDeleted({
           subscriptionId,
           request

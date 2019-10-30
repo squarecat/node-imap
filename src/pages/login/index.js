@@ -22,7 +22,6 @@ import { getAuthError } from '../../utils/errors';
 const logoUrl = `${process.env.CDN_URL}/images/meta/logo.png`;
 
 const isMaintenanceMode = false;
-let error;
 
 function resetUrlParams(action, teams) {
   if (typeof window !== 'undefined') {
@@ -36,7 +35,6 @@ function resetUrlParams(action, teams) {
     }
     window.history.replaceState(newState, '', url);
   }
-  error = null;
 }
 
 const selectCardHeight = 690;
@@ -94,7 +92,7 @@ const initialState = {
   email: '',
   resetCode: '',
   teams: false,
-  error,
+  error: false,
   existingProvider: null
 };
 
@@ -177,7 +175,7 @@ const LoginPage = React.memo(
         height = windowHeight + 50;
       }
       return height;
-    }, [state.error, state.step]);
+    }, [state.error, state.providerIntent, state.step]);
 
     const classes = cx('hold-onto-your-butts-we-are-logging-in', {
       errored: !!state.error
@@ -273,7 +271,7 @@ const LoginPage = React.memo(
               />
             </div>
             {switchContent}
-            {getError(error)}
+            {getError(state.error)}
             <p styleName="notice">
               We only ask for the permissions we need to operate - read more{' '}
               <TextLink href="/security" target="_">
@@ -479,7 +477,15 @@ const LoginPage = React.memo(
           </div>
         </>
       );
-    }, [action, register, state.email, state.existingProvider, state.step]);
+    }, [
+      action,
+      register,
+      state.email,
+      state.error,
+      state.existingProvider,
+      state.step,
+      state.teams
+    ]);
 
     return (
       <Layout title={action} slug={register ? '/signup' : '/login'}>
@@ -573,7 +579,7 @@ const AuthButtons = React.memo(({ dispatch, action, hideOther }) => {
     }
 
     return buttons.map(b => <span key={b.type}>{b.el}</span>);
-  }, [action, dispatch]);
+  }, [action, dispatch, hideOther]);
   // let content = null;
   // if (previousProvider) {
   //   content = (

@@ -68,7 +68,7 @@ function SendersPage({ data }) {
           </p>
           <div styleName="join-container">
             <a href="/signup" className={`beam-me-up-cta`}>
-              Get Started for FREE
+              Start Unsubscribing
             </a>
             <p styleName="join-text">
               Join <TextImportant>{unsubscribes}</TextImportant> of our users
@@ -141,7 +141,7 @@ function SendersPage({ data }) {
             </h3>
             <p>
               Quickly determine the quality of emails and see which senders spam
-              you the most using our ranking system - Subscriber Score.{' '}
+              you the most using our ranking system - Subscription Score.{' '}
               <TextImportant>{percentage}%</TextImportant> of Leave Me Alone
               users unsubscribe from {label} emails.
             </p>

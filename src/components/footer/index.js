@@ -1,6 +1,12 @@
 import './footer.module.scss';
 
-import { FacebookIcon, LinkedInIcon, MailIcon, TwitterIcon } from '../icons';
+import {
+  FacebookIcon,
+  LinkedInIcon,
+  MailIcon,
+  TwitterIcon,
+  Arrow as ArrowIcon
+} from '../icons';
 import { Link, StaticQuery, graphql } from 'gatsby';
 
 import Img from 'gatsby-image';
@@ -75,7 +81,7 @@ export default () => (
                 <TextLink href="/save-the-planet">Save the planet</TextLink>
               </li>
             </ul>
-            <ul styleName="footer-nav">
+            {/* <ul styleName="footer-nav">
               <h4 styleName="footer-nav-title">Privacy</h4>
               <li>
                 <TextLink href="/security">Security</TextLink>
@@ -86,7 +92,28 @@ export default () => (
               <li>
                 <TextLink href="/terms">Terms of use</TextLink>
               </li>
+            </ul> */}
+
+            <ul styleName="footer-nav">
+              <h4 styleName="footer-nav-title">Compare</h4>
+              <li>
+                <TextLink href="/unroll-me-alternative">Unroll.Me</TextLink>
+              </li>
+              <li>
+                <TextLink href="/unsubscriber-alternative">
+                  Unsubscriber
+                </TextLink>
+              </li>
+              <li>
+                <TextLink href="/cleanfox-alternative">Cleanfox</TextLink>
+              </li>
+              <li style={{ whiteSpace: 'nowrap' }}>
+                <TextLink href="/leave-me-alone-alternatives">
+                  All comparisons <ArrowIcon inline width="12" height="12" />
+                </TextLink>
+              </li>
             </ul>
+
             <ul styleName="footer-nav">
               <h4 styleName="footer-nav-title">Support</h4>
               <li>
@@ -124,13 +151,22 @@ export default () => (
             <ul styleName="footer-nav">
               <h4 styleName="footer-nav-title">Works With</h4>
               <li>
-                <TextLink href="/providers/google">Google</TextLink>
+                <TextLink href="/unsubscribe-gmail-g-suite">Google</TextLink>
               </li>
               <li>
-                <TextLink href="/providers/microsoft">Microsoft</TextLink>
+                <TextLink href="/unsubscribe-outlook-hotmail">
+                  Microsoft
+                </TextLink>
               </li>
               <li>
-                <TextLink href="/providers/imap">IMAP</TextLink>
+                <TextLink href="/unsubscribe-imap-fastmail-icloud">
+                  IMAP
+                </TextLink>
+              </li>
+              <li style={{ whiteSpace: 'nowrap' }}>
+                <TextLink href="/supported-email-providers">
+                  All providers <ArrowIcon inline width="12" height="12" />
+                </TextLink>
               </li>
             </ul>
             <ul styleName="footer-nav">
@@ -165,6 +201,20 @@ export default () => (
                 <TextLink target="_" href="http://leavemealone.releasepage.co">
                   Releases
                 </TextLink>
+              </li>
+            </ul>
+          </div>
+
+          <div styleName="footer-bottom">
+            <ul styleName="footer-privacy">
+              <li>
+                <TextLink href="/security">Security</TextLink>
+              </li>
+              <li>
+                <TextLink href="/privacy">Privacy</TextLink>
+              </li>
+              <li>
+                <TextLink href="/terms">Terms</TextLink>
               </li>
             </ul>
           </div>

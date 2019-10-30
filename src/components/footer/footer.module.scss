@@ -1,6 +1,8 @@
 @import '../../styles/common/colors.scss';
 @import '../header/header.module.scss';
 
+$footer-link-color: #eae8e8;
+
 .footer {
   display: flex;
   flex-direction: column;
@@ -15,13 +17,13 @@
   }
   a,
   a:hover {
-    color: #eae8e8;
+    color: $footer-link-color;
     border-bottom-color: transparent;
   }
 
   a:hover {
     opacity: 1;
-    border-bottom-color: #eae8e8;
+    border-bottom-color: $footer-link-color;
   }
 
   @media (max-width: 700px) {
@@ -46,7 +48,7 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #eae8e8;
+  border-bottom: 1px solid $footer-link-color;
 }
 
 .footer-links {
@@ -66,10 +68,10 @@
 
 .footer-title {
   @extend .header-title;
-  color: #eae8e8;
+  color: $footer-link-color;
 
   &:hover {
-    color: #eae8e8;
+    color: $footer-link-color;
   }
 }
 
@@ -83,7 +85,7 @@
   flex: 1;
   margin-bottom: 2rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     min-width: 50%;
   }
 }
@@ -127,17 +129,41 @@
 }
 
 .footer-social li svg {
-  color: #eae8e8;
+  color: $footer-link-color;
 }
 .footer-social li:hover svg {
-  color: #eae8e8;
+  color: $footer-link-color;
+}
+
+.footer-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+
+  li:nth-child(1):after,
+  li:nth-child(2):after {
+    content: '•';
+    color: $footer-link-color;
+    position: relative;
+    left: 10px;
+  }
+  li:nth-child(1) a {
+    color: $color-yellow;
+  }
+  li:nth-child(2) a {
+    color: $color-purple;
+  }
+  li:nth-child(3) a {
+    color: $color-pink;
+  }
 }
 
 .subpage {
 }
 
 .footer-nav-title {
-  color: #eae8e8;
+  color: $footer-link-color;
   opacity: 0.5;
   padding: 10px;
   margin: 0 0 15px 0;
@@ -148,20 +174,20 @@
 .made-by,
 p.made-by {
   text-align: center;
-  color: #eae8e8;
+  color: $footer-link-color;
   padding: 10px 0;
   a {
     opacity: 0.9;
   }
   a,
   a:hover {
-    color: #eae8e8;
+    color: $footer-link-color;
     border-bottom-color: transparent;
   }
 
   a:hover {
     opacity: 1;
-    border-bottom-color: #eae8e8;
+    border-bottom-color: $footer-link-color;
   }
 }
 
@@ -169,4 +195,10 @@ p.made-by {
   height: 40px;
   display: flex;
   align-items: center;
+}
+
+.separator {
+  color: $footer-link-color;
+  margin: 10px;
+  display: block;
 }
