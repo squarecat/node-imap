@@ -8,15 +8,17 @@ import React, { useMemo } from 'react';
 
 import useUser from '../utils/hooks/use-user';
 
-function AppLayoutContainer({ pageName, children }) {
+function AppLayoutContainer({ pageName, children, showLoading = true }) {
   return (
     <AppLayout pageName={pageName}>
-      <App pageName={pageName}>{children}</App>
+      <App pageName={pageName} showLoading={showLoading}>
+        {children}
+      </App>
     </AppLayout>
   );
 }
 
-const App = React.memo(({ children, pageName }) => {
+const App = React.memo(({ children, pageName, showLoading }) => {
   const [isLoaded] = useUser(u => u.loaded);
   console.log(pageName);
 
@@ -27,12 +29,16 @@ const App = React.memo(({ children, pageName }) => {
       </main>
     );
   }, [children, isLoaded]);
+  let doShowLoading = showLoading;
+  if (pageName) {
+    doShowLoading = false;
+  }
 
-  const showLoading = !pageName;
+  // const showLoading = pageName ? !pageName : showLoading;
   return (
     <>
-      <Header loaded={isLoaded} />
-      <Auth showLoading={showLoading} loaded={isLoaded}>
+      <Header loaded={!doShowLoading} />
+      <Auth showLoading={doShowLoading} loaded={isLoaded}>
         <ErrorBoundary>{content}</ErrorBoundary>
       </Auth>
     </>

@@ -30,9 +30,10 @@ function Content() {
   );
 }
 
-export default function App() {
+export default function App({ location }) {
+  const { showLoading } = location.state ? location.state : {};
   return (
-    <Template>
+    <Template showLoading={showLoading}>
       <Content />
     </Template>
   );

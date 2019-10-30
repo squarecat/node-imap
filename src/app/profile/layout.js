@@ -34,7 +34,9 @@ function Page({ children, pageName }) {
       <div styleName="profile-container">
         <div styleName="profile-nav-container">
           <p styleName="profile-back">
-            <Link to="/app">&lt; Back to mail</Link>
+            <Link to="/app" state={{ showLoading: false }}>
+              &lt; Back to mail
+            </Link>
           </p>
           <ul styleName="profile-nav">
             <li>
