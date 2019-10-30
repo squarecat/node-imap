@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, useState, useRef } from 'react';
-import { Transition, TransitionGroup } from 'react-transition-group';
+import React, { useReducer, useEffect, useRef, useCallback } from 'react';
+
 import { HotKeys } from 'react-hotkeys';
 
 import MailItem from '../item';
-import _after from 'lodash.after';
+
 import { getTransitionClasses } from '../../../utils/transition';
 import styles from './list.module.scss';
 
@@ -12,14 +12,36 @@ const keyMap = {
   PREV_ITEM: 'up'
 };
 
+const loadReducer = (state, action) => {
+  if (action.type === 'reset') {
+    return {
+      finished: false,
+      loadedItems: 0,
+      totalItems: action.data
+    };
+  }
+  if (action.type === 'load-item') {
+    const loadedItems = state.loadedItems + 1;
+    return {
+      ...state,
+      loadedItems,
+      finished: loadedItems === state.totalItems
+    };
+  }
+  return state;
+};
+
 function MailList({ mail }) {
-  const [loading, setLoading] = useState(true);
   const tableRef = useRef(null);
-  const setLoad = useCallback(() => {
-    if (loading) {
-      setLoading(false);
-    }
-  }, [loading]);
+  const [loadedState, dispatch] = useReducer(loadReducer, {
+    finished: false,
+    itemCount: 0,
+    totalItems: mail.length
+  });
+
+  useEffect(() => {
+    dispatch({ type: 'reset', data: mail.length });
+  }, [mail]);
 
   const handlers = {
     NEXT_ITEM: e => {
@@ -72,41 +94,27 @@ function MailList({ mail }) {
     }
   };
 
-  const onLoad = useMemo(() => {
-    return _after(mail.length, setLoad);
-  }, [mail, setLoad]);
+  const onLoad = useCallback(() => {
+    dispatch({ type: 'load-item' });
+  }, [dispatch]);
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <table styleName="list" ref={tableRef} data-active={0} aria-live="off">
         <tbody>
-          <TransitionGroup component={null}>
-            {mail.map((id, i) => {
-              return (
-                <Transition
-                  appear
-                  mountOnEnter
-                  unmountOnExit
-                  timeout={{
-                    appear: 50 * i,
-                    enter: 50 * i,
-                    exit: 0
-                  }}
-                  in={!loading}
-                  key={id}
-                >
-                  {state => {
-                    const classes = getTransitionClasses('item', state, styles);
-                    return (
-                      <tr className={classes} key={id}>
-                        <MailItem id={id} onLoad={onLoad} />
-                      </tr>
-                    );
-                  }}
-                </Transition>
-              );
-            })}
-          </TransitionGroup>
+          {mail.map((id, i) => {
+            const state = loadedState.finished ? 'entered' : 'exited';
+            const classes = getTransitionClasses('item', state, styles);
+            return (
+              <tr
+                style={{ transitionDelay: `${50 * i}ms` }}
+                className={classes}
+                key={id}
+              >
+                <MailItem id={id} onLoad={onLoad} />
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </HotKeys>

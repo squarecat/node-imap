@@ -20,9 +20,11 @@ export const MailProvider = function({ children }) {
   const db = useContext(DatabaseContext);
   const { actions } = useMailSocket();
   const [state, dispatch] = useReducer(mailReducer, initialState);
+  const [isLoading, setLoading] = useState(true);
   const [filteredMail, setFilteredMail] = useState({
     count: 0,
-    mail: []
+    mail: [],
+    loaded: false
   });
 
   // when we get new data we check all the filter values
@@ -115,9 +117,13 @@ export const MailProvider = function({ children }) {
       ) {
         setFilteredMail({ count, mail });
       }
+
       // if there are unseenSenders then emit
       if (unseenSenders.length) {
         actions.setOccurrencesSeen({ senders: unseenSenders });
+      }
+      if (isLoading) {
+        setLoading(true);
       }
     };
     if (state.initialized) {
@@ -134,7 +140,8 @@ export const MailProvider = function({ children }) {
     state.options,
     db,
     filteredMail,
-    actions
+    actions,
+    isLoading
   ]);
 
   // save filter state to db to use as initial
@@ -147,7 +154,7 @@ export const MailProvider = function({ children }) {
 
   const value = useMemo(
     () => ({
-      isLoading: !state.initialized,
+      isLoading,
       page: state.page,
       perPage: state.perPage,
       fetch,
@@ -161,16 +168,16 @@ export const MailProvider = function({ children }) {
       options: state.options
     }),
     [
-      filteredMail.count,
-      filteredMail.mail,
-      state.activeFilters,
-      state.filterValues,
-      state.initialized,
-      state.options,
+      isLoading,
       state.page,
       state.perPage,
+      state.filterValues,
+      state.activeFilters,
+      state.sortByValue,
       state.sortByDirection,
-      state.sortByValue
+      state.options,
+      filteredMail.mail,
+      filteredMail.count
     ]
   );
 

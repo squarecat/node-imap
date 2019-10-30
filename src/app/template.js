@@ -29,15 +29,15 @@ const App = React.memo(({ children, pageName, showLoading }) => {
       </main>
     );
   }, [children, isLoaded]);
+
   let doShowLoading = showLoading;
   if (pageName) {
     doShowLoading = false;
   }
 
-  // const showLoading = pageName ? !pageName : showLoading;
   return (
     <>
-      <Header loaded={!doShowLoading} />
+      <Header loaded={!doShowLoading || isLoaded} />
       <Auth showLoading={doShowLoading} loaded={isLoaded}>
         <ErrorBoundary>{content}</ErrorBoundary>
       </Auth>

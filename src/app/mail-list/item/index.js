@@ -29,7 +29,7 @@ const keyMap = {
   HEART: 'h'
 };
 
-function MailItem({ id, onLoad }) {
+const MailItem = React.memo(function MailItem({ id, onLoad }) {
   const m = useMailItem(id);
   const { actions } = useContext(MailContext);
   const { open: openModal } = useContext(ModalContext);
@@ -64,8 +64,11 @@ function MailItem({ id, onLoad }) {
   }, [actions, setIgnored, m]);
 
   useEffect(() => {
-    if (m) {
-      onLoad();
+    if (m.key) {
+      // remove jank
+      requestAnimationFrame(() => {
+        onLoad();
+      });
     }
   }, [m, onLoad]);
 
@@ -147,7 +150,7 @@ function MailItem({ id, onLoad }) {
       </td>
     </>
   );
-}
+});
 
 function ItemScore({ mail }) {
   const { score, fromEmail: sender } = mail;
