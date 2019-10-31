@@ -85,7 +85,7 @@
     "cdn": "https://cdn.leavemealone.app"
   },
   "airtable": {
-    "key": "key0cK6sejCiwx9p0",
+    "key": "$AIRTABLE_API_KEY",
     "expenses": {
       "baseId": "app0FrYsnDlnZvGHc",
       "tableId": "Leave Me Alone",
