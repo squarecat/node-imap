@@ -169,6 +169,10 @@ $color-btn-border-focus: hsla(18, 100%, 38%, 0.25);
   transform: scale(1);
 }
 
+.long {
+  height: auto;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);

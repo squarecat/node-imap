@@ -38,3 +38,55 @@ svg + .email {
   background-color: rgba(0, 0, 0, 0.1);
   width: 100%;
 }
+
+.boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 20px;
+  margin-bottom: 20px;
+
+  @media (max-width: 500px) {
+    grid-template-columns: auto;
+  }
+}
+
+.box {
+  text-align: center;
+  background-color: white;
+  border: 1px solid $color-border-red;
+  border-radius: 7px;
+  padding: 20px;
+  @media (max-width: 500px) {
+    padding: 10px;
+  }
+}
+
+.box-img {
+  height: 100px;
+  margin: 0 auto;
+  position: relative;
+  left: -5px;
+
+  @media (max-width: 600px) {
+    height: 70px;
+  }
+}
+
+.box-value,
+.box-label {
+  display: block;
+}
+.box-value {
+  font-size: 32px;
+  margin: 10px 0;
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
+}
+.box-label {
+}
+
+.helper {
+  font-style: italic;
+}
