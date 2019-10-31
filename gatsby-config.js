@@ -67,6 +67,20 @@ module.exports = {
         path: `${__dirname}/src/senders/`
       }
     },
+    {
+      resolve: `gatsby-source-airtable`,
+      options: {
+        apiKey: process.env.AIRTABLE_API_KEY,
+        tables: [
+          {
+            baseId: `appmarx5L9y9Lb2o0`,
+            tableName: `News`,
+            tableView: 'Shown',
+            mapping: { Cover_Image: `fileNode`, Logo: `fileNode` }
+          }
+        ]
+      }
+    },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {

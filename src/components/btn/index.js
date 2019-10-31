@@ -18,7 +18,8 @@ const styleProps = [
   'outlined',
   'fill',
   'onDarkBg',
-  'positive'
+  'positive',
+  'long'
 ];
 
 export default ({
@@ -47,7 +48,8 @@ export default ({
     outlined: props.outlined,
     fill: props.fill,
     'on-dark-bg': props.onDarkBg,
-    positive: props.positive
+    positive: props.positive,
+    long: props.long
   });
 
   let elProps = _omit(props, styleProps);

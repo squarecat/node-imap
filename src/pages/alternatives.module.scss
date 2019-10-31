@@ -200,9 +200,7 @@ tbody {
 .cell {
   width: 200px;
   height: 60px;
-  // padding: 5px 25px;
   border-bottom: 1px solid $color-border-red;
-  vertical-align: top;
 
   &:first-child {
     width: 150px;
@@ -210,9 +208,12 @@ tbody {
     font-weight: bold;
   }
 }
-
+.head-cell {
+  vertical-align: bottom;
+}
 .cell {
   border-right: 1px solid $color-border-red;
+  vertical-align: top;
 
   &:first-child {
     font-family: 'Gotham-Rounded-Bold';
@@ -248,6 +249,14 @@ tbody {
   }
 }
 
+.helper-text {
+  font-size: 12px;
+  opacity: 0.8;
+  margin: 10px 0;
+  font-style: italic;
+  display: none;
+}
+
 .all-comparisons {
   max-width: 1400px;
 
@@ -258,7 +267,6 @@ tbody {
   .head-cell,
   .cell {
     width: 200px;
-    // padding: 5px 15px;
   }
 
   @media (max-width: 1100px) {
@@ -273,6 +281,9 @@ tbody {
       box-shadow: inset -5px 0 5px -5px $color-border-red,
         inset 5px 0 5px -5px $color-border-red;
       border-top: 1px solid $color-border-red;
+    }
+    .helper-text {
+      display: block;
     }
   }
 }
