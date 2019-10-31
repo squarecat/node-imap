@@ -12,7 +12,6 @@ export const TextLink = ({
   as,
   event,
   linkTo,
-  className = '',
   ...props
 }) => {
   const classes = cx(styles.link, {
@@ -29,7 +28,11 @@ export const TextLink = ({
 
   if (as === 'link' || linkTo) {
     return (
-      <Link to={linkTo} className={`${className} ${classes}`} onClick={onClick}>
+      <Link
+        to={linkTo}
+        className={`${props.className || ''} ${classes}`}
+        onClick={onClick}
+      >
         {children}
       </Link>
     );

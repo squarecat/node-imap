@@ -23,14 +23,14 @@ export default function WallOfLovePage() {
       <WallOfLove />
       <div styleName="end-stuff">
         <h2>Check out what all the fuss is about!</h2>
-        <TextLink
+        <a
           event="clicked-wall-of-love-cta"
           href={`/signup`}
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
           style={{ margin: '50px auto' }}
         >
           Sign up for FREE
-        </TextLink>
+        </a>
         <p>Or...</p>
         <p>
           Check out{' '}

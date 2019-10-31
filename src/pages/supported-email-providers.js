@@ -35,13 +35,13 @@ const ProviderGoogle = () => {
               Suite, Outlook, Hotmail, iCloud, Fastmail and more.
             </p>
 
-            <TextLink
+            <a
               href="/signup"
               event="clicked-google-cta"
               className={`beam-me-up-cta`}
             >
               Connect Your Inbox!
-            </TextLink>
+            </a>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
@@ -114,13 +114,13 @@ const ProviderGoogle = () => {
 
       <div styleName="provider-inner end-stuff">
         <h2>Unsubscribe from annoying emails in all of your inboxes!</h2>
-        <TextLink
+        <a
           href="/signup"
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
           style={{ margin: '50px auto' }}
         >
           Start Unsubscribing
-        </TextLink>
+        </a>
         <p>Or...</p>
         <p>
           Check out{' '}
