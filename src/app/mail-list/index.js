@@ -59,8 +59,8 @@ const MailView = React.memo(function MailView() {
     if (!mail.length || !accounts.length) {
       return <Empty hasFilters={activeFilters.length} />;
     }
-    return <MailList mail={mail} />;
-  }, [showLoading, mail, accounts.length, activeFilters.length]);
+    return <MailList mail={mail} page={page} />;
+  }, [showLoading, mail, accounts.length, page, activeFilters.length]);
 
   const countStyles = cx(styles.countText, {
     [styles.shown]: !inProgress

@@ -65,10 +65,7 @@ const MailItem = React.memo(function MailItem({ id, onLoad }) {
 
   useEffect(() => {
     if (m.key) {
-      // remove jank
-      requestAnimationFrame(() => {
-        onLoad();
-      });
+      onLoad(m.key);
     }
   }, [m, onLoad]);
 

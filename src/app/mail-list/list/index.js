@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useRef, useCallback } from 'react';
-
+import { Transition } from 'react-transition-group';
 import { HotKeys } from 'react-hotkeys';
 
 import MailItem from '../item';
@@ -12,35 +12,50 @@ const keyMap = {
   PREV_ITEM: 'up'
 };
 
-const loadReducer = (state, action) => {
+const loadReducer = (state = { mail: [] }, action) => {
   if (action.type === 'reset') {
+    const merged = action.data.map(m => {
+      const exists = state.mail.some(ex => ex.id === m.id && ex.rendered);
+      if (exists) {
+        return { id: m.id, rendered: true, prerendered: true };
+      }
+      return m;
+    });
     return {
-      finished: false,
-      loadedItems: 0,
-      totalItems: action.data
+      mail: merged
     };
   }
   if (action.type === 'load-item') {
-    const loadedItems = state.loadedItems + 1;
     return {
-      ...state,
-      loadedItems,
-      finished: loadedItems === state.totalItems
+      mail: state.mail.map(m =>
+        m.id === action.data ? { id: m.id, rendered: true } : m
+      )
     };
   }
   return state;
 };
 
-function MailList({ mail }) {
+function MailList({ mail = [], page }) {
   const tableRef = useRef(null);
-  const [loadedState, dispatch] = useReducer(loadReducer, {
-    finished: false,
-    itemCount: 0,
-    totalItems: mail.length
+  const [state, dispatch] = useReducer(loadReducer, {
+    mail: mail.map(m => ({
+      id: m
+    }))
   });
 
   useEffect(() => {
-    dispatch({ type: 'reset', data: mail.length });
+    tableRef.current.classList.remove(styles.loaded);
+  }, [page]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch({
+        type: 'reset',
+        data: mail.map(m => ({
+          id: m
+        }))
+      });
+    }, 200);
   }, [mail]);
 
   const handlers = {
@@ -93,26 +108,36 @@ function MailList({ mail }) {
       e.preventDefault();
     }
   };
+  const onRender = useCallback(
+    id => {
+      if (state.mail.some(m => m.id === id && !m.rendered)) {
+        dispatch({ type: 'load-item', data: id });
+      }
+    },
+    [dispatch, state.mail]
+  );
 
-  const onLoad = useCallback(() => {
-    dispatch({ type: 'load-item' });
-  }, [dispatch]);
+  // when everything is loaded
+  useEffect(() => {
+    const rendered = state.mail.filter(m => m.rendered);
+    if (rendered.length > 5 || rendered.length === state.mail.length) {
+      tableRef.current.classList.add(styles.loaded);
+    }
+  }, [state.mail]);
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <table styleName="list" ref={tableRef} data-active={0} aria-live="off">
         <tbody>
-          {mail.map((id, i) => {
-            const state = loadedState.finished ? 'entered' : 'exited';
-            const classes = getTransitionClasses('item', state, styles);
+          {state.mail.map(({ id, prerendered }, i) => {
             return (
-              <tr
-                style={{ transitionDelay: `${50 * i}ms` }}
-                className={classes}
+              <Item
                 key={id}
-              >
-                <MailItem id={id} onLoad={onLoad} />
-              </tr>
+                id={id}
+                delay={50 * i}
+                onRender={onRender}
+                prerendered={prerendered}
+              />
             );
           })}
         </tbody>
@@ -122,3 +147,27 @@ function MailList({ mail }) {
 }
 
 export default MailList;
+
+const Item = React.memo(({ id, onRender, delay }) => {
+  const ref = useRef(null);
+  const onLoad = useCallback(() => {
+    if (ref) {
+      ref.current.classList.add(styles.itemLoaded);
+    }
+    onRender(id);
+  }, [onRender, id]);
+  return (
+    <Transition mountOnEnter unmountOnExit timeout={0} in={true}>
+      {state => (
+        <tr
+          ref={ref}
+          style={{ transitionDelay: `${delay}ms` }}
+          className={getTransitionClasses(`item`, state, styles)}
+          key={id}
+        >
+          <MailItem id={id} onLoad={onLoad} />
+        </tr>
+      )}
+    </Transition>
+  );
+});
