@@ -74,6 +74,13 @@
     width: 60px;
     padding: 0;
   }
+
+  [tabindex]:focus {
+    outline: 0;
+    [data-active='true'] & {
+      outline: dashed 2px rgba(0, 0, 0, 0.2);
+    }
+  }
 }
 
 .mail-item {
