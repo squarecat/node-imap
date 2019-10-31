@@ -26,7 +26,7 @@ const alternatives = [
     path: 'leave-me-alone-vs-cleanfox',
     slug: 'cleanfox-alternative',
     description:
-      'We allow you to unsubscribe from all mailing lists at once, have live chat support, and also plant trees. More info...'
+      'We show you the worst spammers, let you sort and filter your mail, have live chat support, and also plant trees. More info...'
   }
 ];
 

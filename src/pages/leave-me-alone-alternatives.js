@@ -183,7 +183,7 @@ function LeaveMeAloneAlternatives() {
                     <AlternativeCross />
                   </td>
                   <td styleName="cell">
-                    <AlternativeCross />
+                    <AlternativeCheck />
                   </td>
                 </tr>
                 <tr>
@@ -213,7 +213,37 @@ function LeaveMeAloneAlternatives() {
                     <AlternativeCross />
                   </td>
                   <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                </tr>
+                <tr>
+                  <td styleName="cell">Show # of times received</td>
+                  <td styleName="cell">
                     <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                </tr>
+                <tr>
+                  <td styleName="cell">Sort and filter mail</td>
+                  <td styleName="cell">
+                    <AlternativeCheck />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
+                  </td>
+                  <td styleName="cell">
+                    <AlternativeCross />
                   </td>
                 </tr>
                 <tr>
@@ -265,6 +295,7 @@ function LeaveMeAloneAlternatives() {
             </table>
           </div>
         </div>
+        <p styleName="helper-text">Psst, scroll to the right to see more →</p>
       </div>
 
       <div styleName="alternative-inner cards">
