@@ -200,9 +200,7 @@ tbody {
 .cell {
   width: 200px;
   height: 60px;
-  // padding: 5px 25px;
   border-bottom: 1px solid $color-border-red;
-  vertical-align: top;
 
   &:first-child {
     width: 150px;
@@ -210,9 +208,12 @@ tbody {
     font-weight: bold;
   }
 }
-
+.head-cell {
+  vertical-align: bottom;
+}
 .cell {
   border-right: 1px solid $color-border-red;
+  vertical-align: top;
 
   &:first-child {
     font-family: 'Gotham-Rounded-Bold';
@@ -266,7 +267,6 @@ tbody {
   .head-cell,
   .cell {
     width: 200px;
-    // padding: 5px 15px;
   }
 
   @media (max-width: 1100px) {
