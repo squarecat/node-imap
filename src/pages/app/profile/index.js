@@ -1,15 +1,9 @@
 import './profile.module.scss';
 
 import { GoogleIcon, KeyIcon, MicrosoftIcon } from '../../../components/icons';
-import React, {
-  useCallback,
-  useContext,
-  useState,
-  useMemo,
-  useEffect
-} from 'react';
+import React, { useCallback, useContext, useState, useMemo } from 'react';
 import { TextImportant, TextLink } from '../../../components/text';
-import { TwitterIcon } from '../../../components/icons';
+import { TwitterIcon, Arrow as ArrowIcon } from '../../../components/icons';
 
 import { AlertContext } from '../../../providers/alert-provider';
 import Button from '../../../components/btn';
@@ -120,12 +114,17 @@ Join me and get 5 extra unsubscribe credits for free! 🙌leavemealone.app/r/${r
 
   const content = useMemo(() => {
     if (unsubCount <= 0) {
-      <>
-        <p>You haven't unsubscribed from any mailing lists yet.</p>
-        <Link to="/app">
-          Start cleaning your inboxes to see your achievements here!
-        </Link>
-      </>;
+      return (
+        <>
+          <p>You haven't unsubscribed from any mailing lists yet.</p>
+          <p>
+            <Link to="/app">
+              Start cleaning your inboxes to see your achievements here!{' '}
+              <ArrowIcon inline width="14" height="14" />
+            </Link>
+          </p>
+        </>
+      );
     }
     return (
       <>
