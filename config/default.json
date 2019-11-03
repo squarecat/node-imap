@@ -92,7 +92,7 @@
     "cdn": "https://cdn.leavemealone.app"
   },
   "airtable": {
-    "key": "key0cK6sejCiwx9p0",
+    "key": "$AIRTABLE_API_KEY",
     "expenses": {
       "baseId": "app0FrYsnDlnZvGHc",
       "tableId": "Leave Me Alone",
@@ -101,10 +101,6 @@
     "beta": {
       "baseId": "appq5b5dkcmMPEbBA",
       "tableId": "Beta Users"
-    },
-    "news": {
-      "baseId": "appmarx5L9y9Lb2o0",
-      "tableId": "News"
     },
     "baseUrl": "https://api.airtable.com/v0"
   }

@@ -30,7 +30,7 @@ export const TextLink = ({
     return (
       <Link
         to={linkTo}
-        className={`${props.className} ${classes}`}
+        className={`${props.className || ''} ${classes}`}
         onClick={onClick}
       >
         {children}

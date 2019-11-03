@@ -223,8 +223,8 @@ export default () => {
         <p>
           That said, we do store some completely anonymous data so that we can
           show fancy statistics (like the ones you see on the homepage), and
-          power our Subscription Score algorithm. You can read more about this and
-          how we manage all our data{' '}
+          power our Subscription Score algorithm. You can read more about this
+          and how we manage all our data{' '}
           <TextLink as="link" linkTo="/security">
             here
           </TextLink>
@@ -232,13 +232,13 @@ export default () => {
         </p>
 
         <br />
-        <TextLink
+        <a
           href="/signup"
           event="clicked-pricing-privacy-cta"
           className={`beam-me-up-cta beam-me-up-cta-center`}
         >
           Sign Me Up!
-        </TextLink>
+        </a>
       </div>
 
       <div styleName="end-stuff">
@@ -259,13 +259,13 @@ export default () => {
           .
         </p>
         <p style={{ margin: '50px auto' }}>Or...</p>
-        <TextLink
+        <a
           href={`/signup`}
           event="clicked-pricing-footer-cta"
           className={`beam-me-up-cta beam-me-up-cta-center beam-me-up-cta-invert`}
         >
           Try now for FREE
-        </TextLink>
+        </a>
         <p style={{ maxWidth: 400, margin: '50px auto' }}>
           Part of a team? Learn more about{' '}
           <TextLink href="/teams">Leave Me Alone for Teams</TextLink> - refer

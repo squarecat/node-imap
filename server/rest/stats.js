@@ -1,7 +1,7 @@
 import { getAllStats, getLeaderboardStats } from '../services/stats';
-import { getExpenses, getNews } from '../utils/airtable';
 
 import { RestError } from '../utils/errors';
+import { getExpenses } from '../utils/airtable';
 
 export default app => {
   app.use('/api/stats/*', (req, res, next) => {
@@ -37,16 +37,6 @@ export default app => {
       res.send(stats);
     } catch (err) {
       next(new RestError('failed to get expenses', { cause: err }));
-    }
-  });
-
-  app.get('/api/news', async (req, res, next) => {
-    res.setHeader('Cache-Control', 'public, max-age=2628000, immutable');
-    try {
-      const news = await getNews();
-      res.send(news);
-    } catch (err) {
-      next(new RestError('failed to get news', { cause: err }));
     }
   });
 };

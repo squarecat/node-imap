@@ -53,15 +53,12 @@ function CleanfoxAlternative() {
         <div styleName="container">
           <div styleName="container-text">
             <h1 styleName="title">
-              The Cleanfox alternative for unsubscribing in all your accounts
+              The Cleanfox alternative for unsubscribing from unwanted emails
             </h1>
-            {/* The Cleanfox alternative for all of your mailboxes */}
             <p styleName="tagline">
               Leave Me Alone is a Cleanfox alternative that{' '}
-              <TextImportant>
-                connects to all your mailboxes at once
-              </TextImportant>{' '}
-              so you can unsubscribe from all unwanted emails in one place.
+              <TextImportant>makes unsubscribing more efficient</TextImportant>{' '}
+              so you can spend less time managing your inbox.
             </p>
             <a href="/signup" className={`beam-me-up-cta`}>
               Start Unsubscribing
@@ -105,10 +102,10 @@ function CleanfoxAlternative() {
                 Unsubscribe from emails in all mailboxes together
               </td>
               <td styleName="cell">
-                <AlternativeCheck text="Connects all email addresses to one Leave Me Alone account" />
+                <AlternativeCheck />
               </td>
               <td styleName="cell">
-                <AlternativeCross />
+                <AlternativeCheck />
               </td>
             </tr>
             <tr>
@@ -167,7 +164,25 @@ function CleanfoxAlternative() {
                 <AlternativeCheck />
               </td>
               <td styleName="cell">
+                <AlternativeCross />
+              </td>
+            </tr>
+            <tr>
+              <td styleName="cell">Show # of times received</td>
+              <td styleName="cell">
                 <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+            </tr>
+            <tr>
+              <td styleName="cell">Sort and filter mail</td>
+              <td styleName="cell">
+                <AlternativeCheck />
+              </td>
+              <td styleName="cell">
+                <AlternativeCross />
               </td>
             </tr>
           </tbody>
@@ -195,13 +210,12 @@ function CleanfoxAlternative() {
               <img src={broomImg} alt="broom sweeping image" />
             </div>
             <div styleName="feature-text">
-              <h3 styleName="feature-title">Clean all mailboxes</h3>
+              <h3 styleName="feature-title">Clean more efficiently</h3>
               <p>
                 Leave Me Alone is a Cleanfox competitor that offers the same
-                instant unsubscribe service, but for all of your email accounts
-                in one place. Simply connect your Gmail, Outlook, and any other
-                inbox to one Leave Me Alone account and we show you all of your
-                newsletters.
+                instant unsubscribe service, but with sorting and filtering that
+                makes it easier to see which account received the newsletter,
+                and gives you feedback on the success of your unsubscribe.
               </p>
               <p>
                 <TextLink as="link" linkTo="/learn">
@@ -338,8 +352,8 @@ function CleanfoxAlternative() {
       <div styleName="alternative-inner end-stuff">
         <h2>Your search for a Cleanfox alternative is over.</h2>
         <p>
-          Sign up to Leave Me Alone to unsubscribe from mailing lists in all of
-          your mailboxes at the same time. Clean your inbox & save our planet!
+          Sign up to Leave Me Alone to unsubscribe more quickly and efficiently
+          than ever before. Plus, you'll be helping to save our planet!
         </p>
         <a
           href="/signup"

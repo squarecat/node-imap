@@ -23,24 +23,20 @@ export const CARBON_BLACK_COFFEE = 21;
 
 export function formatWeight(weight, { rounded = false } = {}) {
   if (weight < 1000) {
-    return <span>{formatNumber(weight)}g</span>;
+    return `${formatNumber(weight)}g`;
   }
 
   // less than a tonne
   if (weight / TONNE_CONVERSION < 1000) {
     const kg = weight / 1000;
     const display = rounded ? formatNumber(kg) : formatNumberPrecise(kg);
-    return <span>{display}kg</span>;
+    return `${display}kg`;
   }
 
   const tonnes = weight / TONNE_CONVERSION;
   const display = rounded ? formatNumber(tonnes) : formatNumberPrecise(tonnes);
   const text = tonnes > 1 ? 'tonnes' : 'tonne';
-  return (
-    <span>
-      {display} {text}
-    </span>
-  );
+  return `${display} ${text}`;
 }
 
 export function formatNumber(num) {

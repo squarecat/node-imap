@@ -47,13 +47,13 @@ const ProviderGoogle = () => {
               newsletters in your {variationsText} inboxes.
             </p>
 
-            <TextLink
+            <a
               href="/signup"
               event="clicked-google-cta"
               className={`beam-me-up-cta`}
             >
               Start Unsubscribing
-            </TextLink>
+            </a>
           </div>
           <div styleName="container-image">
             <MailListIllustration />
