@@ -73,7 +73,9 @@ export default (socket, db) => {
                   }, {})
                 );
 
-                item.occurrences = newOccurrences;
+                item.occurrences = newOccurrences.sort(
+                  (a, b) => b.date - a.date
+                );
                 console.log('[fetcher]: adding new occ');
                 item.occurrenceCount = newOccurrences.length;
               });

@@ -14,6 +14,8 @@ const histogram = io.histogram({
   measurement: 'mean'
 });
 
+const contentOnlyHosts = ['imap.mail.yahoo.com', 'imap.mail.me.com'];
+
 export async function* fetchMail({
   masterKey,
   user,
@@ -77,6 +79,7 @@ export async function* fetchMail({
           totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
         if (unsubscribableMail.length) {
+          debugger;
           const {
             dupes: newDupeCache,
             seenMail,
@@ -169,7 +172,7 @@ async function* readFromBox(client, mailbox, from) {
     const supportsSort = client.serverSupports('SORT');
     let uuids;
     let searchParams = ['BODY', 'unsubscribe'];
-    if (client._config.host !== 'imap.mail.me.com') {
+    if (!contentOnlyHosts.includes(client._config.host)) {
       // fixme, implement body searching for all mailboxes
       // searchParams = ['OR', searchParams, ['HEADER', 'LIST-UNSUBSCRIBE', '']];
       searchParams = ['HEADER', 'LIST-UNSUBSCRIBE', ''];
