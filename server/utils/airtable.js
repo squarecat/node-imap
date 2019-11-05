@@ -13,7 +13,6 @@ const airtable = new Airtable({
 
 const expensesBase = airtable.base(expenses.baseId);
 const betaBase = airtable.base(beta.baseId);
-const newsBase = airtable.base(news.baseId);
 
 let newsItems = {
   results: {},

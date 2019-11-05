@@ -7,6 +7,7 @@ import io from '@pm2/io';
 import logger from '../../../utils/logger';
 import { parseMailList } from './parser';
 import util from 'util';
+import { appendScores } from '../common';
 
 const histogram = io.histogram({
   name: 'IMAP Scan Time',
@@ -78,13 +79,21 @@ export async function* fetchMail({
         if (unsubscribableMail.length) {
           const {
             dupes: newDupeCache,
-            deduped,
+            seenMail,
+            newMail,
             dupeSenders: newDupeSenders
           } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
-          totalUnsubCount = totalUnsubCount + deduped.length;
+          const newSubscriptions = await appendScores(newMail);
+          totalUnsubCount = totalUnsubCount + newMail.length;
           dupeCache = newDupeCache;
           dupeSenders = newDupeSenders;
-          yield { type: 'mail', data: deduped };
+          yield {
+            type: 'mail',
+            data: {
+              duplicateSubscriptions: seenMail,
+              newSubscriptions
+            }
+          };
         }
         next = await iter.next();
       }
@@ -119,6 +128,7 @@ export async function* fetchMail({
       dupeSenders
     };
   } catch (err) {
+    logger.error(err);
     throw new MailError('failed to fetch mail', {
       provider: 'imap',
       cause: err

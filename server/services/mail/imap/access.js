@@ -51,6 +51,7 @@ function connect({ username, password, host, port, tls = true, audit }) {
         rejectUnauthorized: process.env.NODE_ENV === 'production'
       },
       debug: msg => {
+        logger.debug(`[imap]: ${msg}`);
         if (uselessLogs.some(log => msg.includes(log))) {
           return;
         }

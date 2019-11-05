@@ -2,7 +2,7 @@ import { doRequest, getOutlookAccessToken } from './access';
 import { getFilterString, getSearchString } from './utils';
 
 import { createAudit } from '../../audit';
-import { dedupeMailList } from '../common';
+import { dedupeMailList, appendScores } from '../common';
 import { getEstimateForTimeframe } from './estimator';
 import io from '@pm2/io';
 import logger from '../../../utils/logger';
@@ -79,13 +79,21 @@ export async function* fetchMail({ user, account, from, prevDupeCache }) {
         if (unsubscribableMail.length) {
           const {
             dupes: newDupeCache,
-            deduped,
+            seenMail,
+            newMail,
             dupeSenders: newDupeSenders
           } = dedupeMailList(dupeCache, unsubscribableMail, dupeSenders);
+          const newSubscriptions = await appendScores(newMail);
           dupeCache = newDupeCache;
           dupeSenders = newDupeSenders;
-          totalUnsubCount = totalUnsubCount + deduped.length;
-          yield { type: 'mail', data: deduped };
+          totalUnsubCount = totalUnsubCount + newMail.length;
+          yield {
+            type: 'mail',
+            data: {
+              duplicateSubscriptions: seenMail,
+              newSubscriptions
+            }
+          };
         }
 
         next = await iter.next();
