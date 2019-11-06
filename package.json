@@ -4,6 +4,8 @@
   "version": "2.0.0",
   "author": "Squarecat <admin@squarecat.io>",
   "dependencies": {
+    "utf7": ">=1.0.2",
+    "readable-stream": "1.1.x",
     "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
     "@babel/plugin-syntax-async-generators": "^7.2.0",
     "@babel/polyfill": "^7.0.0",

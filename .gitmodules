@@ -1,3 +1,7 @@
 [submodule "plugins/simple-analytics-gatsby-plugin"]
 	path = plugins/simple-analytics-gatsby-plugin
 	url = git@github.com:squarecat/simple-analytics-gatsby-plugin.git
+
+[submodule "server/vendor/node-imap"]
+	path = server/vendor/node-imap
+	url = git@github.com:squarecat/node-imap.git

@@ -1,6 +1,6 @@
 import * as CommonUtils from '../common';
 
-import Imap from 'imap';
+import Imap from '../../../vendor/node-imap';
 import logger from '../../../utils/logger';
 
 export function isMailUnsubscribable(headers = [], ignoredSenderList = []) {

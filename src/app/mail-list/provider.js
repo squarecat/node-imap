@@ -217,7 +217,7 @@ async function filterMail(activeFilters, db, options) {
     filteredCollection = filteredCollection.toCollection();
   }
   // get total count of all filtered items
-  const count = await filteredCollection.count();
+  const count = await filteredCollection.count();  
   // sort all items
   filteredCollection = await filteredCollection.sortBy(options.orderBy);
   if (options.sortDirection === 'desc') {

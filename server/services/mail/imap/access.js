@@ -1,4 +1,4 @@
-import Imap from 'imap';
+import Imap from '../../../vendor/node-imap';
 import { getImapAccessDetails } from '../../imap.js';
 import io from '@pm2/io';
 import logger from '../../../utils/logger';

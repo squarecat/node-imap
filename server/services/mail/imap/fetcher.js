@@ -79,7 +79,6 @@ export async function* fetchMail({
           totalPrevUnsubbedCount + previouslyUnsubbedCount;
 
         if (unsubscribableMail.length) {
-          debugger;
           const {
             dupes: newDupeCache,
             seenMail,
@@ -218,7 +217,7 @@ async function* fetchUuids(client, uuids) {
   console.log(`fetching ${uuids.length} messages`);
   const f = client.fetch(uuids, {
     markSeen: false,
-    bodies: 'HEADER.FIELDS (From To Subject List-Unsubscribe)'
+    bodies: 'HEADER.FIELDS (FROM TO SUBJECT LIST-UNSUBSCRIBE)'
   });
 
   const iter = iterator(f);
@@ -264,7 +263,9 @@ async function* iterator(f) {
     done = true;
   };
   const onMessage = async message => {
+    logger.debug('[imap]: got message');
     const email = await getMessage(message);
+    logger.debug('[imap]: parsed message');
     messages = [...messages, email];
   };
   f.on('end', onEnd);
